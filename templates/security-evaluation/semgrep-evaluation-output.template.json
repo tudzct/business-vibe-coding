@@ -1,0 +1,21 @@
+{
+  "artifact_type": "semgrep-evaluation-output",
+  "schema_version": 1,
+  "evaluation_id": "<EVALUATION-ID>",
+  "tool": {"name": "semgrep", "image": "<pinned-image>", "image_id": "<image-id>", "status": "completed | failed", "exit_code": 0},
+  "source": {"frozen_hash": "sha256:<hash>", "after_hash": "sha256:<hash>", "unchanged": true},
+  "scope": {"categories": ["A01", "A02"], "scanned_paths": ["finalsource/"]},
+  "counts": {"potential_findings": 0, "unscored_observations": 0, "by_category": {"A01": 0, "A02": 0}},
+  "findings": [
+    {
+      "id": "<FINDING-ID>",
+      "criterion_id": "<SEMGR-A01/A02-NNN>",
+      "rule_id": "<semgrep-rule-id>",
+      "category": "A01 | A02",
+      "cwe_ids": ["CWE-<number>"],
+      "status": "potential_finding",
+      "evidence": {"path": "<relative-source-path>", "line": 1, "message": "<sanitized-message>"}
+    }
+  ],
+  "limitations": []
+}

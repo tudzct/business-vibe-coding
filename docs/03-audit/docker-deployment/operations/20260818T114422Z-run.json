@@ -1,0 +1,22 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-08-18T11:44:22Z",
+  "mode": "run",
+  "repository_revision": "83666da7cc9a804af65b2e00dc1290d0b95e8812",
+  "source_hash": "sha256:fd02b411ef0619bcde0db4efba7d387fbbd2779433d39e49b0e408aa44196a0b",
+  "tool_versions": {
+    "docker_cli": "29.7.2",
+    "docker_compose": "5.3.1",
+    "docker_daemon": "29.7.2"
+  },
+  "commands": [
+    {"id": "compose-config", "exit_code": 0},
+    {"id": "compose-up-build-detached", "exit_code": 0},
+    {"id": "compose-ps", "exit_code": 0},
+    {"id": "backend-health", "exit_code": 0},
+    {"id": "proxied-backend-health", "exit_code": 0},
+    {"id": "frontend-reachability", "exit_code": 0}
+  ],
+  "outcome": "PASS",
+  "error_excerpt": null
+}

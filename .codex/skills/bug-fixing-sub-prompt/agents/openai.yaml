@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bug-fixing Sub-prompt"
+  short_description: "Repair evidenced generated-source errors and record metrics"
+  default_prompt: "Use $bug-fixing-sub-prompt to repair one evidenced generated-source error, preserve first-pass audit data, and append repair metrics."

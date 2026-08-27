@@ -1,0 +1,14 @@
+{
+  "artifact_type": "zap-evaluation-input",
+  "schema_version": 1,
+  "evaluation_id": "<EVALUATION-ID>",
+  "evaluation_scope": "current_final_source",
+  "runtime": {"compose_file": "finalsource/compose.yaml", "openapi_discovery": "http://backend:3000/docs-json", "leave_running_for_researcher": true},
+  "categories": ["A01", "A02"],
+  "criteria_catalog": {"path": "security-tools/criteria/third-party-security-criteria.json", "checksum": "sha256:<checksum>", "id": "<CATALOG-ID>"},
+  "evaluation_policy": {"path": "security-tools/evaluation-policies/<POLICY-ID>.json", "checksum": "sha256:<checksum>", "id": "<POLICY-ID>"},
+  "rule_policy": {"path": "security-tools/zap/zap-rules.conf", "checksum": "sha256:<checksum>", "strict_execution": false},
+  "tool_lock": {"path": "security-tools/tool-versions.lock.json", "checksum": "sha256:<checksum>"},
+  "contexts": [{"id": "anonymous", "auth": {"mode": "none"}}],
+  "execution": {"mode": "container", "raw_output": "ephemeral"}
+}

@@ -1,0 +1,36 @@
+{
+  "artifact_type": "final-source-security-evaluation-input",
+  "schema_version": 1,
+  "evaluation_id": "<EVALUATION-ID>",
+  "status": "Approved",
+  "researcher": "<stable-researcher-id>",
+  "approved_at": "<ISO-8601>",
+  "scope": {
+    "kind": "current_final_source",
+    "source_root": "finalsource/",
+    "frozen_hash": "sha256:<hash>",
+    "categories": ["A01", "A02"],
+    "contributing_uc_range": {"from": "UC-001", "to": "UC-016"}
+  },
+  "policy": {
+    "path": "security-tools/evaluation-policies/<POLICY-ID>.json",
+    "checksum": "sha256:<checksum>",
+    "id": "<POLICY-ID>"
+  },
+  "tools": {
+    "semgrep": {
+      "enabled": true,
+      "input_contract": "templates/security-evaluation/semgrep-evaluation-input.template.json",
+      "output_contract": "templates/security-evaluation/semgrep-evaluation-output.template.json"
+    },
+    "zap": {
+      "enabled": true,
+      "input_contract": "templates/security-evaluation/zap-evaluation-input.template.json",
+      "output_contract": "templates/security-evaluation/zap-evaluation-output.template.json"
+    }
+  },
+  "output": {
+    "directory": "docs/03-audit/security-tools/finalsource/<EVALUATION-ID>/",
+    "canonical_summary": "evaluation-summary.json"
+  }
+}

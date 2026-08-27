@@ -1,0 +1,95 @@
+{
+  "run_id": "<run-id>",
+  "model_selection_gate_version": 3,
+  "experiment_configuration": {
+    "configuration_id": "<CONFIG-ID>",
+    "comparison_group_id": "<COMPARISON-GROUP-ID>",
+    "researcher_id": "<stable researcher identifier>",
+    "artifact": "docs/05-experiments/configurations/<CONFIG-ID>.json",
+    "checksum": "sha256:<checksum>",
+    "run_activation": "docs/02-construction/implementation/<UC-ID>/runs/<run-id>/run-activation.json"
+  },
+  "uc_id": "<UC-ID>",
+  "uc_name": "<Use case name>",
+  "replicate_index": 1,
+  "run_order": 1,
+  "audit_protocol": "fixed | matched | cross",
+  "generation_model": {
+    "requested_label": "Sol Light | Luna Medium | Terra Medium | <other>",
+    "requested_model_id": "gpt-5.6-sol | gpt-5.6-luna | gpt-5.6-terra | <exact-id>",
+    "requested_reasoning_effort": "none | low | medium | high | xhigh | max",
+    "requested_reasoning_mode": "standard | pro",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "effective_reasoning_effort": null,
+    "codex_client_version": null
+  },
+  "audit_model": {
+    "requested_label": "same-as-generation | <label>",
+    "requested_model_id": "same-as-generation | <exact-id>",
+    "requested_reasoning_effort": "same-as-generation | none | low | medium | high | xhigh | max",
+    "requested_reasoning_mode": "same-as-generation | standard | pro",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "effective_reasoning_effort": null,
+    "codex_client_version": null
+  },
+  "timing_method": "system_timestamp_delta",
+  "timing_wall_clock": {
+    "initial_started_at": "",
+    "initial_started_epoch_ms": null,
+    "initial_ended_at": "",
+    "initial_ended_epoch_ms": null
+  },
+  "timing_seconds": { "initial": null },
+  "tokens": { "initial_total": null },
+  "security": {
+    "source_revision": "sha256:<frozen-finalsource-hash-after-repair>",
+    "frozen_sec_ids": ["SEC-A01-01"],
+    "total": null,
+    "met": null,
+    "unmet": null,
+    "not_evaluable": null,
+    "categories": {
+      "A01": { "total": null, "met": null, "unmet": null, "not_evaluable": null },
+      "A02": { "total": null, "met": null, "unmet": null, "not_evaluable": null },
+      "A03": { "total": null, "met": null, "unmet": null, "not_evaluable": null },
+      "A04": { "total": null, "met": null, "unmet": null, "not_evaluable": null },
+      "A05": { "total": null, "met": null, "unmet": null, "not_evaluable": null },
+      "A06": { "total": null, "met": null, "unmet": null, "not_evaluable": null },
+      "A07": { "total": null, "met": null, "unmet": null, "not_evaluable": null },
+      "A08": { "total": null, "met": null, "unmet": null, "not_evaluable": null },
+      "A09": { "total": null, "met": null, "unmet": null, "not_evaluable": null },
+      "A10": { "total": null, "met": null, "unmet": null, "not_evaluable": null }
+    },
+    "requirements": [
+      {
+        "sr_id": "SR-<UC-ID>-A01-01",
+        "sec_id": "SEC-A01-01",
+        "category": "A01",
+        "status": "met | unmet | not_evaluable",
+        "evidence": ["inspectable source/configuration/build/runtime evidence"],
+        "rationale": "requirement-specific assessment rationale"
+      }
+    ]
+  },
+  "repairs": [],
+  "manual_estimates_minutes": [
+    { "expert": "Expert 1", "minutes": null, "assumptions": "" },
+    { "expert": "Expert 2", "minutes": null, "assumptions": "" },
+    { "expert": "Expert 3", "minutes": null, "assumptions": "" }
+  ],
+  "ui_accuracy_percent": null,
+  "flow_accuracy_percent": null,
+  "complexity": {
+    "components": {
+      "actors": 0,
+      "main_flow_steps": 0,
+      "alternate_exception_flows": 0,
+      "data_entities": 0,
+      "integrations": 0,
+      "security_sensitivity": 0,
+      "ui_states": 0
+    }
+  }
+}

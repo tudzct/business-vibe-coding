@@ -1,0 +1,4 @@
+interface:
+  display_name: "Run Secure AI-DLC"
+  short_description: "Orchestrate traceable secure AI development"
+  default_prompt: "Use $run-secure-aidlc to drive this use case through the secure AI-DLC workflow."

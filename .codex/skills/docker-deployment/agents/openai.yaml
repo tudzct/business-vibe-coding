@@ -1,0 +1,4 @@
+interface:
+  display_name: "Docker Deployment Guide"
+  short_description: "Prepare, preflight, run, and troubleshoot Docker"
+  default_prompt: "Use $docker-deployment to prepare Docker, preflight locked security tools before experiments, run the stack when authorized, and record sanitized outcomes."

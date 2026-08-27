@@ -1,0 +1,11 @@
+{
+  "artifact_type": "database-schema",
+  "uc_id": "<UC-ID>",
+  "status": "Draft",
+  "source_use_case": "<path>",
+  "source_prompt": "<path-or-null>",
+  "created_at": "<ISO-8601>",
+  "contract": {},
+  "assumptions": [],
+  "approval": null
+}

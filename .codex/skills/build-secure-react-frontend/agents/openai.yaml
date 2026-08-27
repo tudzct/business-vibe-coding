@@ -1,0 +1,4 @@
+interface:
+  display_name: "Build Secure React Frontend"
+  short_description: "Build secure React and Vite features"
+  default_prompt: "Use $build-secure-react-frontend to implement the frontend portion of this approved prompt."

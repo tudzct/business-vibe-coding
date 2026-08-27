@@ -1,0 +1,4 @@
+interface:
+  display_name: "Generate Source Code"
+  short_description: "Implement and verify approved prompts"
+  default_prompt: "Use $gen-source-code with the path to my approved security-coding-prompt file and implement it into finalsource."

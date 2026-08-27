@@ -1,0 +1,21 @@
+{
+  "artifact_type": "zap-evaluation-output",
+  "schema_version": 1,
+  "evaluation_id": "<EVALUATION-ID>",
+  "tool": {"name": "zap", "image": "<pinned-image>", "image_id": "<image-id>", "status": "completed | failed", "exit_code": 0},
+  "source": {"frozen_hash": "sha256:<hash>", "after_hash": "sha256:<hash>", "unchanged": true},
+  "scope": {"categories": ["A01", "A02"], "target_sets": [], "contexts": [], "coverage_units": []},
+  "counts": {"potential_findings": 0, "unscored_observations": 0, "by_category": {"A01": 0, "A02": 0}},
+  "findings": [
+    {
+      "id": "<FINDING-ID>",
+      "criterion_id": "<ZAP-A01/A02-NNN>",
+      "rule_id": "<zap-plugin-id>",
+      "category": "A01 | A02",
+      "cwe_ids": ["CWE-<number>"],
+      "status": "potential_finding",
+      "evidence": {"method": "GET", "url": "<sanitized-url>", "parameter": "<sanitized-parameter>", "message": "<sanitized-message>"}
+    }
+  ],
+  "limitations": []
+}

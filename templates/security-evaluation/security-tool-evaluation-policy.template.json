@@ -1,0 +1,39 @@
+{
+  "artifact_type": "third-party-security-evaluation-policy",
+  "schema_version": 4,
+  "policy_id": "<POLICY-ID>",
+  "status": "Draft",
+  "evaluation_target": "current_final_source",
+  "research_product_id": "<RESEARCH-PRODUCT-ID>",
+  "researcher": null,
+  "decided_at": null,
+  "scope": ["A01", "A02"],
+  "refs": {
+    "criteria_catalog": {"path": "security-tools/criteria/third-party-security-criteria.json", "checksum": "sha256:<checksum>", "id": "<CATALOG-ID>"},
+    "tool_lock": {"path": "security-tools/tool-versions.lock.json", "checksum": "sha256:<checksum>"},
+    "rule_bundles": {
+      "semgrep": {"path": "security-tools/semgrep/semgrep.yml", "checksum": "sha256:<checksum>"},
+      "zap": {"path": "security-tools/zap/zap-rules.conf", "checksum": "sha256:<checksum>", "strict_execution": false}
+    }
+  },
+  "enabled_criteria": ["<TSC-CRITERION-ID>"],
+  "coverage_contract": {
+    "source_paths": ["finalsource/"],
+    "contexts": [
+      {"id": "anonymous", "role": null, "auth": {"mode": "none"}, "applicability": "required"},
+      {"id": "owner_a", "role": "user", "auth": {"mode": "bearer_env", "secret_env": "SECURITY_EVAL_OWNER_A_TOKEN"}, "applicability": "if_present"},
+      {"id": "owner_b", "role": "user", "auth": {"mode": "bearer_env", "secret_env": "SECURITY_EVAL_OWNER_B_TOKEN"}, "applicability": "if_present"}
+    ],
+    "target_sets": [
+      {"id": "openapi", "kind": "openapi", "discovery": "http://backend:3000/docs-json", "include": ["/api/**"], "exclude": ["/api/health", "/docs", "/docs-json"], "contexts": ["anonymous", "owner_a", "owner_b"]}
+    ],
+    "probes": [
+      {"id": "cross-owner-object-access", "category": "A01", "kind": "authorization_matrix", "target_set": "openapi", "contexts": ["owner_a", "owner_b"], "required_capabilities": ["authenticated_context", "two_owners", "object_fixture"], "applicability": "if_present"}
+    ],
+    "known_limitations": [
+      {"code": "business_logic_coverage_bounded", "detail": "Automated third-party tools cannot prove absence of business-logic broken access control."},
+      {"code": "custom_semgrep_rules_candidate", "detail": "Project-custom Semgrep rules remain candidate detectors until independent calibration evidence is approved."},
+      {"code": "zap_strict_execution_unproven", "detail": "The packaged ZAP API scan cannot prove default-off passive and active execution scoping."}
+    ]
+  }
+}

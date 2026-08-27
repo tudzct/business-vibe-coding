@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "security-tool-evaluation-summary.schema.json",
+  "title": "Canonical independent security evaluation summary",
+  "$comment": "SR-blind contract: this artifact cannot contain SR identifiers or references to generation-owned artifacts; the canonical validator enforces this recursively.",
+  "type": "object",
+  "propertyNames": {"not": {"pattern": "^(sr_id|sr_ids|security_requirement|security_requirements|security_resource|security_resources|prompt_e|coding_prompt|coding_prompts|generation_audit|generation_audits|repair_prompt|repair_prompts|experiment_run|experiment_runs)$"}},
+  "additionalProperties": false,
+  "required": ["artifact_type", "schema_version", "evaluation_id", "evaluation_scope", "source_root", "contributing_uc_range", "source", "refs", "result", "execution", "coverage", "findings"],
+  "properties": {
+    "artifact_type": {"const": "security-evaluation-summary"},
+    "schema_version": {"const": 5},
+    "evaluation_id": {"type": "string", "minLength": 1},
+    "evaluation_scope": {"const": "current_final_source"},
+    "source_root": {"const": "finalsource/"},
+    "contributing_uc_range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from", "to"],
+      "properties": {
+        "from": {"type": "string", "pattern": "^UC-[0-9]{3}$"},
+        "to": {"type": "string", "pattern": "^UC-[0-9]{3}$"}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["frozen_hash", "after_hash", "unchanged"],
+      "properties": {
+        "frozen_hash": {"$ref": "#/$defs/sha256"},
+        "after_hash": {"$ref": "#/$defs/sha256"},
+        "unchanged": {"type": "boolean"}
+      }
+    },
+    "refs": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["criteria_catalog", "policy", "tool_lock"],
+      "properties": {"criteria_catalog": {"$ref": "#/$defs/ref"}, "policy": {"$ref": "#/$defs/ref"}, "tool_lock": {"$ref": "#/$defs/ref"}}
+    },
+    "result": {
+      "type": "object",
+      "required": ["status", "potential_findings", "unscored_observations", "by_category", "by_tool"],
+      "properties": {
+        "status": {"enum": ["no_finding_detected", "potential_findings_detected", "scan_failed"]},
+        "potential_findings": {"type": "integer", "minimum": 0},
+        "unscored_observations": {"type": "integer", "minimum": 0},
+        "by_category": {"type": "object"},
+        "by_tool": {"type": "object"}
+      }
+    },
+    "execution": {"type": "object"},
+    "coverage": {
+      "type": "object",
+      "required": ["contexts", "target_sets", "units", "limitations"],
+      "properties": {
+        "contexts": {"type": "array", "items": {"$ref": "#/$defs/coverageObservation"}},
+        "target_sets": {"type": "array", "items": {"$ref": "#/$defs/coverageObservation"}},
+        "units": {"type": "array", "items": {"$ref": "#/$defs/coverageObservation"}},
+        "limitations": {"type": "array"}
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "propertyNames": {"not": {"pattern": "^(sr_id|sr_ids|security_requirement|security_requirements|security_resource|security_resources|prompt_e|coding_prompt|coding_prompts|generation_audit|generation_audits|repair_prompt|repair_prompts|experiment_run|experiment_runs)$"}}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "checksum", "id"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "checksum": {"$ref": "#/$defs/sha256"},
+        "id": {"type": "string", "minLength": 1}
+      }
+    },
+    "coverageObservation": {
+      "type": "object",
+      "required": ["id", "status"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "status": {"enum": ["evaluated", "not_evaluable", "scan_failed"]},
+        "reason_code": {"type": "string"}
+      }
+    }
+  }
+}

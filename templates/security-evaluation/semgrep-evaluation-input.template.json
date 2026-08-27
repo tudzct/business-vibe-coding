@@ -1,0 +1,13 @@
+{
+  "artifact_type": "semgrep-evaluation-input",
+  "schema_version": 1,
+  "evaluation_id": "<EVALUATION-ID>",
+  "evaluation_scope": "current_final_source",
+  "source": {"root": "finalsource/", "frozen_hash": "sha256:<hash>", "read_only": true},
+  "categories": ["A01", "A02"],
+  "criteria_catalog": {"path": "security-tools/criteria/third-party-security-criteria.json", "checksum": "sha256:<checksum>", "id": "<CATALOG-ID>"},
+  "evaluation_policy": {"path": "security-tools/evaluation-policies/<POLICY-ID>.json", "checksum": "sha256:<checksum>", "id": "<POLICY-ID>"},
+  "rule_policy": {"path": "security-tools/semgrep/semgrep.yml", "checksum": "sha256:<checksum>"},
+  "tool_lock": {"path": "security-tools/tool-versions.lock.json", "checksum": "sha256:<checksum>"},
+  "execution": {"mode": "container", "network": "none", "raw_output": "ephemeral"}
+}

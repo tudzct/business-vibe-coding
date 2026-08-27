@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "final-source-security-evaluation-input.schema.json",
+  "title": "Approved product-level final-source security evaluation input",
+  "$comment": "SR-blind contract: this artifact cannot contain SR identifiers or references to generation-owned artifacts; the canonical validator enforces this recursively.",
+  "type": "object",
+  "propertyNames": {"not": {"pattern": "^(sr_id|sr_ids|security_requirement|security_requirements|security_resource|security_resources|prompt_e|coding_prompt|coding_prompts|generation_audit|generation_audits|repair_prompt|repair_prompts|experiment_run|experiment_runs)$"}},
+  "additionalProperties": false,
+  "required": ["artifact_type", "schema_version", "evaluation_id", "status", "researcher", "approved_at", "scope", "policy", "tools", "output"],
+  "properties": {
+    "artifact_type": {"const": "final-source-security-evaluation-input"},
+    "schema_version": {"const": 1},
+    "evaluation_id": {"type": "string", "minLength": 1},
+    "status": {"const": "Approved"},
+    "researcher": {"type": "string", "minLength": 1},
+    "approved_at": {"type": "string", "minLength": 1},
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "source_root", "frozen_hash", "categories", "contributing_uc_range"],
+      "properties": {
+        "kind": {"const": "current_final_source"},
+        "source_root": {"const": "finalsource/"},
+        "frozen_hash": {"$ref": "#/$defs/sha256"},
+        "categories": {"const": ["A01", "A02"]},
+        "contributing_uc_range": {"$ref": "#/$defs/ucRange"}
+      }
+    },
+    "policy": {"$ref": "#/$defs/ref"},
+    "tools": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["semgrep", "zap"],
+      "properties": {
+        "semgrep": {"$ref": "#/$defs/tool"},
+        "zap": {"$ref": "#/$defs/tool"}
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["directory", "canonical_summary"],
+      "properties": {
+        "directory": {"type": "string", "pattern": "^docs/03-audit/security-tools/finalsource/[^/]+/$"},
+        "canonical_summary": {"const": "evaluation-summary.json"}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "checksum", "id"],
+      "properties": {"path": {"type": "string", "minLength": 1}, "checksum": {"$ref": "#/$defs/sha256"}, "id": {"type": "string", "minLength": 1}}
+    },
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "input_contract", "output_contract"],
+      "properties": {"enabled": {"const": true}, "input_contract": {"type": "string", "minLength": 1}, "output_contract": {"type": "string", "minLength": 1}}
+    },
+    "ucRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from", "to"],
+      "properties": {"from": {"type": "string", "pattern": "^UC-[0-9]{3}$"}, "to": {"type": "string", "pattern": "^UC-[0-9]{3}$"}}
+    }
+  }
+}
