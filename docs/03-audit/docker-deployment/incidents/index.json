@@ -1,0 +1,11 @@
+{
+  "artifact_type": "docker-incident-index",
+  "incidents": [
+    {
+      "incident_id": "DEP-20260827-001",
+      "fingerprint": "backend-startup-mysql-application-user-access-denied",
+      "path": "docs/03-audit/docker-deployment/incidents/backend-startup-mysql-application-user-access-denied.json",
+      "outcome": "resolved"
+    }
+  ]
+}

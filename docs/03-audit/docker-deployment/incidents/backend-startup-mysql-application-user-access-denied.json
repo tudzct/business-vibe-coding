@@ -1,0 +1,41 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260827-001",
+  "observed_at": "2026-08-27T08:10:24Z",
+  "layer": "database/backend startup",
+  "fingerprint": "backend-startup-mysql-application-user-access-denied",
+  "symptom": "The rebuilt backend cannot become healthy because MySQL rejects the configured application user.",
+  "evidence": [
+    "Database container is healthy.",
+    "Backend reports ER_ACCESS_DENIED_ERROR while establishing its TypeORM connection.",
+    "Frontend rebuilt successfully, is healthy and serves a bundle without UC-01 registration strings."
+  ],
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "The credential stored for the application user in the persistent MySQL volume does not match the credential supplied to the rebuilt backend from the current environment file."
+  },
+  "actions_attempted": [
+    "Rebuilt and recreated the Compose stack without deleting the MySQL volume.",
+    "Started the rebuilt frontend without dependencies so the rolled-back UI is available.",
+    "Verified frontend reachability and absence of UC-01 registration strings in the served bundle.",
+    "Stopped database and backend, then ran MySQL locally through its Unix socket in temporary skip-grant-tables and skip-networking recovery mode.",
+    "Changed only the application-user password to the current environment value and restarted the normal database/backend services.",
+    "Verified database, backend and frontend health plus backend/frontend reachability."
+  ],
+  "files_changed": [
+    "docs/03-audit/docker-deployment/environment-current.json",
+    "docs/03-audit/docker-deployment/operations/20260827T081024Z-run.json",
+    "docs/03-audit/docker-deployment/incidents/index.json",
+    "docs/03-audit/docker-deployment/incidents/backend-startup-mysql-application-user-access-denied.json"
+  ],
+  "commands_rerun": [
+    "compose up --build --detach",
+    "compose up --detach --no-deps frontend",
+    "compose ps",
+    "frontend reachability and bundle inspection",
+    "backend health request"
+  ],
+  "outcome": "resolved",
+  "reusable_resolution": "With researcher authorization, stop database consumers, start MySQL temporarily with grant tables disabled and networking disabled, change only the application-user password to the current environment value through the local Unix socket, then restart and verify the normal stack. No volume deletion is required.",
+  "prevention": "Keep the environment credential stable for the lifetime of the persistent MySQL volume, or rotate the database user credential before changing the environment file."
+}

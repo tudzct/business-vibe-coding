@@ -1,0 +1,22 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-08-27T08:10:24Z",
+  "mode": "run",
+  "repository_revision": "9ae953b54a4ef6642c153fd4a1e5cb057dad4eb5",
+  "source_hash": "sha256:70a8aa14cea3a0b17f73263b02961805a79d0cdc4e310a375b5d6f97afdc6942",
+  "tool_versions": {
+    "docker_cli": "29.6.1",
+    "docker_compose": "5.3.0",
+    "docker_daemon": "29.6.1"
+  },
+  "commands": [
+    {"id": "compose-up-build-detached", "exit_code": 1},
+    {"id": "compose-up-frontend-no-deps", "exit_code": 0},
+    {"id": "compose-ps", "exit_code": 0},
+    {"id": "frontend-reachability", "exit_code": 0},
+    {"id": "frontend-uc01-bundle-absence", "exit_code": 0},
+    {"id": "backend-health", "exit_code": 52}
+  ],
+  "outcome": "BLOCKED",
+  "error_excerpt": "Backend database authentication was rejected for the configured application user; no credential value was recorded."
+}
