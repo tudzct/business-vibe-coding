@@ -1,0 +1,10 @@
+{
+  "artifact_type": "run-activation",
+  "gate_version": 3,
+  "uc_id": "UC-01",
+  "run_id": "UC01-SOL-MEDIUM-R1",
+  "configuration_artifact": "docs/05-experiments/configurations/CFG-UC01-GPT56SOL-MEDIUM-R1-20260827.json",
+  "configuration_checksum": "sha256:47937d67c1b34f6f515a87f831b06586dd13c2a86ed063ef98f71d696716e764",
+  "activated_at": "2026-08-27T11:29:32.479300Z",
+  "status": "Confirmed"
+}

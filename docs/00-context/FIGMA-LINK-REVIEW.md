@@ -6,7 +6,7 @@ File này là **downstream review/mapping input**. Không chỉnh sửa 16 file 
 
 Người nghiên cứu đã xác nhận các URL chuẩn trong cột **Replacement URL** và phần occurrence bên dưới. Đây là nguồn mapping chuẩn cho Codex; không đọc lại file key cũ từ UC bất biến để thay thế các giá trị này. `NOT_APPLICABLE` có nghĩa UC nguồn không cung cấp thiết kế Figma.
 
-Ngày 2026-08-27, người nghiên cứu đã thay thế mapping của UC-01 bằng URL Figma `VibeTesting` bên dưới. Mapping này áp dụng cho frozen UC hiện tại `docs/01-inception/use-cases/uc-01-register-account.md`, có đặc tả nguồn tại `Use cases!A5:B25`. Figma connector chưa trả về frame context trong phiên này vì Figma Desktop không có layer được chọn; file key và node ID được lấy trực tiếp từ URL do người nghiên cứu cung cấp. Cùng ngày, mapping Login đã được xác nhận trước đây được gán lại cho frozen UC hiện tại `docs/01-inception/use-cases/uc-02-login.md`, có đặc tả nguồn tại `Use cases!A26:B44`.
+Ngày 2026-08-27, người nghiên cứu đã thay thế mapping của UC-01 bằng file Figma `VibeTesting`. Figma connector xác nhận node `66:4728` trong URL ban đầu là canvas `Design`, không phải frame đăng ký; frame đúng là `137:8071`, tên `102. Signup`, trong cùng file. Mapping đã được hiệu chỉnh theo bằng chứng connector và áp dụng cho frozen UC hiện tại `docs/01-inception/use-cases/uc-01-register-account.md`, có đặc tả nguồn tại `Use cases!A5:B25`. Cùng ngày, mapping Login đã được xác nhận trước đây được gán lại cho frozen UC hiện tại `docs/01-inception/use-cases/uc-02-login.md`, có đặc tả nguồn tại `Use cases!A26:B44`.
 
 Sau khi review hoàn tất, Codex sẽ:
 
@@ -19,7 +19,7 @@ Sau khi review hoàn tất, Codex sẽ:
 
 | UC | Use case | Source UC | Current file key | Current node ID | Số lần xuất hiện | Replacement URL | Review status / note |
 |---|---|---|---|---|---:|---|---|
-| UC-001 | Register an Account | `docs/01-inception/use-cases/uc-01-register-account.md` | `BTSOvEnU2X3CNrNvSxX9Ry` | `66:4728` | 0 (external mapping) | `https://www.figma.com/design/BTSOvEnU2X3CNrNvSxX9Ry/Finebank---Financial-Management-Dashboard-UI-Kits--Community---VibeTesting-?node-id=66-4728&p=f&t=LTofk7XE4yZcHPBU-0` | Researcher-supplied replacement for current UC-01; capture the node into a new frozen dataset before frontend generation or UI audit. |
+| UC-001 | Register an Account | `docs/01-inception/use-cases/uc-01-register-account.md` | `BTSOvEnU2X3CNrNvSxX9Ry` | `137:8071` | 0 (external mapping) | `https://www.figma.com/design/BTSOvEnU2X3CNrNvSxX9Ry/Finebank---Financial-Management-Dashboard-UI-Kits--Community---VibeTesting-?node-id=137-8071&p=f&t=LTofk7XE4yZcHPBU-0` | Researcher-authorized correction for current UC-01; connector-verified frame `102. Signup`. |
 | UC-002 | Log In | `docs/01-inception/use-cases/uc-02-login.md` | `7lyW3RmfX2jUM2VI6XdHK9` | `137:7477` | 0 (external mapping) | `https://www.figma.com/design/7lyW3RmfX2jUM2VI6XdHK9/Finebank---Financial-Management-Dashboard-UI-Kits--Community---Copy-?node-id=137-7477&t=t5xq1zzdRdWbBQza-0` | Previously researcher-confirmed Login mapping, retargeted to current UC-02; capture the node into a new frozen dataset before frontend generation or UI audit. |
 | UC-003 | View the list of transactions | `docs/01-inception/use-cases/uc-03-view-transaction-list.md` | `7lyW3RmfX2jUM2VI6XdHK9` | `66:5474` | 2 | `https://www.figma.com/design/7lyW3RmfX2jUM2VI6XdHK9/Finebank---Financial-Management-Dashboard-UI-Kits--Community---Copy-?node-id=66-5474&t=JIvgR8yO5kRKVT0b-0` | URL chuẩn đã được người nghiên cứu xác nhận. |
 | UC-004 | Add a new transaction | `docs/01-inception/use-cases/uc-04-create-new-transaction.md` | — | — | 0 | `NOT_APPLICABLE` | UC nguồn không chứa URL Figma. |
@@ -43,7 +43,7 @@ Các URL dưới đây là URL chuẩn thay thế theo đúng từng occurrence 
 ### UC-001
 
 - Frozen UC hiện tại không chứa occurrence URL Figma. Researcher đã cung cấp replacement mapping ngoài UC:
-  `https://www.figma.com/design/BTSOvEnU2X3CNrNvSxX9Ry/Finebank---Financial-Management-Dashboard-UI-Kits--Community---VibeTesting-?node-id=66-4728&p=f&t=LTofk7XE4yZcHPBU-0`
+  `https://www.figma.com/design/BTSOvEnU2X3CNrNvSxX9Ry/Finebank---Financial-Management-Dashboard-UI-Kits--Community---VibeTesting-?node-id=137-8071&p=f&t=LTofk7XE4yZcHPBU-0`
 
 ### UC-002
 

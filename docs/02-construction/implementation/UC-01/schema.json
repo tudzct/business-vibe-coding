@@ -1,0 +1,207 @@
+{
+  "artifact_type": "database-schema",
+  "uc_id": "UC-01",
+  "status": "Approved",
+  "source_use_case": "docs/01-inception/use-cases/uc-01-register-account.md",
+  "source_prompt": "docs/02-construction/coding-prompts/UC-01-business-coding-prompt.md",
+  "created_at": "2026-08-27T11:30:39.8010846Z",
+  "contract": {
+    "evidence_and_scope": {
+      "uc_api_ids_and_operations": [
+        "UC-01 Register an Account",
+        "API-AUTH-REGISTER",
+        "POST /api/auth/register"
+      ],
+      "source_fields_and_rules": {
+        "fields": [
+          "User.id",
+          "User.fullName",
+          "User.email",
+          "User.passwordHash",
+          "generated unique username",
+          "totalBalance = 0"
+        ],
+        "business_rules": [
+          "BR-REG-01",
+          "BR-REG-02",
+          "BR-REG-03",
+          "BR-REG-07",
+          "BR-REG-08",
+          "BR-REG-09",
+          "BR-REG-10",
+          "BR-REG-11"
+        ]
+      },
+      "existing_entities_and_migrations_inspected": {
+        "entities": [],
+        "migrations": [],
+        "finding": "The current finalsource/be baseline contains no TypeORM entities or migrations. DatabaseModule uses autoLoadEntities=true and synchronize=false."
+      },
+      "new_table_or_change_required": "Create a new users table and corresponding User TypeORM entity for UC-01 registration persistence.",
+      "out_of_scope": [
+        "Google authentication",
+        "login and other authentication endpoints",
+        "user profile fields not required by UC-01",
+        "account, bill, goal and transaction relationships",
+        "user deletion, retention and cascading behavior",
+        "changes to existing tables because none are present in the target baseline"
+      ]
+    },
+    "entity_mapping": [
+      {
+        "typescript_entity_property": "User.id",
+        "table_column": "users.id",
+        "mysql_type": "INT UNSIGNED AUTO_INCREMENT",
+        "null_default": "NOT NULL; database generated; no default",
+        "constraint_index": "pk_users PRIMARY KEY",
+        "source_rationale": "The UC UML defines User.id as required Integer and the successful API returns it as a JavaScript number."
+      },
+      {
+        "typescript_entity_property": "User.fullName",
+        "table_column": "users.full_name",
+        "mysql_type": "VARCHAR(25) CHARACTER SET utf8mb4",
+        "null_default": "NOT NULL; no default",
+        "constraint_index": "chk_users_full_name_length CHECK (CHAR_LENGTH(full_name) BETWEEN 4 AND 25)",
+        "source_rationale": "BR-REG-01 requires an NFC-normalized, trimmed full name of 4 through 25 Unicode-letter characters with single internal spaces. Backend validation remains authoritative for the Unicode pattern."
+      },
+      {
+        "typescript_entity_property": "User.email",
+        "table_column": "users.email",
+        "mysql_type": "VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci",
+        "null_default": "NOT NULL; no default",
+        "constraint_index": "uq_users_email UNIQUE; chk_users_email_normalized CHECK (email = LOWER(TRIM(email)))",
+        "source_rationale": "BR-REG-02 caps normalized email at 255; BR-REG-03 and BR-REG-10 require database-protected normalized-email uniqueness under concurrent registration."
+      },
+      {
+        "typescript_entity_property": "User.username",
+        "table_column": "users.username",
+        "mysql_type": "VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci",
+        "null_default": "NOT NULL; no default",
+        "constraint_index": "uq_users_username UNIQUE",
+        "source_rationale": "UC-01 POST-1 and Basic Flow step 9 require a generated unique username derived from the normalized email prefix."
+      },
+      {
+        "typescript_entity_property": "User.passwordHash",
+        "table_column": "users.password_hash",
+        "mysql_type": "CHAR(60) CHARACTER SET ascii COLLATE ascii_bin",
+        "null_default": "NOT NULL; no default",
+        "constraint_index": "none",
+        "source_rationale": "BR-REG-09 requires a bcrypt cost-10 hash before persistence; standard bcrypt encoded hashes are 60 ASCII characters."
+      },
+      {
+        "typescript_entity_property": "User.totalBalance",
+        "table_column": "users.total_balance",
+        "mysql_type": "DECIMAL(19,4)",
+        "null_default": "NOT NULL DEFAULT 0.0000",
+        "constraint_index": "none",
+        "source_rationale": "UC-01 POST-1 requires totalBalance = 0 for a newly registered User; the project database policy requires fixed-precision DECIMAL(19,4) for money."
+      }
+    ],
+    "relationships_and_ownership": {
+      "relationships": [],
+      "ownership_scope": "UC-01 creates the root User record. It defines no child relationship, tenant foreign key, cascade or client-provided owner identifier.",
+      "authorization_boundary": "Registration is public. The backend generates the User identity and ignores any unsupported owner or id fields through the global whitelist/forbidNonWhitelisted validation configuration."
+    },
+    "sensitive_data_and_exposure": {
+      "credential_fields_and_storage_protection": [
+        "Persist only users.password_hash after bcrypt hashing with cost 10.",
+        "Never persist password or confirmPassword.",
+        "Declare User.passwordHash with TypeORM select=false so ordinary repository reads exclude it by default."
+      ],
+      "fields_excluded_from_default_orm_selection": [
+        "users.password_hash"
+      ],
+      "allowlisted_registration_response_fields": [
+        "users.id as user.id",
+        "users.full_name as user.fullName",
+        "users.email as user.email",
+        "signed accessToken generated only after successful persistence"
+      ],
+      "fields_not_exposed_by_registration": [
+        "users.password_hash",
+        "users.username",
+        "users.total_balance",
+        "password",
+        "confirmPassword"
+      ],
+      "retention_or_deletion_behavior": "Unspecified by UC-01 and therefore out of scope; this migration defines no automatic deletion or cascade.",
+      "logging_and_export_restrictions": [
+        "Do not log or export password, confirmPassword, password_hash or JWT values.",
+        "Do not include request bodies or credential values in validation, conflict or internal-error logs."
+      ]
+    },
+    "migration_plan": {
+      "migration_name": "20260827113000-CreateUsersTable.ts",
+      "forward_operations": [
+        "Create users with the approved columns, explicit names, types, nullability and defaults.",
+        "Create pk_users on id.",
+        "Create uq_users_email on email and uq_users_username on username.",
+        "Create chk_users_email_normalized and chk_users_full_name_length.",
+        "Create the User TypeORM entity with every database name explicit and passwordHash select=false.",
+        "Keep TypeORM synchronize=false."
+      ],
+      "rollback_operations": [
+        "Drop the users table, which also drops its primary key, unique constraints and check constraints."
+      ],
+      "rollback_data_loss_risk": "Rollback is destructive for every User row created after the migration. It must not be run against retained data without an explicit researcher-approved recovery/export plan.",
+      "lock_backfill_deployment_considerations": "The target baseline has no users table or legacy rows, so no backfill is proposed. CREATE TABLE takes a metadata lock but does not rewrite existing application tables. Deploy the migration before starting backend code that registers users.",
+      "synchronize_remains_false": true
+    }
+  },
+  "assumptions": [
+    {
+      "id": "SCHEMA-UC01-A01",
+      "decision": "Use INT UNSIGNED AUTO_INCREMENT for users.id.",
+      "basis": "The UC UML states Integer and the API/frontend use a JavaScript number; no larger range is supplied.",
+      "material_alternative": "BIGINT UNSIGNED would increase range but would require an explicit API serialization strategy to avoid JavaScript precision loss.",
+      "requires_approval": true
+    },
+    {
+      "id": "SCHEMA-UC01-A02",
+      "decision": "Use VARCHAR(255) for username and protect it with uq_users_username.",
+      "basis": "The UC requires a generated unique username derived from an email whose normalized maximum length is 255, but supplies no username length.",
+      "material_alternative": "A shorter explicit username cap would require a sourced truncation/collision policy that UC-01 does not provide.",
+      "requires_approval": true
+    },
+    {
+      "id": "SCHEMA-UC01-A03",
+      "decision": "Use utf8mb4_0900_ai_ci for email and username, require stored email to equal LOWER(TRIM(email)), and enforce unique constraints on stored normalized values.",
+      "basis": "BR-REG-02, BR-REG-03 and BR-REG-10 require lowercase/trim normalization and conflict-safe uniqueness.",
+      "material_alternative": "A binary collation would make uniqueness case-sensitive and would rely more heavily on all writers normalizing correctly.",
+      "requires_approval": true
+    },
+    {
+      "id": "SCHEMA-UC01-A04",
+      "decision": "Use CHAR(60) ASCII binary for the bcrypt hash and exclude it from default ORM selection.",
+      "basis": "BR-REG-09 fixes bcrypt hashing at cost 10; bcrypt encoded hashes have a fixed 60-character ASCII form.",
+      "material_alternative": "VARCHAR(60) would allow non-fixed-length values without adding UC-backed behavior.",
+      "requires_approval": true
+    },
+    {
+      "id": "SCHEMA-UC01-A05",
+      "decision": "Use DECIMAL(19,4) NOT NULL DEFAULT 0.0000 for total_balance without a nonnegative check.",
+      "basis": "UC-01 requires the initial value zero and project policy fixes monetary storage at DECIMAL(19,4); the broader domain may permit negative balances and UC-01 supplies no invariant forbidding them.",
+      "material_alternative": "A nonnegative check would invent a cross-use-case balance rule.",
+      "requires_approval": true
+    },
+    {
+      "id": "SCHEMA-UC01-A06",
+      "decision": "Do not add created_at, updated_at, soft-delete, retention or cascade columns/behavior.",
+      "basis": "UC-01 does not require lifecycle timestamps or deletion semantics; the smallest schema contains only sourced registration fields.",
+      "material_alternative": "Adding lifecycle columns now would expand schema beyond the frozen UC.",
+      "requires_approval": true
+    },
+    {
+      "id": "SCHEMA-UC01-A07",
+      "decision": "The rollback drops users and is accepted as destructive only for an explicitly authorized rollback.",
+      "basis": "A reversible create-table migration necessarily removes the created table on down migration.",
+      "material_alternative": "A non-dropping rollback would not restore the pre-migration schema and would leave an unmanaged table.",
+      "requires_approval": true
+    }
+  ],
+  "approval": {
+    "approved_by": "kien",
+    "approved_at": "2026-08-27T11:32:25.4028745Z",
+    "source": "Researcher confirmation in conversation: phê duyệt toàn bộ"
+  }
+}

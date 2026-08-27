@@ -1,0 +1,30 @@
+{
+  "artifact_type": "initial-generation-evidence",
+  "status": "Frozen",
+  "uc_id": "UC-01",
+  "run_id": "UC01-SOL-MEDIUM-R1",
+  "source_prompt": "docs/02-construction/coding-prompts/UC-01-business-coding-prompt.md",
+  "run_activation": "docs/02-construction/implementation/UC-01/runs/UC01-SOL-MEDIUM-R1/run-activation.json",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "unavailable_reason": "The execution environment did not expose effective model or snapshot metadata to repository tools.",
+    "codex_client_version": "codex-cli 0.150.0-alpha.8"
+  },
+  "timing_wall_clock": {
+    "started_at": "2026-08-27T18:32:55.574+07:00",
+    "started_epoch_ms": 1787830375574,
+    "ended_at": "2026-08-27T18:36:18.186+07:00",
+    "ended_epoch_ms": 1787830578186,
+    "duration_seconds": 202.612
+  },
+  "tokens": {
+    "total": null,
+    "unavailable_reason": "Runner token telemetry was not exposed to repository tools."
+  },
+  "first_pass_source_revision": "sha256:ae6bf9ac8fe0ea8116e6cfc0a76d83e569cf125dfa4a0e2e74923ddf48c1d443",
+  "hash_method": "SHA-256 over newline-joined sorted relative-path:file-SHA-256 entries for every file under finalsource/."
+}

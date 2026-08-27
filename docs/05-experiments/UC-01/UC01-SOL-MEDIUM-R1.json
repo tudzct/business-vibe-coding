@@ -1,0 +1,517 @@
+{
+  "run_id": "UC01-SOL-MEDIUM-R1",
+  "run_status": "complete",
+  "experiment_configuration": {
+    "configuration_id": "CFG-UC01-GPT56SOL-MEDIUM-R1-20260827",
+    "comparison_group_id": "CG-UC01-20260827",
+    "researcher_id": "kien",
+    "artifact": "docs/05-experiments/configurations/CFG-UC01-GPT56SOL-MEDIUM-R1-20260827.json",
+    "checksum": "sha256:47937d67c1b34f6f515a87f831b06586dd13c2a86ed063ef98f71d696716e764",
+    "run_activation": "docs/02-construction/implementation/UC-01/runs/UC01-SOL-MEDIUM-R1/run-activation.json"
+  },
+  "uc_id": "UC-01",
+  "uc_name": "Register an Account",
+  "replicate_index": 1,
+  "run_order": 1,
+  "audit_protocol": "matched",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "codex_client_version": "codex-cli 0.150.0-alpha.8",
+    "unavailable_reason": "Effective model and snapshot metadata were not exposed to repository tools."
+  },
+  "timing_wall_clock": {
+    "initial_started_at": "2026-08-27T18:32:55.574+07:00",
+    "initial_started_epoch_ms": 1787830375574,
+    "initial_ended_at": "2026-08-27T18:36:18.186+07:00",
+    "initial_ended_epoch_ms": 1787830578186
+  },
+  "timing_seconds": {
+    "initial": 202.612,
+    "repairs": 477.162,
+    "total": 679.774
+  },
+  "tokens": {
+    "initial_total": null,
+    "repair_total": null,
+    "total": null,
+    "unavailable_reason": "Runner token telemetry was not exposed to repository tools."
+  },
+  "business_rules": {
+    "baseline": "docs/02-construction/implementation/UC-01/business-rule-baseline.json",
+    "source_revision": "sha256:bbb381a67c26a759750510084168c57beed5bd9641d7f6364c27419c42454aa0",
+    "ordered_br_ids": [
+      "BR-REG-01",
+      "BR-REG-02",
+      "BR-REG-03",
+      "BR-REG-04",
+      "BR-REG-05",
+      "BR-REG-06",
+      "BR-REG-07",
+      "BR-REG-08",
+      "BR-REG-09",
+      "BR-REG-10",
+      "BR-REG-11"
+    ],
+    "initial": {
+      "total": 11,
+      "met": 1,
+      "unmet": 10,
+      "not_evaluable": 0,
+      "requirements": [
+        {
+          "br_id": "BR-REG-01",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts",
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "Docker Compose build: frontend passed; backend failed TS2305/TS7016"
+          ],
+          "rationale": "Frontend and backend source implement normalization and validation, but the backend cannot compile, so complete end-to-end enforcement is not satisfied in the initial snapshot."
+        },
+        {
+          "br_id": "BR-REG-02",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts",
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "Docker Compose build: backend failed TS2305/TS7016"
+          ],
+          "rationale": "Normalization and validation are present in source, but the non-compiling backend prevents complete enforcement."
+        },
+        {
+          "br_id": "BR-REG-03",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/database/migrations/20260827113000-CreateUsersTable.ts",
+            "finalsource/be/src/modules/user/user.entity.ts",
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "Docker Compose build: backend failed TS2305"
+          ],
+          "rationale": "Unique normalized email is represented in the entity, migration and service, but the migration does not compile in the initial snapshot."
+        },
+        {
+          "br_id": "BR-REG-04",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts",
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "Docker Compose build: backend failed TS2305/TS7016"
+          ],
+          "rationale": "Password constraints exist on both layers, but authoritative backend enforcement is not buildable."
+        },
+        {
+          "br_id": "BR-REG-05",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts",
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "Docker Compose build: backend failed TS2305/TS7016"
+          ],
+          "rationale": "Allowed-character checks exist on both layers, but authoritative backend enforcement is not buildable."
+        },
+        {
+          "br_id": "BR-REG-06",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "Docker Compose build: backend failed TS2305/TS7016"
+          ],
+          "rationale": "Password equality is enforced before persistence in source, but the backend cannot compile."
+        },
+        {
+          "br_id": "BR-REG-07",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/user/user.entity.ts",
+            "finalsource/be/src/database/migrations/20260827113000-CreateUsersTable.ts",
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "finalsource/be/src/modules/auth/dto/register-response.dto.ts"
+          ],
+          "rationale": "The persistence model, migration and response omit confirmPassword, and no application logging writes it."
+        },
+        {
+          "br_id": "BR-REG-08",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "Docker Compose build: backend failed TS2305/TS7016"
+          ],
+          "rationale": "The service validates before transaction and persistence, but the backend is not buildable in the initial snapshot."
+        },
+        {
+          "br_id": "BR-REG-09",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "finalsource/be/src/modules/user/user.entity.ts",
+            "Docker Compose build: TS7016 for bcrypt"
+          ],
+          "rationale": "Source hashes before save with cost 10 and protects passwordHash, but missing bcrypt declarations prevent compilation."
+        },
+        {
+          "br_id": "BR-REG-10",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/database/migrations/20260827113000-CreateUsersTable.ts",
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "Docker Compose build: TS2305 in migration"
+          ],
+          "rationale": "Unique constraints and duplicate-key conflict mapping exist, but the migration does not compile."
+        },
+        {
+          "br_id": "BR-REG-11",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.controller.ts",
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "finalsource/fe/src/context/AuthContext.tsx",
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "Docker Compose build: backend failed TS2305/TS7016"
+          ],
+          "rationale": "The success/session/navigation flow is implemented in source, but the backend cannot compile and therefore cannot supply a successful registration response."
+        }
+      ],
+      "acceptance_percent": 9.09
+    },
+    "final": {
+      "total": 11,
+      "met": 11,
+      "unmet": 0,
+      "not_evaluable": 0,
+      "requirements": [
+        {
+          "br_id": "BR-REG-01",
+          "status": "met",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts",
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "Docker Compose production builds passed; database/backend/frontend healthy; bounded observations: /register 200, valid 201, invalid 400, duplicate 409, concurrent same-email 201 and 409"
+          ],
+          "rationale": "Both layers normalize/validate the full name and the response returns the normalized value."
+        },
+        {
+          "br_id": "BR-REG-02",
+          "status": "met",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts",
+            "finalsource/be/src/database/migrations/20260827113000-CreateUsersTable.ts",
+            "Docker Compose production builds passed; database/backend/frontend healthy; bounded observations: /register 200, valid 201, invalid 400, duplicate 409, concurrent same-email 201 and 409"
+          ],
+          "rationale": "Both layers normalize/validate email; database check and unique index protect stored normalized values."
+        },
+        {
+          "br_id": "BR-REG-03",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/user/user.entity.ts",
+            "finalsource/be/src/database/migrations/20260827113000-CreateUsersTable.ts",
+            "Docker Compose production builds passed; database/backend/frontend healthy; bounded observations: /register 200, valid 201, invalid 400, duplicate 409, concurrent same-email 201 and 409"
+          ],
+          "rationale": "The normalized stored email has a unique index and duplicate registration returned 409."
+        },
+        {
+          "br_id": "BR-REG-04",
+          "status": "met",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts",
+            "Docker Compose production builds passed; database/backend/frontend healthy; bounded observations: /register 200, valid 201, invalid 400, duplicate 409, concurrent same-email 201 and 409"
+          ],
+          "rationale": "Both layers enforce every password composition and length condition; invalid input returned 400."
+        },
+        {
+          "br_id": "BR-REG-05",
+          "status": "met",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts",
+            "Docker Compose production builds passed; database/backend/frontend healthy; bounded observations: /register 200, valid 201, invalid 400, duplicate 409, concurrent same-email 201 and 409"
+          ],
+          "rationale": "Both layers enforce the exact permitted password character set."
+        },
+        {
+          "br_id": "BR-REG-06",
+          "status": "met",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "Docker Compose production builds passed; database/backend/frontend healthy; bounded observations: /register 200, valid 201, invalid 400, duplicate 409, concurrent same-email 201 and 409"
+          ],
+          "rationale": "Both layers require equality before persistence; mismatch is rejected."
+        },
+        {
+          "br_id": "BR-REG-07",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/user/user.entity.ts",
+            "finalsource/be/src/modules/auth/dto/register-response.dto.ts",
+            "Docker Compose production builds passed; database/backend/frontend healthy; bounded observations: /register 200, valid 201, invalid 400, duplicate 409, concurrent same-email 201 and 409"
+          ],
+          "rationale": "confirmPassword is absent from persistence, response models and application logging."
+        },
+        {
+          "br_id": "BR-REG-08",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "finalsource/be/src/filters/http-exception.filter.ts",
+            "Docker Compose production builds passed; database/backend/frontend healthy; bounded observations: /register 200, valid 201, invalid 400, duplicate 409, concurrent same-email 201 and 409"
+          ],
+          "rationale": "Validation precedes transaction/persistence/JWT issuance; invalid requests return the standard error envelope."
+        },
+        {
+          "br_id": "BR-REG-09",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "finalsource/be/src/modules/user/user.entity.ts",
+            "Docker Compose production builds passed; database/backend/frontend healthy; bounded observations: /register 200, valid 201, invalid 400, duplicate 409, concurrent same-email 201 and 409"
+          ],
+          "rationale": "Bcrypt cost 10 hashing precedes save; plaintext/hash are not logged or returned and passwordHash is select=false."
+        },
+        {
+          "br_id": "BR-REG-10",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/database/migrations/20260827113000-CreateUsersTable.ts",
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "Docker Compose production builds passed; database/backend/frontend healthy; bounded observations: /register 200, valid 201, invalid 400, duplicate 409, concurrent same-email 201 and 409"
+          ],
+          "rationale": "Database uniqueness is authoritative; concurrent observation produced exactly one 201 and one 409 without conflict data."
+        },
+        {
+          "br_id": "BR-REG-11",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.controller.ts",
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "finalsource/fe/src/context/AuthContext.tsx",
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "Docker Compose production builds passed; database/backend/frontend healthy; bounded observations: /register 200, valid 201, invalid 400, duplicate 409, concurrent same-email 201 and 409"
+          ],
+          "rationale": "Successful persistence precedes JWT issuance; response/session/navigation source and runtime envelope satisfy the success flow."
+        }
+      ],
+      "acceptance_percent": 100.0
+    }
+  },
+  "repairs": [
+    {
+      "repair_id": "R001",
+      "sub_prompt": "docs/02-construction/implementation/UC-01/runs/UC01-SOL-MEDIUM-R1/repairs/001-typeorm-primary-key.md",
+      "category": "technical",
+      "trigger": "compile",
+      "fingerprint": "TS2305 unsupported TablePrimaryKey",
+      "affected_br_ids": [
+        "BR-REG-03",
+        "BR-REG-08",
+        "BR-REG-09",
+        "BR-REG-10",
+        "BR-REG-11"
+      ],
+      "source_revision_before": "sha256:ae6bf9ac8fe0ea8116e6cfc0a76d83e569cf125dfa4a0e2e74923ddf48c1d443",
+      "source_revision_after": "sha256:a349a8242ec02e6905072a70325351dd31d708747eca0468299f5603a3fbdf04",
+      "evidence_before": "TS2305 unsupported TablePrimaryKey",
+      "evidence_after": "The next build/runtime progressed to a distinct fingerprint.",
+      "changed_files": [
+        "finalsource/be/src/database/migrations/20260827113000-CreateUsersTable.ts"
+      ],
+      "status": "complete",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "requested_reasoning_mode": "standard",
+        "effective_model_id": null,
+        "effective_snapshot": null,
+        "codex_client_version": "codex-cli 0.150.0-alpha.8",
+        "unavailable_reason": "Effective model and snapshot metadata were not exposed to repository tools."
+      },
+      "timing": {
+        "started_at": "2026-08-27T18:38:27.856+07:00",
+        "started_epoch_ms": 1787830707856,
+        "ended_at": "2026-08-27T18:39:07.977+07:00",
+        "ended_epoch_ms": 1787830747977,
+        "duration_seconds": 40.121
+      },
+      "tokens": null
+    },
+    {
+      "repair_id": "R002",
+      "sub_prompt": "docs/02-construction/implementation/UC-01/runs/UC01-SOL-MEDIUM-R1/repairs/002-bcrypt-types.md",
+      "category": "technical",
+      "trigger": "compile",
+      "fingerprint": "TS7016 missing bcrypt declaration",
+      "affected_br_ids": [
+        "BR-REG-09",
+        "BR-REG-11"
+      ],
+      "source_revision_before": "sha256:a349a8242ec02e6905072a70325351dd31d708747eca0468299f5603a3fbdf04",
+      "source_revision_after": "sha256:9c39fc2735a410ded83d8b3bfd14a81295f667f7e2f4b77cf40396eef5fd9870",
+      "evidence_before": "TS7016 missing bcrypt declaration",
+      "evidence_after": "The next build/runtime progressed to a distinct fingerprint.",
+      "changed_files": [
+        "finalsource/be/src/types/bcrypt.d.ts"
+      ],
+      "status": "complete",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "requested_reasoning_mode": "standard",
+        "effective_model_id": null,
+        "effective_snapshot": null,
+        "codex_client_version": "codex-cli 0.150.0-alpha.8",
+        "unavailable_reason": "Effective model and snapshot metadata were not exposed to repository tools."
+      },
+      "timing": {
+        "started_at": "2026-08-27T18:39:12.548+07:00",
+        "started_epoch_ms": 1787830752549,
+        "ended_at": "2026-08-27T18:40:02.331+07:00",
+        "ended_epoch_ms": 1787830802331,
+        "duration_seconds": 49.782
+      },
+      "tokens": null
+    },
+    {
+      "repair_id": "R003",
+      "sub_prompt": "docs/02-construction/implementation/UC-01/runs/UC01-SOL-MEDIUM-R1/repairs/003-mysql-auto-increment-primary.md",
+      "category": "technical",
+      "trigger": "runtime",
+      "fingerprint": "MySQL ER_WRONG_AUTO_KEY",
+      "affected_br_ids": [
+        "BR-REG-03",
+        "BR-REG-08",
+        "BR-REG-09",
+        "BR-REG-10",
+        "BR-REG-11"
+      ],
+      "source_revision_before": "sha256:9c39fc2735a410ded83d8b3bfd14a81295f667f7e2f4b77cf40396eef5fd9870",
+      "source_revision_after": null,
+      "source_revision_unavailable_reason": "Intermediate hash was not captured; sequential runtime fingerprints and exact changed files are preserved.",
+      "evidence_before": "MySQL ER_WRONG_AUTO_KEY",
+      "evidence_after": "The next build/runtime progressed to a distinct fingerprint.",
+      "changed_files": [
+        "finalsource/be/src/database/migrations/20260827113000-CreateUsersTable.ts"
+      ],
+      "status": "complete",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "requested_reasoning_mode": "standard",
+        "effective_model_id": null,
+        "effective_snapshot": null,
+        "codex_client_version": "codex-cli 0.150.0-alpha.8",
+        "unavailable_reason": "Effective model and snapshot metadata were not exposed to repository tools."
+      },
+      "timing": {
+        "started_at": "2026-08-27T18:41:05.404+07:00",
+        "started_epoch_ms": 1787830865404,
+        "ended_at": "2026-08-27T18:42:23.225+07:00",
+        "ended_epoch_ms": 1787830943225,
+        "duration_seconds": 77.821
+      },
+      "tokens": null
+    },
+    {
+      "repair_id": "R004",
+      "sub_prompt": "docs/02-construction/implementation/UC-01/runs/UC01-SOL-MEDIUM-R1/repairs/004-mysql-unique-index.md",
+      "category": "technical",
+      "trigger": "runtime",
+      "fingerprint": "TypeORM MySQL unique constraint API unsupported",
+      "affected_br_ids": [
+        "BR-REG-03",
+        "BR-REG-10",
+        "BR-REG-11"
+      ],
+      "source_revision_before": null,
+      "source_revision_after": null,
+      "source_revision_unavailable_reason": "Intermediate hash was not captured; sequential runtime fingerprints and exact changed files are preserved.",
+      "evidence_before": "TypeORM MySQL unique constraint API unsupported",
+      "evidence_after": "The next build/runtime progressed to a distinct fingerprint.",
+      "changed_files": [
+        "finalsource/be/src/database/migrations/20260827113000-CreateUsersTable.ts"
+      ],
+      "status": "complete",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "requested_reasoning_mode": "standard",
+        "effective_model_id": null,
+        "effective_snapshot": null,
+        "codex_client_version": "codex-cli 0.150.0-alpha.8",
+        "unavailable_reason": "Effective model and snapshot metadata were not exposed to repository tools."
+      },
+      "timing": {
+        "started_at": "2026-08-27T18:42:23.225+07:00",
+        "started_epoch_ms": 1787830943225,
+        "ended_at": "2026-08-27T18:44:45.579+07:00",
+        "ended_epoch_ms": 1787831085579,
+        "duration_seconds": 142.354
+      },
+      "tokens": null
+    },
+    {
+      "repair_id": "R005",
+      "sub_prompt": "docs/02-construction/implementation/UC-01/runs/UC01-SOL-MEDIUM-R1/repairs/005-mysql-check-constraints.md",
+      "category": "technical",
+      "trigger": "runtime",
+      "fingerprint": "TypeORM MySQL check API unsupported and partial DDL retry",
+      "affected_br_ids": [
+        "BR-REG-01",
+        "BR-REG-02",
+        "BR-REG-03",
+        "BR-REG-10"
+      ],
+      "source_revision_before": null,
+      "source_revision_after": "sha256:bbb381a67c26a759750510084168c57beed5bd9641d7f6364c27419c42454aa0",
+      "source_revision_unavailable_reason": "Intermediate hash was not captured; sequential runtime fingerprints and exact changed files are preserved.",
+      "evidence_before": "TypeORM MySQL check API unsupported and partial DDL retry",
+      "evidence_after": "Docker Compose production builds passed; database/backend/frontend healthy; bounded observations: /register 200, valid 201, invalid 400, duplicate 409, concurrent same-email 201 and 409",
+      "changed_files": [
+        "finalsource/be/src/database/migrations/20260827113000-CreateUsersTable.ts"
+      ],
+      "status": "complete",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "requested_reasoning_mode": "standard",
+        "effective_model_id": null,
+        "effective_snapshot": null,
+        "codex_client_version": "codex-cli 0.150.0-alpha.8",
+        "unavailable_reason": "Effective model and snapshot metadata were not exposed to repository tools."
+      },
+      "timing": {
+        "started_at": "2026-08-27T18:44:45.579+07:00",
+        "started_epoch_ms": 1787831085580,
+        "ended_at": "2026-08-27T18:47:32.663+07:00",
+        "ended_epoch_ms": 1787831252664,
+        "duration_seconds": 167.084
+      },
+      "tokens": null
+    }
+  ],
+  "manual_estimates_minutes": [],
+  "ui_accuracy_percent": null,
+  "flow_accuracy_percent": 100,
+  "complexity": {
+    "actors": 1,
+    "main_flow_steps": 12,
+    "alternate_exception_flows": 3,
+    "data_entities": 1,
+    "integrations": 3,
+    "business_rules": 11,
+    "ui_states": 6
+  },
+  "ui_accuracy_reason": "No deterministic rendered screenshot comparison was captured; structural mapping is documented.",
+  "all_sub_prompt_count": 5
+}

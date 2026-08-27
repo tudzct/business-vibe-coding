@@ -1,0 +1,141 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-resource",
+  "status": "Frozen",
+  "uc_id": "UC-01",
+  "source_use_case": "docs/01-inception/use-cases/uc-01-register-account.md",
+  "source_use_case_sha256": "sha256:bbdfcf7d3d1dd36d17b0e133368b52d7d11ee9267d911454396a0bfc609450fe",
+  "spreadsheet": {
+    "id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "tab": "Use cases",
+    "range": "A5:B25",
+    "retrieved_at": "2026-08-27T03:49:28.570Z"
+  },
+  "ocl_utility_source": "Use cases!A2:B2",
+  "rules": [
+    {
+      "br_id": "BR-REG-01",
+      "name": "Valid registration full name",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AuthService::register(\n  dto : RegisterDto\n) : AuthResponse\n\npre BR_REG_01_Defined:\n  not dto.fullName.oclIsUndefined()\n\npre BR_REG_01_Length:\n  let normalizedName : String = trim(nfc(dto.fullName))\n  in\n    normalizedName.size() >= 4 and\n    normalizedName.size() <= 25\n\npre BR_REG_01_Pattern:\n  let normalizedName : String = trim(nfc(dto.fullName))\n  in\n    matches(\n      normalizedName,\n      '^[\\p{L}]+(?: [\\p{L}]+)*$'\n    )\n\npost BR_REG_01_Normalized:\n  let normalizedName : String = trim(nfc(dto.fullName))\n  in\n    result.success implies\n      not result.data.oclIsUndefined() and\n      not result.data.user.oclIsUndefined() and\n      result.data.user.fullName = normalizedName",
+      "context": "AuthService::register(dto : RegisterDto) : AuthResponse",
+      "enforcement_layers": ["frontend", "backend"],
+      "failure_behavior": "Client field-level error and no API call for client-side validation failure; backend independently rejects invalid input through the standard error envelope.",
+      "traceability": ["Use cases!A5:B25", "UC-01 Basic Flow 5, 7, 10", "UC-01 AF-1", "API-AUTH-REGISTER"]
+    },
+    {
+      "br_id": "BR-REG-02",
+      "name": "Valid registration email",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AuthService::register(\n  dto : RegisterDto\n) : AuthResponse\n\npre BR_REG_02_Defined:\n  not dto.email.oclIsUndefined()\n\npre BR_REG_02_NotEmpty:\n  trim(dto.email).size() > 0\n\npre BR_REG_02_MaxLength:\n  let normalizedEmail : String = lower(trim(dto.email))\n  in\n    normalizedEmail.size() <= 255\n\npre BR_REG_02_ValidFormat:\n  let normalizedEmail : String = lower(trim(dto.email))\n  in\n    isEmail(normalizedEmail)\n\npost BR_REG_02_Normalized:\n  let normalizedEmail : String = lower(trim(dto.email))\n  in\n    result.success implies\n      not result.data.oclIsUndefined() and\n      not result.data.user.oclIsUndefined() and\n      result.data.user.email = normalizedEmail",
+      "context": "AuthService::register(dto : RegisterDto) : AuthResponse",
+      "enforcement_layers": ["frontend", "backend"],
+      "failure_behavior": "Client field-level error and no API call for empty or invalid email; backend independently rejects invalid input through the standard error envelope.",
+      "traceability": ["Use cases!A5:B25", "UC-01 Basic Flow 5, 7, 10", "UC-01 AF-1", "API-AUTH-REGISTER"]
+    },
+    {
+      "br_id": "BR-REG-03",
+      "name": "Unique registration email",
+      "representation": "ocl_invariant",
+      "expression_or_text": "context User\n\ninv BR_REG_03_UniqueNormalizedEmail:\n  User.allInstances()->isUnique(\n    user | lower(trim(user.email))\n  )\n\ncontext AuthService::register(\n  dto : RegisterDto\n) : AuthResponse\n\npre BR_REG_03_EmailNotRegistered:\n  not User.allInstances()->exists(\n    user |\n      lower(trim(user.email)) =\n      lower(trim(dto.email))\n  )",
+      "context": "User; AuthService::register(dto : RegisterDto) : AuthResponse",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "HTTP 409 Conflict for an already registered normalized email; no authenticated frontend state is created.",
+      "traceability": ["Use cases!A5:B25", "UC-01 Basic Flow 8", "UC-01 AF-2", "API-AUTH-REGISTER"]
+    },
+    {
+      "br_id": "BR-REG-04",
+      "name": "Valid registration password",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AuthService::register(\n  dto : RegisterDto\n) : AuthResponse\n\npre BR_REG_04_Defined:\n  not dto.password.oclIsUndefined()\n\npre BR_REG_04_Length:\n  dto.password.size() >= 8 and\n  dto.password.size() <= 64\n\npre BR_REG_04_NoWhitespace:\n  not matches(\n    dto.password,\n    '.*\\s.*'\n  )\n\npre BR_REG_04_ContainsLowercase:\n  matches(\n    dto.password,\n    '.*[a-z].*'\n  )\n\npre BR_REG_04_ContainsUppercase:\n  matches(\n    dto.password,\n    '.*[A-Z].*'\n  )\n\npre BR_REG_04_ContainsDigit:\n  matches(\n    dto.password,\n    '.*[0-9].*'\n  )\n\npre BR_REG_04_ContainsSpecialCharacter:\n  matches(\n    dto.password,\n    '.*[!@#$%^&*(){}\\-_+=\\[\\],./<>?\\\\|:;].*'\n  )",
+      "context": "AuthService::register(dto : RegisterDto) : AuthResponse",
+      "enforcement_layers": ["frontend", "backend"],
+      "failure_behavior": "Client field-level error and no API call for invalid password; backend independently rejects invalid input through the standard error envelope.",
+      "traceability": ["Use cases!A5:B25", "UC-01 Basic Flow 5, 7", "UC-01 AF-1", "API-AUTH-REGISTER"]
+    },
+    {
+      "br_id": "BR-REG-05",
+      "name": "Permitted password characters",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AuthService::register(\n  dto : RegisterDto\n) : AuthResponse\n\npre BR_REG_05_AllowedCharacters:\n  matches(\n    dto.password,\n    '^[A-Za-z0-9!@#$%^&*(){}_=+\\[\\],./<>?\\\\|:;\\-]+$'\n  )",
+      "context": "AuthService::register(dto : RegisterDto) : AuthResponse",
+      "enforcement_layers": ["frontend", "backend"],
+      "failure_behavior": "Client field-level error and no API call for invalid password characters; backend independently rejects invalid input through the standard error envelope.",
+      "traceability": ["Use cases!A5:B25", "UC-01 Basic Flow 5, 7", "UC-01 AF-1", "API-AUTH-REGISTER"]
+    },
+    {
+      "br_id": "BR-REG-06",
+      "name": "Matching registration passwords",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AuthService::register(\n  dto : RegisterDto\n) : AuthResponse\n\npre BR_REG_06_ConfirmPasswordDefined:\n  not dto.confirmPassword.oclIsUndefined()\n\npre BR_REG_06_PasswordsMatch:\n  dto.confirmPassword = dto.password",
+      "context": "AuthService::register(dto : RegisterDto) : AuthResponse",
+      "enforcement_layers": ["frontend", "backend"],
+      "failure_behavior": "Client field-level error and no API call when passwords differ; backend independently rejects mismatched passwords through the standard error envelope.",
+      "traceability": ["Use cases!A5:B25", "UC-01 Basic Flow 5, 8", "UC-01 AF-1", "API-AUTH-REGISTER"]
+    },
+    {
+      "br_id": "BR-REG-07",
+      "name": "Confirm password handling",
+      "representation": "natural_language",
+      "expression_or_text": "confirmPassword shall not be persisted or written to application logs.",
+      "context": "Registration input handling",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "No separate source-backed runtime error is specified; confirmPassword must be excluded from persistence and logs.",
+      "traceability": ["Use cases!A5:B25", "UC-01 RegisterDto", "API-AUTH-REGISTER"]
+    },
+    {
+      "br_id": "BR-REG-08",
+      "name": "Invalid registration handling",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context AuthService::register(\n  dto : RegisterDto\n) : AuthResponse\n\npost BR_REG_08_InvalidRequestRejected:\n  not self.isRegistrationInputValid(dto)\n  implies\n    result.success = false\n\npost BR_REG_08_NoUserCreated:\n  not self.isRegistrationInputValid(dto)\n  implies\n    User.allInstances()->size() =\n    User.allInstances()@pre->size()",
+      "context": "AuthService::register(dto : RegisterDto) : AuthResponse",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "Reject invalid registration with success=false in the standard error envelope, create no User, and establish no authenticated frontend state.",
+      "traceability": ["Use cases!A5:B25", "UC-01 POST-4", "UC-01 Basic Flow 7", "UC-01 AF-1", "UC-01 EF-1", "API-AUTH-REGISTER"]
+    },
+    {
+      "br_id": "BR-REG-09",
+      "name": "Bcrypt password storage",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context AuthService::register(\n  dto : RegisterDto\n) : AuthResponse\n\npost BR_REG_09_PasswordHashed:\n  result.success implies\n    let createdUser : User =\n      User.allInstances()->any(\n        user |\n          lower(trim(user.email)) =\n          lower(trim(dto.email))\n      )\n    in\n      not createdUser.oclIsUndefined() and\n      createdUser.passwordHash <> dto.password and\n      bcryptMatches(\n        dto.password,\n        createdUser.passwordHash\n      ) and\n      bcryptCost(createdUser.passwordHash) = 10\nTechnical constraints:\n- The plaintext password shall not be persisted or logged.\n- Neither the plaintext password nor passwordHash shall be included in the API response.\n- The bcrypt hash shall be generated before the User record is persisted.",
+      "context": "AuthService::register(dto : RegisterDto) : AuthResponse; password persistence and response handling",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "Registration must not succeed unless the password is hashed with bcrypt cost 10 before persistence; plaintext and passwordHash remain absent from persistence/log exposure and the API response.",
+      "traceability": ["Use cases!A5:B25", "UC-01 POST-1", "UC-01 Basic Flow 9-10", "API-AUTH-REGISTER"]
+    },
+    {
+      "br_id": "BR-REG-10",
+      "name": "Concurrent registration conflict handling",
+      "representation": "ocl_invariant",
+      "expression_or_text": "context User\n\ninv BR_REG_10_AtMostOneUserPerNormalizedEmail:\n  User.allInstances()->forAll(user |\n    User.allInstances()\n      ->select(other |\n        lower(trim(other.email)) =\n        lower(trim(user.email))\n      )\n      ->size() = 1\n  )\nTechnical constraints:\n- User.email shall be protected by the database unique constraint defined in BR-REG-03.\n- If multiple concurrent registration requests contain the same normalized email, exactly one User creation shall succeed.\n- Each conflicting request shall be rejected with HTTP 409 Conflict.\n- A rejected request shall not issue a JWT or establish an authenticated session.\n- After all concurrent requests complete, exactly one User shall exist for the normalized email.",
+      "context": "User; concurrent AuthService registration",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "Exactly one concurrent creation succeeds; each conflict returns HTTP 409, issues no JWT, creates no session, and leaves exactly one User for the normalized email.",
+      "traceability": ["Use cases!A5:B25", "UC-01 AF-2", "UC-01 POST-4", "API-AUTH-REGISTER", "BR-REG-03"]
+    },
+    {
+      "br_id": "BR-REG-11",
+      "name": "Successful registration",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context AuthService::register(\n  dto : RegisterDto\n) : RegisterResponseDto\n\npost BR_REG_11_SuccessResponse:\n  result.success implies\n    result.message.size() > 0 and\n    not result.data.oclIsUndefined() and\n    not result.data.user.oclIsUndefined() and\n    not result.data.accessToken.oclIsUndefined() and\n    result.data.accessToken.size() > 0\n\npost BR_REG_11_UserCreated:\n  result.success implies\n    User.allInstances()->one(user |\n      user.id = result.data.user.id and\n      lower(trim(user.email)) =\n        lower(trim(dto.email))\n    )\nTechnical constraints:\n- After the User has been successfully persisted, the backend shall issue a signed JWT access token identifying that User.\n- The successful response shall contain the created user information and access token inside the data object.\n- After receiving the successful response, the client shall establish an authenticated session using the returned token.\n- The client shall redirect the authenticated user to the home page.\n- A session shall not be established and navigation shall not occur when registration fails.",
+      "context": "AuthService::register(dto : RegisterDto) : RegisterResponseDto; client authentication flow",
+      "enforcement_layers": ["frontend", "backend", "database"],
+      "failure_behavior": "Success requires a persisted unique User, non-empty message and accessToken, mapped user data, authenticated client session, and redirect to `/`; failure establishes no session and performs no navigation.",
+      "traceability": ["Use cases!A5:B25", "UC-01 POST-1 through POST-4", "UC-01 Basic Flow 9-12", "UC-01 EF-1", "API-AUTH-REGISTER"]
+    }
+  ],
+  "ordered_br_ids": [
+    "BR-REG-01",
+    "BR-REG-02",
+    "BR-REG-03",
+    "BR-REG-04",
+    "BR-REG-05",
+    "BR-REG-06",
+    "BR-REG-07",
+    "BR-REG-08",
+    "BR-REG-09",
+    "BR-REG-10",
+    "BR-REG-11"
+  ],
+  "unresolved_items": []
+}

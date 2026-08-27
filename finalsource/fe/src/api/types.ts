@@ -11,3 +11,9 @@ export interface ApiError {
   timestamp: string;
   path: string;
 }
+
+export interface User {
+  id: number;
+  fullName: string;
+  email: string;
+}

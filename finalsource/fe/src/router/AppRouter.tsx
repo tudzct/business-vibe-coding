@@ -2,8 +2,10 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { AppShell } from '../components/layout/AppShell';
 import { HomePage } from '../pages/HomePage';
 import { NotFoundPage } from '../pages/NotFoundPage';
+import { RegisterPage } from '../pages/RegisterPage';
 
 const router = createBrowserRouter([
+  { path: '/register', element: <RegisterPage /> },
   {
     path: '/',
     element: <AppShell />,
