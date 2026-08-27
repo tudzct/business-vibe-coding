@@ -12,7 +12,7 @@ This directory contains the pre-existing platform baseline shared by every exper
 ## Backend baseline
 
 - NestJS bootstrap, `/api` prefix, DTO validation and constrained CORS.
-- Secure headers, normalized success/error responses and development-only Swagger.
+- Standard HTTP headers, normalized success/error responses and development-only Swagger.
 - Validated environment/configuration and TypeORM/MySQL wiring with `synchronize: false`.
 - A minimal health endpoint and empty `modules/` extension directory.
 

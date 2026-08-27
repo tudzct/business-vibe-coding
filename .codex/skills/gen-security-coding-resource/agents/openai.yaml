@@ -1,4 +1,0 @@
-interface:
-  display_name: "Generate Security Resources"
-  short_description: "Derive testable security requirements"
-  default_prompt: "Use $gen-security-coding-resource to derive security resources for this use case."

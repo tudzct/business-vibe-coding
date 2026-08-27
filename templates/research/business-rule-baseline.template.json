@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-baseline",
+  "status": "Frozen",
+  "uc_id": "<UC-ID>",
+  "use_case_path": "docs/01-inception/use-cases/<file>.md",
+  "use_case_sha256": "sha256:<checksum>",
+  "business_rule_resource_path": "docs/02-construction/business-rules/<UC-ID>-business-rules.json",
+  "business_rule_resource_sha256": "sha256:<checksum>",
+  "spreadsheet_source": "Use cases!<range>",
+  "ordered_br_ids": ["<BR-ID>"],
+  "frozen_at": "<ISO-8601>"
+}

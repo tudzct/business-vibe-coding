@@ -1,10 +1,7 @@
-# Template catalog
+# Artifact templates
 
-Templates are grouped by the workflow that owns their canonical output:
+- `inception/`: Sheet-derived use-case projection shape.
+- `construction/`: Business Rule resources, Prompt A-F, schema and repair sub-prompts.
+- `research/`: experiment configuration, BR baseline, run activation, audit input and rendered run view.
 
-- `inception/`: use-case authoring shape.
-- `construction/`: coding prompts, schema decisions, security resources, repair prompts and UI records.
-- `research/`: experiment configuration, activation receipts, audit inputs and historical report/gate shapes.
-- `operations/`: Docker environment and incident records.
-
-Keep new templates in the owning domain and reference their full repository-relative path. Do not restore root-level template files.
+Templates contain no test-generation or independent vulnerability-scan workflow.

@@ -1,62 +1,25 @@
-# AI-DLC tối giản cho đề tài
+# Two-phase Business Vibe Coding method
 
-## AI-DLC là gì?
+## Phase 1 — Generate Business Coding Prompt
 
-Trong sản phẩm nghiên cứu này, AI-DLC là một quy trình có cấu trúc để AI chuyển yêu cầu thành source code và lưu lại bằng chứng đánh giá. Nhà nghiên cứu không cần áp dụng đầy đủ các vai trò, tài liệu và nghi thức của AI-DLC doanh nghiệp.
+Inputs: frozen UC/UML/BR projection, OCL utilities, applicable API/Figma source, existing project context and Prompt A-F template.
 
-Quy trình nghiên cứu chỉ giữ bốn bước:
+1. Verify provenance and checksum of the UC projection.
+2. Extract every Business Rule in source order; preserve OCL and authoritative natural language verbatim.
+3. Create and freeze the Business Rule resource and baseline receipt.
+4. Produce Prompts A-D from functional/UI/API inputs, Prompt E from the frozen BR resource, and Prompt F from implementation context and source priority.
+5. Stop for researcher resolution if an ambiguity changes rule semantics, public API, ownership, schema or destructive behavior.
+6. Researcher approves the prompt.
 
-```text
-1. USE CASE
-   ↓
-2. SECURITY CODING PROMPT
-   - gate chọn điểm: researcher_selected hoặc all_catalog
-   - Prompts A-D: chức năng, giao diện, luồng và xử lý lỗi
-   - Prompt E: Security Requirements
-   - Prompt F: ngữ cảnh triển khai
-   ↓ nhà nghiên cứu xem và phê duyệt
-3. SOURCE CODE
-   - kích hoạt run/model bắt buộc trước khi sửa source
-   - finalsource/fe
-   - finalsource/be
-   ↓
-4. AUDIT VÀ SỬA LỖI
-   - đo kết quả lần sinh đầu
-   - tạo sub-prompt khi có lỗi
-   - sửa tối thiểu và audit lại
-```
+## Phase 2 — Generate Source Code
 
-Unified experiment configuration nằm phía trên quy trình và được nhập một lần. Logical gate 1 chỉ kích hoạt security scope để tạo Prompt E; logical gate 2 chỉ kích hoạt một `run_id` sau khi prompt/schema đã được duyệt. Không có source mutation giữa hai mốc này.
+Inputs: approved prompt, existing codebase, database summary and project rules.
 
-## Bốn thành phần cốt lõi
+1. Activate exactly one configured run and capture model/time metadata.
+2. Generate only the source needed for the UC.
+3. Preserve first-pass evidence, then assess every frozen BR from inspectable source/build/runtime evidence.
+4. For an evidenced defect, create one bounded repair sub-prompt, apply the smallest fix and reassess affected BRs.
+5. Complete permitted lint/typecheck/build and Docker runtime observations; do not create or run tests.
+6. Freeze the final source hash and finalize the run record.
 
-### 1. Use case - đầu vào
-
-Use case mô tả chức năng cần xây dựng: actor, điều kiện, luồng chính/ngoại lệ, input/output và acceptance criteria từ baseline TechnicalReport. Nhà nghiên cứu chỉ cần cung cấp file `uc-*.md`; không cần tự điền `BUSINESS_PROMPT_TEMPLATE` tham khảo.
-
-### 2. Security coding prompt - đặc tả cho AI sinh code
-
-`$gen-coding-prompt <use-case.md>` tự đọc use case, project context, Google Sheets và Figma khi có liên kết. Trước khi sinh security resource, skill chờ researcher chọn `researcher_selected` hoặc `all_catalog` và lưu quyết định. Sau đó skill sinh security resource và prompt A-F.
-
-### 3. Source code - kết quả sinh mã
-
-Sau khi nhà nghiên cứu xem và đặt prompt ở trạng thái `Approved`, `$gen-source-code <security-coding-prompt.md>` tự đọc toàn bộ artifact liên quan và sinh code vào `finalsource/`. Nhà nghiên cứu không paste prompt vào chat.
-
-### 4. Audit và bug-fixing sub-prompt - vòng lặp hiệu chỉnh
-
-`$audit-generation-metrics` lưu telemetry sinh code, thời gian, token, UI accuracy, flow accuracy, độ phức tạp UC, từng repair iteration và đúng một source-based assessment cho mỗi frozen Prompt E SR. Khi có lỗi có bằng chứng từ generation audit, hệ thống gọi `$bug-fixing-sub-prompt`, sửa tối thiểu rồi ghi telemetry và assessment lại. Không tạo business-correctness metrics.
-
-## Các điểm nhà nghiên cứu cần quyết định
-
-1. Xác nhận unified experiment configuration; security scope được kích hoạt trước khi sinh security resource.
-2. Phê duyệt security coding prompt trước khi sinh source code.
-3. Quyết định khi yêu cầu còn mơ hồ hoặc việc sửa lỗi phải thay đổi nghiệp vụ, API, schema hay chính sách bảo mật.
-4. Kích hoạt cấu hình model/replicate/run order đầy đủ của đúng run trước khi sinh source. Các assignment có thể được nhập một lần từ đầu nhưng chỉ run đang kích hoạt mới được phép sửa source.
-
-## Những phần không sử dụng trong nghiên cứu
-
-- Không chia vai trò BA, Tech Lead, Developer và Tester.
-- Không tạo PRD/TAR bundle hoặc nhiều guard gate doanh nghiệp.
-- Không có phase Operations độc lập.
-- Không sinh hoặc chạy test case.
-- Không yêu cầu nhà nghiên cứu copy/paste prompt thủ công.
+This is a two-phase research workflow, not an enterprise AI-DLC process.

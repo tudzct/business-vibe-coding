@@ -1,0 +1,4 @@
+interface:
+  display_name: "Generate Business Rule Resource"
+  short_description: "Freeze Sheet-derived OCL and natural-language rules"
+  default_prompt: "Use $gen-business-rule-resource to create the frozen Business Rule resource for this use case."

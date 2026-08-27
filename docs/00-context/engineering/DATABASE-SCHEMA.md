@@ -36,7 +36,7 @@ For every new or changed persisted structure, propose at least:
 | Migration | forward/rollback operations, data-loss risk, locks/backfill/deployment concerns |
 | Decisions | every assumption or material alternative requiring explicit approval |
 
-Use `.codex/skills/build-secure-nest-backend/references/database-schema-template.md` for the full proposal shape.
+Use `.codex/skills/build-nest-backend/references/database-schema-template.md` for the full proposal shape.
 
 ## Approval and persistence workflow
 

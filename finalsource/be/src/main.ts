@@ -27,7 +27,7 @@ async function bootstrap(): Promise<void> {
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalInterceptors(new ResponseInterceptor());
   if (config.getOrThrow<string>('app.nodeEnv') !== 'production') {
-    const document = new DocumentBuilder().setTitle('Security vibe coding API').setVersion('1.0').addBearerAuth().build();
+    const document = new DocumentBuilder().setTitle('Business vibe coding API').setVersion('1.0').addBearerAuth().build();
     SwaggerModule.setup('docs', app, SwaggerModule.createDocument(app, document));
   }
   await app.listen(config.getOrThrow<number>('app.port'));

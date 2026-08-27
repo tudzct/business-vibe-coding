@@ -5,7 +5,6 @@
   "docker": {"cli": "unknown", "compose": "unknown", "daemon": "unknown"},
   "configuration": {"env_present": false, "env_valid": false, "compose_valid": false},
   "services": {},
-  "security_tools_preflight": null,
   "status": "UNKNOWN",
   "next_action": "<concise text>"
 }

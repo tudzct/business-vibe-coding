@@ -1,42 +1,30 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "2.0",
   "artifact_type": "experiment-configuration",
   "status": "Draft | Confirmed",
   "configuration_id": "<CONFIG-ID>",
   "comparison_group_id": "<COMPARISON-GROUP-ID>",
-  "researcher_id": "<stable researcher identifier>",
-  "decided_at": "<ISO-8601 timestamp>",
-  "catalog_revision": "docs/00-context/security/OWASP-2025-SECURITY-CATALOG.json@sha256:<checksum>",
+  "researcher_id": "<stable identifier>",
+  "decided_at": "<ISO-8601>",
+  "sheet_revision": "Use cases!A:B@sha256:<projection-checksum-set>",
   "audit_design": {
     "protocol": "fixed | matched | cross",
-    "fixed_auditor": {
-      "requested_label": "<required for fixed; omit otherwise>",
-      "requested_model_id": "<exact model ID>",
-      "requested_reasoning_effort": "none | low | medium | high | xhigh | max",
-      "requested_reasoning_mode": "standard | pro"
-    }
+    "fixed_auditor": null
   },
-  "use_cases": [
-    {
-      "uc_id": "<UC-ID>",
-      "security_scope": {
-        "selection_mode": "researcher_selected | all_catalog",
-        "selected_sec_ids": ["<exact SEC IDs>"],
-        "category_totals": { "A01": 0, "A02": 0, "A03": 0, "A04": 0, "A05": 0, "A06": 0, "A07": 0, "A08": 0, "A09": 0, "A10": 0, "overall": 0 }
-      }
-    }
-  ],
-  "runs": [
-    {
-      "run_id": "<unique RUN-ID>",
-      "uc_id": "<UC-ID>",
-      "requested_label": "Sol Light | Luna Medium | Terra Medium | <custom>",
-      "requested_model_id": "gpt-5.6-sol | gpt-5.6-luna | gpt-5.6-terra | <exact supported ID>",
-      "requested_reasoning_effort": "none | low | medium | high | xhigh | max",
-      "requested_reasoning_mode": "standard | pro",
-      "replicate_index": 1,
-      "run_order": 1,
-      "auditor_assignment": "fixed-auditor | same-as-generation | <explicit auditor ID for cross>"
-    }
-  ]
+  "use_cases": [{
+    "uc_id": "<UC-ID>",
+    "ordered_br_ids": ["<BR-ID>"],
+    "business_rule_baseline": "docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json"
+  }],
+  "runs": [{
+    "run_id": "<unique RUN-ID>",
+    "uc_id": "<UC-ID>",
+    "requested_label": "<model label>",
+    "requested_model_id": "<exact model ID>",
+    "requested_reasoning_effort": "none | low | medium | high | xhigh | max",
+    "requested_reasoning_mode": "standard | pro",
+    "replicate_index": 1,
+    "run_order": 1,
+    "auditor_assignment": "fixed-auditor | same-as-generation | <auditor ID>"
+  }]
 }

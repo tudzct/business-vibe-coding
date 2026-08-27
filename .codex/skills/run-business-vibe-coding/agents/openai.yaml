@@ -1,0 +1,4 @@
+interface:
+  display_name: "Run Business Vibe Coding"
+  short_description: "Orchestrate the two-phase Business Rule method"
+  default_prompt: "Use $run-business-vibe-coding to run this use case through both phases."

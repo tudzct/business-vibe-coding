@@ -52,6 +52,6 @@ If the request is ambiguous, begin with `review`. Ask before the first package i
 - Do not create or run tests/test cases.
 - Do not edit immutable `docs/01-inception/use-cases/uc-*.md` files.
 - Do not commit `.env`, credentials, raw sensitive logs or connector secrets.
-- Do not claim security-requirement compliance from successful deployment; security conclusions require the audit workflow.
+- Do not claim Business Rule compliance from successful deployment alone; per-rule conclusions require the audit workflow.
 - Keep canonical current state and indexed incident evidence in `docs/03-audit/docker-deployment/`. Preserve legacy Markdown history without reading it by default.
 - Persist only command identifier, exit code, timestamp, tool version, source hash and a bounded relevant error excerpt; never persist successful raw transcripts or complete build logs.

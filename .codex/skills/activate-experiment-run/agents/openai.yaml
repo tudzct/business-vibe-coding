@@ -1,0 +1,4 @@
+interface:
+  display_name: "Activate Experiment Run"
+  short_description: "Prepare or activate a confirmed UC experiment run"
+  default_prompt: "Use $activate-experiment-run to prepare or activate one use-case experiment run."

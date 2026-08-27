@@ -1,4 +1,4 @@
 interface:
-  display_name: "Docker Deployment Guide"
-  short_description: "Prepare, preflight, run, and troubleshoot Docker"
-  default_prompt: "Use $docker-deployment to prepare Docker, preflight locked security tools before experiments, run the stack when authorized, and record sanitized outcomes."
+  display_name: "Docker Deployment"
+  short_description: "Review and run the FE/BE/MySQL Compose environment"
+  default_prompt: "Use $docker-deployment to review the environment or run the stack when I authorize it."

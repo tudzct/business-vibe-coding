@@ -1,4 +1,0 @@
-interface:
-  display_name: "Prepare Security Evaluation Input"
-  short_description: "Prepare and approve a frozen source scan input"
-  default_prompt: "Use $prepare-security-evaluation-input to prepare an Approved SR-blind security evaluation input for the frozen final source."

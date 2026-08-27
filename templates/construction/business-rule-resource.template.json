@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-resource",
+  "status": "Draft | Frozen",
+  "uc_id": "<UC-ID>",
+  "source_use_case": "docs/01-inception/use-cases/<file>.md",
+  "source_use_case_sha256": "sha256:<checksum>",
+  "spreadsheet": {
+    "id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "tab": "Use cases",
+    "range": "A:B",
+    "retrieved_at": "<ISO-8601>"
+  },
+  "ocl_utility_source": "Use cases!A2:B2",
+  "rules": [{
+    "br_id": "<BR-ID>",
+    "name": "<name>",
+    "representation": "ocl_invariant | ocl_precondition | ocl_postcondition | natural_language",
+    "expression_or_text": "<verbatim source content>",
+    "context": "<class/operation/business scope>",
+    "enforcement_layers": ["frontend | backend | database"],
+    "failure_behavior": "<source-backed behavior or unresolved>",
+    "traceability": ["<UC/API/UI/source range>"]
+  }],
+  "ordered_br_ids": ["<BR-ID>"],
+  "unresolved_items": []
+}

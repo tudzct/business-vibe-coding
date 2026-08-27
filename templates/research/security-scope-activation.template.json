@@ -1,9 +1,0 @@
-{
-  "artifact_type": "security-scope-activation",
-  "gate_version": 3,
-  "uc_id": "<UC-ID>",
-  "configuration_artifact": "docs/05-experiments/configurations/<CONFIG-ID>.json",
-  "configuration_checksum": "sha256:<checksum>",
-  "activated_at": "<ISO-8601>",
-  "status": "Confirmed"
-}

@@ -1,13 +1,7 @@
 # File-driven implementation workflow
 
-Input: one approved `*-security-coding-prompt.md` artifact.
+Input: one approved `*-business-coding-prompt.md`.
 
-Resolved bundle: prompt -> use case + security-point selection artifact + security resource + connected-source provenance + project context.
+Resolved bundle: prompt → frozen UC + Business Rule resource/baseline + connected-source provenance + project context + active run.
 
-Outputs:
-
-- Source code under `finalsource/fe` and/or `finalsource/be`.
-- Implementation state/sub-prompts under `docs/02-construction/implementation/<UC-ID>/`.
-- Audit JSON/Markdown under `docs/05-experiments/<UC-ID>/`.
-
-Never require the user to reconstruct this bundle through chat messages.
+Outputs are source under `finalsource/`, implementation/repair artifacts under `docs/02-construction/implementation/<UC-ID>/`, and canonical run JSON under `docs/05-experiments/<UC-ID>/`.

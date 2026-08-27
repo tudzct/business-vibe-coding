@@ -24,4 +24,4 @@ auditor_assignment: <fixed-auditor|same-as-generation|explicit cross auditor ID>
 
 Projection này kích hoạt đúng một run đã được researcher xác nhận trong unified experiment configuration. Mọi field phải khớp configuration và checksum; file này không được dùng chung hoặc ghi đè cho run khác.
 
-Security scope đã được kích hoạt trước đó chỉ cho phép sinh Prompt E. Source mutation chỉ được phép sau khi projection này hợp lệ và prompt/schema cần thiết đã được phê duyệt.
+Business Rule baseline đã được đóng băng trước đó để sinh Prompt E. Source mutation chỉ được phép sau khi activation này hợp lệ và prompt/schema cần thiết đã được phê duyệt.

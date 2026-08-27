@@ -1,4 +1,4 @@
 interface:
-  display_name: "Generate Coding Prompt"
-  short_description: "Compile use cases into Prompts A-E"
-  default_prompt: "Use $gen-coding-prompt with the path to my use-case Markdown file and generate its security coding prompt artifacts."
+  display_name: "Generate Business Coding Prompt"
+  short_description: "Compile a UC and Business Rules into Prompts A-F"
+  default_prompt: "Use $gen-coding-prompt with my frozen use-case Markdown path and generate its Business Coding Prompt."

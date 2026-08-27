@@ -1,4 +1,0 @@
-interface:
-  display_name: "Render Security Evaluation"
-  short_description: "Render security evaluation JSON as Markdown"
-  default_prompt: "Use $render-security-evaluation to render the selected canonical security evaluation JSON as Markdown."

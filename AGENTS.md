@@ -1,15 +1,48 @@
-# Security vibe coding agent contract
+# Business vibe coding agent contract
 
-Work only inside this repository unless the user expands scope. On a fresh clone or setup/review request, read and follow `CODEX_SETUP_GUIDE.md`. Read `PROJECT_CONTEXT.md` and `docs/00-context/sources/CONNECTED-SOURCES.md` before planning or editing. Resolve Figma-backed UCs through the repository skill `resolve-figma-design-dataset`; use the installed Figma plugin only to create or refresh a missing dataset version. For every Figma dataset creation or refresh, `docs/00-context/FIGMA-LINK-REVIEW.md` is the sole mapping authority. Never take a Figma file key, node ID or URL from an immutable UC, and never fall back from the review file to a UC when a dataset does not exist. Use the Google Drive plugin for Google Sheets sources; never scrape or guess connected content.
+Work only inside this repository unless the researcher expands scope. On setup or review requests, read `CODEX_SETUP_GUIDE.md`. Before planning or editing, read `PROJECT_CONTEXT.md` and `docs/00-context/sources/CONNECTED-SOURCES.md`.
 
-Use the canonical terminology in `PROJECT_CONTEXT.md`: this repository is a research product, the human operator/approver is the researcher, and a use-case actor is an application user. Avoid education-context role labels in documentation, skills, templates, generated artifacts and reports.
+Use the canonical terminology from `PROJECT_CONTEXT.md`: this repository is a research product, the human operator/approver is the researcher, and actors inside use cases are application users.
 
-Treat every `docs/01-inception/use-cases/uc-*.md` file as immutable read-only research input derived from `resource/TechnicalReport.pdf`. Never edit, normalize, reformat, rename, move, delete or append security/decision/status content to those files. Record derived requirements, ambiguities, UI/API normalization and approvals only in downstream artifacts under `docs/02-construction/` or `docs/05-experiments/`. If a UC appears incorrect, report the discrepancy and stop for the researcher; do not repair it in place.
+## Authoritative inputs
 
-Apply the approved API-response normalization automatically to every UC: preserve each UC's HTTP status, business fields and safe message, but place successful payloads inside `{ success: true, message, data }` and use the centralized safe error envelope `{ success: false, statusCode, message, timestamp, path }`. A raw UC response example is the domain payload/message contract, not an instruction to bypass the global interceptor/filter. Record the normalization only in downstream artifacts. Do not ask again or treat this systematic shape difference as an API ambiguity; stop only when the underlying status, business fields or message semantics conflict.
+The canonical functional and business specification is the Google Sheet identified in `PROJECT_CONTEXT.md`, tab `Use cases`, columns A-B. Files under `docs/01-inception/use-cases/uc-*.md` are frozen, read-only projections of that source. They contain the functional specification, UML model, OCL business rules, natural-language constraints, UI/API mappings and source provenance.
 
-For each feature, follow `docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md`, `docs/00-context/workflow/gates/EXPERIMENT-CONFIGURATION-GATE.md` and `docs/00-context/workflow/ARTIFACT-RETENTION-AND-CONTEXT.md`. New runs use one Confirmed comparison-group configuration for researcher identity, UC security scopes, audit protocol, model assignments, replicate indexes and unique run order. Activate security scope before Prompt E, but do not treat it as permission to mutate source. Activate exactly one run through the compact `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/run-activation.json` receipt before `codex --version`, timing or source mutation. Historical Markdown projections remain read-only evidence. `$gen-coding-prompt <use-case-path>` creates the security resource and persistent security-coding-prompt. After the prompt is approved, `$gen-source-code <prompt-path>` implements into `finalsource/`, invokes affected FE/BE skills, assesses every frozen Prompt E SR from inspectable source/configuration/build/runtime evidence, finishes audit/repair, freezes the final source hash and finalizes `$audit-generation-metrics`. A `complete` run must contain exactly one `met`, `unmet`, or `not_evaluable` result per frozen SR with matching category and overall totals. Do not ask users to paste file contents into chat. Do not create or run functional tests or test cases.
+Never edit a frozen UC to repair a source issue. Report the exact spreadsheet cell/range and stop for the researcher when ambiguity changes behavior, rule meaning, API, schema or evaluation. Refreshing the frozen UC set requires an explicit researcher request and a new source retrieval record.
 
-Docker Compose v2 is the mandatory FE/BE/MySQL runtime for generation gates and researcher inspection. Treat a missing Docker daemon or Compose v2 as `BLOCKED`; never fall back to native host Node.js/MySQL execution.
+When a UC contains a Figma reference, resolve it through `resolve-figma-design-dataset`. Use `docs/00-context/FIGMA-LINK-REVIEW.md` as the sole mapping authority when creating or refreshing a dataset.
 
-Never claim a control from prompt text alone: require inspectable code/build/runtime evidence. Never place secrets, access tokens, full account numbers, passwords, or sensitive payloads in source, fixtures, logs, prompts, or reports. Backend authorization is authoritative; frontend route guards are only UX controls. Stop for human approval when ambiguity changes authorization, data ownership, a public API, schema, destructive migration, or accepted residual risk.
+## Two-phase method
+
+The research method has exactly two phases:
+
+1. **Phase 1 - Generate the business coding prompt.** Read one frozen UC, its UML model, all associated Business Rules, OCL utility definitions, API/Figma sources and the approved Prompt A-F template. Create an exact Business Rule resource and a Draft business coding prompt. Prompt E is Business Rules Compliance; Prompt F is Implementation Context.
+2. **Phase 2 - Generate source code.** After researcher approval and run activation, implement the approved prompt in `finalsource/fe` and/or `finalsource/be`. Record first-pass evidence, assess every frozen BR, create bounded bug-fixing sub-prompts for evidenced errors, rebuild/run with Docker Compose and freeze the final source hash.
+
+Do not introduce a separate evaluation dimension outside the frozen Business Rules.
+
+Before Phase 1, resolve every BR associated with the UC from the frozen UC. Do not select, omit or add rules. Persist `business-rule-baseline.json` with the UC checksum, exact BR IDs and source provenance so generation and evaluation use the same rule set.
+
+Before Phase 2 source mutation, activate exactly one run through `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/run-activation.json`. Requested model, replicate and run order come from the Confirmed experiment configuration.
+
+## Business-rule contract
+
+Preserve each Rule ID and its supplied OCL invariant, precondition or postcondition verbatim. Preserve natural-language and technical constraints for content that is not represented in OCL. Map every rule to its enforceable layer and failure behavior without weakening, duplicating or inventing requirements.
+
+Prompt A and Prompt D implement and reference Prompt E rules; they do not redefine them. Backend/database enforcement is authoritative when a rule crosses trust boundaries. Frontend validation is an additional user-experience control only.
+
+Every frozen BR receives exactly one evidence-based result: `met`, `unmet` or `not_evaluable`. Evidence may come from inspectable source, configuration, non-test build/lint checks and bounded Docker runtime observation. Prompt text alone is never evidence.
+
+## Technical and operational invariants
+
+Apply the project-wide API normalization downstream: successful payloads use `{ success: true, message, data }`; errors use `{ success: false, statusCode, message, timestamp, path }`. Preserve source status, business fields and message semantics.
+
+Keep JWT, password hashing, validation, ownership, secret handling, safe errors, transactionality and concurrency behavior when the UC, BR, API contract or required technical baseline calls for them. They are ordinary application controls, not a separate research intervention.
+
+Database schema changes require a self-contained proposal in `docs/02-construction/implementation/<UC-ID>/schema.json` and explicit researcher approval before entity or migration edits.
+
+Docker Compose v2 is mandatory for FE/BE/MySQL execution. A missing daemon is `BLOCKED`; do not fall back to native host Node.js/MySQL.
+
+Do not create or run tests or test cases. Permitted checks are source inspection, deterministic validators, typecheck, lint, build, Docker health/reachability and bounded manual runtime observation.
+
+Never store credentials, access tokens, passwords, full account numbers or sensitive payloads in source, logs, prompts or reports.

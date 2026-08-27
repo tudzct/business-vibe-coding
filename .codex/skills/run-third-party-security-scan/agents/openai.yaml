@@ -1,4 +1,0 @@
-interface:
-  display_name: "Third-party Security Scan"
-  short_description: "Scan frozen final source with independent Semgrep and ZAP."
-  default_prompt: "Use $run-third-party-security-scan with an Approved product-level evaluation input and frozen current finalsource hash to persist combined third-party Semgrep/ZAP A01/A02 findings and coverage without reading or modifying generation artifacts."
