@@ -18,3 +18,11 @@ export class RegisterDataDto {
   @ApiProperty({ type: RegisteredUserDto })
   user!: RegisteredUserDto;
 }
+
+export class RegisterResponseDto {
+  @ApiProperty({ example: 'Registration successful' })
+  message!: string;
+
+  @ApiProperty({ type: RegisterDataDto })
+  data!: RegisterDataDto;
+}

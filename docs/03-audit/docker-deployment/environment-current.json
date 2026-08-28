@@ -1,11 +1,11 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-08-27T08:20:54Z",
-  "repository_revision": "9ae953b54a4ef6642c153fd4a1e5cb057dad4eb5",
+  "observed_at": "2026-08-28T05:18:30.4805658Z",
+  "repository_revision": "212f2e3e99f6f7517a9433a64e657fb713c0187f",
   "docker": {
-    "cli": "29.6.1",
-    "compose": "5.3.0",
-    "daemon": "29.6.1"
+    "cli": "29.2.1",
+    "compose": "5.0.2",
+    "daemon": "29.2.1"
   },
   "configuration": {
     "env_present": true,
@@ -13,10 +13,10 @@
     "compose_valid": true
   },
   "services": {
-    "database": "healthy",
-    "backend": "healthy and reachable on configured loopback port",
-    "frontend": "healthy and reachable on configured port"
+    "database": "running and healthy",
+    "backend": "running and healthy on loopback port 3000",
+    "frontend": "running and healthy on host port 8080; /register reachable with HTTP 200"
   },
   "status": "PASS",
-  "next_action": "No deployment correction is currently required."
+  "next_action": "Open the generated registration page at http://localhost:8080/register; port 8000 serves the separate Security vibe coding workbench."
 }

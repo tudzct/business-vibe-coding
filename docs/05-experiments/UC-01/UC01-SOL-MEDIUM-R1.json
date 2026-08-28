@@ -35,10 +35,24 @@
     "total": 679.774
   },
   "tokens": {
-    "initial_total": null,
-    "repair_total": null,
-    "total": null,
-    "unavailable_reason": "Runner token telemetry was not exposed to repository tools."
+    "initial_total": 622561,
+    "repair_total": 7125248,
+    "total": 7747809,
+    "initial_breakdown": {
+      "input_tokens": 44539,
+      "cached_input_tokens": 39936,
+      "output_tokens": 9883,
+      "reasoning_output_tokens": 2410,
+      "cost_usd": 0.4563
+    },
+    "repair_breakdown": {
+      "input_tokens": 87431,
+      "cached_input_tokens": 7741440,
+      "output_tokens": 32178,
+      "reasoning_output_tokens": 8940,
+      "cost_usd": 5.2551
+    },
+    "telemetry_source": "C:\\Users\\User\\.codex\\sessions\\2026\\08\\27\\rollout-2026-08-27T18-11-18-01a042ea-caa9-78d0-bbe5-18585a677277.jsonl"
   },
   "business_rules": {
     "baseline": "docs/02-construction/implementation/UC-01/business-rule-baseline.json",
@@ -344,7 +358,10 @@
         "ended_epoch_ms": 1787830747977,
         "duration_seconds": 40.121
       },
-      "tokens": null
+      "tokens": {
+        "total": 957610,
+        "telemetry_source": "derived_interval_telemetry"
+      }
     },
     {
       "repair_id": "R002",
@@ -380,7 +397,10 @@
         "ended_epoch_ms": 1787830802331,
         "duration_seconds": 49.782
       },
-      "tokens": null
+      "tokens": {
+        "total": 1025836,
+        "telemetry_source": "derived_interval_telemetry"
+      }
     },
     {
       "repair_id": "R003",
@@ -420,7 +440,10 @@
         "ended_epoch_ms": 1787830943225,
         "duration_seconds": 77.821
       },
-      "tokens": null
+      "tokens": {
+        "total": 1402799,
+        "telemetry_source": "derived_interval_telemetry"
+      }
     },
     {
       "repair_id": "R004",
@@ -458,7 +481,10 @@
         "ended_epoch_ms": 1787831085579,
         "duration_seconds": 142.354
       },
-      "tokens": null
+      "tokens": {
+        "total": 1006986,
+        "telemetry_source": "derived_interval_telemetry"
+      }
     },
     {
       "repair_id": "R005",
@@ -497,7 +523,10 @@
         "ended_epoch_ms": 1787831252664,
         "duration_seconds": 167.084
       },
-      "tokens": null
+      "tokens": {
+        "total": 872086,
+        "telemetry_source": "derived_interval_telemetry"
+      }
     }
   ],
   "manual_estimates_minutes": [],

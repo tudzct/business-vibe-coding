@@ -1,0 +1,21 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-08-28T05:18:30.4805658Z",
+  "mode": "troubleshoot",
+  "repository_revision": "212f2e3e99f6f7517a9433a64e657fb713c0187f",
+  "source_hash": "sha256:72d97516e9017858845190965c40c00579fd25f22aa92f580af5dc434d7fce8d",
+  "tool_versions": {
+    "docker_cli": "29.2.1",
+    "docker_compose": "5.0.2",
+    "docker_daemon": "29.2.1"
+  },
+  "commands": [
+    { "id": "docker-info", "exit_code": 0 },
+    { "id": "compose-ps", "exit_code": 0 },
+    { "id": "http-register-port-8000", "exit_code": 0 },
+    { "id": "http-register-port-8080", "exit_code": 0 }
+  ],
+  "outcome": "PASS",
+  "error_excerpt": null,
+  "finding": "The reported 404 belongs to the separate Security vibe coding service on port 8000. The generated business-vibe-coding frontend is healthy on port 8080 and serves /register with HTTP 200; no source repair is applicable."
+}

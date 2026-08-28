@@ -6,6 +6,18 @@
       "fingerprint": "backend-startup-mysql-application-user-access-denied",
       "path": "docs/03-audit/docker-deployment/incidents/backend-startup-mysql-application-user-access-denied.json",
       "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260828-001",
+      "fingerprint": "backend-startup-host-port-3000-in-use",
+      "path": "docs/03-audit/docker-deployment/incidents/backend-startup-host-port-3000-in-use.json",
+      "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260828-002",
+      "fingerprint": "docker-daemon-desktop-linux-engine-unavailable",
+      "path": "docs/03-audit/docker-deployment/incidents/docker-daemon-desktop-linux-engine-unavailable.json",
+      "outcome": "blocked"
     }
   ]
 }

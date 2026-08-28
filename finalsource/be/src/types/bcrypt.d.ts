@@ -1,3 +1,3 @@
 declare module 'bcrypt' {
-  export function hash(data: string, saltOrRounds: number): Promise<string>;
+  export function hash(data: string | Buffer, saltOrRounds: string | number): Promise<string>;
 }

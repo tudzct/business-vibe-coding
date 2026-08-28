@@ -1,0 +1,26 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-08-28T03:19:07.8646376+00:00",
+  "mode": "run",
+  "repository_revision": "212f2e3e99f6f7517a9433a64e657fb713c0187f",
+  "source_hash": "sha256:1e0cf736fcabf4b89704033259707a603fa46afbcd4df829cac45ea8ad4d2e78",
+  "tool_versions": {
+    "docker_cli": "29.2.1",
+    "docker_compose": "5.0.2",
+    "docker_daemon": "29.2.1"
+  },
+  "commands": [
+    { "id": "host-lint-build-tool-availability", "exit_code": 1 },
+    { "id": "compose-build-first-pass", "exit_code": 1 },
+    { "id": "compose-build-after-repair-001", "exit_code": 0 },
+    { "id": "compose-build-after-repair-002", "exit_code": 0 },
+    { "id": "compose-up-default-backend-port", "exit_code": 1 },
+    { "id": "host-port-owner-inspection", "exit_code": 0 },
+    { "id": "compose-up-backend-port-3002", "exit_code": 0 },
+    { "id": "compose-ps-and-health", "exit_code": 0 },
+    { "id": "frontend-login-reachability", "exit_code": 0 },
+    { "id": "bounded-login-runtime-observation", "exit_code": 0 }
+  ],
+  "outcome": "PASS",
+  "error_excerpt": "First-pass backend build exposed TS2339 for the local bcrypt declaration; initial startup also found host port 3000 occupied. Both fingerprints were resolved without storing raw logs or sensitive values."
+}

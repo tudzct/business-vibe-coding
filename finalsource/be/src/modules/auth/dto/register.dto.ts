@@ -1,34 +1,33 @@
-import { Transform } from 'class-transformer';
-import { IsEmail, IsString, Length, Matches, MaxLength, MinLength } from 'class-validator';
-
-const fullNamePattern = /^\p{L}+(?: \p{L}+)*$/u;
-const allowedPasswordPattern = /^[A-Za-z0-9!@#$%^&*(){}_=+\[\],./<>?\\|:;\-]+$/;
-const passwordSpecialPattern = /[!@#$%^&*(){}\-_+=\[\],./<>?\\|:;]/;
+import { Transform, type TransformFnParams } from 'class-transformer';
+import { IsEmail, IsNotEmpty, IsString, Length, Matches, MaxLength } from 'class-validator';
 
 export class RegisterDto {
-  @Transform(({ value }: { value: unknown }) => typeof value === 'string' ? value.normalize('NFC').trim() : value)
+  @Transform(({ value }: TransformFnParams) => typeof value === 'string' ? value.normalize('NFC').trim() : value)
   @IsString()
+  @IsNotEmpty()
   @Length(4, 25)
-  @Matches(fullNamePattern, { message: 'Full name may contain only Unicode letters separated by single spaces' })
+  @Matches(/^[\p{L}]+(?: [\p{L}]+)*$/u)
   fullName!: string;
 
-  @Transform(({ value }: { value: unknown }) => typeof value === 'string' ? value.trim().toLowerCase() : value)
+  @Transform(({ value }: TransformFnParams) => typeof value === 'string' ? value.trim().toLowerCase() : value)
   @IsString()
-  @MaxLength(255)
+  @IsNotEmpty()
   @IsEmail()
+  @MaxLength(255)
   email!: string;
 
   @IsString()
+  @IsNotEmpty()
   @Length(8, 64)
-  @Matches(/^\S+$/, { message: 'Password must not contain whitespace' })
-  @Matches(/[a-z]/, { message: 'Password must contain a lowercase letter' })
-  @Matches(/[A-Z]/, { message: 'Password must contain an uppercase letter' })
-  @Matches(/[0-9]/, { message: 'Password must contain a digit' })
-  @Matches(passwordSpecialPattern, { message: 'Password must contain a permitted special character' })
-  @Matches(allowedPasswordPattern, { message: 'Password contains a character that is not permitted' })
+  @Matches(/^\S+$/)
+  @Matches(/[a-z]/)
+  @Matches(/[A-Z]/)
+  @Matches(/[0-9]/)
+  @Matches(/[!@#$%^&*(){}\-_+=\[\],./<>?\\|:;]/)
+  @Matches(/^[A-Za-z0-9!@#$%^&*(){}_=+\[\],./<>?\\|:;\-]+$/)
   password!: string;
 
   @IsString()
-  @MinLength(1)
+  @IsNotEmpty()
   confirmPassword!: string;
 }

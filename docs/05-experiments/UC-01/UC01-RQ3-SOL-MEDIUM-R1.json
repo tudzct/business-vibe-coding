@@ -1,0 +1,450 @@
+{
+  "run_id": "UC01-RQ3-SOL-MEDIUM-R1",
+  "run_status": "blocked",
+  "experiment_configuration": {
+    "configuration_id": "CFG-UC01-RQ3-GPT56SOL-MEDIUM-R1-20260828",
+    "comparison_group_id": "CG-UC01-RQ3-20260828",
+    "researcher_id": "kien",
+    "artifact": "docs/05-experiments/configurations/CFG-UC01-RQ3-GPT56SOL-MEDIUM-R1-20260828.json",
+    "checksum": "sha256:fa988e88c248647b3c7000c749c5b669910d5686df81beb19f145b475bbdd88f",
+    "run_activation": "docs/02-construction/implementation/UC-01/runs/UC01-RQ3-SOL-MEDIUM-R1/run-activation.json"
+  },
+  "uc_id": "UC-01",
+  "uc_name": "Register an Account",
+  "prompt_variant": "rq3",
+  "replicate_index": 1,
+  "run_order": 1,
+  "audit_protocol": "matched",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "codex_client_version": "codex-cli 0.150.0-alpha.12.2",
+    "unavailable_reason": "Effective model and snapshot metadata were not exposed to repository tools."
+  },
+  "audit_model": {
+    "assignment": "same-as-generation",
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "unavailable_reason": "Effective model and snapshot metadata were not exposed to repository tools."
+  },
+  "timing_wall_clock": {
+    "initial_started_at": "2026-08-28T11:09:48.9935720+07:00",
+    "initial_started_epoch_ms": 1787890188998,
+    "initial_ended_at": "2026-08-28T11:12:40.5905033+07:00",
+    "initial_ended_epoch_ms": 1787890360590
+  },
+  "timing_seconds": {
+    "initial": 171.592,
+    "repairs": 70.564,
+    "total": 242.156
+  },
+  "tokens": {
+    "initial_total": 6868023,
+    "repair_total": 0,
+    "total": 6868023,
+    "telemetry_source": "C:\\Users\\User\\.codex\\sessions\\2026\\08\\28\\rollout-2026-08-28T10-56-55-01a04683-75d3-7eb0-9b33-5e82e795fdfb.jsonl",
+    "details": {
+      "initial": {
+        "turn_id": 5,
+        "input": 89930,
+        "cache_read": 6743424,
+        "total_input": 6833354,
+        "output": 34669,
+        "reasoning": 8694,
+        "cost_usd": 4.8614,
+        "duration_seconds": 792.906
+      },
+      "repairs": {
+        "count": 0,
+        "total_tokens": 0,
+        "cost_usd": 0
+      }
+    }
+  },
+  "business_rules": {
+    "baseline": "docs/02-construction/implementation/UC-01/business-rule-baseline.json",
+    "source_revision": "sha256:b27bad22a3e18a2563788439b3814503ba3d72bedd5c8b0913fad075d868eb14",
+    "ordered_br_ids": [
+      "BR-REG-01",
+      "BR-REG-02",
+      "BR-REG-03",
+      "BR-REG-04",
+      "BR-REG-05",
+      "BR-REG-06",
+      "BR-REG-07",
+      "BR-REG-08",
+      "BR-REG-09",
+      "BR-REG-10",
+      "BR-REG-11"
+    ],
+    "initial": {
+      "total": 11,
+      "met": 6,
+      "unmet": 5,
+      "not_evaluable": 0,
+      "requirements": [
+        {
+          "br_id": "BR-REG-01",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts",
+            "finalsource/be/src/database/migrations/20260827113000-CreateUsersTable.ts"
+          ],
+          "rationale": "Both layers require a name and normalize it, and the database checks length, but neither frontend nor backend enforces the complete 4-25 Unicode-letter/single-space rule."
+        },
+        {
+          "br_id": "BR-REG-02",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts",
+            "finalsource/be/src/modules/auth/auth.service.ts"
+          ],
+          "rationale": "Email is trimmed, lowercased and format-validated, but neither validation layer enforces the normalized 255-character maximum before persistence."
+        },
+        {
+          "br_id": "BR-REG-03",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "finalsource/be/src/modules/user/user.entity.ts",
+            "finalsource/be/src/database/migrations/20260827113000-CreateUsersTable.ts"
+          ],
+          "rationale": "The service queries normalized email and the schema defines a unique email index plus normalized-storage check."
+        },
+        {
+          "br_id": "BR-REG-04",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts"
+          ],
+          "rationale": "The first pass requires only a non-empty password and omits the length, whitespace and composition requirements."
+        },
+        {
+          "br_id": "BR-REG-05",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts"
+          ],
+          "rationale": "No frontend or backend check limits passwords to the authoritative permitted character set."
+        },
+        {
+          "br_id": "BR-REG-06",
+          "status": "met",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/auth.service.ts"
+          ],
+          "rationale": "Both layers require confirmPassword and reject a mismatch before persistence."
+        },
+        {
+          "br_id": "BR-REG-07",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/user/user.entity.ts",
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "finalsource/be/src/modules/auth/dto/register-response.dto.ts"
+          ],
+          "rationale": "confirmPassword is absent from the persistence model and response, and no application logging records it."
+        },
+        {
+          "br_id": "BR-REG-08",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/auth/dto/register.dto.ts",
+            "finalsource/be/src/modules/auth/auth.service.ts"
+          ],
+          "rationale": "Validation occurs before persistence for implemented checks, but inputs invalid under the missing full-name, email-length and password rules can reach persistence."
+        },
+        {
+          "br_id": "BR-REG-09",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "finalsource/be/src/modules/user/user.entity.ts",
+            "finalsource/be/src/modules/auth/dto/register-response.dto.ts"
+          ],
+          "rationale": "The service hashes with bcrypt cost 10 before save; plaintext and hash are absent from responses/logs and passwordHash is excluded from default selection."
+        },
+        {
+          "br_id": "BR-REG-10",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "finalsource/be/src/database/migrations/20260827113000-CreateUsersTable.ts"
+          ],
+          "rationale": "Database uniqueness is authoritative and duplicate-key races are mapped to HTTP 409 before JWT issuance."
+        },
+        {
+          "br_id": "BR-REG-11",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.controller.ts",
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "finalsource/fe/src/context/AuthContext.tsx",
+            "finalsource/fe/src/components/auth/SignUpForm.tsx"
+          ],
+          "rationale": "Source persists before signing, returns token and mapped user data, then validates and stores the session before navigating; failures do not execute those actions."
+        }
+      ],
+      "acceptance_percent": 54.55
+    },
+    "final": {
+      "total": 11,
+      "met": 7,
+      "unmet": 0,
+      "not_evaluable": 4,
+      "requirements": [
+        {
+          "br_id": "BR-REG-01",
+          "status": "met",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts",
+            "repair 001 source inspection"
+          ],
+          "rationale": "Both layers normalize and enforce the complete 4-25 Unicode-letter/single-space rule; the response maps the normalized stored name."
+        },
+        {
+          "br_id": "BR-REG-02",
+          "status": "met",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts",
+            "repair 002 source inspection"
+          ],
+          "rationale": "Both layers trim, lowercase, require, cap at 255 and format-check email before the normalized value is queried and persisted."
+        },
+        {
+          "br_id": "BR-REG-03",
+          "status": "not_evaluable",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "finalsource/be/src/database/migrations/20260827113000-CreateUsersTable.ts",
+            "Docker daemon unavailable"
+          ],
+          "rationale": "Source and schema define normalized lookup and uniqueness, but the mandatory Docker build/migration/runtime evidence cannot currently verify executable database enforcement."
+        },
+        {
+          "br_id": "BR-REG-04",
+          "status": "met",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts",
+            "repair 003 source inspection"
+          ],
+          "rationale": "Both validation layers enforce 8-64 characters, no whitespace and required lowercase, uppercase, digit and special-character composition without password normalization."
+        },
+        {
+          "br_id": "BR-REG-05",
+          "status": "met",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts",
+            "repair 003 source inspection"
+          ],
+          "rationale": "Both validation layers use the authoritative permitted-character expression."
+        },
+        {
+          "br_id": "BR-REG-06",
+          "status": "met",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx",
+            "finalsource/be/src/modules/auth/auth.service.ts"
+          ],
+          "rationale": "Both layers require confirmPassword and reject mismatch before persistence."
+        },
+        {
+          "br_id": "BR-REG-07",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/user/user.entity.ts",
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "finalsource/be/src/modules/auth/dto/register-response.dto.ts"
+          ],
+          "rationale": "confirmPassword is absent from persistence, response and logging paths."
+        },
+        {
+          "br_id": "BR-REG-08",
+          "status": "not_evaluable",
+          "evidence": [
+            "finalsource/be/src/modules/auth/dto/register.dto.ts",
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "Docker daemon unavailable"
+          ],
+          "rationale": "Source validates before persistence, but mandatory build/runtime observation cannot verify that every invalid request leaves database state unchanged."
+        },
+        {
+          "br_id": "BR-REG-09",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "finalsource/be/src/modules/user/user.entity.ts",
+            "finalsource/be/src/modules/auth/dto/register-response.dto.ts"
+          ],
+          "rationale": "Source hashes with bcrypt cost 10 before save and excludes plaintext/hash from persistence exposure, logging and responses."
+        },
+        {
+          "br_id": "BR-REG-10",
+          "status": "not_evaluable",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "finalsource/be/src/database/migrations/20260827113000-CreateUsersTable.ts",
+            "Docker daemon unavailable"
+          ],
+          "rationale": "Source maps database duplicate-key races to 409 without issuing a JWT, but concurrent runtime behavior cannot be observed while Docker is unavailable."
+        },
+        {
+          "br_id": "BR-REG-11",
+          "status": "not_evaluable",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.controller.ts",
+            "finalsource/be/src/modules/auth/auth.service.ts",
+            "finalsource/fe/src/context/AuthContext.tsx",
+            "Docker daemon unavailable"
+          ],
+          "rationale": "The complete source flow is present, but production build and bounded end-to-end success/session/navigation evidence are unavailable."
+        }
+      ],
+      "acceptance_percent": 63.64
+    }
+  },
+  "repairs": [
+    {
+      "repair_id": "R001",
+      "sub_prompt": "docs/02-construction/implementation/UC-01/runs/UC01-RQ3-SOL-MEDIUM-R1/repairs/001-full-name-validation.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "Normalized full name lacks complete length and Unicode word-pattern validation",
+      "affected_br_ids": [
+        "BR-REG-01",
+        "BR-REG-08"
+      ],
+      "source_revision_before": "sha256:38fab3e939b21a112569b6feedf3db710af6273a8471cfa64e7771205f8761a6",
+      "source_revision_after": "sha256:fca09bf68a2d6a57d7d20e9135fec0f0a23cd3bb64574dbeea7d2409a7b1729a",
+      "evidence_before": "Frontend/backend only required a non-empty normalized name.",
+      "evidence_after": "Source inspection confirms matching normalized 4-25 Unicode-letter/single-space checks on both layers; Docker verification remains blocked.",
+      "changed_files": [
+        "finalsource/be/src/modules/auth/dto/register.dto.ts",
+        "finalsource/fe/src/components/auth/SignUpForm.tsx"
+      ],
+      "status": "complete",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "requested_reasoning_mode": "standard",
+        "effective_model_id": null,
+        "effective_snapshot": null,
+        "codex_client_version": "codex-cli 0.150.0-alpha.12.2",
+        "unavailable_reason": "Effective model and snapshot metadata were not exposed to repository tools."
+      },
+      "timing": {
+        "started_at": "2026-08-28T11:15:39.8614243+07:00",
+        "started_epoch_ms": 1787890539861,
+        "ended_at": "2026-08-28T11:16:03.9344498+07:00",
+        "ended_epoch_ms": 1787890563934,
+        "duration_seconds": 24.073
+      },
+      "tokens": null
+    },
+    {
+      "repair_id": "R002",
+      "sub_prompt": "docs/02-construction/implementation/UC-01/runs/UC01-RQ3-SOL-MEDIUM-R1/repairs/002-email-max-length.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "Normalized registration email lacks pre-persistence 255-character maximum",
+      "affected_br_ids": [
+        "BR-REG-02",
+        "BR-REG-08"
+      ],
+      "source_revision_before": "sha256:fca09bf68a2d6a57d7d20e9135fec0f0a23cd3bb64574dbeea7d2409a7b1729a",
+      "source_revision_after": "sha256:11e9d1551f463ec33c696435c2e7434cc42620ad0fa33d2dd48415393456cc04",
+      "evidence_before": "Frontend/backend normalized and format-checked email without a maximum length.",
+      "evidence_after": "Source inspection confirms both layers reject normalized email longer than 255 characters; Docker verification remains blocked.",
+      "changed_files": [
+        "finalsource/be/src/modules/auth/dto/register.dto.ts",
+        "finalsource/fe/src/components/auth/SignUpForm.tsx"
+      ],
+      "status": "complete",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "requested_reasoning_mode": "standard",
+        "effective_model_id": null,
+        "effective_snapshot": null,
+        "codex_client_version": "codex-cli 0.150.0-alpha.12.2",
+        "unavailable_reason": "Effective model and snapshot metadata were not exposed to repository tools."
+      },
+      "timing": {
+        "started_at": "2026-08-28T11:16:11.5796995+07:00",
+        "started_epoch_ms": 1787890571579,
+        "ended_at": "2026-08-28T11:16:32.6815404+07:00",
+        "ended_epoch_ms": 1787890592681,
+        "duration_seconds": 21.102
+      },
+      "tokens": null
+    },
+    {
+      "repair_id": "R003",
+      "sub_prompt": "docs/02-construction/implementation/UC-01/runs/UC01-RQ3-SOL-MEDIUM-R1/repairs/003-password-policy.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "Registration password only checked for non-empty value",
+      "affected_br_ids": [
+        "BR-REG-04",
+        "BR-REG-05",
+        "BR-REG-08"
+      ],
+      "source_revision_before": "sha256:11e9d1551f463ec33c696435c2e7434cc42620ad0fa33d2dd48415393456cc04",
+      "source_revision_after": "sha256:b27bad22a3e18a2563788439b3814503ba3d72bedd5c8b0913fad075d868eb14",
+      "evidence_before": "Frontend/backend required only a non-empty password.",
+      "evidence_after": "Source inspection confirms length, whitespace, composition and permitted-character enforcement on both layers; Docker verification remains blocked.",
+      "changed_files": [
+        "finalsource/be/src/modules/auth/dto/register.dto.ts",
+        "finalsource/fe/src/components/auth/SignUpForm.tsx"
+      ],
+      "status": "complete",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "requested_reasoning_mode": "standard",
+        "effective_model_id": null,
+        "effective_snapshot": null,
+        "codex_client_version": "codex-cli 0.150.0-alpha.12.2",
+        "unavailable_reason": "Effective model and snapshot metadata were not exposed to repository tools."
+      },
+      "timing": {
+        "started_at": "2026-08-28T11:16:45.0298689+07:00",
+        "started_epoch_ms": 1787890605029,
+        "ended_at": "2026-08-28T11:17:10.4181088+07:00",
+        "ended_epoch_ms": 1787890630418,
+        "duration_seconds": 25.389
+      },
+      "tokens": null
+    }
+  ],
+  "manual_estimates_minutes": [],
+  "ui_accuracy_percent": 100,
+  "flow_accuracy_percent": 75,
+  "complexity": {
+    "actors": 1,
+    "main_flow_steps": 12,
+    "alternate_exception_flows": 3,
+    "data_entities": 1,
+    "integrations": 3,
+    "business_rules": 11,
+    "ui_states": 6
+  },
+  "ui_accuracy_reason": "All visible structural elements in frozen frame 137:8071 plus the UC-required confirmPassword control are mapped in source; deterministic rendered comparison is blocked until Docker is available.",
+  "flow_accuracy_reason": "Source covers trigger, request, persistence, response, session and exception paths, but Docker runtime observation is blocked and some validation rules need repair.",
+  "all_sub_prompt_count": 3
+}

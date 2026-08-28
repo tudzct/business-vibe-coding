@@ -5,14 +5,14 @@ description: Generate a complete Business Coding Prompt A-F from one frozen Shee
 
 # Generate Business Coding Prompt
 
-Accept one readable `docs/01-inception/use-cases/uc-*.md` path. Treat it as immutable and verify its Sheet provenance.
+Accept one readable `docs/01-inception/use-cases/uc-*.md` path and optional `--variant [full|rq3]` (defaults to `full`). Treat UC as immutable and verify its Sheet provenance.
 
-1. Read `PROJECT_CONTEXT.md`, source/workflow rules and `templates/construction/coding-prompt.template.md`.
+1. Read `PROJECT_CONTEXT.md`, source/workflow rules and corresponding template: `templates/construction/coding-prompt.template.md` for `full`, or `templates/construction/coding-prompt-rq3.template.md` for `rq3`.
 2. Resolve referenced API/Figma sources without guessing. For Figma-backed UCs, use `resolve-figma-design-dataset` and the mapping authority in `FIGMA-LINK-REVIEW.md`.
-3. Invoke `gen-business-rule-resource`; require exact equality between source-order BR IDs, the frozen resource and baseline receipt.
-4. Fill Prompts A-D from UC/API/Figma inputs. Apply the standard response envelope without changing domain status, fields or message semantics.
-5. Insert the deterministic Prompt E projection verbatim. Fill Prompt F with source priority and implementation boundaries.
+3. Invoke `gen-business-rule-resource`; require exact equality between source-order BR IDs, the frozen resource and baseline receipt (always required so Phase 2 evaluation has the identical ground truth baseline).
+4. Fill Prompts A-D from UC/API/Figma inputs. Apply the standard response envelope without changing domain status, fields or message semantics. For `rq3`, ensure Prompts A and C do not reference Prompt E.
+5. If `full`: insert the deterministic Prompt E projection verbatim and fill Prompt F with source priority and implementation boundaries. If `rq3`: omit Prompts E and F entirely.
 6. If information is missing, record it; stop for the researcher when it changes business meaning, API, ownership, schema or destructive behavior.
-7. Write `docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md`, report its status and do not paste the full prompt unless requested.
+7. Write target prompt: `docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md` (for `full`) or `docs/02-construction/coding-prompts/<UC-ID>-rq3-coding-prompt.md` (for `rq3`). Report its status and do not paste the full prompt unless requested.
 
 Do not edit frozen UCs or create/run tests.

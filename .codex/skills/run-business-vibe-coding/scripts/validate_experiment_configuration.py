@@ -8,6 +8,7 @@ from pathlib import Path
 EFFORTS = {"none", "low", "medium", "high", "xhigh", "max"}
 MODES = {"standard", "pro"}
 PROTOCOLS = {"fixed", "matched", "cross"}
+PROMPT_VARIANTS = {"full", "rq3"}
 
 
 def text(value, field):
@@ -76,9 +77,12 @@ def validate(path):
         orders.add(order)
         replicate = positive(run.get("replicate_index"), prefix + ".replicate_index")
         validate_model(run, prefix)
-        key = (uc_id, run["requested_model_id"], run["requested_reasoning_effort"], run["requested_reasoning_mode"], replicate)
+        variant = run.get("prompt_variant", "full")
+        if variant not in PROMPT_VARIANTS:
+            raise ValueError(f"{prefix}.prompt_variant must be one of {sorted(PROMPT_VARIANTS)}")
+        key = (uc_id, variant, run["requested_model_id"], run["requested_reasoning_effort"], run["requested_reasoning_mode"], replicate)
         if key in assignments:
-            raise ValueError(f"duplicate UC/model/replicate assignment: {key}")
+            raise ValueError(f"duplicate UC/variant/model/replicate assignment: {key}")
         assignments.add(key)
         text(run.get("auditor_assignment"), prefix + ".auditor_assignment")
     return data

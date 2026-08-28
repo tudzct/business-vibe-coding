@@ -2,7 +2,7 @@
 
 The canonical run JSON records:
 
-- configuration, UC, model, replicate, order, wall-clock time and token use;
+- configuration, UC, prompt_variant (`full` or `rq3`), model, replicate, order, wall-clock time and token use;
 - frozen final-source checksum;
 - initial and final assessment for every frozen BR;
 - each BR status: `met`, `unmet` or `not_evaluable`, with evidence and rationale;

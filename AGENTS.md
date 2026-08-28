@@ -16,10 +16,10 @@ When a UC contains a Figma reference, resolve it through `resolve-figma-design-d
 
 The research method has exactly two phases:
 
-1. **Phase 1 - Generate the business coding prompt.** Read one frozen UC, its UML model, all associated Business Rules, OCL utility definitions, API/Figma sources and the approved Prompt A-F template. Create an exact Business Rule resource and a Draft business coding prompt. Prompt E is Business Rules Compliance; Prompt F is Implementation Context.
-2. **Phase 2 - Generate source code.** After researcher approval and run activation, implement the approved prompt in `finalsource/fe` and/or `finalsource/be`. Record first-pass evidence, assess every frozen BR, create bounded bug-fixing sub-prompts for evidenced errors, rebuild/run with Docker Compose and freeze the final source hash.
+1. **Phase 1 - Generate the business coding prompt.** Read one frozen UC, its UML model, all associated Business Rules, OCL utility definitions, API/Figma sources and the approved prompt template (Prompt A-F template for full runs, or Prompt A-D template for RQ3 ablation runs). Create an exact Business Rule resource and a Draft business coding prompt. In full runs, Prompt E is Business Rules Compliance and Prompt F is Implementation Context; in RQ3 runs, Prompts E and F are omitted.
+2. **Phase 2 - Generate source code.** After researcher approval and run activation, implement the approved prompt in `finalsource/fe` and/or `finalsource/be`. Record first-pass evidence, assess every frozen BR from the baseline, create bounded bug-fixing sub-prompts for evidenced errors, rebuild/run with Docker Compose and freeze the final source hash.
 
-Do not introduce a separate evaluation dimension outside the frozen Business Rules.
+Do not introduce a separate evaluation dimension outside the frozen Business Rules. Both Full and RQ3 runs evaluate against the identical frozen Business Rules baseline.
 
 Before Phase 1, resolve every BR associated with the UC from the frozen UC. Do not select, omit or add rules. Persist `business-rule-baseline.json` with the UC checksum, exact BR IDs and source provenance so generation and evaluation use the same rule set.
 
@@ -29,7 +29,7 @@ Before Phase 2 source mutation, activate exactly one run through `docs/02-constr
 
 Preserve each Rule ID and its supplied OCL invariant, precondition or postcondition verbatim. Preserve natural-language and technical constraints for content that is not represented in OCL. Map every rule to its enforceable layer and failure behavior without weakening, duplicating or inventing requirements.
 
-Prompt A and Prompt D implement and reference Prompt E rules; they do not redefine them. Backend/database enforcement is authoritative when a rule crosses trust boundaries. Frontend validation is an additional user-experience control only.
+In full runs, Prompt A and Prompt D implement and reference Prompt E rules; they do not redefine them. In RQ3 runs, Prompts A-D derive strictly from functional/UI/API specifications without Prompt E references. Backend/database enforcement is authoritative when a rule crosses trust boundaries. Frontend validation is an additional user-experience control only.
 
 Every frozen BR receives exactly one evidence-based result: `met`, `unmet` or `not_evaluable`. Evidence may come from inspectable source, configuration, non-test build/lint checks and bounded Docker runtime observation. Prompt text alone is never evidence.
 

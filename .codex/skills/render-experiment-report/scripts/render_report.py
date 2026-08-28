@@ -22,6 +22,7 @@ def main():
     lines = [
         f"# Experiment run {data.get('run_id', '')}", "",
         f"- UC: `{data.get('uc_id', '')}`",
+        f"- Prompt variant: `{data.get('prompt_variant', 'full')}`",
         f"- Canonical input: `{args.input}`",
         f"- Input SHA-256: `{hashlib.sha256(raw).hexdigest()}`", "",
         "## Final Business Rule assessment", "",

@@ -1,0 +1,21 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-08-28T04:19:33.9050469Z",
+  "mode": "run",
+  "repository_revision": "212f2e3e99f6f7517a9433a64e657fb713c0187f",
+  "source_hash": "sha256:b27bad22a3e18a2563788439b3814503ba3d72bedd5c8b0913fad075d868eb14",
+  "tool_versions": {
+    "docker_cli": "29.2.1",
+    "docker_compose": "5.0.2",
+    "docker_daemon": null
+  },
+  "commands": [
+    { "id": "docker-info", "exit_code": 1 },
+    { "id": "compose-config-quiet", "exit_code": 0 },
+    { "id": "compose-up-build-detached", "exit_code": 1 },
+    { "id": "windows-docker-service-status", "exit_code": 0 },
+    { "id": "windows-docker-service-start", "exit_code": 1 }
+  ],
+  "outcome": "BLOCKED",
+  "error_excerpt": "Docker Desktop Linux engine pipe is unavailable; the stopped Docker service cannot be started by the current process."
+}

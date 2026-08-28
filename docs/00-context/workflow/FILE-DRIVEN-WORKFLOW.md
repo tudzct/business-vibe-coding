@@ -7,7 +7,7 @@
 3. Create `docs/02-construction/business-rules/<UC-ID>-business-rules.{json,md}` with all rules in order.
 4. Freeze `docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json`.
 5. Resolve referenced Figma data when applicable.
-6. Generate `docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md` using Prompts A-F.
+6. Generate coding prompt: `docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md` (for Full using Prompts A-F) or `docs/02-construction/coding-prompts/<UC-ID>-rq3-coding-prompt.md` (for RQ3 using Prompts A-D).
 7. Obtain researcher approval for unresolved decisions and the completed prompt.
 
 ## Phase 2

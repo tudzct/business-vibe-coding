@@ -1,0 +1,22 @@
+{
+  "artifact_type": "generation-start-evidence",
+  "status": "Captured",
+  "uc_id": "UC-02",
+  "run_id": "UC02-SOL-MEDIUM-R1",
+  "source_prompt": "docs/02-construction/coding-prompts/UC-02-rq3-coding-prompt.md",
+  "source_prompt_sha256": "sha256:01b79ea5464a5578cd25f5deda8b5c18745a08e2734cc3775c1290fc867e05ce",
+  "run_activation": "docs/02-construction/implementation/UC-02/runs/UC02-SOL-MEDIUM-R1/run-activation.json",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "unavailable_reason": "The execution environment did not expose effective model or snapshot metadata to repository tools.",
+    "codex_client_version": "codex-cli 0.150.0-alpha.8"
+  },
+  "started_at": "2026-08-28T10:07:42.686+07:00",
+  "started_epoch_ms": 1787886462687,
+  "baseline_source_revision": "sha256:cc483a1fbdcaf284b020f0e274d88b9a0ecfbc5b81ac8b59672b4360297cf9e5",
+  "hash_method": "SHA-256 over newline-joined sorted relative-path:file-SHA-256 entries for every file under finalsource/."
+}

@@ -98,6 +98,7 @@ def main() -> None:
         "gate_version": 3,
         "uc_id": args.uc_id,
         "run_id": args.run_id,
+        "prompt_variant": run_entries[0].get("prompt_variant", "full"),
         "configuration_artifact": configuration_rel,
         "configuration_checksum": "sha256:" + hashlib.sha256(configuration.read_bytes()).hexdigest(),
         "activated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),

@@ -62,7 +62,9 @@ Processing:
 2. Extract all unique BR IDs in source order; do not select a subset.
 3. Copy each BR's OCL and natural-language constraints into a canonical Business Rule resource.
 4. Record the UC checksum and BR IDs in `business-rule-baseline.json`.
-5. Generate Prompt A-F. Prompt E is an exact BR projection; A/D reference it; F sets context and priority.
+5. Generate coding prompt:
+   - For Full branch: Prompt A-F (Prompt E is an exact BR projection; A/D reference it; F sets context and priority).
+   - For RQ3 branch: Prompt A-D (omitting E and F; A/D derive strictly from functional/UI/API specifications).
 6. Stop at researcher approval.
 
 Outputs:
@@ -70,7 +72,8 @@ Outputs:
 ```text
 docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json
 docs/02-construction/business-rules/<UC-ID>-business-rules.json
-docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md
+docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md (Full)
+docs/02-construction/coding-prompts/<UC-ID>-rq3-coding-prompt.md (RQ3)
 ```
 
 ### Phase 2 - Generate Source Code

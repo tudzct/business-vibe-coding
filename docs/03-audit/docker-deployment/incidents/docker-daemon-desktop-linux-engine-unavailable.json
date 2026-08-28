@@ -1,0 +1,30 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260828-002",
+  "observed_at": "2026-08-28T04:19:33.9050469Z",
+  "layer": "host-docker",
+  "fingerprint": "docker-daemon-desktop-linux-engine-unavailable",
+  "symptom": "Docker CLI and Compose are installed, but the Docker Desktop Linux engine pipe is absent, so images cannot be inspected or built.",
+  "evidence": "docker info and Compose startup could not connect to dockerDesktopLinuxEngine; com.docker.service is stopped and cannot be started from the current non-elevated process.",
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "Docker Desktop daemon is not running."
+  },
+  "actions": [
+    "Validated Docker CLI and Compose versions.",
+    "Validated sanitized Compose configuration without exposing environment values.",
+    "Queried Docker daemon connectivity and Windows service state.",
+    "Attempted to start com.docker.service; the current process lacks permission."
+  ],
+  "files_changed": [],
+  "commands_rerun": [
+    "docker-info",
+    "compose-config-quiet",
+    "compose-up-build-detached",
+    "windows-docker-service-status",
+    "windows-docker-service-start"
+  ],
+  "outcome": "blocked",
+  "reusable_resolution": "Start Docker Desktop interactively, wait for the Linux engine to become available, then rerun Compose with the recorded BACKEND_PORT=3002 host override.",
+  "prevention": "Verify Docker Desktop daemon connectivity immediately before activating the runtime portion of a research run."
+}

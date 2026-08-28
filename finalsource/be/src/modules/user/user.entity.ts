@@ -1,26 +1,24 @@
-import { Check, Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'users' })
 @Index('uq_users_email', ['email'], { unique: true })
 @Index('uq_users_username', ['username'], { unique: true })
-@Check('chk_users_email_normalized', 'email = LOWER(TRIM(email))')
-@Check('chk_users_full_name_length', 'CHAR_LENGTH(full_name) BETWEEN 4 AND 25')
 export class User {
-  @PrimaryGeneratedColumn({ name: 'id', type: 'int', unsigned: true, primaryKeyConstraintName: 'pk_users' })
+  @PrimaryGeneratedColumn({ type: 'int', unsigned: true, name: 'id', primaryKeyConstraintName: 'pk_users' })
   id!: number;
 
-  @Column({ name: 'full_name', type: 'varchar', length: 25 })
+  @Column({ type: 'varchar', length: 25, name: 'full_name' })
   fullName!: string;
 
-  @Column({ name: 'email', type: 'varchar', length: 255, collation: 'utf8mb4_0900_ai_ci' })
+  @Column({ type: 'varchar', length: 255, name: 'email' })
   email!: string;
 
-  @Column({ name: 'username', type: 'varchar', length: 255, collation: 'utf8mb4_0900_ai_ci' })
+  @Column({ type: 'varchar', length: 255, name: 'username' })
   username!: string;
 
-  @Column({ name: 'password_hash', type: 'char', length: 60, charset: 'ascii', collation: 'ascii_bin', select: false })
+  @Column({ type: 'char', length: 60, name: 'password_hash', select: false })
   passwordHash!: string;
 
-  @Column({ name: 'total_balance', type: 'decimal', precision: 19, scale: 4, default: '0.0000' })
+  @Column({ type: 'decimal', precision: 19, scale: 4, name: 'total_balance', default: '0.0000' })
   totalBalance!: string;
 }

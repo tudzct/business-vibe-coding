@@ -5,7 +5,7 @@ description: Repair one evidenced source/build/runtime or Business Rule implemen
 
 # Bug-fixing Sub-prompt
 
-Use only after the initial audit is persisted. Read the repair template and contract.
+Use only after the initial audit is persisted. For RQ3 runs, never initiate sub-prompts automatically; require explicit researcher authorization after the first-pass hold point. Read the repair template and contract.
 
 1. Select one evidenced defect and fingerprint it; do not repair speculation or add a feature.
 2. Create one numbered repair artifact with allowed files, affected BR IDs and permitted non-test checks.

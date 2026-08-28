@@ -12,12 +12,14 @@
 
 This project studies automated source-code generation from use-case specifications enriched with explicit Business Rules. Rules are expressed as OCL invariants, preconditions or postconditions when representable; remaining constraints stay in authoritative natural language.
 
-The method extends the two-phase method described by Đặng Thị Thanh Trúc:
+The method extends the two-phase method described by Đặng Thị Thanh Trúc across two experimental setups:
 
-1. **Phase 1 - Generate Business Coding Prompt:** combine a use-case specification, UML model, Business Rules, API/Figma sources and the Prompt A-F template.
-2. **Phase 2 - Generate Source Code:** combine the approved prompt, existing codebase, database summary and project rules; generate source and use evidence-driven bug-fixing sub-prompts until the permitted completion gates pass.
+1. **Full method (RQ1/RQ2):** Uses the complete Prompt A-F template. Prompt A covers backend/API, Prompt B frontend UI, Prompt C frontend logic/API integration, Prompt D validation/error handling, Prompt E Business Rules Compliance (OCL and natural-language rules) and Prompt F Implementation Context.
+2. **Ablation study (RQ3):** Uses the ablated Prompt A-D template, omitting Prompts E and F. It evaluates how LLMs perform when explicit Business Rules and OCL specifications are withheld, evaluated against the identical Business Rule baseline.
 
-Prompt A covers backend/API, Prompt B frontend UI, Prompt C frontend logic/API integration, Prompt D validation/error handling, Prompt E Business Rules Compliance and Prompt F Implementation Context.
+Both setups follow the two-phase method:
+- **Phase 1 - Generate Business Coding Prompt:** produce and approve the designated prompt artifact (`*-business-coding-prompt.md` for Full, `*-rq3-coding-prompt.md` for RQ3).
+- **Phase 2 - Generate Source Code:** implement the approved prompt starting from clean baseline, record first-pass evidence, assess every frozen BR, perform bounded repairs, and run Docker runtime observations.
 
 ## Authoritative sources
 
