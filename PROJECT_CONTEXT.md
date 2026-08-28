@@ -15,7 +15,7 @@ This project studies automated source-code generation from use-case specificatio
 The method extends the two-phase method described by Đặng Thị Thanh Trúc across two experimental setups:
 
 1. **Full method (RQ1/RQ2):** Uses the complete Prompt A-F template. Prompt A covers backend/API, Prompt B frontend UI, Prompt C frontend logic/API integration, Prompt D validation/error handling, Prompt E Business Rules Compliance (OCL and natural-language rules) and Prompt F Implementation Context.
-2. **Ablation study (RQ3):** Uses the ablated Prompt A-D template, omitting Prompts E and F. It evaluates how LLMs perform when explicit Business Rules and OCL specifications are withheld, evaluated against the identical Business Rule baseline.
+2. **Ablation study (RQ3):** Uses only Prompts A-D, omitting Prompts E and F together. It evaluates how LLMs perform without the explicit Business Rules/OCL projection and the additional implementation context, against the identical frozen Business Rule baseline.
 
 Both setups follow the two-phase method:
 - **Phase 1 - Generate Business Coding Prompt:** produce and approve the designated prompt artifact (`*-business-coding-prompt.md` for Full, `*-rq3-coding-prompt.md` for RQ3).
@@ -86,7 +86,7 @@ finalsource/be                         generated NestJS source
 
 A run is complete only when:
 
-- the approved prompt contains Prompts A-F and the exact frozen BR set;
+- the approved prompt has the configured structure: Prompts A-F with the exact frozen BR set for Full, or Prompts A-D with no Prompt E or F content for RQ3;
 - initial generation telemetry is preserved before repair;
 - every BR has one `met`, `unmet` or `not_evaluable` assessment with evidence;
 - every evidenced defect has a bounded repair record or an explicit researcher decision;

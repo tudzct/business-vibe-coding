@@ -13,47 +13,146 @@ generated_at: <ISO-8601 timestamp>
 
 ## Prompt A: Backend API
 
-Build `[HTTP METHOD] [API PATH]` in `[BACKEND LOCATION]` for `[UC/API ID]`.
+### Objective: Build the API endpoint, business logic, validation, and server-side error handling.
 
-- Access: `[PUBLIC / AUTHENTICATED]`
-- Request: `[BODY / QUERY / PATH PARAMS]`
-- Main logic: `[SERVICE / USE-CASE LOCATION]`
-- Success payload: `[UC DOMAIN PAYLOAD]`
-- Normalized success: `{ "success": true, "message": "[MESSAGE]", "data": [DOMAIN PAYLOAD] }`
-- Errors: preserve the UC status/message through the standard error envelope.
+Create the `[HTTP METHOD] [API PATH]` endpoint in `[BACKEND ENTRY POINT]`.
 
-Implement every backend/database-applicable rule in Prompt E. Do not invent behavior, dependencies or schema changes.
+This endpoint MUST be `[PUBLIC / PROTECTED]`. If protected, use `[AUTHENTICATION MECHANISM]`.
+
+### Request Format
+
+`[REQUEST BODY / QUERY PARAMS / PATH PARAMS]`
+
+Implement the main logic in `[BUSINESS LOGIC LOCATION]`.
+
+### Logic
+
+Implement the backend flow for `[USE CASE / API ID]`.
+
+Enforce all backend and database rules specified in Prompt E, including applicable normalization, validation, authorization, persistence, transaction, concurrency, and sensitive-data handling.
+
+### Success Response
+
+`[SUCCESS RESPONSE]`
+
+Wrap the domain payload in `{ "success": true, "message": "[MESSAGE]", "data": [DOMAIN PAYLOAD] }` without changing source-defined fields or message semantics.
+
+### Error Handling
+
+If `[ERROR CONDITION]`, return or throw `[ERROR TYPE / HTTP STATUS]` with `[ERROR RESPONSE]`.
+
+Preserve the source status and message through `{ "success": false, "statusCode": [STATUS], "message": "[MESSAGE]", "timestamp": "[ISO-8601]", "path": "[API PATH]" }`.
+
+Follow the existing project architecture. Do not introduce new architectural layers or dependencies.
+
+Handle relevant ownership, transaction, concurrency, idempotency, date/timezone, and monetary-rounding rules. Use existing ORM mappings and migration conventions. Do not alter the schema without an explicit source requirement and researcher-approved schema proposal.
 
 ## Prompt B: Frontend UI
 
-Build `[COMPONENT]` for `[UC-ID]` from the frozen Figma dataset `[DATASET/NODE/CHECKSUM or N/A]`.
+### Objective: Build the user interface according to the Figma design.
 
-- Required elements: `[ELEMENTS]`
-- Required states: `[STATES]`
-- UC-backed controls are functional; design-only controls remain visual unless a source defines behavior.
-- If a UC-required control is absent, add the smallest design-consistent element and record the mapping decision.
+Create `[COMPONENT NAME]` using `[FRONTEND TECHNOLOGIES]`.
 
-Do not create or run tests.
+The component MUST display:
+
+- `[UI ELEMENT 1]`
+- `[UI ELEMENT 2]`
+- `[UI ELEMENT 3]`
+- `[...]`
+
+### Figma Design Scope
+
+Frozen Figma dataset and target: `[DATASET / FRAME / NODE / CHECKSUM or N/A]`
+
+Use the checksum-valid frozen Figma dataset to identify all frames relevant to the active use case.
+
+Determine relevant frames using the use case name, purpose, application-user actions, screen titles, visible UI text, and semantically related terms.
+
+Record the exact names and node IDs of all identified target frames:
+
+- `[IDENTIFIED FIGMA FRAME NAME AND NODE ID 1]`
+- `[IDENTIFIED FIGMA FRAME NAME AND NODE ID 2]`
+- `[...]`
+
+If the relevant frames cannot be identified unambiguously, stop and report the matching candidates instead of selecting or inventing a frame.
+
+### Implementation Requirements
+
+STRICTLY follow the frozen Figma design at `[DATASET / FRAME / NODE / CHECKSUM]`.
+
+Ensure the layout, spacing, typography, colors, components, states, and responsive behavior match the design.
+
+Use the project's existing styling system and component conventions. UC-backed controls are functional; design-only controls remain visual unless a source defines behavior. If a UC-required control is absent, add the smallest design-consistent element and record the mapping decision.
 
 ## Prompt C: Frontend Logic and API Integration
 
-Connect `[COMPONENT]` to `[HTTP METHOD] [API PATH]` using the existing API client.
+### Objective: Connect the frontend component to the API and implement the successful flow.
 
-- Request: `[PAYLOAD]`
-- Success: read the domain payload from the normalized response data.
-- Ordered success actions: `[STATE / NAVIGATION / MESSAGE]`
-- Implement every frontend-applicable rule in Prompt E and no unsupported behavior.
+Continue working on `[COMPONENT NAME]`.
+
+Add the required state using `[STATE / FORM MANAGEMENT APPROACH]`.
+
+Implement the asynchronous function `[FUNCTION NAME]` to send a `[HTTP METHOD]` request to `[API PATH FROM PROMPT A]`.
+
+### Request Payload
+
+`[REQUEST PAYLOAD]`
+
+Use the project's existing API client or request approach.
+
+### Success Response
+
+`[SUCCESS RESPONSE FROM PROMPT A]`
+
+Read the domain payload from the normalized response data.
+
+When successful:
+
+1. `[SUCCESS ACTION 1]`
+2. `[SUCCESS ACTION 2]`
+3. `[UPDATE STATE / SESSION]`
+4. `[NAVIGATE / REFRESH DATA]`
+
+Preserve API request idempotency where applicable.
+
+Normalize date/timezone and monetary values according to the API contract and existing project conventions.
 
 ## Prompt D: Validation and Error Handling
 
-- Client validation: `[SOURCE-BACKED CONSTRAINTS]`
-- Loading/duplicate prevention: `[CONTROLS AND INDICATOR]`
-- Error mapping: `[STATUS/CONDITION -> MESSAGE/LOCATION]`
-- Backend enforcement remains authoritative where a rule cannot be guaranteed by the client.
+### Objective: Complete client-side validation, loading state, and API error handling.
+
+Refine `[FUNCTION NAME]` in `[COMPONENT NAME]`.
+
+### Loading State
+
+When `[LOADING STATE]` is true:
+
+- Disable `[SUBMIT BUTTON]`.
+- Display `[SPINNER / LOADING TEXT]`.
+- Prevent duplicate submissions.
+
+### API Error
+
+If the API returns `[STATUS / ERROR CONDITION]`:
+
+- Display `[ERROR MESSAGE]`.
+- Display the message at `[ERROR DISPLAY LOCATION]`.
+
+### Client-Side Validation
+
+Before calling the API, enforce every client-applicable validation rule in Prompt E for `[USE CASE / API ID]`.
+
+Display validation messages at `[VALIDATION MESSAGE LOCATION]`.
+
+Backend validation remains authoritative.
+
+Do not call the API when client-side validation fails.
 
 ## Prompt E: Business Rules Compliance
 
-Insert the ordered rule projection generated from the frozen Business Rule resource without changing its semantics.
+### Objective: Implement the complete frozen Business Rule set for this use case without changing its meaning.
+
+The ordered Rule IDs below MUST exactly match the frozen Business Rule baseline. Every rule appears exactly once in this projection; one implementation control may enforce multiple rules when appropriate.
 
 ### Business Rule: `[BR-ID]`
 
@@ -65,18 +164,27 @@ Insert the ordered rule projection generated from the frozen Business Rule resou
 - **Failure behavior:** `[source-backed status/message/state, or unresolved]`
 - **Traceability:** `[UC step/API/UI/source range]`
 
-Preserve OCL exactly. Natural-language rules remain authoritative when OCL cannot express them. Do not infer missing thresholds, statuses, ownership, schema, or failure behavior; record an unresolved item and stop for the researcher when it changes implementation.
+Preserve every Rule ID, OCL expression and authoritative natural-language constraint exactly.
+
+Prompts A and D must reference applicable Rule IDs without redefining them. Backend/database enforcement remains authoritative across trust boundaries; frontend enforcement is an additional user-experience control.
+
+Do not invent missing thresholds, statuses, ownership, schema, enforcement layers or failure behavior. Record unresolved source information and stop for the researcher when it changes implementation.
 
 ## Prompt F: Implementation Context
 
-Use Prompts A-E with the project rules, database summary, frozen UC/UML/BR specification, Business Rule resource and applicable Figma/API sources.
+Use every prompt present in this approved artifact together with:
+
+- project rules and target manifests/lockfiles;
+- approved database contract;
+- approved API contract;
+- checksum-valid frozen Figma evidence when applicable;
+- existing source-code conventions.
 
 Priority:
 
-1. Canonical Sheet-derived UC, UML and Business Rules
-2. Prompt E exact Business Rules
-3. Approved API contract and database/project rules
-4. Frozen Figma design
-5. Existing source conventions
+1. Requirements explicitly present in this approved prompt
+2. Approved API and database/project contracts
+3. Frozen Figma evidence
+4. Existing source-code conventions
 
-Generate source only. Do not create or run tests or test cases. Modify only files required by the UC, record generation/repair telemetry, assess every frozen BR, and freeze the final source hash.
+Generate source only. Modify only files required by the use case. Do not create or run tests or test cases. Do not introduce unapproved schema, public API, ownership, dependency or destructive changes.

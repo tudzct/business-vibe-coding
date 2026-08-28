@@ -3,8 +3,8 @@
 ## Full prompt variant (Prompts A-F)
 - A: backend endpoint, DTO, domain logic, persistence impact and response/error behavior (references Prompt E).
 - B: source-backed UI and visual states.
-- C: typed client integration, state and success flow (references Prompt E).
-- D: validation, loading, exceptions and recovery.
+- C: typed client integration, state and success flow.
+- D: validation, loading, exceptions and recovery (references Prompt E).
 - E: exact ordered projection of all frozen Business Rules.
 - F: project/database/source context, priority, source-only and no-tests limits.
 
@@ -13,6 +13,7 @@
 - B: source-backed UI and visual states.
 - C: typed client integration, state and success flow (no Prompt E references).
 - D: validation, loading, exceptions and recovery derived from basic flows.
-- Omitted: Prompt E (Business Rules Compliance) and Prompt F (Implementation Context).
+- E: omitted.
+- F: omitted.
 
 Raw UC success fields become the domain payload in the standard success envelope; UC error status/message use the standard error envelope. This transport normalization must not change business meaning.
