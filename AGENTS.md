@@ -16,7 +16,7 @@ When a UC contains a Figma reference, resolve it through `resolve-figma-design-d
 
 The research method has exactly two phases:
 
-1. **Phase 1 - Generate the business coding prompt.** Read one frozen UC, its UML model, all associated Business Rules, OCL utility definitions, API/Figma sources and the approved prompt template (Prompt A-F template for full runs, or Prompt A-D template for RQ3 ablation runs). Create an exact Business Rule resource and a Draft business coding prompt. In full runs, Prompt E is Business Rules Compliance and Prompt F is Implementation Context; in RQ3 runs, Prompts E and F are omitted.
+1. **Phase 1 - Generate the business coding prompt.** Read one frozen UC, its UML model, all associated Business Rules, OCL utility definitions, API/Figma sources and the approved prompt template (Prompts A-F for full runs, or Prompts A-D for RQ3 ablation runs). Create an exact Business Rule resource and a Draft business coding prompt. In full runs, Prompt E is Business Rules Compliance and Prompt F is Implementation Context; in RQ3 runs, Prompts E and F are omitted together.
 2. **Phase 2 - Generate source code.** After researcher approval and run activation, implement the approved prompt in `finalsource/fe` and/or `finalsource/be`. Record first-pass evidence, assess every frozen BR from the baseline, create bounded bug-fixing sub-prompts for evidenced errors, rebuild/run with Docker Compose and freeze the final source hash.
 
 Do not introduce a separate evaluation dimension outside the frozen Business Rules. Both Full and RQ3 runs evaluate against the identical frozen Business Rules baseline.

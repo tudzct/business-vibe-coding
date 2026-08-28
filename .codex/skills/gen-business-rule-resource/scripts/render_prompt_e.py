@@ -34,7 +34,11 @@ def main():
     if ordered != list(by_id) or set(ordered) != set(by_id):
         raise ValueError("ordered_br_ids must exactly match rules in source order")
 
-    out = ["## Prompt E: Business Rules Compliance", ""]
+    out = [
+        "## Prompt E: Business Rules Compliance", "",
+        "### Objective: Implement the complete frozen Business Rule set for this use case without changing its meaning.", "",
+        "The ordered Rule IDs below MUST exactly match the frozen Business Rule baseline. Every rule appears exactly once in this projection; one implementation control may enforce multiple rules when appropriate.", "",
+    ]
     for br_id in ordered:
         rule = by_id[br_id]
         out.extend([
@@ -47,6 +51,11 @@ def main():
             f"- **Failure behavior:** {require_text(rule.get('failure_behavior'), br_id + '.failure_behavior')}",
             f"- **Traceability:** {', '.join(rule.get('traceability', [])) or 'unresolved'}", ""
         ])
+    out.extend([
+        "Preserve every Rule ID, OCL expression and authoritative natural-language constraint exactly.", "",
+        "Prompts A and D must reference applicable Rule IDs without redefining them. Backend/database enforcement remains authoritative across trust boundaries; frontend enforcement is an additional user-experience control.", "",
+        "Do not invent missing thresholds, statuses, ownership, schema, enforcement layers or failure behavior. Record unresolved source information and stop for the researcher when it changes implementation.",
+    ])
     print("\n".join(out).rstrip())
 
 
