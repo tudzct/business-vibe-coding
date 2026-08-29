@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-05",
+  "use_case_path": "docs/01-inception/use-cases/uc-05-view-bank-accounts.md",
+  "use_case_sha256": "sha256:fe08cb8f7877f07891e484e1723fecb3915b55702a97b14a042b5a3c1c54da44",
+  "business_rule_resource_path": "docs/02-construction/business-rules/UC-05-business-rules.json",
+  "business_rule_resource_sha256": "sha256:a981617e5530cce2a824990a34b95a7d35f80f1a3fbf5f184b72d3e1435a5a5e",
+  "spreadsheet_source": "Use cases!A83:B105",
+  "ordered_br_ids": [
+    "BR-ACC-01",
+    "BR-ACC-02",
+    "BR-ACC-03",
+    "BR-ACC-04",
+    "BR-ACC-05",
+    "BR-ACC-06"
+  ],
+  "frozen_at": "2026-08-29T12:14:55.1894549+00:00"
+}
+
