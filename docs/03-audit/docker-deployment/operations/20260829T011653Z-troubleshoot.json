@@ -1,0 +1,28 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-08-29T01:16:53Z",
+  "mode": "troubleshoot",
+  "repository_revision": "e0d3b66821645038644f2f2f5e7c81387cc57d9e",
+  "source_hash": "sha256:23a20998dce523ae6ee5204b6dae5587f137a7bc24b4eee0cc38e259fa8cb635",
+  "tool_versions": {
+    "docker_cli": "29.6.1",
+    "docker_compose": "5.3.0",
+    "docker_daemon": "29.6.1"
+  },
+  "commands": [
+    { "id": "compose-build-frontend-initial", "exit_code": 1 },
+    { "id": "compose-build-frontend-after-repair", "exit_code": 0 },
+    { "id": "compose-build-backend-initial", "exit_code": 1 },
+    { "id": "compose-build-backend-after-typing-repair", "exit_code": 0 },
+    { "id": "compose-up-before-health-repair", "exit_code": 1 },
+    { "id": "compose-build-backend-after-health-repair", "exit_code": 0 },
+    { "id": "compose-up-detached", "exit_code": 0 },
+    { "id": "compose-ps", "exit_code": 0 },
+    { "id": "frontend-root-http", "exit_code": 0 },
+    { "id": "backend-health-http", "exit_code": 0 },
+    { "id": "proxied-health-http", "exit_code": 0 }
+  ],
+  "outcome": "PASS",
+  "error_excerpt": null,
+  "finding": "The restored source required bounded TypeScript compatibility repairs and restoration of the Compose health-route contract. Both images now build; database, backend and frontend are healthy; direct and proxied reachability return HTTP 200."
+}

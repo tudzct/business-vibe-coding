@@ -1,24 +1,64 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Account } from '../account/account.entity';
+import { Bill } from '../bill/bill.entity';
+import { Goal } from '../goal/goal.entity';
 
-@Entity({ name: 'users' })
-@Index('uq_users_email', ['email'], { unique: true })
-@Index('uq_users_username', ['username'], { unique: true })
+@Entity('Users')
 export class User {
-  @PrimaryGeneratedColumn({ type: 'int', unsigned: true, name: 'id', primaryKeyConstraintName: 'pk_users' })
-  id!: number;
+  @PrimaryGeneratedColumn({ name: 'user_id' })
+  userId!: number;
 
-  @Column({ type: 'varchar', length: 25, name: 'full_name' })
+  @Column({ name: 'full_name', type: 'varchar', length: 255 })
   fullName!: string;
 
-  @Column({ type: 'varchar', length: 255, name: 'email' })
+  @Column({ name: 'email', type: 'varchar', length: 255, unique: true })
   email!: string;
 
-  @Column({ type: 'varchar', length: 255, name: 'username' })
+  @Column({ name: 'username', type: 'varchar', length: 255, unique: true })
   username!: string;
 
-  @Column({ type: 'char', length: 60, name: 'password_hash', select: false })
-  passwordHash!: string;
+  @Column({ name: 'password', type: 'varchar', length: 255 })
+  password!: string;
 
-  @Column({ type: 'decimal', precision: 19, scale: 4, name: 'total_balance', default: '0.0000' })
-  totalBalance!: string;
+  @Column({ name: 'phone_number', type: 'varchar', length: 20, nullable: true })
+  phoneNumber!: string;
+
+  @Column({
+    name: 'profile_picture_url',
+    type: 'varchar',
+    length: 500,
+    nullable: true,
+  })
+  profilePictureUrl!: string;
+
+  @Column({
+    name: 'total_balance',
+    type: 'decimal',
+    precision: 15,
+    scale: 2,
+    default: 0,
+  })
+  totalBalance!: number;
+
+  @OneToMany(() => Account, (account) => account.user)
+  accounts!: Account[];
+
+  @OneToMany(() => Bill, (bill) => bill.user)
+  bills!: Bill[];
+
+  @OneToMany(() => Goal, (goal) => goal.user)
+  goals!: Goal[];
+
+//   @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: true })
+//   createdAt: Date;
+
+//   @UpdateDateColumn({ name: 'updated_at', type: 'timestamp', nullable: true })
+//   updatedAt: Date;
 }

@@ -18,6 +18,24 @@
       "fingerprint": "docker-daemon-desktop-linux-engine-unavailable",
       "path": "docs/03-audit/docker-deployment/incidents/docker-daemon-desktop-linux-engine-unavailable.json",
       "outcome": "blocked"
+    },
+    {
+      "incident_id": "DEP-20260829-001",
+      "fingerprint": "frontend-build-typescript-unused-import-and-tsx-extension",
+      "path": "docs/03-audit/docker-deployment/incidents/frontend-build-typescript-unused-import-and-tsx-extension.json",
+      "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260829-002",
+      "fingerprint": "backend-build-strict-property-initialization-and-cors-callback-typing",
+      "path": "docs/03-audit/docker-deployment/incidents/backend-build-strict-property-initialization-and-cors-callback-typing.json",
+      "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260829-003",
+      "fingerprint": "backend-healthcheck-missing-api-health-route",
+      "path": "docs/03-audit/docker-deployment/incidents/backend-healthcheck-missing-api-health-route.json",
+      "outcome": "resolved"
     }
   ]
 }

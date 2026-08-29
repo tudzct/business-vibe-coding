@@ -1,36 +1,72 @@
-import { ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import type { NextFunction, Request, Response } from 'express';
 import { AppModule } from './app.module';
-import { HttpExceptionFilter } from './filters/http-exception.filter';
-import { ResponseInterceptor } from './interceptors/response.interceptor';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import type { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 
-async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
-  const config = app.get(ConfigService);
-  app.setGlobalPrefix('api');
-  app.enableCors({
-    origin: config.getOrThrow<string[]>('app.corsOrigins'),
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+
+  // Cấu hình CORS
+  const allowedOrigins = process.env.CORS_ORIGINS
+    ? process.env.CORS_ORIGINS.split(',')
+    : ['http://localhost:3000', 'http://localhost:5173'];
+
+  const corsOptions: CorsOptions = {
+    origin: (origin, callback) => {
+      // Cho phép requests không có origin (mobile apps, Postman, etc.)
+      if (!origin) {
+        return callback(null, true);
+      }
+      // Kiểm tra origin có trong danh sách allowed
+      if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true, // Cho phép gửi cookies và authorization headers
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    exposedHeaders: ['Authorization'],
+  };
+
+  app.enableCors(corsOptions);
+
+  // Cấu hình Swagger
+  const config = new DocumentBuilder()
+    .setTitle('Financial Management API')
+    .setDescription('API documentation cho ứng dụng quản lý tài chính')
+    .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth', // This name here is important for matching up with @ApiBearerAuth() in your controller!
+    )
+    .addTag('auth', 'Xác thực người dùng')
+    .addTag('users', 'Quản lý người dùng')
+    .addTag('accounts', 'Quản lý tài khoản')
+    .addTag('transactions', 'Quản lý giao dịch')
+    .addTag('bills', 'Quản lý hóa đơn')
+    .addTag('goals', 'Quản lý mục tiêu')
+    .addTag('expenses', 'Quản lý chi tiêu')
+    .addTag('categories', 'Quản lý danh mục')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
   });
-  app.use((_request: Request, response: Response, next: NextFunction) => {
-    response.setHeader('X-Content-Type-Options', 'nosniff');
-    response.setHeader('X-Frame-Options', 'DENY');
-    response.setHeader('Referrer-Policy', 'no-referrer');
-    next();
-  });
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
-  app.useGlobalFilters(new HttpExceptionFilter());
-  app.useGlobalInterceptors(new ResponseInterceptor());
-  if (config.getOrThrow<string>('app.nodeEnv') !== 'production') {
-    const document = new DocumentBuilder().setTitle('Business vibe coding API').setVersion('1.0').addBearerAuth().build();
-    SwaggerModule.setup('docs', app, SwaggerModule.createDocument(app, document));
-  }
-  await app.listen(config.getOrThrow<number>('app.port'));
+
+  await app.listen(process.env.PORT ?? 8000);
+  console.log(`🚀 Application is running on: http://localhost:${process.env.PORT ?? 8000}`);
+  console.log(`📚 Swagger documentation: http://localhost:${process.env.PORT ?? 8000}/api/docs`);
 }
-
-void bootstrap();
+bootstrap();

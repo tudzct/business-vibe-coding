@@ -1,0 +1,30 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260829-003",
+  "observed_at": "2026-08-29T01:16:53Z",
+  "layer": "backend-health",
+  "fingerprint": "backend-healthcheck-missing-api-health-route",
+  "symptom": "The rebuilt backend process started, but Compose marked it unhealthy and withheld frontend startup.",
+  "evidence": "Bounded startup logs showed only the root route while Compose requested /api/health.",
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "The restored backend omitted the health route required by the preserved Compose contract."
+  },
+  "actions": [
+    "Added GET /api/health using the normalized success envelope.",
+    "Rebuilt the backend image and recreated the stack.",
+    "Verified healthy containers and direct/proxied HTTP 200 responses."
+  ],
+  "files_changed": ["finalsource/be/src/app.controller.ts"],
+  "commands_rerun": [
+    "compose-build-backend",
+    "compose-up-detached",
+    "compose-ps",
+    "frontend-root-reachability",
+    "backend-health-reachability",
+    "proxied-backend-health-reachability"
+  ],
+  "outcome": "resolved",
+  "reusable_resolution": "Keep the backend /api/health route aligned with the Compose healthcheck before dependent-service startup.",
+  "prevention": "Validate health-route compatibility when creating or updating the sanitized source baseline."
+}

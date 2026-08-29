@@ -1,0 +1,47 @@
+{
+  "schema_version": "2.0",
+  "artifact_type": "experiment-configuration",
+  "status": "Confirmed",
+  "configuration_id": "CFG-UC01-RQ3-SOL-MEDIUM-R1-20260829",
+  "comparison_group_id": "CG-RQ3-SOL-MEDIUM-16UC-20260829",
+  "researcher_id": "tu",
+  "decided_at": "2026-08-29T01:29:54Z",
+  "sheet_revision": "Use cases!A:B@sha256:91a20743e933fdc79140875ffa175bb83575f975dde77697fa89d30942803e7c",
+  "audit_design": {
+    "protocol": "matched",
+    "fixed_auditor": null
+  },
+  "use_cases": [
+    {
+      "uc_id": "UC-01",
+      "ordered_br_ids": [
+        "BR-REG-01",
+        "BR-REG-02",
+        "BR-REG-03",
+        "BR-REG-04",
+        "BR-REG-05",
+        "BR-REG-06",
+        "BR-REG-07",
+        "BR-REG-08",
+        "BR-REG-09",
+        "BR-REG-10",
+        "BR-REG-11"
+      ],
+      "business_rule_baseline": "docs/02-construction/implementation/UC-01/business-rule-baseline.json"
+    }
+  ],
+  "runs": [
+    {
+      "run_id": "RQ3-SOL-MEDIUM-R1-UC01",
+      "uc_id": "UC-01",
+      "prompt_variant": "rq3",
+      "requested_label": "Sol Medium",
+      "requested_model_id": "gpt-5.6-sol",
+      "requested_reasoning_effort": "medium",
+      "requested_reasoning_mode": "standard",
+      "replicate_index": 1,
+      "run_order": 1,
+      "auditor_assignment": "same-as-generation"
+    }
+  ]
+}

@@ -1,11 +1,11 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-08-28T05:18:30.4805658Z",
-  "repository_revision": "212f2e3e99f6f7517a9433a64e657fb713c0187f",
+  "observed_at": "2026-08-29T01:16:53Z",
+  "repository_revision": "e0d3b66821645038644f2f2f5e7c81387cc57d9e",
   "docker": {
-    "cli": "29.2.1",
-    "compose": "5.0.2",
-    "daemon": "29.2.1"
+    "cli": "29.6.1",
+    "compose": "5.3.0",
+    "daemon": "29.6.1"
   },
   "configuration": {
     "env_present": true,
@@ -14,9 +14,9 @@
   },
   "services": {
     "database": "running and healthy",
-    "backend": "running and healthy on loopback port 3000",
-    "frontend": "running and healthy on host port 8080; /register reachable with HTTP 200"
+    "backend": "running and healthy on loopback port 3001; /api/health reachable with HTTP 200",
+    "frontend": "running and healthy on host port 8081; root and proxied /api/health reachable with HTTP 200"
   },
   "status": "PASS",
-  "next_action": "Open the generated registration page at http://localhost:8080/register; port 8000 serves the separate Security vibe coding workbench."
+  "next_action": "Open the application at http://localhost:8081."
 }

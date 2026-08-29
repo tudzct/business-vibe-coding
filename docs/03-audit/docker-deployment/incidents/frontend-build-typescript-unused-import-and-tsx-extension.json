@@ -1,0 +1,26 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260829-001",
+  "observed_at": "2026-08-29T01:16:53Z",
+  "layer": "frontend-build",
+  "fingerprint": "frontend-build-typescript-unused-import-and-tsx-extension",
+  "symptom": "The restored frontend source failed its production build with TS6133 and TS5097.",
+  "evidence": "The bounded build output identified an unused React hook import and a .tsx extension in an application import.",
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "The restored source did not satisfy the committed strict TypeScript and Vite configuration."
+  },
+  "actions": [
+    "Removed the unused useEffect import.",
+    "Changed the App import to extensionless ESM resolution.",
+    "Rebuilt the frontend image."
+  ],
+  "files_changed": [
+    "finalsource/fe/src/hooks/useLocalStorage.ts",
+    "finalsource/fe/src/main.tsx"
+  ],
+  "commands_rerun": ["compose-build-frontend"],
+  "outcome": "resolved",
+  "reusable_resolution": "Keep React imports used and use extensionless local TypeScript imports under the committed Vite configuration.",
+  "prevention": "Validate the sanitized source baseline with the permitted frontend production build before freezing it."
+}

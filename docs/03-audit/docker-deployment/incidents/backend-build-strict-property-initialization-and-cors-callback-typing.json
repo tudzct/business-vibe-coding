@@ -1,0 +1,31 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260829-002",
+  "observed_at": "2026-08-29T01:16:53Z",
+  "layer": "backend-build",
+  "fingerprint": "backend-build-strict-property-initialization-and-cors-callback-typing",
+  "symptom": "The restored backend source failed its production build with strict property initialization and implicit-any callback diagnostics.",
+  "evidence": "The bounded build reported ORM-managed entity properties without definite-assignment declarations and two untyped CORS callback parameters.",
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "The restored entities and CORS options did not satisfy the committed strict TypeScript configuration."
+  },
+  "actions": [
+    "Added definite-assignment declarations to ORM-managed entity properties without changing schema metadata.",
+    "Contextually typed the CORS configuration through Nest CorsOptions.",
+    "Rebuilt the backend image."
+  ],
+  "files_changed": [
+    "finalsource/be/src/main.ts",
+    "finalsource/be/src/modules/account/account.entity.ts",
+    "finalsource/be/src/modules/bill/bill.entity.ts",
+    "finalsource/be/src/modules/category/category.entity.ts",
+    "finalsource/be/src/modules/goal/goal.entity.ts",
+    "finalsource/be/src/modules/transaction/transaction.entity.ts",
+    "finalsource/be/src/modules/user/user.entity.ts"
+  ],
+  "commands_rerun": ["compose-build-backend"],
+  "outcome": "resolved",
+  "reusable_resolution": "Represent framework-hydrated TypeORM properties explicitly and type CORS options without weakening compiler strictness.",
+  "prevention": "Validate the sanitized backend baseline with the permitted production build before freezing it."
+}
