@@ -1,0 +1,32 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260829-004",
+  "observed_at": "2026-08-29T02:32:37Z",
+  "layer": "backend-build",
+  "fingerprint": "backend-build-bcrypt-missing-typescript-declaration",
+  "symptom": "The current backend image fails TypeScript compilation before a runtime image is produced.",
+  "evidence": {
+    "service": "backend",
+    "stage": "Dockerfile npm run build",
+    "primary_error": "TS7016: no declaration file for module bcrypt at finalsource/be/src/modules/auth/auth.service.ts:8:25",
+    "frontend_control": "The frontend image built successfully from the same first-pass source revision.",
+    "stale_runtime_excluded": "Existing healthy containers predate the current source revision and are not runtime evidence."
+  },
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "The backend imports bcrypt, while the pinned dependency tree supplies no TypeScript declaration for that module."
+  },
+  "actions_attempted": [
+    "Ran the authorized Compose build/start command for all services.",
+    "Built the frontend image independently after the combined build canceled its stage.",
+    "Inspected Compose service state and excluded pre-existing containers as stale evidence."
+  ],
+  "files_changed": [],
+  "commands_rerun": [
+    "docker compose --env-file finalsource/.env -f finalsource/compose.yaml build frontend",
+    "docker compose --env-file finalsource/.env -f finalsource/compose.yaml ps --format json"
+  ],
+  "outcome": "unresolved",
+  "resolution": "Not applied because the RQ3 initial assessment is frozen and the mandatory researcher hold precedes any repair sub-prompt.",
+  "prevention": "Run the backend production build immediately after first-pass freeze and record missing ambient module declarations as a technical repair candidate."
+}

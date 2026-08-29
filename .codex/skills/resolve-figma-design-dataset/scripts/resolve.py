@@ -26,13 +26,7 @@ def select_dataset(version: Optional[str]) -> Path:
         if not (candidate / "manifest.json").is_file():
             raise FileNotFoundError(f"Dataset version không tồn tại hoặc thiếu manifest: {version}")
         return candidate
-    candidates = sorted(
-        path for path in DATASET_ROOT.iterdir()
-        if path.is_dir() and (path / "manifest.json").is_file()
-    )
-    if not candidates:
-        raise FileNotFoundError("Chưa có full offline Figma dataset")
-    return candidates[-1]
+    raise FileNotFoundError("Cần chỉ định dataset đã kích hoạt bằng --dataset-version; không tự chọn version mới nhất")
 
 
 def normalize_uc(value: str) -> str:
@@ -50,15 +44,41 @@ def digest(path: Path) -> str:
     return value.hexdigest()
 
 
+def crlf_digest(path: Path) -> Optional[str]:
+    try:
+        data = path.read_bytes()
+        text = data.decode("utf-8")
+    except (OSError, UnicodeDecodeError):
+        return None
+    canonical_lf = text.replace("\r\n", "\n").replace("\r", "\n")
+    canonical_crlf = canonical_lf.replace("\n", "\r\n").encode("utf-8")
+    return hashlib.sha256(canonical_crlf).hexdigest()
+
+
 def verify(dataset: Path) -> list[dict]:
     results = []
     for line in (dataset / "checksums.sha256").read_text(encoding="utf-8").splitlines():
         if not line.strip():
             continue
         expected, relative = line.split("  ", 1)
-        target = dataset / relative
+        # Checksum ledgers may be created on Windows and retained as immutable
+        # evidence. Resolve their separators portably without rewriting them.
+        normalized_relative = relative.replace("\\", "/")
+        relative_path = Path(normalized_relative)
+        if relative_path.is_absolute() or ".." in relative_path.parts:
+            raise ValueError(f"Đường dẫn checksum không an toàn: {relative}")
+        target = dataset.joinpath(*relative_path.parts)
         actual = digest(target) if target.is_file() else None
-        results.append({"path": relative, "ok": actual == expected, "expected": expected, "actual": actual})
+        matched_via = "raw-bytes" if actual == expected else None
+        if target.is_file() and matched_via is None and crlf_digest(target) == expected:
+            matched_via = "canonical-crlf"
+        results.append({
+            "path": normalized_relative,
+            "ok": matched_via is not None,
+            "expected": expected,
+            "actual": actual,
+            "matched_via": matched_via,
+        })
     return results
 
 
@@ -74,7 +94,11 @@ def main() -> int:
         print(json.dumps({"status": "no-dataset", "error": str(error)}, ensure_ascii=False), file=sys.stderr)
         return 4
     manifest = json.loads((dataset / "manifest.json").read_text(encoding="utf-8"))
-    checks = verify(dataset)
+    try:
+        checks = verify(dataset)
+    except (ValueError, OSError) as error:
+        print(json.dumps({"status": "invalid-checksum-ledger", "error": str(error)}, ensure_ascii=False), file=sys.stderr)
+        return 2
     integrity_ok = all(item["ok"] for item in checks)
     if args.validate_all:
         print(json.dumps({"dataset_id": manifest["dataset_id"], "integrity_ok": integrity_ok, "files": checks}, ensure_ascii=False, indent=2))

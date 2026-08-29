@@ -1,0 +1,30 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-08-29T02:32:37Z",
+  "mode": "run",
+  "source_revision": "sha256:77649a5e1ad1249aae838159cd1cdcdb494b0baf7838b7ba8c21dc5fab499b56",
+  "commands": [
+    {
+      "id": "compose-up-build-detached",
+      "exit_code": 1,
+      "result": "backend image build failed with TS7016 for bcrypt declarations"
+    },
+    {
+      "id": "compose-build-frontend",
+      "exit_code": 0,
+      "result": "frontend production image built successfully"
+    },
+    {
+      "id": "compose-ps-json",
+      "exit_code": 0,
+      "result": "pre-existing healthy containers detected and excluded as stale evidence"
+    }
+  ],
+  "docker": {
+    "cli": "29.6.1",
+    "compose": "5.3.0",
+    "daemon": "29.6.1"
+  },
+  "status": "BLOCKED",
+  "incident": "DEP-20260829-004"
+}

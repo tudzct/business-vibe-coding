@@ -1,0 +1,361 @@
+{
+  "run_id": "RQ3-SOL-MEDIUM-R1-UC01",
+  "run_status": "rq3_hold",
+  "hold_reason": "Initial RQ3 assessment is frozen; researcher authorization is required before any repair sub-prompt.",
+  "experiment_configuration": {
+    "configuration_id": "CFG-UC01-RQ3-SOL-MEDIUM-R1-20260829",
+    "comparison_group_id": "CG-RQ3-SOL-MEDIUM-16UC-20260829",
+    "researcher_id": "tu",
+    "artifact": "docs/05-experiments/configurations/CFG-UC01-RQ3-SOL-MEDIUM-R1-20260829.json",
+    "checksum": "sha256:1fea615be553267727f8a57305a58c69aacde6492c29a89b7090dc4c77445450",
+    "run_activation": "docs/02-construction/implementation/UC-01/runs/RQ3-SOL-MEDIUM-R1-UC01/run-activation.json"
+  },
+  "uc_id": "UC-01",
+  "uc_name": "Register an Account",
+  "prompt_variant": "rq3",
+  "replicate_index": 1,
+  "run_order": 1,
+  "audit_protocol": "matched",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "codex_client_version": "codex-cli 0.149.1",
+    "unavailable_reason": "Effective model and snapshot metadata were not exposed to repository tools."
+  },
+  "audit_model": {
+    "assignment": "same-as-generation",
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "unavailable_reason": "Effective model and snapshot metadata were not exposed to repository tools."
+  },
+  "timing_wall_clock": {
+    "initial_started_at": "2026-08-29T09:17:02.379+07:00",
+    "initial_started_epoch_ms": 1787969822379,
+    "initial_ended_at": "2026-08-29T09:29:43.354+07:00",
+    "initial_ended_epoch_ms": 1787970583355
+  },
+  "timing_seconds": {
+    "initial": 760.976,
+    "repairs": 0,
+    "total": 760.976
+  },
+  "tokens": {
+    "initial_total": 5806597,
+    "repair_total": 0,
+    "total": 5806597,
+    "telemetry_source": "/Users/ldt/.codex/sessions/2026/08/29/rollout-2026-08-29T08-45-06-01a04b31-2212-7980-a5cc-9e20d13e76aa.jsonl",
+    "details": {
+      "initial": {
+        "turn_id": 4,
+        "input": 99263,
+        "cache_read": 5675520,
+        "total_input": 5774783,
+        "output": 31814,
+        "reasoning": 7651,
+        "cost_usd": 4.2885,
+        "duration_seconds": 1562.918
+      },
+      "repairs": {
+        "count": 0,
+        "total_tokens": 0,
+        "cost_usd": 0
+      }
+    }
+  },
+  "validation": {
+    "host_backend_build": {
+      "status": "not_run",
+      "reason": "Host node_modules is absent; native host execution is not an accepted runtime fallback."
+    },
+    "host_frontend_build": {
+      "status": "not_run",
+      "reason": "Host node_modules is absent; native host execution is not an accepted runtime fallback."
+    },
+    "docker_backend_build": {
+      "status": "failed",
+      "command": "docker compose --env-file finalsource/.env -f finalsource/compose.yaml up --build -d",
+      "evidence": "TypeScript TS7016 at finalsource/be/src/modules/auth/auth.service.ts:8:25: no declaration file for bcrypt."
+    },
+    "docker_frontend_build": {
+      "status": "passed",
+      "command": "docker compose --env-file finalsource/.env -f finalsource/compose.yaml build frontend"
+    },
+    "docker_runtime": {
+      "status": "not_evaluable",
+      "reason": "The current backend image did not build. Running containers predate this source revision and were excluded as stale evidence."
+    }
+  },
+  "business_rules": {
+    "baseline": "docs/02-construction/implementation/UC-01/business-rule-baseline.json",
+    "source_revision": "sha256:77649a5e1ad1249aae838159cd1cdcdb494b0baf7838b7ba8c21dc5fab499b56",
+    "ordered_br_ids": [
+      "BR-REG-01",
+      "BR-REG-02",
+      "BR-REG-03",
+      "BR-REG-04",
+      "BR-REG-05",
+      "BR-REG-06",
+      "BR-REG-07",
+      "BR-REG-08",
+      "BR-REG-09",
+      "BR-REG-10",
+      "BR-REG-11"
+    ],
+    "initial": {
+      "total": 11,
+      "met": 6,
+      "unmet": 5,
+      "not_evaluable": 0,
+      "requirements": [
+        {
+          "br_id": "BR-REG-01",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx:40",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts:3",
+            "finalsource/be/src/modules/auth/auth.service.ts:27"
+          ],
+          "rationale": "Both layers require a name and the service normalizes it, but neither layer enforces the complete 4-25 Unicode-letter and single-space pattern."
+        },
+        {
+          "br_id": "BR-REG-02",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx:44",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts:8",
+            "finalsource/be/src/modules/auth/auth.service.ts:28"
+          ],
+          "rationale": "Email is required, format-checked, trimmed and lowercased, but neither validation layer enforces the normalized 255-character maximum."
+        },
+        {
+          "br_id": "BR-REG-03",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts:29",
+            "finalsource/be/src/modules/user/user.entity.ts:21"
+          ],
+          "rationale": "The service checks the normalized email and the existing TypeORM mapping marks the stored email unique."
+        },
+        {
+          "br_id": "BR-REG-04",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx:49",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts:15"
+          ],
+          "rationale": "The first pass requires only a non-empty password and omits the required length, whitespace and character-composition checks."
+        },
+        {
+          "br_id": "BR-REG-05",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx:49",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts:15"
+          ],
+          "rationale": "No frontend or backend validation limits passwords to the permitted character set."
+        },
+        {
+          "br_id": "BR-REG-06",
+          "status": "met",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx:50",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts:20",
+            "finalsource/be/src/modules/auth/auth.service.ts:23"
+          ],
+          "rationale": "Both layers require confirmPassword and reject mismatched passwords before persistence."
+        },
+        {
+          "br_id": "BR-REG-07",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts:42",
+            "finalsource/be/src/modules/user/user.entity.ts:13",
+            "finalsource/be/src/modules/auth/dto/register-response.dto.ts:1"
+          ],
+          "rationale": "confirmPassword is used only for comparison and is absent from the persistence entity, response DTO and application logging paths."
+        },
+        {
+          "br_id": "BR-REG-08",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/main.ts:11",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts:3",
+            "finalsource/be/src/modules/auth/auth.service.ts:23"
+          ],
+          "rationale": "Implemented checks run before save, but requests invalid under the missing name, email-length and password constraints can reach persistence."
+        },
+        {
+          "br_id": "BR-REG-09",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts:36",
+            "finalsource/be/src/modules/auth/auth.service.ts:42",
+            "finalsource/be/src/modules/auth/dto/register-response.dto.ts:1"
+          ],
+          "rationale": "The service hashes with bcrypt cost 10 before save, persists only the generated hash, and excludes plaintext and stored password fields from the response."
+        },
+        {
+          "br_id": "BR-REG-10",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/user/user.entity.ts:21",
+            "finalsource/be/src/modules/auth/auth.service.ts:47",
+            "finalsource/be/src/modules/auth/auth.service.ts:67"
+          ],
+          "rationale": "Database uniqueness is present, duplicate query failures are mapped to HTTP 409, and JWT issuance occurs only after a successful save."
+        },
+        {
+          "br_id": "BR-REG-11",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts:47",
+            "finalsource/be/src/modules/auth/auth.service.ts:53",
+            "finalsource/fe/src/context/AuthContext.tsx:67",
+            "finalsource/fe/src/components/auth/SignUpForm.tsx:72"
+          ],
+          "rationale": "Source persists before signing, returns a non-empty message, token and mapped user, then stores the validated session and navigates home; failures bypass those actions."
+        }
+      ],
+      "acceptance_percent": 54.55
+    },
+    "final": {
+      "total": 11,
+      "met": 6,
+      "unmet": 5,
+      "not_evaluable": 0,
+      "requirements": [
+        {
+          "br_id": "BR-REG-01",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx:40",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts:3",
+            "finalsource/be/src/modules/auth/auth.service.ts:27"
+          ],
+          "rationale": "Both layers require a name and the service normalizes it, but neither layer enforces the complete 4-25 Unicode-letter and single-space pattern."
+        },
+        {
+          "br_id": "BR-REG-02",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx:44",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts:8",
+            "finalsource/be/src/modules/auth/auth.service.ts:28"
+          ],
+          "rationale": "Email is required, format-checked, trimmed and lowercased, but neither validation layer enforces the normalized 255-character maximum."
+        },
+        {
+          "br_id": "BR-REG-03",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts:29",
+            "finalsource/be/src/modules/user/user.entity.ts:21"
+          ],
+          "rationale": "The service checks the normalized email and the existing TypeORM mapping marks the stored email unique."
+        },
+        {
+          "br_id": "BR-REG-04",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx:49",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts:15"
+          ],
+          "rationale": "The first pass requires only a non-empty password and omits the required length, whitespace and character-composition checks."
+        },
+        {
+          "br_id": "BR-REG-05",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx:49",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts:15"
+          ],
+          "rationale": "No frontend or backend validation limits passwords to the permitted character set."
+        },
+        {
+          "br_id": "BR-REG-06",
+          "status": "met",
+          "evidence": [
+            "finalsource/fe/src/components/auth/SignUpForm.tsx:50",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts:20",
+            "finalsource/be/src/modules/auth/auth.service.ts:23"
+          ],
+          "rationale": "Both layers require confirmPassword and reject mismatched passwords before persistence."
+        },
+        {
+          "br_id": "BR-REG-07",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts:42",
+            "finalsource/be/src/modules/user/user.entity.ts:13",
+            "finalsource/be/src/modules/auth/dto/register-response.dto.ts:1"
+          ],
+          "rationale": "confirmPassword is used only for comparison and is absent from the persistence entity, response DTO and application logging paths."
+        },
+        {
+          "br_id": "BR-REG-08",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/main.ts:11",
+            "finalsource/be/src/modules/auth/dto/register.dto.ts:3",
+            "finalsource/be/src/modules/auth/auth.service.ts:23"
+          ],
+          "rationale": "Implemented checks run before save, but requests invalid under the missing name, email-length and password constraints can reach persistence."
+        },
+        {
+          "br_id": "BR-REG-09",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts:36",
+            "finalsource/be/src/modules/auth/auth.service.ts:42",
+            "finalsource/be/src/modules/auth/dto/register-response.dto.ts:1"
+          ],
+          "rationale": "The service hashes with bcrypt cost 10 before save, persists only the generated hash, and excludes plaintext and stored password fields from the response."
+        },
+        {
+          "br_id": "BR-REG-10",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/user/user.entity.ts:21",
+            "finalsource/be/src/modules/auth/auth.service.ts:47",
+            "finalsource/be/src/modules/auth/auth.service.ts:67"
+          ],
+          "rationale": "Database uniqueness is present, duplicate query failures are mapped to HTTP 409, and JWT issuance occurs only after a successful save."
+        },
+        {
+          "br_id": "BR-REG-11",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts:47",
+            "finalsource/be/src/modules/auth/auth.service.ts:53",
+            "finalsource/fe/src/context/AuthContext.tsx:67",
+            "finalsource/fe/src/components/auth/SignUpForm.tsx:72"
+          ],
+          "rationale": "Source persists before signing, returns a non-empty message, token and mapped user, then stores the validated session and navigates home; failures bypass those actions."
+        }
+      ],
+      "acceptance_percent": 54.55
+    }
+  },
+  "repairs": [],
+  "manual_estimates_minutes": [],
+  "ui_accuracy_percent": 100,
+  "flow_accuracy_percent": 75,
+  "complexity": {
+    "actors": 1,
+    "main_flow_steps": 12,
+    "alternate_exception_flows": 3,
+    "data_entities": 1,
+    "integrations": 3,
+    "business_rules": 11,
+    "ui_states": 6
+  },
+  "ui_accuracy_reason": "Source maps every visible structural element in frozen frame 137:8071 and adds the UC-required confirmPassword control; deterministic rendered comparison is unavailable because the current backend image did not build.",
+  "flow_accuracy_reason": "Source covers trigger, request, persistence, response, session and exception paths, but five validation-related rule outcomes are unmet and current-image end-to-end runtime observation is unavailable.",
+  "all_sub_prompt_count": 0
+}

@@ -5,7 +5,7 @@ The method has exactly two phases. Frozen inputs, approved prompts and first-pas
 ## Phase 1
 
 1. Select one frozen `docs/01-inception/use-cases/uc-*.md` projection and the `full` or `rq3` prompt variant recorded by the Confirmed experiment configuration.
-2. Verify the UC checksum and recorded Sheet ID, tab, range and retrieval time. Do not refresh connected sources unless the researcher explicitly requests it.
+2. Verify the UC checksum and recorded Sheet ID, tab, range and retrieval time. Compare raw bytes first; if only line endings differ, require an exact canonical-LF or canonical-CRLF checksum match and retain `docs/02-construction/implementation/<UC-ID>/source-checksum-normalization.json`. Do not rewrite the frozen UC or refresh connected sources for a line-ending-only match.
 3. Resolve every associated BR in source order. Create `docs/02-construction/business-rules/<UC-ID>-business-rules.{json,md}` and freeze `docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json`; do not select, omit or add rules.
 4. Resolve referenced API and checksum-valid frozen Figma evidence when applicable. Do not infer a missing or ambiguous mapping.
 5. Generate one Draft prompt:

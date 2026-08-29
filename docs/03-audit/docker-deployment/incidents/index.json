@@ -36,6 +36,12 @@
       "fingerprint": "backend-healthcheck-missing-api-health-route",
       "path": "docs/03-audit/docker-deployment/incidents/backend-healthcheck-missing-api-health-route.json",
       "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260829-004",
+      "fingerprint": "backend-build-bcrypt-missing-typescript-declaration",
+      "path": "docs/03-audit/docker-deployment/incidents/backend-build-bcrypt-missing-typescript-declaration.json",
+      "outcome": "unresolved"
     }
   ]
 }

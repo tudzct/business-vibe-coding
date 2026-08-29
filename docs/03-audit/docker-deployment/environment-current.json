@@ -1,7 +1,8 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-08-29T01:16:53Z",
-  "repository_revision": "e0d3b66821645038644f2f2f5e7c81387cc57d9e",
+  "observed_at": "2026-08-29T02:32:37Z",
+  "repository_revision": "6295aed",
+  "source_revision": "sha256:77649a5e1ad1249aae838159cd1cdcdb494b0baf7838b7ba8c21dc5fab499b56",
   "docker": {
     "cli": "29.6.1",
     "compose": "5.3.0",
@@ -9,14 +10,16 @@
   },
   "configuration": {
     "env_present": true,
-    "env_valid": true,
+    "env_ignored": true,
+    "env_tracked": false,
     "compose_valid": true
   },
   "services": {
-    "database": "running and healthy",
-    "backend": "running and healthy on loopback port 3001; /api/health reachable with HTTP 200",
-    "frontend": "running and healthy on host port 8081; root and proxied /api/health reachable with HTTP 200"
+    "database": "pre-existing container running and healthy",
+    "backend": "current image build failed; pre-existing healthy container is stale and excluded",
+    "frontend": "current image build passed; pre-existing healthy container is stale and excluded"
   },
-  "status": "PASS",
-  "next_action": "Open the application at http://localhost:8081."
+  "status": "BLOCKED",
+  "blocking_incident": "DEP-20260829-004",
+  "next_action": "At the RQ3 hold, obtain researcher authorization before repairing the missing bcrypt TypeScript declaration."
 }

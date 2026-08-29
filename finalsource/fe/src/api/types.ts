@@ -1,9 +1,15 @@
 // Định nghĩa các type cho API response
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean
   message: string
   data?: T
+}
+
+export interface AuthUser {
+  id: number
+  fullName: string
+  email: string
 }
 
 export interface User {
