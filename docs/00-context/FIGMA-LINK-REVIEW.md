@@ -23,7 +23,7 @@ After the review is complete, Codex will:
 | UC-002 | Log In | `docs/01-inception/use-cases/uc-02-login.md` | `BTSOvEnU2X3CNrNvSxX9Ry` | `137:7477` | 0 (external mapping) | `https://www.figma.com/design/BTSOvEnU2X3CNrNvSxX9Ry/Finebank---Financial-Management-Dashboard-UI-Kits--Community---VibeTesting-?node-id=137-7477&t=LaQ5xK7Lt3sAWQLV-0` | Previously researcher-confirmed Login mapping, retargeted to current UC-02; capture the node into a new frozen dataset before frontend generation or UI audit. |
 | UC-003 | View the list of transactions | `docs/01-inception/use-cases/uc-03-view-transaction-list.md` | `7lyW3RmfX2jUM2VI6XdHK9` | `66:5474` | 2 | `https://www.figma.com/design/7lyW3RmfX2jUM2VI6XdHK9/Finebank---Financial-Management-Dashboard-UI-Kits--Community---Copy-?node-id=66-5474&t=JIvgR8yO5kRKVT0b-0` | Standard URL has been confirmed by the researcher. |
 | UC-004 | Add a new transaction | `docs/01-inception/use-cases/uc-04-create-new-transaction.md` | — | — | 0 | `NOT_APPLICABLE` | Source UC does not contain a Figma URL. |
-| UC-005 | View list of bank accounts | `docs/01-inception/use-cases/uc-05-view-user-account-list.md` | `7lyW3RmfX2jUM2VI6XdHK9` | `66:5320` | 2 | `https://www.figma.com/design/7lyW3RmfX2jUM2VI6XdHK9/Finebank---Financial-Management-Dashboard-UI-Kits--Community---Copy-?node-id=66-5320&t=JIvgR8yO5kRKVT0b-0` | Standard URL has been confirmed by the researcher. |
+| UC-005 | View list of bank accounts | `docs/01-inception/use-cases/uc-05-view-user-account-list.md` | `BTSOvEnU2X3CNrNvSxX9Ry` | `2883:1676` | 2 | `https://www.figma.com/design/BTSOvEnU2X3CNrNvSxX9Ry/Finebank---Financial-Management-Dashboard-UI-Kits--Community---VibeTesting-?node-id=2883-1676&t=LaQ5xK7Lt3sAWQLV-0` | Researcher-authorized correction for grouped UC-05 frames. |
 | UC-006 | Add a new account | `docs/01-inception/use-cases/uc-06-add-new-account.md` | — | — | 0 | `NOT_APPLICABLE` | Source UC does not contain a Figma URL. |
 | UC-007 | Edit account | `docs/01-inception/use-cases/uc-07-edit-account-information.md` | — | — | 0 | `NOT_APPLICABLE` | Source UC does not contain a Figma URL. |
 | UC-008 | Delete bank account | `docs/01-inception/use-cases/uc-08-delete-account-and-related-transactions.md` | — | — | 0 | `NOT_APPLICABLE` | Source UC does not contain a Figma URL. |
@@ -61,8 +61,8 @@ The URLs below are the standard replacement URLs for each exact occurrence confi
 
 ### UC-005
 
-- Line 48: `https://www.figma.com/design/7lyW3RmfX2jUM2VI6XdHK9/Finebank---Financial-Management-Dashboard-UI-Kits--Community---Copy-?node-id=66-5320&t=JIvgR8yO5kRKVT0b-0`
-- Line 139: `https://www.figma.com/design/7lyW3RmfX2jUM2VI6XdHK9/Finebank---Financial-Management-Dashboard-UI-Kits--Community---Copy-?node-id=66-5320&t=JIvgR8yO5kRKVT0b-0`
+- Line 48: `https://www.figma.com/design/BTSOvEnU2X3CNrNvSxX9Ry/Finebank---Financial-Management-Dashboard-UI-Kits--Community---VibeTesting-?node-id=2883-1676&t=LaQ5xK7Lt3sAWQLV-0`
+- Line 139: `https://www.figma.com/design/BTSOvEnU2X3CNrNvSxX9Ry/Finebank---Financial-Management-Dashboard-UI-Kits--Community---VibeTesting-?node-id=2883-1676&t=LaQ5xK7Lt3sAWQLV-0`
 
 ### UC-006
 

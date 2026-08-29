@@ -18,7 +18,7 @@ Use the connected Google Drive/Sheets interface. Never scrape, reconstruct or gu
 
 ## Figma and API sources
 
-Use them only where the Sheet references them. Figma mappings come only from `docs/00-context/FIGMA-LINK-REVIEW.md`; a frozen dataset is required before use.
+Use them only where the Sheet references them. API contracts are explicitly defined as markdown files in `docs/01-inception/api-contracts/`. Figma mappings come only from `docs/00-context/FIGMA-LINK-REVIEW.md`; a frozen dataset is required before use.
 
 - When creating or refreshing a dataset, read every file key, node ID and URL only from `docs/00-context/FIGMA-LINK-REVIEW.md`. The links inside immutable UC files are provenance-only and may be inaccessible; do not call Figma with them.
 - Use `resolve-figma-design-dataset` whenever a prompt or UC contains a Figma URL, file key, frame name, node ID or selection ID.
