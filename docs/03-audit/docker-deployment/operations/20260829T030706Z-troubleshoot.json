@@ -1,0 +1,32 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-08-29T03:07:06Z",
+  "mode": "troubleshoot",
+  "source_revision": "sha256:b6f0b95196c7d6538fd416c54ccc5f285068a0b1f215dd5a48b7be9fcc55115c",
+  "commands": [
+    {
+      "id": "compose-up-build-frontend",
+      "exit_code": 0,
+      "result": "current frontend production image built and restarted"
+    },
+    {
+      "id": "compose-ps",
+      "exit_code": 0,
+      "result": "database, backend and frontend healthy"
+    },
+    {
+      "id": "bounded-frontend-proxy-observation",
+      "exit_code": 0,
+      "result": "frontend /register returned 200 and same-origin POST /api/auth/register reached the backend normalized 400 envelope"
+    }
+  ],
+  "docker": {
+    "cli": "29.6.1",
+    "compose": "5.3.0",
+    "daemon": "29.6.1"
+  },
+  "status": "READY",
+  "incidents_resolved": [
+    "DEP-20260829-006"
+  ]
+}

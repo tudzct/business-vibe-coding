@@ -20,6 +20,9 @@ const initialValues: FormValues = {
 }
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const fullNamePattern = /^\p{L}+(?: \p{L}+)*$/u
+const allowedPasswordPattern = /^[A-Za-z0-9!@#$%^&*(){}_+=\[\],./<>?\\|:;\-]+$/
+const specialCharacterPattern = /[!@#$%^&*(){}\-_+=\[\],./<>?\\|:;]/
 
 const SignUpForm = () => {
   const navigate = useNavigate()
@@ -39,14 +42,37 @@ const SignUpForm = () => {
 
   const validate = (): FieldErrors => {
     const nextErrors: FieldErrors = {}
+    const normalizedFullName = values.fullName.normalize('NFC').trim()
+    const normalizedEmail = values.email.trim().toLowerCase()
 
-    if (!values.fullName.trim()) nextErrors.fullName = 'Full name is required'
-    if (!values.email.trim()) {
+    if (!normalizedFullName) {
+      nextErrors.fullName = 'Full name is required'
+    } else if (normalizedFullName.length < 4 || normalizedFullName.length > 25) {
+      nextErrors.fullName = 'Full name must be between 4 and 25 characters'
+    } else if (!fullNamePattern.test(normalizedFullName)) {
+      nextErrors.fullName = 'Use letters separated by single spaces only'
+    }
+    if (!normalizedEmail) {
       nextErrors.email = 'Email address is required'
-    } else if (!emailPattern.test(values.email.trim())) {
+    } else if (normalizedEmail.length > 255) {
+      nextErrors.email = 'Email address must be 255 characters or fewer'
+    } else if (!emailPattern.test(normalizedEmail)) {
       nextErrors.email = 'Enter a valid email address'
     }
-    if (!values.password) nextErrors.password = 'Password is required'
+    if (!values.password) {
+      nextErrors.password = 'Password is required'
+    } else if (values.password.length < 8 || values.password.length > 64) {
+      nextErrors.password = 'Password must be between 8 and 64 characters'
+    } else if (!allowedPasswordPattern.test(values.password)) {
+      nextErrors.password = 'Password contains a character that is not permitted'
+    } else if (
+      !/[a-z]/.test(values.password) ||
+      !/[A-Z]/.test(values.password) ||
+      !/[0-9]/.test(values.password) ||
+      !specialCharacterPattern.test(values.password)
+    ) {
+      nextErrors.password = 'Use uppercase, lowercase, number, and special characters'
+    }
     if (!values.confirmPassword) {
       nextErrors.confirmPassword = 'Password confirmation is required'
     } else if (values.confirmPassword !== values.password) {
@@ -70,7 +96,11 @@ const SignUpForm = () => {
     setFormError('')
 
     try {
-      await register(values)
+      await register({
+        ...values,
+        fullName: values.fullName.normalize('NFC').trim(),
+        email: values.email.trim().toLowerCase(),
+      })
       navigate('/')
     } catch (error: unknown) {
       setFormError(error instanceof Error ? error.message : 'Registration failed')
@@ -252,4 +282,3 @@ const PasswordField = ({ id, label, value, error, visible, onToggle, onChange }:
 )
 
 export default SignUpForm
-

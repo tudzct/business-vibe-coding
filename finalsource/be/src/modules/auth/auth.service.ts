@@ -43,14 +43,14 @@ export class AuthService {
       fullName,
       email,
       username,
-      password: passwordHash,
-      totalBalance: 0,
+      passwordHash,
+      totalBalance: '0.0000',
     });
 
     try {
       const savedUser = await this.users.save(user);
       const accessToken = await this.jwtService.signAsync({
-        sub: savedUser.userId,
+        sub: savedUser.id,
       });
 
       return {
@@ -59,7 +59,7 @@ export class AuthService {
         data: {
           accessToken,
           user: {
-            id: savedUser.userId,
+            id: savedUser.id,
             fullName: savedUser.fullName,
             email: savedUser.email,
           },

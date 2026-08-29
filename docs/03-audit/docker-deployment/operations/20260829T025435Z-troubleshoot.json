@@ -1,0 +1,45 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-08-29T02:54:35Z",
+  "mode": "troubleshoot",
+  "source_revision": "sha256:c8364f8a02970c77c1faeeb39e5a66412d536a3c9ec58315cd40c0548ebd8f65",
+  "commands": [
+    {
+      "id": "compose-build-backend-after-bcrypt-repair",
+      "exit_code": 0,
+      "result": "backend production image built successfully"
+    },
+    {
+      "id": "compose-build-backend-frontend-after-validation-repairs",
+      "exit_code": 0,
+      "result": "both production images built successfully after each bounded validation repair"
+    },
+    {
+      "id": "compose-up-current-images",
+      "exit_code": 0,
+      "result": "database, backend and frontend became healthy"
+    },
+    {
+      "id": "bounded-registration-observation-before-mapping-repair",
+      "exit_code": 0,
+      "result": "invalid input returned 400; valid input exposed the distinct Users table mapping fingerprint"
+    },
+    {
+      "id": "read-only-approved-schema-inspection",
+      "exit_code": 0,
+      "result": "approved migrated users table and constraints confirmed; no schema mutation required"
+    },
+    {
+      "id": "compose-up-after-source-mapping-repair",
+      "exit_code": 0,
+      "result": "current backend and frontend images healthy; invalid 400, valid success and duplicate 409 observed with sensitive fields sanitized"
+    }
+  ],
+  "docker": {
+    "cli": "29.6.1",
+    "compose": "5.3.0",
+    "daemon": "29.6.1"
+  },
+  "status": "READY",
+  "incidents_resolved": ["DEP-20260829-004", "DEP-20260829-005"]
+}

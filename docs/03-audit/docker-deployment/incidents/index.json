@@ -41,7 +41,19 @@
       "incident_id": "DEP-20260829-004",
       "fingerprint": "backend-build-bcrypt-missing-typescript-declaration",
       "path": "docs/03-audit/docker-deployment/incidents/backend-build-bcrypt-missing-typescript-declaration.json",
-      "outcome": "unresolved"
+      "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260829-005",
+      "fingerprint": "backend-runtime-user-entity-schema-mismatch",
+      "path": "docs/03-audit/docker-deployment/incidents/backend-runtime-user-entity-schema-mismatch.json",
+      "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260829-006",
+      "fingerprint": "frontend-runtime-api-base-url-unbound-port",
+      "path": "docs/03-audit/docker-deployment/incidents/frontend-runtime-api-base-url-unbound-port.json",
+      "outcome": "resolved"
     }
   ]
 }

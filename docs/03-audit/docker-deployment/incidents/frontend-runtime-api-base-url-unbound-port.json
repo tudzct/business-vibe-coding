@@ -1,0 +1,35 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260829-006",
+  "observed_at": "2026-08-29T03:05:30Z",
+  "layer": "frontend-proxy-network",
+  "fingerprint": "frontend-runtime-api-base-url-unbound-port",
+  "symptom": "Browser registration requests targeted localhost port 8000, where the active Compose stack exposes no service.",
+  "evidence": {
+    "client_default": "http://localhost:8000/api",
+    "active_frontend_host_port": 8081,
+    "active_backend_host_port": 3001,
+    "existing_proxy": "Nginx /api/ forwards to backend:3000"
+  },
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "The Axios fallback bypassed the existing same-origin frontend proxy and hardcoded an unrelated host port."
+  },
+  "actions_attempted": [
+    "Changed only the Axios default base URL to /api while preserving explicit VITE_API_BASE_URL overrides.",
+    "Rebuilt and restarted the current frontend image with Docker Compose.",
+    "Observed the frontend page and a sanitized invalid registration request through the Nginx proxy."
+  ],
+  "files_changed": [
+    "finalsource/fe/src/api/axiosInstance.ts"
+  ],
+  "commands_rerun": [
+    "docker compose --env-file finalsource/.env -f finalsource/compose.yaml up --build -d frontend",
+    "docker compose --env-file finalsource/.env -f finalsource/compose.yaml ps",
+    "docker compose --env-file finalsource/.env -f finalsource/compose.yaml exec -T backend node -e <sanitized bounded proxy observation>"
+  ],
+  "outcome": "resolved",
+  "resolved_at": "2026-08-29T03:07:06Z",
+  "resolution": "The browser client now uses same-origin /api; current frontend /register returned 200 and proxied registration reached the backend error envelope.",
+  "prevention": "For the Docker runtime, use relative same-origin API paths when Nginx owns the browser-facing reverse proxy; avoid hardcoded host ports in client fallbacks."
+}

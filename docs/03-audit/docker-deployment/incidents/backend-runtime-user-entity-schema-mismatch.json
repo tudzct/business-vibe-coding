@@ -1,0 +1,37 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260829-005",
+  "observed_at": "2026-08-29T02:52:12Z",
+  "layer": "backend-runtime",
+  "fingerprint": "backend-runtime-user-entity-schema-mismatch",
+  "symptom": "Valid registration returned HTTP 500 before persistence.",
+  "evidence": {
+    "primary_error": "Table vibe_business.Users does not exist",
+    "source_mapping": "The inherited entity targeted Users.user_id and Users.password.",
+    "database_mapping": "Read-only inspection confirmed the approved migrated table users with id and password_hash.",
+    "schema_mutation": "none"
+  },
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "The inherited entity's case-sensitive table name and column mappings did not match the already-approved deployed schema."
+  },
+  "actions_attempted": [
+    "Inspected sanitized backend logs.",
+    "Inspected the approved UC-01 schema artifact and current table metadata without changing the database.",
+    "Aligned only the User entity and registration service property mappings.",
+    "Rebuilt and restarted current backend/frontend images and repeated bounded registration observations."
+  ],
+  "files_changed": [
+    "finalsource/be/src/modules/user/user.entity.ts",
+    "finalsource/be/src/modules/auth/auth.service.ts"
+  ],
+  "commands_rerun": [
+    "docker compose --env-file finalsource/.env -f finalsource/compose.yaml up --build -d backend frontend",
+    "docker compose --env-file finalsource/.env -f finalsource/compose.yaml exec -T backend node -e <sanitized bounded observation>",
+    "docker compose --env-file finalsource/.env -f finalsource/compose.yaml ps"
+  ],
+  "outcome": "resolved",
+  "resolved_at": "2026-08-29T02:54:35Z",
+  "resolution": "Current-image registration succeeded, returned only allowlisted user fields plus token presence, rejected invalid input with 400 and duplicate email with 409; no schema mutation occurred.",
+  "prevention": "Before runtime activation, compare case-sensitive entity table/column mappings with the approved deployed schema using read-only metadata inspection."
+}
