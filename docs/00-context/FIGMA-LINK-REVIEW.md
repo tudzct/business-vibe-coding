@@ -8,6 +8,8 @@ The researcher has confirmed the standard URLs in the **Replacement URL** column
 
 On 2026-08-27, the researcher replaced the UC-01 mapping with the `VibeTesting` Figma file. The Figma connector confirmed that node `66:4728` in the original URL is the `Design` canvas, not the registration frame; the correct frame is `137:8071`, named `102. Signup`, in the same file. The mapping has been corrected according to the connector evidence and applied to the current frozen UC `docs/01-inception/use-cases/uc-01-register-account.md`, which has its source specification at `Use cases!A5:B25`. On the same day, the previously confirmed Login mapping was reassigned to the current frozen UC `docs/01-inception/use-cases/uc-02-login.md`, which has its source specification at `Use cases!A26:B44`.
 
+On 2026-08-29, the researcher supplied an external UC-004 mapping in the `VibeTesting - Copy` file. The Figma connector verified node `4740:1106` as frame `107.1 Add Transactions` at 1440×1024. This mapping supplements the existing confirmed mappings; it does not replace their file keys.
+
 After the review is complete, Codex will:
 
 1. Test each replacement URL using the Figma plugin.
@@ -22,7 +24,7 @@ After the review is complete, Codex will:
 | UC-001 | Register an Account | `docs/01-inception/use-cases/uc-01-register-account.md` | `BTSOvEnU2X3CNrNvSxX9Ry` | `137:8071` | 0 (external mapping) | `https://www.figma.com/design/BTSOvEnU2X3CNrNvSxX9Ry/Finebank---Financial-Management-Dashboard-UI-Kits--Community---VibeTesting-?node-id=137-8071&p=f&t=LTofk7XE4yZcHPBU-0` | Researcher-authorized correction for current UC-01; connector-verified frame `102. Signup`. |
 | UC-002 | Log In | `docs/01-inception/use-cases/uc-02-login.md` | `BTSOvEnU2X3CNrNvSxX9Ry` | `137:7477` | 0 (external mapping) | `https://www.figma.com/design/BTSOvEnU2X3CNrNvSxX9Ry/Finebank---Financial-Management-Dashboard-UI-Kits--Community---VibeTesting-?node-id=137-7477&t=LaQ5xK7Lt3sAWQLV-0` | Previously researcher-confirmed Login mapping, retargeted to current UC-02; capture the node into a new frozen dataset before frontend generation or UI audit. |
 | UC-003 | View the list of transactions | `docs/01-inception/use-cases/uc-03-view-transaction-list.md` | `7lyW3RmfX2jUM2VI6XdHK9` | `66:5474` | 2 | `https://www.figma.com/design/7lyW3RmfX2jUM2VI6XdHK9/Finebank---Financial-Management-Dashboard-UI-Kits--Community---Copy-?node-id=66-5474&t=JIvgR8yO5kRKVT0b-0` | Standard URL has been confirmed by the researcher. |
-| UC-004 | Add a new transaction | `docs/01-inception/use-cases/uc-04-create-new-transaction.md` | — | — | 0 | `NOT_APPLICABLE` | Source UC does not contain a Figma URL. |
+| UC-004 | Add a new transaction | `docs/01-inception/use-cases/uc-04-create-new-transaction.md` | `zu3rZ336n1et2pWUGGIxlO` | `4740:1106` | 0 (external mapping) | `https://www.figma.com/design/zu3rZ336n1et2pWUGGIxlO/Finebank---Financial-Management-Dashboard-UI-Kits--Community---VibeTesting---Copy-?node-id=4740-1106&m=dev` | Researcher-supplied mapping; connector-verified frame `107.1 Add Transactions`. |
 | UC-005 | View list of bank accounts | `docs/01-inception/use-cases/uc-05-view-bank-accounts.md` | `BTSOvEnU2X3CNrNvSxX9Ry` | `2883:1676` | 2 | `https://www.figma.com/design/BTSOvEnU2X3CNrNvSxX9Ry/Finebank---Financial-Management-Dashboard-UI-Kits--Community---VibeTesting-?node-id=2883-1676&t=LaQ5xK7Lt3sAWQLV-0` | Researcher-authorized correction for grouped UC-05 frames. |
 | UC-006 | Add a new account | `docs/01-inception/use-cases/uc-06-add-new-account.md` | — | — | 0 | `NOT_APPLICABLE` | Source UC does not contain a Figma URL. |
 | UC-007 | Edit account | `docs/01-inception/use-cases/uc-07-edit-account-information.md` | — | — | 0 | `NOT_APPLICABLE` | Source UC does not contain a Figma URL. |
@@ -57,7 +59,8 @@ The URLs below are the standard replacement URLs for each exact occurrence confi
 
 ### UC-004
 
-- No Figma URL in the source UC.
+- The current Frozen UC does not contain a Figma URL occurrence. The researcher has provided a replacement mapping outside the UC:
+  `https://www.figma.com/design/zu3rZ336n1et2pWUGGIxlO/Finebank---Financial-Management-Dashboard-UI-Kits--Community---VibeTesting---Copy-?node-id=4740-1106&m=dev`
 
 ### UC-005
 
