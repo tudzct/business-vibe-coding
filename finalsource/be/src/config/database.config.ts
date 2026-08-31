@@ -11,6 +11,8 @@ export default registerAs(
     password: process.env.DB_PASSWORD || 'trucdang02',
     database: process.env.DB_DATABASE || 'financial1',
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+    migrations: [__dirname + '/../database/migrations/*{.ts,.js}'],
+    migrationsRun: true,
     synchronize: false, // Database đã được tạo sẵn, không tự động sync
     logging: process.env.NODE_ENV === 'development',
   }),

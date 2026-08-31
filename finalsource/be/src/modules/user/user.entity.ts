@@ -10,39 +10,34 @@ import { Account } from '../account/account.entity';
 import { Bill } from '../bill/bill.entity';
 import { Goal } from '../goal/goal.entity';
 
-@Entity('Users')
+@Entity('users')
 export class User {
-  @PrimaryGeneratedColumn({ name: 'user_id' })
+  @PrimaryGeneratedColumn({ name: 'id', type: 'int', unsigned: true })
   userId!: number;
 
-  @Column({ name: 'full_name', type: 'varchar', length: 255 })
+  @Column({ name: 'full_name', type: 'varchar', length: 25 })
   fullName!: string;
 
   @Column({ name: 'email', type: 'varchar', length: 255, unique: true })
   email!: string;
 
-  @Column({ name: 'username', type: 'varchar', length: 255, unique: true })
-  username!: string;
-
-  @Column({ name: 'password', type: 'varchar', length: 255 })
-  password!: string;
-
-  @Column({ name: 'phone_number', type: 'varchar', length: 20, nullable: true })
-  phoneNumber!: string;
-
   @Column({
-    name: 'profile_picture_url',
+    name: 'username',
     type: 'varchar',
-    length: 500,
+    length: 255,
+    unique: true,
     nullable: true,
   })
-  profilePictureUrl!: string;
+  username!: string | null;
+
+  @Column({ name: 'password_hash', type: 'char', length: 60 })
+  password!: string;
 
   @Column({
     name: 'total_balance',
     type: 'decimal',
-    precision: 15,
-    scale: 2,
+    precision: 19,
+    scale: 4,
     default: 0,
   })
   totalBalance!: number;

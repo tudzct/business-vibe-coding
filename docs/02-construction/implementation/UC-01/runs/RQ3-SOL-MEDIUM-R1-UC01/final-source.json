@@ -1,0 +1,22 @@
+{
+  "artifact_type": "final-source-revision",
+  "status": "Frozen",
+  "uc_id": "UC-01",
+  "run_id": "RQ3-SOL-MEDIUM-R1-UC01",
+  "source_revision": "sha256:6e59c386050dd601c036d3e4e50046dd203332a29efd235a5fc2f4cc311d04f7",
+  "hash_method": "SHA-256 over sorted relative path, NUL, per-file SHA-256 and newline entries; node_modules, dist and .env files excluded.",
+  "frozen_at": "2026-08-31T10:30:22.330+07:00",
+  "verification": {
+    "frontend_production_build": "pass",
+    "backend_production_build": "pass",
+    "database_health": "healthy",
+    "backend_health": "healthy",
+    "frontend_health": "healthy",
+    "proxy_health_status": 200,
+    "register_page_status": 200,
+    "registration_status": 201,
+    "duplicate_status": 409,
+    "invalid_status": 400,
+    "tests_created_or_run": false
+  }
+}

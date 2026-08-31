@@ -1,0 +1,41 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-08-31T03:30:22Z",
+  "mode": "troubleshoot",
+  "source_revision": "sha256:6e59c386050dd601c036d3e4e50046dd203332a29efd235a5fc2f4cc311d04f7",
+  "commands": [
+    {
+      "id": "compose-up-build-current-source",
+      "exit_code": 0,
+      "result": "current frontend and backend production images built; all three services started"
+    },
+    {
+      "id": "compose-ps",
+      "exit_code": 0,
+      "result": "database, backend and frontend healthy"
+    },
+    {
+      "id": "bounded-registration-observation",
+      "exit_code": 0,
+      "result": "proxy/page 200, registration 201 with allowlisted user fields and token presence, duplicate 409, invalid input 400 normalized envelope"
+    },
+    {
+      "id": "read-only-users-metadata",
+      "exit_code": 0,
+      "result": "users mapping aligned; email unique, username nullable and bounded created hash uses bcrypt cost 10"
+    }
+  ],
+  "docker": {
+    "cli": "29.2.1",
+    "compose": "5.0.2",
+    "daemon": "29.2.1"
+  },
+  "status": "READY",
+  "incidents_resolved": [
+    "DEP-20260829-005",
+    "DEP-20260829-006"
+  ],
+  "limitations": [
+    "No connected in-app or extension browser was available for a fresh visual screenshot."
+  ]
+}

@@ -1,0 +1,120 @@
+{
+  "artifact_type": "database-schema",
+  "uc_id": "UC-01",
+  "status": "Approved",
+  "source_use_case": "docs/01-inception/use-cases/uc-01-register-account.md",
+  "source_prompt": "docs/02-construction/coding-prompts/UC-01-rq3-coding-prompt.md",
+  "active_run": "docs/02-construction/implementation/UC-01/runs/RQ3-SOL-MEDIUM-R1-UC01/run-activation.json",
+  "created_at": "2026-08-31T09:53:33.570+07:00",
+  "contract": {
+    "evidence_and_scope": {
+      "uc_and_api": [
+        "UC-01 Register an Account",
+        "API-AUTH-REGISTER POST /api/auth/register"
+      ],
+      "source_fields": [
+        "fullName",
+        "email",
+        "password",
+        "confirmPassword"
+      ],
+      "existing_mapping_inspected": "finalsource/be/src/modules/user/user.entity.ts",
+      "change_required": "Allow the existing Users.username column to be NULL so registration can persist the four-field public request without inventing a username.",
+      "out_of_scope": [
+        "No new request or response fields",
+        "No table, relationship, ownership, cascade, index, or uniqueness changes",
+        "No changes to legacy login behavior",
+        "No backfill or generated username"
+      ]
+    },
+    "columns": [
+      {
+        "typescript_entity_property": "User.username",
+        "table": "Users",
+        "column": "username",
+        "mysql_type": "VARCHAR(255)",
+        "nullability": "NULL",
+        "default": null,
+        "constraint_and_index": "Preserve the existing unique constraint; MySQL permits multiple NULL values in a unique index.",
+        "source_rationale": "UC-01 and its approved API contract do not accept username, and the prompt explicitly prohibits inventing one. The current NOT NULL mapping otherwise makes persistence impossible."
+      }
+    ],
+    "relationships_and_ownership": {
+      "changes": [],
+      "statement": "The proposal does not alter ownership or relationships. Existing user-owned resources remain scoped by the authenticated user in their respective implementations."
+    },
+    "sensitive_data_and_exposure": {
+      "credential_storage": "Password remains bcrypt-hashed; confirmPassword and plaintext credentials are never persisted.",
+      "default_selection": "No selection behavior changes are proposed.",
+      "api_response_allowlist": [
+        "id",
+        "fullName",
+        "email"
+      ],
+      "retention_or_deletion": "Unchanged.",
+      "logging_and_export": "Do not log or export passwords, confirmPassword, password hashes, or access tokens."
+    },
+    "migration_plan": {
+      "name": "20260831095333-make-users-username-nullable.ts",
+      "forward_operations": [
+        "Alter Users.username from VARCHAR(255) NOT NULL to VARCHAR(255) NULL while preserving its unique constraint."
+      ],
+      "rollback_operations": [
+        "Refuse rollback while any Users row has username IS NULL.",
+        "After an explicit data-resolution decision, alter Users.username back to VARCHAR(255) NOT NULL while preserving uniqueness."
+      ],
+      "data_loss_risk": "The forward migration is non-destructive. Rollback is blocked if registrations created under this contract have NULL usernames; no automatic or invented backfill is permitted.",
+      "deployment_considerations": "The ALTER may take a metadata or table lock depending on MySQL state and table size; apply through the repository migration mechanism during an approved maintenance window.",
+      "synchronize_remains_false": true
+    }
+  },
+  "assumptions": [
+    "The existing physical table and column names are Users.username as declared by the current TypeORM entity.",
+    "The existing unique constraint on username is retained so non-null legacy usernames remain unique.",
+    "Nullable username is the smallest compatible schema change; making username non-unique, renaming the table, or replacing legacy username login is not authorized by UC-01.",
+    "No automatic username backfill may be derived from email or fullName because the approved prompt prohibits invented username values."
+  ],
+  "approval": {
+    "approved_by_researcher": true,
+    "approved_via": "researcher confirmation in active Codex session",
+    "approved_at": "2026-08-31T09:55:21.516+07:00"
+  },
+  "pending_amendment": {
+    "amendment_id": "UC-01-SCHEMA-RUNTIME-001",
+    "status": "Withdrawn",
+    "created_at": "2026-08-31T10:22:40.297+07:00",
+    "trigger_evidence": "A rebuilt backend repeatedly fails migration startup with TypeORMError: Table Users does not exist; the physical vibe_business database contains no Users table available to the migration.",
+    "required_change": "Extend migration 20260831095333 so that, when Users is absent, it creates the existing entity-mapped Users table instead of attempting changeColumn. When Users already exists, retain the previously approved nullable-username alteration path.",
+    "table_contract": {
+      "table": "Users",
+      "columns": [
+        { "name": "user_id", "type": "INT", "nullable": false, "auto_increment": true, "constraint": "primary key" },
+        { "name": "full_name", "type": "VARCHAR(255)", "nullable": false },
+        { "name": "email", "type": "VARCHAR(255)", "nullable": false, "constraint": "unique" },
+        { "name": "username", "type": "VARCHAR(255)", "nullable": true, "constraint": "unique for non-null values" },
+        { "name": "password", "type": "VARCHAR(255)", "nullable": false },
+        { "name": "phone_number", "type": "VARCHAR(20)", "nullable": true },
+        { "name": "profile_picture_url", "type": "VARCHAR(500)", "nullable": true },
+        { "name": "total_balance", "type": "DECIMAL(15,2)", "nullable": false, "default": "0.00" }
+      ],
+      "source_mapping": "finalsource/be/src/modules/user/user.entity.ts",
+      "relationships_created": [],
+      "api_change": null
+    },
+    "migration_behavior": {
+      "forward": "Inspect Users. Create the table exactly from the current entity mapping only when absent; otherwise apply the approved nullable username change. Preserve synchronize=false.",
+      "rollback": "If this migration created an otherwise absent Users table, rollback would drop a potentially populated table and is therefore destructive; refuse automatic rollback once any row exists. The existing-table path retains the previously approved guarded rollback.",
+      "data_risk": "Forward creation is additive. Dropping a populated table is prohibited without separate destructive authorization.",
+      "out_of_scope": [
+        "No Accounts, Bills, Goals, Transactions or Categories table creation",
+        "No relationship, ownership, cascade or public API change",
+        "No database volume reset or data deletion"
+      ]
+    },
+    "approval": {
+      "required": false,
+      "resolution": "Read-only metadata inspection confirmed the approved physical table already exists as lowercase users with id and password_hash. No table creation is required; repair is limited to source mapping alignment and the previously approved nullable-username alteration.",
+      "resolved_at": "2026-08-31T10:24:00+07:00"
+    }
+  }
+}

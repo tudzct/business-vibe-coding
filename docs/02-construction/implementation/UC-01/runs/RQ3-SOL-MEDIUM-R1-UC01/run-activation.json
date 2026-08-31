@@ -1,0 +1,11 @@
+{
+  "artifact_type": "run-activation",
+  "gate_version": 3,
+  "uc_id": "UC-01",
+  "run_id": "RQ3-SOL-MEDIUM-R1-UC01",
+  "prompt_variant": "rq3",
+  "configuration_artifact": "docs/05-experiments/configurations/CFG-UC01-RQ3-SOL-MEDIUM-R1-20260829.json",
+  "configuration_checksum": "sha256:bac54564d59789dbfd06c514d6bb0f043941fe3415079c595e73d65ed31511eb",
+  "activated_at": "2026-08-31T02:52:57.058384Z",
+  "status": "Confirmed"
+}
