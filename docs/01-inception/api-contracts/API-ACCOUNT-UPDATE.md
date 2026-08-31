@@ -41,17 +41,6 @@ Bearer JWT
 
 Account owner
 
-## Business Rules / Validation Constraints
-
-- BR-AUTH-01 — JWT-protected operation: Protected controllers require JwtAuthGuard and obtain userId from the validated JWT payload.
-- BR-ACC-19 — Account ownership validation for update: The account must exist and belong to the authenticated user. BR-ACC-20 — Allowed account types for update: The submitted account_type must strictly belong to the allowed enumeration.
-- BR-ACC-21 — Required account text fields for update: The payload must include non-empty strings for bank_name and account_number_full.
-- BR-ACC-22 — Account number format and length for update: The account_number_full must contain only numeric digits and its length must be between 8 and 34 characters.
-- BR-ACC-23 — Numeric non-negative account balance for update: The balance must be a valid numeric type and cannot be negative.
-- BR-ACC-24 — Optional branch name handling during update: The branch_name field is optional and may be saved as null or undefined.
-- BR-ACC-25 — Derive final four account characters for update: The backend MUST implicitly derive account_number_last_4 by taking the exact last 4 characters of the submitted account_number_full.
-- BR-ACC-26 — Account update persistence mapping: The submitted fields overwrite the existing account data and map directly to persisted database records.
-
 ## Request Header(s)
 
 ### headers.Authorization

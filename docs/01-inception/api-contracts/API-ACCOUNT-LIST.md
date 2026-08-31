@@ -41,16 +41,6 @@ Bearer JWT
 
 Authenticated user
 
-## Business Rules / Validation Constraints
-
-- BR-AUTH-01 — JWT-protected operation: Protected controllers require JwtAuthGuard and obtain userId from the validated JWT payload.
-- BR-ACC-01 — Account list ownership scope: The account list query shall return only accounts whose userId equals the authenticated userId.
-- BR-ACC-02 — Ordering: Owned accounts shall be returned in ascending accountId order.
-- BR-ACC-03 — Response rows map to persisted Accounts: The API response fields must map directly to the corresponding persisted account columns.
-- BR-ACC-04 — Account number exposure and masking: The backend shall return only the stored account_number_last_4. The frontend shall mask the account number by prefixing these 4 digits with exactly four asterisks (e.g., **** 1234), regardless of the original length.
-- BR-ACC-05 — Empty account result: If the user owns no accounts, the API shall return a success response with an empty array.
-- BR-ACC-06 — Viewing accounts is read-only: Listing accounts shall not create, update, or delete any Account or Transaction records.
-
 ## Request Header(s)
 
 ### headers.Authorization

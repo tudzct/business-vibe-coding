@@ -41,17 +41,6 @@ Bearer JWT
 
 Authenticated user
 
-## Business Rules / Validation Constraints
-
-- BR-GOAL-04: Valid Goal Type The goal type must be provided and must be either `Saving` or `Expense_Limit`.
-- BR-GOAL-05: Positive Target Amount The target amount must be provided and must be greater than 0.
-- BR-GOAL-06: Valid Goal Date Interval The start date and end date must be provided as valid dates in `YYYY-MM-DD` format. The end date must be later than the start date.
-- BR-GOAL-07: Goal Category Rules An `Expense_Limit` goal must specify a category, and the selected category must exist in the system. A `Saving` goal does not use a category and must be stored with `categoryId = null`.
-- BR-GOAL-08: Authenticated Goal Ownership A newly created goal must belong to the authenticated user identified by the validated JWT. The goal owner must not be determined from data supplied by the client.
-- BR-GOAL-09: Created Goal Persistence When goal creation succeeds, exactly one new Goal record must be stored with the authenticated user ID, selected goal type, target amount, start date, end date, and the applicable category.
-- BR-GOAL-10: Successful Goal Creation When a goal is created successfully, the API must return a success message and the identifier of the newly created goal. The returned goal identifier must correspond to a persisted goal owned by the authenticated user.
-- BR-GOAL-11: Goal Creation Failure Handling Invalid goal type, target amount, date values, date ordering, or an invalid or missing category for an `Expense_Limit` goal must result in HTTP 400 and no Goal record must be created. If the goal cannot be stored because of an unexpected server or database error, the API must return HTTP 500. The current implementation does not prevent multiple `Saving` goals or duplicate `Expense_Limit` goals.
-
 ## Request Header(s)
 
 ### headers.Authorization

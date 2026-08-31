@@ -41,20 +41,6 @@ Public
 
 None
 
-## Business Rules / Validation Constraints
-
-- BR-REG-01 - Valid registration full name: `fullName` shall not be null, undefined, empty, or whitespace-only; it shall be normalized using Unicode NFC and `trim()`, contain between 4 and 25 characters, and contain only Unicode letters separated by single spaces.
-- BR-REG-02 - Valid registration email: `email` shall be non-empty, trimmed, no longer than 255 characters, and satisfy `class-validator` `IsEmail`; it shall be converted to lowercase before storage and comparison.
-- BR-REG-03 - Unique registration email: A registration email shall not already identify a stored User, regardless of letter case; uniqueness shall be enforced at both the service and database layers.
-- BR-REG-04 - Valid registration password: `password` shall be between 8 and 64 characters, contain no whitespace, and include at least one lowercase letter, one uppercase letter, one digit, and one permitted special character.
-- BR-REG-05 - Permitted password characters: A registration password shall contain only Latin letters, digits, and the permitted special characters `! @ # $ % ^ & * ( ) { } - _ + = [ ] , . / < > ? \\ | : ;`.
-- BR-REG-06 - Matching registration passwords: `confirmPassword` shall be non-empty and shall exactly equal `password`, including letter case.
-- BR-REG-07 - Confirm password handling: `confirmPassword` shall not be stored in the database or written to application logs.
-- BR-REG-08 - Invalid registration handling: If any registration field violates a validation or business rule, the system shall reject the request and shall not create a User record.
-- BR-REG-09 - Bcrypt password storage: A registered password shall be hashed with bcrypt using 10 salt rounds before the User record is saved; the plaintext password shall not be stored, logged, or returned.
-- BR-REG-10 - Concurrent registration conflict handling: If concurrent registration requests use the same normalized email, exactly one User record shall be created. Each conflicting request shall be rejected with HTTP 409 Conflict; no JWT shall be issued and no authenticated session shall be established for the rejected request.
-- BR-REG-11 - Successful registration: After successful registration, the system shall create the User, issue a JWT access token, establish an authenticated session, and redirect the user to the home page.
-
 ## Request Header(s)
 
 ### headers.Content-Type

@@ -41,14 +41,6 @@ Bearer JWT
 
 Account owner
 
-## Business Rules / Validation Constraints
-
-- BR-AUTH-01 — JWT-protected operation: Protected controllers require JwtAuthGuard and obtain userId from the validated JWT payload.
-- BR-ACC-15 — Account existence and ownership: Account detail operations shall succeed only when account.userId equals the authenticated userId.
-- BR-ACC-16 — Five most recent account transactions: Account detail shall include at most five transactions ordered by transaction_date descending.
-- BR-ACC-17 — Response rows map to persisted data with signed amounts: Response fields must exactly match the persisted Account and Transaction data. Expense amounts are negated (returned as negative) while Revenue amounts remain positive.
-- BR-ACC-18 — Viewing details is read-only: Listing account details shall not create, update, or delete any Account, Transaction, User, or Category records.
-
 ## Request Header(s)
 
 ### headers.Authorization

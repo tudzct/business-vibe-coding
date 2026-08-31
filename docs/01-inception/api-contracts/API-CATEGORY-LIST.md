@@ -41,10 +41,6 @@ Public
 
 None
 
-## Business Rules / Validation Constraints
-
-- BR-CAT-01 — Alphabetical category list: Categories shall be returned ordered by categoryName ascending.
-
 ## Request Body
 
 None

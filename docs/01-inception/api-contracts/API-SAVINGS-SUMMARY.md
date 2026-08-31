@@ -41,18 +41,6 @@ Bearer JWT
 
 Authenticated user
 
-## Business Rules / Validation Constraints
-
-- BR-SAV-01: Authenticated User Data Scope The savings summary shall be calculated only from transactions belonging to accounts owned by the authenticated user. The user identity shall be obtained from the validated JWT and not from client-supplied data.
-- BR-SAV-02: Savings Summary Year Resolution The requested year shall be parsed as an integer. If the year is missing, cannot be parsed, is less than 1900, or is greater than 2100, the current year shall be used. Because the current implementation uses JavaScript parseInt, a value beginning with a valid numeric prefix, such as 2025abc, is resolved as 2025.
-- BR-SAV-03: Complete Monthly Summary The response shall contain exactly 12 monthly entries for the resolved year and exactly 12 monthly entries for the preceding year. Months shall represent January through December in ascending order using two-digit values from 01 to 12.
-- BR-SAV-04: Monthly Net Savings Calculation For each month, the savings amount shall equal the total Revenue minus the total Expense for that month across all accounts owned by the authenticated user.
-- BR-SAV-05: Previous-Year Comparison The this_year series shall represent the resolved requested year, while the last_year series shall represent exactly the preceding year, calculated as resolvedYear - 1.
-- BR-SAV-06: Missing Transaction Data If the authenticated user has no accounts, or if a month contains no matching transactions, the savings amount for that month shall be 0. Missing data shall not cause monthly entries to be omitted.
-- BR-SAV-07: Savings Amount Rounding Each calculated monthly savings amount shall be rounded to two decimal places before being included in the API response.
-- BR-SAV-08: Savings Summary Response and Failure Handling A successful response shall contain the authenticated user_id, the resolved year, and both 12-month savings series. If the savings calculation fails unexpectedly, the backend shall return HTTP 500. Retrieving the savings summary shall not create, update, or delete Account or Transaction records.
-- BR-SAV-09: Savings Chart Point Value Tooltip When the savings chart is displayed, hovering the pointer over a data point in either the selected-year or previous-year series shall display a tooltip showing the savings amount represented by that point. The displayed value shall correspond exactly to the monthly savings amount returned for that month and series. The tooltip shall disappear when the pointer is no longer hovering over the data point.
-
 ## Request Header(s)
 
 ### headers.Authorization

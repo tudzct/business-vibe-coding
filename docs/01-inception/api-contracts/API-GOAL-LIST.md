@@ -41,12 +41,6 @@ Bearer JWT
 
 Authenticated user
 
-## Business Rules / Validation Constraints
-
-- BR-GOAL-01: Goals selected for display The API shall return only goals owned by the authenticated user. It returns one Saving goal or null, and every Expense_Limit goal whose date interval overlaps the current month, where start_date <= endOfMonth and end_date >= startOfMonth. The current implementation uses findOne for Saving goals, so if multiple Saving goals exist, one matching goal is returned.
-- BR-GOAL-02: Saving goal achieved amount If a Saving goal exists, target_achieved shall equal the authenticated user's total Revenue for the current month minus total Expense for the current month, calculated only from accounts owned by that user. If there are no owned accounts or no matching transactions, the corresponding totals are treated as 0.
-- BR-GOAL-03: Expense-limit current expense For each returned Expense_Limit goal, current_expense shall equal the authenticated user's total current-month Expense for that goal's category, calculated only from accounts owned by that user. If there are no owned accounts or no matching transactions, current_expense is 0. The response category is the persisted category name; if the category cannot be resolved, the implementation returns "Unknown".
-
 ## Request Header(s)
 
 ### headers.Authorization

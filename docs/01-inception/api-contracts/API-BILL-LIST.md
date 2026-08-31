@@ -41,16 +41,6 @@ Bearer JWT
 
 Authenticated user
 
-## Business Rules / Validation Constraints
-
-- BR-BILL-01: Bill ownership scope The bill list shall contain only Bills whose userId equals the authenticated userId.
-- BR-BILL-02: Upcoming date boundary Before querying bills, the backend shall create the current system date and reset its time to 00:00:00.000. Only Bills whose dueDate is greater than or equal to that normalized current date shall be returned.
-- BR-BILL-03: Due-date ordering Returned Bills shall be ordered by dueDate in ascending order.
-- BR-BILL-04: Response mapping and normalization Each returned row shall map the persisted billId, userId, itemDescription, and amount. amount shall be returned as a number. dueDate shall be formatted as YYYY-MM-DD. lastChargeDate shall be formatted as YYYY-MM-DD when present and returned as null when absent. logoUrl shall be returned as its stored non-empty value and as null when missing or empty.
-- BR-BILL-05: Empty upcoming-bill result If the authenticated user has no Bills satisfying the upcoming-date condition, the API shall return HTTP 200 with data as an empty array.
-- BR-BILL-06: Read-only list operation Listing upcoming Bills shall not create, update, or delete Bill records.
-- BR-BILL-07: Retrieval failure handling If the bill repository query or response mapping fails, the backend shall return HTTP 500 Internal Server Error with the message "Failed to fetch bills".
-
 ## Request Header(s)
 
 ### headers.Authorization

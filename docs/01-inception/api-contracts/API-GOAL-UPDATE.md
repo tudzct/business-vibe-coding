@@ -41,15 +41,6 @@ Bearer JWT
 
 Goal owner
 
-## Business Rules / Validation Constraints
-
-- BR-GOAL-12: Positive updated target amount When a user adjusts a financial goal, the new target_amount is required and must be a number greater than 0. A missing, invalid, or non-positive value shall be rejected with HTTP 400 and shall not change the existing goal.
-- BR-GOAL-13: Existing goal required Only an existing goal may be adjusted. The system shall find the Goal corresponding to goalId; if no such Goal exists, the request shall be rejected with HTTP 404 and no data shall be changed.
-- BR-GOAL-14: Authenticated goal ownership A user may adjust only a goal that they own. The user's identity shall be determined from the validated JWT, not from the request body. If the Goal exists but belongs to another user, the system shall return HTTP 403 and shall not perform the update.
-- BR-GOAL-15: Target-only goal update The Adjust Financial Goal operation shall change only targetAmount. All other Goal attributes, including owner, goal type, category, start date, and end date, shall remain unchanged. The operation shall not create or delete any Goal.
-- BR-GOAL-16: Successful update response After a successful update, the new targetAmount shall be persisted for the correct Goal owned by the authenticated user. The response shall return "Goal updated successfully" together with the goal_id and the updated target_amount.
-- BR-GOAL-17: Update failure handling If an update request fails or is rejected, the previous targetAmount shall remain unchanged. An invalid target value shall return HTTP 400; a non-existent Goal shall return HTTP 404; a Goal owned by another user shall return HTTP 403; and an unexpected storage failure shall return HTTP 500 with the message "Không thể lưu thay đổi lúc này. Vui lòng thử lại sau." A missing, invalid, or expired JWT shall be rejected by the API authentication layer before any update is performed.
-
 ## Request Header(s)
 
 ### headers.Authorization

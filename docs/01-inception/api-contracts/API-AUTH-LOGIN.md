@@ -41,15 +41,6 @@ Public
 
 None
 
-## Business Rules / Validation Constraints
-
-- BR-LOG-01 - Valid login email: The login email shall be defined, non-empty, and have a valid email format.
-- BR-LOG-02 - Non-empty login password: The login password shall be defined and non-empty.
-- BR-LOG-03 - Existing login account: Login can succeed only if a user account corresponding to the submitted email exists in the system.
-- BR-LOG-04 - Credential verification: Login can succeed only if the submitted password matches the stored password hash of the user corresponding to the submitted email.
-- BR-LOG-05 - Invalid credential handling: If the submitted email does not correspond to an existing user or the submitted password does not match the stored password hash, the login attempt shall be rejected.
-- BR-LOG-06 - Successful login: When the submitted credentials are valid, the system shall authenticate the user, issue a JWT access token, and return the authenticated user's basic information.
-
 ## Request Header(s)
 
 ### headers.Content-Type

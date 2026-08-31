@@ -41,15 +41,6 @@ Bearer JWT
 
 Authenticated user
 
-## Business Rules / Validation Constraints
-
-- BR-EXP-01: Authenticated ownership scope JwtAuthGuard shall validate the Bearer JWT and provide request.user.userId. Only Transactions whose account_id belongs to an Accounts row with user_id equal to that authenticated identifier are eligible.
-- BR-EXP-02: Current-year Expense inclusion and amount calculation The service shall include a transaction only when type = Expense and transaction_date is within the backend server's current calendar year, inclusively from 1 January 00:00:00 through 31 December 23:59:59. Transactions.status is not filtered: Complete, Pending, and Failed rows are all included when the other predicates match. Each returned totalExpense shall equal SUM(amount) for the eligible transactions in that month.
-- BR-EXP-03: Sparse monthly aggregation and ordering The service shall group eligible transactions by MONTH(transaction_date), calculate totalExpense as SUM(amount), convert the total to a JavaScript number, and order results chronologically from Jan to Dec. The API shall return at most one item for each returned month and only months with at least one eligible transaction; it shall not generate missing months with totalExpense = 0.
-- BR-EXP-04: Client-side full-year display Only when the API returns one or more summary items, ExpenseSummaryChart shall create a 12-month Jan-to-Dec display, preserve each returned month's totalExpense, and use totalExpense = 0 for every absent month.
-- BR-EXP-05: Empty result and no-data UI If the authenticated user owns no accounts, or owns accounts but has no eligible current-year Expense transactions, the successful response shall be { "data": [] }. The frontend shall display its no-expense-data state instead of the chart.
-- BR-EXP-06: Read-only operation and response envelope The endpoint shall not create, update, or delete Accounts or Transactions. On HTTP 200, ExpensesController shall return exactly { data: ExpenseSummaryItem[] }; unlike the general API convention, it shall not include success or message fields.
-
 ## Request Header(s)
 
 ### headers.Authorization

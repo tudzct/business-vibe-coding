@@ -41,18 +41,6 @@ Bearer JWT
 
 Owner of the referenced account
 
-## Business Rules / Validation Constraints
-
-- BR-AUTH-01 - JWT-protected operation JwtAuthGuard shall validate the bearer JWT and provide the authenticated identifier corresponding to Users.user_id.
-- BR-TXN-08 - Required transaction data accountId, transactionDate, type, itemDescription, shopName, paymentMethod, and amount shall be present. itemDescription, shopName, and paymentMethod shall be non-empty strings; amount shall be at least 0.01. shopName maps to Transactions.shop_name and paymentMethod maps to Transactions.payment_method; neither may be null or empty.
-- BR-TXN-09 - Allowed type and status Type shall be Revenue or Expense. status, when supplied, shall be Complete, Pending, or Failed; when omitted, the stored status shall default to Complete.
-- BR-TXN-10 - Optional category category_id is optional/nullable. When supplied, it shall reference an existing Categories.category_id; when omitted, Transactions.category_id shall be null.
-- BR-TXN-11 - Account ownership accountId shall reference an Accounts.account_id whose Accounts.user_id equals the authenticated Users.user_id.
-- BR-TXN-12 - Sufficient Expense balance For type = Expense, the owned account's balance before creation shall be greater than or equal to amount.
-- BR-TXN-13 - Account balance adjustment Revenue increases Accounts.balance by amount; Expense decreases Accounts.balance by amount.
-- BR-TXN-14 - Transaction persistence mapping On success exactly one new Transactions row shall be created and shall map accountId -> account_id, transactionDate -> transaction_date, itemDescription -> item_description, shopName -> shop_name, paymentMethod -> payment_method, plus type, amount, status, and optional category_id.
-- BR-TXN-15 - Atomic creation The Transactions insert and Accounts.balance update shall commit in one database transaction. If creation fails before commit, both changes shall be rolled back.
-
 ## Request Header(s)
 
 ### headers.Authorization

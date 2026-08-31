@@ -41,12 +41,6 @@ Bearer JWT
 
 Account owner
 
-## Business Rules / Validation Constraints
-
-- BR-AUTH-01 — JWT-protected operation: Protected controllers require JwtAuthGuard and obtain userId from the validated JWT payload.
-- BR-ACC-27 — Account deletion ownership validation: Delete succeeds only for an owned account. A missing account and a non-owned account both produce the same HTTP 404 exception.
-- BR-ACC-28 — Account deletion data integrity (Cascading): Related Transaction rows and the Account row shall be deleted within one TypeORM query-runner transaction.
-
 ## Request Header(s)
 
 ### headers.Authorization

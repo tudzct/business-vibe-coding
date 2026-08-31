@@ -41,17 +41,6 @@ Bearer JWT
 
 Authenticated user
 
-## Business Rules / Validation Constraints
-
-- BR-AUTH-01 — JWT-protected operation: JwtAuthGuard shall validate the bearer JWT and provide the authenticated identifier corresponding to Users.user_id.
-- BR-TXN-01 — Transaction ownership scope: Every returned Transactions row shall have account_id referencing an Accounts row whose user_id equals the authenticated Users.user_id.
-- BR-TXN-02 — Allowed transaction filter: query.type shall be All, Revenue, or Expense. All is a query/UI sentinel only and shall never be stored in Transactions.type; persisted type values are Revenue or Expense.
-- BR-TXN-03 — Pagination and ordering: limit defaults to 10 and must be > 0; offset defaults to 0 and must be >= 0; matching rows are ordered by Transactions.transaction_date descending; hasMore = offset + returnedCount < total.
-- BR-TXN-04 — Relationship integrity: Transactions.account_id shall reference Accounts.account_id. Transactions.category_id may be null; when present it shall reference Categories.category_id.
-- BR-TXN-05 — Empty result consistency: When no transaction matches the authenticated ownership scope and selected filter, data shall be [], total shall be 0, and hasMore shall be false.
-- BR-TXN-06 — Response persistence mapping: Every transaction DTO returned by the endpoint shall correspond to a persisted Transactions row with matching transaction_id, account_id, transaction_date, type, item_description, shop_name, amount, payment_method, and status.
-- BR-TXN-07 — Read-only operation: Listing transaction history shall not create, update, or delete Transactions or Accounts records.
-
 ## Request Header(s)
 
 ### headers.Authorization
