@@ -1,25 +1,25 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-08-31T03:30:22Z",
-  "repository_revision": "b16784b",
-  "source_revision": "sha256:6e59c386050dd601c036d3e4e50046dd203332a29efd235a5fc2f4cc311d04f7",
+  "observed_at": "2026-08-31T14:13:30Z",
+  "repository_revision": null,
+  "source_revision": "sha256:a0ae8b9b34fc5635b53dff48ea9f399cc8860ab67d44822df3f640cbdcc52f33",
   "docker": {
-    "cli": "29.2.1",
-    "compose": "5.0.2",
-    "daemon": "29.2.1"
+    "cli": null,
+    "compose": null,
+    "daemon": null
   },
   "configuration": {
     "env_present": true,
     "env_ignored": true,
     "env_tracked": false,
-    "compose_valid": true
+    "compose_valid": null
   },
   "services": {
-    "database": "running and healthy; approved users schema inspected read-only; username nullable migration applied",
-    "backend": "current repaired image running and healthy; registration 201, invalid 400 and duplicate 409 observed",
-    "frontend": "current repaired image running and healthy; /register and same-origin /api proxy reachable"
+    "database": "not observed from the current execution environment",
+    "backend": "current UC-02 image could not be rebuilt or observed",
+    "frontend": "current UC-02 image could not be rebuilt or observed"
   },
-  "status": "READY",
-  "blocking_incident": null,
-  "next_action": "Use http://localhost:8080/register; perform optional researcher visual comparison because no connected browser instance was available to capture a fresh screenshot."
+  "status": "BLOCKED",
+  "blocking_incident": "Docker CLI and Compose v2 are not callable or present at the standard Docker Desktop binary path in the current execution environment.",
+  "next_action": "Expose Docker Desktop's docker.exe to this task environment, then rebuild with docker compose --env-file finalsource/.env -f finalsource/compose.yaml up -d --build and repeat bounded UC-02 observations."
 }

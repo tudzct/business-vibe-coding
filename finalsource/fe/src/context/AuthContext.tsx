@@ -1,12 +1,12 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 import { User } from '../api/types'
-import { authService, RegisterRequest, RegistrationPayload } from '../api/auth.service'
+import { authService, LoginRequest, RegisterRequest, RegistrationPayload } from '../api/auth.service'
 
 interface AuthContextType {
   user: User | null
   isAuthenticated: boolean
   isLoading: boolean
-  login: (username: string, password: string) => Promise<void>
+  login: (data: LoginRequest) => Promise<void>
   register: (data: RegisterRequest) => Promise<RegistrationPayload>
   logout: () => void
   updateUser: (userData: User) => void
@@ -32,13 +32,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(false)
   }, [])
 
-  const login = async (username: string, password: string): Promise<void> => {
-    const response = await authService.login({ username, password })
+  const login = async (data: LoginRequest): Promise<void> => {
+    const response = await authService.login(data)
     if (!response.success || !response.data) {
       throw new Error(response.message || 'Login failed')
     }
-    const { user: userData, token } = response.data
-    localStorage.setItem('token', token)
+    const { user: userData, accessToken } = response.data
+    localStorage.setItem('token', accessToken)
     localStorage.setItem('user', JSON.stringify(userData))
     setUser(userData)
   }

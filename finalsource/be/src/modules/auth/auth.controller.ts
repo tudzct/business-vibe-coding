@@ -4,9 +4,12 @@ import {
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
+  ApiOkResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { AuthService, RegistrationPayload } from './auth.service';
+import { AuthService, AuthenticatedSession, RegistrationPayload } from './auth.service';
+import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 
 interface RegistrationResponse {
@@ -15,10 +18,27 @@ interface RegistrationResponse {
   data: RegistrationPayload;
 }
 
+interface LoginResponse {
+  success: true;
+  message: 'Successful Login';
+  data: AuthenticatedSession;
+}
+
 @ApiTags('auth')
 @Controller('api/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ description: 'Successful Login' })
+  @ApiBadRequestResponse({ description: 'Invalid login input' })
+  @ApiUnauthorizedResponse({ description: 'Email or password is incorrect' })
+  @ApiInternalServerErrorResponse({ description: 'Login failed safely' })
+  async login(@Body() dto: LoginDto): Promise<LoginResponse> {
+    const data = await this.authService.login(dto);
+    return { success: true, message: 'Successful Login', data };
+  }
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)

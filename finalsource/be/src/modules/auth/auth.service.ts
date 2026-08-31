@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,12 +11,15 @@ import * as bcrypt from 'bcrypt';
 import { isEmail } from 'class-validator';
 import { DataSource, QueryFailedError, Repository } from 'typeorm';
 import { User } from '../user/user.entity';
+import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 
-export interface RegistrationPayload {
+export interface AuthenticatedSession {
   accessToken: string;
   user: { id: number; fullName: string; email: string };
 }
+
+export type RegistrationPayload = AuthenticatedSession;
 
 const permittedPasswordPattern = /^[A-Za-z0-9!@#$%^&*(){}_+=\[\],.\/<>?\\|:;\-]+$/;
 const specialCharacterPattern = /[!@#$%^&*(){}_+=\[\],.\/<>?\\|:;\-]/;
@@ -30,6 +34,37 @@ export class AuthService {
     private readonly dataSource: DataSource,
     private readonly jwtService: JwtService,
   ) {}
+
+  async login(dto: LoginDto): Promise<AuthenticatedSession> {
+    try {
+      const user = await this.users.findOne({
+        where: { email: dto.email.trim().toLowerCase() },
+      });
+
+      if (!user || !(await bcrypt.compare(dto.password, user.password))) {
+        throw new UnauthorizedException('Email or password is incorrect.');
+      }
+
+      const accessToken = await this.jwtService.signAsync({
+        sub: user.userId,
+        email: user.email,
+      });
+
+      return {
+        accessToken,
+        user: {
+          id: user.userId,
+          fullName: user.fullName,
+          email: user.email,
+        },
+      };
+    } catch (error: unknown) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Login could not be completed.');
+    }
+  }
 
   async register(dto: RegisterDto): Promise<RegistrationPayload> {
     if (dto.password !== dto.confirmPassword) {

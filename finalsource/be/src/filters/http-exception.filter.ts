@@ -33,7 +33,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
   private getSafeMessage(exception: unknown): string | string[] {
     if (!(exception instanceof HttpException)) {
-      return 'Registration could not be completed.';
+      return 'The request could not be completed.';
     }
     const body: unknown = exception.getResponse();
     if (typeof body === 'string') {

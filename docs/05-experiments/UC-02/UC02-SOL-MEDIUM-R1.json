@@ -1,0 +1,292 @@
+{
+  "run_id": "UC02-SOL-MEDIUM-R1",
+  "run_status": "runtime_blocked",
+  "hold_gate": "satisfied",
+  "experiment_configuration": {
+    "configuration_id": "CFG-UC02-GPT56SOL-MEDIUM-R1-20260828",
+    "comparison_group_id": "CG-UC02-20260828",
+    "researcher_id": "kien",
+    "artifact": "docs/05-experiments/configurations/CFG-UC02-GPT56SOL-MEDIUM-R1-20260828.json",
+    "checksum": "sha256:66102d3231baf9b4759ba281978ebea610646c19ee977b52ffcd4f14e97f2a41",
+    "run_activation": "docs/02-construction/implementation/UC-02/runs/UC02-SOL-MEDIUM-R1/run-activation.json"
+  },
+  "uc_id": "UC-02",
+  "uc_name": "Log In",
+  "replicate_index": 1,
+  "run_order": 1,
+  "audit_protocol": "matched",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null,
+    "effective_model_unavailable_reason": null,
+    "codex_client_version": null
+  },
+  "audit_model": {
+    "assignment": "same-as-generation",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null,
+    "unavailable_reason": null
+  },
+  "timing_wall_clock": {
+    "initial_started_at": "2026-08-31T21:04:38.8730470+07:00",
+    "initial_started_epoch_ms": 1788185078873,
+    "initial_ended_at": "2026-08-31T21:10:42.2512853+07:00",
+    "initial_ended_epoch_ms": 1788185442251
+  },
+  "timing_seconds": {
+    "initial": 363.378,
+    "repairs": 78.897,
+    "total": 442.275
+  },
+  "tokens": {
+    "initial_total": 2784642,
+    "repair_total": 1306752,
+    "total": 4091394,
+    "telemetry_source": "C:\\Users\\hongk\\.codex\\sessions\\2026\\08\\31\\rollout-2026-08-31T21-01-45-01a05820-46b2-7403-9a10-7794c5fc8ec4.jsonl",
+    "details": {
+      "initial": {
+        "turn_id": 1,
+        "input": 123192,
+        "cache_read": 2636544,
+        "total_input": 2759736,
+        "output": 24906,
+        "reasoning": 3870,
+        "cost_usd": 2.6814,
+        "duration_seconds": 1092.033
+      },
+      "repairs": {
+        "count": 1,
+        "total_tokens": 1306752,
+        "cost_usd": 0.9223
+      }
+    }
+  },
+  "first_pass_source": {
+    "revision": "sha256:a0ae8b9b34fc5635b53dff48ea9f399cc8860ab67d44822df3f640cbdcc52f33",
+    "evidence": "docs/02-construction/implementation/UC-02/runs/UC02-SOL-MEDIUM-R1/first-pass-generation.json"
+  },
+  "checks": {
+    "host_backend_lint": "FAIL: 20 repository-wide errors; the UC-02 auth changes build, while diagnostics are inherited from cumulative UC-01/baseline source, including auth regex escapes",
+    "host_backend_build": "PASS: nest build completed",
+    "host_frontend_lint": "FAIL: 7 repository-wide errors and 2 warnings inherited from cumulative UC-01/baseline source",
+    "host_frontend_build": "PASS: tsc -b and vite build completed",
+    "figma_dataset": "PASS: dataset 2026-08-29-005 node 137:7477 resolved complete with valid checksums",
+    "docker_review": "BLOCKED: Docker CLI, Compose and daemon are inaccessible from the current execution environment",
+    "docker_rebuild_build": "not_evaluable: current images could not be rebuilt",
+    "docker_rebuild_runtime": "not_evaluable: service health could not be observed",
+    "runtime_observation": "not_evaluable: no current-image login request or UI navigation observation could be performed",
+    "browser_visual_observation": "not_evaluable: source was mapped against the frozen 1440x1024 Figma snapshot, but no current application runtime was available"
+  },
+  "business_rules": {
+    "baseline": "docs/02-construction/implementation/UC-02/business-rule-baseline.json",
+    "source_revision": "sha256:a8b0acde22669644304c07aea447890ae3a8b483d8d2dac72da2bae353b597a7",
+    "ordered_br_ids": [
+      "BR-LOG-01",
+      "BR-LOG-02",
+      "BR-LOG-03",
+      "BR-LOG-04",
+      "BR-LOG-05",
+      "BR-LOG-06"
+    ],
+    "initial": {
+      "total": 6,
+      "met": 5,
+      "unmet": 1,
+      "not_evaluable": 0,
+      "requirements": [
+        {
+          "br_id": "BR-LOG-01",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/auth/dto/login.dto.ts:4-9 applies IsEmail to the raw DTO value before service normalization",
+            "finalsource/be/src/modules/auth/auth.service.ts:40-42 trims and lowercases only after ValidationPipe has accepted the DTO",
+            "finalsource/fe/src/pages/Login/Login.tsx:28-33 validates the trimmed email and finalsource/fe/src/pages/Login/Login.tsx:64 sends the trimmed value"
+          ],
+          "rationale": "Frontend behavior matches the rule, but the authoritative backend validates the untrimmed string. A directly submitted email with surrounding whitespace is valid after the rule's trim/lower normalization yet is rejected before AuthService, so the complete rule is unmet."
+        },
+        {
+          "br_id": "BR-LOG-02",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/dto/login.dto.ts:11-15 requires a defined non-empty string password",
+            "finalsource/be/src/main.ts:11-20 installs the strict global ValidationPipe",
+            "finalsource/fe/src/pages/Login/Login.tsx:33 and 54-58 block submission and show a field error for an empty password"
+          ],
+          "rationale": "Both the client and authoritative backend require a defined, non-empty password before authentication."
+        },
+        {
+          "br_id": "BR-LOG-03",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts:40-45 looks up the normalized email and rejects when no User exists",
+            "finalsource/be/src/modules/auth/auth.service.ts:48-59 creates a success payload only from the found User"
+          ],
+          "rationale": "The only success path is reachable after repository lookup returns an existing account, and the response is mapped from that account."
+        },
+        {
+          "br_id": "BR-LOG-04",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts:40-45 requires both an existing user and bcrypt.compare(dto.password, user.password) to succeed",
+            "finalsource/be/src/modules/auth/auth.service.ts:48-59 issues the token and response only after the bcrypt comparison"
+          ],
+          "rationale": "Login success is gated by bcrypt verification against the stored hash for the normalized email account."
+        },
+        {
+          "br_id": "BR-LOG-05",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts:44-46 maps both absent user and failed bcrypt comparison to the identical UnauthorizedException message",
+            "finalsource/be/src/filters/http-exception.filter.ts:20-31 preserves HTTP 401 in the normalized error envelope",
+            "finalsource/fe/src/api/axiosInstance.ts:32-33 exempts login 401 responses from global state clearing/navigation",
+            "finalsource/fe/src/pages/Login/Login.tsx:60-79 updates AuthContext and navigates only inside the successful try path"
+          ],
+          "rationale": "Invalid credentials receive one indistinguishable HTTP 401 failure, while the client creates no session and performs no navigation on failure."
+        },
+        {
+          "br_id": "BR-LOG-06",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/auth.service.ts:48-59 signs an identifying JWT and returns only accessToken plus id, fullName and email",
+            "finalsource/be/src/modules/auth/auth.controller.ts:31-40 returns the normalized Successful Login envelope",
+            "finalsource/fe/src/api/auth.service.ts:8-29 types accessToken and the allowlisted user payload from response.data.data",
+            "finalsource/fe/src/context/AuthContext.tsx:34-43 persists the returned accessToken/user and updates in-memory user state in one login action",
+            "finalsource/fe/src/pages/Login/Login.tsx:63-65 invokes the login action and navigates to / only after success",
+            "Backend and frontend production builds passed; runtime token issuance and navigation remain unobserved because Docker is inaccessible"
+          ],
+          "rationale": "Inspectable source and successful production builds implement the complete signed-token, safe-user response, persisted client session and success-only home navigation contract."
+        }
+      ],
+      "acceptance_percent": 83.33
+    },
+    "final": {
+      "total": 6,
+      "met": 6,
+      "unmet": 0,
+      "not_evaluable": 0,
+      "requirements": [
+        {
+          "br_id": "BR-LOG-01",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/dto/login.dto.ts:7-13 normalizes string email input with trim/lowercase before IsString, IsNotEmpty and IsEmail validation",
+            "finalsource/be/src/modules/auth/auth.service.ts:40-42 uses the normalized DTO email for repository lookup",
+            "Targeted ESLint for finalsource/be/src/modules/auth/dto/login.dto.ts passed with zero warnings",
+            "Backend npm run build passed after Repair 001",
+            "Repair record: docs/02-construction/implementation/UC-02/runs/UC02-SOL-MEDIUM-R1/repairs/001-br-log-01-normalized-email-validation.md"
+          ],
+          "rationale": "Repair 001 aligns authoritative backend validation with lower(trim(dto.email)) while retaining rejection of missing, empty, non-string and invalidly formatted inputs."
+        },
+        {
+          "br_id": "BR-LOG-02",
+          "status": "met",
+          "evidence": [
+            "Same as immutable initial assessment; no repair has been applied."
+          ],
+          "rationale": "No repair has been applied."
+        },
+        {
+          "br_id": "BR-LOG-03",
+          "status": "met",
+          "evidence": [
+            "Same as immutable initial assessment; no repair has been applied."
+          ],
+          "rationale": "No repair has been applied."
+        },
+        {
+          "br_id": "BR-LOG-04",
+          "status": "met",
+          "evidence": [
+            "Same as immutable initial assessment; no repair has been applied."
+          ],
+          "rationale": "No repair has been applied."
+        },
+        {
+          "br_id": "BR-LOG-05",
+          "status": "met",
+          "evidence": [
+            "Same as immutable initial assessment; no repair has been applied."
+          ],
+          "rationale": "No repair has been applied."
+        },
+        {
+          "br_id": "BR-LOG-06",
+          "status": "met",
+          "evidence": [
+            "Same as immutable initial assessment; no repair has been applied."
+          ],
+          "rationale": "No repair has been applied."
+        }
+      ],
+      "acceptance_percent": 100.0
+    }
+  },
+  "repairs": [
+    {
+      "repair_id": "UC02-SOL-MEDIUM-R1-REPAIR-001",
+      "repair_index": 1,
+      "sub_prompt": "docs/02-construction/implementation/UC-02/runs/UC02-SOL-MEDIUM-R1/repairs/001-br-log-01-normalized-email-validation.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-log-01-raw-email-validated-before-normalization",
+      "affected_br_ids": [
+        "BR-LOG-01"
+      ],
+      "source_revision_before": "sha256:a0ae8b9b34fc5635b53dff48ea9f399cc8860ab67d44822df3f640cbdcc52f33",
+      "source_revision_after": "sha256:a8b0acde22669644304c07aea447890ae3a8b483d8d2dac72da2bae353b597a7",
+      "status": "complete",
+      "model": {
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "medium"
+      },
+      "timing": {
+        "started_at": "2026-08-31T21:42:00.5771979+07:00",
+        "started_epoch_ms": 1788187320577,
+        "ended_at": "2026-08-31T21:43:19.4747441+07:00",
+        "ended_epoch_ms": 1788187399474,
+        "duration_seconds": 78.897
+      },
+      "tokens": {
+        "total": 1306752,
+        "input": 24133,
+        "cache_read": 1277184,
+        "output": 5435,
+        "cost_usd": 0.9223
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/auth/dto/login.dto.ts"
+      ],
+      "verification": [
+        "Targeted DTO ESLint passed with zero warnings.",
+        "Backend production build passed.",
+        "Docker runtime observation remains unavailable in the current execution environment."
+      ],
+      "result": "BR-LOG-01 reassessed from unmet to met without changing the immutable initial assessment."
+    }
+  ],
+  "manual_estimates_minutes": [],
+  "ui_accuracy_percent": null,
+  "ui_accuracy": {
+    "structural_coverage": "10/10 visible frozen Figma groups represented: wordmark, email, password/eye, forgot-password text, keep-signed-in, login action, divider, sign-in text, disabled Google control and create-account link",
+    "deterministic_similarity": null,
+    "limitation": "The frozen 1440x1024 design snapshot was inspected and mapped to source, but Docker/browser runtime rendering was unavailable."
+  },
+  "flow_accuracy_percent": null,
+  "flow_accuracy": {
+    "source_checkpoints": "trigger, request, domain decision, response, UI result and validation/authentication/network exception paths are inspectable",
+    "limitation": "Database-backed credential outcomes, token issuance and browser navigation were not runtime-observed because Docker is inaccessible."
+  },
+  "complexity": {
+    "actors": 1,
+    "main_flow_steps": 10,
+    "alternate_exception_flows": 3,
+    "data_entities": 1,
+    "integrations": 3,
+    "business_rules": 6,
+    "ui_states": 5
+  },
+  "all_sub_prompt_count": 1
+}

@@ -1,7 +1,7 @@
 ---
 artifact_type: business-coding-prompt
 prompt_variant: rq3-ad
-status: Draft
+status: Approved
 uc_id: UC-02
 uc_name: Log In
 source_use_case: docs/01-inception/use-cases/uc-02-login.md

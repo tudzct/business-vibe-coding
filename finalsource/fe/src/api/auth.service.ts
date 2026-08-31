@@ -2,8 +2,13 @@ import axiosInstance from './axiosInstance'
 import { ApiResponse, User } from './types'
 
 export interface LoginRequest {
-  username: string
+  email: string
   password: string
+}
+
+export interface LoginPayload {
+  accessToken: string
+  user: { id: number; fullName: string; email: string }
 }
 
 export interface RegisterRequest {
@@ -19,7 +24,7 @@ export interface RegistrationPayload {
 }
 
 export const authService = {
-  login: async (data: LoginRequest): Promise<ApiResponse<{ user: User; token: string }>> => {
+  login: async (data: LoginRequest): Promise<ApiResponse<LoginPayload>> => {
     const response = await axiosInstance.post('/auth/login', data)
     return response.data
   },

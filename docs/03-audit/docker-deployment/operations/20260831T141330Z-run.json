@@ -1,0 +1,27 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-08-31T14:13:30Z",
+  "mode": "run",
+  "source_revision": "sha256:a0ae8b9b34fc5635b53dff48ea9f399cc8860ab67d44822df3f640cbdcc52f33",
+  "commands": [
+    {
+      "id": "docker-cli-version",
+      "exit_code": 1,
+      "result": "docker was not recognized in the current shell"
+    },
+    {
+      "id": "standard-docker-desktop-cli-path-check",
+      "exit_code": 1,
+      "result": "docker.exe was absent from the standard Docker Desktop resources path visible to this execution environment"
+    }
+  ],
+  "docker": {
+    "cli": null,
+    "compose": null,
+    "daemon": null
+  },
+  "status": "BLOCKED",
+  "limitations": [
+    "No current-image Compose build, service healthcheck or bounded login runtime observation could be performed."
+  ]
+}

@@ -29,7 +29,8 @@ axiosInstance.interceptors.response.use(
     return response
   },
   (error) => {
-    if (error.response?.status === 401) {
+    const requestPath = typeof error.config?.url === 'string' ? error.config.url : ''
+    if (error.response?.status === 401 && !requestPath.endsWith('/auth/login')) {
       // Token hết hạn hoặc không hợp lệ
       localStorage.removeItem('token')
       localStorage.removeItem('user')

@@ -1,0 +1,41 @@
+{
+  "artifact_type": "first-pass-generation",
+  "status": "Frozen",
+  "uc_id": "UC-02",
+  "run_id": "UC02-SOL-MEDIUM-R1",
+  "prompt_variant": "rq3",
+  "source_prompt": "docs/02-construction/coding-prompts/UC-02-rq3-coding-prompt.md",
+  "source_prompt_sha256": "sha256:c27df6273c0ebd2dd29a1ccbedd460875cb35da0bd47f833cc1a9e09cf5268d2",
+  "run_activation": "docs/02-construction/implementation/UC-02/runs/UC02-SOL-MEDIUM-R1/run-activation.json",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null,
+    "effective_model_unavailable_reason": null,
+    "codex_client_version": null,
+    "codex_client_version_unavailable_reason": "The active desktop tool context does not expose an authoritative client version."
+  },
+  "timing_wall_clock": {
+    "started_at": "2026-08-31T21:04:38.8730470+07:00",
+    "started_epoch_ms": 1788185078873,
+    "ended_at": "2026-08-31T21:10:42.2512853+07:00",
+    "ended_epoch_ms": 1788185442251,
+    "duration_seconds": 363.378
+  },
+  "tokens": {
+    "initial_total": 2784642,
+    "session_turn_id": 1,
+    "input": 123192,
+    "cache_read": 2636544,
+    "output": 24906,
+    "cost_usd": 2.6814,
+    "telemetry_source": "C:\\Users\\hongk\\.codex\\sessions\\2026\\08\\31\\rollout-2026-08-31T21-01-45-01a05820-46b2-7403-9a10-7794c5fc8ec4.jsonl"
+  },
+  "source_revision": {
+    "sha256": "sha256:a0ae8b9b34fc5635b53dff48ea9f399cc8860ab67d44822df3f640cbdcc52f33",
+    "method": "SHA-256 over sorted relative path, NUL, per-file SHA-256 and newline entries; node_modules, dist and .env files excluded."
+  },
+  "repairs_applied": 0
+}
