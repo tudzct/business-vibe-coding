@@ -42,43 +42,39 @@ The visitor opens the registration page or selects the Create an account link.
 
 ### Pre-Condition(s)
 
-PRE-1: The frontend registration route /register is accessible.
-PRE-2: The backend and database are available.
+PRE-1: The registration route (/register) is accessible to the visitor.
+PRE-2: The backend and database services are operational.
 
 ### Post-Condition(s)
 
-POST-1: On success, a new user record is stored with a generated unique username, a bcrypt password hash, and totalBalance = 0.
-POST-2: A JWT and mapped user object are stored in localStorage.
-POST-3: The frontend authentication context contains the new user and navigates to /.
-POST-4: On failure, no authenticated frontend state is created.
+POST-1: On success, a new user account is created and persisted, an authenticated session is established, and the user is redirected to the home page.
+POST-2: On failure, no user account or authenticated session is created, and an appropriate error message is displayed.
 
 ### Basic Flow
 
-1. The visitor opens /register.
-2. The frontend displays SignUpForm.
-3. The visitor enters fullName, email, password, and confirmPassword.
-4. The visitor selects Sign Up.
-5. The frontend validates the submitted data according to BR-REG-01, BR-REG-02, BR-REG-04, BR-REG-05, and BR-REG-06.
-6. The frontend sends POST /api/auth/register.
-7. The backend normalizes the input and independently enforces all applicable registration rules.
-8. AuthService verifies password equality and checks whether the email already exists.
-9. AuthService generates a unique username from the email prefix, hashes the password with bcrypt using 10 salt rounds, and stores the user with totalBalance = 0.
-10. AuthService creates the registered user result and signs a JWT. The backend returns success, message, and a data object containing accessToken and the created user's id, fullName, and email.
-11. AuthContext reads data.accessToken and data.user, maps the returned user, stores the token and user in localStorage, and updates its user state.
-12. The frontend navigates to /.
+1. The visitor opens the registration page (/register).
+2. The frontend displays the registration form (SignUpForm).
+3. The visitor enters registration details: fullName, email, password, and confirmPassword.
+4. The visitor submits the registration form.
+5. The frontend performs preliminary validation on the submitted form fields.
+6. The frontend sends the registration request (POST /api/auth/register) to the backend API.
+7. The backend validates and processes the registration data according to established business rules.
+8. Upon successful validation, the backend persists the new user account securely and generates an authenticated session.
+9. The backend returns a successful response containing the authentication token and created user profile data.
+10. The frontend establishes the authenticated user session and redirects the user to the home page (/).
 
 ### Alternative Flow
 
 AF-1: Client-side validation failure
-5a. If any required field is empty, the email format is invalid, or the passwords differ, the frontend displays a field-level error and does not call the API.
+5a. If any submitted field fails preliminary validation, the frontend displays field-level error messages and halts form submission without calling the API.
 
-AF-2: Duplicate email
-8a. If the email already exists, the backend returns HTTP 409 and the frontend displays the returned error.
+AF-2: Registration conflict / Duplicate account
+7a. If registration data conflicts with existing account policies (e.g., email already registered), the backend rejects the request and the frontend displays the returned error message.
 
 ### Exception Flow
 
 EF-1: Registration request failure
-6a. If the request fails for another reason, SignUpForm displays the API error value or a general registration failure message and remains on the form.
+6a. If the registration request encounters an unexpected network or server error, the frontend displays a failure notification and remains on the registration form.
 
 ### Related UI
 

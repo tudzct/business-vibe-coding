@@ -1,5 +1,5 @@
 import axiosInstance from './axiosInstance'
-import { ApiResponse, AuthUser, User } from './types'
+import { ApiResponse, User } from './types'
 
 export interface LoginRequest {
   username: string
@@ -7,15 +7,11 @@ export interface LoginRequest {
 }
 
 export interface RegisterRequest {
-  fullName: string
+  full_name: string
   email: string
+  username: string
   password: string
-  confirmPassword: string
-}
-
-export interface RegisterData {
-  accessToken: string
-  user: AuthUser
+  phone_number?: string
 }
 
 export const authService = {
@@ -26,7 +22,7 @@ export const authService = {
   },
 
   // Đăng ký
-  register: async (data: RegisterRequest): Promise<ApiResponse<RegisterData>> => {
+  register: async (data: RegisterRequest): Promise<ApiResponse<User>> => {
     const response = await axiosInstance.post('/auth/register', data)
     return response.data
   },

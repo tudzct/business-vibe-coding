@@ -42,44 +42,39 @@ The visitor opens the login page or selects the Login link.
 
 ### Pre-Condition(s)
 
-PRE-1: A user record with the submitted email exists for successful authentication.
-PRE-2: The frontend login route /login is accessible.
-PRE-3: The backend and database are available.
+PRE-1: The login route (/login) is accessible to the visitor.
+PRE-2: The backend and database services are operational.
 
 ### Post-Condition(s)
 
-POST-1: On success, a JWT and mapped user object are stored in localStorage.
-POST-2: AuthContext contains the authenticated user.
-POST-3: The frontend navigates to /.
-POST-4: On failure, the visitor remains on the login page and no new authenticated state is created.
+POST-1: On success, an authenticated user session is established and the user is redirected to the home page.
+POST-2: On failure, no authenticated session is created, the visitor remains on the login page, and an error notification is displayed.
 
 ### Basic Flow
 
-1. The visitor clicks login button.
-2. The frontend displays LoginForm.
-3. The visitor enters email and password.
-4. The visitor selects Login.
-5. The frontend verifies that email is non-empty and matches its email pattern and that password is non-empty.
-6. The frontend sends POST /api/auth/login.
-7. The backend ValidationPipe validates LoginDto.
-8. AuthService finds the user by email and compares the submitted password with the stored bcrypt hash.
-9. AuthService signs a JWT whose payload contains sub and email.
-10. The backend returns success, message, accessToken, and basic user information.
-11. AuthContext maps the user, stores token and user in localStorage, and updates its user state.
-12. The frontend navigates to /.
+1. The visitor opens the login page (/login).
+2. The frontend displays the login form (LoginForm).
+3. The visitor enters credentials: email and password.
+4. The visitor submits the login form.
+5. The frontend performs preliminary validation on the credentials.
+6. The frontend sends the authentication request (POST /api/auth/login) to the backend API.
+7. The backend verifies the submitted credentials against registered accounts according to established security and authentication rules.
+8. Upon successful authentication, the backend issues an authenticated session.
+9. The backend returns a successful response with session credentials and user profile information.
+10. The frontend establishes the authenticated session and redirects the user to the home page (/).
 
 ### Alternative Flow
 
 AF-1: Client-side validation failure
-5a. If email or password is invalid or empty, the frontend displays a field-level error and does not call the API.
+5a. If credentials fail preliminary validation, the frontend displays field-level error messages and halts submission without calling the API.
 
 ### Exception Flow
 
-EF-1: Invalid credentials
-8a. If the user does not exist or bcrypt comparison fails, the backend returns HTTP 401 and the frontend displays the authentication error.
+EF-1: Authentication failure / Invalid credentials
+7a. If credentials do not match an active registered account or fail security verification, the backend rejects the request and the frontend displays an authentication failure notification.
 
-EF-2: Other request failure
-6a. LoginForm displays the returned message or a general login failure message.
+EF-2: Service or network failure
+6a. If the request encounters a network error or server malfunction, the frontend displays a general failure message and remains on the login page.
 
 ### Related UI
 

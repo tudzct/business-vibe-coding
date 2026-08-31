@@ -43,57 +43,48 @@ The user opens the Transactions page.
 ### Pre-Condition(s)
 
 PRE-1: The user is authenticated.
-PRE-2: The validated JWT identifies an existing Users.user_id.
-PRE-3: The protected route /transactions is accessible to the authenticated user.
+PRE-2: The protected route (/transactions) is accessible to the authenticated user.
 
 ### Post-Condition(s)
 
-POST-1: Every displayed transaction belongs to an Accounts row whose user_id equals the authenticated Users.user_id.
-POST-2: The page displays transactions using the selected filter All, Revenue, or Expense; All is a query/UI filter only and is never a stored Transactions.type value.
-POST-3: Returned transactions are ordered by transaction_date descending.
-POST-4: The frontend stores the current offset and hasMore state for pagination.
-POST-5: If no owned accounts or no matching transactions exist, the page displays an empty state.
-POST-6: Viewing transaction history does not create, update, or delete Transactions or Accounts records.
+POST-1: The page displays transaction history within the user's authorized ownership scope matching the selected filter and pagination parameters.
+POST-2: If no transactions exist for the selected criteria, an empty-state message is displayed.
+POST-3: System state and data remain unchanged (read-only query operation).
 
 ### Basic Flow
 
-1. The user opens /transactions.
-2. The page initializes filterType = All, offset = 0, and limit = 10.
-3. The frontend sends GET /api/v1/transactions with type=All, limit=10, and offset=0.
-4. JwtAuthGuard validates the JWT and supplies the authenticated identifier corresponding to Users.user_id.
-5. TransactionService loads account_id values from Accounts where Accounts.user_id equals the authenticated user_id.
-6. TransactionService queries Transactions whose account_id belongs to those owned Accounts. If type is Revenue or Expense, it additionally filters Transactions.type by that enum value. It counts the matching rows, orders them by transaction_date descending, and applies offset and limit.
-7. The backend returns data, total, and hasMore.
-8. The frontend displays transaction data including item_description, shop_name, transaction_date, payment_method, amount, status, and a sign derived from Transactions.type.
+1. The user navigates to the Transactions page (/transactions).
+2. The page initializes default query parameters (filter and pagination settings).
+3. The frontend requests the initial transaction list (GET /api/v1/transactions) with default parameters.
+4. The backend authenticates the user and verifies authorization.
+5. The backend queries transaction records owned by the user, applying business rules for filtering, ordering, and pagination.
+6. The backend returns the transaction list along with total count and pagination metadata.
+7. The frontend renders the transaction history items and pagination controls.
 
 ### Alternative Flow
 
 AF-1: Filter by transaction type
-2a. The user selects All, Revenue, or Expense.
-2b. The page clears the current list and requests the first page using the selected filter.
-2c. If All is selected, no Transactions.type predicate is applied. All is not persisted in the database.
+2a. The user selects a specific transaction category or type filter.
+2b. The page resets pagination and requests transaction data according to the selected filter criteria.
 
-AF-2: Load more
-8a. If hasMore is true, the user selects Load More.
-8b. The frontend requests the next page using the current filter and offset and appends the returned rows.
+AF-2: Pagination / Load more
+7a. If additional transaction pages are available, the user requests to load more records.
+7b. The frontend requests the subsequent page of transactions and appends them to the current list.
 
-AF-3: No owned accounts or no matching transactions
-5a. If no Accounts rows exist for the authenticated user_id, or no Transactions rows match the selected filter, the backend returns data=[], total=0, and hasMore=false.
-8c. The frontend displays its empty-state message.
+AF-3: Empty transaction history
+5a. If no transactions match the query criteria, the backend returns an empty dataset.
+7c. The frontend displays the appropriate empty-state message.
 
 ### Exception Flow
 
 EF-1: Unauthorized request
-4a. If the JWT is missing, invalid, expired, or cannot resolve the authenticated user identity, the backend returns HTTP 401.
-4b. The Axios response interceptor removes token and user from localStorage and redirects to /login.
+4a. If user authentication is missing or invalid, the backend rejects the request and the frontend redirects the user to the login page.
 
-EF-2: Invalid transaction filter or pagination
-6a. The backend returns HTTP 400 when type is outside All, Revenue, or Expense, when limit cannot be parsed or is not positive, or when offset cannot be parsed or is negative.
-6b. The frontend displays the returned message and an error toast.
+EF-2: Invalid query parameters
+5b. If filter or pagination parameters fail validation, the backend rejects the request and the frontend displays a validation error.
 
-EF-3: Retrieval failure
-6c. If transaction retrieval fails, the backend returns HTTP 500.
-6d. The frontend displays the returned message and an error toast.
+EF-3: Service failure
+5c. If transaction retrieval encounters a server or database error, the frontend displays an error notification.
 
 ### Related UI
 
