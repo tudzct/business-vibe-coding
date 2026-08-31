@@ -1,0 +1,39 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-08-31T07:56:16Z",
+  "mode": "run",
+  "source_revision": "sha256:a38e8affad58adbb60572b8d586aff4e74ae38e841d9c2590143006de7b4134c",
+  "commands": [
+    {
+      "id": "compose-review",
+      "exit_code": 0,
+      "result": "Docker CLI, Compose v2, daemon and configuration available"
+    },
+    {
+      "id": "compose-build-current-source",
+      "exit_code": 0,
+      "result": "frontend and backend production images built successfully"
+    },
+    {
+      "id": "compose-recreate-current-images",
+      "exit_code": 0,
+      "result": "backend and frontend recreated; database preserved"
+    },
+    {
+      "id": "bounded-uc10-observation",
+      "exit_code": 1,
+      "result": "health and frontend 200; unauthenticated summary 401; authenticated summary 500 because required domain tables are absent"
+    }
+  ],
+  "docker": {
+    "cli": "29.6.1",
+    "compose": "5.3.0",
+    "daemon": "29.6.1"
+  },
+  "status": "BLOCKED",
+  "incident": "DEP-20260831-001",
+  "limitations": [
+    "No signed-in browser screenshot was captured.",
+    "Successful and partial-data summary flows cannot be observed until the approved runtime contains Account and Transaction domain tables."
+  ]
+}

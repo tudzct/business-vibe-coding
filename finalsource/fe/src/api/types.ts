@@ -69,3 +69,8 @@ export interface Goal {
   target_achieved: boolean
   last_updated: string
 }
+
+export interface ExpenseSummaryItem {
+  month: string
+  totalExpense: number
+}

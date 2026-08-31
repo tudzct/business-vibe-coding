@@ -1,0 +1,273 @@
+{
+  "run_id": "RQ3-SOL-MEDIUM-R1-UC10",
+  "run_status": "rq3_hold",
+  "hold_gate": "awaiting_researcher_authorization",
+  "experiment_configuration": {
+    "configuration_id": "CFG-UC10-RQ3-SOL-MEDIUM-R1-20260831",
+    "comparison_group_id": "CG-RQ3-SOL-MEDIUM-16UC-20260829",
+    "researcher_id": "tu",
+    "artifact": "docs/05-experiments/configurations/CFG-UC10-RQ3-SOL-MEDIUM-R1-20260831.json",
+    "checksum": "sha256:f3a78ed67460a4df1ba1dc76369ac96898257622dd5422ff5213d5a9c916041d",
+    "run_activation": "docs/02-construction/implementation/UC-10/runs/RQ3-SOL-MEDIUM-R1-UC10/run-activation.json"
+  },
+  "uc_id": "UC-10",
+  "uc_name": "View Monthly Expense Summary",
+  "replicate_index": 1,
+  "run_order": 1,
+  "audit_protocol": "matched",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null,
+    "effective_model_unavailable_reason": "The session telemetry exposes the effective model family but not an authoritative snapshot identifier.",
+    "codex_client_version": "codex-cli 0.149.1"
+  },
+  "audit_model": {
+    "assignment": "same-as-generation",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null,
+    "unavailable_reason": "The session telemetry exposes the effective model family but not an authoritative snapshot identifier."
+  },
+  "timing_wall_clock": {
+    "initial_started_at": "2026-08-31T07:46:24.866Z",
+    "initial_started_epoch_ms": 1788162384866,
+    "initial_ended_at": "2026-08-31T07:51:38.621Z",
+    "initial_ended_epoch_ms": 1788162698621
+  },
+  "timing_seconds": {
+    "initial": 313.755,
+    "repairs": 0,
+    "total": 313.755
+  },
+  "tokens": {
+    "initial_total": 5783084,
+    "repair_total": 0,
+    "total": 5783084,
+    "telemetry_source": "/Users/ldt/.codex/sessions/2026/08/31/rollout-2026-08-31T14-30-53-01a056ba-6e1a-7d02-8b28-fdf4535e12af.jsonl",
+    "details": {
+      "initial": {
+        "turn_id": 3,
+        "input": 108599,
+        "cache_read": 5640576,
+        "total_input": 5749175,
+        "output": 33909,
+        "reasoning": 7379,
+        "cost_usd": 4.3806,
+        "duration_seconds": 906.047
+      },
+      "repairs": {
+        "count": 0,
+        "total_tokens": 0,
+        "cost_usd": 0
+      }
+    }
+  },
+  "first_pass_source": {
+    "revision": "sha256:a38e8affad58adbb60572b8d586aff4e74ae38e841d9c2590143006de7b4134c",
+    "evidence": "docs/02-construction/implementation/UC-10/runs/RQ3-SOL-MEDIUM-R1-UC10/first-pass-generation.json"
+  },
+  "checks": {
+    "host_backend_lint": "not_evaluable: eslint executable absent because host dependencies are not installed",
+    "host_backend_build": "not_evaluable: nest executable absent because host dependencies are not installed",
+    "host_frontend_lint": "not_evaluable: eslint executable absent because host dependencies are not installed",
+    "host_frontend_build": "not_evaluable: tsc executable absent because host dependencies are not installed",
+    "docker_review": "PASS: Docker CLI 29.6.1, Compose v5.3.0, daemon 29.6.1 and Compose configuration available",
+    "docker_rebuild_build": "PASS: current frontend and backend production images built successfully from first-pass source",
+    "docker_rebuild_runtime": "PASS: database, backend and frontend containers are healthy from current images",
+    "frontend_reachability": "PASS: GET /expenses returned HTTP 200 through the current frontend container",
+    "authentication_exception": "PASS: unauthenticated GET /api/v1/expenses/summary returned normalized HTTP 401",
+    "authenticated_summary": "BLOCKED: authenticated GET returned normalized HTTP 500 because the active database contains no Account or Transaction domain tables",
+    "browser_visual_observation": "not_evaluable: no signed-in browser observation was captured; frozen Figma and source structural evidence were retained",
+    "runtime_incident": "backend-runtime-expense-summary-domain-tables-absent"
+  },
+  "business_rules": {
+    "baseline": "docs/02-construction/implementation/UC-10/business-rule-baseline.json",
+    "source_revision": "sha256:a38e8affad58adbb60572b8d586aff4e74ae38e841d9c2590143006de7b4134c",
+    "ordered_br_ids": [
+      "BR-EXP-01",
+      "BR-EXP-02",
+      "BR-EXP-03",
+      "BR-EXP-04",
+      "BR-EXP-05",
+      "BR-EXP-06",
+      "BR-EXP-07"
+    ],
+    "initial": {
+      "total": 7,
+      "met": 4,
+      "unmet": 3,
+      "not_evaluable": 0,
+      "requirements": [
+        {
+          "br_id": "BR-EXP-01",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/jwt-auth.guard.ts:19-38 verifies the Bearer JWT and derives userId from the signed subject",
+            "finalsource/be/src/modules/expenses/expenses.controller.ts:14-29 protects the endpoint and passes only request.user.userId",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:26-32 joins Account and scopes the query by account.userId"
+          ],
+          "rationale": "The authenticated JWT identity is authoritative and only transactions reached through accounts owned by that user can contribute."
+        },
+        {
+          "br_id": "BR-EXP-02",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/expenses/expenses.service.ts:26-32 constrains transaction.type to TransactionType.EXPENSE before aggregation"
+          ],
+          "rationale": "Revenue rows cannot contribute to the selected monthly sums."
+        },
+        {
+          "br_id": "BR-EXP-03",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/expenses/expenses.service.ts:26-35 has ownership and type predicates but no current-calendar-year transactionDate predicate",
+            "The generated query observed in bounded backend logs groups all matching rows by month without a year boundary"
+          ],
+          "rationale": "Transactions from different years can be combined into the same month, contrary to the required backend-server current calendar year scope."
+        },
+        {
+          "br_id": "BR-EXP-04",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/expenses/expenses.service.ts:29-34 selects and groups by MONTH(transaction.transactionDate)",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:37-43 maps that numeric transactionDate month to the response abbreviation"
+          ],
+          "rationale": "Monthly attribution is derived directly from transactionDate rather than another timestamp."
+        },
+        {
+          "br_id": "BR-EXP-05",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/expenses/expenses.service.ts:28-34 sums owned Expense amounts by transactionDate month",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:26-35 omits the current-year predicate required by the eligible-transaction set"
+          ],
+          "rationale": "The SUM expression is present, but its input set can include otherwise matching transactions from prior or future years, so the exact required total is not enforced."
+        },
+        {
+          "br_id": "BR-EXP-06",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/expenses/expenses.service.ts:12-15 defines only the twelve valid month abbreviations",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:29-35 groups by numeric month and orders ascending",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:37-43 returns only rows produced by the aggregation and does not generate zero-fill rows"
+          ],
+          "rationale": "The backend result is sparse, unique per grouped month, validly abbreviated and chronologically ordered."
+        },
+        {
+          "br_id": "BR-EXP-07",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/pages/Expenses/Expenses.tsx:169-175 constructs all twelve month labels and preserves returned values",
+            "finalsource/fe/src/pages/Expenses/Expenses.tsx:173 assigns null rather than 0 to every missing month",
+            "finalsource/fe/src/pages/Expenses/Expenses.tsx:267-276 correctly bypasses chart preparation for an empty summary"
+          ],
+          "rationale": "The twelve-month shape, uniqueness and returned totals are preserved, but missing months violate the rule because their totalExpense is null instead of zero."
+        }
+      ],
+      "acceptance_percent": 57.14
+    },
+    "final": {
+      "total": 7,
+      "met": 4,
+      "unmet": 3,
+      "not_evaluable": 0,
+      "requirements": [
+        {
+          "br_id": "BR-EXP-01",
+          "status": "met",
+          "evidence": [
+            "Same as immutable initial assessment; no repair has been authorized."
+          ],
+          "rationale": "No repair has been applied."
+        },
+        {
+          "br_id": "BR-EXP-02",
+          "status": "met",
+          "evidence": [
+            "Same as immutable initial assessment; no repair has been authorized."
+          ],
+          "rationale": "No repair has been applied."
+        },
+        {
+          "br_id": "BR-EXP-03",
+          "status": "unmet",
+          "evidence": [
+            "Same as immutable initial assessment; no repair has been authorized."
+          ],
+          "rationale": "No repair has been applied."
+        },
+        {
+          "br_id": "BR-EXP-04",
+          "status": "met",
+          "evidence": [
+            "Same as immutable initial assessment; no repair has been authorized."
+          ],
+          "rationale": "No repair has been applied."
+        },
+        {
+          "br_id": "BR-EXP-05",
+          "status": "unmet",
+          "evidence": [
+            "Same as immutable initial assessment; no repair has been authorized."
+          ],
+          "rationale": "No repair has been applied."
+        },
+        {
+          "br_id": "BR-EXP-06",
+          "status": "met",
+          "evidence": [
+            "Same as immutable initial assessment; no repair has been authorized."
+          ],
+          "rationale": "No repair has been applied."
+        },
+        {
+          "br_id": "BR-EXP-07",
+          "status": "unmet",
+          "evidence": [
+            "Same as immutable initial assessment; no repair has been authorized."
+          ],
+          "rationale": "No repair has been applied."
+        }
+      ],
+      "acceptance_percent": 57.14
+    }
+  },
+  "ui_accuracy": {
+    "design_dataset": "2026-08-29-005",
+    "node_id": "66:5698",
+    "structural_evidence": "The source implements the 280 px dark sidebar, top header, #F4F5F7 background, Expenses Comparison heading, white chart card, Jan-Dec axis, grid, current-month teal accent, loading, empty and error states.",
+    "deterministic_similarity": null,
+    "limitation": "No signed-in browser screenshot was captured for pixel-level comparison."
+  },
+  "flow_accuracy": {
+    "checkpoints_total": 9,
+    "checkpoints_satisfied": 7,
+    "checkpoints_not_evaluable": 2,
+    "satisfied": [
+      "protected /expenses route",
+      "automatic summary request",
+      "Bearer JWT attachment and verification",
+      "authenticated identity passed to service",
+      "normalized 401 exception flow",
+      "typed loading/error/empty UI states",
+      "current frontend and backend production builds"
+    ],
+    "not_evaluable": [
+      "successful aggregation response against persisted expense data",
+      "rendered success/partial-data chart against persisted expense data"
+    ]
+  },
+  "complexity": {
+    "actors": 1,
+    "main_flow_steps": 7,
+    "alternative_flows": 2,
+    "exception_flows": 2,
+    "entities": 2,
+    "integrations": 2,
+    "business_rules": 7,
+    "ui_states": 4
+  },
+  "repairs": [],
+  "all_sub_prompt_count": 0
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-10",
+  "use_case_path": "docs/01-inception/use-cases/uc-10-view-monthly-expense-summary.md",
+  "use_case_sha256": "sha256:1d2306543086e50d0769eaa91cf6934f2b41393d381163e18bd494dc91e46f13",
+  "business_rule_resource_path": "docs/02-construction/business-rules/UC-10-business-rules.json",
+  "business_rule_resource_sha256": "sha256:a75206cfe3c28ea2e5ab2af106554ca017791a9ee4cad317eeef872c4fb59a11",
+  "spreadsheet_source": "Use cases!A219:B237",
+  "ordered_br_ids": [
+    "BR-EXP-01",
+    "BR-EXP-02",
+    "BR-EXP-03",
+    "BR-EXP-04",
+    "BR-EXP-05",
+    "BR-EXP-06",
+    "BR-EXP-07"
+  ],
+  "frozen_at": "2026-08-31T07:39:49Z"
+}

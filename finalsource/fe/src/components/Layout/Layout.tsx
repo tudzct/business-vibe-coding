@@ -14,7 +14,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  if (location.pathname === '/register') {
+  if (location.pathname === '/register' || location.pathname === '/expenses') {
     return <>{children}</>
   }
 
@@ -104,4 +104,3 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 }
 
 export default Layout
-

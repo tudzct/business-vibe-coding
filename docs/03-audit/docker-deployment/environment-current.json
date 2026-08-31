@@ -1,12 +1,12 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-08-31T03:30:22Z",
-  "repository_revision": "b16784b",
-  "source_revision": "sha256:6e59c386050dd601c036d3e4e50046dd203332a29efd235a5fc2f4cc311d04f7",
+  "observed_at": "2026-08-31T07:56:16Z",
+  "repository_revision": "c1b35e0",
+  "source_revision": "sha256:a38e8affad58adbb60572b8d586aff4e74ae38e841d9c2590143006de7b4134c",
   "docker": {
-    "cli": "29.2.1",
-    "compose": "5.0.2",
-    "daemon": "29.2.1"
+    "cli": "29.6.1",
+    "compose": "5.3.0",
+    "daemon": "29.6.1"
   },
   "configuration": {
     "env_present": true,
@@ -15,11 +15,11 @@
     "compose_valid": true
   },
   "services": {
-    "database": "running and healthy; approved users schema inspected read-only; username nullable migration applied",
-    "backend": "current repaired image running and healthy; registration 201, invalid 400 and duplicate 409 observed",
-    "frontend": "current repaired image running and healthy; /register and same-origin /api proxy reachable"
+    "database": "running and healthy; read-only inspection found only users and migrations tables, with UC-10 Account/Transaction domain tables absent",
+    "backend": "current UC-10 first-pass image running and healthy; health 200, normalized unauthenticated summary 401, authenticated summary 500 due absent domain tables",
+    "frontend": "current UC-10 first-pass image running and healthy; /expenses reachable with HTTP 200"
   },
-  "status": "READY",
-  "blocking_incident": null,
-  "next_action": "Use http://localhost:8080/register; perform optional researcher visual comparison because no connected browser instance was available to capture a fresh screenshot."
+  "status": "BLOCKED",
+  "blocking_incident": "DEP-20260831-001",
+  "next_action": "Hold at the RQ3 first-pass gate; obtain researcher authorization before any BR repair or schema/runtime initialization proposal."
 }
