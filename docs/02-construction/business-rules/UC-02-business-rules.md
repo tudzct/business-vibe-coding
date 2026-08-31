@@ -3,7 +3,7 @@ artifact_type: business-rule-resource
 status: Frozen
 uc_id: UC-02
 source_use_case: docs/01-inception/use-cases/uc-02-login.md
-source_use_case_sha256: sha256:2d993dc7167bb3bc4d27f7a44962bad15f6f16de9a727a7498dd45f60963c650
+source_use_case_sha256: sha256:d6534cff0161f6d65d4b4a9f786e4e78f75afdc4d66be0b80aaf36223c3d237e
 ---
 
 # UC-02 Business Rule Resource

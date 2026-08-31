@@ -4,9 +4,9 @@
   "status": "Frozen",
   "uc_id": "UC-02",
   "use_case_path": "docs/01-inception/use-cases/uc-02-login.md",
-  "use_case_sha256": "sha256:2d993dc7167bb3bc4d27f7a44962bad15f6f16de9a727a7498dd45f60963c650",
+  "use_case_sha256": "sha256:d6534cff0161f6d65d4b4a9f786e4e78f75afdc4d66be0b80aaf36223c3d237e",
   "business_rule_resource_path": "docs/02-construction/business-rules/UC-02-business-rules.json",
-  "business_rule_resource_sha256": "sha256:cd30b0fd4128789dc64aca230d48863d682b50c331f62ad804013e0288c5ca6e",
+  "business_rule_resource_sha256": "sha256:a1cb3b5dbb61a999b7cf90a4898a8cef9f970e4e8fd5c064f0181f0348831406",
   "spreadsheet_source": "Use cases!A26:B44",
   "ordered_br_ids": [
     "BR-LOG-01",
