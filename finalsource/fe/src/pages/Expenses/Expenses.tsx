@@ -31,7 +31,7 @@ const navigationItems = [
 
 interface ChartItem {
   month: (typeof monthNames)[number]
-  totalExpense: number | null
+  totalExpense: number
 }
 
 const formatAmount = (value: number): string =>
@@ -112,8 +112,8 @@ const ExpenseSummaryChart = ({ data }: { readonly data: ChartItem[] }) => {
         <caption>Monthly expense totals</caption>
         <thead><tr><th>Month</th><th>Total expense</th></tr></thead>
         <tbody>
-          {data.filter((item) => item.totalExpense !== null).map((item) => (
-            <tr key={item.month}><td>{item.month}</td><td>{formatAmount(item.totalExpense ?? 0)}</td></tr>
+          {data.map((item) => (
+            <tr key={item.month}><td>{item.month}</td><td>{formatAmount(item.totalExpense)}</td></tr>
           ))}
         </tbody>
       </table>
@@ -170,7 +170,7 @@ const Expenses = () => {
     const returnedByMonth = new Map(summary.map((item) => [item.month, item.totalExpense]))
     return monthNames.map((month) => ({
       month,
-      totalExpense: returnedByMonth.get(month) ?? null,
+      totalExpense: returnedByMonth.get(month) ?? 0,
     }))
   }, [summary])
 

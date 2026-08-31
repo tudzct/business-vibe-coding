@@ -23,6 +23,9 @@ export class ExpensesService {
 
   async getExpenseSummary(userId: number): Promise<ExpenseSummaryItem[]> {
     try {
+      const currentYear = new Date().getFullYear();
+      const yearStart = `${currentYear}-01-01`;
+      const nextYearStart = `${currentYear + 1}-01-01`;
       const rows = await this.transactions
         .createQueryBuilder('transaction')
         .innerJoin('transaction.account', 'account')
@@ -30,6 +33,10 @@ export class ExpensesService {
         .addSelect('SUM(transaction.amount)', 'totalExpense')
         .where('account.userId = :userId', { userId })
         .andWhere('transaction.type = :type', { type: TransactionType.EXPENSE })
+        .andWhere('transaction.transactionDate >= :yearStart', { yearStart })
+        .andWhere('transaction.transactionDate < :nextYearStart', {
+          nextYearStart,
+        })
         .groupBy('MONTH(transaction.transactionDate)')
         .orderBy('monthNumber', 'ASC')
         .getRawMany<MonthlyExpenseRow>();

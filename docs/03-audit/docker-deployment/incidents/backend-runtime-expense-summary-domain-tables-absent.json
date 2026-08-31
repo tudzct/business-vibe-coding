@@ -9,7 +9,8 @@
     "primary_error": "Required transaction table is absent from the active application database.",
     "database_metadata": "Read-only SHOW TABLES returned only users and migrations.",
     "service_health": "database, backend and frontend remained healthy",
-    "schema_mutation": "none"
+    "schema_mutation": "none",
+    "repaired_query": "Bounded logs confirm current-year start/end predicates are present before the table-absence failure."
   },
   "root_cause": {
     "status": "confirmed",
@@ -20,6 +21,7 @@
     "Recreated frontend and backend containers without changing the database volume.",
     "Observed health, frontend reachability, normalized HTTP 401 and authenticated HTTP 500.",
     "Inspected only table names with the configured application database user."
+    ,"Reapplied the two authorized BR repairs after a workspace rollback, rebuilt both images and repeated the bounded observation."
   ],
   "files_changed": [],
   "commands_rerun": [

@@ -24,14 +24,14 @@
     "duration_seconds": 313.755
   },
   "tokens": {
-    "initial_total": 5783084,
+    "initial_total": 6489842,
     "telemetry_source": "/Users/ldt/.codex/sessions/2026/08/31/rollout-2026-08-31T14-30-53-01a056ba-6e1a-7d02-8b28-fdf4535e12af.jsonl",
     "turn_id": 3,
-    "input": 108599,
-    "cache_read": 5640576,
-    "total_input": 5749175,
-    "output": 33909,
-    "reasoning": 7379
+    "input": 113985,
+    "cache_read": 6340480,
+    "total_input": 6454465,
+    "output": 35377,
+    "reasoning": 7805
   },
   "source_revision": {
     "sha256": "sha256:a38e8affad58adbb60572b8d586aff4e74ae38e841d9c2590143006de7b4134c",
