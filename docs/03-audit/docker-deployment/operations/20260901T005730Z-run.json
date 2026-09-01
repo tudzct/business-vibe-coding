@@ -1,0 +1,36 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "mode": "run",
+  "observed_at": "2026-09-01T00:57:30.895Z",
+  "source_revision": "sha256:6de9443c8ef50690b68ff8043cc96ba21a8842b559942c701dd43470d3bea328",
+  "commands": [
+    {
+      "id": "compose-up-build-detached",
+      "exit_code": 0,
+      "result": "Backend and frontend production images built; database, backend and frontend containers became healthy."
+    },
+    {
+      "id": "backend-docker-lint",
+      "exit_code": 0,
+      "result": "Backend ESLint completed with zero warnings."
+    },
+    {
+      "id": "frontend-docker-lint",
+      "exit_code": 0,
+      "result": "Frontend ESLint completed with zero warnings."
+    },
+    {
+      "id": "bounded-http-status-observation",
+      "exit_code": 0,
+      "result": "Health and frontend routes returned 200; protected endpoints returned 401 without authentication; category lookup returned 500."
+    },
+    {
+      "id": "bounded-backend-log-inspection",
+      "exit_code": 0,
+      "result": "Confirmed missing Categories table without persisting raw logs or sensitive payloads."
+    }
+  ],
+  "outcome": "partial-blocked-schema-approval",
+  "blocking_incident": "DEP-20260901-001",
+  "tests_created_or_run": false
+}

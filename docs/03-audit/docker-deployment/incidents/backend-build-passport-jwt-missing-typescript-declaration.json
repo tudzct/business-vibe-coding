@@ -1,0 +1,39 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260831-001",
+  "observed_at": "2026-08-31T14:47:07Z",
+  "layer": "backend-build",
+  "fingerprint": "backend-build-passport-jwt-missing-typescript-declaration",
+  "symptom": "The current first-pass backend image fails TypeScript compilation at the passport-jwt import; Compose therefore cannot start the current backend source.",
+  "evidence": [
+    "Docker backend build exited 1 with TS7016 at src/modules/auth/jwt.strategy.ts:4.",
+    "The frontend current-source production image built successfully when isolated.",
+    "Existing healthy service containers predate source revision sha256:f0fd0965a7fcb07de003b5d7f7acc755e745d8f9499fb76513726a8134ca77a4 and are not runtime evidence for this run."
+  ],
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "The installed passport-jwt package has no declaration available to this TypeScript project, and the first-pass source does not supply one."
+  },
+  "actions_attempted": [
+    "Ran current-source docker compose up -d --build.",
+    "Built the frontend image separately to isolate its result.",
+    "Ran backend and frontend lint in disposable Node containers without mutating the workspace.",
+    "After researcher authorization, added @types/passport-jwt as a backend development dependency and rebuilt only the backend image."
+  ],
+  "files_changed_during_troubleshooting": [
+    "finalsource/be/package.json",
+    "finalsource/be/package-lock.json"
+  ],
+  "commands_rerun": [
+    "compose-up-build-current-source",
+    "compose-build-frontend",
+    "disposable-container-backend-lint",
+    "disposable-container-frontend-lint",
+    "compose-build-backend-after-repair"
+  ],
+  "outcome": "resolved",
+  "resolved_at": "2026-08-31T15:45:15.524Z",
+  "resolution_evidence": "Current-source backend Compose image build exited 0 after npm ci, nest build and production dependency pruning completed.",
+  "reusable_resolution": "Add @types/passport-jwt as a backend development dependency, update the lockfile and rebuild the backend image.",
+  "prevention": "Require the authentication module production build to pass before runtime activation while preserving first-pass evidence."
+}

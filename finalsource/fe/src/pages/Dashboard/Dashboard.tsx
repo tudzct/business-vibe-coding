@@ -19,7 +19,7 @@ const Dashboard: React.FC = () => {
         setIsLoading(true)
         const [accountsRes, transactionsRes] = await Promise.all([
           accountService.getAccounts(),
-          transactionService.getTransactions({}),
+          transactionService.getTransactions({ type: 'All', limit: 5, offset: 0 }),
         ])
 
         if (accountsRes.success && accountsRes.data) {
@@ -28,9 +28,10 @@ const Dashboard: React.FC = () => {
 
         if (transactionsRes.success && transactionsRes.data) {
           // Lấy 5 giao dịch gần nhất
-          setRecentTransactions(transactionsRes.data.slice(0, 5))
+          setRecentTransactions(transactionsRes.data.data.slice(0, 5))
         }
-      } catch (err: any) {
+      } catch (caught: unknown) {
+        const err = caught instanceof globalThis.Error ? caught : { message: '' }
         setError(err.message || 'Không thể tải dữ liệu')
       } finally {
         setIsLoading(false)

@@ -18,9 +18,9 @@ export class MakeUsersUsernameNullable20260831095333
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    const rows: Array<{ count: string }> = await queryRunner.query(
+    const rows = (await queryRunner.query(
       'SELECT COUNT(*) AS count FROM `users` WHERE `username` IS NULL',
-    );
+    )) as Array<{ count: string }>;
     if (Number(rows[0]?.count ?? 0) > 0) {
       throw new Error(
         'Cannot make users.username required while NULL usernames exist.',

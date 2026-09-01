@@ -5,8 +5,6 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
 import { Transaction } from '../transaction/transaction.entity';
@@ -19,7 +17,7 @@ export enum AccountType {
   LOAN = 'Loan',
 }
 
-@Entity('Accounts')
+@Entity('accounts')
 export class Account {
   @PrimaryGeneratedColumn({ name: 'account_id' })
   accountId!: number;

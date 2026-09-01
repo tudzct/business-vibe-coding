@@ -17,7 +17,7 @@
       "incident_id": "DEP-20260828-002",
       "fingerprint": "docker-daemon-desktop-linux-engine-unavailable",
       "path": "docs/03-audit/docker-deployment/incidents/docker-daemon-desktop-linux-engine-unavailable.json",
-      "outcome": "blocked"
+      "outcome": "resolved"
     },
     {
       "incident_id": "DEP-20260829-001",
@@ -54,6 +54,30 @@
       "fingerprint": "frontend-runtime-api-base-url-unbound-port",
       "path": "docs/03-audit/docker-deployment/incidents/frontend-runtime-api-base-url-unbound-port.json",
       "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260831-001",
+      "fingerprint": "backend-build-passport-jwt-missing-typescript-declaration",
+      "path": "docs/03-audit/docker-deployment/incidents/backend-build-passport-jwt-missing-typescript-declaration.json",
+      "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260831-002",
+      "fingerprint": "backend-runtime-transaction-account-table-case-mismatch",
+      "path": "docs/03-audit/docker-deployment/incidents/backend-runtime-transaction-account-table-case-mismatch.json",
+      "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260831-003",
+      "fingerprint": "frontend-build-error-component-shadowed-native-error",
+      "path": "docs/03-audit/docker-deployment/incidents/frontend-build-error-component-shadowed-native-error.json",
+      "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260901-001",
+      "fingerprint": "backend-runtime-categories-table-missing",
+      "path": "docs/03-audit/docker-deployment/incidents/backend-runtime-categories-table-missing.json",
+      "outcome": "blocked-schema-approval"
     }
   ]
 }

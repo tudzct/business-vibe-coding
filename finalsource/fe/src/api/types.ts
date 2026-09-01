@@ -40,12 +40,67 @@ export interface Transaction {
   transaction_date: string
   type: 'Revenue' | 'Expense'
   item_description: string
-  shop_name?: string
+  shop_name: string
   amount: number
-  payment_method?: string
+  payment_method: string
   status: 'Complete' | 'Pending' | 'Failed'
-  receipt_id?: string
-  category_id?: number
+}
+
+export interface AccountListItem {
+  id: number
+  bank_name: string
+  account_type: Account['account_type']
+  branch_name: string | null
+  account_number_last_4: string
+  balance: number
+}
+
+export interface AccountListResponse {
+  user_id: number
+  accounts: AccountListItem[]
+}
+
+export type TransactionFilter = 'All' | 'Revenue' | 'Expense'
+
+export interface TransactionListQuery {
+  type: TransactionFilter
+  limit?: number
+  offset?: number
+}
+
+export interface TransactionListResponse {
+  data: Transaction[]
+  total: number
+  hasMore: boolean
+}
+
+export type TransactionStatus = 'Complete' | 'Pending' | 'Failed'
+
+export interface CreateTransactionPayload {
+  accountId: number
+  transactionDate: string
+  type: 'Revenue' | 'Expense'
+  itemDescription: string
+  category_id?: number | null
+  shopName: string
+  amount: number
+  paymentMethod: string
+  status?: TransactionStatus
+}
+
+export interface CreatedTransaction {
+  transactionId: number
+  accountId: number
+  transactionDate: string
+  type: 'Revenue' | 'Expense'
+  itemDescription: string
+  shopName: string
+  amount: number
+  paymentMethod: string
+  status: TransactionStatus
+  receiptId: string | null
+  createdAt: string
+  category_id: number | null
 }
 
 export interface Bill {

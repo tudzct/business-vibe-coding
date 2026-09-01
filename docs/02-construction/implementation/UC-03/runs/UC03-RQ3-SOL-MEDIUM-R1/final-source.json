@@ -1,0 +1,27 @@
+{
+  "artifact_type": "final-source-revision",
+  "status": "Frozen",
+  "uc_id": "UC-03",
+  "run_id": "UC03-RQ3-SOL-MEDIUM-R1",
+  "source_revision": "sha256:122349abeca1f8831497cbbc504418aef22db2ce1a8c76f300c6dfb182a92176",
+  "hash_method": "SHA-256 over sorted relative path, NUL, per-file SHA-256 and newline entries; node_modules, dist and .env files excluded.",
+  "frozen_at": "2026-08-31T23:20:19.255+07:00",
+  "verification": {
+    "backend_lint": "pass",
+    "frontend_lint": "pass",
+    "backend_production_build": "pass",
+    "frontend_production_build": "pass",
+    "database_health": "healthy",
+    "backend_health": "healthy",
+    "frontend_health": "healthy",
+    "backend_health_status": 200,
+    "transactions_route_status": 200,
+    "transaction_list_status": 200,
+    "invalid_query_status": 400,
+    "unauthenticated_status": 401,
+    "nonexistent_user_status": 401,
+    "read_only_snapshot_unchanged": true,
+    "current_backend_error_lines": 0,
+    "tests_created_or_run": false
+  }
+}

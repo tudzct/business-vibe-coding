@@ -31,7 +31,8 @@ const Login: React.FC = () => {
     try {
       await login(formData.username, formData.password)
       navigate('/dashboard')
-    } catch (err: any) {
+    } catch (caught: unknown) {
+      const err = caught instanceof globalThis.Error ? caught : { message: '' }
       setError(err.message || 'Đăng nhập thất bại. Vui lòng thử lại.')
     } finally {
       setIsLoading(false)

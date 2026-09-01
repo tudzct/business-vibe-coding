@@ -1,0 +1,22 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260831-003",
+  "observed_at": "2026-08-31T16:15:00Z",
+  "resolved_at": "2026-08-31T16:18:41.721Z",
+  "layer": "frontend-build",
+  "fingerprint": "frontend-build-error-component-shadowed-native-error",
+  "symptom": "Frontend TypeScript production build failed with TS2554 and TS7009 in Dashboard and Login.",
+  "evidence": [
+    "Both pages imported a React component named Error, shadowing the native Error constructor introduced by a lint repair."
+  ],
+  "root_cause": { "status": "confirmed", "summary": "A component import shadowed the native error constructor in the caught-value fallback." },
+  "files_changed_during_troubleshooting": [
+    "finalsource/fe/src/pages/Dashboard/Dashboard.tsx",
+    "finalsource/fe/src/pages/Login/Login.tsx"
+  ],
+  "commands_rerun": ["frontend-lint", "compose-up-build-current-source", "bounded-uc03-runtime-observation"],
+  "outcome": "resolved",
+  "resolution_evidence": "Frontend lint and production build pass; final Compose services are healthy and UC-03 observations pass.",
+  "reusable_resolution": "Use globalThis.Error when a local Error component shadows the native constructor.",
+  "prevention": "Run production TypeScript build after every lint-only source correction."
+}

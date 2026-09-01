@@ -35,6 +35,7 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- Provider and hook intentionally share one context instance.
 export const useTheme = () => {
   const context = useContext(ThemeContext)
   if (context === undefined) {

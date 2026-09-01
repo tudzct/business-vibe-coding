@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-03",
+  "use_case_path": "docs/01-inception/use-cases/uc-03-view-transaction-history.md",
+  "use_case_sha256": "sha256:8d4cac9572e4181a9e55609fa7006538c41201522a97a93467d2235e8618bd7d",
+  "business_rule_resource_path": "docs/02-construction/business-rules/UC-03-business-rules.json",
+  "business_rule_resource_sha256": "sha256:4f3a2752d5b26d397ead335a610d321355ea6f3acec5c4f21ba4ffdbbbff906d",
+  "spreadsheet_source": "Use cases!A45:B63",
+  "ordered_br_ids": [
+    "BR-TXN-01",
+    "BR-TXN-02",
+    "BR-TXN-03",
+    "BR-TXN-04",
+    "BR-TXN-05",
+    "BR-TXN-06",
+    "BR-TXN-07"
+  ],
+  "frozen_at": "2026-08-31T13:51:55.7244405Z"
+}

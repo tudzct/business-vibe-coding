@@ -1,0 +1,30 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260901-001",
+  "observed_at": "2026-09-01T00:55:31Z",
+  "layer": "backend-database-schema",
+  "fingerprint": "backend-runtime-categories-table-missing",
+  "symptom": "GET /api/categories returns HTTP 500 while the backend and database containers remain healthy.",
+  "evidence": "The bounded backend log shows MySQL error 1146 for vibe_business.Categories. Source inspection found a Categories entity but no migration that creates the table.",
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "The running database schema does not contain the Categories table required by the UC-04 category lookup."
+  },
+  "actions": [
+    "Confirmed all three Compose services are running and healthy.",
+    "Confirmed backend and frontend production images build successfully.",
+    "Confirmed backend and frontend lint pass in disposable Docker containers.",
+    "Stopped before schema mutation because repository policy requires an approved schema proposal."
+  ],
+  "files_changed": [],
+  "commands_rerun": [
+    "compose-up-build-detached",
+    "backend-docker-lint",
+    "frontend-docker-lint",
+    "bounded-http-status-observation",
+    "bounded-backend-log-inspection"
+  ],
+  "outcome": "blocked-schema-approval",
+  "reusable_resolution": "Prepare docs/02-construction/implementation/UC-04/schema.json and obtain explicit researcher approval before adding or applying the Categories migration.",
+  "prevention": "Validate required entity tables against existing migrations before activating runtime verification for a UC that introduces a new lookup entity."
+}

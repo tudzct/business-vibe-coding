@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-resource",
+  "status": "Frozen",
+  "uc_id": "UC-03",
+  "source_use_case": "docs/01-inception/use-cases/uc-03-view-transaction-history.md",
+  "source_use_case_sha256": "sha256:8d4cac9572e4181a9e55609fa7006538c41201522a97a93467d2235e8618bd7d",
+  "spreadsheet": {
+    "id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "tab": "Use cases",
+    "range": "A45:B63",
+    "retrieved_at": "2026-08-27T03:49:28.570Z"
+  },
+  "ocl_utility_source": "Use cases!A2:B2",
+  "rules": [
+    {
+      "br_id": "BR-TXN-01",
+      "name": "Transaction ownership scope",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context TransactionService::findAllByUserId(\n  user_id : Integer,\n  type : TransactionFilterType,\n  limit : Integer,\n  offset : Integer\n) : TransactionListResponseDto\n\npre BR_TXN_01_UserExists:\n  User.allInstances()->exists(u |\n    u.user_id = user_id\n  )\n\npost BR_TXN_01_OwnedAccountsOnly:\n  result.data->forAll(t |\n    Account.allInstances()->exists(a |\n      a.account_id = t.account_id and\n      a.user_id = user_id\n    )\n  )",
+      "context": "TransactionService::findAllByUserId(user_id : Integer, type : TransactionFilterType, limit : Integer, offset : Integer) : TransactionListResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "A missing, invalid, or expired authenticated identity is rejected with HTTP 401; a successful list contains only transactions belonging to accounts owned by the authenticated user.",
+      "traceability": ["Use cases!A45:B63", "UC-03 PRE-1", "UC-03 Basic Flow 4-6", "UC-03 POST-1", "API-TRANSACTION-LIST"]
+    },
+    {
+      "br_id": "BR-TXN-02",
+      "name": "Allowed transaction filter and stored transaction type",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context TransactionService::findAllByUserId(\n  user_id : Integer,\n  type : TransactionFilterType,\n  limit : Integer,\n  offset : Integer\n) : TransactionListResponseDto\n\npre BR_TXN_02_AllowedFilter:\n  Set{TransactionFilterType::All,\n      TransactionFilterType::Revenue,\n      TransactionFilterType::Expense}->includes(type)\n\npost BR_TXN_02_FilterApplied:\n  (type = TransactionFilterType::Revenue implies\n    result.data->forAll(t |\n      t.type = TransactionType::Revenue\n    )) and\n  (type = TransactionFilterType::Expense implies\n    result.data->forAll(t |\n      t.type = TransactionType::Expense\n    ))\n\ncontext Transaction\ninv BR_TXN_02_StoredType:\n  type = TransactionType::Revenue or\n  type = TransactionType::Expense\n\nTechnical constraint:\n- All is a query/UI filter only. It shall never be stored in Transactions.type.",
+      "context": "TransactionService::findAllByUserId(user_id : Integer, type : TransactionFilterType, limit : Integer, offset : Integer) : TransactionListResponseDto; Transaction",
+      "enforcement_layers": ["frontend", "backend", "database"],
+      "failure_behavior": "The client and backend accept only All, Revenue, or Expense as filters; invalid values return HTTP 400. Revenue and Expense constrain returned rows, while All remains a query/UI sentinel and is never persisted.",
+      "traceability": ["Use cases!A45:B63", "UC-03 AF-1", "UC-03 EF-2", "UC-03 UML TransactionFilterType and TransactionType", "API-TRANSACTION-LIST"]
+    },
+    {
+      "br_id": "BR-TXN-03",
+      "name": "Pagination and ordering",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context TransactionService::findAllByUserId(\n  user_id : Integer,\n  type : TransactionFilterType,\n  limit : Integer,\n  offset : Integer\n) : TransactionListResponseDto\n\npre BR_TXN_03_LimitPositive:\n  limit > 0\n\npre BR_TXN_03_OffsetNonNegative:\n  offset >= 0\n\npost BR_TXN_03_PageSize:\n  result.data->size() <= limit\n\npost BR_TXN_03_HasMore:\n  result.hasMore =\n    (offset + result.data->size() < result.total)\n\npost BR_TXN_03_DescendingTransactionDate:\n  result.data->size() <= 1 or\n  Sequence{1..result.data->size()-1}->forAll(i |\n    result.data->at(i).transaction_date >=\n    result.data->at(i + 1).transaction_date\n  )\n\nTechnical constraints:\n- If limit is omitted, the endpoint shall use limit = 10.\n- If offset is omitted, the endpoint shall use offset = 0.",
+      "context": "TransactionService::findAllByUserId(user_id : Integer, type : TransactionFilterType, limit : Integer, offset : Integer) : TransactionListResponseDto",
+      "enforcement_layers": ["frontend", "backend", "database"],
+      "failure_behavior": "Invalid limit or offset values return HTTP 400. Valid results use defaults limit 10 and offset 0 when omitted, return at most limit rows ordered by transaction date descending, and expose total and hasMore consistently for load-more pagination.",
+      "traceability": ["Use cases!A45:B63", "UC-03 Basic Flow 2-7", "UC-03 AF-2", "UC-03 EF-2", "API-TRANSACTION-LIST"]
+    },
+    {
+      "br_id": "BR-TXN-04",
+      "name": "Database relationship integrity",
+      "representation": "ocl_invariant",
+      "expression_or_text": "context Account\ninv BR_TXN_04_AccountOwnerExists:\n  User.allInstances()->exists(u |\n    u.user_id = self.user_id\n  )\n\ncontext Transaction\ninv BR_TXN_04_TransactionAccountExists:\n  Account.allInstances()->exists(a |\n    a.account_id = self.account_id\n  )\n\ninv BR_TXN_04_OptionalCategoryValid:\n  self.category_id.oclIsUndefined() or\n  Category.allInstances()->exists(c |\n    c.category_id = self.category_id\n  )",
+      "context": "Account; Transaction",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "Account ownership, Transaction-to-Account, and optional Transaction-to-Category references remain valid through the existing ORM/database relationships; the source defines no separate list-response error for an integrity violation.",
+      "traceability": ["Use cases!A45:B63", "UC-03 UML User-Account-Transaction-Category relationships", "API-TRANSACTION-LIST"]
+    },
+    {
+      "br_id": "BR-TXN-05",
+      "name": "Empty transaction result",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context TransactionService::findAllByUserId(\n  user_id : Integer,\n  type : TransactionFilterType,\n  limit : Integer,\n  offset : Integer\n) : TransactionListResponseDto\n\npost BR_TXN_05_EmptyResultConsistency:\n  result.total = 0 implies\n    result.data->isEmpty() and\n    result.hasMore = false",
+      "context": "TransactionService::findAllByUserId(user_id : Integer, type : TransactionFilterType, limit : Integer, offset : Integer) : TransactionListResponseDto; transaction-list empty state",
+      "enforcement_layers": ["frontend", "backend"],
+      "failure_behavior": "No matching transactions return an empty data array, total 0, and hasMore false; the client displays the empty-state message.",
+      "traceability": ["Use cases!A45:B63", "UC-03 POST-2", "UC-03 AF-3", "API-TRANSACTION-LIST"]
+    },
+    {
+      "br_id": "BR-TXN-06",
+      "name": "Response rows map to persisted Transactions",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context TransactionService::findAllByUserId(\n  user_id : Integer,\n  type : TransactionFilterType,\n  limit : Integer,\n  offset : Integer\n) : TransactionListResponseDto\n\npost BR_TXN_06_ResponseBackedByTransaction:\n  result.data->forAll(dto |\n    Transaction.allInstances()->exists(t |\n      t.transaction_id = dto.transaction_id and\n      t.account_id = dto.account_id and\n      t.transaction_date = dto.transaction_date and\n      t.type = dto.type and\n      t.item_description = dto.item_description and\n      t.shop_name = dto.shop_name and\n      t.amount = dto.amount and\n      t.payment_method = dto.payment_method and\n      t.status = dto.status\n    )\n  )",
+      "context": "TransactionService::findAllByUserId(user_id : Integer, type : TransactionFilterType, limit : Integer, offset : Integer) : TransactionListResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "Every returned DTO row maps to the corresponding persisted Transaction fields; retrieval failures return the source-defined HTTP 500 safe error.",
+      "traceability": ["Use cases!A45:B63", "UC-03 Basic Flow 5-6", "UC-03 UML Transaction and TransactionDto", "API-TRANSACTION-LIST"]
+    },
+    {
+      "br_id": "BR-TXN-07",
+      "name": "Viewing transaction history is read-only",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context TransactionService::findAllByUserId(\n  user_id : Integer,\n  type : TransactionFilterType,\n  limit : Integer,\n  offset : Integer\n) : TransactionListResponseDto\n\npost BR_TXN_07_TransactionIdentityUnchanged:\n  Transaction.allInstances()->collect(t | t.transaction_id)->asSet() =\n  Transaction.allInstances()@pre->collect(t | t.transaction_id)->asSet()\n\npost BR_TXN_07_TransactionDataUnchanged:\n  Transaction.allInstances()->forAll(t |\n    Transaction.allInstances()@pre->exists(old |\n      old.transaction_id = t.transaction_id and\n      old.account_id = t.account_id and\n      old.transaction_date = t.transaction_date and\n      old.type = t.type and\n      old.item_description = t.item_description and\n      old.shop_name = t.shop_name and\n      old.amount = t.amount and\n      old.payment_method = t.payment_method and\n      old.status = t.status and\n      old.receipt_id = t.receipt_id and\n      old.category_id = t.category_id\n    )\n  )\n\npost BR_TXN_07_AccountIdentityUnchanged:\n  Account.allInstances()->collect(a | a.account_id)->asSet() =\n  Account.allInstances()@pre->collect(a | a.account_id)->asSet()\n\nTechnical constraint:\n- Listing transaction history shall not create, update, or delete Transactions or Accounts records.",
+      "context": "TransactionService::findAllByUserId(user_id : Integer, type : TransactionFilterType, limit : Integer, offset : Integer) : TransactionListResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "The GET list operation does not create, update, or delete Transaction or Account records; the source defines no separate error response for a read-only violation.",
+      "traceability": ["Use cases!A45:B63", "UC-03 POST-3", "UC-03 Basic Flow 3-6", "API-TRANSACTION-LIST"]
+    }
+  ],
+  "ordered_br_ids": [
+    "BR-TXN-01",
+    "BR-TXN-02",
+    "BR-TXN-03",
+    "BR-TXN-04",
+    "BR-TXN-05",
+    "BR-TXN-06",
+    "BR-TXN-07"
+  ],
+  "unresolved_items": []
+}

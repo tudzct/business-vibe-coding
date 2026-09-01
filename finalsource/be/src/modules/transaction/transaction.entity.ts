@@ -4,8 +4,6 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { Account } from '../account/account.entity';
 import { Category } from '../category/category.entity';
@@ -21,7 +19,7 @@ export enum TransactionStatus {
   FAILED = 'Failed',
 }
 
-@Entity('Transactions')
+@Entity('transactions')
 export class Transaction {
   @PrimaryGeneratedColumn({ name: 'transaction_id' })
   transactionId!: number;

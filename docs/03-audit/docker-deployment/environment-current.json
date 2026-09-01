@@ -1,8 +1,8 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-08-31T03:30:22Z",
-  "repository_revision": "b16784b",
-  "source_revision": "sha256:6e59c386050dd601c036d3e4e50046dd203332a29efd235a5fc2f4cc311d04f7",
+  "observed_at": "2026-09-01T00:57:30.895Z",
+  "repository_revision": "c1b35e0",
+  "source_revision": "sha256:6de9443c8ef50690b68ff8043cc96ba21a8842b559942c701dd43470d3bea328",
   "docker": {
     "cli": "29.2.1",
     "compose": "5.0.2",
@@ -15,11 +15,11 @@
     "compose_valid": true
   },
   "services": {
-    "database": "running and healthy; approved users schema inspected read-only; username nullable migration applied",
-    "backend": "current repaired image running and healthy; registration 201, invalid 400 and duplicate 409 observed",
-    "frontend": "current repaired image running and healthy; /register and same-origin /api proxy reachable"
+    "database": "healthy",
+    "backend": "current-source image built; container healthy; /api/health returned 200",
+    "frontend": "current-source image built; container healthy; / and /transactions/add returned 200"
   },
-  "status": "READY",
-  "blocking_incident": null,
-  "next_action": "Use http://localhost:8080/register; perform optional researcher visual comparison because no connected browser instance was available to capture a fresh screenshot."
+  "status": "PARTIAL",
+  "blocking_incident": "DEP-20260901-001",
+  "next_action": "Obtain researcher approval for the required Categories schema proposal before any entity or migration change; UC-04 remains at the RQ3 hold gate."
 }
