@@ -54,6 +54,12 @@
       "fingerprint": "frontend-runtime-api-base-url-unbound-port",
       "path": "docs/03-audit/docker-deployment/incidents/frontend-runtime-api-base-url-unbound-port.json",
       "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260901-001",
+      "fingerprint": "frontend-build-account-options-dashboard-contract",
+      "path": "docs/03-audit/docker-deployment/incidents/frontend-build-account-options-dashboard-contract.json",
+      "outcome": "resolved"
     }
   ]
 }

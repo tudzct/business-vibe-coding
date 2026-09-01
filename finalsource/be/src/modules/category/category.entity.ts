@@ -9,7 +9,7 @@ import {
 import { Transaction } from '../transaction/transaction.entity';
 import { Goal } from '../goal/goal.entity';
 
-@Entity('Categories')
+@Entity('categories')
 export class Category {
   @PrimaryGeneratedColumn({ name: 'category_id' })
   categoryId!: number;

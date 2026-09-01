@@ -7,7 +7,7 @@ source_type: google-sheets
 source_spreadsheet_id: 1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM
 source_sheet: "Use cases"
 source_range: "A64:B82"
-retrieved_at: 2026-08-27T03:49:28.570Z
+retrieved_at: 2026-09-01T01:22:04.719Z
 ---
 
 # UC-04: Create a Transaction
@@ -42,59 +42,68 @@ The user selects Add Transaction from the Transactions page.
 
 ### Pre-Condition(s)
 
-PRE-1: The user is authenticated.
-PRE-2: The user has at least one active bank account eligible for transactions.
+PRE-1: The user is authenticated and the validated JWT identifies an existing Users.user_id.
+PRE-2: At least one Accounts row exists with Accounts.user_id equal to the authenticated user_id.
+PRE-3: The selected account exists and is owned by the authenticated user.
+PRE-4: A category is optional. If category_id is supplied, it must reference an existing Categories.category_id.
 
 ### Post-Condition(s)
 
-POST-1: On success, the transaction is recorded, the associated account balance is adjusted consistently, and the user receives a success confirmation.
-POST-2: On failure, no transaction is created and account balances remain unchanged.
+POST-1: On success, exactly one new Transactions row is stored for the selected account.
+POST-2: The stored transaction has type Revenue or Expense, amount > 0, and non-empty item_description, shop_name, and payment_method. category_id may be null.
+POST-3: For Revenue, the selected Accounts.balance increases by amount; for Expense, it decreases by amount.
+POST-4: The Transactions insert and Accounts.balance update are committed atomically; on failure neither partial change remains.
+POST-5: The frontend shows a success toast, resets the form, and navigates to /transactions after 1.5 seconds.
 
 ### Basic Flow
 
-1. The user navigates to the transaction creation screen (/transactions/add).
-2. The form loads the user's available accounts and available transaction categories.
-3. The user fills in the transaction details (description, amount, type, account, date, counterparty/shop, payment method, and optional category).
-4. The user submits the transaction form.
-5. The frontend performs preliminary validation on the entered transaction details.
-6. The frontend sends the creation request (POST /api/v1/transactions) to the backend API.
-7. The backend authenticates the request and validates all transaction inputs against business and ownership rules.
-8. Upon successful validation, the backend records the transaction and updates the associated account balance atomically.
-9. The backend returns a success response with the created transaction details.
-10. The frontend displays a success notification, clears form fields, and navigates back to the transactions list.
+1. The user opens /transactions/add.
+2. AddTransactionForm loads the user's accounts and loads categories for optional classification.
+3. The user enters itemDescription, amount, transaction type, account, transaction date, shopName, and paymentMethod; the user may optionally select a category.
+4. The form defaults type to Expense, transactionDate to today, and submitted status to Complete.
+5. The user selects Save.
+6. The frontend validates accountId, transactionDate, type, non-empty itemDescription, non-empty shopName, non-empty paymentMethod, and amount >= 0.01. category_id is not required.
+7. The frontend sends POST /api/v1/transactions.
+8. JwtAuthGuard validates the JWT and supplies the authenticated identifier corresponding to Users.user_id.
+9. The backend validates CreateTransactionDto, verifies category_id only when supplied, and verifies that accountId references an Accounts row owned by the authenticated user_id.
+10. For Expense, the backend verifies Accounts.balance >= amount.
+11. The backend creates the Transactions row, mapping accountId -> account_id, transactionDate -> transaction_date, itemDescription -> item_description, shopName -> shop_name, and paymentMethod -> payment_method. If status is omitted, Complete is used.
+12. In the same database transaction, the backend updates Accounts.balance by +amount for Revenue or -amount for Expense and commits both changes.
+13. The frontend displays a success toast, resets fields, and navigates to /transactions after 1.5 seconds.
 
 ### Alternative Flow
 
-AF-1: Revenue transaction
-3a. The user selects a Revenue transaction type.
-8a. The system processes the transaction and increases the account balance accordingly without applying minimum balance constraints.
+AF-1: Create Revenue
+4a. The user selects Revenue.
+10a. The insufficient-balance check is not applied.
+12a. The backend increases Accounts.balance by amount.
 
-AF-2: Transaction without category
-3b. The user leaves the optional category unselected.
-8b. The system records the transaction without assigning a category classification.
+AF-2: Create transaction without category
+3a. The user leaves category unselected.
+9a. The backend does not require a category lookup and stores Transactions.category_id = null.
 
 AF-3: Category list unavailable
-2a. If category options cannot be loaded, the frontend notifies the user while allowing transaction creation to continue since classification is optional.
+2a. If categories cannot be loaded, the frontend shows a warning but still allows creation without category because category_id is optional.
 
-AF-4: Form cancellation
-4a. The user cancels the operation and the frontend returns to the transaction list without submitting.
+AF-4: Cancel
+5a. The user selects Cancel and the frontend navigates to /transactions without submitting.
 
 ### Exception Flow
 
-EF-1: Account data unavailable
-2b. If the user's accounts cannot be retrieved, the frontend informs the user and disables submission until an account is available.
+EF-1: Accounts cannot be loaded
+2a. If the user's accounts cannot be loaded, the frontend displays an error and cannot submit because accountId is required.
 
 EF-2: Client-side validation failure
-5a. If required fields fail preliminary validation, the frontend displays field errors and prevents submission.
+6a. If accountId, transactionDate, type, itemDescription, shopName, or paymentMethod is missing/empty, or amount < 0.01, the frontend displays field errors and does not send the request.
 
 EF-3: Unauthorized request
-7a. If authentication is missing or expired, the backend rejects the request and the user is redirected to login.
+8a. If the JWT is missing, invalid, or expired, the backend returns HTTP 401.
 
-EF-4: Business validation failure
-7b. If the transaction violates business constraints (such as unauthorized account selection or insufficient balance), the backend rejects the request and the frontend displays the returned error.
+EF-4: Backend validation or business-rule failure
+9a. Invalid required input, an invalid supplied category_id, a non-owned account, or insufficient Expense balance produces HTTP 400; the frontend displays the returned error.
 
-EF-5: Processing failure
-8c. If an error occurs during persistence, the system rolls back all changes to preserve data consistency and displays an error message.
+EF-5: Database failure
+12a. The backend rolls back the database transaction so neither the Transactions row nor Accounts.balance is partially changed, and returns HTTP 500.
 
 ### Related UI
 

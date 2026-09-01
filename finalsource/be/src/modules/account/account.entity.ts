@@ -19,7 +19,7 @@ export enum AccountType {
   LOAN = 'Loan',
 }
 
-@Entity('Accounts')
+@Entity('accounts')
 export class Account {
   @PrimaryGeneratedColumn({ name: 'account_id' })
   accountId!: number;

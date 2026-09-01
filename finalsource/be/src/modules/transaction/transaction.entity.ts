@@ -21,7 +21,7 @@ export enum TransactionStatus {
   FAILED = 'Failed',
 }
 
-@Entity('Transactions')
+@Entity('transactions')
 export class Transaction {
   @PrimaryGeneratedColumn({ name: 'transaction_id' })
   transactionId!: number;
@@ -68,11 +68,11 @@ export class Transaction {
   })
   status!: TransactionStatus;
 
-  @Column({ name: 'receipt_id', type: 'varchar', length: 255, nullable: true })
-  receiptId!: string;
+  @Column({ name: 'receipt_id', type: 'int', unsigned: true, nullable: true })
+  receiptId!: number | null;
 
   @Column({ name: 'category_id', type: 'int', nullable: true })
-  categoryId!: number;
+  categoryId!: number | null;
 
   @ManyToOne(() => Category, (category) => category.transactions, {
     nullable: true,

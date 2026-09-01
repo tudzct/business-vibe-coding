@@ -18,6 +18,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     return <>{children}</>
   }
 
+  if (location.pathname.startsWith('/transactions')) {
+    return <>{children}</>
+  }
+
   const handleLogout = () => {
     logout()
     navigate('/login')

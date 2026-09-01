@@ -1,6 +1,33 @@
 import axiosInstance from './axiosInstance'
 import { ApiResponse, Transaction } from './types'
 
+export interface CreateTransactionRequest {
+  accountId: number
+  transactionDate: string
+  type: 'Revenue' | 'Expense'
+  itemDescription: string
+  category_id?: number | null
+  shopName: string
+  amount: number
+  paymentMethod: string
+  status: 'Complete'
+}
+
+export interface CreatedTransaction {
+  transactionId: number
+  accountId: number
+  transactionDate: string
+  type: 'Revenue' | 'Expense'
+  itemDescription: string
+  shopName: string
+  amount: number
+  paymentMethod: string
+  status: 'Complete' | 'Pending' | 'Failed'
+  receiptId: number | null
+  createdAt: string
+  category_id: number | null
+}
+
 export const transactionService = {
   // Lấy danh sách giao dịch
   getTransactions: async (params?: {
@@ -21,8 +48,8 @@ export const transactionService = {
   },
 
   // Tạo giao dịch mới
-  createTransaction: async (data: Omit<Transaction, 'transaction_id'>): Promise<ApiResponse<Transaction>> => {
-    const response = await axiosInstance.post('/transactions', data)
+  createTransaction: async (data: CreateTransactionRequest): Promise<ApiResponse<CreatedTransaction>> => {
+    const response = await axiosInstance.post('/v1/transactions', data)
     return response.data
   },
 

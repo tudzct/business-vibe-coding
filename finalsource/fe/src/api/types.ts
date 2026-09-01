@@ -44,8 +44,8 @@ export interface Transaction {
   amount: number
   payment_method?: string
   status: 'Complete' | 'Pending' | 'Failed'
-  receipt_id?: string
-  category_id?: number
+  receipt_id?: number | null
+  category_id?: number | null
 }
 
 export interface Bill {

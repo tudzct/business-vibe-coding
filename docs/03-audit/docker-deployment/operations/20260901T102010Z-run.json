@@ -1,0 +1,19 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-09-01T10:20:10.7922822Z",
+  "mode": "run",
+  "source_revision": "sha256:e5a8fc821a59f4bd3c388d354a9c4ea9c43cd1d55603810063e7b7b79753ac36",
+  "commands": [
+    { "id": "compose-build-and-start-repaired-stack", "exit_code": 0, "result": "backend and frontend images rebuilt; database, backend and frontend healthy" },
+    { "id": "backend-health", "exit_code": 0, "result": "HTTP 200" },
+    { "id": "category-list-after-table-mapping-repair", "exit_code": 0, "result": "HTTP 200 normalized success envelope" },
+    { "id": "frontend-root-and-add-route", "exit_code": 0, "result": "HTTP 200 for root and /transactions/add" },
+    { "id": "browser-visual-observation", "exit_code": 1, "result": "No in-app or extension browser was available" }
+  ],
+  "docker": { "cli": "29.2.1", "compose": "v5.0.2", "daemon": "29.2.1" },
+  "status": "WARN",
+  "limitations": [
+    "Visual browser observation was unavailable.",
+    "Authenticated transaction persistence awaits explicit approval of the Draft receipt_id nullability schema proposal."
+  ]
+}

@@ -1,25 +1,25 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-08-31T14:13:30Z",
+  "observed_at": "2026-09-01T11:17:48.9780044Z",
   "repository_revision": null,
-  "source_revision": "sha256:a0ae8b9b34fc5635b53dff48ea9f399cc8860ab67d44822df3f640cbdcc52f33",
+  "source_revision": "sha256:cc6d74b91c95d043cb4974d5b439e3e9e76dba3b14d6ba90aa9fc655ff6006bf",
   "docker": {
-    "cli": null,
-    "compose": null,
-    "daemon": null
+    "cli": "29.2.1",
+    "compose": "v5.0.2",
+    "daemon": "29.2.1"
   },
   "configuration": {
     "env_present": true,
     "env_ignored": true,
     "env_tracked": false,
-    "compose_valid": null
+    "compose_valid": true
   },
   "services": {
-    "database": "not observed from the current execution environment",
-    "backend": "current UC-02 image could not be rebuilt or observed",
-    "frontend": "current UC-02 image could not be rebuilt or observed"
+    "database": "healthy",
+    "backend": "final UC-04 image built, running and healthy; health/category HTTP 200; authenticated success and bounded HTTP 400 exception observations passed",
+    "frontend": "Repair 008 transaction-navigation image built, recreated, running and healthy; /transactions and /transactions/add returned HTTP 200"
   },
-  "status": "BLOCKED",
-  "blocking_incident": "Docker CLI and Compose v2 are not callable or present at the standard Docker Desktop binary path in the current execution environment.",
-  "next_action": "Expose Docker Desktop's docker.exe to this task environment, then rebuild with docker compose --env-file finalsource/.env -f finalsource/compose.yaml up -d --build and repeat bounded UC-02 observations."
+  "status": "PASS",
+  "blocking_incident": null,
+  "next_action": "Researcher hard-refreshes /transactions, confirms the tabs, and uses Add Transaction to perform the end-to-end UI flow; no connected browser was available for automated click verification."
 }

@@ -1,10 +1,27 @@
 import axiosInstance from './axiosInstance'
 import { ApiResponse, Account } from './types'
 
+export interface AccountOption {
+  id: number
+  bankName: string
+  accountType: string
+  accountNumberLast4: string
+  balance: number
+}
+
+interface AccountOptionsData {
+  accounts: AccountOption[]
+}
+
 export const accountService = {
   // Lấy danh sách tài khoản của user
   getAccounts: async (): Promise<ApiResponse<Account[]>> => {
     const response = await axiosInstance.get('/accounts')
+    return response.data
+  },
+
+  getAccountOptions: async (): Promise<ApiResponse<AccountOptionsData>> => {
+    const response = await axiosInstance.get('/v1/accounts')
     return response.data
   },
 

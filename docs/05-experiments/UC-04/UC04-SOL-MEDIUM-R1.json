@@ -1,0 +1,721 @@
+{
+  "run_id": "UC04-SOL-MEDIUM-R1",
+  "run_status": "complete",
+  "hold_gate": "satisfied",
+  "experiment_configuration": {
+    "configuration_id": "CFG-UC04-RQ3-SOL-MEDIUM-R1-20260901",
+    "comparison_group_id": "CG-UC04-RQ3-20260901",
+    "researcher_id": "kien",
+    "artifact": "docs/05-experiments/configurations/CFG-UC04-RQ3-SOL-MEDIUM-R1-20260901.json",
+    "checksum": "sha256:6f5e68a80e2a9d67c955c1e52b17ef142b7cb1f818e33602b03003f8f6e75ade",
+    "run_activation": "docs/02-construction/implementation/UC-04/runs/UC04-SOL-MEDIUM-R1/run-activation.json"
+  },
+  "uc_id": "UC-04",
+  "uc_name": "Create a Transaction",
+  "replicate_index": 1,
+  "run_order": 1,
+  "audit_protocol": "matched",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "effective_model_unavailable_reason": "The active tool context does not expose an authoritative effective model identifier or snapshot.",
+    "codex_client_version": "codex-cli 0.151.0-alpha.7.2"
+  },
+  "audit_model": {
+    "assignment": "same-as-generation",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "unavailable_reason": "The active tool context does not expose an authoritative effective model identifier or snapshot."
+  },
+  "timing_wall_clock": {
+    "initial_started_at": "2026-09-01T01:43:13.4866202Z",
+    "initial_started_epoch_ms": 1788226993486,
+    "initial_ended_at": "2026-09-01T01:46:59.7864039Z",
+    "initial_ended_epoch_ms": 1788227219786
+  },
+  "timing_seconds": {
+    "initial": 226.3,
+    "repairs": 928.981,
+    "total": 1155.281
+  },
+  "tokens": {
+    "initial_total": 418144,
+    "repair_total": 7153764,
+    "total": 7571908,
+    "telemetry_source": "C:\\Users\\User\\.codex\\sessions\\2026\\09\\01\\rollout-2026-09-01T08-34-42-01a05a9a-b266-7b72-b6ff-23c46c34ced7.jsonl",
+    "extraction_method": "Sum event_msg.token_count.info.last_token_usage within the captured initial and per-repair ISO/epoch windows.",
+    "details": {
+      "initial": {
+        "input": 38717,
+        "cache_read": 367872,
+        "total_input": 406589,
+        "output": 11555,
+        "reasoning": 1345,
+        "total": 418144,
+        "cost_usd": 0.7242
+      },
+      "repairs": {
+        "count": 8,
+        "total_tokens": 7153764,
+        "cost_usd": 4.6025
+      }
+    }
+  },
+  "first_pass_source": {
+    "revision": "sha256:4cd90dd4af2e3df8170aee70838c976d21dda9f0d4adf417bd646af7cb1e9c16",
+    "evidence": "docs/02-construction/implementation/UC-04/runs/UC04-SOL-MEDIUM-R1/first-pass-generation.json"
+  },
+  "final_source": {
+    "revision": "sha256:cc6d74b91c95d043cb4974d5b439e3e9e76dba3b14d6ba90aa9fc655ff6006bf",
+    "unavailable_reason": null
+  },
+  "checks": {
+    "host_backend_lint": "FAIL repository-wide: 20 cumulative/baseline errors remain; targeted UC-04 DTO and migration lint checks pass after Repairs 005 and 006",
+    "host_backend_build": "not_evaluable: local dependencies are not installed",
+    "host_frontend_lint": "PASS for targeted Repair 007 AddTransaction page/form containerized ESLint; prior repository-wide cumulative/baseline diagnostics remain outside this repair scope",
+    "host_frontend_build": "not_evaluable: local dependencies are not installed",
+    "figma_dataset": "PASS: dataset 2026-08-29-005 nodes 4740:1106 and 66:5474 resolved complete with valid checksums",
+    "docker_backend_build": "PASS: final current-source UC-04 backend image completed Nest production build",
+    "docker_frontend_build": "PASS after Repair 008: current UC-04 frontend completed TypeScript and Vite production build",
+    "docker_backend_runtime": "PASS: current backend container is healthy; /api/health returned HTTP 200; missing-JWT POST /api/v1/transactions returned normalized HTTP 401",
+    "docker_category_runtime": "PASS after Repair 003: current backend GET /api/categories returned normalized HTTP 200",
+    "docker_frontend_runtime": "PASS after Repair 008: rebuilt frontend container is healthy and /transactions plus /transactions/add return HTTP 200; post-repair rendered browser observation is unavailable",
+    "authenticated_creation_runtime": "PASS: bounded fake-data observation loaded one owned account, created one Revenue transaction with null receipt/category, increased balance 100.0000 to 110.0000, and returned the normalized success envelope; whitespace and insufficient Expense returned HTTP 400 with zero rows and unchanged balance"
+  },
+  "business_rules": {
+    "baseline": "docs/02-construction/implementation/UC-04/business-rule-baseline.json",
+    "source_revision": "sha256:e5a8fc821a59f4bd3c388d354a9c4ea9c43cd1d55603810063e7b7b79753ac36",
+    "ordered_br_ids": [
+      "BR-TXN-08",
+      "BR-TXN-09",
+      "BR-TXN-10",
+      "BR-TXN-11",
+      "BR-TXN-12",
+      "BR-TXN-13",
+      "BR-TXN-14",
+      "BR-TXN-15"
+    ],
+    "initial": {
+      "total": 8,
+      "met": 6,
+      "unmet": 2,
+      "not_evaluable": 0,
+      "requirements": [
+        {
+          "br_id": "BR-TXN-08",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts:24-27,33-36,42-45 use IsNotEmpty without trim normalization",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:61-66 trims itemDescription, shopName and paymentMethod only after DTO validation and does not reject a trimmed empty value",
+            "finalsource/fe/src/pages/AddTransaction/AddTransactionPage.tsx:90-100 correctly rejects client-side blank values"
+          ],
+          "rationale": "The frontend blocks blank required text, but the authoritative backend accepts whitespace-only strings through IsNotEmpty and then persists them as empty strings, so trim(value).size() > 0 is not independently enforced."
+        },
+        {
+          "br_id": "BR-TXN-09",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts:21-23 and 46-49 enforce the transaction type and optional supplied status enums",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:67 defaults omitted status to Complete and returns the stored status",
+            "The current backend production image built successfully"
+          ],
+          "rationale": "The backend restricts both enums and implements the required Complete default on the persisted transaction and response."
+        },
+        {
+          "br_id": "BR-TXN-10",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts:29-32 permits an omitted or null category",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:43-49 performs a category lookup only when an identifier is supplied and rejects a missing category",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:63 and 90 map omitted category to null and supplied category to the stored/returned identifier"
+          ],
+          "rationale": "The creation service implements the optional lookup, rejection, and nullable persistence/result branches. The separate category-list runtime failure does not weaken server-side create validation, but remains a flow defect."
+        },
+        {
+          "br_id": "BR-TXN-11",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/auth/jwt-auth.guard.ts:15-31 derives userId only from a verified Bearer JWT subject",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:35-41 queries the account by both accountId and authenticated userId and rejects no match",
+            "Current-image runtime returned normalized HTTP 401 for a missing JWT"
+          ],
+          "rationale": "Only an account matching both the selected identifier and verified JWT owner can reach persistence."
+        },
+        {
+          "br_id": "BR-TXN-12",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/transaction/transaction.service.ts:35-38 locks the owned account inside the database transaction",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:52-56 rejects only Expense when the locked balance is below amount",
+            "The current backend production image built successfully"
+          ],
+          "rationale": "The authoritative transaction service applies the sufficient-balance implication to Expense and leaves Revenue outside that check."
+        },
+        {
+          "br_id": "BR-TXN-13",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/transaction/transaction.service.ts:34 executes the operation in one TypeORM transaction",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:72-76 adds amount for Revenue or subtracts it for Expense and saves the selected account through the transaction manager",
+            "finalsource/be/src/modules/account/account.entity.ts:51-57 persists balance as DECIMAL(15,2)"
+          ],
+          "rationale": "Inspectable persistence source implements the exact directional balance adjustment in the same transaction as creation."
+        },
+        {
+          "br_id": "BR-TXN-14",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/transaction/transaction.service.ts:58-70 creates and saves exactly one explicitly mapped Transaction entity",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:78-91 maps the saved identifier and fields into the normalized response payload",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:93-98 preserves HTTP exceptions and maps other persistence failures to the required safe HTTP 500 message",
+            "The current backend production image built successfully"
+          ],
+          "rationale": "The sole success path saves one mapped row, returns its created fields, and relies on the enclosing transaction to roll back persistence failure."
+        },
+        {
+          "br_id": "BR-TXN-15",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/transaction/transaction.service.ts:34-76 encloses the insert and balance save in one TypeORM transaction and maps category_id as nullable",
+            "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts:24-27,33-36,42-45 do not reject whitespace-only mandatory mapped strings",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:61-66 can trim accepted whitespace-only strings to empty before persistence"
+          ],
+          "rationale": "Atomicity and field mapping are present, but the complete rule is unmet because mandatory shopName/paymentMethod/itemDescription can become empty after backend validation."
+        }
+      ],
+      "acceptance_percent": 75.0
+    },
+    "final": {
+      "total": 8,
+      "met": 8,
+      "unmet": 0,
+      "not_evaluable": 0,
+      "requirements": [
+        {
+          "br_id": "BR-TXN-08",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts trims itemDescription, shopName and paymentMethod before existing string/non-empty validation",
+            "Backend Docker production build passed after Repair 001",
+            "Repair record: docs/02-construction/implementation/UC-04/runs/UC04-SOL-MEDIUM-R1/repairs/001-required-text-whitespace-normalization.md"
+          ],
+          "rationale": "Repair 001 makes whitespace-only required text empty before IsNotEmpty runs, so the authoritative backend now enforces trim(value).size() > 0."
+        },
+        {
+          "br_id": "BR-TXN-09",
+          "status": "met",
+          "evidence": [
+            "Same as immutable initial assessment; no repair is authorized or applied."
+          ],
+          "rationale": "No reassessment change."
+        },
+        {
+          "br_id": "BR-TXN-10",
+          "status": "met",
+          "evidence": [
+            "Same as immutable initial assessment; no repair is authorized or applied."
+          ],
+          "rationale": "No reassessment change."
+        },
+        {
+          "br_id": "BR-TXN-11",
+          "status": "met",
+          "evidence": [
+            "Same as immutable initial assessment; no repair is authorized or applied."
+          ],
+          "rationale": "No reassessment change."
+        },
+        {
+          "br_id": "BR-TXN-12",
+          "status": "met",
+          "evidence": [
+            "Same as immutable initial assessment; no repair is authorized or applied."
+          ],
+          "rationale": "No reassessment change."
+        },
+        {
+          "br_id": "BR-TXN-13",
+          "status": "met",
+          "evidence": [
+            "Same as immutable initial assessment; no repair is authorized or applied."
+          ],
+          "rationale": "No reassessment change."
+        },
+        {
+          "br_id": "BR-TXN-14",
+          "status": "met",
+          "evidence": [
+            "Bounded authenticated runtime created exactly one transaction row and returned Transaction created successfully with null receipt/category",
+            "The persisted Revenue row was accompanied by the expected account balance change from 100.0000 to 110.0000",
+            "Repair record: docs/02-construction/implementation/UC-04/runs/UC04-SOL-MEDIUM-R1/repairs/004-receipt-id-nullability-schema-alignment.md"
+          ],
+          "rationale": "Approved schema alignment and current-image runtime confirm the mapped transaction can be persisted exactly once without fabricating a receipt identifier."
+        },
+        {
+          "br_id": "BR-TXN-15",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts trims each mandatory mapped text input before non-empty validation",
+            "finalsource/be/src/modules/transaction/transaction.service.ts retains the original single TypeORM transaction and nullable category mapping",
+            "Backend Docker production build passed after Repair 001",
+            "Repair record: docs/02-construction/implementation/UC-04/runs/UC04-SOL-MEDIUM-R1/repairs/001-required-text-whitespace-normalization.md",
+            "Bounded insufficient-Expense runtime returned HTTP 400 with balance 100.0000 and transaction count 0",
+            "Approved receipt_id migration executed with synchronize=false and retained nullable category/receipt behavior"
+          ],
+          "rationale": "The repaired backend rejects empty-after-trim mapped fields, preserves atomic persistence, and current-image success/failure observations confirm the mapped nullable fields and rollback-safe precondition behavior."
+        }
+      ],
+      "acceptance_percent": 100.0
+    }
+  },
+  "repairs": [
+    {
+      "repair_id": "UC04-SOL-MEDIUM-R1-REPAIR-001",
+      "repair_index": 1,
+      "sub_prompt": "docs/02-construction/implementation/UC-04/runs/UC04-SOL-MEDIUM-R1/repairs/001-required-text-whitespace-normalization.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "required-text-whitespace-normalization",
+      "affected_br_ids": [
+        "BR-TXN-08",
+        "BR-TXN-15"
+      ],
+      "source_revision_before": "sha256:4cd90dd4af2e3df8170aee70838c976d21dda9f0d4adf417bd646af7cb1e9c16",
+      "source_revision_after": "sha256:fb6624a8b30362bfd69c528f74c81e447487076e131e5fd26a9ad6a00a2b01c5",
+      "status": "complete",
+      "model": {
+        "effective_model_id": null,
+        "reasoning_effort": "medium",
+        "unavailable_reason": "The active tool context does not expose an authoritative effective model identifier."
+      },
+      "timing": {
+        "started_at": "2026-09-01T01:54:56.1287771Z",
+        "started_epoch_ms": 1788227696128,
+        "ended_at": "2026-09-01T01:55:44.0765567Z",
+        "ended_epoch_ms": 1788227744076,
+        "duration_seconds": 47.948
+      },
+      "tokens": {
+        "total": 500749,
+        "input": 2638,
+        "cache_read": 497152,
+        "total_input": 499790,
+        "output": 959,
+        "reasoning": 67,
+        "cost_usd": 0.2905
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts"
+      ],
+      "verification": [
+        "Backend Docker production build passed."
+      ],
+      "result": "BR-TXN-08 and BR-TXN-15 reassessed from unmet to met without changing the immutable initial assessment."
+    },
+    {
+      "repair_id": "UC04-SOL-MEDIUM-R1-REPAIR-002",
+      "repair_index": 2,
+      "sub_prompt": "docs/02-construction/implementation/UC-04/runs/UC04-SOL-MEDIUM-R1/repairs/002-frontend-account-options-dashboard-contract.md",
+      "category": "technical",
+      "trigger": "compile",
+      "fingerprint": "frontend-account-options-dashboard-contract",
+      "affected_br_ids": [],
+      "source_revision_before": "sha256:fb6624a8b30362bfd69c528f74c81e447487076e131e5fd26a9ad6a00a2b01c5",
+      "source_revision_after": "sha256:3a7b8826033f9ea8f7f33341f8690fdd311d4a81dcf493a16cc005c5e9c827e8",
+      "status": "complete",
+      "model": {
+        "effective_model_id": null,
+        "reasoning_effort": "medium",
+        "unavailable_reason": "The active tool context does not expose an authoritative effective model identifier."
+      },
+      "timing": {
+        "started_at": "2026-09-01T01:57:08.9650321Z",
+        "started_epoch_ms": 1788227828965,
+        "ended_at": "2026-09-01T01:58:02.3652923Z",
+        "ended_epoch_ms": 1788227882365,
+        "duration_seconds": 53.4
+      },
+      "tokens": {
+        "total": 813218,
+        "input": 6160,
+        "cache_read": 805632,
+        "total_input": 811792,
+        "output": 1426,
+        "reasoning": 188,
+        "cost_usd": 0.4764
+      },
+      "changed_files": [
+        "finalsource/fe/src/api/account.service.ts",
+        "finalsource/fe/src/pages/AddTransaction/AddTransactionPage.tsx"
+      ],
+      "verification": [
+        "Frontend Docker TypeScript/Vite production build passed."
+      ],
+      "result": "The cumulative Dashboard contract is restored and UC-04 uses a dedicated normalized account-options method; BR assessments are unchanged."
+    },
+    {
+      "repair_id": "UC04-SOL-MEDIUM-R1-REPAIR-003",
+      "repair_index": 3,
+      "sub_prompt": "docs/02-construction/implementation/UC-04/runs/UC04-SOL-MEDIUM-R1/repairs/003-typeorm-entity-table-case-mismatch.md",
+      "category": "technical",
+      "trigger": "runtime",
+      "fingerprint": "typeorm-entity-table-case-mismatch",
+      "affected_br_ids": [],
+      "source_revision_before": "sha256:3a7b8826033f9ea8f7f33341f8690fdd311d4a81dcf493a16cc005c5e9c827e8",
+      "source_revision_after": "sha256:e5a8fc821a59f4bd3c388d354a9c4ea9c43cd1d55603810063e7b7b79753ac36",
+      "status": "complete",
+      "model": {
+        "effective_model_id": null,
+        "reasoning_effort": "medium",
+        "unavailable_reason": "The active tool context does not expose an authoritative effective model identifier."
+      },
+      "timing": {
+        "started_at": "2026-09-01T10:16:45.0987584Z",
+        "started_epoch_ms": 1788257805098,
+        "ended_at": "2026-09-01T10:17:40.2657713Z",
+        "ended_epoch_ms": 1788257860265,
+        "duration_seconds": 55.167
+      },
+      "tokens": {
+        "total": 624049,
+        "input": 5504,
+        "cache_read": 616960,
+        "total_input": 622464,
+        "output": 1585,
+        "reasoning": 535,
+        "cost_usd": 0.3836
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/account/account.entity.ts",
+        "finalsource/be/src/modules/category/category.entity.ts",
+        "finalsource/be/src/modules/transaction/transaction.entity.ts"
+      ],
+      "verification": [
+        "Backend Docker production build passed.",
+        "Current backend image restarted successfully.",
+        "GET /api/categories returned HTTP 200 with the normalized success envelope."
+      ],
+      "result": "The TypeORM mappings now target the existing lowercase schema tables; category-list runtime is restored and BR assessments are unchanged."
+    },
+    {
+      "repair_id": "UC04-SOL-MEDIUM-R1-REPAIR-004",
+      "repair_index": 4,
+      "sub_prompt": "docs/02-construction/implementation/UC-04/runs/UC04-SOL-MEDIUM-R1/repairs/004-receipt-id-nullability-schema-alignment.md",
+      "category": "business_rule",
+      "trigger": "runtime",
+      "fingerprint": "transactions-receipt-id-not-null-schema-conflict",
+      "affected_br_ids": [
+        "BR-TXN-14",
+        "BR-TXN-15"
+      ],
+      "source_revision_before": "sha256:e5a8fc821a59f4bd3c388d354a9c4ea9c43cd1d55603810063e7b7b79753ac36",
+      "source_revision_after": "sha256:04f1ef8199ade05a3fdb5c418d4d79f6dced458ab12ac752470968f312740b25",
+      "status": "complete",
+      "model": {
+        "effective_model_id": null,
+        "reasoning_effort": "medium",
+        "unavailable_reason": "The active tool context does not expose an authoritative effective model identifier."
+      },
+      "timing": {
+        "started_at": "2026-09-01T10:23:13.7745752Z",
+        "started_epoch_ms": 1788258193774,
+        "ended_at": "2026-09-01T10:25:22.8515547Z",
+        "ended_epoch_ms": 1788258322851,
+        "duration_seconds": 129.077
+      },
+      "tokens": {
+        "total": 1059609,
+        "input": 8779,
+        "cache_read": 1046272,
+        "total_input": 1055051,
+        "output": 4558,
+        "reasoning": 1215,
+        "cost_usd": 0.7038
+      },
+      "changed_files": [
+        "finalsource/be/src/database/migrations/20260901101931-make-transactions-receipt-id-nullable.ts",
+        "finalsource/be/src/modules/transaction/transaction.entity.ts"
+      ],
+      "verification": [
+        "Researcher-approved schema proposal recorded.",
+        "Backend Docker production build passed.",
+        "Migration executed and DESCRIBE confirmed receipt_id nullable.",
+        "Authenticated Revenue creation persisted one row, returned receiptId null and increased balance by the submitted amount.",
+        "Whitespace and insufficient Expense observations returned HTTP 400 without persistence changes."
+      ],
+      "result": "BR-TXN-14 and BR-TXN-15 remain met with runtime evidence after the approved nullable receipt_id alignment."
+    },
+    {
+      "repair_id": "UC04-SOL-MEDIUM-R1-REPAIR-005",
+      "repair_index": 5,
+      "sub_prompt": "docs/02-construction/implementation/UC-04/runs/UC04-SOL-MEDIUM-R1/repairs/005-dto-transform-unsafe-return-lint.md",
+      "category": "technical",
+      "trigger": "lint",
+      "fingerprint": "dto-transform-unsafe-return-lint",
+      "affected_br_ids": [
+        "BR-TXN-08",
+        "BR-TXN-15"
+      ],
+      "source_revision_before": "sha256:04f1ef8199ade05a3fdb5c418d4d79f6dced458ab12ac752470968f312740b25",
+      "source_revision_after": "sha256:3a5a9d629f586006dfd232cce6b919320e4336cb8b8006b51d1e45b52e4981fa",
+      "status": "complete",
+      "model": {
+        "effective_model_id": null,
+        "reasoning_effort": "medium",
+        "unavailable_reason": "The active tool context does not expose an authoritative effective model identifier."
+      },
+      "timing": {
+        "started_at": "2026-09-01T10:26:26.0073503Z",
+        "started_epoch_ms": 1788258386007,
+        "ended_at": "2026-09-01T10:27:29.4323191Z",
+        "ended_epoch_ms": 1788258449432,
+        "duration_seconds": 63.425
+      },
+      "tokens": {
+        "total": 738128,
+        "input": 6538,
+        "cache_read": 729600,
+        "total_input": 736138,
+        "output": 1990,
+        "reasoning": 947,
+        "cost_usd": 0.4572
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts"
+      ],
+      "verification": [
+        "Targeted DTO ESLint passed with zero warnings.",
+        "Backend Docker production build passed."
+      ],
+      "result": "The class-transformer boundary is narrowed through an unknown-typed helper with no change to BR-TXN-08/15 behavior or status."
+    },
+    {
+      "repair_id": "UC04-SOL-MEDIUM-R1-REPAIR-006",
+      "repair_index": 6,
+      "sub_prompt": "docs/02-construction/implementation/UC-04/runs/UC04-SOL-MEDIUM-R1/repairs/006-migration-query-result-narrowing.md",
+      "category": "technical",
+      "trigger": "lint",
+      "fingerprint": "migration-query-result-unsafe-assignment",
+      "affected_br_ids": [
+        "BR-TXN-15"
+      ],
+      "source_revision_before": "sha256:3a5a9d629f586006dfd232cce6b919320e4336cb8b8006b51d1e45b52e4981fa",
+      "source_revision_after": "sha256:5c48eada0b9a90bf43af67bcfb9b8063b64920c9215c8e9f4269ce3e9f9a1ed5",
+      "status": "complete",
+      "model": {
+        "effective_model_id": null,
+        "reasoning_effort": "medium",
+        "unavailable_reason": "The active tool context does not expose an authoritative effective model identifier."
+      },
+      "timing": {
+        "started_at": "2026-09-01T10:27:36.0243873Z",
+        "started_epoch_ms": 1788258456024,
+        "ended_at": "2026-09-01T10:28:35.3813890Z",
+        "ended_epoch_ms": 1788258515381,
+        "duration_seconds": 59.357
+      },
+      "tokens": {
+        "total": 749930,
+        "input": 3915,
+        "cache_read": 744960,
+        "total_input": 748875,
+        "output": 1055,
+        "reasoning": 122,
+        "cost_usd": 0.4237
+      },
+      "changed_files": [
+        "finalsource/be/src/database/migrations/20260901101931-make-transactions-receipt-id-nullable.ts"
+      ],
+      "verification": [
+        "Targeted migration ESLint passed with zero warnings.",
+        "Backend Docker production build passed.",
+        "Final current-source Compose stack is healthy."
+      ],
+      "result": "The rollback guard safely narrows QueryRunner output without changing migration or BR-TXN-15 behavior."
+    },
+    {
+      "repair_id": "UC04-SOL-MEDIUM-R1-REPAIR-007",
+      "repair_index": 7,
+      "sub_prompt": "docs/02-construction/implementation/UC-04/runs/UC04-SOL-MEDIUM-R1/repairs/007-figma-rendered-ui-alignment.md",
+      "category": "ui",
+      "trigger": "ui_review",
+      "fingerprint": "figma-rendered-ui-alignment",
+      "affected_br_ids": [],
+      "source_revision_before": "sha256:5c48eada0b9a90bf43af67bcfb9b8063b64920c9215c8e9f4269ce3e9f9a1ed5",
+      "source_revision_after": "sha256:959bee589e77009e57a7d00945ad75b18dbfd799c55857c218dd9b997c5997df",
+      "status": "complete",
+      "model": {
+        "effective_model_id": null,
+        "reasoning_effort": "medium",
+        "unavailable_reason": "The active tool context does not expose an authoritative effective model identifier."
+      },
+      "timing": {
+        "started_at": "2026-09-01T11:01:12.3247672Z",
+        "started_epoch_ms": 1788260472328,
+        "ended_at": "2026-09-01T11:05:20.5081177Z",
+        "ended_epoch_ms": 1788260720511,
+        "duration_seconds": 248.183
+      },
+      "tokens": {
+        "total": 2224890,
+        "input": 19464,
+        "cache_read": 2195968,
+        "total_input": 2215432,
+        "output": 9458,
+        "reasoning": 2772,
+        "cost_usd": 1.479
+      },
+      "changed_files": [
+        "finalsource/fe/src/pages/AddTransaction/AddTransactionPage.tsx",
+        "finalsource/fe/src/pages/AddTransaction/AddTransactionForm.tsx"
+      ],
+      "verification": [
+        "Frozen Figma dataset 2026-08-29-005 node 4740:1106 resolved complete with valid checksums.",
+        "Targeted containerized ESLint passed with zero warnings.",
+        "Frontend Docker TypeScript/Vite production build passed.",
+        "Rebuilt frontend container is healthy; /transactions/add and /api/health returned HTTP 200."
+      ],
+      "result": "The desktop shell and form source now follow the frozen Figma dimensions, colors, spacing, typography hierarchy, iconography and control composition while preserving UC-04 behavior. Post-repair rendered similarity remains pending because no browser surface was connected."
+    },
+    {
+      "repair_id": "UC04-SOL-MEDIUM-R1-REPAIR-008",
+      "repair_index": 8,
+      "sub_prompt": "docs/02-construction/implementation/UC-04/runs/UC04-SOL-MEDIUM-R1/repairs/008-transaction-entry-navigation.md",
+      "category": "flow",
+      "trigger": "flow_review",
+      "fingerprint": "transaction-entry-navigation-placeholder",
+      "affected_br_ids": [],
+      "source_revision_before": "sha256:959bee589e77009e57a7d00945ad75b18dbfd799c55857c218dd9b997c5997df",
+      "source_revision_after": "sha256:cc6d74b91c95d043cb4974d5b439e3e9e76dba3b14d6ba90aa9fc655ff6006bf",
+      "status": "complete",
+      "model": {
+        "effective_model_id": null,
+        "reasoning_effort": "medium",
+        "unavailable_reason": "The active tool context does not expose an authoritative effective model identifier."
+      },
+      "timing": {
+        "started_at": "2026-09-01T11:13:16.5544554Z",
+        "started_epoch_ms": 1788261196554,
+        "ended_at": "2026-09-01T11:17:48.9780044Z",
+        "ended_epoch_ms": 1788261468978,
+        "duration_seconds": 272.424
+      },
+      "tokens": {
+        "total": 443191,
+        "input": 32722,
+        "cache_read": 398592,
+        "total_input": 431314,
+        "output": 11877,
+        "reasoning": 1002,
+        "cost_usd": 0.3883
+      },
+      "changed_files": [
+        "finalsource/fe/src/pages/Transactions/Transactions.tsx",
+        "finalsource/fe/src/components/Layout/Layout.tsx"
+      ],
+      "verification": [
+        "Frozen Figma dataset 2026-08-29-005 node 66:5474 resolved complete with valid checksums.",
+        "Targeted containerized ESLint passed with zero warnings.",
+        "Frontend Docker TypeScript/Vite production build passed.",
+        "Rebuilt frontend container is healthy; /transactions, /transactions/add, and /api/health returned HTTP 200."
+      ],
+      "result": "The transaction list route now uses the frozen shell, its All/Revenue/Expenses tabs and search are interactive, and Add Transaction routes to /transactions/add. Post-repair click confirmation remains pending because no browser surface was connected."
+    }
+  ],
+  "evidenced_defects": [
+    {
+      "fingerprint": "required-text-whitespace-normalization",
+      "category": "business_rule",
+      "affected_br_ids": [
+        "BR-TXN-08",
+        "BR-TXN-15"
+      ],
+      "status": "resolved",
+      "summary": "Backend validation accepts whitespace-only required transaction text and the service trims it to empty before persistence."
+    },
+    {
+      "fingerprint": "frontend-account-options-dashboard-contract",
+      "category": "build",
+      "affected_br_ids": [],
+      "status": "resolved",
+      "summary": "The cumulative Dashboard consumer is incompatible with the UC-04 account-list service response type, blocking the current frontend build."
+    },
+    {
+      "fingerprint": "category-list-runtime-500",
+      "category": "runtime",
+      "affected_br_ids": [],
+      "status": "resolved",
+      "summary": "GET /api/categories returned the safe normalized HTTP 500 envelope in the current backend runtime."
+    },
+    {
+      "fingerprint": "transactions-receipt-id-not-null-schema-conflict",
+      "category": "business_rule",
+      "affected_br_ids": [
+        "BR-TXN-14",
+        "BR-TXN-15"
+      ],
+      "status": "resolved",
+      "summary": "The existing NOT NULL receipt_id column prevented approved receipt-less transaction creation until the researcher-approved nullable migration was applied."
+    },
+    {
+      "fingerprint": "dto-transform-unsafe-return-lint",
+      "category": "lint",
+      "affected_br_ids": [
+        "BR-TXN-08",
+        "BR-TXN-15"
+      ],
+      "status": "resolved",
+      "summary": "Class-transformer callback values required safe unknown-boundary narrowing."
+    },
+    {
+      "fingerprint": "migration-query-result-unsafe-assignment",
+      "category": "lint",
+      "affected_br_ids": [
+        "BR-TXN-15"
+      ],
+      "status": "resolved",
+      "summary": "TypeORM QueryRunner query output required explicit unknown narrowing in the rollback guard."
+    },
+    {
+      "fingerprint": "figma-rendered-ui-alignment",
+      "category": "ui",
+      "affected_br_ids": [],
+      "status": "source_corrected_render_pending",
+      "summary": "The researcher observed that the rendered transaction-creation UI did not match the frozen Figma frame and could not support end-to-end UI-flow observation; Repair 007 aligned the bounded UI source and rebuilt the healthy frontend image, but post-repair visual confirmation remains pending."
+    },
+    {
+      "fingerprint": "transaction-entry-navigation-placeholder",
+      "category": "flow",
+      "affected_br_ids": [],
+      "status": "source_corrected_observation_pending",
+      "summary": "The /transactions route was a generic placeholder with no functional filters or entry action. Repair 008 implements the frozen transaction shell, interactive tabs/search, and the /transactions/add trigger; researcher click confirmation remains pending."
+    }
+  ],
+  "manual_estimates_minutes": [],
+  "ui_accuracy_percent": null,
+  "ui_accuracy": {
+    "source_structural_coverage": "After Repairs 007-008, both transaction routes map the frozen 1440x1024 shell dimensions, icon navigation and selected state, date/bell/search header, interactive tabs, add control, list/card surfaces and creation controls with the specified colors, spacing, radii and typography hierarchy.",
+    "deterministic_similarity": null,
+    "researcher_observation_before_repair": "The researcher reported that the rendered UI before Repair 007 did not match the frozen Figma specification.",
+    "limitation": "No connected browser surface was available for post-repair rendered comparison, so no defensible UI Accuracy percentage is recorded until the researcher confirms the rebuilt page."
+  },
+  "flow_accuracy_percent": null,
+  "flow_accuracy": {
+    "source_checkpoints": "The /transactions trigger, type tabs, search, /transactions/add navigation, option loads, validation, authenticated request, ownership/category/balance decisions, transaction persistence, success reset/navigation and error branches are inspectable.",
+    "researcher_observation_before_repair": "The pre-repair UI mismatch prevented the researcher from executing the specified browser flow against the Figma-based interface.",
+    "limitation": "The rebuilt route is reachable and source/API/runtime checkpoints remain available, but Operational Flow Accuracy stays not evaluable until the researcher confirms the repaired UI and performs the end-to-end browser flow."
+  },
+  "complexity": {
+    "actors": 1,
+    "main_flow_steps": 13,
+    "alternate_exception_flows": 9,
+    "data_entities": 4,
+    "integrations": 4,
+    "business_rules": 8,
+    "ui_states": 7
+  },
+  "all_sub_prompt_count": 8
+}

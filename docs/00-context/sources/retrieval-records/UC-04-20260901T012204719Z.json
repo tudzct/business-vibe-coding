@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "source-retrieval-record",
+  "status": "Frozen",
+  "retrieval_id": "SRC-UC04-20260901T012204719Z",
+  "retrieved_at": "2026-09-01T01:22:04.719Z",
+  "authorization": {
+    "actor": "researcher",
+    "decision": "confirmed",
+    "scope": "Refresh the frozen UC-04 projection from the canonical Google Sheet and resume RQ3 prompt generation."
+  },
+  "source": {
+    "type": "google-sheets",
+    "spreadsheet_id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "sheet": "Use cases",
+    "range": "A64:B82",
+    "retrieval_method": "connected-google-drive-get-spreadsheet-range"
+  },
+  "projection": {
+    "path": "docs/01-inception/use-cases/uc-04-create-transaction.md",
+    "previous_sha256": "sha256:ae0185a8d42a037253d3a7208135679f0f29ab90dc2f48d9796237dfd147846a",
+    "refreshed_sha256": "sha256:0d6d0bc1aaa9e393bbeac88f9bc75420954049f4f6067de631ea45a876b17893",
+    "status": "Frozen"
+  },
+  "refreshed_cells": [
+    "Use cases!B71",
+    "Use cases!B72",
+    "Use cases!B73",
+    "Use cases!B74",
+    "Use cases!B75"
+  ],
+  "verification": {
+    "spreadsheet_id_matches_project_context": true,
+    "sheet_and_range_match_projection_provenance": true,
+    "ordered_business_rule_ids": [
+      "BR-TXN-08",
+      "BR-TXN-09",
+      "BR-TXN-10",
+      "BR-TXN-11",
+      "BR-TXN-12",
+      "BR-TXN-13",
+      "BR-TXN-14",
+      "BR-TXN-15"
+    ],
+    "business_rule_text_changed": false,
+    "unresolved_items": []
+  }
+}

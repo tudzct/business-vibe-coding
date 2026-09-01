@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "source-decision-record",
+  "status": "Confirmed",
+  "uc_id": "UC-04",
+  "confirmed_at": "2026-09-01T01:32:00.509Z",
+  "confirmed_by": "researcher",
+  "decisions": [
+    {
+      "decision_id": "UC04-API-RECEIPT-ID-TYPE",
+      "conflict": {
+        "canonical_sheet_projection": "Use cases!B76 defines CreateTransactionDataDto.receiptId as Integer [0..1].",
+        "api_contract": "API-TRANSACTION-CREATE defines data.receiptId as string and nullable."
+      },
+      "resolution": "Use integer | null for the public data.receiptId field, following the canonical Sheet-derived UML type and nullability.",
+      "affected_artifact": "docs/02-construction/coding-prompts/UC-04-rq3-coding-prompt.md"
+    }
+  ]
+}
