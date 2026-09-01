@@ -1,0 +1,22 @@
+{
+  "artifact_type": "final-source-revision",
+  "status": "Frozen",
+  "uc_id": "UC-11",
+  "run_id": "RQ3-SOL-MEDIUM-R1-UC11",
+  "source_revision": "sha256:dcdfeff6a8a3fa93dfd24a303dff1e26dc56c05c54631c851f015b042f1ef095",
+  "hash_method": "SHA-256 over sorted relative path, NUL, per-file SHA-256 and newline entries; node_modules, dist and .env files excluded.",
+  "file_count": 97,
+  "frozen_at": "2026-09-01T09:20:23Z",
+  "terminal_condition": "Authorized bounded repairs complete; authenticated runtime observation remains blocked by DEP-20260831-001.",
+  "verification": {
+    "backend_production_build": "pass",
+    "database_health": "healthy",
+    "backend_health": "healthy",
+    "frontend_health": "healthy",
+    "expenses_page_status": 200,
+    "unauthenticated_breakdown_status": 401,
+    "openapi_contract": "pass",
+    "authenticated_breakdown": "not_evaluable: required Account and Transaction domain tables are absent",
+    "tests_created_or_run": false
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-11",
+  "use_case_path": "docs/01-inception/use-cases/uc-11-view-expenses-by-category.md",
+  "use_case_sha256": "sha256:b1aa742337d80cd75581afcb19a01a6f8d316e447b5b9515b4e0bcaaf96ad521",
+  "business_rule_resource_path": "docs/02-construction/business-rules/UC-11-business-rules.json",
+  "business_rule_resource_sha256": "sha256:1966dbdfb245693587643472f5ca5bf42e0360966f9c0be142dd767a5ac76194",
+  "spreadsheet_source": "Use cases!A238:B256",
+  "ordered_br_ids": [
+    "BR-EXP-CAT-01",
+    "BR-EXP-CAT-02",
+    "BR-EXP-CAT-03",
+    "BR-EXP-CAT-04",
+    "BR-EXP-CAT-05",
+    "BR-EXP-CAT-06",
+    "BR-EXP-CAT-07"
+  ],
+  "frozen_at": "2026-08-31T12:34:58Z"
+}

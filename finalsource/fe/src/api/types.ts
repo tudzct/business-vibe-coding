@@ -126,3 +126,21 @@ export interface Goal {
   target_achieved: boolean
   last_updated: string
 }
+
+export interface ExpenseSummaryItem {
+  month: string
+  totalExpense: number
+}
+
+export interface ExpenseSubCategory {
+  item_description: string
+  amount: number
+  date: string
+}
+
+export interface BreakdownResult {
+  category: string
+  total: number
+  changePercent: number | null
+  subCategories: ExpenseSubCategory[]
+}

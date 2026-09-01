@@ -1,0 +1,36 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260831-001",
+  "observed_at": "2026-08-31T07:56:16Z",
+  "layer": "backend-runtime",
+  "fingerprint": "backend-runtime-expense-summary-domain-tables-absent",
+  "symptom": "Authenticated GET /api/v1/expenses/summary returned the normalized HTTP 500 aggregation error.",
+  "evidence": {
+    "primary_error": "Required transaction table is absent from the active application database.",
+    "database_metadata": "Read-only SHOW TABLES returned only users and migrations.",
+    "service_health": "database, backend and frontend remained healthy",
+    "schema_mutation": "none",
+    "repaired_query": "Bounded logs confirm current-year start/end predicates are present before the table-absence failure."
+  },
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "The active persistent database has not been initialized with the Account and Transaction domain tables required for UC-10 runtime aggregation."
+  },
+  "actions_attempted": [
+    "Built current frontend and backend production images.",
+    "Recreated frontend and backend containers without changing the database volume.",
+    "Observed health, frontend reachability, normalized HTTP 401 and authenticated HTTP 500.",
+    "Inspected only table names with the configured application database user."
+    ,"Reapplied the two authorized BR repairs after a workspace rollback, rebuilt both images and repeated the bounded observation."
+  ],
+  "files_changed": [],
+  "commands_rerun": [
+    "docker compose --env-file finalsource/.env -f finalsource/compose.yaml build backend frontend",
+    "docker compose --env-file finalsource/.env -f finalsource/compose.yaml up -d --no-deps --force-recreate backend frontend",
+    "docker compose --env-file finalsource/.env -f finalsource/compose.yaml exec -T backend node -e <sanitized bounded observation>",
+    "docker compose --env-file finalsource/.env -f finalsource/compose.yaml exec -T database sh -lc <read-only table inspection>"
+  ],
+  "outcome": "blocked",
+  "resolution": null,
+  "prevention": "Activate a researcher-approved domain schema/runtime baseline before UCs that require Account and Transaction persistence; never create missing tables implicitly."
+}

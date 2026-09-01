@@ -1,0 +1,154 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-resource",
+  "status": "Frozen",
+  "uc_id": "UC-10",
+  "source_use_case": "docs/01-inception/use-cases/uc-10-view-monthly-expense-summary.md",
+  "source_use_case_sha256": "sha256:1d2306543086e50d0769eaa91cf6934f2b41393d381163e18bd494dc91e46f13",
+  "spreadsheet": {
+    "id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "tab": "Use cases",
+    "range": "A219:B237",
+    "retrieved_at": "2026-08-31T02:49:48.000Z"
+  },
+  "ocl_utility_source": "Use cases!A2:B2",
+  "rules": [
+    {
+      "br_id": "BR-EXP-01",
+      "name": "Ownership scope",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context ExpensesService::getExpenseSummary(\n  userId : Integer\n) : Sequence(ExpenseSummaryItem)\n\npre BR_EXP_01_AuthenticatedIdentity:\n  not userId.oclIsUndefined()\n\npost BR_EXP_01_OwnedTransactionsOnly:\n  let ownedAccountIds : Set(Integer) =\n    Account.allInstances()\n      ->select(a |\n        a.userId = userId\n      )\n      ->collect(a |\n        a.accountId\n      )\n      ->asSet()\n  in\n    result->forAll(item |\n      Transaction.allInstances()->forAll(t |\n        contributesTo(t, item)\n        implies\n        ownedAccountIds->includes(t.accountId)\n      )\n    )\n\nTechnical constraints:\n- Only transactions associated with accounts owned by the authenticated user may contribute to the expense summary.\n- The aggregation userId shall come from the validated JWT and shall not be supplied or overridden by the client.",
+      "context": "ExpensesService::getExpenseSummary(userId : Integer) : Sequence(ExpenseSummaryItem)",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "A missing, invalid, or expired authenticated identity is rejected with HTTP 401; successful aggregation uses the validated JWT userId and only transactions from that user's accounts.",
+      "traceability": [
+        "Use cases!A219:B237",
+        "UC-10 PRE-1",
+        "UC-10 Basic Flow 2-4",
+        "UC-10 EF-1",
+        "API-EXPENSE-SUMMARY"
+      ]
+    },
+    {
+      "br_id": "BR-EXP-02",
+      "name": "Expense eligibility",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context ExpensesService::getExpenseSummary(\n  userId : Integer\n) : Sequence(ExpenseSummaryItem)\n\npost BR_EXP_02_ExpenseOnly:\n  result->forAll(item |\n    Transaction.allInstances()\n      ->select(t |\n        monthOf(t.transactionDate) =\n          monthNumber(item.month)\n      )\n      ->forAll(t |\n        contributesTo(t, item)\n        implies\n        t.type = TransactionType::Expense\n      )\n  )\n\nTechnical constraints:\n- Only transactions with `type = Expense` contribute to the summary.\n- Revenue transactions shall not contribute to any monthly expense total.",
+      "context": "ExpensesService::getExpenseSummary(userId : Integer) : Sequence(ExpenseSummaryItem)",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "Only Expense transactions contribute to returned totals; the source defines no separate error response for an eligibility violation.",
+      "traceability": [
+        "Use cases!A219:B237",
+        "UC-10 Basic Flow 4-5",
+        "API-EXPENSE-SUMMARY"
+      ]
+    },
+    {
+      "br_id": "BR-EXP-03",
+      "name": "Reporting period",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context ExpensesService::getExpenseSummary(\n  userId : Integer\n) : Sequence(ExpenseSummaryItem)\n\npost BR_EXP_03_CurrentCalendarYearOnly:\n  result->forAll(item |\n    Transaction.allInstances()\n      ->select(t |\n        monthOf(t.transactionDate) =\n          monthNumber(item.month)\n      )\n      ->forAll(t |\n        contributesTo(t, item)\n        implies\n        yearOf(t.transactionDate) = currentYear()\n      )\n  )\n\nTechnical constraints:\n- Only transactions whose `transactionDate` falls in the backend server's current calendar year are included.\n- The endpoint does not accept a year parameter.",
+      "context": "ExpensesService::getExpenseSummary(userId : Integer) : Sequence(ExpenseSummaryItem)",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "Only transactions in the backend server's current calendar year contribute, and no client year parameter is accepted; the source defines no separate error response for a reporting-period violation.",
+      "traceability": [
+        "Use cases!A219:B237",
+        "UC-10 Basic Flow 4-5",
+        "API-EXPENSE-SUMMARY"
+      ]
+    },
+    {
+      "br_id": "BR-EXP-04",
+      "name": "Monthly attribution",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context ExpensesService::getExpenseSummary(\n  userId : Integer\n) : Sequence(ExpenseSummaryItem)\n\npost BR_EXP_04_TransactionDateDeterminesMonth:\n  result->forAll(item |\n    Transaction.allInstances()->forAll(t |\n      contributesTo(t, item)\n      implies\n      monthOf(t.transactionDate) =\n        monthNumber(item.month)\n    )\n  )\n\nTechnical constraints:\n- A transaction belongs to the month represented by its `transactionDate`, not another system timestamp.",
+      "context": "ExpensesService::getExpenseSummary(userId : Integer) : Sequence(ExpenseSummaryItem)",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "Each contribution is attributed by transactionDate month; the source defines no separate error response for a monthly-attribution violation.",
+      "traceability": [
+        "Use cases!A219:B237",
+        "UC-10 Basic Flow 4-5",
+        "UC-10 UML Transaction.transactionDate",
+        "API-EXPENSE-SUMMARY"
+      ]
+    },
+    {
+      "br_id": "BR-EXP-05",
+      "name": "Monthly aggregation",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context ExpensesService::getExpenseSummary(\n  userId : Integer\n) : Sequence(ExpenseSummaryItem)\n\npost BR_EXP_05_MonthlyExpenseTotal:\n  let ownedAccountIds : Set(Integer) =\n    Account.allInstances()\n      ->select(a |\n        a.userId = userId\n      )\n      ->collect(a |\n        a.accountId\n      )\n      ->asSet()\n  in\n    result->forAll(item |\n      item.totalExpense =\n        Transaction.allInstances()\n          ->select(t |\n            ownedAccountIds->includes(t.accountId) and\n            t.type = TransactionType::Expense and\n            yearOf(t.transactionDate) = currentYear() and\n            monthOf(t.transactionDate) =\n              monthNumber(item.month)\n          )\n          ->collect(t |\n            t.amount\n          )\n          ->sum()\n    )\n\nTechnical constraints:\n- A month's `totalExpense` equals the sum of `amount` for all eligible transactions assigned to that month.",
+      "context": "ExpensesService::getExpenseSummary(userId : Integer) : Sequence(ExpenseSummaryItem)",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "Each totalExpense is the sum of all eligible transaction amounts assigned to that month; aggregation failures return HTTP 500 with the source-defined safe message.",
+      "traceability": [
+        "Use cases!A219:B237",
+        "UC-10 Basic Flow 4-5",
+        "UC-10 EF-2",
+        "API-EXPENSE-SUMMARY"
+      ]
+    },
+    {
+      "br_id": "BR-EXP-06",
+      "name": "Backend result semantics",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context ExpensesService::getExpenseSummary(\n  userId : Integer\n) : Sequence(ExpenseSummaryItem)\n\npost BR_EXP_06_UniqueMonth:\n  result->isUnique(item |\n    item.month\n  )\n\npost BR_EXP_06_ValidMonth:\n  result->forAll(item |\n    monthNumber(item.month) >= 1 and\n    monthNumber(item.month) <= 12\n  )\n\npost BR_EXP_06_ChronologicalOrder:\n  result->size() <= 1 or\n  Sequence{1..result->size() - 1}->forAll(i |\n    monthNumber(result->at(i).month) <\n    monthNumber(result->at(i + 1).month)\n  )\n\nTechnical constraints:\n- The backend returns only months containing eligible expense data.\n- Each returned month shall appear at most once and results shall be ordered chronologically.\n- `month` shall use Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, or Dec.\n- The backend shall not generate zero-valued entries solely to fill missing calendar months.",
+      "context": "ExpensesService::getExpenseSummary(userId : Integer) : Sequence(ExpenseSummaryItem)",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "The backend returns a sparse, unique, chronologically ordered sequence using valid Jan-Dec abbreviations; the source defines no separate error response for a result-semantics violation.",
+      "traceability": [
+        "Use cases!A219:B237",
+        "UC-10 AF-1",
+        "UC-10 AF-2",
+        "UC-10 UML ExpenseSummaryItem",
+        "API-EXPENSE-SUMMARY"
+      ]
+    },
+    {
+      "br_id": "BR-EXP-07",
+      "name": "Missing-month normalization",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context ExpenseSummaryChart::buildChartData(\n  summaryData : Sequence(ExpenseSummaryItem)\n) : Sequence(ExpenseChartItem)\n\npre BR_EXP_07_HasSummaryData:\n  summaryData->notEmpty()\n\npost BR_EXP_07_TwelveMonths:\n  result->size() = 12\n\npost BR_EXP_07_UniqueMonth:\n  result->isUnique(item |\n    item.month\n  )\n\npost BR_EXP_07_AllCalendarMonths:\n  Set{'Jan', 'Feb', 'Mar', 'Apr',\n      'May', 'Jun', 'Jul', 'Aug',\n      'Sep', 'Oct', 'Nov', 'Dec'}\n  =\n  result->collect(item |\n    item.month\n  )->asSet()\n\npost BR_EXP_07_PreserveReturnedTotals:\n  summaryData->forAll(source |\n    result->one(item |\n      item.month = source.month and\n      item.totalExpense = source.totalExpense\n    )\n  )\n\npost BR_EXP_07_MissingMonthIsZero:\n  result->forAll(item |\n    summaryData->forAll(source |\n      source.month <> item.month\n    )\n    implies\n      item.totalExpense = 0\n  )\n\nTechnical constraints:\n- When at least one monthly result exists, the frontend constructs Jan–Dec and assigns `0` to missing months.",
+      "context": "ExpenseSummaryChart::buildChartData(summaryData : Sequence(ExpenseSummaryItem)) : Sequence(ExpenseChartItem)",
+      "enforcement_layers": [
+        "frontend"
+      ],
+      "failure_behavior": "When summary data is non-empty, the frontend preserves returned totals and supplies zero for every missing Jan-Dec month; an empty summary displays the no-data state rather than preparing chart data.",
+      "traceability": [
+        "Use cases!A219:B237",
+        "UC-10 Basic Flow 6-7",
+        "UC-10 AF-1",
+        "UC-10 AF-2",
+        "ExpensesPage",
+        "ExpenseSummaryChart"
+      ]
+    }
+  ],
+  "ordered_br_ids": [
+    "BR-EXP-01",
+    "BR-EXP-02",
+    "BR-EXP-03",
+    "BR-EXP-04",
+    "BR-EXP-05",
+    "BR-EXP-06",
+    "BR-EXP-07"
+  ],
+  "unresolved_items": []
+}
