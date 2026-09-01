@@ -1,5 +1,5 @@
 import axiosInstance from './axiosInstance'
-import { ApiResponse, Account } from './types'
+import { Account, ApiResponse } from './types'
 
 export interface AccountOption {
   id: number
@@ -14,14 +14,14 @@ interface AccountOptionsData {
 }
 
 export const accountService = {
-  // Lấy danh sách tài khoản của user
-  getAccounts: async (): Promise<ApiResponse<Account[]>> => {
-    const response = await axiosInstance.get('/accounts')
+  getAccountOptions: async (signal?: AbortSignal): Promise<ApiResponse<AccountOptionsData>> => {
+    const response = await axiosInstance.get('/v1/accounts', { signal })
     return response.data
   },
 
-  getAccountOptions: async (): Promise<ApiResponse<AccountOptionsData>> => {
-    const response = await axiosInstance.get('/v1/accounts')
+  // Lấy danh sách tài khoản của user
+  getAccounts: async (): Promise<ApiResponse<Account[]>> => {
+    const response = await axiosInstance.get('/accounts')
     return response.data
   },
 
@@ -49,4 +49,3 @@ export const accountService = {
     return response.data
   },
 }
-

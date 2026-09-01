@@ -8,7 +8,13 @@ import { CategoryModule } from './modules/category/category.module';
 import { TransactionModule } from './modules/transaction/transaction.module';
 
 @Module({
-  imports: [DatabaseModule, AuthModule, AccountModule, CategoryModule, TransactionModule],
+  imports: [
+    DatabaseModule,
+    AuthModule,
+    AccountModule,
+    CategoryModule,
+    TransactionModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

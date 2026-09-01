@@ -73,6 +73,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- Provider and hook intentionally share one context instance.
 export const useAuth = () => {
   const context = useContext(AuthContext)
   if (context === undefined) {

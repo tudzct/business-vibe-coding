@@ -1,29 +1,29 @@
 import { Controller, Get } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Category } from './category.entity';
+import {
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { CategoryDto, CategoryService } from './category.service';
 
 @ApiTags('categories')
 @Controller('api/categories')
 export class CategoryController {
-  constructor(@InjectRepository(Category) private readonly categories: Repository<Category>) {}
+  constructor(private readonly categoryService: CategoryService) {}
 
   @Get()
   @ApiOkResponse({ description: 'Category options' })
+  @ApiInternalServerErrorResponse({ description: 'Category retrieval failed safely' })
   async list(): Promise<{
     success: true;
     message: string;
-    data: Array<{ category_id: number; category_name: string }>;
+    data: CategoryDto[];
   }> {
-    const categories = await this.categories.find({ order: { categoryName: 'ASC' } });
+    const data = await this.categoryService.findAll();
     return {
       success: true,
       message: 'Categories retrieved successfully',
-      data: categories.map((category) => ({
-        category_id: category.categoryId,
-        category_name: category.categoryName,
-      })),
+      data,
     };
   }
 }

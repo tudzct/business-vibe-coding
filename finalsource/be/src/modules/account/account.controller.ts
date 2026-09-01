@@ -1,5 +1,11 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { AuthenticatedRequest, JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AccountOption, AccountService } from './account.service';
 
@@ -13,6 +19,7 @@ export class AccountController {
   @Get()
   @ApiOkResponse({ description: 'Authenticated account options' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiInternalServerErrorResponse({ description: 'Account retrieval failed safely' })
   async list(@Req() request: AuthenticatedRequest): Promise<{
     success: true;
     message: string;

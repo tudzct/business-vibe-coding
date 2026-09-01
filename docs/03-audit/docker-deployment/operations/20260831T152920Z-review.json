@@ -1,0 +1,24 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-08-31T15:29:20Z",
+  "mode": "review",
+  "source_revision": "sha256:f0fd0965a7fcb07de003b5d7f7acc755e745d8f9499fb76513726a8134ca77a4",
+  "commands": [
+    {
+      "id": "database-foreign-key-metadata",
+      "exit_code": 0,
+      "result": "read-only INFORMATION_SCHEMA inspection found the 3 required foreign keys"
+    },
+    {
+      "id": "database-orphan-aggregate-counts",
+      "exit_code": 0,
+      "result": "0 orphan accounts, 0 transactions without an account and 0 non-null transaction categories without a category"
+    }
+  ],
+  "status": "BLOCKED",
+  "blocking_incident": "DEP-20260831-001",
+  "limitations": [
+    "The integrity observation evaluates the active database only; it does not make the stale application containers current-source runtime evidence.",
+    "The backend current-source build failure and BR-TXN-01 defect remain unresolved because no repair was authorized."
+  ]
+}

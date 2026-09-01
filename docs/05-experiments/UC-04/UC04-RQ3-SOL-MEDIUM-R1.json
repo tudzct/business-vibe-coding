@@ -1,0 +1,296 @@
+{
+  "run_id": "UC04-RQ3-SOL-MEDIUM-R1",
+  "run_status": "rq3_hold",
+  "hold_gate": {
+    "status": "awaiting_researcher_authorization",
+    "reason": "RQ3 initial assessment is frozen; no repair sub-prompt may begin without explicit researcher authorization."
+  },
+  "experiment_configuration": {
+    "configuration_id": "CFG-UC04-RQ3-GPT56SOL-MEDIUM-R1-20260901",
+    "comparison_group_id": "CG-UC04-RQ3-20260901",
+    "researcher_id": "kien",
+    "artifact": "docs/05-experiments/configurations/CFG-UC04-RQ3-GPT56SOL-MEDIUM-R1-20260901.json",
+    "checksum": "sha256:f2d5c3a875e198cfa89cc252e16c7f9fec58023be735ef4adc6977c8134f84a2",
+    "run_activation": "docs/02-construction/implementation/UC-04/runs/UC04-RQ3-SOL-MEDIUM-R1/run-activation.json"
+  },
+  "uc_id": "UC-04",
+  "uc_name": "Create a Transaction",
+  "prompt_variant": "rq3",
+  "replicate_index": 1,
+  "run_order": 1,
+  "audit_protocol": "matched",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "effective_model_unavailable_reason": "The active tool context does not expose an authoritative effective model or snapshot identifier.",
+    "codex_client_version": "codex-cli 0.151.0-alpha.7.2"
+  },
+  "audit_model": {
+    "assignment": "same-as-generation",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "unavailable_reason": "The active tool context does not expose an authoritative effective model or snapshot identifier."
+  },
+  "timing_wall_clock": {
+    "initial_started_at": "2026-09-01T07:37:56.577+07:00",
+    "initial_started_epoch_ms": 1788223076578,
+    "initial_ended_at": "2026-09-01T07:41:54.010+07:00",
+    "initial_ended_epoch_ms": 1788223314011
+  },
+  "timing_seconds": {
+    "initial": 237.433,
+    "repairs": 0,
+    "total": 237.433
+  },
+  "tokens": {
+    "initial_total": 4421263,
+    "repair_total": 0,
+    "total": 4421263,
+    "telemetry_source": "C:\\Users\\User\\.codex\\sessions\\2026\\09\\01\\rollout-2026-09-01T07-21-09-01a05a57-5aed-7691-bedd-a080d6bcb2a7.jsonl",
+    "details": {
+      "initial": {
+        "turn_id": 5,
+        "input": 83876,
+        "cache_read": 4308096,
+        "total_input": 4391972,
+        "output": 29291,
+        "reasoning": 7790,
+        "cost_usd": 3.4522,
+        "duration_seconds": 611.535
+      },
+      "repairs": {
+        "count": 0,
+        "total_tokens": 0,
+        "cost_usd": 0
+      }
+    }
+  },
+  "business_rules": {
+    "baseline": "docs/02-construction/implementation/UC-04/business-rule-baseline.json",
+    "ordered_br_ids": [
+      "BR-TXN-08",
+      "BR-TXN-09",
+      "BR-TXN-10",
+      "BR-TXN-11",
+      "BR-TXN-12",
+      "BR-TXN-13",
+      "BR-TXN-14",
+      "BR-TXN-15"
+    ],
+    "source_revision": "sha256:6de9443c8ef50690b68ff8043cc96ba21a8842b559942c701dd43470d3bea328",
+    "initial": {
+      "requirements": [
+        {
+          "br_id": "BR-TXN-08",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts:17-58 validates every required request field, trims mandatory strings and enforces amount >= 0.01",
+            "finalsource/fe/src/pages/Transactions/AddTransaction.tsx:131-174 performs corresponding preliminary validation and constructs the typed request only after success"
+          ],
+          "rationale": "The request cannot reach the service through the protected endpoint without the complete required shape, and the UI prevents submission for the same client-applicable conditions."
+        },
+        {
+          "br_id": "BR-TXN-09",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts:27-28 and 55-58 constrain type and optional status to the persistence enums",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:70-80 stores Complete when status is omitted and preserves an allowed supplied status"
+          ],
+          "rationale": "Both allowed value sets are runtime-validated and the source-defined default is explicit in the persisted entity input."
+        },
+        {
+          "br_id": "BR-TXN-10",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/transaction/transaction.service.ts:43-54 checks Category existence only when category_id is supplied",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:70-80 and 154-173 persist the supplied category mapping and return null when it is omitted",
+            "finalsource/fe/src/pages/Transactions/AddTransaction.tsx:152-171 validates selected options while permitting an omitted category"
+          ],
+          "rationale": "The implementation distinguishes absent category from a supplied identifier and validates, persists and returns each case consistently."
+        },
+        {
+          "br_id": "BR-TXN-11",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/transaction/transaction.controller.ts:46-49 and 77-87 protect creation with the JWT guard and use only request.user.userId",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:32-45 queries the locked Account by both accountId and authenticated userId and rejects absence"
+          ],
+          "rationale": "A client cannot provide the owner identity, and account resolution is scoped to the authenticated application user."
+        },
+        {
+          "br_id": "BR-TXN-12",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/transaction/transaction.service.ts:56-68 rejects an Expense whose amount exceeds the current locked owned-account balance and does not apply that constraint to Revenue",
+            "finalsource/fe/src/pages/Transactions/AddTransaction.tsx:148-150 supplies matching preliminary Expense feedback from the selected account"
+          ],
+          "rationale": "The authoritative check occurs after ownership resolution against the current balance inside the database transaction."
+        },
+        {
+          "br_id": "BR-TXN-13",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/transaction/transaction.service.ts:32-41 obtains a pessimistic lock on the selected owned Account",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:82-87 adds the amount for Revenue or subtracts it for Expense and saves through the transactional manager"
+          ],
+          "rationale": "The balance transformation is explicit for both transaction types and is protected from stale concurrent updates."
+        },
+        {
+          "br_id": "BR-TXN-14",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/transaction/transaction.service.ts:70-82 constructs and saves one Transaction with an explicit field-by-field mapping from the validated DTO",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:154-173 maps the saved entity to the declared created-transaction response fields",
+            "finalsource/be/src/modules/transaction/transaction.controller.ts:77-93 exposes exactly one POST create call and returns the normalized HTTP 201 success envelope"
+          ],
+          "rationale": "The source has one insert operation and maps trimmed/request/default values into persistence and the returned created entity."
+        },
+        {
+          "br_id": "BR-TXN-15",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/transaction/transaction.service.ts:32-89 encloses validation-dependent reads, the Transaction insert and Account update in one TypeORM transaction using only its manager",
+            "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts:30-53 makes shopName and paymentMethod trimmed non-empty inputs while leaving category_id optional/nullable",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:70-80 maps those fields to the Transaction entity and preserves nullable category behavior"
+          ],
+          "rationale": "Any thrown validation or persistence error aborts the TypeORM transaction, while the request-to-column mapping and mandatory/optional distinctions are enforced by the create path."
+        }
+      ],
+      "total": 8,
+      "met": 8,
+      "not_evaluable": 0,
+      "unmet": 0,
+      "acceptance_percent": 100.0
+    },
+    "final": {
+      "requirements": [
+        {
+          "br_id": "BR-TXN-08",
+          "status": "met",
+          "evidence": [
+            "Immutable first-pass source evidence; no repair has been authorized or applied."
+          ],
+          "rationale": "Final currently equals the frozen initial assessment at the RQ3 hold gate."
+        },
+        {
+          "br_id": "BR-TXN-09",
+          "status": "met",
+          "evidence": [
+            "Immutable first-pass source evidence; no repair has been authorized or applied."
+          ],
+          "rationale": "Final currently equals the frozen initial assessment at the RQ3 hold gate."
+        },
+        {
+          "br_id": "BR-TXN-10",
+          "status": "met",
+          "evidence": [
+            "Immutable first-pass source evidence; no repair has been authorized or applied."
+          ],
+          "rationale": "Final currently equals the frozen initial assessment at the RQ3 hold gate."
+        },
+        {
+          "br_id": "BR-TXN-11",
+          "status": "met",
+          "evidence": [
+            "Immutable first-pass source evidence; no repair has been authorized or applied."
+          ],
+          "rationale": "Final currently equals the frozen initial assessment at the RQ3 hold gate."
+        },
+        {
+          "br_id": "BR-TXN-12",
+          "status": "met",
+          "evidence": [
+            "Immutable first-pass source evidence; no repair has been authorized or applied."
+          ],
+          "rationale": "Final currently equals the frozen initial assessment at the RQ3 hold gate."
+        },
+        {
+          "br_id": "BR-TXN-13",
+          "status": "met",
+          "evidence": [
+            "Immutable first-pass source evidence; no repair has been authorized or applied."
+          ],
+          "rationale": "Final currently equals the frozen initial assessment at the RQ3 hold gate."
+        },
+        {
+          "br_id": "BR-TXN-14",
+          "status": "met",
+          "evidence": [
+            "Immutable first-pass source evidence; no repair has been authorized or applied."
+          ],
+          "rationale": "Final currently equals the frozen initial assessment at the RQ3 hold gate."
+        },
+        {
+          "br_id": "BR-TXN-15",
+          "status": "met",
+          "evidence": [
+            "Immutable first-pass source evidence; no repair has been authorized or applied."
+          ],
+          "rationale": "Final currently equals the frozen initial assessment at the RQ3 hold gate."
+        }
+      ],
+      "total": 8,
+      "met": 8,
+      "not_evaluable": 0,
+      "unmet": 0,
+      "acceptance_percent": 100.0
+    }
+  },
+  "repairs": [],
+  "evidenced_defects": [],
+  "environment_blockers": [
+    {
+      "fingerprint": "docker-daemon-desktop-linux-engine-unavailable",
+      "evidence": "Docker CLI and Compose are installed, but the Docker Desktop Linux engine pipe was absent during the authorized run check.",
+      "impact": "The earlier runtime check was blocked; the daemon later became available and the current-source Compose build and bounded verification ran successfully.",
+      "outcome": "resolved"
+    },
+    {
+      "fingerprint": "backend-runtime-categories-table-missing",
+      "evidence": "GET /api/categories returned HTTP 500 and the bounded backend log reported that vibe_business.Categories does not exist; no migration currently creates it.",
+      "impact": "The optional category selector cannot load from the running backend. A schema proposal and explicit researcher approval are required before mutation.",
+      "outcome": "blocked-schema-approval"
+    }
+  ],
+  "verification": {
+    "backend_lint": "pass-docker",
+    "frontend_lint": "pass-docker",
+    "backend_production_build": "pass-docker",
+    "frontend_production_build": "pass-docker",
+    "database_health": "healthy",
+    "backend_health": "healthy; /api/health=200",
+    "frontend_health": "healthy; /=200; /transactions/add=200",
+    "runtime_observation": {
+      "categories_public": 500,
+      "accounts_unauthenticated": 401,
+      "create_transaction_unauthenticated": 401,
+      "success_path": "not_observed_without_mutating_data_or using researcher credentials"
+    },
+    "tests_created_or_run": false
+  },
+  "manual_estimates_minutes": [],
+  "ui_accuracy_percent": null,
+  "ui_accuracy": {
+    "structural_coverage": "Inspectable source represents the frozen frame's sidebar/header context, Recent Transaction tabs, Add Transaction action, two-column eight-field form, optional category, and Cancel/Save actions with responsive stacking.",
+    "deterministic_similarity": null,
+    "limitation": "The current-source route was reachable in Docker, but deterministic pixel similarity was not performed."
+  },
+  "flow_accuracy_percent": null,
+  "flow_accuracy": {
+    "source_checkpoints": "Inspectable source covers protected routing, account/category option loading, non-blocking category failure, client validation, typed create request, ownership/balance decisions, atomic persistence, success navigation and safe errors.",
+    "limitation": "Protected endpoints rejected unauthenticated requests as expected, but the authenticated create success path was not exercised and category lookup is blocked by the missing Categories table."
+  },
+  "complexity": {
+    "actors": 1,
+    "main_flow_steps": 10,
+    "alternate_exception_flows": 9,
+    "data_entities": 4,
+    "integrations": 3,
+    "business_rules": 8,
+    "ui_states": 6
+  },
+  "all_sub_prompt_count": 0
+}

@@ -4,8 +4,6 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { Account } from '../account/account.entity';
 import { Category } from '../category/category.entity';

@@ -62,7 +62,7 @@ const Login = () => {
     setIsLoading(true)
     try {
       await login({ email: formData.email.trim(), password: formData.password })
-      navigate('/')
+      navigate('/dashboard')
     } catch (error: unknown) {
       if (axios.isAxiosError<ApiErrorResponse>(error) && error.response) {
         const message = error.response.data?.message
@@ -130,62 +130,45 @@ const Login = () => {
               />
               <button
                 type="button"
-                disabled={isLoading}
-                onClick={() => setPasswordVisible((visible) => !visible)}
                 aria-label={passwordVisible ? 'Hide password' : 'Show password'}
-                className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-[#999da3] hover:text-[#299d91] focus:outline-none focus:ring-2 focus:ring-inset focus:ring-[#299d91] disabled:cursor-not-allowed"
+                onClick={() => setPasswordVisible((value) => !value)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
               >
-                <svg aria-hidden="true" viewBox="0 0 24 24" className="h-6 w-6 fill-none stroke-current" strokeWidth="2">
-                  <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
-                  <circle cx="12" cy="12" r="2.5" />
-                  {passwordVisible && <path d="m4 4 16 16" />}
-                </svg>
+                {passwordVisible ? '👁️' : '👁️‍🗨️'}
               </button>
             </div>
             {fieldErrors.password && <p id="password-error" className="mt-1 text-sm text-[#e73d1c]">{fieldErrors.password}</p>}
           </div>
 
-          <label className="mb-4 flex w-fit items-center gap-4 text-base font-light leading-6">
+          <div className="mb-8 flex items-center">
             <input
+              id="keepSignedIn"
+              name="keepSignedIn"
               type="checkbox"
               checked={keepSignedIn}
-              disabled={isLoading}
               onChange={(event) => setKeepSignedIn(event.target.checked)}
-              className="h-5 w-5 accent-[#299d91]"
+              className="h-4 w-4 rounded border-gray-300 text-[#299d91] focus:ring-[#299d91]"
             />
-            Keep me signed in
-          </label>
+            <label htmlFor="keepSignedIn" className="ml-2 block text-sm text-gray-900">
+              Keep me signed in
+            </label>
+          </div>
 
           <button
             type="submit"
             disabled={isLoading}
-            className="flex h-12 w-full items-center justify-center rounded bg-[#299d91] px-3 text-base font-semibold text-white transition hover:bg-[#238b80] focus:outline-none focus:ring-2 focus:ring-[#299d91] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
+            className="flex h-12 w-full items-center justify-center rounded-lg bg-[#299d91] px-4 text-base font-semibold text-white transition hover:bg-[#23877d] focus:outline-none focus:ring-2 focus:ring-[#299d91]/50 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {isLoading ? 'Signing in…' : 'Login'}
+            {isLoading ? 'Signing in...' : 'Sign In'}
           </button>
-
-          <div className="my-6 flex items-center gap-4 text-sm text-[#999da3]">
-            <span className="h-px flex-1 bg-[#d0d5dd]" />
-            <span>or sign in with</span>
-            <span className="h-px flex-1 bg-[#d0d5dd]" />
-          </div>
-
-          <button type="button" disabled className="flex h-12 w-full cursor-not-allowed items-center justify-center gap-4 rounded bg-[#e4e7eb] text-base text-[#4b5768]">
-            <span aria-hidden="true" className="text-xl font-semibold text-[#4285f4]">G</span>
-            Continue with Google
-          </button>
-
-          <div className="mt-10 text-center">
-            <Link
-              to="/register"
-              aria-disabled={isLoading}
-              onClick={(event) => { if (isLoading) event.preventDefault() }}
-              className={`text-base font-semibold text-[#299d91] ${isLoading ? 'pointer-events-none opacity-60' : 'hover:underline'}`}
-            >
-              Create an account
-            </Link>
-          </div>
         </form>
+
+        <p className="mt-8 text-center text-sm text-[#4b5768]">
+          Don&apos;t have an account?{' '}
+          <Link to="/register" className="font-semibold text-[#299d91] hover:underline">
+            Register here
+          </Link>
+        </p>
       </div>
     </main>
   )

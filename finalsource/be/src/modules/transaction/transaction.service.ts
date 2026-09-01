@@ -4,11 +4,22 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Account } from '../account/account.entity';
 import { Category } from '../category/category.entity';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
-import { Transaction, TransactionStatus, TransactionType } from './transaction.entity';
+import { CreateTransactionDataDto } from './dto/create-transaction-response.dto';
+import { TransactionFilterType } from './dto/transaction-list-query.dto';
+import {
+  TransactionDto,
+  TransactionListResponseDto,
+} from './dto/transaction-list-response.dto';
+import {
+  Transaction,
+  TransactionStatus,
+  TransactionType,
+} from './transaction.entity';
 
 export interface CreatedTransactionPayload {
   transactionId: number;
@@ -27,7 +38,11 @@ export interface CreatedTransactionPayload {
 
 @Injectable()
 export class TransactionService {
-  constructor(private readonly dataSource: DataSource) {}
+  constructor(
+    @InjectRepository(Transaction)
+    private readonly transactions: Repository<Transaction>,
+    private readonly dataSource: DataSource,
+  ) {}
 
   async create(userId: number, dto: CreateTransactionDto): Promise<CreatedTransactionPayload> {
     try {
@@ -96,5 +111,65 @@ export class TransactionService {
       }
       throw new InternalServerErrorException('Error when creating transaction. Try it again later.');
     }
+  }
+
+  async findAllByUserId(
+    userId: number,
+    type: TransactionFilterType = TransactionFilterType.ALL,
+    limit: number = 10,
+    offset: number = 0,
+  ): Promise<TransactionListResponseDto> {
+    try {
+      const query = this.transactions
+        .createQueryBuilder('transaction')
+        .innerJoin('transaction.account', 'account')
+        .where('account.userId = :userId', { userId })
+        .orderBy('transaction.transactionDate', 'DESC')
+        .skip(offset)
+        .take(limit);
+
+      if (type !== TransactionFilterType.ALL) {
+        query.andWhere('transaction.type = :type', {
+          type:
+            type === TransactionFilterType.REVENUE
+              ? TransactionType.REVENUE
+              : TransactionType.EXPENSE,
+        });
+      }
+
+      const [rows, total] = await query.getManyAndCount();
+      const data = rows.map((transaction) => this.toDto(transaction));
+
+      return {
+        data,
+        total,
+        hasMore: offset + data.length < total,
+      };
+    } catch {
+      throw new InternalServerErrorException(
+        'Đã xảy ra lỗi hệ thống khi lấy danh sách giao dịch. Vui lòng thử lại sau.',
+      );
+    }
+  }
+
+  private toDto(transaction: Transaction): TransactionDto {
+    return {
+      transaction_id: transaction.transactionId,
+      account_id: transaction.accountId,
+      transaction_date: this.toIsoDate(transaction.transactionDate),
+      type: transaction.type,
+      item_description: transaction.itemDescription,
+      shop_name: transaction.shopName,
+      amount: Number(transaction.amount),
+      payment_method: transaction.paymentMethod,
+      status: transaction.status,
+    };
+  }
+
+  private toIsoDate(value: Date | string): string {
+    if (value instanceof Date) {
+      return value.toISOString().slice(0, 10);
+    }
+    return String(value).slice(0, 10);
   }
 }

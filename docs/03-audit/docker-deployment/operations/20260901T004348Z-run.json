@@ -1,0 +1,31 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "mode": "run",
+  "observed_at": "2026-09-01T00:43:48.722Z",
+  "source_revision": "sha256:6de9443c8ef50690b68ff8043cc96ba21a8842b559942c701dd43470d3bea328",
+  "commands": [
+    {
+      "id": "docker-cli-version",
+      "exit_code": 0,
+      "result": "Docker CLI 29.2.1 is installed."
+    },
+    {
+      "id": "docker-compose-version",
+      "exit_code": 0,
+      "result": "Docker Compose v5.0.2 is installed."
+    },
+    {
+      "id": "docker-daemon-connectivity",
+      "exit_code": 1,
+      "result": "The Docker Desktop Linux engine pipe was absent."
+    },
+    {
+      "id": "compose-config-quiet",
+      "exit_code": 0,
+      "result": "Compose interpolation is valid using the ignored, untracked environment file."
+    }
+  ],
+  "outcome": "blocked",
+  "blocking_incident": "DEP-20260828-002",
+  "tests_created_or_run": false
+}

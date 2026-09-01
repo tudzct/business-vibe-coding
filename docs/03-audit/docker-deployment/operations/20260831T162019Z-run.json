@@ -1,0 +1,13 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "mode": "run",
+  "observed_at": "2026-08-31T16:20:19.255Z",
+  "source_revision": "sha256:122349abeca1f8831497cbbc504418aef22db2ce1a8c76f300c6dfb182a92176",
+  "commands": [
+    { "id": "compose-up-build-current-source", "exit_code": 0, "result": "Frontend and backend production images built and all three services became healthy." },
+    { "id": "bounded-uc03-runtime-observation", "exit_code": 0, "result": "Health/UI/list success, 400, 401, nonexistent-User rejection, empty consistency and read-only snapshot checks passed." },
+    { "id": "current-source-lint", "exit_code": 0, "result": "Backend and frontend ESLint completed with zero diagnostics." }
+  ],
+  "outcome": "pass",
+  "tests_created_or_run": false
+}

@@ -82,4 +82,4 @@ async function bootstrap() {
   console.log(`🚀 Application is running on: http://localhost:${process.env.PORT ?? 8000}`);
   console.log(`📚 Swagger documentation: http://localhost:${process.env.PORT ?? 8000}/api/docs`);
 }
-bootstrap();
+void bootstrap();

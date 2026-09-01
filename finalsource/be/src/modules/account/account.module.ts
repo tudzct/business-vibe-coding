@@ -10,5 +10,6 @@ import { AccountService } from './account.service';
   imports: [TypeOrmModule.forFeature([Account]), AuthModule],
   controllers: [AccountController],
   providers: [AccountService, JwtAuthGuard],
+  exports: [AccountService],
 })
 export class AccountModule {}

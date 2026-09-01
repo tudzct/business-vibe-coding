@@ -21,8 +21,8 @@ interface PasswordFieldProps {
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const fullNamePattern = /^\p{L}+(?: \p{L}+)*$/u
-const permittedPasswordPattern = /^[A-Za-z0-9!@#$%^&*(){}_+=\[\],.\/<>?\\|:;\-]+$/
-const specialCharacterPattern = /[!@#$%^&*(){}_+=\[\],.\/<>?\\|:;\-]/
+const permittedPasswordPattern = /^[A-Za-z0-9!@#$%^&*(){}_+=[\],./<>?\\|:;-]+$/
+const specialCharacterPattern = /[!@#$%^&*(){}_+=[\],./<>?\\|:;-]/
 
 const PasswordField = ({ id, label, value, error, disabled, onChange }: PasswordFieldProps) => {
   const [visible, setVisible] = useState(false)

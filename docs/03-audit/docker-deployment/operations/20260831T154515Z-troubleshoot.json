@@ -1,0 +1,16 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "mode": "troubleshoot",
+  "observed_at": "2026-08-31T15:45:15.524Z",
+  "source_revision": "sha256:cf47d43bc23091e540244249d45b0a56a604e263d30de9e09ac27c4824108c71",
+  "incident_id": "DEP-20260831-001",
+  "commands": [
+    {
+      "id": "compose-build-backend-after-repair",
+      "exit_code": 0,
+      "result": "Backend npm ci, Nest production build, dependency pruning and image export completed."
+    }
+  ],
+  "outcome": "resolved",
+  "tests_created_or_run": false
+}
