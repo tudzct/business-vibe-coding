@@ -1,0 +1,12 @@
+{
+  "artifact_type": "source-retrieval-record",
+  "status": "recorded",
+  "retrieved_at": "2026-08-31T12:21:01.000Z",
+  "source": {"spreadsheet_id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM", "url": "https://docs.google.com/spreadsheets/d/1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM/edit?gid=0#gid=0"},
+  "retrievals": [
+    {"artifact": "docs/01-inception/use-cases/uc-11-view-expenses-by-category.md", "sheet": "Use cases", "range": "A238:B256"},
+    {"artifact": "docs/01-inception/api-contracts/API-EXPENSE-BREAKDOWN.md", "sheet": "API contract", "range": "A222:B240"}
+  ],
+  "method": "Google Drive Sheets connector; exact bounded range reads",
+  "result": "UC-11 and API-EXPENSE-BREAKDOWN projections refreshed from the authoritative Sheet."
+}

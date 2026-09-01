@@ -1,0 +1,29 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-09-01T09:20:23Z",
+  "mode": "repair-verification",
+  "source_revision": "sha256:dcdfeff6a8a3fa93dfd24a303dff1e26dc56c05c54631c851f015b042f1ef095",
+  "commands": [
+    {
+      "id": "repaired-backend-build-and-recreate",
+      "exit_code": 0,
+      "result": "Nest production build passed and the backend container was recreated from the repaired image"
+    },
+    {
+      "id": "post-repair-health-and-contract-observation",
+      "exit_code": 0,
+      "result": "all services healthy; frontend /expenses returned 200; protected breakdown returned normalized 401; OpenAPI retained JWT security, strict calendar-month syntax, and 200/400/401/404/500 responses"
+    }
+  ],
+  "docker": {
+    "cli": "29.6.1",
+    "compose": "5.3.0",
+    "daemon": "29.6.1"
+  },
+  "status": "BLOCKED",
+  "incident": "DEP-20260831-001",
+  "limitations": [
+    "Authenticated success and no-data runtime flows remain unavailable until the researcher separately authorizes domain schema/runtime initialization.",
+    "No signed-in browser screenshot was captured."
+  ]
+}
