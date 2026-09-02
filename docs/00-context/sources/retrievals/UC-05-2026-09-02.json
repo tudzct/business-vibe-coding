@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "source-retrieval-record",
+  "status": "Frozen",
+  "uc_id": "UC-05",
+  "recorded_at": "2026-09-02T11:22:51.4657854Z",
+  "authorization": {
+    "authority": "researcher",
+    "decision": "Use the current UC-05 and API-ACCOUNT-LIST files as the authorized source refresh and do not revert them to the repository baseline."
+  },
+  "canonical_sheet_source": {
+    "spreadsheet_id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "tab": "Use cases",
+    "range": "A83:B105",
+    "projection_retrieved_at": "2026-08-27T03:49:28.570Z"
+  },
+  "accepted_files": [
+    {
+      "path": "docs/01-inception/use-cases/uc-05-view-bank-accounts.md",
+      "sha256": "sha256:225d9f81b2665af2818c8711fe05faf859679bfdc35e0eb8c2f34effbd975d11"
+    },
+    {
+      "path": "docs/01-inception/api-contracts/API-ACCOUNT-LIST.md",
+      "sha256": "sha256:4d0257394e728523003c2d964247de6f5fa5e9ec090ebcbb87dd2aaeff192c55"
+    }
+  ],
+  "figma_dataset": {
+    "dataset_id": "2026-08-29-005",
+    "manifest_sha256": "sha256:41d825cfd36250aa54c87f29ab10e2fbd48df15f9531e9ec7cfab81b4184a0d1",
+    "node_id": "2883:1676",
+    "frame_name": "105. View Bank Accounts",
+    "status": "complete",
+    "integrity_ok": true
+  },
+  "retrieval_note": "This record freezes the researcher-authorized current repository projections. No live connected-source retrieval was performed during this authorization turn."
+}
