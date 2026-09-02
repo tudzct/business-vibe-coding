@@ -42,8 +42,7 @@ The user opens the Accounts page.
 
 ### Pre-Condition(s)
 
-POST-1: The frontend displays accounts.
-POST-2: If no accounts exist, the page displays an empty state and an Add Account action.
+PRE-1: The user is authenticated.
 
 ### Post-Condition(s)
 
@@ -54,7 +53,7 @@ POST-2: If no accounts exist, the page displays an empty state and an Add Accoun
 
 1. The user opens /accounts.
 2. The frontend sends GET /api/v1/accounts.
-3 .JwtAuthGuard authenticates the request and supplies userId.
+3. JwtAuthGuard authenticates the request and supplies userId.
 4. AccountService processes the request to retrieve the account data.
 5. The backend returns success, message, and a data object containing user_id and accounts.
 6. The frontend displays account cards containing bank name, account type, account number, and balance.
@@ -261,5 +260,6 @@ post BR_ACC_06_AccountDataUnchanged:
 Technical constraint:
 - Listing accounts shall not create, update, or delete any Account or Transaction records.
 ~~~
+
 
 
