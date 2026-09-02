@@ -1,0 +1,21 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-09-02T11:50:09Z",
+  "mode": "review",
+  "repository_revision": "123ac73d113997a1201522f2d492ac488a2218a3",
+  "source_hash": "sha256:be1e7ae2ece811f4110925fae26d74451d296851a667c9118cf82af7a70cbd2e",
+  "tool_versions": {
+    "docker_cli": null,
+    "docker_compose": null,
+    "docker_daemon": null
+  },
+  "commands": [
+    {"id": "docker-cli-version", "exit_code": 1},
+    {"id": "docker-compose-version", "exit_code": 1},
+    {"id": "docker-daemon-version", "exit_code": 1},
+    {"id": "compose-config", "exit_code": 1},
+    {"id": "compose-build", "exit_code": 1}
+  ],
+  "outcome": "BLOCKED",
+  "error_excerpt": "Docker CLI is not callable and Docker Desktop's standard docker.exe path is absent in the current execution environment."
+}

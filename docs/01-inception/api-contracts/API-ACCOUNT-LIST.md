@@ -1,4 +1,4 @@
-ï»¿---
+---
 artifact_type: api-contract
 status: Frozen
 api_id: API-ACCOUNT-LIST
@@ -46,7 +46,6 @@ Authenticated user
 ### headers.Authorization
 
 Type: string; Format: Bearer <JWT>; Required: Yes; Nullable: No
-Validation: Must contain a valid, unexpired JWT access token.
 Trigger: Every protected request.
 Description: Authenticates the current user.
 Example: Bearer eyJhbGciOiJIUzI1NiIs...
@@ -56,7 +55,7 @@ Note: Added by the frontend Axios interceptor.
 
 None
 
-## Success Response â€” HTTP 200
+## Success Response — HTTP 200
 
 ### success
 
@@ -129,7 +128,7 @@ Trigger: The user is authenticated.
 Description: Current account balance.
 Example: 4500000
 
-## Error Response â€” HTTP 401
+## Error Response — HTTP 401
 
 ### message
 
@@ -139,7 +138,7 @@ Description: Error description returned by the global HTTP exception filter.
 Example: Unauthorized
 Note: The error envelope also contains success=false and may contain an error field.
 
-## Error Response â€” HTTP 500
+## Error Response — HTTP 500
 
 ### message
 
@@ -148,3 +147,4 @@ Trigger: Account retrieval fails.
 Description: Error description returned by the global HTTP exception filter.
 Example: system error occurred. Please try again later.
 Note: The error envelope also contains success=false and may contain an error field.
+
