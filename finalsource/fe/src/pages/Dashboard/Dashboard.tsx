@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
 import { accountService } from '../../api/account.service'
 import { transactionService } from '../../api/transaction.service'
-import { Account, Transaction } from '../../api/types'
+import type { AccountListItem, Transaction } from '../../api/types'
 import Loading from '../../components/Loading/Loading'
 import Error from '../../components/Error/Error'
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth()
-  const [accounts, setAccounts] = useState<Account[]>([])
+  const [accounts, setAccounts] = useState<AccountListItem[]>([])
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
@@ -23,7 +23,7 @@ const Dashboard: React.FC = () => {
         ])
 
         if (accountsRes.success && accountsRes.data) {
-          setAccounts(accountsRes.data)
+          setAccounts(accountsRes.data.accounts)
         }
 
         if (transactionsRes.success && transactionsRes.data) {
@@ -83,7 +83,7 @@ const Dashboard: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {accounts.map((account) => (
               <div
-                key={account.account_id}
+                key={account.id}
                 className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
               >
                 <h3 className="font-semibold text-gray-900 dark:text-white">

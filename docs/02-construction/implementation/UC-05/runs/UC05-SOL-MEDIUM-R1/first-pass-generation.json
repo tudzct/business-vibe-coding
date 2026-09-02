@@ -1,0 +1,35 @@
+{
+  "artifact_type": "first-pass-generation",
+  "status": "Frozen",
+  "uc_id": "UC-05",
+  "run_id": "UC05-SOL-MEDIUM-R1",
+  "prompt_variant": "rq3",
+  "source_prompt": "docs/02-construction/coding-prompts/UC-05-rq3-coding-prompt.md",
+  "source_prompt_sha256": "sha256:5ba57c5ff65c19e5dab6dbd7b4ef06a4b8645885d43247d78dae4e1f272acab9",
+  "run_activation": "docs/02-construction/implementation/UC-05/runs/UC05-SOL-MEDIUM-R1/run-activation.json",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "effective_model_unavailable_reason": "The active desktop tool context does not expose an authoritative effective model or snapshot identifier.",
+    "codex_client_version": "codex-cli 0.151.0-alpha.7.2"
+  },
+  "timing_wall_clock": {
+    "started_at": "2026-09-02T18:40:26.1848051+07:00",
+    "started_epoch_ms": 1788349226184,
+    "ended_at": "2026-09-02T18:47:17.8536667+07:00",
+    "ended_epoch_ms": 1788349637853,
+    "duration_seconds": 411.669
+  },
+  "tokens": {
+    "initial_total": null,
+    "unavailable_reason": "Runner telemetry extraction is deferred until the canonical run JSON exists and the first-pass assessment is ready."
+  },
+  "source_revision": {
+    "sha256": "sha256:be1e7ae2ece811f4110925fae26d74451d296851a667c9118cf82af7a70cbd2e",
+    "method": "SHA-256 over sorted relative path, NUL, per-file SHA-256 and newline entries; node_modules, dist and .env files excluded."
+  },
+  "repairs_applied": 0
+}
