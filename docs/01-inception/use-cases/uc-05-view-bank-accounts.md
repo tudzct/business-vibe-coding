@@ -42,23 +42,22 @@ The user opens the Accounts page.
 
 ### Pre-Condition(s)
 
-PRE-1: The user is authenticated.
+POST-1: The frontend displays accounts.
+POST-2: If no accounts exist, the page displays an empty state and an Add Account action.
 
 ### Post-Condition(s)
 
-POST-1: The frontend displays accounts owned by the authenticated user.
-POST-2: Accounts are returned in ascending accountId order.
-POST-3: If no accounts exist, the page displays an empty state and an Add Account action.
+POST-1: The frontend displays accounts.
+POST-2: If no accounts exist, the page displays an empty state and an Add Account action.
 
 ### Basic Flow
 
 1. The user opens /accounts.
 2. The frontend sends GET /api/v1/accounts.
-3. JwtAuthGuard authenticates the request and supplies userId.
-4. AccountService queries accounts where account.userId equals userId, selects the list fields, and orders by accountId ascending.
-5. The backend queries and returns only the last four digits of the account number (account_number_last_4) for each account.
-6. The backend returns success, message, and a data object containing user_id and accounts.
-7. The frontend displays account cards containing bank name, account type, the last four account digits prefixed with exactly four asterisks (e.g., **** 5667) regardless of the original account number length, and balance.
+3 .JwtAuthGuard authenticates the request and supplies userId.
+4. AccountService processes the request to retrieve the account data.
+5. The backend returns success, message, and a data object containing user_id and accounts.
+6. The frontend displays account cards containing bank name, account type, account number, and balance.
 
 ### Alternative Flow
 
@@ -262,4 +261,5 @@ post BR_ACC_06_AccountDataUnchanged:
 Technical constraint:
 - Listing accounts shall not create, update, or delete any Account or Transaction records.
 ~~~
+
 
