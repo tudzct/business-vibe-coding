@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-resource",
+  "status": "Frozen",
+  "uc_id": "UC-06",
+  "source_use_case": "docs/01-inception/use-cases/uc-06-add-bank-account.md",
+  "source_use_case_sha256": "sha256:4994be6bc348af9f8c788dd765918b65cb1c6bb725e8952442e3e1150c6ed66c",
+  "spreadsheet": {
+    "id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "tab": "Use cases",
+    "range": "A106:B130",
+    "retrieved_at": "2026-08-27T03:49:28.570Z"
+  },
+  "ocl_utility_source": "Use cases!A2:B2",
+  "rules": [
+    {
+      "br_id": "BR-ACC-07",
+      "name": "Allowed account type",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AccountService::create(\n  userId : Integer,\n  dto : CreateAccountDto\n) : AccountResponseDto\n\npre BR_ACC_07_ValidType:\n  Set{'Checking', 'Credit Card', 'Savings', 'Investment', 'Loan'}->includes(dto.account_type)",
+      "context": "AccountService::create(userId : Integer, dto : CreateAccountDto) : AccountResponseDto",
+      "enforcement_layers": ["frontend", "backend"],
+      "failure_behavior": "Invalid account types fail client-side validation before submission when possible; backend DTO/service validation remains authoritative and returns HTTP 400 for an invalid request.",
+      "traceability": ["Use cases!A106:B130", "UC-06 Basic Flow 3, 5, 7-8", "UC-06 EF-1 and EF-3", "API-ACCOUNT-CREATE"]
+    },
+    {
+      "br_id": "BR-ACC-08",
+      "name": "Required account text fields",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AccountService::create(\n  userId : Integer,\n  dto : CreateAccountDto\n) : AccountResponseDto\n\npre BR_ACC_08_RequiredText:\n  not dto.bank_name.oclIsUndefined() and dto.bank_name.trim().size() > 0 and\n  not dto.account_number_full.oclIsUndefined() and dto.account_number_full.trim().size() > 0",
+      "context": "AccountService::create(userId : Integer, dto : CreateAccountDto) : AccountResponseDto",
+      "enforcement_layers": ["frontend", "backend"],
+      "failure_behavior": "Missing or blank required text fields display field errors and prevent submission on the frontend; backend validation returns HTTP 400 when such a request reaches the API.",
+      "traceability": ["Use cases!A106:B130", "UC-06 Basic Flow 3, 5, 7-8", "UC-06 EF-1 and EF-3", "API-ACCOUNT-CREATE"]
+    },
+    {
+      "br_id": "BR-ACC-09",
+      "name": "Numeric non-negative account balance",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AccountService::create(\n  userId : Integer,\n  dto : CreateAccountDto\n) : AccountResponseDto\n\npre BR_ACC_09_IsNumeric:\n  dto.balance.oclIsTypeOf(Real) or dto.balance.oclIsTypeOf(Integer)\n\npre BR_ACC_09_NonNegativeBalance:\n  not dto.balance.oclIsUndefined() and dto.balance >= 0\nTechnical constraint:\n- The balance must be a valid numeric type (not a string), and must be greater than or equal to zero.",
+      "context": "AccountService::create(userId : Integer, dto : CreateAccountDto) : AccountResponseDto",
+      "enforcement_layers": ["frontend", "backend"],
+      "failure_behavior": "A non-numeric, missing, or negative balance displays a field error and prevents frontend submission; backend validation returns HTTP 400 if an invalid balance reaches the API.",
+      "traceability": ["Use cases!A106:B130", "UC-06 Basic Flow 3, 5, 7-8", "UC-06 EF-1 and EF-3", "API-ACCOUNT-CREATE"]
+    },
+    {
+      "br_id": "BR-ACC-10",
+      "name": "Unique account number per owner",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AccountService::create(\n  userId : Integer,\n  dto : CreateAccountDto\n) : AccountResponseDto\n\npre BR_ACC_10_UniqueAccount:\n  not Account.allInstances()->exists(a | \n    a.user_id = userId and \n    a.account_number_full = dto.account_number_full\n  )",
+      "context": "AccountService::create(userId : Integer, dto : CreateAccountDto) : AccountResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "When the authenticated owner already has the submitted full account number, creation is rejected with HTTP 409 and no account is added.",
+      "traceability": ["Use cases!A106:B130", "UC-06 POST-3", "UC-06 EF-2", "API-ACCOUNT-CREATE"]
+    },
+    {
+      "br_id": "BR-ACC-11",
+      "name": "Derive final four account characters",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context AccountService::create(\n  userId : Integer,\n  dto : CreateAccountDto\n) : AccountResponseDto\n\npost BR_ACC_11_DeriveLast4:\n  let newAcc = Account.allInstances()->any(a | a.account_id = result.id) in\n  newAcc.account_number_last_4 = dto.account_number_full.substring(dto.account_number_full.size() - 3, dto.account_number_full.size())\n\nTechnical constraint:\n- The backend derives account_number_last_4 by taking the exact last 4 characters of the submitted account_number_full (e.g., via .slice(-4)).",
+      "context": "AccountService::create(userId : Integer, dto : CreateAccountDto) : AccountResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "A successfully created account stores account_number_last_4 as the exact final four characters of the submitted account_number_full.",
+      "traceability": ["Use cases!A106:B130", "UC-06 POST-1", "UC-06 Basic Flow 8-9", "API-ACCOUNT-CREATE"]
+    },
+    {
+      "br_id": "BR-ACC-12",
+      "name": "Account creation persistence mapping",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context AccountService::create(\n  userId : Integer,\n  dto : CreateAccountDto\n) : AccountResponseDto\n\npost BR_ACC_12_StorageMapping:\n  Account.allInstances()->exists(a |\n    a.account_id = result.id and\n    a.user_id = userId and\n    a.bank_name = dto.bank_name and\n    a.account_type = dto.account_type and\n    a.branch_name = dto.branch_name and\n    a.account_number_full = dto.account_number_full and\n    a.balance = dto.balance\n  )\n\npost BR_ACC_12_ResponseMapping:\n  result.id = Account.allInstances()->any(a | a.account_number_full = dto.account_number_full).account_id",
+      "context": "AccountService::create(userId : Integer, dto : CreateAccountDto) : AccountResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "A successful response maps to the persisted account created for the authenticated user; a storage failure returns HTTP 500 and the account is not added by the request.",
+      "traceability": ["Use cases!A106:B130", "UC-06 POST-1 and POST-3", "UC-06 Basic Flow 8-9", "UC-06 EF-4", "API-ACCOUNT-CREATE"]
+    },
+    {
+      "br_id": "BR-ACC-13",
+      "name": "Account number format and length",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AccountService::create(\n  userId : Integer,\n  dto : CreateAccountDto\n) : AccountResponseDto\n\npre BR_ACC_13_NumericCharactersOnly:\n  not dto.account_number_full.oclIsUndefined() and \n  matches(dto.account_number_full, '^[0-9]+$')\npre BR_ACC_13_LengthConstraints:\n  dto.account_number_full.size() >= 8 and dto.account_number_full.size() <= 34\n\nTechnical constraint:\n- account_number_full must contain only numeric digits.\n- The length must be between 8 and 34 characters (to safely derive the last 4 digits and reflect real-world bank account numbers).",
+      "context": "AccountService::create(userId : Integer, dto : CreateAccountDto) : AccountResponseDto",
+      "enforcement_layers": ["frontend", "backend"],
+      "failure_behavior": "An account number containing non-digits or fewer than 8 or more than 34 characters displays a field error and prevents frontend submission; backend validation returns HTTP 400 if it reaches the API.",
+      "traceability": ["Use cases!A106:B130", "UC-06 Basic Flow 3, 5, 7-8", "UC-06 EF-1 and EF-3", "API-ACCOUNT-CREATE"]
+    },
+    {
+      "br_id": "BR-ACC-14",
+      "name": "Conditional branch name requirement",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AccountService::create(\n  userId : Integer,\n  dto : CreateAccountDto\n) : AccountResponseDto\n\npre BR_ACC_14_BranchNameConditional:\n  if Set{'Loan', 'Investment'}->includes(dto.account_type) then\n    not dto.branch_name.oclIsUndefined() and dto.branch_name.trim().size() > 0\n  else\n    dto.branch_name.oclIsUndefined() or dto.branch_name.oclIsTypeOf(String)\n  endif\n\nTechnical constraint:\n- This rule overrides the base optional branch rule. If the account_type is 'Loan' or 'Investment', the branch_name field is strictly required and cannot be empty.\n- For all other account types, branch_name is optional. If omitted, it shall be processed and stored as null or undefined.",
+      "context": "AccountService::create(userId : Integer, dto : CreateAccountDto) : AccountResponseDto",
+      "enforcement_layers": ["frontend", "backend", "database"],
+      "failure_behavior": "Loan and Investment submissions without a non-empty branch name are rejected; other account types may omit branch_name, which is stored as null or undefined.",
+      "traceability": ["Use cases!A106:B130", "UC-06 AF-1", "UC-06 EF-1 and EF-3", "API-ACCOUNT-CREATE"]
+    },
+    {
+      "br_id": "BR-ACC-15",
+      "name": "Minimum initial deposit for specific types",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AccountService::create(\n  userId : Integer,\n  dto : CreateAccountDto\n) : AccountResponseDto\n\npre BR_ACC_15_MinInitialDeposit:\n  if Set{'Savings', 'Investment'}->includes(dto.account_type) then\n    not dto.balance.oclIsUndefined() and dto.balance >= 50000\n  else\n    not dto.balance.oclIsUndefined() and dto.balance >= 0\n  endif\n\nTechnical constraint:\n- If the user creates a 'Savings' or 'Investment' account, the initial balance must be at least 50,000.\n- For other account types, the balance can be 0 or more.",
+      "context": "AccountService::create(userId : Integer, dto : CreateAccountDto) : AccountResponseDto",
+      "enforcement_layers": ["frontend", "backend"],
+      "failure_behavior": "Savings or Investment creation with balance below 50,000 is rejected; other account types require a balance of zero or more.",
+      "traceability": ["Use cases!A106:B130", "UC-06 Basic Flow 3, 5, 7-8", "UC-06 EF-1 and EF-3"]
+    },
+    {
+      "br_id": "BR-ACC-16",
+      "name": "Financial capacity proof for Investment accounts",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AccountService::create(\n  userId : Integer,\n  dto : CreateAccountDto\n) : AccountResponseDto\n\npre BR_ACC_16_InvestmentCapacity:\n  dto.account_type = 'Investment' implies\n    Account.allInstances()\n      ->select(a | a.user_id = userId and (a.account_type = 'Checking' or a.account_type = 'Savings'))\n      ->collect(balance)\n      ->sum() >= 100000\n      \nTechnical constraint:\n- If a user attempts to create an 'Investment' account, the backend must query the user's existing accounts.\n- The creation is only allowed if the sum of the balances of all the user's existing 'Checking' and 'Savings' accounts is greater than or equal to 100,000.\n- If the user does not meet this financial capacity requirement, the request must be rejected.",
+      "context": "AccountService::create(userId : Integer, dto : CreateAccountDto) : AccountResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "Investment account creation is rejected unless the authenticated user's existing Checking and Savings account balances total at least 100,000.",
+      "traceability": ["Use cases!A106:B130", "UC-06 Basic Flow 8", "UC-06 POST-3"]
+    }
+  ],
+  "ordered_br_ids": [
+    "BR-ACC-07",
+    "BR-ACC-08",
+    "BR-ACC-09",
+    "BR-ACC-10",
+    "BR-ACC-11",
+    "BR-ACC-12",
+    "BR-ACC-13",
+    "BR-ACC-14",
+    "BR-ACC-15",
+    "BR-ACC-16"
+  ],
+  "unresolved_items": []
+}
