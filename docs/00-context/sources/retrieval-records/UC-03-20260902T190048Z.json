@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "source-retrieval-record",
+  "status": "Frozen",
+  "retrieval_id": "SRC-UC03-20260902T190048Z",
+  "retrieved_at": "2026-09-02T19:00:48.000Z",
+  "authorization": {
+    "actor": "researcher",
+    "decision": "confirmed",
+    "scope": "Refresh the frozen UC-03 projection and API-TRANSACTION-LIST contract to sanitize Business Rule leaks while preserving exact BR-TXN-01..07 rules."
+  },
+  "source": {
+    "type": "google-sheets",
+    "spreadsheet_id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "sheet": "Use cases",
+    "range": "A45:B63",
+    "retrieval_method": "connected-google-drive-get-spreadsheet-range"
+  },
+  "projection": {
+    "path": "docs/01-inception/use-cases/uc-03-view-transaction-history.md",
+    "previous_sha256": "sha256:8d4cac9572e4181a9e55609fa7006538c41201522a97a93467d2235e8618bd7d",
+    "refreshed_sha256": "sha256:e9d22a282be0fee4edd9dcd55ac47191dba78440661c874e490f530b5e784882",
+    "status": "Frozen"
+  },
+  "api_contract": {
+    "path": "docs/01-inception/api-contracts/API-TRANSACTION-LIST.md",
+    "status": "Frozen"
+  },
+  "sanitized_sections": [
+    "UC-03 Post-Conditions (POST-1, POST-3)",
+    "UC-03 Basic Flow (Step 5)",
+    "UC-03 Alternative Flow (AF-1, AF-3)",
+    "UC-03 Exception Flow (EF-2)",
+    "API-TRANSACTION-LIST query validation & descriptions",
+    "API-TRANSACTION-LIST response fields descriptions & formulas",
+    "API-TRANSACTION-LIST error triggers"
+  ],
+  "verification": {
+    "spreadsheet_id_matches_project_context": true,
+    "sheet_and_range_match_projection_provenance": true,
+    "ordered_business_rule_ids": [
+      "BR-TXN-01",
+      "BR-TXN-02",
+      "BR-TXN-03",
+      "BR-TXN-04",
+      "BR-TXN-05",
+      "BR-TXN-06",
+      "BR-TXN-07"
+    ],
+    "business_rule_text_changed": false,
+    "unresolved_items": []
+  }
+}

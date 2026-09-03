@@ -1,25 +1,25 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-08-31T14:13:30Z",
-  "repository_revision": null,
-  "source_revision": "sha256:a0ae8b9b34fc5635b53dff48ea9f399cc8860ab67d44822df3f640cbdcc52f33",
+  "observed_at": "2026-09-02T18:00:13Z",
+  "repository_revision": "399001997a1feb03bdd0a77390d4078ce9bdc2ea",
+  "source_revision": "sha256:28693b164bc42c1d84c04ff32e87ab8a9be96933cd8d9906f9233393eefb609e",
   "docker": {
-    "cli": null,
-    "compose": null,
-    "daemon": null
+    "cli": "Docker 29.2.1",
+    "compose": "Docker Compose v5.0.2",
+    "daemon": "available (server 29.2.1)"
   },
   "configuration": {
     "env_present": true,
     "env_ignored": true,
     "env_tracked": false,
-    "compose_valid": null
+    "compose_valid": true
   },
   "services": {
-    "database": "not observed from the current execution environment",
-    "backend": "current UC-02 image could not be rebuilt or observed",
-    "frontend": "current UC-02 image could not be rebuilt or observed"
+    "database": "healthy",
+    "backend": "current UC-04 image rebuilt and healthy; bounded invalid-date, Cash-limit, and insufficient-balance observations returned HTTP 400",
+    "frontend": "current UC-04 image rebuilt, healthy, and reachable with HTTP 200"
   },
-  "status": "BLOCKED",
-  "blocking_incident": "Docker CLI and Compose v2 are not callable or present at the standard Docker Desktop binary path in the current execution environment.",
-  "next_action": "Expose Docker Desktop's docker.exe to this task environment, then rebuild with docker compose --env-file finalsource/.env -f finalsource/compose.yaml up -d --build and repeat bounded UC-02 observations."
+  "status": "READY",
+  "blocking_incident": null,
+  "next_action": "Keep Docker Desktop running for any additional researcher-authorized observations."
 }

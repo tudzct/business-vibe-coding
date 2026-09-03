@@ -17,7 +17,7 @@
       "incident_id": "DEP-20260828-002",
       "fingerprint": "docker-daemon-desktop-linux-engine-unavailable",
       "path": "docs/03-audit/docker-deployment/incidents/docker-daemon-desktop-linux-engine-unavailable.json",
-      "outcome": "blocked"
+      "outcome": "resolved"
     },
     {
       "incident_id": "DEP-20260829-001",

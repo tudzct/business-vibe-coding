@@ -19,8 +19,9 @@ export interface User {
 }
 
 export interface Account {
-  account_id: number
-  user_id: number
+  id: number
+  account_id?: number
+  user_id?: number
   bank_name: string
   account_type: 'Checking' | 'Credit Card' | 'Savings' | 'Investment' | 'Loan'
   branch_name?: string
@@ -40,12 +41,57 @@ export interface Transaction {
   transaction_date: string
   type: 'Revenue' | 'Expense'
   item_description: string
-  shop_name?: string
+  shop_name: string
   amount: number
-  payment_method?: string
+  payment_method: string
   status: 'Complete' | 'Pending' | 'Failed'
   receipt_id?: string
   category_id?: number
+}
+
+export interface AccountListResult {
+  user_id: number
+  accounts: Account[]
+}
+
+export type TransactionFilter = 'All' | 'Revenue' | 'Expense'
+
+export interface TransactionListQuery {
+  type: TransactionFilter
+  limit?: number
+  offset?: number
+}
+
+export interface TransactionListResult {
+  data: Transaction[]
+  total: number
+  hasMore: boolean
+}
+
+export interface CreateTransactionRequest {
+  accountId: number
+  transactionDate: string
+  type: 'Revenue' | 'Expense'
+  itemDescription: string
+  category_id?: number
+  shopName: string
+  amount: number
+  paymentMethod: string
+}
+
+export interface CreatedTransaction {
+  transactionId: number
+  accountId: number
+  transactionDate: string
+  type: 'Revenue' | 'Expense'
+  itemDescription: string
+  shopName: string
+  amount: number
+  paymentMethod: string
+  status: 'Complete' | 'Pending' | 'Failed'
+  receiptId: string | null
+  createdAt: string
+  category_id: number | null
 }
 
 export interface Bill {

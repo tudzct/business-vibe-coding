@@ -14,7 +14,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  if (location.pathname === '/register' || location.pathname === '/login') {
+  if (
+    location.pathname === '/register' ||
+    location.pathname === '/login' ||
+    location.pathname.startsWith('/transactions')
+  ) {
     return <>{children}</>
   }
 

@@ -1,0 +1,114 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-resource",
+  "status": "Frozen",
+  "uc_id": "UC-04",
+  "source_use_case": "docs/01-inception/use-cases/uc-04-create-transaction.md",
+  "source_use_case_sha256": "sha256:1fe38316635ece4af2d7a9a774fd2efdd731c25d3b74c5aaeb5f3e9b9eb04f43",
+  "spreadsheet": {
+    "id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "tab": "Use cases",
+    "range": "A64:B82",
+    "retrieved_at": "2026-09-02T20:55:00.000Z"
+  },
+  "ocl_utility_source": "Use cases!A2:B2",
+  "source_resolution": {
+    "decision": "researcher_confirmed_frozen_projection",
+    "confirmed_at": "2026-09-02T14:25:30.2549339Z",
+    "live_sheet_mismatch_range": "Use cases!B71:B78",
+    "governing_source": "docs/01-inception/use-cases/uc-04-create-transaction.md"
+  },
+  "rules": [
+    {
+      "br_id": "BR-TXN-08",
+      "name": "Required transaction data, date horizon, and cash payment threshold",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context TransactionService::create(\n  user_id : Integer,\n  dto : CreateTransactionDto\n) : CreateTransactionResponseDto\n\npre BR_TXN_08_RequiredFields:\n  not dto.accountId.oclIsUndefined() and\n  not dto.transactionDate.oclIsUndefined() and\n  not dto.type.oclIsUndefined() and\n  not dto.itemDescription.oclIsUndefined() and\n  trim(dto.itemDescription).size() > 0 and\n  not dto.shopName.oclIsUndefined() and\n  trim(dto.shopName).size() > 0 and\n  not dto.paymentMethod.oclIsUndefined() and\n  trim(dto.paymentMethod).size() > 0 and\n  not dto.amount.oclIsUndefined() and\n  dto.amount >= 0.01\n\npre BR_TXN_08_DateWindow:\n  dto.transactionDate <= currentDate() + 1 and\n  dto.transactionDate >= currentDate() - 365\n\npre BR_TXN_08_CashLimit:\n  dto.paymentMethod = 'Cash' implies dto.amount <= 50000000",
+      "context": "TransactionService::create(user_id : Integer, dto : CreateTransactionDto) : CreateTransactionResponseDto",
+      "enforcement_layers": ["frontend", "backend"],
+      "failure_behavior": "Client-applicable invalid fields prevent submission and display field errors; backend validation or constraint violations return HTTP 400 and no transaction is created.",
+      "traceability": ["Use cases!A64:B82", "UC-04 Basic Flow 3-7", "UC-04 EF-2", "UC-04 EF-4", "API-TRANSACTION-CREATE"]
+    },
+    {
+      "br_id": "BR-TXN-09",
+      "name": "Account type eligibility, allowed transaction types, and default status",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context TransactionService::create(\n  user_id : Integer,\n  dto : CreateTransactionDto\n) : CreateTransactionResponseDto\n\npre BR_TXN_09_EligibleAccountType:\n  Account.allInstances()->exists(a |\n    a.account_id = dto.accountId and\n    Set{AccountType::Checking, AccountType::Savings, AccountType::Credit_Card}->includes(a.account_type)\n  )\n\npre BR_TXN_09_AllowedType:\n  dto.type = TransactionType::Revenue or\n  dto.type = TransactionType::Expense\n\npre BR_TXN_09_AllowedStatus:\n  dto.status.oclIsUndefined() or\n  Set{TransactionStatus::Complete,\n      TransactionStatus::Pending,\n      TransactionStatus::Failed}->includes(dto.status)\n\npost BR_TXN_09_DefaultStatus:\n  (dto.status.oclIsUndefined() implies\n    result.data.status = TransactionStatus::Complete) and\n  (not dto.status.oclIsUndefined() implies\n    result.data.status = dto.status)",
+      "context": "TransactionService::create(user_id : Integer, dto : CreateTransactionDto) : CreateTransactionResponseDto",
+      "enforcement_layers": ["frontend", "backend", "database"],
+      "failure_behavior": "Unsupported account, transaction type, or supplied status produces HTTP 400; an omitted status is persisted and returned as Complete.",
+      "traceability": ["Use cases!A64:B82", "UC-04 PRE-2", "UC-04 Basic Flow 2-9", "UC-04 AF-1", "UC-04 EF-1", "UC-04 EF-4", "API-TRANSACTION-CREATE", "API-ACCOUNT-LIST"]
+    },
+    {
+      "br_id": "BR-TXN-10",
+      "name": "Optional category must be valid when supplied",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context TransactionService::create(\n  user_id : Integer,\n  dto : CreateTransactionDto\n) : CreateTransactionResponseDto\n\npre BR_TXN_10_CategoryOptionalAndValid:\n  dto.category_id.oclIsUndefined() or\n  Category.allInstances()->exists(c |\n    c.category_id = dto.category_id\n  )\n\npost BR_TXN_10_CategoryStored:\n  (dto.category_id.oclIsUndefined() implies\n    result.data.category_id.oclIsUndefined()) and\n  (not dto.category_id.oclIsUndefined() implies\n    result.data.category_id = dto.category_id)",
+      "context": "TransactionService::create(user_id : Integer, dto : CreateTransactionDto) : CreateTransactionResponseDto",
+      "enforcement_layers": ["frontend", "backend", "database"],
+      "failure_behavior": "An invalid supplied category produces HTTP 400; an omitted category remains null and does not prevent creation.",
+      "traceability": ["Use cases!A64:B82", "UC-04 Basic Flow 2-9", "UC-04 AF-2", "UC-04 AF-3", "UC-04 EF-4", "API-TRANSACTION-CREATE", "API-CATEGORY-LIST"]
+    },
+    {
+      "br_id": "BR-TXN-11",
+      "name": "Account ownership scope",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context TransactionService::create(\n  user_id : Integer,\n  dto : CreateTransactionDto\n) : CreateTransactionResponseDto\n\npre BR_TXN_11_AccountOwnedByUser:\n  Account.allInstances()->exists(a |\n    a.account_id = dto.accountId and\n    a.user_id = user_id\n  )",
+      "context": "TransactionService::create(user_id : Integer, dto : CreateTransactionDto) : CreateTransactionResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "A missing or non-owned account produces HTTP 400 and no transaction is created; missing or expired authentication produces HTTP 401.",
+      "traceability": ["Use cases!A64:B82", "UC-04 PRE-1", "UC-04 PRE-2", "UC-04 Basic Flow 2 and 7", "UC-04 EF-3", "UC-04 EF-4", "API-TRANSACTION-CREATE", "API-ACCOUNT-LIST"]
+    },
+    {
+      "br_id": "BR-TXN-12",
+      "name": "Sufficient balance for Expense with Savings maintaining reserve",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context TransactionService::create(\n  user_id : Integer,\n  dto : CreateTransactionDto\n) : CreateTransactionResponseDto\n\npre BR_TXN_12_SufficientExpenseBalance:\n  dto.type = TransactionType::Expense implies\n    Account.allInstances()->exists(a |\n      a.account_id = dto.accountId and\n      a.user_id = user_id and\n      ((a.account_type = AccountType::Savings and a.balance - dto.amount >= 50000) or\n       (a.account_type <> AccountType::Savings and a.balance >= dto.amount))\n    )",
+      "context": "TransactionService::create(user_id : Integer, dto : CreateTransactionDto) : CreateTransactionResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "An Expense that exceeds the available balance or violates the Savings reserve produces HTTP 400 and no transaction or balance change is committed.",
+      "traceability": ["Use cases!A64:B82", "UC-04 Basic Flow 7-8", "UC-04 EF-4", "API-TRANSACTION-CREATE"]
+    },
+    {
+      "br_id": "BR-TXN-13",
+      "name": "Status-dependent account balance adjustment and user total balance sync",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context TransactionService::create(\n  user_id : Integer,\n  dto : CreateTransactionDto\n) : CreateTransactionResponseDto\n\npost BR_TXN_13_AccountBalanceAdjusted:\n  Account.allInstances()->exists(a |\n    a.account_id = dto.accountId and\n    ((result.data.status = TransactionStatus::Complete and dto.type = TransactionType::Revenue and a.balance = a.balance@pre + dto.amount) or\n     (result.data.status = TransactionStatus::Complete and dto.type = TransactionType::Expense and a.balance = a.balance@pre - dto.amount) or\n     (result.data.status <> TransactionStatus::Complete and a.balance = a.balance@pre))\n  )\n\npost BR_TXN_13_UserTotalBalanceSynced:\n  User.allInstances()->exists(u |\n    u.user_id = user_id and\n    ((result.data.status = TransactionStatus::Complete and dto.type = TransactionType::Revenue and u.total_balance = u.total_balance@pre + dto.amount) or\n     (result.data.status = TransactionStatus::Complete and dto.type = TransactionType::Expense and u.total_balance = u.total_balance@pre - dto.amount) or\n     (result.data.status <> TransactionStatus::Complete and u.total_balance = u.total_balance@pre))\n  )",
+      "context": "TransactionService::create(user_id : Integer, dto : CreateTransactionDto) : CreateTransactionResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "Complete transactions adjust both account and user totals according to type; non-Complete transactions adjust neither. A failed update or synchronization rolls back the request and returns HTTP 500.",
+      "traceability": ["Use cases!A64:B82", "UC-04 Basic Flow 7-9", "UC-04 AF-1", "UC-04 EF-5", "API-TRANSACTION-CREATE"]
+    },
+    {
+      "br_id": "BR-TXN-14",
+      "name": "Created transaction maps to the request and database",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context TransactionService::create(\n  user_id : Integer,\n  dto : CreateTransactionDto\n) : CreateTransactionResponseDto\n\npost BR_TXN_14_OneNewTransaction:\n  Transaction.allInstances()->size() =\n    Transaction.allInstances()@pre->size() + 1\n\npost BR_TXN_14_PersistedTransaction:\n  Transaction.allInstances()->exists(t |\n    t.transaction_id = result.data.transactionId and\n    t.account_id = dto.accountId and\n    t.transaction_date = dto.transactionDate and\n    t.type = dto.type and\n    t.item_description = trim(dto.itemDescription) and\n    t.shop_name = trim(dto.shopName) and\n    t.amount = dto.amount and\n    t.payment_method = trim(dto.paymentMethod) and\n    t.status = result.data.status and\n    ((dto.category_id.oclIsUndefined() and\n      t.category_id.oclIsUndefined()) or\n     (not dto.category_id.oclIsUndefined() and\n      t.category_id = dto.category_id))\n  )",
+      "context": "TransactionService::create(user_id : Integer, dto : CreateTransactionDto) : CreateTransactionResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "Success creates exactly one mapped transaction; a persistence failure creates none after rollback and returns HTTP 500.",
+      "traceability": ["Use cases!A64:B82", "UC-04 POST-1", "UC-04 Basic Flow 3 and 8-9", "UC-04 AF-2", "UC-04 EF-5", "UC-04 UML", "API-TRANSACTION-CREATE"]
+    },
+    {
+      "br_id": "BR-TXN-15",
+      "name": "Atomic transaction creation, concurrency safety, and rollback",
+      "representation": "natural_language",
+      "expression_or_text": "Technical constraints:\n- The Transactions insert, Accounts.balance update, and Users.total_balance sync shall execute inside a single atomic database transaction.\n- If any validation, persistence, balance-update, or synchronization step fails before commit, the operation shall roll back and leave all tables unchanged by this request.\n- Database locking or isolation shall prevent race conditions during concurrent balance updates on the same account.\n- shopName maps to Transactions.shop_name and paymentMethod maps to Transactions.payment_method; both are mandatory and shall be trimmed non-empty strings.\n- category_id maps to Transactions.category_id and remains optional/nullable.",
+      "context": "Transaction creation persistence, balance updates, synchronization, and concurrent requests",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "Any pre-commit failure rolls back all request changes and returns the source-defined validation or server error; locking or isolation prevents lost concurrent balance updates.",
+      "traceability": ["Use cases!A64:B82", "UC-04 POST-1", "UC-04 Basic Flow 7-9", "UC-04 AF-2", "UC-04 EF-5", "UC-04 UML", "API-TRANSACTION-CREATE"]
+    }
+  ],
+  "ordered_br_ids": [
+    "BR-TXN-08",
+    "BR-TXN-09",
+    "BR-TXN-10",
+    "BR-TXN-11",
+    "BR-TXN-12",
+    "BR-TXN-13",
+    "BR-TXN-14",
+    "BR-TXN-15"
+  ],
+  "unresolved_items": []
+}

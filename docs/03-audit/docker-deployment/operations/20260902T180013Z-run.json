@@ -1,0 +1,38 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-09-02T18:00:13Z",
+  "mode": "run",
+  "source_revision": "sha256:28693b164bc42c1d84c04ff32e87ab8a9be96933cd8d9906f9233393eefb609e",
+  "commands": [
+    {
+      "id": "compose-config",
+      "exit_code": 0,
+      "result": "Configuration validated without exposing environment values"
+    },
+    {
+      "id": "compose-up-build",
+      "exit_code": 0,
+      "result": "Backend and frontend current-source images built successfully"
+    },
+    {
+      "id": "compose-health",
+      "exit_code": 0,
+      "result": "Database, backend, and frontend services healthy"
+    },
+    {
+      "id": "reachability",
+      "exit_code": 0,
+      "result": "Backend health and frontend root returned HTTP 200"
+    },
+    {
+      "id": "bounded-create-validation",
+      "exit_code": 0,
+      "result": "Owned account list returned eligible types only; invalid date, Cash-limit, and insufficient-balance requests each returned HTTP 400; transaction count remained stable"
+    }
+  ],
+  "status": "PASS",
+  "limitations": [
+    "Successful create and concurrent balance-update outcomes were assessed from inspectable source/build evidence; bounded runtime validation deliberately avoided persisting synthetic financial data.",
+    "Only aggregate booleans and HTTP status codes were retained; no credential, token, account identifier, balance, or transaction payload was persisted."
+  ]
+}
