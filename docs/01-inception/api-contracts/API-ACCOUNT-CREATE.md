@@ -189,6 +189,16 @@ Description: Error description returned by the global HTTP exception filter.
 Example: Unauthorized
 Note: The error envelope also contains success=false and may contain an error field.
 
+## Error Response — HTTP 403
+
+### message
+
+Type: string | string[]; Required: Yes; Nullable: No
+Trigger: The user does not meet the requirements to open this specific account type.
+Description: Error description returned by the global HTTP exception filter.
+Example: You do not meet the minimum financial requirements to open this account type.
+Note: The error envelope also contains success=false and may contain an error field.
+
 ## Error Response — HTTP 409
 
 ### message

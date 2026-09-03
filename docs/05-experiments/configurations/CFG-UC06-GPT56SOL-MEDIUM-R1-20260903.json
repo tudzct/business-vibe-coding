@@ -14,6 +14,7 @@
   "use_cases": [
     {
       "uc_id": "UC-06",
+      "figma_dataset_id": "2026-08-29-005",
       "ordered_br_ids": [
         "BR-ACC-07",
         "BR-ACC-08",
