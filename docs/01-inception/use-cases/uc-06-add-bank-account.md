@@ -57,18 +57,18 @@ POST-3: On failure, the account is not added by the request.
 2. The frontend displays AddAccountForm with accountType defaulted to Checking.
 3. The user enters bank_name, account_type, optional branch_name, account_number_full, and balance.
 4. The user selects Add Account.
-5. The frontend requires bank_name and account_number_full and requires balance to be numeric and non-negative.
+5. The frontend validates the input fields before submission.
 6. The frontend sends POST /api/v1/accounts.
 7. The backend ValidationPipe validates CreateAccountDto.
-8. AccountService checks for another account owned by the same user with the same account_number_full.
-9. AccountService derives the final four characters, creates the account using userId from the JWT, and stores it.
+8. AccountService validates the creation request.
+9. AccountService creates the account using userId from the JWT and stores it.
 10. The frontend shows a success toast and navigates to /accounts after 1.5 seconds.
 
 ### Alternative Flow
 
 AF-1: Optional branch omitted
 3a. The user leaves branch_name empty.
-6a. The frontend omits branch_name and the backend stores it as undefined/null.
+6a. The frontend omits branch_name and the backend stores it appropriately.
 
 AF-2: Cancel
 4a. The user selects Cancel and returns to /accounts without submitting.
@@ -78,8 +78,8 @@ AF-2: Cancel
 EF-1: Client-side validation failure
 5a. The form displays field errors and does not call the API.
 
-EF-2: Duplicate account number for the same user
-8a. The backend returns HTTP 409 and the frontend displays the duplicate-account message.
+EF-2: Account creation conflict
+8a. The backend returns HTTP 409 and the frontend displays the conflict message.
 
 EF-3: Backend validation failure
 7a. The frontend maps returned validation messages to fields when possible.
@@ -267,16 +267,56 @@ Technical constraint:
 - account_number_full must contain only numeric digits.
 - The length must be between 8 and 34 characters (to safely derive the last 4 digits and reflect real-world bank account numbers).
 
-BR-ACC-14: Optional branch name
+BR-ACC-14: Conditional branch name requirement
 context AccountService::create(
   userId : Integer,
   dto : CreateAccountDto
 ) : AccountResponseDto
 
-pre BR_ACC_14_BranchNameOptional:
-  dto.branch_name.oclIsUndefined() or dto.branch_name.oclIsTypeOf(String)
+pre BR_ACC_14_BranchNameConditional:
+  if Set{'Loan', 'Investment'}->includes(dto.account_type) then
+    not dto.branch_name.oclIsUndefined() and dto.branch_name.trim().size() > 0
+  else
+    dto.branch_name.oclIsUndefined() or dto.branch_name.oclIsTypeOf(String)
+  endif
 
 Technical constraint:
-- The branch_name field is optional. If omitted, it shall be processed and stored as null or undefined.
+- This rule overrides the base optional branch rule. If the account_type is 'Loan' or 'Investment', the branch_name field is strictly required and cannot be empty.
+- For all other account types, branch_name is optional. If omitted, it shall be processed and stored as null or undefined.
+
+BR-ACC-15: Minimum initial deposit for specific types
+context AccountService::create(
+  userId : Integer,
+  dto : CreateAccountDto
+) : AccountResponseDto
+
+pre BR_ACC_15_MinInitialDeposit:
+  if Set{'Savings', 'Investment'}->includes(dto.account_type) then
+    not dto.balance.oclIsUndefined() and dto.balance >= 50000
+  else
+    not dto.balance.oclIsUndefined() and dto.balance >= 0
+  endif
+
+Technical constraint:
+- If the user creates a 'Savings' or 'Investment' account, the initial balance must be at least 50,000.
+- For other account types, the balance can be 0 or more.
+
+BR-ACC-16: Financial capacity proof for Investment accounts
+context AccountService::create(
+  userId : Integer,
+  dto : CreateAccountDto
+) : AccountResponseDto
+
+pre BR_ACC_16_InvestmentCapacity:
+  dto.account_type = 'Investment' implies
+    Account.allInstances()
+      ->select(a | a.user_id = userId and (a.account_type = 'Checking' or a.account_type = 'Savings'))
+      ->collect(balance)
+      ->sum() >= 100000
+      
+Technical constraint:
+- If a user attempts to create an 'Investment' account, the backend must query the user's existing accounts.
+- The creation is only allowed if the sum of the balances of all the user's existing 'Checking' and 'Savings' accounts is greater than or equal to 100,000.
+- If the user does not meet this financial capacity requirement, the request must be rejected.
 ~~~
 
