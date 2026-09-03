@@ -45,6 +45,28 @@ export interface AccountListData {
   accounts: AccountListItem[]
 }
 
+export interface CreateAccountRequest {
+  bank_name: string
+  account_type: AccountType
+  branch_name?: string
+  account_number_full: string
+  balance: number
+}
+
+export interface CreatedAccount {
+  id: number
+  user_id: number
+  bank_name: string
+  account_type: AccountType
+  branch_name: string | null
+  account_number_last_4: string
+  balance: number
+}
+
+export interface CreateAccountData {
+  account: CreatedAccount
+}
+
 export interface Category {
   category_id: number
   category_name: string

@@ -1,0 +1,469 @@
+{
+  "run_id": "UC06-SOL-MEDIUM-R1",
+  "run_status": "repair_required",
+  "hold_gate": "satisfied",
+  "experiment_configuration": {
+    "configuration_id": "CFG-UC06-GPT56SOL-MEDIUM-R1-20260903",
+    "comparison_group_id": "CG-RQ3-SOL-MEDIUM-16UC-20260829",
+    "researcher_id": "khanh",
+    "artifact": "docs/05-experiments/configurations/CFG-UC06-GPT56SOL-MEDIUM-R1-20260903.json",
+    "checksum": "sha256:3bc5fef85d6883d479e282fdf76df1b2b4d0310d68dfb2915d5de5f7b5de192d",
+    "run_activation": "docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/run-activation.json"
+  },
+  "uc_id": "UC-06",
+  "uc_name": "Add a Bank Account",
+  "replicate_index": 1,
+  "run_order": 1,
+  "audit_protocol": "matched",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "effective_model_unavailable_reason": "The active desktop tool context does not expose an authoritative effective model or snapshot identifier.",
+    "codex_client_version": "codex-cli 0.153.0-alpha.5"
+  },
+  "audit_model": {
+    "assignment": "same-as-generation",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "unavailable_reason": "The active desktop tool context does not expose an authoritative effective model or snapshot identifier."
+  },
+  "timing_wall_clock": {
+    "initial_started_at": "2026-09-03T20:25:28.2687227+07:00",
+    "initial_started_epoch_ms": 1788441928269,
+    "initial_ended_at": "2026-09-03T20:28:25.5770261+07:00",
+    "initial_ended_epoch_ms": 1788442105580
+  },
+  "timing_seconds": {
+    "initial": 177.311,
+    "repairs": 149.576,
+    "total": 326.887
+  },
+  "tokens": {
+    "initial_total": 1790315,
+    "repair_total": 3971803,
+    "total": 5762118,
+    "telemetry_source": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\03\\rollout-2026-09-03T20-23-55-01a06770-b8f6-7891-baa9-aa806f7894db.jsonl",
+    "details": {
+      "initial": {
+        "turn_id": 1,
+        "input": 93138,
+        "cache_read": 1676288,
+        "total_input": 1769426,
+        "output": 20889,
+        "reasoning": 2821,
+        "cost_usd": 1.9305,
+        "duration_seconds": 543.771
+      },
+      "repairs": {
+        "count": 3,
+        "total_tokens": 3971803,
+        "cost_usd": 2.6479
+      }
+    }
+  },
+  "first_pass_source": {
+    "revision": "sha256:8028afedea2bc59c2acf1b99b9f6c9989975a5adbcf7159e639ac2373862f10d",
+    "evidence": "docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/first-pass-generation.json"
+  },
+  "checks": {
+    "figma_dataset": "PASS: dataset 2026-08-29-005 node 4795:3 resolved complete with valid checksums",
+    "host_backend_build": "PASS: nest build completed",
+    "host_backend_lint": "FAIL: the UC-06 account.service.ts diagnostic is repaired, but 19 cumulative pre-existing diagnostics remain",
+    "host_frontend_build": "PASS after Repair 002: tsc -b and vite build completed",
+    "host_frontend_lint": "FAIL: 7 cumulative pre-existing errors and 2 warnings; no diagnostic was reported in the new UC-06 form or page",
+    "docker_review": "BLOCKED: Docker CLI, Compose v2 and daemon are inaccessible from the current execution environment",
+    "docker_rebuild_build": "not_evaluable: no image build was authorized or possible",
+    "docker_rebuild_runtime": "not_evaluable: service health could not be observed",
+    "runtime_observation": "not_evaluable: no current-image create-account flow could be observed",
+    "browser_visual_observation": "not_evaluable: source was mapped against the frozen 1440x900 frame, but the frontend production build fails and no current runtime is available",
+    "repair_001_targeted_backend_lint": "PASS: account.service.ts ESLint completed with zero warnings",
+    "repair_001_backend_build": "PASS: nest build completed",
+    "repair_002_targeted_frontend_lint": "PASS: api/types.ts ESLint completed with zero warnings",
+    "repair_002_frontend_build": "PASS: tsc -b and vite build completed",
+    "repair_003_targeted_dto_lint": "PASS: create-account.dto.ts ESLint completed with zero warnings",
+    "repair_003_backend_build": "PASS: nest build completed"
+  },
+  "first_pass_defects": [
+    {
+      "fingerprint": "backend-queryfailederror-generic-lint",
+      "category": "technical",
+      "evidence": "finalsource/be/src/modules/account/account.service.ts:88 passes QueryFailedError<any> to a QueryFailedError<Error> parameter, producing an ESLint no-unsafe-argument error."
+    },
+    {
+      "fingerprint": "frontend-shared-api-message-type-build",
+      "category": "technical",
+      "evidence": "finalsource/fe/src/api/types.ts widens ApiResponse.message, while AuthContext.tsx:38 and :49 pass it directly to Error, producing TS2769."
+    },
+    {
+      "fingerprint": "uc06-server-business-constraints-missing",
+      "category": "business_rule",
+      "evidence": "BR-ACC-08, BR-ACC-09, BR-ACC-10, BR-ACC-13, BR-ACC-14, BR-ACC-15 and BR-ACC-16 are unmet in the immutable initial assessment."
+    }
+  ],
+  "business_rules": {
+    "baseline": "docs/02-construction/implementation/UC-06/business-rule-baseline.json",
+    "source_revision": "sha256:865b3de686dda09f6d1cb3b3b5795bd0f2bfcfe0c931cfb7630f823c7c991752",
+    "ordered_br_ids": [
+      "BR-ACC-07",
+      "BR-ACC-08",
+      "BR-ACC-09",
+      "BR-ACC-10",
+      "BR-ACC-11",
+      "BR-ACC-12",
+      "BR-ACC-13",
+      "BR-ACC-14",
+      "BR-ACC-15",
+      "BR-ACC-16"
+    ],
+    "initial": {
+      "requirements": [
+        {
+          "br_id": "BR-ACC-07",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/account/dto/create-account.dto.ts:9-10 applies AccountType enum validation at the server boundary",
+            "finalsource/fe/src/components/AddAccountForm/AddAccountForm.tsx:7-13 and :40 expose and validate exactly the five allowed literals",
+            "Backend production build passed"
+          ],
+          "rationale": "Both the client choice set and server-authoritative DTO validation restrict account type to the frozen set."
+        },
+        {
+          "br_id": "BR-ACC-08",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/AddAccountForm/AddAccountForm.tsx:39 trims bankName before rejecting blank input",
+            "finalsource/be/src/modules/account/dto/create-account.dto.ts:5-7 and :16-18 use IsNotEmpty without trimming, so whitespace-only direct API values pass server validation"
+          ],
+          "rationale": "Frontend validation covers the normal UI path, but the required server-authoritative trim-and-non-empty condition is absent."
+        },
+        {
+          "br_id": "BR-ACC-09",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/account/dto/create-account.dto.ts:20-21 validates numeric type and finiteness but has no non-negative constraint",
+            "finalsource/fe/src/components/AddAccountForm/AddAccountForm.tsx:44-48 accepts any finite number, including a negative balance"
+          ],
+          "rationale": "Numeric strings are converted before submission and backend type validation is present, but negative balances are not rejected."
+        },
+        {
+          "br_id": "BR-ACC-10",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/account/account.service.ts:65-77 creates and saves without an owner-scoped existing-account query",
+            "finalsource/be/src/modules/account/account.entity.ts:38-39 has no approved unique constraint for owner plus full account number",
+            "finalsource/be/src/modules/account/account.service.ts:88-93 maps duplicate driver errors, but no source-level owner-scoped uniqueness enforcement exists"
+          ],
+          "rationale": "Catching a possible database duplicate does not enforce the specified per-owner uniqueness when the schema has no matching constraint."
+        },
+        {
+          "br_id": "BR-ACC-11",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/account/account.service.ts:66-73 derives accountNumberLast4 with dto.account_number_full.slice(-4) before persistence",
+            "finalsource/be/src/modules/account/account.service.ts:77-85 saves and returns the derived stored value",
+            "Backend production build passed"
+          ],
+          "rationale": "The exact final four submitted characters are derived on the backend and persisted."
+        },
+        {
+          "br_id": "BR-ACC-12",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/account/account.controller.ts:55-73 supplies only the authenticated request userId and returns the service result",
+            "finalsource/be/src/modules/account/account.service.ts:65-86 explicitly maps every required input field, saves once, and maps the saved identifier and response fields",
+            "finalsource/be/src/modules/account/account.service.ts:95-97 converts unexpected persistence failures to a safe HTTP 500",
+            "Backend production build passed"
+          ],
+          "rationale": "Inspectable source maps the authenticated owner and submitted account data to one persisted Account and returns the saved identifier without exposing the full number."
+        },
+        {
+          "br_id": "BR-ACC-13",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/AddAccountForm/AddAccountForm.tsx:41-43 enforces the 8-34 digit UI constraint",
+            "finalsource/be/src/modules/account/dto/create-account.dto.ts:16-18 checks only non-empty string and lacks server-side digit and length validators"
+          ],
+          "rationale": "The frontend blocks invalid account numbers, but direct API requests bypass the required authoritative format and length rule."
+        },
+        {
+          "br_id": "BR-ACC-14",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/account/dto/create-account.dto.ts:12-14 makes branch_name optional for every account type",
+            "finalsource/fe/src/components/AddAccountForm/AddAccountForm.tsx:104 omits every blank branch_name without considering Loan or Investment"
+          ],
+          "rationale": "Neither layer requires a non-empty branch name conditionally for Loan or Investment."
+        },
+        {
+          "br_id": "BR-ACC-15",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/account/dto/create-account.dto.ts:20-21 has no balance minimum validator",
+            "finalsource/be/src/modules/account/account.service.ts:65-77 contains no account-type-specific initial-deposit check",
+            "finalsource/fe/src/components/AddAccountForm/AddAccountForm.tsx:37-50 contains no 50,000 Savings or Investment threshold"
+          ],
+          "rationale": "The generated flow does not enforce either the type-specific 50,000 minimum or the general non-negative floor."
+        },
+        {
+          "br_id": "BR-ACC-16",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/account/account.service.ts:65-97 performs only the new-account save and no query or sum of the owner's existing Checking and Savings balances"
+          ],
+          "rationale": "Investment creation has no financial-capacity lookup or rejection path."
+        }
+      ],
+      "total": 10,
+      "unmet": 7,
+      "not_evaluable": 0,
+      "met": 3,
+      "acceptance_percent": 30.0
+    },
+    "final": {
+      "requirements": [
+        {
+          "br_id": "BR-ACC-07",
+          "status": "met",
+          "evidence": [
+            "Same as the immutable initial assessment; no repair has been authorized."
+          ],
+          "rationale": "No repair has been applied."
+        },
+        {
+          "br_id": "BR-ACC-08",
+          "status": "met",
+          "evidence": [
+            "finalsource/fe/src/components/AddAccountForm/AddAccountForm.tsx:39 rejects a bank name whose trimmed value is empty",
+            "finalsource/be/src/modules/account/dto/create-account.dto.ts:5-8 and :16-20 require both text fields to be strings, non-empty, and contain a non-whitespace character",
+            "Targeted create-account DTO ESLint passed with zero warnings",
+            "Backend production build passed",
+            "Repair record: docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/repairs/003-br-acc-08-required-text.md"
+          ],
+          "rationale": "The repaired backend boundary now enforces the trim-size semantics for both required text fields, while the frontend continues to block blank bank names and its stricter account-number validation blocks blank input."
+        },
+        {
+          "br_id": "BR-ACC-09",
+          "status": "unmet",
+          "evidence": [
+            "Same as the immutable initial assessment; no repair has been authorized."
+          ],
+          "rationale": "No repair has been applied."
+        },
+        {
+          "br_id": "BR-ACC-10",
+          "status": "unmet",
+          "evidence": [
+            "Same as the immutable initial assessment; no repair has been authorized."
+          ],
+          "rationale": "No repair has been applied."
+        },
+        {
+          "br_id": "BR-ACC-11",
+          "status": "met",
+          "evidence": [
+            "Same as the immutable initial assessment; no repair has been authorized."
+          ],
+          "rationale": "No repair has been applied."
+        },
+        {
+          "br_id": "BR-ACC-12",
+          "status": "met",
+          "evidence": [
+            "Same as the immutable initial assessment; no repair has been authorized."
+          ],
+          "rationale": "No repair has been applied."
+        },
+        {
+          "br_id": "BR-ACC-13",
+          "status": "unmet",
+          "evidence": [
+            "Same as the immutable initial assessment; no repair has been authorized."
+          ],
+          "rationale": "No repair has been applied."
+        },
+        {
+          "br_id": "BR-ACC-14",
+          "status": "unmet",
+          "evidence": [
+            "Same as the immutable initial assessment; no repair has been authorized."
+          ],
+          "rationale": "No repair has been applied."
+        },
+        {
+          "br_id": "BR-ACC-15",
+          "status": "unmet",
+          "evidence": [
+            "Same as the immutable initial assessment; no repair has been authorized."
+          ],
+          "rationale": "No repair has been applied."
+        },
+        {
+          "br_id": "BR-ACC-16",
+          "status": "unmet",
+          "evidence": [
+            "Same as the immutable initial assessment; no repair has been authorized."
+          ],
+          "rationale": "No repair has been applied."
+        }
+      ],
+      "total": 10,
+      "unmet": 6,
+      "not_evaluable": 0,
+      "met": 4,
+      "acceptance_percent": 40.0
+    }
+  },
+  "repairs": [
+    {
+      "repair_id": "UC06-SOL-MEDIUM-R1-REPAIR-001",
+      "repair_index": 1,
+      "sub_prompt": "docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/repairs/001-backend-queryfailed-error-lint.md",
+      "category": "technical",
+      "trigger": "lint",
+      "fingerprint": "backend-queryfailederror-generic-lint",
+      "affected_br_ids": [],
+      "source_revision_before": "sha256:8028afedea2bc59c2acf1b99b9f6c9989975a5adbcf7159e639ac2373862f10d",
+      "source_revision_after": "sha256:687f401de428ecbc21ae1257e57001cb6e4719e56991d9bd4ec72eb8cccb7ed8",
+      "status": "complete",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "effective_model_id": null,
+        "effective_snapshot": null,
+        "effective_model_unavailable_reason": "The active desktop tool context does not expose an authoritative effective model or snapshot identifier."
+      },
+      "timing": {
+        "started_at": "2026-09-03T20:52:30.9692395+07:00",
+        "started_epoch_ms": 1788443550980,
+        "ended_at": "2026-09-03T20:53:37.8920795+07:00",
+        "ended_epoch_ms": 1788443617892,
+        "duration_seconds": 66.912
+      },
+      "tokens": {
+        "total": 1551115,
+        "input": 21006,
+        "cache_read": 1523584,
+        "output": 6525,
+        "cost_usd": 1.0626
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/account/account.service.ts"
+      ],
+      "verification": [
+        "Targeted account.service.ts ESLint passed with zero warnings.",
+        "Backend TypeScript/Nest production build passed."
+      ],
+      "result": "The backend lint fingerprint is resolved; no frozen BR status changed."
+    },
+    {
+      "repair_id": "UC06-SOL-MEDIUM-R1-REPAIR-002",
+      "repair_index": 2,
+      "sub_prompt": "docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/repairs/002-frontend-api-message-type-build.md",
+      "category": "technical",
+      "trigger": "compile",
+      "fingerprint": "frontend-shared-api-message-type-build",
+      "affected_br_ids": [],
+      "source_revision_before": "sha256:687f401de428ecbc21ae1257e57001cb6e4719e56991d9bd4ec72eb8cccb7ed8",
+      "source_revision_after": "sha256:ff020e5ec1b704162b2411ad2105dd4ca28ecdec31947557e13fd88ee9ab781b",
+      "status": "complete",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "effective_model_id": null,
+        "effective_snapshot": null,
+        "effective_model_unavailable_reason": "The active desktop tool context does not expose an authoritative effective model or snapshot identifier."
+      },
+      "timing": {
+        "started_at": "2026-09-03T21:08:13.3814023+07:00",
+        "started_epoch_ms": 1788444493384,
+        "ended_at": "2026-09-03T21:08:52.5918104+07:00",
+        "ended_epoch_ms": 1788444532592,
+        "duration_seconds": 39.208
+      },
+      "tokens": {
+        "total": 1235104,
+        "input": 17545,
+        "cache_read": 1213312,
+        "output": 4247,
+        "cost_usd": 0.8218
+      },
+      "changed_files": [
+        "finalsource/fe/src/api/types.ts"
+      ],
+      "verification": [
+        "Targeted api/types.ts ESLint passed with zero warnings.",
+        "Frontend TypeScript/Vite production build passed."
+      ],
+      "result": "The frontend compile fingerprint is resolved; no frozen BR status changed."
+    },
+    {
+      "repair_id": "UC06-SOL-MEDIUM-R1-REPAIR-003",
+      "repair_index": 3,
+      "sub_prompt": "docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/repairs/003-br-acc-08-required-text.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-acc-08-server-whitespace-required-text",
+      "affected_br_ids": [
+        "BR-ACC-08"
+      ],
+      "source_revision_before": "sha256:ff020e5ec1b704162b2411ad2105dd4ca28ecdec31947557e13fd88ee9ab781b",
+      "source_revision_after": "sha256:865b3de686dda09f6d1cb3b3b5795bd0f2bfcfe0c931cfb7630f823c7c991752",
+      "status": "complete",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "effective_model_id": null,
+        "effective_snapshot": null,
+        "effective_model_unavailable_reason": "The active desktop tool context does not expose an authoritative effective model or snapshot identifier."
+      },
+      "timing": {
+        "started_at": "2026-09-03T21:16:15.3693562+07:00",
+        "started_epoch_ms": 1788444975372,
+        "ended_at": "2026-09-03T21:16:58.8278449+07:00",
+        "ended_epoch_ms": 1788445018828,
+        "duration_seconds": 43.456
+      },
+      "tokens": {
+        "total": 1185584,
+        "input": 10296,
+        "cache_read": 1171072,
+        "output": 4216,
+        "cost_usd": 0.7635
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/account/dto/create-account.dto.ts"
+      ],
+      "verification": [
+        "Targeted create-account.dto.ts ESLint passed with zero warnings.",
+        "Backend TypeScript/Nest production build passed.",
+        "Source inspection confirms both required text fields reject whitespace-only values."
+      ],
+      "result": "BR-ACC-08 reassessed from unmet to met without changing the immutable initial assessment."
+    }
+  ],
+  "manual_estimates_minutes": [],
+  "ui_accuracy_percent": null,
+  "ui_accuracy": {
+    "structural_coverage": "Source represents the frozen sidebar, active Balances state, breadcrumb, top bar, heading, responsive account form, hint, actions, validation, loading, form error and success toast states.",
+    "deterministic_similarity": null,
+    "limitation": "The frontend production build passes after Repair 002, but Docker is inaccessible, so a current rendered comparison is unavailable."
+  },
+  "flow_accuracy_percent": null,
+  "flow_accuracy": {
+    "source_checkpoints": "Protected route, authenticated create request, typed numeric payload, omitted optional branch, persistence mapping, normalized response, field errors, failure handling, delayed success navigation and cancel path are inspectable.",
+    "limitation": "The frontend and backend production builds pass, but the Docker runtime blocker prevents end-to-end observation."
+  },
+  "complexity": {
+    "actors": 1,
+    "main_flow_steps": 9,
+    "alternate_exception_flows": 4,
+    "data_entities": 1,
+    "integrations": 3,
+    "business_rules": 10,
+    "ui_states": 5
+  },
+  "all_sub_prompt_count": 3
+}
