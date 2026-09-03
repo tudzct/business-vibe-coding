@@ -38,6 +38,12 @@ const validate = (values: FormValues): FieldErrors => {
   const errors: FieldErrors = {}
   if (!values.bankName.trim()) errors.bankName = 'Bank name is required.'
   if (!accountTypes.includes(values.accountType)) errors.accountType = 'Select a valid account type.'
+  if (
+    (values.accountType === 'Loan' || values.accountType === 'Investment') &&
+    !values.branchName.trim()
+  ) {
+    errors.branchName = 'Branch name is required for Loan and Investment accounts.'
+  }
   if (!/^\d{8,34}$/.test(values.accountNumber)) {
     errors.accountNumber = 'Account number must contain 8–34 digits.'
   }
@@ -45,6 +51,13 @@ const validate = (values: FormValues): FieldErrors => {
     errors.balance = 'Current balance is required.'
   } else if (!Number.isFinite(Number(values.balance))) {
     errors.balance = 'Current balance must be a valid number.'
+  } else if (Number(values.balance) < 0) {
+    errors.balance = 'Current balance must be zero or greater.'
+  } else if (
+    (values.accountType === 'Savings' || values.accountType === 'Investment') &&
+    Number(values.balance) < 50000
+  ) {
+    errors.balance = 'Savings and Investment accounts require at least 50,000.'
   }
   return errors
 }

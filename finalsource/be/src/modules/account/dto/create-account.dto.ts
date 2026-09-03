@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Matches } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Matches, Min } from 'class-validator';
 import { AccountType } from '../account.entity';
 
 export class CreateAccountDto {
@@ -17,8 +17,10 @@ export class CreateAccountDto {
   @IsString()
   @IsNotEmpty()
   @Matches(/\S/, { message: 'account_number_full must contain a non-whitespace character' })
+  @Matches(/^\d{8,34}$/, { message: 'account_number_full must contain 8-34 digits' })
   readonly account_number_full!: string;
 
   @IsNumber({ allowInfinity: false, allowNaN: false })
+  @Min(0)
   readonly balance!: number;
 }

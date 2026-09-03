@@ -38,13 +38,13 @@
   },
   "timing_seconds": {
     "initial": 177.311,
-    "repairs": 149.576,
-    "total": 326.887
+    "repairs": 357.425,
+    "total": 534.736
   },
   "tokens": {
     "initial_total": 1790315,
-    "repair_total": 3971803,
-    "total": 5762118,
+    "repair_total": 10464558,
+    "total": 12254873,
     "telemetry_source": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\03\\rollout-2026-09-03T20-23-55-01a06770-b8f6-7891-baa9-aa806f7894db.jsonl",
     "details": {
       "initial": {
@@ -58,9 +58,9 @@
         "duration_seconds": 543.771
       },
       "repairs": {
-        "count": 3,
-        "total_tokens": 3971803,
-        "cost_usd": 2.6479
+        "count": 7,
+        "total_tokens": 10464558,
+        "cost_usd": 6.7531
       }
     }
   },
@@ -84,7 +84,18 @@
     "repair_002_targeted_frontend_lint": "PASS: api/types.ts ESLint completed with zero warnings",
     "repair_002_frontend_build": "PASS: tsc -b and vite build completed",
     "repair_003_targeted_dto_lint": "PASS: create-account.dto.ts ESLint completed with zero warnings",
-    "repair_003_backend_build": "PASS: nest build completed"
+    "repair_003_backend_build": "PASS: nest build completed",
+    "repair_004_targeted_lint": "PASS: create-account.dto.ts and AddAccountForm.tsx ESLint completed with zero warnings",
+    "repair_004_backend_build": "PASS: nest build completed",
+    "repair_004_frontend_build": "PASS: tsc -b and vite build completed",
+    "repair_005_targeted_dto_lint": "PASS: create-account.dto.ts ESLint completed with zero warnings",
+    "repair_005_backend_build": "PASS: nest build completed",
+    "repair_006_targeted_lint": "PASS: account.service.ts and AddAccountForm.tsx ESLint completed with zero warnings",
+    "repair_006_backend_build": "PASS: nest build completed",
+    "repair_006_frontend_build": "PASS: tsc -b and vite build completed",
+    "repair_007_targeted_lint": "PASS: account.service.ts and AddAccountForm.tsx ESLint completed with zero warnings",
+    "repair_007_backend_build": "PASS: nest build completed",
+    "repair_007_frontend_build": "PASS: tsc -b and vite build completed"
   },
   "first_pass_defects": [
     {
@@ -105,7 +116,7 @@
   ],
   "business_rules": {
     "baseline": "docs/02-construction/implementation/UC-06/business-rule-baseline.json",
-    "source_revision": "sha256:865b3de686dda09f6d1cb3b3b5795bd0f2bfcfe0c931cfb7630f823c7c991752",
+    "source_revision": "sha256:4c4d7bdeb8417515e5dbd85c2ec4deb689e5c2058b218489c0143077ca74694c",
     "ordered_br_ids": [
       "BR-ACC-07",
       "BR-ACC-08",
@@ -246,11 +257,16 @@
         },
         {
           "br_id": "BR-ACC-09",
-          "status": "unmet",
+          "status": "met",
           "evidence": [
-            "Same as the immutable initial assessment; no repair has been authorized."
+            "finalsource/be/src/modules/account/dto/create-account.dto.ts:22-24 requires a finite numeric balance with @Min(0)",
+            "finalsource/fe/src/components/AddAccountForm/AddAccountForm.tsx:44-49 rejects missing, non-finite and negative balance input",
+            "finalsource/fe/src/components/AddAccountForm/AddAccountForm.tsx:105 converts the accepted balance to a number before submission",
+            "Targeted ESLint passed for both changed files",
+            "Backend and frontend production builds passed",
+            "Repair record: docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/repairs/004-br-acc-09-non-negative-balance.md"
           ],
-          "rationale": "No repair has been applied."
+          "rationale": "Both boundaries now reject negative balances, the backend remains authoritative for numeric type and minimum, and the frontend sends the accepted value as a JSON number."
         },
         {
           "br_id": "BR-ACC-10",
@@ -278,27 +294,39 @@
         },
         {
           "br_id": "BR-ACC-13",
-          "status": "unmet",
+          "status": "met",
           "evidence": [
-            "Same as the immutable initial assessment; no repair has been authorized."
+            "finalsource/fe/src/components/AddAccountForm/AddAccountForm.tsx:41-43 enforces exactly 8-34 digits before submission",
+            "finalsource/be/src/modules/account/dto/create-account.dto.ts:16-21 requires a string, required text, and the ^\\d{8,34}$ format at the server boundary",
+            "Targeted create-account DTO ESLint passed with zero warnings",
+            "Backend production build passed",
+            "Repair record: docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/repairs/005-br-acc-13-account-number-format.md"
           ],
-          "rationale": "No repair has been applied."
+          "rationale": "The repaired DTO makes the digit and length rule authoritative for direct API requests while the existing frontend supplies matching UX validation."
         },
         {
           "br_id": "BR-ACC-14",
-          "status": "unmet",
+          "status": "met",
           "evidence": [
-            "Same as the immutable initial assessment; no repair has been authorized."
+            "finalsource/fe/src/components/AddAccountForm/AddAccountForm.tsx:41-47 requires a trimmed branch for Loan and Investment before submission",
+            "finalsource/be/src/modules/account/account.service.ts:70-79 rejects Loan and Investment requests whose branch is missing, empty, or whitespace-only",
+            "finalsource/be/src/modules/account/account.service.ts:86 stores omitted branches as null for other account types",
+            "Targeted ESLint and production builds passed for both stacks",
+            "Repair record: docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/repairs/006-br-acc-14-conditional-branch.md"
           ],
-          "rationale": "No repair has been applied."
+          "rationale": "The conditional requirement is enforced at the UI and authoritative service boundary, while non-Loan/non-Investment accounts retain optional nullable branch behavior."
         },
         {
           "br_id": "BR-ACC-15",
-          "status": "unmet",
+          "status": "met",
           "evidence": [
-            "Same as the immutable initial assessment; no repair has been authorized."
+            "finalsource/be/src/modules/account/dto/create-account.dto.ts:23-25 retains the authoritative zero minimum for all balances",
+            "finalsource/be/src/modules/account/account.service.ts:80-88 rejects Savings and Investment balances below 50000",
+            "finalsource/fe/src/components/AddAccountForm/AddAccountForm.tsx:56-61 supplies matching type-specific UX validation",
+            "Targeted ESLint and production builds passed for both stacks",
+            "Repair record: docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/repairs/007-br-acc-15-minimum-deposit.md"
           ],
-          "rationale": "No repair has been applied."
+          "rationale": "Savings and Investment now require at least 50,000 in both layers, and all other types remain subject to the authoritative non-negative constraint."
         },
         {
           "br_id": "BR-ACC-16",
@@ -310,10 +338,10 @@
         }
       ],
       "total": 10,
-      "unmet": 6,
+      "unmet": 2,
       "not_evaluable": 0,
-      "met": 4,
-      "acceptance_percent": 40.0
+      "met": 8,
+      "acceptance_percent": 80.0
     }
   },
   "repairs": [
@@ -427,11 +455,11 @@
         "duration_seconds": 43.456
       },
       "tokens": {
-        "total": 1185584,
-        "input": 10296,
-        "cache_read": 1171072,
-        "output": 4216,
-        "cost_usd": 0.7635
+        "total": 1491127,
+        "input": 13625,
+        "cache_read": 1472640,
+        "output": 4862,
+        "cost_usd": 0.9503
       },
       "changed_files": [
         "finalsource/be/src/modules/account/dto/create-account.dto.ts"
@@ -442,6 +470,188 @@
         "Source inspection confirms both required text fields reject whitespace-only values."
       ],
       "result": "BR-ACC-08 reassessed from unmet to met without changing the immutable initial assessment."
+    },
+    {
+      "repair_id": "UC06-SOL-MEDIUM-R1-REPAIR-004",
+      "repair_index": 4,
+      "sub_prompt": "docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/repairs/004-br-acc-09-non-negative-balance.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-acc-09-negative-balance-accepted",
+      "affected_br_ids": [
+        "BR-ACC-09"
+      ],
+      "source_revision_before": "sha256:865b3de686dda09f6d1cb3b3b5795bd0f2bfcfe0c931cfb7630f823c7c991752",
+      "source_revision_after": "sha256:6e63f68df05d12c873b8b91630eb79ea12857d9d380c97ea2c0b205d3e1fa1bf",
+      "status": "complete",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "effective_model_id": null,
+        "effective_snapshot": null,
+        "effective_model_unavailable_reason": "The active desktop tool context does not expose an authoritative effective model or snapshot identifier."
+      },
+      "timing": {
+        "started_at": "2026-09-03T21:20:59.9455943+07:00",
+        "started_epoch_ms": 1788445259950,
+        "ended_at": "2026-09-03T21:21:49.2850736+07:00",
+        "ended_epoch_ms": 1788445309285,
+        "duration_seconds": 49.335
+      },
+      "tokens": {
+        "total": 1468338,
+        "input": 15970,
+        "cache_read": 1447424,
+        "output": 4944,
+        "cost_usd": 0.9519
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/account/dto/create-account.dto.ts",
+        "finalsource/fe/src/components/AddAccountForm/AddAccountForm.tsx"
+      ],
+      "verification": [
+        "Targeted ESLint passed for both changed files with zero warnings.",
+        "Backend TypeScript/Nest production build passed.",
+        "Frontend TypeScript/Vite production build passed.",
+        "Source inspection confirms negative balances are rejected at both boundaries."
+      ],
+      "result": "BR-ACC-09 reassessed from unmet to met without changing the immutable initial assessment."
+    },
+    {
+      "repair_id": "UC06-SOL-MEDIUM-R1-REPAIR-005",
+      "repair_index": 5,
+      "sub_prompt": "docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/repairs/005-br-acc-13-account-number-format.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-acc-13-server-account-number-format",
+      "affected_br_ids": [
+        "BR-ACC-13"
+      ],
+      "source_revision_before": "sha256:6e63f68df05d12c873b8b91630eb79ea12857d9d380c97ea2c0b205d3e1fa1bf",
+      "source_revision_after": "sha256:371dd24d2c73734d87f0e70955c9f09d0f287a4a69eba3cbc40bd71c319c3fe2",
+      "status": "complete",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "effective_model_id": null,
+        "effective_snapshot": null,
+        "effective_model_unavailable_reason": "The active desktop tool context does not expose an authoritative effective model or snapshot identifier."
+      },
+      "timing": {
+        "started_at": "2026-09-03T21:26:56.2068171+07:00",
+        "started_epoch_ms": 1788445616210,
+        "ended_at": "2026-09-03T21:27:38.3623162+07:00",
+        "ended_epoch_ms": 1788445658363,
+        "duration_seconds": 42.153
+      },
+      "tokens": {
+        "total": 1582216,
+        "input": 13642,
+        "cache_read": 1564032,
+        "output": 4542,
+        "cost_usd": 0.9865
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/account/dto/create-account.dto.ts"
+      ],
+      "verification": [
+        "Targeted create-account.dto.ts ESLint passed with zero warnings.",
+        "Backend TypeScript/Nest production build passed.",
+        "Source inspection confirms exactly 8-34 ASCII digits are required at the backend boundary."
+      ],
+      "result": "BR-ACC-13 reassessed from unmet to met without changing the immutable initial assessment."
+    },
+    {
+      "repair_id": "UC06-SOL-MEDIUM-R1-REPAIR-006",
+      "repair_index": 6,
+      "sub_prompt": "docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/repairs/006-br-acc-14-conditional-branch.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-acc-14-conditional-branch-not-enforced",
+      "affected_br_ids": [
+        "BR-ACC-14"
+      ],
+      "source_revision_before": "sha256:371dd24d2c73734d87f0e70955c9f09d0f287a4a69eba3cbc40bd71c319c3fe2",
+      "source_revision_after": "sha256:d2d1c1121119e672208f01a8fb5ecd84e4a09f7d7b0ac001145b809889badee3",
+      "status": "complete",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "effective_model_id": null,
+        "effective_snapshot": null,
+        "effective_model_unavailable_reason": "The active desktop tool context does not expose an authoritative effective model or snapshot identifier."
+      },
+      "timing": {
+        "started_at": "2026-09-03T21:32:19.3335106+07:00",
+        "started_epoch_ms": 1788445939337,
+        "ended_at": "2026-09-03T21:33:24.1853868+07:00",
+        "ended_epoch_ms": 1788446004185,
+        "duration_seconds": 64.848
+      },
+      "tokens": {
+        "total": 1710825,
+        "input": 16646,
+        "cache_read": 1688832,
+        "output": 5347,
+        "cost_usd": 1.0881
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/account/account.service.ts",
+        "finalsource/fe/src/components/AddAccountForm/AddAccountForm.tsx"
+      ],
+      "verification": [
+        "Targeted ESLint passed for both changed files with zero warnings.",
+        "Backend TypeScript/Nest production build passed.",
+        "Frontend TypeScript/Vite production build passed.",
+        "Source inspection confirms conditional required and optional-null branch paths."
+      ],
+      "result": "BR-ACC-14 reassessed from unmet to met without changing the immutable initial assessment."
+    },
+    {
+      "repair_id": "UC06-SOL-MEDIUM-R1-REPAIR-007",
+      "repair_index": 7,
+      "sub_prompt": "docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/repairs/007-br-acc-15-minimum-deposit.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-acc-15-type-specific-minimum-deposit",
+      "affected_br_ids": [
+        "BR-ACC-15"
+      ],
+      "source_revision_before": "sha256:d2d1c1121119e672208f01a8fb5ecd84e4a09f7d7b0ac001145b809889badee3",
+      "source_revision_after": "sha256:4c4d7bdeb8417515e5dbd85c2ec4deb689e5c2058b218489c0143077ca74694c",
+      "status": "complete",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "effective_model_id": null,
+        "effective_snapshot": null,
+        "effective_model_unavailable_reason": "The active desktop tool context does not expose an authoritative effective model or snapshot identifier."
+      },
+      "timing": {
+        "started_at": "2026-09-03T21:36:49.2513780+07:00",
+        "started_epoch_ms": 1788446209254,
+        "ended_at": "2026-09-03T21:37:40.7674211+07:00",
+        "ended_epoch_ms": 1788446260767,
+        "duration_seconds": 51.513
+      },
+      "tokens": {
+        "total": 1425833,
+        "input": 12217,
+        "cache_read": 1409408,
+        "output": 4208,
+        "cost_usd": 0.892
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/account/account.service.ts",
+        "finalsource/fe/src/components/AddAccountForm/AddAccountForm.tsx"
+      ],
+      "verification": [
+        "Targeted ESLint passed for both changed files with zero warnings.",
+        "Backend TypeScript/Nest production build passed.",
+        "Frontend TypeScript/Vite production build passed.",
+        "Source inspection confirms the type-specific and general balance floors."
+      ],
+      "result": "BR-ACC-15 reassessed from unmet to met without changing the immutable initial assessment."
     }
   ],
   "manual_estimates_minutes": [],
@@ -465,5 +675,5 @@
     "business_rules": 10,
     "ui_states": 5
   },
-  "all_sub_prompt_count": 3
+  "all_sub_prompt_count": 7
 }

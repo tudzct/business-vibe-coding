@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
 import { Account, AccountType } from './account.entity';
@@ -63,6 +68,24 @@ export class AccountService {
   }
 
   async createForUser(userId: number, dto: CreateAccountDto): Promise<CreatedAccount> {
+    if (
+      [AccountType.LOAN, AccountType.INVESTMENT].includes(dto.account_type) &&
+      !dto.branch_name?.trim()
+    ) {
+      throw new BadRequestException(
+        'branch_name is required for Loan and Investment accounts.',
+      );
+    }
+
+    if (
+      [AccountType.SAVINGS, AccountType.INVESTMENT].includes(dto.account_type) &&
+      dto.balance < 50000
+    ) {
+      throw new BadRequestException(
+        'balance must be at least 50000 for Savings and Investment accounts.',
+      );
+    }
+
     const account = this.accounts.create({
       userId,
       bankName: dto.bank_name,
