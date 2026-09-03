@@ -1,0 +1,4362 @@
+Field Name	Content	UC_ID	Target_Range
+Use Case ID	UC-01	UC-01	A5:B25
+Use Case Name	Register an Account	UC-01	A5:B25
+Description	As a visitor, I want to register with my full name, email address, password, and password confirmation so that the application creates an authenticated user session.	UC-01	A5:B25
+Actor(s)	Visitor	UC-01	A5:B25
+Priority	Not Specified	UC-01	A5:B25
+Trigger	The visitor opens the registration page or selects the Create an account link.	UC-01	A5:B25
+Pre-Condition(s)	"PRE-1: The registration route (/register) is accessible to the visitor.
+PRE-2: The backend and database services are operational."	UC-01	A5:B25
+Post-Condition(s)	"POST-1: On success, a new user account is created and persisted, an authenticated session is established, and the user is redirected to the home page.
+POST-2: On failure, no user account or authenticated session is created, and an appropriate error message is displayed."	UC-01	A5:B25
+Basic Flow	"1. The visitor opens the registration page (/register).
+2. The frontend displays the registration form (SignUpForm).
+3. The visitor enters registration details: fullName, email, password, and confirmPassword.
+4. The visitor submits the registration form.
+5. The frontend performs preliminary validation on the submitted form fields.
+6. The frontend sends the registration request (POST /api/auth/register) to the backend API.
+7. The backend validates and processes the registration data according to established business rules.
+8. Upon successful validation, the backend persists the new user account securely and generates an authenticated session.
+9. The backend returns a successful response containing the authentication token and created user profile data.
+10. The frontend establishes the authenticated user session and redirects the user to the home page (/)."	UC-01	A5:B25
+Alternative Flow	"AF-1: Client-side validation failure
+5a. If any submitted field fails preliminary validation, the frontend displays field-level error messages and halts form submission without calling the API.
+
+AF-2: Registration conflict / Duplicate account
+7a. If registration data conflicts with existing account policies (e.g., email already registered), the backend rejects the request and the frontend displays the returned error message."	UC-01	A5:B25
+Exception Flow	"EF-1: Registration request failure
+6a. If the registration request encounters an unexpected network or server error, the frontend displays a failure notification and remains on the registration form."	UC-01	A5:B25
+Related UI	Register page; SignUpForm; route /register; AuthContext	UC-01	A5:B25
+Related API IDs	API-AUTH-REGISTER	UC-01	A5:B25
+Notes	Scope clarification: This use case covers email/password registration only. Google sign-up is outside scope.	UC-01	A5:B25
+UML Model	"~~~plantuml
+@startuml
+
+class RegisterDto <<DTO>> {
+  fullName: String [0..1]
+  email: String [0..1]
+  password: String [0..1]
+  confirmPassword: String [0..1]
+}
+
+class User <<Entity>> {
+  id: Integer [1]
+  fullName: String [1]
+  email: String [1]
+  passwordHash: String [1]
+}
+
+class RegisteredUserDto <<DTO>> {
+  id: Integer [1]
+  fullName: String [1]
+  email: String [1]
+}
+
+class RegisterDataDto <<DTO>> {
+  accessToken: String [1]
+  user: RegisteredUserDto [1]
+}
+
+class RegisterResponseDto <<DTO>> {
+  success: Boolean [1]
+  message: String [1]
+  data: RegisterDataDto [0..1]
+}
+
+class AuthResponse <<DTO>> {
+  success: Boolean
+  user: User [0..1]
+  accessToken: String [0..1]
+}
+
+class PasswordHasher <<Service>> {
+  hash(password: String, rounds: Integer): String
+  matches(password: String, hash: String): Boolean {query}
+  cost(hash: String): Integer {query}
+}
+
+class AuthService <<Service>> {
+  register(dto: RegisterDto): RegisterResponseDto
+  isRegistrationInputValid(dto: RegisterDto): Boolean {query}
+}
+
+AuthService ..> RegisterDto
+AuthService ..> RegisterResponseDto
+AuthService ..> PasswordHasher
+
+RegisterResponseDto --> RegisterDataDto
+RegisterDataDto --> RegisteredUserDto
+RegisteredUserDto ..> User : maps from
+
+@enduml
+~~~"	UC-01	A5:B25
+Business Rules	"The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+
+~~~text
+BR-REG-01: Valid registration full name:
+context AuthService::register(
+  dto : RegisterDto
+) : AuthResponse
+
+pre BR_REG_01_Defined:
+  not dto.fullName.oclIsUndefined()
+
+pre BR_REG_01_Length:
+  let normalizedName : String = trim(nfc(dto.fullName))
+  in
+    normalizedName.size() >= 4 and
+    normalizedName.size() <= 25
+
+pre BR_REG_01_Pattern:
+  let normalizedName : String = trim(nfc(dto.fullName))
+  in
+    matches(
+      normalizedName,
+      '^[\p{L}]+(?: [\p{L}]+)*$'
+    )
+
+post BR_REG_01_Normalized:
+  let normalizedName : String = trim(nfc(dto.fullName))
+  in
+    result.success implies
+      not result.data.oclIsUndefined() and
+      not result.data.user.oclIsUndefined() and
+      result.data.user.fullName = normalizedName
+
+BR-REG-02: Valid registration email:
+context AuthService::register(
+  dto : RegisterDto
+) : AuthResponse
+
+pre BR_REG_02_Defined:
+  not dto.email.oclIsUndefined()
+
+pre BR_REG_02_NotEmpty:
+  trim(dto.email).size() > 0
+
+pre BR_REG_02_MaxLength:
+  let normalizedEmail : String = lower(trim(dto.email))
+  in
+    normalizedEmail.size() <= 255
+
+pre BR_REG_02_ValidFormat:
+  let normalizedEmail : String = lower(trim(dto.email))
+  in
+    isEmail(normalizedEmail)
+
+post BR_REG_02_Normalized:
+  let normalizedEmail : String = lower(trim(dto.email))
+  in
+    result.success implies
+      not result.data.oclIsUndefined() and
+      not result.data.user.oclIsUndefined() and
+      result.data.user.email = normalizedEmail
+
+BR-REG-03: Unique registration email:
+context User
+
+inv BR_REG_03_UniqueNormalizedEmail:
+  User.allInstances()->isUnique(
+    user | lower(trim(user.email))
+  )
+
+context AuthService::register(
+  dto : RegisterDto
+) : AuthResponse
+
+pre BR_REG_03_EmailNotRegistered:
+  not User.allInstances()->exists(
+    user |
+      lower(trim(user.email)) =
+      lower(trim(dto.email))
+  )
+
+BR-REG-04: Valid registration password
+context AuthService::register(
+  dto : RegisterDto
+) : AuthResponse
+
+pre BR_REG_04_Defined:
+  not dto.password.oclIsUndefined()
+
+pre BR_REG_04_Length:
+  dto.password.size() >= 8 and
+  dto.password.size() <= 64
+
+pre BR_REG_04_NoWhitespace:
+  not matches(
+    dto.password,
+    '.*\s.*'
+  )
+
+pre BR_REG_04_ContainsLowercase:
+  matches(
+    dto.password,
+    '.*[a-z].*'
+  )
+
+pre BR_REG_04_ContainsUppercase:
+  matches(
+    dto.password,
+    '.*[A-Z].*'
+  )
+
+pre BR_REG_04_ContainsDigit:
+  matches(
+    dto.password,
+    '.*[0-9].*'
+  )
+
+pre BR_REG_04_ContainsSpecialCharacter:
+  matches(
+    dto.password,
+    '.*[!@#$%^&*(){}\-_+=\[\],./<>?\\|:;].*'
+  )
+
+BR-REG-05: Permitted password characters
+context AuthService::register(
+  dto : RegisterDto
+) : AuthResponse
+
+pre BR_REG_05_AllowedCharacters:
+  matches(
+    dto.password,
+    '^[A-Za-z0-9!@#$%^&*(){}_=+\[\],./<>?\\|:;\-]+$'
+  )
+
+BR-REG-06: Matching registration passwords
+context AuthService::register(
+  dto : RegisterDto
+) : AuthResponse
+
+pre BR_REG_06_ConfirmPasswordDefined:
+  not dto.confirmPassword.oclIsUndefined()
+
+pre BR_REG_06_PasswordsMatch:
+  dto.confirmPassword = dto.password
+
+BR-REG-07: Confirm password handling
+confirmPassword shall not be persisted or written to application logs.
+
+BR-REG-08: Invalid registration handling
+context AuthService::register(
+  dto : RegisterDto
+) : AuthResponse
+
+post BR_REG_08_InvalidRequestRejected:
+  not self.isRegistrationInputValid(dto)
+  implies
+    result.success = false
+
+post BR_REG_08_NoUserCreated:
+  not self.isRegistrationInputValid(dto)
+  implies
+    User.allInstances()->size() =
+    User.allInstances()@pre->size()
+
+BR-REG-09: Bcrypt password storage
+context AuthService::register(
+  dto : RegisterDto
+) : AuthResponse
+
+post BR_REG_09_PasswordHashed:
+  result.success implies
+    let createdUser : User =
+      User.allInstances()->any(
+        user |
+          lower(trim(user.email)) =
+          lower(trim(dto.email))
+      )
+    in
+      not createdUser.oclIsUndefined() and
+      createdUser.passwordHash <> dto.password and
+      bcryptMatches(
+        dto.password,
+        createdUser.passwordHash
+      ) and
+      bcryptCost(createdUser.passwordHash) = 10
+Technical constraints:
+- The plaintext password shall not be persisted or logged.
+- Neither the plaintext password nor passwordHash shall be included in the API response.
+- The bcrypt hash shall be generated before the User record is persisted.
+
+BR-REG-10: Concurrent registration conflict handling
+context User
+
+inv BR_REG_10_AtMostOneUserPerNormalizedEmail:
+  User.allInstances()->forAll(user |
+    User.allInstances()
+      ->select(other |
+        lower(trim(other.email)) =
+        lower(trim(user.email))
+      )
+      ->size() = 1
+  )
+Technical constraints:
+- User.email shall be protected by the database unique constraint defined in BR-REG-03.
+- If multiple concurrent registration requests contain the same normalized email, exactly one User creation shall succeed.
+- Each conflicting request shall be rejected with HTTP 409 Conflict.
+- A rejected request shall not issue a JWT or establish an authenticated session.
+- After all concurrent requests complete, exactly one User shall exist for the normalized email.
+
+BR-REG-11: Successful registration
+context AuthService::register(
+  dto : RegisterDto
+) : RegisterResponseDto
+
+post BR_REG_11_SuccessResponse:
+  result.success implies
+    result.message.size() > 0 and
+    not result.data.oclIsUndefined() and
+    not result.data.user.oclIsUndefined() and
+    not result.data.accessToken.oclIsUndefined() and
+    result.data.accessToken.size() > 0
+
+post BR_REG_11_UserCreated:
+  result.success implies
+    User.allInstances()->one(user |
+      user.id = result.data.user.id and
+      lower(trim(user.email)) =
+        lower(trim(dto.email))
+    )
+Technical constraints:
+- After the User has been successfully persisted, the backend shall issue a signed JWT access token identifying that User.
+- The successful response shall contain the created user information and access token inside the data object.
+- After receiving the successful response, the client shall establish an authenticated session using the returned token.
+- The client shall redirect the authenticated user to the home page.
+- A session shall not be established and navigation shall not occur when registration fails.
+~~~"	UC-01	A5:B25
+		UC-01	A5:B25
+Use Case ID	UC-02	UC-02	A26:B44
+Use Case Name	Log In	UC-02	A26:B44
+Description	As a registered visitor, I want to log in with my email address and password so that the application creates an authenticated session.	UC-02	A26:B44
+Actor(s)	Visitor	UC-02	A26:B44
+Priority	Not Specified	UC-02	A26:B44
+Trigger	The visitor opens the login page or selects the Login link.	UC-02	A26:B44
+Pre-Condition(s)	"PRE-1: The login route (/login) is accessible to the visitor.
+PRE-2: The backend and database services are operational."	UC-02	A26:B44
+Post-Condition(s)	"POST-1: On success, an authenticated user session is established and the user is redirected to the home page.
+POST-2: On failure, no authenticated session is created, the visitor remains on the login page, and an error notification is displayed."	UC-02	A26:B44
+Basic Flow	"1. The visitor opens the login page (/login).
+2. The frontend displays the login form (LoginForm).
+3. The visitor enters credentials: email and password.
+4. The visitor submits the login form.
+5. The frontend performs preliminary validation on the credentials.
+6. The frontend sends the authentication request (POST /api/auth/login) to the backend API.
+7. The backend verifies the submitted credentials against registered accounts according to established security and authentication rules.
+8. Upon successful authentication, the backend issues an authenticated session.
+9. The backend returns a successful response with session credentials and user profile information.
+10. The frontend establishes the authenticated session and redirects the user to the home page (/)."	UC-02	A26:B44
+Alternative Flow	"AF-1: Client-side validation failure
+5a. If credentials fail preliminary validation, the frontend displays field-level error messages and halts submission without calling the API."	UC-02	A26:B44
+Exception Flow	"EF-1: Authentication failure / Invalid credentials
+7a. If credentials do not match an active registered account or fail security verification, the backend rejects the request and the frontend displays an authentication failure notification.
+
+EF-2: Service or network failure
+6a. If the request encounters a network error or server malfunction, the frontend displays a general failure message and remains on the login page."	UC-02	A26:B44
+Related UI	Login page; LoginForm; route /login; AuthContext	UC-02	A26:B44
+Related API IDs	API-AUTH-LOGIN	UC-02	A26:B44
+Notes	Scope clarification: Authentication data is persisted in localStorage regardless of the “Keep me signed in” selection. Password recovery and Google login are outside scope.	UC-02	A26:B44
+UML Model	"~~~plantuml
+@startuml
+
+class LoginDto <<DTO>> {
+  email: String [0..1]
+  password: String [0..1]
+}
+
+class User <<Entity>> {
+  id: Integer [1]
+  fullName: String [1]
+  email: String [1]
+  passwordHash: String [1]
+}
+
+class LoginUserDto <<DTO>> {
+  id: Integer [1]
+  fullName: String [1]
+  email: String [1]
+}
+
+class LoginDataDto <<DTO>> {
+  accessToken: String [1]
+  user: LoginUserDto [1]
+}
+
+class LoginResponseDto <<DTO>> {
+  success: Boolean [1]
+  message: String [1]
+  data: LoginDataDto [0..1]
+}
+
+class PasswordHasher <<Service>> {
+  matches(password: String, hash: String): Boolean {query}
+}
+
+class AuthService <<Service>> {
+  login(dto: LoginDto): LoginResponseDto
+  isLoginInputValid(dto: LoginDto): Boolean {query}
+}
+
+AuthService ..> LoginDto
+AuthService ..> LoginResponseDto
+AuthService ..> PasswordHasher
+
+LoginResponseDto --> LoginDataDto
+LoginDataDto --> LoginUserDto
+LoginUserDto ..> User : maps from
+
+@enduml
+~~~"	UC-02	A26:B44
+Business Rules	"The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+
+~~~text
+BR-LOG-01 - Valid login email
+
+context AuthService::login(
+  dto : LoginDto
+) : LoginResponseDto
+
+pre BR_LOG_01_Defined:
+  not dto.email.oclIsUndefined()
+
+pre BR_LOG_01_NotEmpty:
+  trim(dto.email).size() > 0
+
+pre BR_LOG_01_ValidFormat:
+  let normalizedEmail : String =
+    lower(trim(dto.email))
+  in
+    isEmail(normalizedEmail)
+
+BR-LOG-02 - Non-empty login password
+
+context AuthService::login(
+  dto : LoginDto
+) : LoginResponseDto
+
+pre BR_LOG_02_Defined:
+  not dto.password.oclIsUndefined()
+
+pre BR_LOG_02_NotEmpty:
+  dto.password.size() > 0
+
+BR-LOG-03 - Existing login account
+
+context AuthService::login(
+  dto : LoginDto
+) : LoginResponseDto
+
+post BR_LOG_03_SuccessRequiresExistingUser:
+  result.success implies
+    User.allInstances()->exists(
+      user |
+        lower(trim(user.email)) =
+        lower(trim(dto.email))
+    )
+
+BR-LOG-04 - Credential verification
+
+context AuthService::login(
+  dto : LoginDto
+) : LoginResponseDto
+
+post BR_LOG_04_SuccessRequiresValidCredentials:
+  result.success implies
+    User.allInstances()->exists(
+      user |
+        lower(trim(user.email)) =
+          lower(trim(dto.email))
+        and
+        self.passwordHasher.matches(
+          dto.password,
+          user.passwordHash
+        )
+    )
+
+BR-LOG-05 - Invalid credential handling
+
+context AuthService::login(
+  dto : LoginDto
+) : LoginResponseDto
+
+post BR_LOG_05_InvalidCredentialsRejected:
+  let credentialsValid : Boolean =
+    User.allInstances()->exists(
+      user |
+        lower(trim(user.email)) =
+          lower(trim(dto.email))
+        and
+        self.passwordHasher.matches(
+          dto.password,
+          user.passwordHash
+        )
+    )
+  in
+    result.success = credentialsValid
+
+Technical constraints:
+
+If credentialsValid = false, the backend shall return HTTP 401 Unauthorized.
+The same authentication error shall be returned when the email does not exist or when the password is incorrect.
+
+BR-LOG-06 - Successful login
+
+context AuthService::login(
+  dto : LoginDto
+) : LoginResponseDto
+
+post BR_LOG_06_SuccessResponse:
+  result.success implies
+    not result.data.oclIsUndefined() and
+    not result.data.accessToken.oclIsUndefined() and
+    result.data.accessToken.size() > 0 and
+    not result.data.user.oclIsUndefined()
+
+post BR_LOG_06_CorrectAuthenticatedUser:
+  result.success implies
+    User.allInstances()->exists(
+      user |
+        user.id = result.data.user.id and
+        lower(trim(user.email)) =
+          lower(trim(dto.email)) and
+        result.data.user.fullName = user.fullName and
+        result.data.user.email = user.email
+    )
+
+Technical constraints:
+
+The backend shall issue a signed JWT access token after successful authentication.
+Neither the submitted plaintext password nor the stored password hash shall be included in the API response.
+After receiving a successful response, the client shall establish the authenticated session using the returned access token and user information.
+~~~"	UC-02	A26:B44
+		UC-02	A26:B44
+Use Case ID	UC-03	UC-03	A45:B63
+Use Case Name	View Transaction History	UC-03	A45:B63
+Description	As an authenticated user, I want to view, filter, and paginate transactions belonging to my accounts.	UC-03	A45:B63
+Actor(s)	Authenticated User	UC-03	A45:B63
+Priority	Not Specified	UC-03	A45:B63
+Trigger	The user opens the Transactions page.	UC-03	A45:B63
+Pre-Condition(s)	"PRE-1: The user is authenticated.
+PRE-2: The protected route (/transactions) is accessible to the authenticated user."	UC-03	A45:B63
+Post-Condition(s)	"POST-1: The page displays the user's transaction history matching the selected filter and pagination parameters.
+POST-2: If no transactions exist for the selected criteria, an empty-state message is displayed.
+POST-3: The user views the transaction list without modifying existing records."	UC-03	A45:B63
+Basic Flow	"1. The user navigates to the Transactions page (/transactions).
+2. The page initializes default query parameters (filter and pagination settings).
+3. The frontend requests the initial transaction list (GET /api/v1/transactions) with default parameters.
+4. The backend authenticates the user and verifies authorization.
+5. The backend retrieves transaction records based on the requested filter and pagination criteria.
+6. The backend returns the transaction list along with total count and pagination metadata.
+7. The frontend renders the transaction history items and pagination controls."	UC-03	A45:B63
+Alternative Flow	"AF-1: Filter by transaction type
+2a. The user selects a specific transaction type filter.
+2b. The page resets pagination and requests transaction data according to the selected filter criteria.
+
+AF-2: Pagination / Load more
+7a. If additional transaction pages are available, the user requests to load more records.
+7b. The frontend requests the subsequent page of transactions and appends them to the current list.
+
+AF-3: Empty transaction history
+5a. If no transactions match the query criteria, the system returns an empty result set.
+7c. The frontend displays the appropriate empty-state message."	UC-03	A45:B63
+Exception Flow	"EF-1: Unauthorized request
+4a. If user authentication is missing or invalid, the backend rejects the request and the frontend redirects the user to the login page.
+
+EF-2: Invalid query parameters
+5b. If query parameters fail validation, the backend rejects the request and the frontend displays a validation error.
+
+EF-3: Service failure
+5c. If transaction retrieval encounters a server or database error, the frontend displays an error notification."	UC-03	A45:B63
+Related UI	TransactionsPage; route /transactions	UC-03	A45:B63
+Related API IDs	API-TRANSACTION-LIST	UC-03	A45:B63
+Notes	Not specified	UC-03	A45:B63
+UML Model	"~~~plantuml
+@startuml
+
+class User <<Entity>> {
+  user_id: Integer [1]
+  full_name: String [1]
+  email: String [1]
+  username: String [1]
+  password: String [1]
+  phone_number: String [1]
+  profile_picture_url: String [1]
+  total_balance: Decimal [1]
+}
+
+class Account <<Entity>> {
+  account_id: Integer [1]
+  user_id: Integer [1]
+  bank_name: String [1]
+  account_type: AccountType [1]
+  branch_name: String [1]
+  account_number_full: String [1]
+  account_number_last_4: String [1]
+  balance: Decimal [1]
+}
+
+class Category <<Entity>> {
+  category_id: Integer [1]
+  category_name: String [1]
+}
+
+class Transaction <<Entity>> {
+  transaction_id: Integer [1]
+  account_id: Integer [1]
+  transaction_date: Date [1]
+  type: TransactionType [1]
+  item_description: String [1]
+  shop_name: String [1]
+  amount: Decimal [1]
+  payment_method: String [1]
+  status: TransactionStatus [1]
+  receipt_id: Integer [1]
+  category_id: Integer [0..1]
+}
+
+enum AccountType {
+  Checking
+  Credit_Card
+  Savings
+  Investment
+  Loan
+}
+note right of AccountType
+  Credit_Card maps to database literal 'Credit Card'.
+end note
+
+enum TransactionType {
+  Revenue
+  Expense
+}
+
+enum TransactionStatus {
+  Complete
+  Pending
+  Failed
+}
+
+enum TransactionFilterType {
+  All
+  Revenue
+  Expense
+}
+
+class TransactionListQueryDto <<DTO>> {
+  type: TransactionFilterType [1]
+  limit: Integer [0..1]
+  offset: Integer [0..1]
+}
+
+class TransactionDto <<DTO>> {
+  transaction_id: Integer [1]
+  account_id: Integer [1]
+  transaction_date: Date [1]
+  type: TransactionType [1]
+  item_description: String [1]
+  shop_name: String [1]
+  amount: Decimal [1]
+  payment_method: String [1]
+  status: TransactionStatus [1]
+}
+
+class TransactionListResponseDto <<DTO>> {
+  data: TransactionDto [*]
+  total: Integer [1]
+  hasMore: Boolean [1]
+}
+
+class TransactionService <<Service>> {
+  findAllByUserId(user_id: Integer, type: TransactionFilterType, limit: Integer, offset: Integer): TransactionListResponseDto
+}
+
+User ""1"" -- ""0..*"" Account : owns
+Account ""1"" -- ""0..*"" Transaction : contains
+Category ""0..1"" -- ""0..*"" Transaction : classifies
+
+TransactionService ..> TransactionListQueryDto
+TransactionService ..> TransactionListResponseDto
+TransactionListResponseDto --> TransactionDto
+TransactionDto ..> Transaction : maps from
+
+@enduml
+~~~"	UC-03	A45:B63
+Business Rules	"The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+
+~~~text
+BR-TXN-01: Transaction ownership and user scope
+context TransactionService::findAllByUserId(
+  user_id : Integer,
+  type : TransactionFilterType,
+  limit : Integer,
+  offset : Integer
+) : TransactionListResponseDto
+
+pre BR_TXN_01_UserExists:
+  User.allInstances()->exists(u |
+    u.user_id = user_id
+  )
+
+post BR_TXN_01_OwnedAccountsOnly:
+  result.data->forAll(t |
+    Account.allInstances()->exists(a |
+      a.account_id = t.account_id and
+      a.user_id = user_id
+    )
+  )
+
+Technical constraints:
+- The authenticated user identity is derived from the validated JWT token.
+- Only transaction records belonging to accounts owned by the authenticated user shall be retrieved.
+
+BR-TXN-02: Type filter semantics and failed transaction retention window
+context TransactionService::findAllByUserId(
+  user_id : Integer,
+  type : TransactionFilterType,
+  limit : Integer,
+  offset : Integer
+) : TransactionListResponseDto
+
+pre BR_TXN_02_AllowedFilter:
+  Set{TransactionFilterType::All,
+      TransactionFilterType::Revenue,
+      TransactionFilterType::Expense}->includes(type)
+
+post BR_TXN_02_FilterApplied:
+  (type = TransactionFilterType::Revenue implies
+    result.data->forAll(t |
+      t.type = TransactionType::Revenue
+    )) and
+  (type = TransactionFilterType::Expense implies
+    result.data->forAll(t |
+      t.type = TransactionType::Expense
+    ))
+
+post BR_TXN_02_FailedRetentionWindow:
+  result.data->forAll(t |
+    t.status = TransactionStatus::Failed implies
+      t.transaction_date >= currentDate() - 30
+  )
+
+context Transaction
+inv BR_TXN_02_StoredType:
+  type = TransactionType::Revenue or
+  type = TransactionType::Expense
+
+Technical constraints:
+- All is a query/UI filter only; it shall never be stored in Transactions.type.
+- Transactions with status Failed that are older than 30 days relative to the current system date shall be automatically excluded from the query results.
+
+BR-TXN-03: Status-priority multi-tier ordering and dynamic limit clamping
+context TransactionService::findAllByUserId(
+  user_id : Integer,
+  type : TransactionFilterType,
+  limit : Integer,
+  offset : Integer
+) : TransactionListResponseDto
+
+pre BR_TXN_03_LimitPositive:
+  limit > 0
+
+pre BR_TXN_03_OffsetNonNegative:
+  offset >= 0
+
+post BR_TXN_03_MaxPageSizeClamped:
+  (limit > 50 implies result.data->size() <= 50) and
+  (limit <= 50 implies result.data->size() <= limit)
+
+post BR_TXN_03_HasMore:
+  result.hasMore =
+    (offset + result.data->size() < result.total)
+
+post BR_TXN_03_PriorityStatusOrdering:
+  result.data->size() <= 1 or
+  Sequence{1..result.data->size()-1}->forAll(i |
+    let curr = result.data->at(i) in
+    let nxt = result.data->at(i + 1) in
+    (curr.status = TransactionStatus::Pending and nxt.status <> TransactionStatus::Pending) or
+    (curr.status = nxt.status and curr.transaction_date > nxt.transaction_date) or
+    (curr.status = nxt.status and curr.transaction_date = nxt.transaction_date and curr.transaction_id >= nxt.transaction_id) or
+    (curr.status <> TransactionStatus::Pending and nxt.status <> TransactionStatus::Pending and curr.transaction_date > nxt.transaction_date) or
+    (curr.status <> TransactionStatus::Pending and nxt.status <> TransactionStatus::Pending and curr.transaction_date = nxt.transaction_date and curr.transaction_id >= nxt.transaction_id)
+  )
+
+Technical constraints:
+- If limit is omitted, default to limit = 10. If limit exceeds 50, clamp effective limit to 50 without rejecting the request.
+- If offset is omitted, default to offset = 0.
+- Transactions with status Pending shall be sorted first, followed by descending transaction_date, then descending transaction_id.
+
+BR-TXN-04: Database relationship integrity
+context Account
+inv BR_TXN_04_AccountOwnerExists:
+  User.allInstances()->exists(u |
+    u.user_id = self.user_id
+  )
+
+context Transaction
+inv BR_TXN_04_TransactionAccountExists:
+  Account.allInstances()->exists(a |
+    a.account_id = self.account_id
+  )
+
+inv BR_TXN_04_OptionalCategoryValid:
+  self.category_id.oclIsUndefined() or
+  Category.allInstances()->exists(c |
+    c.category_id = self.category_id
+  )
+
+BR-TXN-05: Empty transaction result consistency
+context TransactionService::findAllByUserId(
+  user_id : Integer,
+  type : TransactionFilterType,
+  limit : Integer,
+  offset : Integer
+) : TransactionListResponseDto
+
+post BR_TXN_05_EmptyResultConsistency:
+  result.total = 0 implies
+    result.data->isEmpty() and
+    result.hasMore = false
+
+Technical constraint:
+- When total equals 0, the frontend shall display the empty-state message ""No transactions are found!"" and pagination controls shall not load further records.
+
+BR-TXN-06: Status-dependent signed amount and conditional merchant masking
+context TransactionService::findAllByUserId(
+  user_id : Integer,
+  type : TransactionFilterType,
+  limit : Integer,
+  offset : Integer
+) : TransactionListResponseDto
+
+post BR_TXN_06_ResponseMappingAndSignedAmount:
+  result.data->forAll(dto |
+    Transaction.allInstances()->exists(t |
+      t.transaction_id = dto.transaction_id and
+      t.account_id = dto.account_id and
+      t.transaction_date = dto.transaction_date and
+      t.type = dto.type and
+      t.item_description = dto.item_description and
+      t.payment_method = dto.payment_method and
+      t.status = dto.status and
+      ((t.status = TransactionStatus::Complete and t.type = TransactionType::Expense and dto.amount = -(t.amount)) or
+       (t.status = TransactionStatus::Complete and t.type = TransactionType::Revenue and dto.amount = t.amount) or
+       (t.status <> TransactionStatus::Complete and dto.amount = t.amount)) and
+      ((t.payment_method = 'Credit Card' and t.status = TransactionStatus::Pending and dto.shop_name = '***') or
+       (not (t.payment_method = 'Credit Card' and t.status = TransactionStatus::Pending) and dto.shop_name = t.shop_name))
+    )
+  )
+
+Technical constraints:
+- Completed Expense transactions shall have negative amounts in the response; Completed Revenue transactions remain positive.
+- Pending or Failed transactions shall preserve their unsigned absolute amount.
+- Pending transactions paid via Credit Card shall have shop_name masked as '***'.
+
+BR-TXN-07: Read-only query idempotency and audit immutability
+context TransactionService::findAllByUserId(
+  user_id : Integer,
+  type : TransactionFilterType,
+  limit : Integer,
+  offset : Integer
+) : TransactionListResponseDto
+
+post BR_TXN_07_TransactionIdentityUnchanged:
+  Transaction.allInstances()->collect(t | t.transaction_id)->asSet() =
+  Transaction.allInstances()@pre->collect(t | t.transaction_id)->asSet()
+
+post BR_TXN_07_TransactionDataUnchanged:
+  Transaction.allInstances()->forAll(t |
+    Transaction.allInstances()@pre->exists(old |
+      old.transaction_id = t.transaction_id and
+      old.account_id = t.account_id and
+      old.transaction_date = t.transaction_date and
+      old.type = t.type and
+      old.item_description = t.item_description and
+      old.shop_name = t.shop_name and
+      old.amount = t.amount and
+      old.payment_method = t.payment_method and
+      old.status = t.status and
+      old.receipt_id = t.receipt_id and
+      old.category_id = t.category_id
+    )
+  )
+
+post BR_TXN_07_AccountIdentityUnchanged:
+  Account.allInstances()->collect(a | a.account_id)->asSet() =
+  Account.allInstances()@pre->collect(a | a.account_id)->asSet()
+
+Technical constraint:
+- Listing transaction history shall never create, mutate, or delete Transactions, Accounts, or Users records.
+~~~"	UC-03	A45:B63
+		UC-03	A45:B63
+Use Case ID	UC-04	UC-04	A64:B82
+Use Case Name	Create a Transaction	UC-04	A64:B82
+Description	As an authenticated user, I want to create a revenue or expense transaction for one of my accounts.	UC-04	A64:B82
+Actor(s)	Authenticated User	UC-04	A64:B82
+Priority	Not Specified	UC-04	A64:B82
+Trigger	The user selects Add Transaction from the Transactions page.	UC-04	A64:B82
+Pre-Condition(s)	"PRE-1: The user is authenticated.
+PRE-2: The user has at least one active bank account eligible for transactions."	UC-04	A64:B82
+Post-Condition(s)	"POST-1: On success, the transaction is created and persisted, and the user receives a success confirmation.
+POST-2: On failure, no transaction is created and an appropriate error message is displayed."	UC-04	A64:B82
+Basic Flow	"1. The user navigates to the transaction creation screen (/transactions/add).
+2. The form loads the user's available accounts and available transaction categories.
+3. The user fills in the transaction details (description, amount, type, account, date, counterparty/shop, payment method, and optional category).
+4. The user submits the transaction form.
+5. The frontend performs preliminary validation on the entered transaction details.
+6. The frontend sends the creation request (POST /api/v1/transactions) to the backend API.
+7. The backend authenticates the request and validates all transaction inputs according to established business rules.
+8. Upon successful validation, the backend creates and persists the new transaction record.
+9. The backend returns a success response with the created transaction details.
+10. The frontend displays a success notification, clears form fields, and navigates back to the transactions list."	UC-04	A64:B82
+Alternative Flow	"AF-1: Revenue transaction
+3a. The user selects a Revenue transaction type.
+8a. The system processes and records the revenue transaction.
+
+AF-2: Transaction without category
+3b. The user leaves the optional category unselected.
+8b. The system records the transaction without assigning a category classification.
+
+AF-3: Category list unavailable
+2a. If category options cannot be loaded, the frontend notifies the user while allowing transaction creation to continue.
+
+AF-4: Form cancellation
+4a. The user cancels the operation and the frontend returns to the transaction list without submitting."	UC-04	A64:B82
+Exception Flow	"EF-1: Account data unavailable
+2b. If the user's accounts cannot be retrieved, the frontend informs the user and disables submission until an account is available.
+
+EF-2: Client-side validation failure
+5a. If required fields fail preliminary validation, the frontend displays field errors and prevents submission.
+
+EF-3: Unauthorized request
+7a. If authentication is missing or expired, the backend rejects the request and the user is redirected to login.
+
+EF-4: Business validation failure
+7b. If the transaction violates business constraints, the backend rejects the request and the frontend displays the returned error.
+
+EF-5: Processing failure
+8c. If a server or persistence error occurs, the backend rejects the request and the frontend displays an error notification."	UC-04	A64:B82
+Related UI	AddTransactionPage; AddTransactionForm; route /transactions/add	UC-04	A64:B82
+Related API IDs	API-TRANSACTION-CREATE; API-ACCOUNT-LIST; API-CATEGORY-LIST	UC-04	A64:B82
+Notes	Scope clarification: This use case handles direct transaction creation for user bank accounts. Receipt file attachment and recurring schedule setup are outside scope.	UC-04	A64:B82
+UML Model	"~~~plantuml
+@startuml
+
+class User <<Entity>> {
+  user_id: Integer [1]
+  full_name: String [1]
+  email: String [1]
+  username: String [1]
+  password: String [1]
+  phone_number: String [1]
+  profile_picture_url: String [1]
+  total_balance: Decimal [1]
+}
+
+class Account <<Entity>> {
+  account_id: Integer [1]
+  user_id: Integer [1]
+  bank_name: String [1]
+  account_type: AccountType [1]
+  branch_name: String [1]
+  account_number_full: String [1]
+  account_number_last_4: String [1]
+  balance: Decimal [1]
+}
+
+class Category <<Entity>> {
+  category_id: Integer [1]
+  category_name: String [1]
+}
+
+class Transaction <<Entity>> {
+  transaction_id: Integer [1]
+  account_id: Integer [1]
+  transaction_date: Date [1]
+  type: TransactionType [1]
+  item_description: String [1]
+  shop_name: String [1]
+  amount: Decimal [1]
+  payment_method: String [1]
+  status: TransactionStatus [1]
+  receipt_id: Integer [1]
+  category_id: Integer [0..1]
+}
+
+enum AccountType {
+  Checking
+  Credit_Card
+  Savings
+  Investment
+  Loan
+}
+note right of AccountType
+  Credit_Card maps to database literal 'Credit Card'.
+end note
+
+enum TransactionType {
+  Revenue
+  Expense
+}
+
+enum TransactionStatus {
+  Complete
+  Pending
+  Failed
+}
+
+class CreateTransactionDto <<DTO>> {
+  accountId: Integer [1]
+  transactionDate: Date [1]
+  type: TransactionType [1]
+  itemDescription: String [1]
+  category_id: Integer [0..1]
+  shopName: String [1]
+  amount: Decimal [1]
+  paymentMethod: String [1]
+  status: TransactionStatus [0..1]
+}
+
+class CreateTransactionDataDto <<DTO>> {
+  transactionId: Integer [1]
+  accountId: Integer [1]
+  transactionDate: Date [1]
+  type: TransactionType [1]
+  itemDescription: String [1]
+  shopName: String [1]
+  amount: Decimal [1]
+  paymentMethod: String [1]
+  status: TransactionStatus [1]
+  receiptId: Integer [0..1]
+  category_id: Integer [0..1]
+}
+
+class CreateTransactionResponseDto <<DTO>> {
+  message: String [1]
+  data: CreateTransactionDataDto [1]
+}
+
+class TransactionService <<Service>> {
+  create(user_id: Integer, dto: CreateTransactionDto): CreateTransactionResponseDto
+}
+
+User ""1"" -- ""0..*"" Account : owns
+Account ""1"" -- ""0..*"" Transaction : contains
+Category ""0..1"" -- ""0..*"" Transaction : classifies
+
+TransactionService ..> CreateTransactionDto
+TransactionService ..> CreateTransactionResponseDto
+CreateTransactionResponseDto --> CreateTransactionDataDto
+CreateTransactionDataDto ..> Transaction : maps from
+
+@enduml
+~~~"	UC-04	A64:B82
+Business Rules	"The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+
+~~~text
+BR-TXN-08: Required transaction data, date horizon, and cash payment threshold
+context TransactionService::create(
+  user_id : Integer,
+  dto : CreateTransactionDto
+) : CreateTransactionResponseDto
+
+pre BR_TXN_08_RequiredFields:
+  not dto.accountId.oclIsUndefined() and
+  not dto.transactionDate.oclIsUndefined() and
+  not dto.type.oclIsUndefined() and
+  not dto.itemDescription.oclIsUndefined() and
+  trim(dto.itemDescription).size() > 0 and
+  not dto.shopName.oclIsUndefined() and
+  trim(dto.shopName).size() > 0 and
+  not dto.paymentMethod.oclIsUndefined() and
+  trim(dto.paymentMethod).size() > 0 and
+  not dto.amount.oclIsUndefined() and
+  dto.amount >= 0.01
+
+pre BR_TXN_08_DateWindow:
+  dto.transactionDate <= currentDate() + 1 and
+  dto.transactionDate >= currentDate() - 365
+
+pre BR_TXN_08_CashLimit:
+  dto.paymentMethod = 'Cash' implies dto.amount <= 50000000
+
+BR-TXN-09: Account type eligibility, allowed transaction types, and default status
+context TransactionService::create(
+  user_id : Integer,
+  dto : CreateTransactionDto
+) : CreateTransactionResponseDto
+
+pre BR_TXN_09_EligibleAccountType:
+  Account.allInstances()->exists(a |
+    a.account_id = dto.accountId and
+    Set{AccountType::Checking, AccountType::Savings, AccountType::Credit_Card}->includes(a.account_type)
+  )
+
+pre BR_TXN_09_AllowedType:
+  dto.type = TransactionType::Revenue or
+  dto.type = TransactionType::Expense
+
+pre BR_TXN_09_AllowedStatus:
+  dto.status.oclIsUndefined() or
+  Set{TransactionStatus::Complete,
+      TransactionStatus::Pending,
+      TransactionStatus::Failed}->includes(dto.status)
+
+post BR_TXN_09_DefaultStatus:
+  (dto.status.oclIsUndefined() implies
+    result.data.status = TransactionStatus::Complete) and
+  (not dto.status.oclIsUndefined() implies
+    result.data.status = dto.status)
+
+BR-TXN-10: Optional category must be valid when supplied
+context TransactionService::create(
+  user_id : Integer,
+  dto : CreateTransactionDto
+) : CreateTransactionResponseDto
+
+pre BR_TXN_10_CategoryOptionalAndValid:
+  dto.category_id.oclIsUndefined() or
+  Category.allInstances()->exists(c |
+    c.category_id = dto.category_id
+  )
+
+post BR_TXN_10_CategoryStored:
+  (dto.category_id.oclIsUndefined() implies
+    result.data.category_id.oclIsUndefined()) and
+  (not dto.category_id.oclIsUndefined() implies
+    result.data.category_id = dto.category_id)
+
+BR-TXN-11: Account ownership scope
+context TransactionService::create(
+  user_id : Integer,
+  dto : CreateTransactionDto
+) : CreateTransactionResponseDto
+
+pre BR_TXN_11_AccountOwnedByUser:
+  Account.allInstances()->exists(a |
+    a.account_id = dto.accountId and
+    a.user_id = user_id
+  )
+
+BR-TXN-12: Sufficient balance for Expense with Savings maintaining reserve
+context TransactionService::create(
+  user_id : Integer,
+  dto : CreateTransactionDto
+) : CreateTransactionResponseDto
+
+pre BR_TXN_12_SufficientExpenseBalance:
+  dto.type = TransactionType::Expense implies
+    Account.allInstances()->exists(a |
+      a.account_id = dto.accountId and
+      a.user_id = user_id and
+      ((a.account_type = AccountType::Savings and a.balance - dto.amount >= 50000) or
+       (a.account_type <> AccountType::Savings and a.balance >= dto.amount))
+    )
+
+BR-TXN-13: Status-dependent account balance adjustment and user total balance sync
+context TransactionService::create(
+  user_id : Integer,
+  dto : CreateTransactionDto
+) : CreateTransactionResponseDto
+
+post BR_TXN_13_AccountBalanceAdjusted:
+  Account.allInstances()->exists(a |
+    a.account_id = dto.accountId and
+    ((result.data.status = TransactionStatus::Complete and dto.type = TransactionType::Revenue and a.balance = a.balance@pre + dto.amount) or
+     (result.data.status = TransactionStatus::Complete and dto.type = TransactionType::Expense and a.balance = a.balance@pre - dto.amount) or
+     (result.data.status <> TransactionStatus::Complete and a.balance = a.balance@pre))
+  )
+
+post BR_TXN_13_UserTotalBalanceSynced:
+  User.allInstances()->exists(u |
+    u.user_id = user_id and
+    ((result.data.status = TransactionStatus::Complete and dto.type = TransactionType::Revenue and u.total_balance = u.total_balance@pre + dto.amount) or
+     (result.data.status = TransactionStatus::Complete and dto.type = TransactionType::Expense and u.total_balance = u.total_balance@pre - dto.amount) or
+     (result.data.status <> TransactionStatus::Complete and u.total_balance = u.total_balance@pre))
+  )
+
+BR-TXN-14: Created transaction maps to the request and database
+context TransactionService::create(
+  user_id : Integer,
+  dto : CreateTransactionDto
+) : CreateTransactionResponseDto
+
+post BR_TXN_14_OneNewTransaction:
+  Transaction.allInstances()->size() =
+    Transaction.allInstances()@pre->size() + 1
+
+post BR_TXN_14_PersistedTransaction:
+  Transaction.allInstances()->exists(t |
+    t.transaction_id = result.data.transactionId and
+    t.account_id = dto.accountId and
+    t.transaction_date = dto.transactionDate and
+    t.type = dto.type and
+    t.item_description = trim(dto.itemDescription) and
+    t.shop_name = trim(dto.shopName) and
+    t.amount = dto.amount and
+    t.payment_method = trim(dto.paymentMethod) and
+    t.status = result.data.status and
+    ((dto.category_id.oclIsUndefined() and
+      t.category_id.oclIsUndefined()) or
+     (not dto.category_id.oclIsUndefined() and
+      t.category_id = dto.category_id))
+  )
+
+BR-TXN-15: Atomic transaction creation, concurrency safety, and rollback
+Technical constraints:
+- The Transactions insert, Accounts.balance update, and Users.total_balance sync shall execute inside a single atomic database transaction.
+- If any validation, persistence, balance-update, or synchronization step fails before commit, the operation shall roll back and leave all tables unchanged by this request.
+- Database locking or isolation shall prevent race conditions during concurrent balance updates on the same account.
+- shopName maps to Transactions.shop_name and paymentMethod maps to Transactions.payment_method; both are mandatory and shall be trimmed non-empty strings.
+- category_id maps to Transactions.category_id and remains optional/nullable.
+~~~"	UC-04	A64:B82
+		UC-04	A64:B82
+Use Case ID	UC-05	UC-05	A83:B105
+Use Case Name	View Bank Accounts	UC-05	A83:B105
+Description	As an authenticated user, I want to view the bank accounts linked to my user identifier.	UC-05	A83:B105
+Actor(s)	Authenticated User	UC-05	A83:B105
+Priority	Not Specified	UC-05	A83:B105
+Trigger	The user opens the Accounts page.	UC-05	A83:B105
+Pre-Condition(s)	PRE-1: The user is authenticated.	UC-05	A83:B105
+Post-Condition(s)	"POST-1: The frontend displays accounts owned by the authenticated user.
+POST-2: Accounts are returned in ascending accountId order.
+POST-3: If no accounts exist, the page displays an empty state and an Add Account action."	UC-05	A83:B105
+Basic Flow	"1. The user opens /accounts.
+2. The frontend sends GET /api/v1/accounts.
+3. JwtAuthGuard authenticates the request and supplies userId.
+4. AccountService queries accounts where account.userId equals userId, selects the list fields, and orders by accountId ascending.
+5. The backend queries and returns only the last four digits of the account number (account_number_last_4) for each account.
+6. The backend returns success, message, and a data object containing user_id and accounts.
+7. The frontend displays account cards containing bank name, account type, the last four account digits prefixed with exactly four asterisks (e.g., **** 5667) regardless of the original account number length, and balance."	UC-05	A83:B105
+Alternative Flow	"AF-1: No linked accounts
+4a. The query returns an empty array.
+6a. The frontend displays its no-account message and an action that navigates to /accounts/add."	UC-05	A83:B105
+Exception Flow	"EF-1: Unauthorized request
+3a. HTTP 401 is handled by the Axios interceptor, which clears local authentication data and redirects to /login.
+
+EF-2: Retrieval failure
+4a. The page displays the returned error message or a general loading error."	UC-05	A83:B105
+Related UI	AccountListPage; AccountCard; route /accounts	UC-05	A83:B105
+Related API IDs	API-ACCOUNT-LIST	UC-05	A83:B105
+Notes	Not specified	UC-05	A83:B105
+UML Model	"~~~plantuml
+@startuml
+
+class User <<Entity>> {
+  user_id: Integer [1]
+  full_name: String [1]
+  email: String [1]
+  username: String [1]
+  password: String [1]
+  phone_number: String [1]
+  profile_picture_url: String [1]
+  total_balance: Decimal [1]
+}
+
+class Account <<Entity>> {
+  account_id: Integer [1]
+  user_id: Integer [1]
+  bank_name: String [1]
+  account_type: AccountType [1]
+  branch_name: String [0..1]
+  account_number_full: String [1]
+  account_number_last_4: String [1]
+  balance: Decimal [1]
+}
+
+enum AccountType {
+  Checking
+  Credit_Card
+  Savings
+  Investment
+  Loan
+}
+note right of AccountType
+  Credit_Card maps to database literal 'Credit Card'.
+end note
+
+class AccountDto <<DTO>> {
+  id: Integer [1]
+  bank_name: String [1]
+  account_type: AccountType [1]
+  branch_name: String [0..1]
+  account_number_last_4: String [1]
+  balance: Decimal [1]
+}
+
+class AccountListDataDto <<DTO>> {
+  user_id: Integer [1]
+  accounts: AccountDto [0..*]
+}
+
+class AccountListResponseDto <<DTO>> {
+  success: Boolean [1]
+  message: String [1]
+  data: AccountListDataDto [1]
+}
+
+class AccountService <<Service>> {
+  findAllByUserId(user_id: Integer): AccountListResponseDto
+}
+
+User ""1"" -- ""0..*"" Account : owns
+
+AccountService ..> AccountListResponseDto
+AccountListResponseDto --> AccountListDataDto
+AccountListDataDto ""1"" -- ""0..*"" AccountDto : contains
+AccountDto ..> Account : maps from
+
+@enduml
+~~~"	UC-05	A83:B105
+Business Rules	"The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+
+~~~text
+BR-ACC-01: Account ownership scope
+context AccountService::findAllByUserId(
+  user_id : Integer
+) : AccountListResponseDto
+
+pre BR_ACC_01_UserDefined:
+  not user_id.oclIsUndefined()
+
+post BR_ACC_01_OwnedAccountsOnly:
+  result.success implies
+    result.data.accounts->forAll(dto |
+      Account.allInstances()->exists(a |
+        a.account_id = dto.id and
+        a.user_id = user_id
+      )
+    )
+
+BR-ACC-02: Ordering
+context AccountService::findAllByUserId(
+  user_id : Integer
+) : AccountListResponseDto
+
+post BR_ACC_02_OrderedByAccountIdAsc:
+  result.success implies
+    result.data.accounts->size() <= 1 or
+    Sequence{1..result.data.accounts->size()-1}->forAll(i |
+      result.data.accounts->at(i).id < result.data.accounts->at(i + 1).id
+    )
+
+BR-ACC-03: Response rows map to persisted Accounts
+context AccountService::findAllByUserId(
+  user_id : Integer
+) : AccountListResponseDto
+
+post BR_ACC_03_ResponseBackedByAccount:
+  result.success implies
+    result.data.accounts->forAll(dto |
+      Account.allInstances()->exists(a |
+        a.account_id = dto.id and
+        a.bank_name = dto.bank_name and
+        a.account_type = dto.account_type and
+        a.branch_name = dto.branch_name and
+        a.account_number_last_4 = dto.account_number_last_4 and
+        a.balance = dto.balance
+      )
+    )
+
+BR-ACC-04: Account number exposure restriction
+context AccountService::findAllByUserId(
+  user_id : Integer
+) : AccountListResponseDto
+post BR_ACC_04_NoFullAccountNumber:
+  result.success implies
+    result.data.accounts->forAll(dto |
+      dto.account_number_full.oclIsUndefined()
+    )
+
+Technical constraints:
+- The backend shall only query the necessary columns to optimize performance.
+- The backend shall not return the full account number (account_number_full) in the list response to prevent exposing sensitive data over the network.
+- The backend shall return only the stored account_number_last_4.
+- The frontend shall mask the account number by prefixing these 4 digits with exactly four asterisks (e.g., """"**** 1234""""), regardless of the original account number's length.""
+
+BR-ACC-05: Empty account result
+context AccountService::findAllByUserId(
+  user_id : Integer
+) : AccountListResponseDto
+post BR_ACC_05_EmptyResultConsistency:
+  not Account.allInstances()->exists(a | a.user_id = user_id)
+  implies
+    result.success and
+    result.data.accounts->isEmpty()
+
+BR-ACC-06: Viewing accounts is read-only
+context AccountService::findAllByUserId(
+  user_id : Integer
+) : AccountListResponseDto
+
+post BR_ACC_06_AccountIdentityUnchanged:
+  Account.allInstances()->collect(a | a.account_id)->asSet() =
+  Account.allInstances()@pre->collect(a | a.account_id)->asSet()
+
+post BR_ACC_06_AccountDataUnchanged:
+  Account.allInstances()->forAll(a |
+    Account.allInstances()@pre->exists(old |
+      old.account_id = a.account_id and
+      old.user_id = a.user_id and
+      old.bank_name = a.bank_name and
+      old.account_type = a.account_type and
+      old.branch_name = a.branch_name and
+      old.account_number_full = a.account_number_full and
+      old.account_number_last_4 = a.account_number_last_4 and
+      old.balance = a.balance
+    )
+  )
+
+Technical constraint:
+- Listing accounts shall not create, update, or delete any Account or Transaction records.
+~~~"	UC-05	A83:B105
+		UC-05	A83:B105
+Use Case ID	UC-06	UC-06	A106:B130
+Use Case Name	Add a Bank Account	UC-06	A106:B130
+Description	As an authenticated user, I want to add a bank account with its current balance.	UC-06	A106:B130
+Actor(s)	Authenticated User	UC-06	A106:B130
+Priority	Not Specified	UC-06	A106:B130
+Trigger	The user selects an Add Account action.	UC-06	A106:B130
+Pre-Condition(s)	"PRE-1: The user is authenticated.
+PRE-2: The Add Account route /accounts/add is accessible."	UC-06	A106:B130
+Post-Condition(s)	"POST-1: On success, an account row is stored with userId from the JWT and account_number_last_4 derived from account_number_full.
+POST-2: The frontend shows a success toast and navigates to /accounts after 1.5 seconds.
+POST-3: On failure, the account is not added by the request."	UC-06	A106:B130
+Basic Flow	"1. The user opens /accounts/add.
+2. The frontend displays AddAccountForm with accountType defaulted to Checking.
+3. The user enters bank_name, account_type, optional branch_name, account_number_full, and balance.
+4. The user selects Add Account.
+5. The frontend requires bank_name and account_number_full and requires balance to be numeric and non-negative.
+6. The frontend sends POST /api/v1/accounts.
+7. The backend ValidationPipe validates CreateAccountDto.
+8. AccountService checks for another account owned by the same user with the same account_number_full.
+9. AccountService derives the final four characters, creates the account using userId from the JWT, and stores it.
+10. The frontend shows a success toast and navigates to /accounts after 1.5 seconds."	UC-06	A106:B130
+Alternative Flow	"AF-1: Optional branch omitted
+3a. The user leaves branch_name empty.
+6a. The frontend omits branch_name and the backend stores it as undefined/null.
+
+AF-2: Cancel
+4a. The user selects Cancel and returns to /accounts without submitting."	UC-06	A106:B130
+Exception Flow	"EF-1: Client-side validation failure
+5a. The form displays field errors and does not call the API.
+
+EF-2: Duplicate account number for the same user
+8a. The backend returns HTTP 409 and the frontend displays the duplicate-account message.
+
+EF-3: Backend validation failure
+7a. The frontend maps returned validation messages to fields when possible.
+
+EF-4: Storage failure
+9a. The backend returns HTTP 500 and the frontend displays its create-account failure message."	UC-06	A106:B130
+Related UI	AddAccountPage; AddAccountForm; route /accounts/add	UC-06	A106:B130
+Related API IDs	API-ACCOUNT-CREATE	UC-06	A106:B130
+Notes	Not specified	UC-06	A106:B130
+UML Model	"~~~plantuml
+@startuml
+
+class User <<Entity>> {
+  user_id: Integer [1]
+  full_name: String [1]
+  email: String [1]
+  username: String [1]
+  password: String [1]
+  phone_number: String [1]
+  profile_picture_url: String [1]
+  total_balance: Decimal [1]
+}
+
+class Account <<Entity>> {
+  account_id: Integer [1]
+  user_id: Integer [1]
+  bank_name: String [1]
+  account_type: AccountType [1]
+  branch_name: String [0..1]
+  account_number_full: String [1]
+  account_number_last_4: String [1]
+  balance: Decimal [1]
+}
+
+enum AccountType {
+  Checking
+  Credit_Card
+  Savings
+  Investment
+  Loan
+}
+note right of AccountType
+  Credit_Card maps to database literal 'Credit Card'.
+end note
+
+class CreateAccountDto <<DTO>> {
+  bank_name: String [1]
+  account_type: AccountType [1]
+  branch_name: String [0..1]
+  account_number_full: String [1]
+  balance: Decimal [1]
+}
+
+class AccountResponseDto <<DTO>> {
+  id: Integer [1]
+  user_id: Integer [1]
+  bank_name: String [1]
+  account_type: AccountType [1]
+  branch_name: String [0..1]
+  account_number_last_4: String [1]
+  balance: Decimal [1]
+}
+
+class AccountService <<Service>> {
+  create(userId: Integer, dto: CreateAccountDto): AccountResponseDto
+}
+
+User ""1"" -- ""0..*"" Account : owns
+AccountService ..> AccountResponseDto
+AccountService ..> CreateAccountDto
+CreateAccountDto ..> Account : mapped to
+AccountResponseDto ..> Account : mapped from
+
+@enduml
+~~~"	UC-06	A106:B130
+Business Rules	"The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+
+~~~text
+BR-ACC-07: Allowed account type
+context AccountService::create(
+  userId : Integer,
+  dto : CreateAccountDto
+) : AccountResponseDto
+
+pre BR_ACC_07_ValidType:
+  Set{'Checking', 'Credit Card', 'Savings', 'Investment', 'Loan'}->includes(dto.account_type)
+
+BR-ACC-08: Required account text fields
+context AccountService::create(
+  userId : Integer,
+  dto : CreateAccountDto
+) : AccountResponseDto
+
+pre BR_ACC_08_RequiredText:
+  not dto.bank_name.oclIsUndefined() and dto.bank_name.trim().size() > 0 and
+  not dto.account_number_full.oclIsUndefined() and dto.account_number_full.trim().size() > 0
+
+BR-ACC-09: Numeric non-negative account balance
+context AccountService::create(
+  userId : Integer,
+  dto : CreateAccountDto
+) : AccountResponseDto
+
+pre BR_ACC_09_IsNumeric:
+  dto.balance.oclIsTypeOf(Real) or dto.balance.oclIsTypeOf(Integer)
+
+pre BR_ACC_09_NonNegativeBalance:
+  not dto.balance.oclIsUndefined() and dto.balance >= 0
+Technical constraint:
+- The balance must be a valid numeric type (not a string), and must be greater than or equal to zero.
+
+BR-ACC-10: Unique account number per owner
+context AccountService::create(
+  userId : Integer,
+  dto : CreateAccountDto
+) : AccountResponseDto
+
+pre BR_ACC_10_UniqueAccount:
+  not Account.allInstances()->exists(a | 
+    a.user_id = userId and 
+    a.account_number_full = dto.account_number_full
+  )
+
+BR-ACC-11: Derive final four account characters
+context AccountService::create(
+  userId : Integer,
+  dto : CreateAccountDto
+) : AccountResponseDto
+
+post BR_ACC_11_DeriveLast4:
+  let newAcc = Account.allInstances()->any(a | a.account_id = result.id) in
+  newAcc.account_number_last_4 = dto.account_number_full.substring(dto.account_number_full.size() - 3, dto.account_number_full.size())
+
+Technical constraint:
+- The backend derives account_number_last_4 by taking the exact last 4 characters of the submitted account_number_full (e.g., via .slice(-4)).
+
+BR-ACC-12: Account creation persistence mapping
+context AccountService::create(
+  userId : Integer,
+  dto : CreateAccountDto
+) : AccountResponseDto
+
+post BR_ACC_12_StorageMapping:
+  Account.allInstances()->exists(a |
+    a.account_id = result.id and
+    a.user_id = userId and
+    a.bank_name = dto.bank_name and
+    a.account_type = dto.account_type and
+    a.branch_name = dto.branch_name and
+    a.account_number_full = dto.account_number_full and
+    a.balance = dto.balance
+  )
+
+post BR_ACC_12_ResponseMapping:
+  result.id = Account.allInstances()->any(a | a.account_number_full = dto.account_number_full).account_id
+
+BR-ACC-13: Account number format and length
+context AccountService::create(
+  userId : Integer,
+  dto : CreateAccountDto
+) : AccountResponseDto
+
+pre BR_ACC_13_NumericCharactersOnly:
+  not dto.account_number_full.oclIsUndefined() and 
+  matches(dto.account_number_full, '^[0-9]+$')
+pre BR_ACC_13_LengthConstraints:
+  dto.account_number_full.size() >= 8 and dto.account_number_full.size() <= 34
+
+Technical constraint:
+- account_number_full must contain only numeric digits.
+- The length must be between 8 and 34 characters (to safely derive the last 4 digits and reflect real-world bank account numbers).
+
+BR-ACC-14: Optional branch name
+context AccountService::create(
+  userId : Integer,
+  dto : CreateAccountDto
+) : AccountResponseDto
+
+pre BR_ACC_14_BranchNameOptional:
+  dto.branch_name.oclIsUndefined() or dto.branch_name.oclIsTypeOf(String)
+
+Technical constraint:
+- The branch_name field is optional. If omitted, it shall be processed and stored as null or undefined.
+~~~"	UC-06	A106:B130
+		UC-06	A106:B130
+Use Case ID	UC-07	UC-07	A131:B152
+Use Case Name	View Bank Account Details	UC-07	A131:B152
+Description	As an authenticated account owner, I want to view one account and its five most recent transactions.	UC-07	A131:B152
+Actor(s)	Authenticated User	UC-07	A131:B152
+Priority	Not Specified	UC-07	A131:B152
+Trigger	The user selects an account card.	UC-07	A131:B152
+Pre-Condition(s)	"PRE-1: The user is authenticated.
+PRE-2: The path contains an account identifier."	UC-07	A131:B152
+Post-Condition(s)	"POST-1: On success, the page displays account information and at most five recent transactions.
+POST-2: Expense amounts in recent_transactions are returned as negative values.
+POST-3: Unauthorized account data is not returned."	UC-07	A131:B152
+Basic Flow	"1. The user selects an account card and opens /accounts/:id.
+2. AccountDetailPage requests GET /api/v1/accounts/:id.
+3. The controller validates authentication and parses id as an integer.
+4. AccountService loads the account by accountId.
+5. AccountService verifies account.userId equals the authenticated userId.
+6. AccountService loads at most five transactions for the account, ordered by transactionDate descending.
+7. AccountService maps transaction dates to YYYY-MM-DD and makes Expense amounts negative.
+8. The frontend displays bank name, type, branch, full account number, balance, and recent transactions."	UC-07	A131:B152
+Alternative Flow	"AF-1: No recent transactions
+6a. The query returns an empty array.
+8a. The account information remains visible with an empty recent-transactions section."	UC-07	A131:B152
+Exception Flow	"EF-1: Invalid account ID
+3a. The controller returns HTTP 400.
+
+EF-2: Account not found
+4a. The backend returns HTTP 404.
+
+EF-3: Account belongs to another user
+5a. The backend returns HTTP 403.
+
+EF-4: Retrieval failure
+6a. The backend returns HTTP 500 and the frontend displays its error state."	UC-07	A131:B152
+Related UI	AccountDetailPage; route /accounts/:id	UC-07	A131:B152
+Related API IDs	API-ACCOUNT-DETAIL	UC-07	A131:B152
+Notes	Not specified	UC-07	A131:B152
+UML Model	"~~~plantuml
+@startuml
+
+class User <<Entity>> {
+  user_id: Integer [1]
+  full_name: String [1]
+  email: String [1]
+  username: String [1]
+  password: String [1]
+  phone_number: String [0..1]
+  profile_picture_url: String [0..1]
+  total_balance: Decimal [1]
+}
+
+class Account <<Entity>> {
+  account_id: Integer [1]
+  user_id: Integer [1]
+  bank_name: String [1]
+  account_type: AccountType [1]
+  branch_name: String [0..1]
+  account_number_full: String [1]
+  account_number_last_4: String [1]
+  balance: Decimal [1]
+}
+
+enum AccountType {
+  Checking
+  Credit_Card
+  Savings
+  Investment
+  Loan
+}
+
+class Transaction <<Entity>> {
+  transaction_id: Integer [1]
+  account_id: Integer [1]
+  category_id: Integer [0..1]
+  transaction_date: Date [1]
+  type: TransactionTypeEnum [1]
+  item_description: String [1]
+  shop_name: String [0..1]
+  amount: Decimal [1]
+  payment_method: String [0..1]
+  status: TransactionStatus [1]
+  receipt_id: String [0..1]
+}
+
+enum TransactionTypeEnum {
+  Revenue
+  Expense
+}
+
+enum TransactionStatus {
+  Complete
+  Pending
+  Failed
+}
+
+class TransactionDto <<DTO>> {
+  date: String [1]
+  amount: Decimal [1]
+  description: String [1]
+  status: TransactionStatus [1]
+  receipt_id: String [0..1]
+  type: TransactionTypeEnum [1]
+}
+
+class AccountDetailResponseDto <<DTO>> {
+  id: Integer [1]
+  bank_name: String [1]
+  account_type: AccountType [1]
+  branch_name: String [0..1]
+  account_number_full: String [1]
+  balance: Decimal [1]
+  recent_transactions: TransactionDto [0..5]
+}
+
+class AccountService <<Service>> {
+  findOneWithTransactions(accountId: Integer, userId: Integer): AccountDetailResponseDto
+}
+
+User ""1"" -- ""0..*"" Account : owns
+Account ""1"" -- ""0..*"" Transaction : has
+AccountService ..> AccountDetailResponseDto
+AccountDetailResponseDto *-- ""0..5"" TransactionDto : contains
+AccountDetailResponseDto ..> Account : maps from
+TransactionDto ..> Transaction : maps from
+
+@enduml
+~~~"	UC-07	A131:B152
+Business Rules	"The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+
+~~~text
+BR-ACC-15: Account existence and ownership
+context AccountService::findOneWithTransactions(
+  accountId : Integer,
+  userId : Integer
+) : AccountDetailResponseDto
+pre BR_ACC_15_AccountMustBeOwned:
+  Account.allInstances()->exists(a | 
+    a.account_id = accountId and 
+    a.user_id = userId
+  )
+
+BR-ACC-16: Five most recent account transactions
+context AccountService::findOneWithTransactions(
+  accountId : Integer,
+  userId : Integer
+) : AccountDetailResponseDto
+post BR_ACC_16_MaxFiveRecentTransactions:
+  result.recent_transactions->size() <= 5
+post BR_ACC_16_OrderedByDateDescending:
+  result.recent_transactions->size() <= 1 or
+  Sequence{1..result.recent_transactions->size()-1}->forAll(i |
+    result.recent_transactions->at(i).date >= result.recent_transactions->at(i + 1).date
+  )
+Technical constraint:
+- The backend shall return at most five transactions ordered by transaction_date descending.
+
+BR-ACC-17: Response rows map to persisted data with signed amounts
+context AccountService::findOneWithTransactions(
+  accountId : Integer,
+  userId : Integer
+) : AccountDetailResponseDto
+post BR_ACC_17_ResponseBackedByAccount:
+  Account.allInstances()->exists(a |
+    a.account_id = result.id and
+    a.user_id = userId and
+    a.bank_name = result.bank_name and
+    a.account_type = result.account_type and
+    (a.branch_name.oclIsUndefined() implies result.branch_name.oclIsUndefined()) and
+    (not a.branch_name.oclIsUndefined() implies a.branch_name = result.branch_name) and
+    a.account_number_full = result.account_number_full and
+    a.balance = result.balance
+  )
+post BR_ACC_17_ResponseBackedByTransaction:
+  result.recent_transactions->forAll(tDto |
+    Transaction.allInstances()->exists(t |
+      t.account_id = accountId and
+      t.item_description = tDto.description and
+      ((t.type = TransactionTypeEnum::Expense and tDto.amount = -(t.amount)) or
+       (t.type = TransactionTypeEnum::Revenue and tDto.amount = t.amount)) and
+      t.status = tDto.status and
+      (t.receipt_id.oclIsUndefined() implies tDto.receipt_id.oclIsUndefined()) and
+      (not t.receipt_id.oclIsUndefined() implies t.receipt_id = tDto.receipt_id) and
+      t.type = tDto.type and
+      tDto.date = toIsoDate(t.transaction_date)
+    )
+  )
+Technical constraint:
+- In the account-detail mapping, Expense amounts are negated (returned as negative) and Revenue amounts remain positive.
+- Unused persisted fields in Transaction (e.g., shop_name, payment_method, category_id) are intentionally excluded from the returned TransactionDto.
+
+post BR_ACC_18_AccountIdentityUnchanged:
+  Account.allInstances()->collect(a | a.account_id)->asSet() =
+  Account.allInstances()@pre->collect(a | a.account_id)->asSet()
+post BR_ACC_18_AccountDataUnchanged:
+  Account.allInstances()->forAll(a |
+    Account.allInstances()@pre->exists(old |
+      old.account_id = a.account_id and
+      old.user_id = a.user_id and
+      old.bank_name = a.bank_name and
+      old.account_type = a.account_type and
+      old.branch_name = a.branch_name and
+      old.account_number_full = a.account_number_full and
+      old.account_number_last_4 = a.account_number_last_4 and
+      old.balance = a.balance
+    )
+  )
+post BR_ACC_18_TransactionIdentityUnchanged:
+  Transaction.allInstances()->collect(t | t.transaction_id)->asSet() =
+  Transaction.allInstances()@pre->collect(t | t.transaction_id)->asSet()
+post BR_ACC_18_TransactionDataUnchanged:
+  Transaction.allInstances()->forAll(t |
+    Transaction.allInstances()@pre->exists(old |
+      old.transaction_id = t.transaction_id and
+      old.account_id = t.account_id and
+      old.category_id = t.category_id and
+      old.transaction_date = t.transaction_date and
+      old.type = t.type and
+      old.item_description = t.item_description and
+      old.shop_name = t.shop_name and
+      old.amount = t.amount and
+      old.payment_method = t.payment_method and
+      old.status = t.status and
+      old.receipt_id = t.receipt_id
+    )
+  )
+Technical constraint:
+- Viewing account details shall not create, update, or delete any Account or Transaction records.
+~~~"	UC-07	A131:B152
+		UC-07	A131:B152
+Use Case ID	Use Case ID	UC-08	A153:B199
+Use Case Name	Edit a Bank Account	UC-08	A153:B199
+Description	As an authenticated account owner, I want to edit an account's bank name, type, branch, full account number, and balance.	UC-08	A153:B199
+Actor(s)	Authenticated User	UC-08	A153:B199
+Priority	Not Specified	UC-08	A153:B199
+Trigger	The user selects Edit on an account detail page.	UC-08	A153:B199
+Pre-Condition(s)	"PRE-1: The user is authenticated.
+PRE-2: The account exists and is owned by the authenticated user.
+PRE-3: Account details have been loaded."	UC-08	A153:B199
+Post-Condition(s)	"POST-1: On success, the account fields are overwritten with the submitted values.
+POST-2: account_number_last_4 is implicitly derived by the backend from the submitted account_number_full.
+POST-3: On success, the system displays a success toast notification (""Update successful""), waits 1500 ms, closes the edit form, and reloads the account details to reflect the updated data.
+POST-4: On failure, the stored account remains unchanged by the failed request."	UC-08	A153:B199
+Basic Flow	"1. The user opens an account detail page and selects Edit.
+2. AccountEditForm is populated from loaded AccountDetail data.
+3. The user changes bank_name, account_type, optional branch_name, account_number_full, or balance.
+4. The user selects Save Changes.
+5. The frontend validates required fields (bank_name, account_number_full), allowed account_type, valid account_number_full format (8-34 digits), and numeric non-negative balance.
+6. The frontend sends PUT /api/v1/accounts/:id with all update fields (excluding account_number_last_4).
+7. The controller validates that id parses to an integer.
+8. AccountService verifies that the account exists and belongs to userId.
+9. ValidationPipe and AccountService validate the submitted fields.
+10. AccountService derives account_number_last_4, overwrites the account fields, and saves the row.
+11. The frontend displays a success toast, waits 1500ms, and invokes its success callback; AccountDetailPage reloads account data and exits edit mode."	UC-08	A153:B199
+Alternative Flow	"AF-1: Optional branch omitted
+3a. The user clears branch_name.
+10a. The backend stores branchName as undefined/null.
+
+AF-2: Cancel
+4a. The user selects Cancel and the detail page exits edit mode without sending an update request."	UC-08	A153:B199
+Exception Flow	"EF-1: Client-side or DTO validation failure
+5a. The frontend displays field errors, or the backend returns HTTP 400.
+
+EF-2: Account not found
+8a. The backend returns HTTP 404.
+
+EF-3: Account belongs to another user
+8a. The backend returns HTTP 403 and the frontend displays its permission error.
+
+EF-4: Storage failure
+10a. The backend returns HTTP 500 and the frontend displays its save failure message."	UC-08	A153:B199
+Related UI	AccountDetailPage; AccountEditForm; route /accounts/:id	UC-08	A153:B199
+Related API IDs	API-ACCOUNT-UPDATE	UC-08	A153:B199
+Notes	Clarification: When account_number_full is changed, the new value must remain unique among the authenticated user's accounts.	UC-08	A153:B199
+UML Model	"~~~plantuml
+@startuml
+
+class User <<Entity>> {
+  user_id: Integer [1]
+  full_name: String [1]
+  email: String [1]
+  username: String [1]
+  password: String [1]
+  phone_number: String [1]
+  profile_picture_url: String [1]
+  total_balance: Decimal [1]
+}
+
+class Account <<Entity>> {
+  account_id: Integer [1]
+  user_id: Integer [1]
+  bank_name: String [1]
+  account_type: AccountType [1]
+  branch_name: String [0..1]
+  account_number_full: String [1]
+  account_number_last_4: String [1]
+  balance: Decimal [1]
+}
+
+enum AccountType {
+  Checking
+  Credit_Card
+  Savings
+  Investment
+  Loan
+}
+note right of AccountType
+  Credit_Card maps to database literal 'Credit Card'.
+end note
+
+class UpdateAccountDto <<DTO>> {
+  bank_name: String [1]
+  account_type: AccountType [1]
+  branch_name: String [0..1]
+  account_number_full: String [1]
+  balance: Decimal [1]
+}
+note left of UpdateAccountDto
+  account_number_last_4 is deliberately omitted 
+  from input to enforce backend derivation.
+end note
+
+class UpdatedAccountDto <<DTO>> {
+  account_id: Integer [1]
+  user_id: Integer [1]
+  bank_name: String [1]
+  account_type: AccountType [1]
+  branch_name: String [0..1]
+  account_number_full: String [1]
+  account_number_last_4: String [1]
+  balance: Decimal [1]
+}
+
+class UpdateAccountResponseDto <<DTO>> {
+  message: String [1]
+  account: UpdatedAccountDto [1]
+}
+
+class AccountService <<Service>> {
+  update(accountId: Integer, userId: Integer, dto: UpdateAccountDto): UpdatedAccountDto
+}
+
+User ""1"" -- ""0..*"" Account : owns
+AccountService ..> UpdatedAccountDto
+AccountService ..> UpdateAccountDto
+UpdateAccountDto ..> Account : mapped to
+UpdatedAccountDto ..> Account : mapped from
+UpdateAccountResponseDto *-- ""1"" UpdatedAccountDto : contains
+
+@enduml
+~~~"	UC-08	A153:B199
+Business Rules	"The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+
+~~~text
+BR-ACC-19: Account ownership validation for update
+context AccountService::update(
+  accountId : Integer,
+  userId : Integer,
+  dto : UpdateAccountDto
+) : UpdatedAccountDto
+pre BR_ACC_19_MustOwnAccount:
+  Account.allInstances()->exists(a |
+    a.account_id = accountId and
+    a.user_id = userId
+  )
+
+BR-ACC-20: Allowed account types for update
+context AccountService::update(
+  accountId : Integer,
+  userId : Integer,
+  dto : UpdateAccountDto
+) : UpdatedAccountDto
+pre BR_ACC_20_ValidType:
+  Set{AccountType::Checking, AccountType::Credit_Card, AccountType::Savings, AccountType::Investment, AccountType::Loan}->includes(dto.account_type)
+
+BR-ACC-21: Required account text fields for update
+context AccountService::update(
+  accountId : Integer,
+  userId : Integer,
+  dto : UpdateAccountDto
+) : UpdatedAccountDto
+pre BR_ACC_21_RequiredText:
+  not dto.bank_name.oclIsUndefined() and dto.bank_name.trim().size() > 0 and
+  not dto.account_number_full.oclIsUndefined() and dto.account_number_full.trim().size() > 0
+
+BR-ACC-22: Account number format and length for update
+context AccountService::update(
+  accountId : Integer,
+  userId : Integer,
+  dto : UpdateAccountDto
+) : UpdatedAccountDto
+pre BR_ACC_22_NumericCharactersOnly:
+  not dto.account_number_full.oclIsUndefined() and 
+  matches(dto.account_number_full, '^[0-9]+$')
+pre BR_ACC_22_LengthConstraints:
+  dto.account_number_full.size() >= 8 and dto.account_number_full.size() <= 34
+
+BR-ACC-23: Numeric non-negative account balance for update
+context AccountService::update(
+  accountId : Integer,
+  userId : Integer,
+  dto : UpdateAccountDto
+) : UpdatedAccountDto
+pre BR_ACC_23_IsNumeric:
+  dto.balance.oclIsTypeOf(Real) or dto.balance.oclIsTypeOf(Integer)
+pre BR_ACC_23_NonNegativeBalance:
+  not dto.balance.oclIsUndefined() and dto.balance >= 0
+
+BR-ACC-24: Optional branch name handling during update
+context AccountService::update(
+  accountId : Integer,
+  userId : Integer,
+  dto : UpdateAccountDto
+) : UpdatedAccountDto
+pre BR_ACC_24_BranchNameOptional:
+  dto.branch_name.oclIsUndefined() or dto.branch_name.oclIsTypeOf(String)
+
+BR-ACC-25: Derive final four account characters for update
+context AccountService::update(
+  accountId : Integer,
+  userId : Integer,
+  dto : UpdateAccountDto
+) : UpdatedAccountDto
+post BR_ACC_25_DeriveLast4:
+  let updatedAcc = Account.allInstances()->any(a | a.account_id = accountId) in
+  updatedAcc.account_number_last_4 = dto.account_number_full.substring(
+    dto.account_number_full.size() - 3, 
+    dto.account_number_full.size()
+  )
+Technical constraint:
+- The backend MUST implicitly derive account_number_last_4 by taking the exact last 4 characters of the submitted account_number_full.
+
+BR-ACC-26: Account update persistence mapping
+context AccountService::update(
+  accountId : Integer,
+  userId : Integer,
+  dto : UpdateAccountDto
+) : UpdatedAccountDto
+post BR_ACC_26_StorageMapping:
+  Account.allInstances()->exists(a |
+    a.account_id = accountId and
+    a.bank_name = dto.bank_name and
+    a.account_type = dto.account_type and
+    (dto.branch_name.oclIsUndefined() implies a.branch_name.oclIsUndefined()) and
+    (not dto.branch_name.oclIsUndefined() implies a.branch_name = dto.branch_name) and
+    a.account_number_full = dto.account_number_full and
+    a.balance = dto.balance
+  )
+~~~"	UC-08	A153:B199
+		UC-08	A153:B199
+Use Case ID	UC-09	UC-09	A200:B218
+Use Case Name	Delete a Bank Account	UC-09	A200:B218
+Description	As an authenticated account owner, I want to permanently delete an account and its related transactions.	UC-09	A200:B218
+Actor(s)	Authenticated User	UC-09	A200:B218
+Priority	Not Specified	UC-09	A200:B218
+Trigger	The user selects Delete from an account card or account detail page.	UC-09	A200:B218
+Pre-Condition(s)	"PRE-1: The user is authenticated.
+PRE-2: The account exists and is owned by the authenticated user."	UC-09	A200:B218
+Post-Condition(s)	"POST-1: On confirmed success, all Transaction rows with the accountId and the Account row are deleted in one database transaction.
+POST-2: On confirmed success, the system displays a success dialog, waits 1500ms, and then refreshes the account list or navigates to /accounts.
+POST-3: On cancellation or rollback, no deletion is committed."	UC-09	A200:B218
+Basic Flow	"1. The user selects Delete for an account.
+2. Delete Account Modal displays the bank name, final four account digits, and a warning that all related transactions will be deleted.
+3. The user selects Confirm Delete.
+4. The frontend sends DELETE /api/v1/accounts/:id.
+5. The controller validates that id parses to an integer.
+6. AccountService starts a database transaction, loads the account, and verifies ownership.
+7. AccountService deletes related Transaction rows.
+8. AccountService deletes the Account row and commits the transaction.
+9. The frontend closes the modal, displays a success dialog, waits 1500ms, and then refreshes the list or navigates to /accounts."	UC-09	A200:B218
+Alternative Flow	"AF-1: Cancel deletion
+3a. The user selects Cancel or closes the modal.
+3b. No API request is sent and no data changes."	UC-09	A200:B218
+Exception Flow	"EF-1: Invalid account ID
+5a. The controller returns HTTP 400.
+
+EF-2: Missing or non-owned account
+6a. The service rolls back and returns HTTP 404 using the same message for both cases.
+
+EF-3: Database deletion failure
+7a. The service rolls back the transaction and returns HTTP 500."	UC-09	A200:B218
+Related UI	AccountListPage; AccountDetailPage; DeleteAccountModal	UC-09	A200:B218
+Related API IDs	API-ACCOUNT-DELETE	UC-09	A200:B218
+Notes	Security rationale: An account that does not exist and an account not owned by the authenticated user are both reported as HTTP 404, rather than 403, to avoid disclosing the existence of another user's account.	UC-09	A200:B218
+UML Model	"~~~plantuml
+@startuml
+
+class User <<Entity>> {
+  user_id: Integer [1]
+  full_name: String [1]
+  email: String [1]
+  username: String [1]
+  password: String [1]
+  phone_number: String [1]
+  profile_picture_url: String [1]
+  total_balance: Decimal [1]
+}
+
+class Account <<Entity>> {
+  account_id: Integer [1]
+  user_id: Integer [1]
+  bank_name: String [1]
+  account_type: AccountType [1]
+  branch_name: String [0..1]
+  account_number_full: String [1]
+  account_number_last_4: String [1]
+  balance: Decimal [1]
+}
+
+class Transaction <<Entity>> {
+  transaction_id: Integer [1]
+  account_id: Integer [1]
+  transaction_date: Date [1]
+  type: TransactionType [1]
+  item_description: String [1]
+  shop_name: String [0..1]
+  amount: Decimal [1]
+  payment_method: String [0..1]
+  status: TransactionStatus [1]
+  receipt_id: String [0..1]
+  category_id: Integer [0..1]
+}
+
+enum AccountType {
+  Checking
+  Credit_Card
+  Savings
+  Investment
+  Loan
+}
+
+enum TransactionType {
+  Revenue
+  Expense
+}
+
+enum TransactionStatus {
+  Complete
+  Pending
+  Failed
+}
+
+class DeleteAccountResponseDto <<DTO>> {
+  message: String [1]
+  deleted_account_id: Integer [1]
+}
+
+class AccountService <<Service>> {
+  delete(accountId: Integer, userId: Integer): DeleteAccountResponseDto
+}
+
+User ""1"" -- ""0..*"" Account : owns
+Account ""1"" -- ""0..*"" Transaction : contains
+AccountService ..> DeleteAccountResponseDto
+AccountService ..> Account : deletes
+AccountService ..> Transaction : deletes cascade
+
+@enduml
+~~~"	UC-09	A200:B218
+Business Rules	"The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+
+~~~text
+BR-ACC-27: Account deletion ownership validation
+context AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto
+pre BR_ACC_27_MustOwnAccount:
+  Account.allInstances()->exists(a | a.account_id = accountId and a.user_id = userId)
+Technical constraint:
+- If the account does not exist or does not belong to the user, the backend intentionally throws a 404 NotFoundException to prevent data 
+enumeration.
+
+BR-ACC-28: Account deletion data integrity (Cascading)
+context AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto
+post BR_ACC_28_AtomicDeletion:
+  not Account.allInstances()->exists(a | a.account_id = accountId) and
+  not Transaction.allInstances()->exists(t | t.account_id = accountId)
+Technical constraint:
+- The backend MUST execute the deletion of all related Transaction rows and the Account row within a single atomic database transaction (using QueryRunner). If any step fails, the entire transaction rolls back.
+~~~"	UC-09	A200:B218
+		UC-09	A200:B218
+Use Case ID	UC-10	UC-10	A219:B237
+Use Case Name	View Monthly Expense Summary	UC-10	A219:B237
+Description	As an authenticated user, I want to view current-year expense totals grouped by month.	UC-10	A219:B237
+Actor(s)	Authenticated User	UC-10	A219:B237
+Priority	Not Specified	UC-10	A219:B237
+Trigger	The user opens the Expenses page.	UC-10	A219:B237
+Pre-Condition(s)	PRE-1: The user is authenticated.	UC-10	A219:B237
+Post-Condition(s)	"POST-1: If eligible expense data exists, the system displays the user's monthly expense summary for the current calendar year.
+POST-2: The monthly summary represents all twelve calendar months, with months containing no eligible expense transactions represented by zero."	UC-10	A219:B237
+Basic Flow	"1. The user opens /expenses.
+2. ExpenseSummaryChart sends GET /api/v1/expenses/summary.
+3. JwtAuthGuard supplies userId.
+4. ExpensesService loads account IDs owned by the user.
+5. If accounts exist, the service aggregates only Expense transactions between the first and last day of the current year, grouped by SQL month and ordered ascending.
+6. The backend returns data entries containing month abbreviations and totalExpense.
+7. The frontend expands the response to Jan-Dec by inserting zero for missing months and renders the comparison bar chart."	UC-10	A219:B237
+Alternative Flow	"AF-1: No owned accounts or no expense rows
+4a. The service returns an empty array.
+7a. The frontend displays its no-expense-data message rather than the chart."	UC-10	A219:B237
+Exception Flow	"EF-1: Retrieval or aggregation failure
+5a. The backend returns HTTP 500.
+5b. The frontend displays the returned error value or its general loading error."	UC-10	A219:B237
+Related UI	ExpensesPage; ExpenseSummaryChart; route /expenses	UC-10	A219:B237
+Related API IDs	API-EXPENSE-SUMMARY	UC-10	A219:B237
+Notes	Scope clarification: The expense summary aggregates the current calendar year only; the API does not accept a year parameter.	UC-10	A219:B237
+UML Model	"~~~plantuml
+@startuml
+
+class AuthenticatedRequest <<DTO>> {
+  userId: Integer [1]
+  email: String [1]
+}
+
+class Account <<Entity>> {
+  accountId: Integer [1]
+  userId: Integer [1]
+}
+
+class Transaction <<Entity>> {
+  transactionId: Integer [1]
+  accountId: Integer [1]
+  transactionDate: Date [1]
+  type: TransactionType [1]
+  amount: Decimal [1]
+  status: TransactionStatus [1]
+}
+
+enum TransactionType {
+  Revenue
+  Expense
+}
+
+enum TransactionStatus {
+  Complete
+  Pending
+  Failed
+}
+
+class ExpenseSummaryItem <<DTO>> {
+  month: String [1]
+  totalExpense: Number [1]
+}
+
+class ExpenseSummaryResponseDto <<DTO>> {
+  data: ExpenseSummaryItem [0..*]
+}
+
+class JwtAuthGuard <<Guard>> {
+  validate(token: BearerJWT): AuthenticatedRequest
+}
+
+class ExpensesController <<Controller>> {
+  getExpenseSummary(request: AuthenticatedRequest): ExpenseSummaryResponseDto
+}
+
+class ExpensesService <<Service>> {
+  getExpenseSummary(userId: Integer): Sequence(ExpenseSummaryItem)
+}
+
+Account ""1"" -- ""0..*"" Transaction : contains
+ExpensesController ..> JwtAuthGuard : protected by
+ExpensesController ..> ExpensesService
+ExpensesController ..> ExpenseSummaryResponseDto : returns { data }
+ExpensesService ..> Account : finds owned accounts
+ExpensesService ..> Transaction : aggregates
+ExpenseSummaryResponseDto --> ExpenseSummaryItem
+
+note right of ExpensesService
+  Uses the server's current calendar year.
+  Returns only months having qualifying rows;
+  a missing month is not returned by the API.
+end note
+
+@enduml
+~~~"	UC-10	A219:B237
+Business Rules	"The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+
+~~~text
+BR-EXP-01: Authenticated ownership scope
+
+context ExpensesService::getExpenseSummary(
+  userId : Integer
+) : Sequence(ExpenseSummaryItem)
+
+pre BR_EXP_01_AuthenticatedIdentity:
+  not userId.oclIsUndefined()
+
+post BR_EXP_01_OwnedAccountsOnly:
+  let ownedAccountIds : Set(Integer) =
+    Account.allInstances()
+      ->select(a | a.userId = userId)
+      ->collect(a | a.accountId)
+      ->asSet()
+  in
+    result->forAll(item |
+      Transaction.allInstances()->exists(t |
+        ownedAccountIds->includes(t.accountId) and
+        t.type = TransactionType::Expense and
+        yearOf(t.transactionDate) = currentYear() and
+        monthOf(t.transactionDate) = monthNumber(item.month)
+      )
+    )
+
+Technical constraints:
+- JwtAuthGuard must validate a Bearer JWT before the controller reads request.user.userId.
+- Only Accounts whose userId equals the authenticated userId are in scope; another user's transactions must never contribute.
+
+BR-EXP-02: Current-year Expense inclusion and amount calculation
+
+context ExpensesService::getExpenseSummary(
+  userId : Integer
+) : Sequence(ExpenseSummaryItem)
+
+post BR_EXP_02_ExpenseSum:
+  let ownedAccountIds : Set(Integer) =
+    Account.allInstances()
+      ->select(a | a.userId = userId)
+      ->collect(a | a.accountId)
+      ->asSet()
+  in
+    result->forAll(item |
+      item.totalExpense =
+        Transaction.allInstances()
+          ->select(t |
+            ownedAccountIds->includes(t.accountId) and
+            t.type = TransactionType::Expense and
+            yearOf(t.transactionDate) = currentYear() and
+            monthOf(t.transactionDate) = monthNumber(item.month)
+          )
+          ->collect(t | t.amount)
+          ->sum()
+    )
+
+Technical constraints:
+- currentYear() is calculated by the backend from new Date().getFullYear().
+- The SQL boundary is inclusive: 1 January 00:00:00 through 31 December 23:59:59 of that server-side year.
+- No predicate is applied to Transactions.status; every matching Expense transaction is included regardless of Complete, Pending, or Failed status.
+
+BR-EXP-03: Sparse monthly aggregation and ordering
+
+context ExpensesService::getExpenseSummary(
+  userId : Integer
+) : Sequence(ExpenseSummaryItem)
+
+post BR_EXP_03_MonthlyAggregation:
+  result->isUnique(item | item.month) and
+  result->forAll(item |
+    monthNumber(item.month) >= 1 and
+    monthNumber(item.month) <= 12
+  ) and
+  result->forAll(first |
+    result->forAll(second |
+      result->indexOf(first) < result->indexOf(second)
+        implies monthNumber(first.month) < monthNumber(second.month)
+    )
+  )
+
+Technical constraints:
+- The database groups by MONTH(transaction_date) and orders ascending.
+- month is mapped to Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, or Dec.
+- totalExpense is SUM(amount), converted to a JavaScript number.
+- The API returns only months with at least one qualifying row; it does not create zero-value items.
+
+BR-EXP-04: Client-side full-year display
+
+context ExpenseSummaryChart::renderChart(
+  summaryData : Sequence(ExpenseSummaryItem)
+) : Sequence(ExpenseSummaryItem)
+
+pre BR_EXP_04_HasSummaryData:
+  summaryData->notEmpty()
+
+post BR_EXP_04_CompleteYearDisplay:
+  result->size() = 12 and
+  result->isUnique(item | item.month) and
+  result->forAll(item |
+    monthNumber(item.month) >= 1 and
+    monthNumber(item.month) <= 12
+  ) and
+  result->forAll(item |
+    summaryData->exists(source |
+      source.month = item.month and
+      source.totalExpense = item.totalExpense
+    ) or
+    (summaryData->forAll(source | source.month <> item.month) and
+      item.totalExpense = 0)
+  )
+
+BR-EXP-05: Empty result and no-data UI
+
+context ExpensesService::getExpenseSummary(
+  userId : Integer
+) : Sequence(ExpenseSummaryItem)
+
+post BR_EXP_05_EmptyWhenNoQualifyingData:
+  let ownedAccountIds : Set(Integer) =
+    Account.allInstances()
+      ->select(a | a.userId = userId)
+      ->collect(a | a.accountId)
+      ->asSet()
+  in
+    (ownedAccountIds->isEmpty() or
+      Transaction.allInstances()->forAll(t |
+        not (ownedAccountIds->includes(t.accountId) and
+             t.type = TransactionType::Expense and
+             yearOf(t.transactionDate) = currentYear())
+      ))
+    implies result->isEmpty()
+
+Technical constraints:
+- When summaryData is empty, ExpenseSummaryChart displays its no-expense-data message and does not render the twelve-bar chart.
+
+BR-EXP-06: Read-only operation and response envelope
+
+context ExpensesService::getExpenseSummary(
+  userId : Integer
+) : Sequence(ExpenseSummaryItem)
+
+post BR_EXP_06_NoPersistentChanges:
+  Account.allInstances() = Account.allInstances()@pre and
+  Transaction.allInstances() = Transaction.allInstances()@pre
+
+Technical constraints:
+- GET /api/v1/expenses/summary performs no create, update, or delete operation.
+- On HTTP 200, ExpensesController returns exactly { data: summary }; this endpoint does not return success or message fields.
+~~~"	UC-10	A219:B237
+		UC-10	A219:B237
+Use Case ID	UC-11	UC-11	A238:B256
+Use Case Name	View Expenses by Category	UC-11	A238:B256
+Description	As an authenticated user, I want to view one month's Expense transactions grouped by category and compared with the previous month.	UC-11	A238:B256
+Actor(s)	Authenticated User	UC-11	A238:B256
+Priority	Not Specified	UC-11	A238:B256
+Trigger	The user opens the Expenses page or changes the month input.	UC-11	A238:B256
+Pre-Condition(s)	"PRE-1: The user is authenticated.
+PRE-2: selectedMonth is initialized to the current month in YYYY-MM form."	UC-11	A238:B256
+Post-Condition(s)	"POST-1: The page displays category totals, changePercent, and underlying transactions for the selected month.
+POST-2: Category groups are sorted by total descending.
+POST-3: If no data exists, the frontend displays its no-data message."	UC-11	A238:B256
+Basic Flow	"1. The user opens /expenses.
+2. ExpensesPage initializes selectedMonth to the current YYYY-MM value.
+3. ExpensesBreakdown sends GET /api/v1/expenses/breakdown?month=selectedMonth.
+4. The controller requires month to match four digits, a hyphen, and two digits.
+5. ExpensesService loads account IDs owned by the user and parses year and month number.
+6. The service queries current-month and previous-month Expense transactions for those accounts.
+7. Current-month rows are grouped by categoryId; previous-month totals are grouped by the same key.
+8. The service labels categoryId 0 as Uncategorized, unresolved category IDs as Unknown, calculates changePercent, rounds totals and percentages to two decimals, and sorts category groups by total descending.
+9. The frontend displays each category, total, change percentage, and subcategory transaction rows."	UC-11	A238:B256
+Alternative Flow	"AF-1: Select another month
+2a. The user changes the HTML month input.
+3a. The component requests the new selectedMonth.
+
+AF-2: Uncategorized transaction
+8a. A transaction with null categoryId is returned under Uncategorized.
+
+AF-3: Previous category total equals zero
+8a. changePercent is 100 when the current total is positive; otherwise it is null."	UC-11	A238:B256
+Exception Flow	"EF-1: Invalid month syntax
+4a. The controller returns HTTP 400.
+
+EF-2: No accounts, invalid month number, or no current-month expense rows
+5a. The service returns HTTP 404 with its no-data error.
+
+EF-3: Retrieval failure
+6a. The backend returns HTTP 500 and the frontend displays its error state."	UC-11	A238:B256
+Related UI	ExpensesPage; ExpensesBreakdown; month input; route /expenses	UC-11	A238:B256
+Related API IDs	API-EXPENSE-BREAKDOWN	UC-11	A238:B256
+Notes	Not specified	UC-11	A238:B256
+UML Model	"~~~plantuml
+@startuml
+
+class AuthenticatedRequest <<DTO>> {
+  userId: Integer [1]
+}
+
+class Account <<Entity>> {
+  accountId: Integer [1]
+  userId: Integer [1]
+}
+
+class Transaction <<Entity>> {
+  transactionId: Integer [1]
+  accountId: Integer [1]
+  transactionDate: Date [1]
+  type: TransactionType [1]
+  itemDescription: String [1]
+  amount: Decimal [1]
+  status: TransactionStatus [1]
+  categoryId: Integer [0..1]
+}
+
+class Category <<Entity>> {
+  categoryId: Integer [1]
+  categoryName: String [1]
+}
+
+enum TransactionType {
+  Revenue
+  Expense
+}
+
+enum TransactionStatus {
+  Complete
+  Pending
+  Failed
+}
+
+class ExpenseSubCategory <<DTO>> {
+  item_description: String [1]
+  amount: Number [1]
+  date: String [1]
+}
+
+class BreakdownResult <<DTO>> {
+  category: String [1]
+  total: Number [1]
+  changePercent: Number [0..1]
+  subCategories: ExpenseSubCategory [1..*] {ordered}
+}
+
+class ExpenseBreakdownResponse <<DTO>> {
+  data: BreakdownResult [1..*] {ordered}
+}
+
+class JwtAuthGuard <<Guard>> {
+  validate(token: BearerJWT): AuthenticatedRequest
+}
+
+class ExpensesController <<Controller>> {
+  getExpensesBreakdown(request: AuthenticatedRequest, month: String): ExpenseBreakdownResponse
+}
+
+class ExpensesService <<Service>> {
+  getExpensesBreakdown(userId: Integer, month: String): Sequence(BreakdownResult)
+}
+
+class ExpensesPage <<UI>> {
+  selectedMonth: String [1]
+}
+
+class ExpensesBreakdown <<UI>> {
+  month: String [1]
+  expensesData: BreakdownResult [*]
+  fetchExpensesBreakdown(month: String)
+}
+
+Account ""1"" -- ""0..*"" Transaction : owns transactions
+Category ""0..1"" -- ""0..*"" Transaction : classifies
+ExpensesController ..> JwtAuthGuard : protected by
+ExpensesController ..> ExpensesService
+ExpensesController ..> ExpenseBreakdownResponse : returns { data }
+ExpensesService ..> Account : resolves owned accountIds
+ExpensesService ..> Transaction : loads current/previous Expense rows
+ExpensesService ..> Category : resolves categoryName
+ExpenseBreakdownResponse --> BreakdownResult
+BreakdownResult --> ExpenseSubCategory
+ExpensesPage --> ExpensesBreakdown : passes selectedMonth
+ExpensesBreakdown ..> ExpenseBreakdownResponse : GET /api/v1/expenses/breakdown
+
+note right of ExpensesService
+  Current-month and previous-month queries use inclusive
+  calendar-month boundaries. January compares with December
+  of the preceding year. Groups are sorted by total descending.
+end note
+
+note right of ExpensesBreakdown
+  Figma 109. Expenses shows category cards with total,
+  comparison to last month, and transaction description,
+  amount, and date rows.
+end note
+
+@enduml
+~~~"	UC-11	A238:B256
+Business Rules	"The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+
+~~~text
+BR-EXP-07: Authenticated ownership scope
+
+context ExpensesService::getExpensesBreakdown(
+  userId : Integer,
+  month : String
+) : Sequence(BreakdownResult)
+
+pre BR_EXP_07_AuthenticatedIdentity:
+  not userId.oclIsUndefined()
+
+post BR_EXP_07_OwnedAccountsOnly:
+  result->forAll(item |
+    item.subCategories->forAll(detail |
+      Transaction.allInstances()->exists(t |
+        Account.allInstances()->exists(a |
+          a.accountId = t.accountId and
+          a.userId = userId
+        ) and
+        t.type = TransactionType::Expense and
+        t.itemDescription = detail.item_description and
+        t.amount = detail.amount and
+        toIsoDate(t.transactionDate) = detail.date
+      )
+    )
+  )
+
+Technical constraints:
+- JwtAuthGuard shall validate a Bearer JWT before the controller reads request.user.userId.
+- Transactions owned by another user shall never contribute to the breakdown.
+
+BR-EXP-08: Breakdown month syntax
+
+context ExpensesService::getExpensesBreakdown(
+  userId : Integer,
+  month : String
+) : Sequence(BreakdownResult)
+
+pre BR_EXP_08_Defined:
+  not month.oclIsUndefined()
+
+pre BR_EXP_08_ValidSyntax:
+  matches(month, '^\d{4}-\d{2}$')
+
+Technical constraint:
+- A missing month or a value that does not match YYYY-MM shall be rejected by ExpensesController with HTTP 400.
+
+BR-EXP-09: Valid breakdown calendar month
+
+context ExpensesService::getExpensesBreakdown(
+  userId : Integer,
+  month : String
+) : Sequence(BreakdownResult)
+
+pre BR_EXP_09_ValidMonthNumber:
+  let monthNum : Integer = month.substring(6, 7).toInteger()
+  in
+    monthNum >= 1 and monthNum <= 12
+
+Technical constraint:
+- A syntactically valid value whose MM portion is outside 01..12 shall produce the service's HTTP 404 no-data response.
+
+BR-EXP-10: Eligible current-month expenses and no-data handling
+
+context ExpensesService::getExpensesBreakdown(
+  userId : Integer,
+  month : String
+) : Sequence(BreakdownResult)
+
+post BR_EXP_10_CurrentMonthExpenseOnly:
+  result->forAll(item |
+    item.subCategories->forAll(detail |
+      Transaction.allInstances()->exists(t |
+        Account.allInstances()->exists(a |
+          a.accountId = t.accountId and a.userId = userId
+        ) and
+        t.type = TransactionType::Expense and
+        isWithinInclusiveMonth(t.transactionDate, month) and
+        t.itemDescription = detail.item_description and
+        t.amount = detail.amount and
+        toIsoDate(t.transactionDate) = detail.date
+      )
+    )
+  )
+
+Technical constraints:
+- The service shall return HTTP 404 when the user owns no Accounts or when no eligible current-month Expense transactions exist.
+- No Transactions.status predicate is applied; Complete, Pending, and Failed rows are eligible when the other predicates match.
+
+BR-EXP-11: Category grouping, totals, and detail mapping
+
+context ExpensesService::getExpensesBreakdown(
+  userId : Integer,
+  month : String
+) : Sequence(BreakdownResult)
+
+post BR_EXP_11_OneGroupPerCategory:
+  result->isUnique(item | item.category)
+
+post BR_EXP_11_CategoryTotal:
+  result->forAll(item |
+    item.total =
+      item.subCategories
+        ->collect(detail | detail.amount)
+        ->sum()
+  )
+
+post BR_EXP_11_DetailMapping:
+  result->forAll(item |
+    item.subCategories->forAll(detail |
+      not detail.item_description.oclIsUndefined() and
+      not detail.amount.oclIsUndefined() and
+      not detail.date.oclIsUndefined()
+    )
+  )
+
+Technical constraints:
+- Current-month rows shall be grouped by categoryId; null categoryId is normalized to key 0.
+- Key 0 shall be labeled Uncategorized. An unresolved non-null categoryId shall be labeled Unknown.
+- Each detail shall map Transaction.itemDescription to item_description, Number(Transaction.amount) to amount, and transactionDate to an ISO YYYY-MM-DD date string.
+
+BR-EXP-12: Previous-month comparison
+
+context ExpensesService::getExpensesBreakdown(
+  userId : Integer,
+  month : String
+) : Sequence(BreakdownResult)
+
+post BR_EXP_12_ChangePercent:
+  result->forAll(item |
+    let previousTotal : Decimal =
+      previousMonthExpenseTotal(userId, month, item.category)
+    in
+      if previousTotal = 0 then
+        if item.total > 0 then
+          item.changePercent = 100
+        else
+          item.changePercent.oclIsUndefined()
+        endif
+      else
+        item.changePercent =
+          ((item.total - previousTotal) / previousTotal) * 100
+      endif
+  )
+
+Technical constraints:
+- The comparison period is the immediately preceding calendar month.
+- For January, the previous period is December of the preceding year.
+- Previous-month rows use the same ownership, Expense type, inclusive date-boundary, and normalized category-key rules as current-month rows.
+
+BR-EXP-13: Rounding and deterministic ordering
+
+context ExpensesService::getExpensesBreakdown(
+  userId : Integer,
+  month : String
+) : Sequence(BreakdownResult)
+
+post BR_EXP_13_RoundedValues:
+  result->forAll(item |
+    item.total = round2(item.total) and
+    (item.changePercent.oclIsUndefined() or
+     item.changePercent = round2(item.changePercent))
+  )
+
+post BR_EXP_13_GroupsSortedDescending:
+  Sequence{1..result->size()}->forAll(i |
+    i < result->size() implies
+      result->at(i).total >= result->at(i + 1).total
+  )
+
+post BR_EXP_13_DetailsSortedAscending:
+  result->forAll(item |
+    Sequence{1..item.subCategories->size()}->forAll(i |
+      i < item.subCategories->size() implies
+        item.subCategories->at(i).date <=
+        item.subCategories->at(i + 1).date
+    )
+  )
+
+BR-EXP-14: Selected-month UI and Figma breakdown mapping
+
+Technical constraints:
+- ExpensesPage shall initialize selectedMonth to the client's current YYYY-MM value.
+- Changing the month input shall cause ExpensesBreakdown to request GET /api/v1/expenses/breakdown with query.month equal to selectedMonth.
+- Each returned BreakdownResult shall be rendered as a breakdown card containing category, total, changePercent compared with the previous month, and its transaction description, amount, and date rows, consistent with Figma frame 109. Expenses.
+- A null changePercent shall display as N/A. Loading, no-data, and error states shall replace the card grid when applicable.
+
+BR-EXP-15: Read-only operation and response envelope
+
+context ExpensesService::getExpensesBreakdown(
+  userId : Integer,
+  month : String
+) : Sequence(BreakdownResult)
+
+post BR_EXP_15_AccountIdentityUnchanged:
+  Account.allInstances()->collect(a | a.accountId)->asSet() =
+  Account.allInstances()@pre->collect(a | a.accountId)->asSet()
+
+post BR_EXP_15_TransactionIdentityUnchanged:
+  Transaction.allInstances()->collect(t | t.transactionId)->asSet() =
+  Transaction.allInstances()@pre->collect(t | t.transactionId)->asSet()
+
+Technical constraints:
+- The operation shall not create, update, or delete Accounts, Transactions, or Categories.
+- On HTTP 200, ExpensesController shall return exactly { data: BreakdownResult[] }; it shall not add success or message fields.
+~~~"	UC-11	A238:B256
+		UC-11	A238:B256
+Use Case ID	UC-12	UC-12	A257:B275
+Use Case Name	View Upcoming Bills	UC-12	A257:B275
+Description	As an authenticated user, I want to view bills due today or later.	UC-12	A257:B275
+Actor(s)	Authenticated User	UC-12	A257:B275
+Priority	Not Specified	UC-12	A257:B275
+Trigger	The user opens the Bills page.	UC-12	A257:B275
+Pre-Condition(s)	PRE-1: The user is authenticated.	UC-12	A257:B275
+Post-Condition(s)	"POST-1: The page displays bills owned by the user whose dueDate is on or after the current date at 00:00:00.
+POST-2: Bills are ordered by dueDate ascending.
+POST-3: If no bills exist, the page displays its empty state."	UC-12	A257:B275
+Basic Flow	"1. The user opens /bills.
+2. UpcomingBills sends GET /api/v1/bills.
+3. JwtAuthGuard supplies userId.
+4. BillService resets the current time to 00:00:00.
+5. The service queries bills where bill.userId equals userId and dueDate is greater than or equal to that date, ordered by dueDate ascending.
+6. The service maps dates to YYYY-MM-DD and nullable fields to null.
+7. The frontend displays each bill's description, due date, last charge date, logo when available, and amount."	UC-12	A257:B275
+Alternative Flow	"AF-1: No upcoming bills
+5a. The query returns an empty array.
+7a. The frontend displays its no-upcoming-bills state.
+
+AF-2: Retry loading
+7b. After an error, the user may select the retry action and the component calls the list API again."	UC-12	A257:B275
+Exception Flow	"EF-1: Retrieval failure
+5a. The backend returns HTTP 500 with its bill-fetch message.
+5b. The frontend displays the error state."	UC-12	A257:B275
+Related UI	BillsPage; UpcomingBills; route /bills	UC-12	A257:B275
+Related API IDs	API-BILL-LIST	UC-12	A257:B275
+Notes	Scope clarification: This use case covers retrieval and display of upcoming bills only. Executing a bill payment through “Pay Now” is outside scope.	UC-12	A257:B275
+UML Model	"~~~plantuml
+@startuml
+
+class AuthenticatedRequest <<SecurityContext>> {
+  userId: Integer [1]
+}
+
+class Bill <<Entity>> {
+  billId: Integer [1]
+  userId: Integer [1]
+  dueDate: Date [1]
+  logoUrl: String [0..1]
+  itemDescription: String [1]
+  lastChargeDate: Date [0..1]
+  amount: Decimal [1]
+}
+
+class BillDto <<DTO>> {
+  billId: Integer [1]
+  userId: Integer [1]
+  itemDescription: String [1]
+  logoUrl: String [0..1]
+  dueDate: String [1]
+  lastChargeDate: String [0..1]
+  amount: Decimal [1]
+}
+
+class BillsResponseDto <<DTO>> {
+  data: BillDto [*]
+}
+
+class BillController <<Controller>> {
+  getBills(request: AuthenticatedRequest): BillsResponseDto
+}
+
+class BillService <<Service>> {
+  findUpcomingBillsByUserId(userId: Integer): BillDto [*]
+  currentDateAtMidnight(): Date {query}
+  formatDate(date: Date): String {query}
+}
+
+BillController ..> AuthenticatedRequest
+BillController ..> BillsResponseDto
+BillController ..> BillService
+BillService ..> Bill
+BillService ..> BillDto
+BillsResponseDto --> BillDto
+BillDto ..> Bill : maps from
+
+@enduml
+~~~"	UC-12	A257:B275
+Business Rules	"The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+
+~~~text
+BR-BILL-01: Bill ownership scope
+
+context BillService::findUpcomingBillsByUserId(
+  userId : Integer
+) : Sequence(BillDto)
+
+post BR_BILL_01_OwnedBillsOnly:
+  result->forAll(
+    dto | dto.userId = userId
+  )
+
+post BR_BILL_01_MapsToOwnedPersistedBill:
+  result->forAll(
+    dto |
+      Bill.allInstances()->exists(
+        bill |
+          bill.billId = dto.billId and
+          bill.userId = userId
+      )
+  )
+
+BR-BILL-02: Upcoming date boundary
+
+context BillService::findUpcomingBillsByUserId(
+  userId : Integer
+) : Sequence(BillDto)
+
+post BR_BILL_02_UpcomingBillsOnly:
+  result->forAll(
+    dto |
+      Bill.allInstances()->exists(
+        bill |
+          bill.billId = dto.billId and
+          bill.dueDate >= self.currentDateAtMidnight()
+      )
+  )
+
+post BR_BILL_02_AllEligibleBillsReturned:
+  result->size() =
+    Bill.allInstances()
+      ->select(
+        bill |
+          bill.userId = userId and
+          bill.dueDate >= self.currentDateAtMidnight()
+      )
+      ->size()
+
+Technical constraint:
+- currentDateAtMidnight() represents the current system date with hour, minute, second, and millisecond reset to zero before the repository query.
+
+BR-BILL-03: Due-date ordering
+
+context BillService::findUpcomingBillsByUserId(
+  userId : Integer
+) : Sequence(BillDto)
+
+post BR_BILL_03_DueDateAscending:
+  result->size() <= 1 or
+  Sequence{1..result->size() - 1}->forAll(
+    i |
+      let currentBill : Bill =
+        Bill.allInstances()->any(
+          bill | bill.billId = result->at(i).billId
+        ),
+      nextBill : Bill =
+        Bill.allInstances()->any(
+          bill | bill.billId = result->at(i + 1).billId
+        )
+      in
+        currentBill.dueDate <= nextBill.dueDate
+  )
+
+BR-BILL-04: Response mapping and normalization
+
+context BillService::findUpcomingBillsByUserId(
+  userId : Integer
+) : Sequence(BillDto)
+
+post BR_BILL_04_ResponseMapping:
+  result->forAll(
+    dto |
+      Bill.allInstances()->exists(
+        bill |
+          bill.billId = dto.billId and
+          bill.userId = dto.userId and
+          bill.itemDescription = dto.itemDescription and
+          bill.amount = dto.amount and
+          dto.dueDate = self.formatDate(bill.dueDate) and
+          (
+            bill.lastChargeDate.oclIsUndefined()
+            implies dto.lastChargeDate.oclIsUndefined()
+          ) and
+          (
+            not bill.lastChargeDate.oclIsUndefined()
+            implies
+              dto.lastChargeDate =
+                self.formatDate(bill.lastChargeDate)
+          ) and
+          (
+            (bill.logoUrl.oclIsUndefined() or bill.logoUrl.size() = 0)
+            implies dto.logoUrl.oclIsUndefined()
+          ) and
+          (
+            (not bill.logoUrl.oclIsUndefined() and bill.logoUrl.size() > 0)
+            implies dto.logoUrl = bill.logoUrl
+          )
+      )
+  )
+
+Technical constraints:
+- formatDate shall return YYYY-MM-DD.
+- amount shall be returned as a number.
+- A missing lastChargeDate shall be returned as null.
+- A missing or empty logoUrl shall be returned as null.
+
+BR-BILL-05: Empty upcoming-bill result
+
+context BillService::findUpcomingBillsByUserId(
+  userId : Integer
+) : Sequence(BillDto)
+
+post BR_BILL_05_EmptyWhenNoEligibleBills:
+  Bill.allInstances()
+    ->select(
+      bill |
+        bill.userId = userId and
+        bill.dueDate >= self.currentDateAtMidnight()
+    )
+    ->isEmpty()
+  implies
+    result->isEmpty()
+
+BR-BILL-06: Read-only list operation
+
+Listing upcoming bills shall not create, update, or delete Bill records.
+
+BR-BILL-07: Retrieval failure handling
+
+If the repository query or bill-response mapping fails, the backend shall reject the request with HTTP 500 Internal Server Error and the message ""Failed to fetch bills"".
+~~~"	UC-12	A257:B275
+		UC-12	A257:B275
+Use Case ID	UC-13	UC-13	A276:B294
+Use Case Name	View Financial Goals	UC-13	A276:B294
+Description	As an authenticated user, I want to view a saving goal, active expense-limit goals, and their calculated current-month progress.	UC-13	A276:B294
+Actor(s)	Authenticated User	UC-13	A276:B294
+Priority	Not Specified	UC-13	A276:B294
+Trigger	The user opens the Goals page.	UC-13	A276:B294
+Pre-Condition(s)	PRE-1: The user is authenticated.	UC-13	A276:B294
+Post-Condition(s)	"POST-1: The response contains one Saving goal or null and an array of Expense_Limit goals whose date ranges overlap the current month.
+POST-2: Saving progress and expense-category progress are calculated from the user's current-month transactions.
+POST-3: The page displays an empty goal state when both sections are absent."	UC-13	A276:B294
+Basic Flow	"1. The user opens /goals.
+2. GoalsPage sends GET /api/v1/goals.
+3. GoalService finds one Saving goal for userId.
+4. The service finds all Expense_Limit goals for userId and filters those whose intervals overlap the current month.
+5. If a Saving goal exists, the service sums current-month Revenue and Expense transactions across user-owned accounts and calculates target_achieved = revenue - expense.
+6. For each active Expense_Limit goal, the service sums current-month Expense transactions for the goal's category across user-owned accounts.
+7. The backend returns success, message, savingGoal, and expenseGoals.
+8. The frontend displays goal amounts, dates, and progress percentages."	UC-13	A276:B294
+Alternative Flow	"AF-1: No goals
+3a. savingGoal is null and expenseGoals is empty.
+8a. The page displays its no-goals state and a Create Goal action.
+
+AF-2: No owned accounts or no matching transactions
+5a. Calculated progress values remain zero."	UC-13	A276:B294
+Exception Flow	"EF-1: Unauthorized request
+2a. HTTP 401 redirects to /login.
+
+EF-2: Retrieval or calculation failure
+3a. The backend returns HTTP 500 and the page displays its retryable error component."	UC-13	A276:B294
+Related UI	GoalsPage; saving and expense goal cards; route /goals	UC-13	A276:B294
+Related API IDs	API-GOAL-LIST	UC-13	A276:B294
+Notes	Assumption: The dashboard treats the Saving goal as singular. Uniqueness is not a persisted invariant; if multiple Saving goals exist, which one is selected is unspecified.	UC-13	A276:B294
+UML Model	"~~~plantuml
+@startuml
+
+enum GoalType {
+  SAVING
+  EXPENSE_LIMIT
+}
+
+enum TransactionType {
+  REVENUE
+  EXPENSE
+}
+
+class Goal <<Entity>> {
+  goalId: Integer [1]
+  userId: Integer [1]
+  goalType: GoalType [1]
+  categoryId: Integer [0..1]
+  startDate: Date [1]
+  endDate: Date [1]
+  targetAmount: Decimal [1]
+}
+
+class Account <<Entity>> {
+  accountId: Integer [1]
+  userId: Integer [1]
+}
+
+class Transaction <<Entity>> {
+  transactionId: Integer [1]
+  accountId: Integer [1]
+  categoryId: Integer [0..1]
+  transactionDate: Date [1]
+  type: TransactionType [1]
+  amount: Decimal [1]
+}
+
+class Category <<Entity>> {
+  categoryId: Integer [1]
+  categoryName: String [1]
+}
+
+class SavingGoalDto <<DTO>> {
+  goalId: Integer [1]
+  goalType: GoalType [1]
+  targetAmount: Decimal [1]
+  targetAchieved: Decimal [1]
+  startDate: String [1]
+  endDate: String [1]
+}
+
+class ExpenseGoalDto <<DTO>> {
+  goalId: Integer [1]
+  category: String [1]
+  targetAmount: Decimal [1]
+  currentExpense: Decimal [1]
+}
+
+class GoalDataDto <<DTO>> {
+  savingGoal: SavingGoalDto [0..1]
+  expenseGoals: ExpenseGoalDto [*]
+}
+
+class GoalListResponseDto <<DTO>> {
+  success: Boolean [1]
+  message: String [1]
+  data: GoalDataDto [1]
+}
+
+class GoalService <<Service>> {
+  getGoals(userId: Integer): GoalListResponseDto
+  currentMonthStart(): Date {query}
+  currentMonthEnd(): Date {query}
+}
+
+GoalService ..> GoalListResponseDto
+GoalListResponseDto --> GoalDataDto
+GoalDataDto --> SavingGoalDto
+GoalDataDto --> ExpenseGoalDto
+SavingGoalDto ..> Goal : maps from
+ExpenseGoalDto ..> Goal : maps from
+Goal --> Category : category [0..1]
+Transaction --> Account
+Transaction --> Category : category [0..1]
+
+@enduml
+~~~"	UC-13	A276:B294
+Business Rules	"The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+
+~~~text
+BR-GOAL-01: Goals selected for display
+
+context GoalService::getGoals(
+  userId : Integer
+) : GoalListResponseDto
+
+post BR_GOAL_01_SavingGoalScope:
+  let savingGoals : Set(Goal) =
+    Goal.allInstances()
+      ->select(g |
+        g.userId = userId and
+        g.goalType = GoalType::SAVING
+      )
+      ->asSet()
+  in
+    result.success implies
+      (
+        (savingGoals->isEmpty() and
+          result.data.savingGoal.oclIsUndefined())
+        or
+        (not savingGoals->isEmpty() and
+          not result.data.savingGoal.oclIsUndefined() and
+          savingGoals->exists(g |
+            g.goalId = result.data.savingGoal.goalId and
+            g.targetAmount = result.data.savingGoal.targetAmount
+          ))
+      )
+
+post BR_GOAL_01_ExpenseGoalsExact:
+  let expected : Set(Goal) =
+    Goal.allInstances()
+      ->select(g |
+        g.userId = userId and
+        g.goalType = GoalType::EXPENSE_LIMIT and
+        g.startDate <= self.currentMonthEnd() and
+        g.endDate >= self.currentMonthStart()
+      )
+      ->asSet()
+  in
+    result.success implies
+      result.data.expenseGoals->size() = expected->size() and
+      result.data.expenseGoals->forAll(dto |
+        expected->exists(g |
+          g.goalId = dto.goalId and
+          g.targetAmount = dto.targetAmount
+        )
+      )
+
+Technical Constraint:
+- The current implementation uses the repository's findOne method for Saving goals and does not enforce uniqueness. If multiple Saving goals exist, one matching goal is returned.
+
+BR-GOAL-02: Saving goal achieved amount
+
+context GoalService::getGoals(
+  userId : Integer
+) : GoalListResponseDto
+
+post BR_GOAL_02_TargetAchieved:
+  not result.data.savingGoal.oclIsUndefined()
+  implies
+    let ownedAccountIds : Set(Integer) =
+      Account.allInstances()
+        ->select(a | a.userId = userId)
+        ->collect(a | a.accountId)
+        ->asSet()
+    in
+    let monthTransactions : Set(Transaction) =
+      Transaction.allInstances()
+        ->select(t |
+          ownedAccountIds->includes(t.accountId) and
+          t.transactionDate >= self.currentMonthStart() and
+          t.transactionDate <= self.currentMonthEnd()
+        )
+        ->asSet()
+    in
+    let totalRevenue : Decimal =
+      monthTransactions
+        ->select(t | t.type = TransactionType::REVENUE)
+        ->collect(t | t.amount)
+        ->sum()
+    in
+    let totalExpense : Decimal =
+      monthTransactions
+        ->select(t | t.type = TransactionType::EXPENSE)
+        ->collect(t | t.amount)
+        ->sum()
+    in
+      result.data.savingGoal.targetAchieved =
+        totalRevenue - totalExpense
+
+Technical Constraint:
+- An empty SUM result is treated as 0, corresponding to COALESCE(SUM(...), 0) in the implementation.
+
+BR-GOAL-03: Expense-limit current expense
+
+context GoalService::getGoals(
+  userId : Integer
+) : GoalListResponseDto
+
+post BR_GOAL_03_CurrentExpense:
+  result.data.expenseGoals->forAll(dto |
+    let goal : Goal =
+      Goal.allInstances()->any(g | g.goalId = dto.goalId)
+    in
+    let ownedAccountIds : Set(Integer) =
+      Account.allInstances()
+        ->select(a | a.userId = userId)
+        ->collect(a | a.accountId)
+        ->asSet()
+    in
+    let currentExpense : Decimal =
+      Transaction.allInstances()
+        ->select(t |
+          ownedAccountIds->includes(t.accountId) and
+          t.type = TransactionType::EXPENSE and
+          t.categoryId = goal.categoryId and
+          t.transactionDate >= self.currentMonthStart() and
+          t.transactionDate <= self.currentMonthEnd()
+        )
+        ->collect(t | t.amount)
+        ->sum()
+    in
+      dto.currentExpense = currentExpense and
+      (
+        (goal.categoryId.oclIsUndefined() and dto.category = 'Unknown')
+        or
+        Category.allInstances()->exists(c |
+          c.categoryId = goal.categoryId and
+          dto.category = c.categoryName
+        )
+      )
+  )
+
+Technical Constraint:
+- If the user has no owned accounts or no matching Expense transactions, currentExpense is 0.
+~~~"	UC-13	A276:B294
+		UC-13	A276:B294
+Use Case ID	UC-14	UC-14	A295:B313
+Use Case Name	Create a Financial Goal	UC-14	A295:B313
+Description	As an authenticated user, I want to create a Saving or Expense_Limit goal.	UC-14	A295:B313
+Actor(s)	Authenticated User	UC-14	A295:B313
+Priority	Not Specified	UC-14	A295:B313
+Trigger	The user selects Create Goal on the Goals page.	UC-14	A295:B313
+Pre-Condition(s)	"PRE-1: The user is authenticated.
+PRE-2: The category reference data service is operational and accessible."	UC-14	A295:B313
+Post-Condition(s)	"POST-1: On success, the financial goal is created and persisted, the modal closes, a success notification appears, and the goals list refreshes.
+POST-2: On failure, no goal is created and an appropriate error notification is displayed."	UC-14	A295:B313
+Basic Flow	"1. The user opens the Create Goal modal on the Goals page.
+2. The modal loads available categories.
+3. The form initializes default fields.
+4. The user enters goal details: goal type, target amount, start date, end date, and category selection.
+5. The user submits the goal creation form.
+6. The frontend performs preliminary validation on the entered goal details.
+7. The frontend sends the creation request (POST /api/v1/goals) to the backend API.
+8. The backend authenticates the request and validates all goal inputs according to established business rules.
+9. Upon successful validation, the backend creates and persists the new goal record.
+10. The backend returns a success response with the created goal details.
+11. The frontend displays a success notification, closes the modal, and refreshes the goals list."	UC-14	A295:B313
+Alternative Flow	"AF-1: Saving goal creation
+4a. The user selects a Saving goal type.
+9a. The system processes and records the saving goal.
+
+AF-2: Expense limit goal creation
+4b. The user selects an Expense Limit goal type and chooses a category.
+9b. The system processes and records the expense limit goal.
+
+AF-3: Form cancellation
+5a. The user closes or cancels the modal, and the frontend terminates the operation without submitting data."	UC-14	A295:B313
+Exception Flow	"EF-1: Client-side validation failure
+6a. If preliminary validation fails, the modal displays field errors and halts submission.
+
+EF-2: Unauthorized request
+8a. If user authentication is missing or expired, the backend rejects the request and the user is prompted to authenticate.
+
+EF-3: Business validation failure
+8b. If the goal inputs violate business constraints, the backend rejects the request and the modal displays the returned error message.
+
+EF-4: Server or persistence failure
+9a. If an unexpected error occurs during processing or storage, the backend returns an error and the frontend displays a failure notification."	UC-14	A295:B313
+Related UI	GoalsPage; CreateGoalModal	UC-14	A295:B313
+Related API IDs	API-GOAL-CREATE; API-CATEGORY-LIST	UC-14	A295:B313
+Notes	Scope clarification: This use case handles the direct creation of financial goals (savings and expense limits). Goal tracking, contribution adjustments, and milestone calculations are outside scope.	UC-14	A295:B313
+UML Model	"~~~plantuml
+@startuml
+
+enum GoalType {
+  SAVING
+  EXPENSE_LIMIT
+}
+
+note right of GoalType
+  SAVING maps to ""Saving"".
+  EXPENSE_LIMIT maps to ""Expense_Limit"".
+end note
+
+class AuthenticatedRequest <<SecurityContext>> {
+  userId: Integer [1]
+}
+
+class User <<Entity>> {
+  userId: Integer [1]
+}
+
+class Category <<Entity>> {
+  categoryId: Integer [1]
+  categoryName: String [1]
+}
+
+class Goal <<Entity>> {
+  goalId: Integer [1]
+  userId: Integer [1]
+  goalType: GoalType [1]
+  categoryId: Integer [0..1]
+  startDate: Date [1]
+  endDate: Date [1]
+  targetAmount: Decimal [1]
+}
+
+class CreateGoalDto <<DTO>> {
+  goal_type: GoalType [1]
+  category_id: Integer [0..1]
+  start_date: String [1]
+  end_date: String [1]
+  target_amount: Decimal [1]
+}
+
+class CreateGoalResponseDto <<DTO>> {
+  message: String [1]
+  goal_id: Integer [1]
+}
+
+class GoalController <<Controller>> {
+  createGoal(
+    request: AuthenticatedRequest,
+    dto: CreateGoalDto
+  ): CreateGoalResponseDto
+}
+
+class GoalService <<Service>> {
+  createGoal(
+    userId: Integer,
+    dto: CreateGoalDto
+  ): Goal
+
+  isValidDate(value: String): Boolean {query}
+  toDate(value: String): Date {query}
+}
+
+User ""1"" -- ""0..*"" Goal : owns
+Category ""0..1"" -- ""0..*"" Goal : categorizes
+
+GoalController ..> AuthenticatedRequest
+GoalController ..> CreateGoalDto
+GoalController ..> CreateGoalResponseDto
+GoalController ..> GoalService
+
+GoalService ..> Goal
+GoalService ..> Category
+GoalService ..> CreateGoalDto
+
+@enduml
+~~~"	UC-14	A295:B313
+Business Rules	"The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+
+~~~text
+BR-GOAL-04: Allowed goal type, active goals quota, and single active saving goal
+
+context GoalService::createGoal(
+  userId : Integer,
+  dto : CreateGoalDto
+) : Goal
+
+pre BR_GOAL_04_GoalTypeDefined:
+  not dto.goal_type.oclIsUndefined()
+
+pre BR_GOAL_04_AllowedGoalType:
+  Set{
+    GoalType::SAVING,
+    GoalType::EXPENSE_LIMIT
+  }->includes(dto.goal_type)
+
+pre BR_GOAL_04_MaxActiveGoalsLimit:
+  Goal.allInstances()->select(g |
+    g.userId = userId and
+    g.endDate >= currentDate()
+  )->size() < 5
+
+pre BR_GOAL_04_SingleActiveSavingGoal:
+  dto.goal_type = GoalType::SAVING implies
+    not Goal.allInstances()->exists(g |
+      g.userId = userId and
+      g.goalType = GoalType::SAVING and
+      g.endDate >= currentDate()
+    )
+
+Technical constraints:
+- A user shall have at most 5 active goals (where endDate >= currentDate()) at any given time.
+- A user shall have at most 1 active Saving goal at any given time.
+- Creating a goal that exceeds the active quota or creates a concurrent active Saving goal shall result in HTTP 400 Bad Request.
+
+
+BR-GOAL-05: Target amount domain thresholds and currency rounding
+
+context GoalService::createGoal(
+  userId : Integer,
+  dto : CreateGoalDto
+) : Goal
+
+pre BR_GOAL_05_TargetDefined:
+  not dto.target_amount.oclIsUndefined()
+
+pre BR_GOAL_05_TargetRange:
+  dto.target_amount >= 100000 and
+  dto.target_amount <= 1000000000
+
+pre BR_GOAL_05_CurrencyRoundingStep:
+  dto.target_amount.mod(10000) = 0
+
+Technical constraints:
+- target_amount shall be at least 100,000 VND and at most 1,000,000,000 VND.
+- target_amount shall be an exact multiple of 10,000 VND.
+- Any amount violating these thresholds shall result in HTTP 400 Bad Request.
+
+
+BR-GOAL-06: Goal date horizon, minimum duration, and maximum duration window
+
+context GoalService::createGoal(
+  userId : Integer,
+  dto : CreateGoalDto
+) : Goal
+
+pre BR_GOAL_06_DatesDefined:
+  not dto.start_date.oclIsUndefined() and
+  not dto.end_date.oclIsUndefined()
+
+pre BR_GOAL_06_ValidDates:
+  self.isValidDate(dto.start_date) and
+  self.isValidDate(dto.end_date)
+
+pre BR_GOAL_06_StartDateHorizon:
+  self.toDate(dto.start_date) >= currentDate() - 7 and
+  self.toDate(dto.start_date) <= currentDate() + 30
+
+pre BR_GOAL_06_DurationIntervalWindow:
+  self.toDate(dto.end_date) >= self.toDate(dto.start_date) + 7 and
+  self.toDate(dto.end_date) <= self.toDate(dto.start_date) + 365
+
+Technical constraints:
+- start_date and end_date shall use valid YYYY-MM-DD date strings.
+- start_date shall not be more than 7 days in the past and not more than 30 days in the future relative to currentDate().
+- The goal duration (end_date - start_date) shall be at least 7 days and at most 365 days.
+
+
+BR-GOAL-07: Category requirements, non-overlapping expense limit periods, and persistence
+
+context GoalService::createGoal(
+  userId : Integer,
+  dto : CreateGoalDto
+) : Goal
+
+pre BR_GOAL_07_ExpenseCategoryRequiredAndExists:
+  dto.goal_type = GoalType::EXPENSE_LIMIT implies
+    (not dto.category_id.oclIsUndefined() and
+     Category.allInstances()->exists(c |
+       c.categoryId = dto.category_id
+     ))
+
+pre BR_GOAL_07_NoOverlappingExpenseLimitForCategory:
+  dto.goal_type = GoalType::EXPENSE_LIMIT implies
+    not Goal.allInstances()->exists(g |
+      g.userId = userId and
+      g.goalType = GoalType::EXPENSE_LIMIT and
+      g.categoryId = dto.category_id and
+      g.startDate <= self.toDate(dto.end_date) and
+      g.endDate >= self.toDate(dto.start_date)
+    )
+
+post BR_GOAL_07_CategoryPersisted:
+  (dto.goal_type = GoalType::SAVING implies
+    result.categoryId.oclIsUndefined()) and
+  (dto.goal_type = GoalType::EXPENSE_LIMIT implies
+    result.categoryId = dto.category_id)
+
+Technical constraints:
+- Expense_Limit goals require a valid, existing category_id.
+- For Expense_Limit, no two goals for the same user and category may have overlapping date intervals ([startDate, endDate] overlap where existing.startDate <= new.endDate and existing.endDate >= new.startDate).
+- Any category_id supplied for a Saving goal is not persisted; Saving goals are stored with categoryId = null.
+
+
+BR-GOAL-08: Authenticated goal ownership and active account prerequisite
+
+context GoalService::createGoal(
+  userId : Integer,
+  dto : CreateGoalDto
+) : Goal
+
+pre BR_GOAL_08_UserHasActiveAccount:
+  Account.allInstances()->exists(a |
+    a.user_id = userId
+  )
+
+post BR_GOAL_08_OwnedByAuthenticatedUser:
+  result.userId = userId
+
+Technical constraints:
+- The authenticated user shall own at least one bank account (Accounts record with user_id = userId) to establish a financial goal.
+- userId shall be obtained from the validated JWT access token.
+- The client shall not determine the owner through the request body.
+
+
+BR-GOAL-09: Created goal persistence and initial progress state
+
+context GoalService::createGoal(
+  userId : Integer,
+  dto : CreateGoalDto
+) : Goal
+
+post BR_GOAL_09_ExactlyOneGoalCreated:
+  Goal.allInstances()->size() =
+    Goal.allInstances()@pre->size() + 1
+
+post BR_GOAL_09_PersistedValues:
+  Goal.allInstances()->one(g |
+    g.goalId = result.goalId and
+    g.userId = userId and
+    g.goalType = dto.goal_type and
+    g.startDate = self.toDate(dto.start_date) and
+    g.endDate = self.toDate(dto.end_date) and
+    g.targetAmount = dto.target_amount and
+    ((dto.goal_type = GoalType::SAVING and g.categoryId.oclIsUndefined()) or
+     (dto.goal_type = GoalType::EXPENSE_LIMIT and g.categoryId = dto.category_id))
+  )
+
+Technical constraints:
+- Exactly one new Goal record shall be inserted into the database.
+- The created goal values must exactly reflect the validated input and normalized category assignment.
+
+
+BR-GOAL-10: Successful creation response
+
+context GoalController::createGoal(
+  request : AuthenticatedRequest,
+  dto : CreateGoalDto
+) : CreateGoalResponseDto
+
+post BR_GOAL_10_Response:
+  result.message = 'Goal created successfully' and
+  Goal.allInstances()->exists(g |
+    g.goalId = result.goal_id and
+    g.userId = request.userId
+  )
+
+Technical constraints:
+- On successful creation, the backend shall return HTTP 201 Created with JSON structure containing success=true, message=""Goal created successfully"", and data containing the created goal_id.
+
+
+BR-GOAL-11: Creation failure handling, transactionality, and concurrency safety
+
+Technical constraints:
+- Any validation failure (invalid goal type, active goal quota reached, concurrent saving goal conflict, amount out of range, unrounded amount, date window violation, goal duration outside [7, 365] days, missing/invalid category, or overlapping expense-limit interval) shall result in HTTP 400 Bad Request.
+- If the authenticated user has no existing bank account, creation shall be rejected with HTTP 400 Bad Request.
+- Validation or business constraint failures shall not persist any Goal record.
+- Goal creation shall execute inside a database transaction to prevent partial persistence and ensure atomicity.
+- Concurrency control or database locking shall prevent race conditions during concurrent goal creation requests for the same user.
+- An unexpected repository/database failure shall result in HTTP 500 Internal Server Error with message:
+  ""Không thể tạo mục tiêu lúc này. Vui lòng thử lại sau.""
+~~~"	UC-14	A295:B313
+		UC-14	A295:B313
+Use Case ID	UC-15	UC-15	A314:B331
+Use Case Name	Adjust a Financial Goal	UC-15	A314:B331
+Description	As an authenticated goal owner, I want to change an existing goal's target amount.	UC-15	A314:B331
+Actor(s)	Authenticated User	UC-15	A314:B331
+Priority	Not Specified	UC-15	A314:B331
+Trigger	The user selects Edit on a displayed Saving or Expense_Limit goal.	UC-15	A314:B331
+Pre-Condition(s)	"PRE-1: The user is authenticated.
+PRE-2: The financial goal adjustment interface is accessible."	UC-15	A314:B331
+Post-Condition(s)	"POST-1: On success, the financial goal is updated, the modal closes, a success notification appears, and the goals list refreshes.
+POST-2: On failure, the goal remains unchanged and an appropriate error notification is displayed."	UC-15	A314:B331
+Basic Flow	"1. The user selects Edit for a displayed goal on the Goals page.
+2. The modal opens displaying the current goal details.
+3. The user modifies the target amount and submits the form.
+4. The frontend performs preliminary validation on the entered target amount.
+5. The frontend sends the update request (PUT /api/v1/goals/:goalId) to the backend API.
+6. The backend authenticates the request and validates all update inputs according to established business rules.
+7. Upon successful validation, the backend updates the goal record.
+8. The backend returns a success response with the updated goal details.
+9. The frontend displays a success notification, closes the modal, and refreshes the goals list."	UC-15	A314:B331
+Alternative Flow	"AF-1: Form cancellation
+3a. The user closes or cancels the modal, and the frontend terminates the operation without submitting data."	UC-15	A314:B331
+Exception Flow	"EF-1: Client-side validation failure
+4a. If preliminary validation fails, the modal displays field errors and halts submission.
+
+EF-2: Unauthorized request
+6a. If user authentication is missing or expired, the backend rejects the request and the user is prompted to authenticate.
+
+EF-3: Business validation or permission failure
+6b. If the update request violates business constraints or security rules, the backend rejects the request and the frontend displays the returned error notification.
+
+EF-4: Server or persistence failure
+7a. If an unexpected error occurs during processing or storage, the backend returns an error and the frontend displays a failure notification."	UC-15	A314:B331
+Related UI	GoalsPage; AdjustGoalModal	UC-15	A314:B331
+Related API IDs	API-GOAL-UPDATE	UC-15	A314:B331
+Notes	Scope clarification: This use case handles adjusting existing financial goals. Goal creation, deletion, and manual contribution entries are outside scope.	UC-15	A314:B331
+UML Model	"~~~plantuml
+@startuml
+
+enum GoalType {
+  SAVING
+  EXPENSE_LIMIT
+}
+
+note right of GoalType
+  SAVING maps to ""Saving"".
+  EXPENSE_LIMIT maps to ""Expense_Limit"".
+end note
+
+class AuthenticatedRequest <<SecurityContext>> {
+  userId: Integer [1]
+}
+
+class User <<Entity>> {
+  userId: Integer [1]
+}
+
+class Goal <<Entity>> {
+  goalId: Integer [1]
+  userId: Integer [1]
+  goalType: GoalType [1]
+  categoryId: Integer [0..1]
+  startDate: Date [1]
+  endDate: Date [1]
+  targetAmount: Decimal [1]
+}
+
+class UpdateGoalDto <<DTO>> {
+  target_amount: Decimal [1]
+}
+
+class UpdatedGoalDto <<DTO>> {
+  goal_id: Integer [1]
+  target_amount: Decimal [1]
+}
+
+class UpdateGoalResponseDto <<DTO>> {
+  message: String [1]
+  updated_goal: UpdatedGoalDto [1]
+}
+
+class GoalController <<Controller>> {
+  updateGoal(
+    request: AuthenticatedRequest,
+    goalId: Integer,
+    dto: UpdateGoalDto
+  ): UpdateGoalResponseDto
+}
+
+class GoalService <<Service>> {
+  updateGoal(
+    userId: Integer,
+    goalId: Integer,
+    dto: UpdateGoalDto
+  ): Goal
+}
+
+User ""1"" -- ""0..*"" Goal : owns
+
+GoalController ..> AuthenticatedRequest
+GoalController ..> UpdateGoalDto
+GoalController ..> UpdateGoalResponseDto
+GoalController ..> GoalService
+
+GoalService ..> Goal
+GoalService ..> UpdateGoalDto
+
+UpdateGoalResponseDto --> UpdatedGoalDto
+UpdatedGoalDto ..> Goal : maps from
+
+@enduml
+~~~"	UC-15	A314:B331
+Business Rules	"The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+
+~~~text
+BR-GOAL-12: Target amount domain thresholds, currency rounding, and non-identical value requirement
+
+context GoalService::updateGoal(
+  userId : Integer,
+  goalId : Integer,
+  dto : UpdateGoalDto
+) : Goal
+
+pre BR_GOAL_12_TargetDefined:
+  not dto.target_amount.oclIsUndefined()
+
+pre BR_GOAL_12_TargetRange:
+  dto.target_amount >= 100000 and
+  dto.target_amount <= 1000000000
+
+pre BR_GOAL_12_CurrencyRoundingStep:
+  dto.target_amount.mod(10000) = 0
+
+pre BR_GOAL_12_TargetAmountChanged:
+  Goal.allInstances()->exists(g |
+    g.goalId = goalId and
+    g.targetAmount <> dto.target_amount
+  )
+
+Technical constraints:
+- target_amount shall be at least 100,000 VND and at most 1,000,000,000 VND.
+- target_amount shall be an exact multiple of 10,000 VND.
+- The new target_amount shall be different from the currently stored targetAmount of the goal.
+- Any amount violating these thresholds or matching the current target amount shall result in HTTP 400 Bad Request.
+
+
+BR-GOAL-13: Existing goal and active period requirement
+
+context GoalService::updateGoal(
+  userId : Integer,
+  goalId : Integer,
+  dto : UpdateGoalDto
+) : Goal
+
+pre BR_GOAL_13_GoalExists:
+  Goal.allInstances()->exists(g |
+    g.goalId = goalId
+  )
+
+pre BR_GOAL_13_GoalIsActive:
+  Goal.allInstances()->exists(g |
+    g.goalId = goalId and
+    g.endDate >= currentDate()
+  )
+
+Technical constraints:
+- If no Goal exists with goalId, the backend shall return HTTP 404 Not Found with message ""Mục tiêu không tồn tại.""
+- If the goal exists but has already expired (endDate < currentDate()), the backend shall return HTTP 400 Bad Request with message ""Không thể điều chỉnh mục tiêu tài chính đã kết thúc.""
+
+
+BR-GOAL-14: Authenticated goal ownership
+
+context GoalService::updateGoal(
+  userId : Integer,
+  goalId : Integer,
+  dto : UpdateGoalDto
+) : Goal
+
+pre BR_GOAL_14_OwnedByAuthenticatedUser:
+  Goal.allInstances()->exists(g |
+    g.goalId = goalId and
+    g.userId = userId
+  )
+
+Technical constraints:
+- userId shall be obtained from the validated JWT access token.
+- If the goal belongs to another user, the backend shall return HTTP 403 Forbidden with message ""Bạn không có quyền chỉnh sửa mục tiêu này.""
+
+
+BR-GOAL-15: Target-only goal update and structural field immutability
+
+context GoalService::updateGoal(
+  userId : Integer,
+  goalId : Integer,
+  dto : UpdateGoalDto
+) : Goal
+
+post BR_GOAL_15_NoGoalCreatedOrDeleted:
+  Goal.allInstances()->size() =
+    Goal.allInstances()@pre->size()
+
+post BR_GOAL_15_OnlyTargetAmountChanged:
+  let original : Goal =
+    Goal.allInstances()@pre->any(g |
+      g.goalId = goalId
+    )
+  in
+  let updated : Goal =
+    Goal.allInstances()->any(g |
+      g.goalId = goalId
+    )
+  in
+    updated.targetAmount = dto.target_amount and
+    updated.userId = original.userId and
+    updated.goalType = original.goalType and
+    updated.startDate = original.startDate and
+    updated.endDate = original.endDate and
+    updated.categoryId.oclIsUndefined() =
+      original.categoryId.oclIsUndefined() and
+    (
+      not original.categoryId.oclIsUndefined()
+      implies updated.categoryId = original.categoryId
+    )
+
+Technical constraints:
+- Only targetAmount shall be updated; all other fields (userId, goalType, startDate, endDate, categoryId) must remain strictly unchanged.
+- The update operation shall not create or delete any Goal records.
+
+
+BR-GOAL-16: Successful update response
+
+context GoalController::updateGoal(
+  request : AuthenticatedRequest,
+  goalId : Integer,
+  dto : UpdateGoalDto
+) : UpdateGoalResponseDto
+
+post BR_GOAL_16_Response:
+  result.message = 'Goal updated successfully' and
+  result.updated_goal.goal_id = goalId and
+  result.updated_goal.target_amount = dto.target_amount and
+  Goal.allInstances()->exists(g |
+    g.goalId = goalId and
+    g.userId = request.userId and
+    g.targetAmount = dto.target_amount
+  )
+
+Technical constraints:
+- On successful update, the backend shall return HTTP 200 OK with success envelope containing message=""Goal updated successfully"" and updated_goal payload containing goal_id and target_amount."	UC-15	A314:B331
+		UC-15	A314:B331
+Use Case ID	UC-16	UC-16	A332:B351
+Use Case Name	View Savings Summary	UC-16	A332:B351
+Description	As an authenticated user, I want to compare monthly net savings for a selected year with the previous year.	UC-16	A332:B351
+Actor(s)	Authenticated User	UC-16	A332:B351
+Priority	Not Specified	UC-16	A332:B351
+Trigger	The user opens the Goals page or changes the year selector in Saving Summary.	UC-16	A332:B351
+Pre-Condition(s)	"PRE-1: The user is authenticated.
+PRE-2: The savings summary interface is accessible to the authenticated user."	UC-16	A332:B351
+Post-Condition(s)	"POST-1: On success, the system presents monthly net savings comparison data between the evaluated year and the preceding year, and the frontend renders the corresponding visual chart.
+POST-2: If no data is available for the specified period, an appropriate empty-state notification is displayed.
+POST-3: System state and financial records remain unchanged (read-only query operation)."	UC-16	A332:B351
+Basic Flow	"1. The user navigates to the savings summary section on the Goals page.
+2. The frontend requests savings summary data for the initial target year (GET /api/v1/savings/summary).
+3. The backend authenticates the request and validates query parameters according to established business rules.
+4. The backend evaluates transaction records belonging to the authenticated user.
+5. The backend compiles monthly net savings figures for the target year.
+6. The backend computes comparative savings metrics for the preceding year.
+7. The backend returns the compiled savings summary response.
+8. The frontend renders the comparative chart displaying the target and preceding year data series."	UC-16	A332:B351
+Alternative Flow	"AF-1: Select another year
+2a. The user selects a different year from the year selector.
+2b. The frontend requests savings summary data for the newly selected year.
+
+AF-2: Empty savings data
+5a. If no transactions or accounts exist for the evaluated periods, the backend returns empty summary datasets.
+8a. The frontend displays an empty-state message indicating no transaction data is available instead of the chart."	UC-16	A332:B351
+Exception Flow	"EF-1: Unauthorized request
+3a. If authentication is missing or invalid, the backend rejects the request (HTTP 401) and the user is prompted to authenticate.
+
+EF-2: Service or calculation failure
+4a. If an unexpected error occurs during data retrieval or calculation, the backend returns an error response (HTTP 500) and the frontend displays a failure notification."	UC-16	A332:B351
+Related UI	GoalsPage; SavingsSummaryChart; year selector	UC-16	A332:B351
+Related API IDs	API-SAVINGS-SUMMARY	UC-16	A332:B351
+Notes	Scope clarification: This use case handles viewing and comparing annual monthly net savings summaries. Modifying transaction entries, updating account balances, or configuring budget limits are outside scope.	UC-16	A332:B351
+UML Model	"~~~plantuml
+@startuml
+
+enum AccountType {
+  CHECKING
+  SAVINGS
+  CREDIT_CARD
+  INVESTMENT
+  LOAN
+}
+
+enum TransactionType {
+  REVENUE
+  EXPENSE
+}
+
+enum TransactionStatus {
+  COMPLETE
+  PENDING
+  FAILED
+}
+
+enum SavingsSeries {
+  THIS_YEAR
+  LAST_YEAR
+}
+
+class AuthenticatedRequest <<SecurityContext>> {
+  userId: Integer [1]
+}
+
+class User <<Entity>> {
+  userId: Integer [1]
+}
+
+class Account <<Entity>> {
+  accountId: Integer [1]
+  userId: Integer [1]
+  accountType: AccountType [1]
+}
+
+class Transaction <<Entity>> {
+  transactionId: Integer [1]
+  accountId: Integer [1]
+  transactionDate: Date [1]
+  type: TransactionType [1]
+  amount: Decimal [1]
+  status: TransactionStatus [1]
+}
+
+class SavingsSummaryQueryDto <<DTO>> {
+  year: String [0..1]
+}
+
+class MonthlySavingsDto <<DTO>> {
+  month: String [1]
+  amount: Decimal [1]
+  transaction_count: Integer [1]
+}
+
+class SavingsSummaryDataDto <<DTO>> {
+  this_year: MonthlySavingsDto [12]
+  last_year: MonthlySavingsDto [12]
+}
+
+class SavingsSummaryResponseDto <<DTO>> {
+  user_id: Integer [1]
+  year: Integer [1]
+  summary: SavingsSummaryDataDto [1]
+}
+
+class SavingsController <<Controller>> {
+  getSavingsSummary(
+    request: AuthenticatedRequest,
+    year: String
+  ): SavingsSummaryResponseDto
+
+  resolveYear(year: String): Integer
+}
+
+class SavingsService <<Service>> {
+  getSavingsSummary(
+    userId: Integer,
+    year: Integer
+  ): SavingsSummaryResponseDto
+
+  calculateMonthlySavings(
+    userId: Integer,
+    year: Integer
+  ): MonthlySavingsDto [12]
+}
+
+class SavingsTooltip <<UIModel>> {
+  visible: Boolean [1]
+  month: String [0..1]
+  amount: Decimal [0..1]
+  series: SavingsSeries [0..1]
+  transaction_count: Integer [0..1]
+}
+
+class SavingsSummaryChart <<UIComponent>> {
+  isChartVisible: Boolean [1]
+  hoverPoint(
+    series: SavingsSeries,
+    month: String
+  ): SavingsTooltip
+  leavePoint(): void
+}
+
+User ""1"" -- ""0..*"" Account : owns
+Account ""1"" -- ""0..*"" Transaction : contains
+
+SavingsSummaryChart ..> SavingsSummaryResponseDto
+SavingsSummaryChart ..> SavingsTooltip
+SavingsSummaryChart ..> SavingsSeries
+
+SavingsController ..> AuthenticatedRequest
+SavingsController ..> SavingsSummaryQueryDto
+SavingsController ..> SavingsService
+SavingsController ..> SavingsSummaryResponseDto
+
+SavingsService ..> Account
+SavingsService ..> Transaction
+SavingsService ..> SavingsSummaryResponseDto
+
+SavingsSummaryResponseDto --> SavingsSummaryDataDto
+SavingsSummaryDataDto --> MonthlySavingsDto
+
+@enduml
+~~~"	UC-16	A332:B351
+Business Rules	"The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+
+~~~text
+BR-SAV-01: Eligible account types and authenticated user ownership scope
+
+context SavingsService::getSavingsSummary(
+  userId : Integer,
+  year : Integer
+) : SavingsSummaryResponseDto
+
+post BR_SAV_01_UserIdentity:
+  result.user_id = userId
+
+post BR_SAV_01_EligibleOwnedAccountsOnly:
+  let eligibleAccounts : Set(Account) =
+    Account.allInstances()->select(a |
+      a.userId = userId and
+      (a.accountType = AccountType::CHECKING or
+       a.accountType = AccountType::SAVINGS)
+    )
+  in
+  Transaction.allInstances()
+    ->select(t | eligibleAccounts->exists(a | a.accountId = t.accountId))
+    ->includesAll(
+      Transaction.allInstances()
+        ->select(t | eligibleAccounts->exists(a | a.accountId = t.accountId))
+    )
+
+Technical constraints:
+- userId shall be obtained from the validated JWT access token.
+- Only accounts owned by the authenticated user with accountType equal to 'Checking' or 'Savings' shall be eligible for savings summary calculations.
+- Accounts with accountType 'Credit Card', 'Loan', or 'Investment', as well as accounts owned by other users, shall not contribute to the savings summary.
+
+
+BR-SAV-02: Rolling 5-year evaluation window and fallback clamping
+
+context SavingsController::getSavingsSummary(
+  request : AuthenticatedRequest,
+  year : String
+) : SavingsSummaryResponseDto
+
+post BR_SAV_02_ValidWindowUsed:
+  let parsedYear : Integer = parseInt(year, 10)
+  in
+    (
+      not isNaN(parsedYear) and
+      parsedYear >= currentYear() - 5 and
+      parsedYear <= currentYear()
+    )
+    implies
+      result.year = parsedYear
+
+post BR_SAV_02_InvalidOrOutOfWindowDefaultsToCurrentYear:
+  let parsedYear : Integer = parseInt(year, 10)
+  in
+    (
+      year.oclIsUndefined() or
+      isNaN(parsedYear) or
+      parsedYear < currentYear() - 5 or
+      parsedYear > currentYear()
+    )
+    implies
+      result.year = currentYear()
+
+Technical constraints:
+- The evaluation window is restricted to the rolling 5-year period up to the current calendar year ([currentYear - 5, currentYear]).
+- Any year parameter that is missing, non-numeric, in the future (year > currentYear()), or older than 5 years (year < currentYear() - 5) shall resolve to the current year.
+
+
+BR-SAV-03: Ordered 12-month calendar series and transaction count metadata
+
+context SavingsService::getSavingsSummary(
+  userId : Integer,
+  year : Integer
+) : SavingsSummaryResponseDto
+
+post BR_SAV_03_TwelveMonthsThisYear:
+  result.summary.this_year->size() = 12
+
+post BR_SAV_03_TwelveMonthsLastYear:
+  result.summary.last_year->size() = 12
+
+post BR_SAV_03_MonthSequenceAndMetadata:
+  Sequence{1..12}->forAll(i |
+    result.summary.this_year->at(i).month = padTwoDigits(i) and
+    result.summary.this_year->at(i).transaction_count >= 0 and
+    result.summary.last_year->at(i).month = padTwoDigits(i) and
+    result.summary.last_year->at(i).transaction_count >= 0
+  )
+
+Technical constraints:
+- Both this_year and last_year series shall contain exactly 12 monthly elements corresponding to two-digit month strings ""01"" through ""12"" in ascending order.
+- Each monthly element shall include transaction_count representing the exact number of eligible completed transactions recorded in that month.
+
+
+BR-SAV-04: Completed transaction status filtering and monthly net savings calculation
+
+context SavingsService::getSavingsSummary(
+  userId : Integer,
+  year : Integer
+) : SavingsSummaryResponseDto
+
+post BR_SAV_04_ThisYearAmounts:
+  result.summary.this_year->forAll(dto |
+    let monthNumber : Integer =
+      dto.month.toInteger()
+    in
+    let eligibleAccountIds : Set(Integer) =
+      Account.allInstances()
+        ->select(a |
+          a.userId = userId and
+          (a.accountType = AccountType::CHECKING or
+           a.accountType = AccountType::SAVINGS)
+        )
+        ->collect(a | a.accountId)
+        ->asSet()
+    in
+    let monthlyTransactions : Set(Transaction) =
+      Transaction.allInstances()
+        ->select(t |
+          eligibleAccountIds->includes(t.accountId) and
+          yearOf(t.transactionDate) = year and
+          monthOf(t.transactionDate) = monthNumber and
+          t.status = TransactionStatus::COMPLETE
+        )
+        ->asSet()
+    in
+    let revenue : Decimal =
+      monthlyTransactions
+        ->select(t | t.type = TransactionType::REVENUE)
+        ->collect(t | t.amount)
+        ->sum()
+    in
+    let expense : Decimal =
+      monthlyTransactions
+        ->select(t | t.type = TransactionType::EXPENSE)
+        ->collect(t | t.amount)
+        ->sum()
+    in
+      dto.amount = roundToTwoDecimals(revenue - expense) and
+      dto.transaction_count = monthlyTransactions->size()
+  )
+
+Technical constraints:
+- Only transactions with status = Complete shall contribute to monthly Revenue and Expense calculations.
+- Transactions with status Pending or Failed shall be excluded.
+- Monthly net savings equals total Complete Revenue minus total Complete Expense across eligible owned accounts. If Expense exceeds Revenue, the amount shall be negative.
+
+
+BR-SAV-05: Symmetrical preceding-year baseline and historical data ceiling
+
+context SavingsService::getSavingsSummary(
+  userId : Integer,
+  year : Integer
+) : SavingsSummaryResponseDto
+
+post BR_SAV_05_LastYearAmounts:
+  result.summary.last_year->forAll(dto |
+    let monthNumber : Integer =
+      dto.month.toInteger()
+    in
+    let eligibleAccountIds : Set(Integer) =
+      Account.allInstances()
+        ->select(a |
+          a.userId = userId and
+          (a.accountType = AccountType::CHECKING or
+           a.accountType = AccountType::SAVINGS)
+        )
+        ->collect(a | a.accountId)
+        ->asSet()
+    in
+    let monthlyTransactions : Set(Transaction) =
+      Transaction.allInstances()
+        ->select(t |
+          eligibleAccountIds->includes(t.accountId) and
+          yearOf(t.transactionDate) = year - 1 and
+          monthOf(t.transactionDate) = monthNumber and
+          t.status = TransactionStatus::COMPLETE
+        )
+        ->asSet()
+    in
+    let revenue : Decimal =
+      monthlyTransactions
+        ->select(t | t.type = TransactionType::REVENUE)
+        ->collect(t | t.amount)
+        ->sum()
+    in
+    let expense : Decimal =
+      monthlyTransactions
+        ->select(t | t.type = TransactionType::EXPENSE)
+        ->collect(t | t.amount)
+        ->sum()
+    in
+      dto.amount = roundToTwoDecimals(revenue - expense) and
+      dto.transaction_count = monthlyTransactions->size()
+  )
+
+Technical constraints:
+- last_year represents exactly resolvedYear - 1 and applies the identical calculation rules as this_year.
+- If the user had no eligible accounts or completed transactions in year - 1, each of the 12 entries for last_year shall have amount = 0.00 and transaction_count = 0.
+
+
+BR-SAV-06: Future months zero-capping and missing period normalization
+
+context SavingsService::getSavingsSummary(
+  userId : Integer,
+  year : Integer
+) : SavingsSummaryResponseDto
+
+post BR_SAV_06_FutureMonthsZeroCapped:
+  (year = currentYear()) implies
+    result.summary.this_year->forAll(dto |
+      dto.month.toInteger() > currentMonth() implies
+        (dto.amount = 0 and dto.transaction_count = 0)
+    )
+
+post BR_SAV_06_MissingPeriodZeroFilled:
+  result.summary.this_year->forAll(dto |
+    let monthNumber : Integer = dto.month.toInteger() in
+    let matchingTxns = Transaction.allInstances()->select(t |
+      Account.allInstances()->exists(a |
+        a.accountId = t.accountId and
+        a.userId = userId and
+        (a.accountType = AccountType::CHECKING or a.accountType = AccountType::SAVINGS)
+      ) and
+      yearOf(t.transactionDate) = year and
+      monthOf(t.transactionDate) = monthNumber and
+      t.status = TransactionStatus::COMPLETE
+    ) in
+    matchingTxns->isEmpty() implies (dto.amount = 0 and dto.transaction_count = 0)
+  )
+
+Technical constraints:
+- When the evaluated year is the current calendar year, all future months (month > currentMonth()) shall have amount = 0.00 and transaction_count = 0 regardless of whether scheduled or post-dated transactions exist in the database.
+- For elapsed months with no completed transactions, or if the user owns no eligible accounts, amount shall be 0.00 and transaction_count shall be 0.
+
+
+BR-SAV-07: Accounting-grade decimal precision and half-up rounding
+
+context SavingsService::getSavingsSummary(
+  userId : Integer,
+  year : Integer
+) : SavingsSummaryResponseDto
+
+post BR_SAV_07_PrecisionAndHalfUpRounding:
+  result.summary.this_year->forAll(dto |
+    dto.amount = roundToTwoDecimals(dto.amount) and
+    (dto.amount = 0 implies dto.amount >= 0)
+  ) and
+  result.summary.last_year->forAll(dto |
+    dto.amount = roundToTwoDecimals(dto.amount) and
+    (dto.amount = 0 implies dto.amount >= 0)
+  )
+
+Technical constraints:
+- Monthly aggregation of Revenue and Expense amounts shall maintain full decimal precision before difference subtraction.
+- The resulting net savings amount shall be rounded using round-half-up to exactly two decimal places.
+- Any negative zero representation (-0.00) resulting from floating-point arithmetic shall be normalized to 0.00.
+
+
+BR-SAV-08: Idempotent read-only execution, audit immutability, and safe error containment
+
+context SavingsService::getSavingsSummary(
+  userId : Integer,
+  year : Integer
+) : SavingsSummaryResponseDto
+
+post BR_SAV_08_StrictDatabaseImmutability:
+  Account.allInstances()->collect(a | a.accountId)->asSet() =
+    Account.allInstances()@pre->collect(a | a.accountId)->asSet() and
+  Transaction.allInstances()->collect(t | t.transactionId)->asSet() =
+    Transaction.allInstances()@pre->collect(t | t.transactionId)->asSet() and
+  User.allInstances()->collect(u | u.userId)->asSet() =
+    User.allInstances()@pre->collect(u | u.userId)->asSet()
+
+Technical constraints:
+- Retrieving the savings summary is strictly read-only and idempotent; it shall never create, mutate, or delete records in Users, Accounts, Transactions, Goals, or Bills tables.
+- Database queries shall execute under READ COMMITTED transaction isolation to avoid dirty reads during concurrent writes.
+- Unexpected database or computation failures shall return HTTP 500 Internal Server Error without exposing internal query syntax or stack traces.
+
+
+BR-SAV-09: Interactive point hover parity and signed currency tooltip
+
+context SavingsSummaryChart::hoverPoint(
+  series : SavingsSeries,
+  month : String
+) : SavingsTooltip
+
+pre BR_SAV_09_ChartDisplayed:
+  self.isChartVisible = true
+
+pre BR_SAV_09_PointExists:
+  (series = SavingsSeries::THIS_YEAR implies self.summary.this_year->exists(p | p.month = month)) and
+  (series = SavingsSeries::LAST_YEAR implies self.summary.last_year->exists(p | p.month = month))
+
+post BR_SAV_09_TooltipVisibleAndParity:
+  result.visible = true and
+  (
+    series = SavingsSeries::THIS_YEAR implies
+      self.summary.this_year->exists(p |
+        p.month = month and
+        result.month = p.month and
+        result.amount = p.amount and
+        result.series = series
+      )
+  ) and
+  (
+    series = SavingsSeries::LAST_YEAR implies
+      self.summary.last_year->exists(p |
+        p.month = month and
+        result.month = p.month and
+        result.amount = p.amount and
+        result.series = series
+      )
+  )
+
+context SavingsSummaryChart::leavePoint()
+
+post BR_SAV_09_TooltipHidden:
+  self.tooltip.visible = false
+
+Technical constraints:
+- Hovering over any rendered data point in either yearly series shall display an interactive tooltip showing the month label, series indicator, formatted currency amount with explicit sign ('+' for positive, '-' for negative), and transaction count.
+- Moving the pointer away from the data point shall immediately hide the tooltip.
+~~~"	UC-16	A332:B351
+		UC-16	A332:B351

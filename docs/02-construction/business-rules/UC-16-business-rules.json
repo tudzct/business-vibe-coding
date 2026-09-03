@@ -1,0 +1,124 @@
+﻿{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-resource",
+  "status": "Frozen",
+  "uc_id": "UC-16",
+  "source_use_case": "docs/01-inception/use-cases/uc-16-view-savings-summary.md",
+  "source_use_case_sha256": "sha256:d4abbcbfcd5bb2f77acc9bc3209fa5b843a2f379bbd706b5fee8ce550b493a8a",
+  "spreadsheet": {
+    "id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "tab": "Use cases",
+    "range": "A332:B351",
+    "retrieved_at": "2026-09-03T13:33:06.000Z"
+  },
+  "ocl_utility_source": "Use cases!A2:B2",
+  "source_resolution": {
+    "decision": "researcher_confirmed_frozen_projection",
+    "confirmed_at": "2026-09-03T13:33:06.000Z",
+    "governing_source": "docs/01-inception/use-cases/uc-16-view-savings-summary.md"
+  },
+  "rules": [
+    {
+      "br_id": "BR-SAV-01",
+      "name": "Eligible account types and authenticated user ownership scope",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context SavingsService::getSavingsSummary(\n  userId : Integer,\n  year : Integer\n) : SavingsSummaryResponseDto\n\npost BR_SAV_01_UserIdentity:\n  result.user_id = userId\n\npost BR_SAV_01_EligibleOwnedAccountsOnly:\n  let eligibleAccounts : Set(Account) =\n    Account.allInstances()->select(a |\n      a.userId = userId and\n      (a.accountType = AccountType::CHECKING or\n       a.accountType = AccountType::SAVINGS)\n    )\n  in\n  Transaction.allInstances()\n    ->select(t | eligibleAccounts->exists(a | a.accountId = t.accountId))\n    ->includesAll(\n      Transaction.allInstances()\n        ->select(t | eligibleAccounts->exists(a | a.accountId = t.accountId))\n    )\n\nTechnical constraints:\n- userId shall be obtained from the validated JWT access token.\n- Only accounts owned by the authenticated user with accountType equal to 'Checking' or 'Savings' shall be eligible for savings summary calculations.\n- Accounts with accountType 'Credit Card', 'Loan', or 'Investment', as well as accounts owned by other users, shall not contribute to the savings summary.",
+      "context": "SavingsService::getSavingsSummary(userId : Integer, year : Integer) : SavingsSummaryResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "Accounts not belonging to the user or not of type Checking/Savings are excluded from the query. Missing or invalid JWT produces HTTP 401.",
+      "traceability": ["Use cases!A332:B351", "UC-16 PRE-1", "UC-16 Basic Flow 4", "API-SAVINGS-SUMMARY"]
+    },
+    {
+      "br_id": "BR-SAV-02",
+      "name": "Rolling 5-year evaluation window and fallback clamping",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context SavingsController::getSavingsSummary(\n  request : AuthenticatedRequest,\n  year : String\n) : SavingsSummaryResponseDto\n\npost BR_SAV_02_ValidWindowUsed:\n  let parsedYear : Integer = parseInt(year, 10)\n  in\n    (\n      not isNaN(parsedYear) and\n      parsedYear >= currentYear() - 5 and\n      parsedYear <= currentYear()\n    )\n    implies\n      result.year = parsedYear\n\npost BR_SAV_02_InvalidOrOutOfWindowDefaultsToCurrentYear:\n  let parsedYear : Integer = parseInt(year, 10)\n  in\n    (\n      year.oclIsUndefined() or\n      isNaN(parsedYear) or\n      parsedYear < currentYear() - 5 or\n      parsedYear > currentYear()\n    )\n    implies\n      result.year = currentYear()\n\nTechnical constraints:\n- The evaluation window is restricted to the rolling 5-year period up to the current calendar year ([currentYear - 5, currentYear]).\n- Any year parameter that is missing, non-numeric, in the future (year > currentYear()), or older than 5 years (year < currentYear() - 5) shall resolve to the current year.",
+      "context": "SavingsController::getSavingsSummary(request : AuthenticatedRequest, year : String) : SavingsSummaryResponseDto",
+      "enforcement_layers": ["backend"],
+      "failure_behavior": "Out-of-window, missing, or invalid year parameters silently fallback to currentYear() without throwing validation errors.",
+      "traceability": ["Use cases!A332:B351", "UC-16 Basic Flow 3", "API-SAVINGS-SUMMARY"]
+    },
+    {
+      "br_id": "BR-SAV-03",
+      "name": "Ordered 12-month calendar series and transaction count metadata",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context SavingsService::getSavingsSummary(\n  userId : Integer,\n  year : Integer\n) : SavingsSummaryResponseDto\n\npost BR_SAV_03_TwelveMonthsThisYear:\n  result.summary.this_year->size() = 12\n\npost BR_SAV_03_TwelveMonthsLastYear:\n  result.summary.last_year->size() = 12\n\npost BR_SAV_03_MonthSequenceAndMetadata:\n  Sequence{1..12}->forAll(i |\n    result.summary.this_year->at(i).month = padTwoDigits(i) and\n    result.summary.this_year->at(i).transaction_count >= 0 and\n    result.summary.last_year->at(i).month = padTwoDigits(i) and\n    result.summary.last_year->at(i).transaction_count >= 0\n  )\n\nTechnical constraints:\n- Both this_year and last_year series shall contain exactly 12 monthly elements corresponding to two-digit month strings \"01\" through \"12\" in ascending order.\n- Each monthly element shall include transaction_count representing the exact number of eligible completed transactions recorded in that month.",
+      "context": "SavingsService::getSavingsSummary(userId : Integer, year : Integer) : SavingsSummaryResponseDto",
+      "enforcement_layers": ["backend"],
+      "failure_behavior": "Response strictly maintains 12 ordered monthly elements from '01' to '12' with non-negative integer transaction_count for both series.",
+      "traceability": ["Use cases!A332:B351", "UC-16 Basic Flow 7", "API-SAVINGS-SUMMARY"]
+    },
+    {
+      "br_id": "BR-SAV-04",
+      "name": "Completed transaction status filtering and monthly net savings calculation",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context SavingsService::getSavingsSummary(\n  userId : Integer,\n  year : Integer\n) : SavingsSummaryResponseDto\n\npost BR_SAV_04_ThisYearAmounts:\n  result.summary.this_year->forAll(dto |\n    let monthNumber : Integer = dto.month.toInteger() in\n    let eligibleAccountIds : Set(Integer) =\n      Account.allInstances()\n        ->select(a |\n          a.userId = userId and\n          (a.accountType = AccountType::CHECKING or\n           a.accountType = AccountType::SAVINGS)\n        )\n        ->collect(a | a.accountId)\n        ->asSet()\n    in\n    let monthlyTransactions : Set(Transaction) =\n      Transaction.allInstances()\n        ->select(t |\n          eligibleAccountIds->includes(t.accountId) and\n          yearOf(t.transactionDate) = year and\n          monthOf(t.transactionDate) = monthNumber and\n          t.status = TransactionStatus::COMPLETE\n        )\n        ->asSet()\n    in\n    let revenue : Decimal =\n      monthlyTransactions\n        ->select(t | t.type = TransactionType::REVENUE)\n        ->collect(t | t.amount)\n        ->sum()\n    in\n    let expense : Decimal =\n      monthlyTransactions\n        ->select(t | t.type = TransactionType::EXPENSE)\n        ->collect(t | t.amount)\n        ->sum()\n    in\n      dto.amount = roundToTwoDecimals(revenue - expense) and\n      dto.transaction_count = monthlyTransactions->size()\n  )\n\nTechnical constraints:\n- Only transactions with status = Complete shall contribute to monthly Revenue and Expense calculations.\n- Transactions with status Pending or Failed shall be excluded.\n- Monthly net savings equals total Complete Revenue minus total Complete Expense across eligible owned accounts. If Expense exceeds Revenue, the amount shall be negative.",
+      "context": "SavingsService::getSavingsSummary(userId : Integer, year : Integer) : SavingsSummaryResponseDto",
+      "enforcement_layers": ["backend"],
+      "failure_behavior": "Only Complete transactions are summed; Pending/Failed are ignored; net savings can be negative if expenses exceed revenues.",
+      "traceability": ["Use cases!A332:B351", "UC-16 Basic Flow 5", "API-SAVINGS-SUMMARY"]
+    },
+    {
+      "br_id": "BR-SAV-05",
+      "name": "Symmetrical preceding-year baseline and historical data ceiling",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context SavingsService::getSavingsSummary(\n  userId : Integer,\n  year : Integer\n) : SavingsSummaryResponseDto\n\npost BR_SAV_05_LastYearAmounts:\n  result.summary.last_year->forAll(dto |\n    let monthNumber : Integer = dto.month.toInteger() in\n    let eligibleAccountIds : Set(Integer) =\n      Account.allInstances()\n        ->select(a |\n          a.userId = userId and\n          (a.accountType = AccountType::CHECKING or\n           a.accountType = AccountType::SAVINGS)\n        )\n        ->collect(a | a.accountId)\n        ->asSet()\n    in\n    let monthlyTransactions : Set(Transaction) =\n      Transaction.allInstances()\n        ->select(t |\n          eligibleAccountIds->includes(t.accountId) and\n          yearOf(t.transactionDate) = year - 1 and\n          monthOf(t.transactionDate) = monthNumber and\n          t.status = TransactionStatus::COMPLETE\n        )\n        ->asSet()\n    in\n    let revenue : Decimal =\n      monthlyTransactions\n        ->select(t | t.type = TransactionType::REVENUE)\n        ->collect(t | t.amount)\n        ->sum()\n    in\n    let expense : Decimal =\n      monthlyTransactions\n        ->select(t | t.type = TransactionType::EXPENSE)\n        ->collect(t | t.amount)\n        ->sum()\n    in\n      dto.amount = roundToTwoDecimals(revenue - expense) and\n      dto.transaction_count = monthlyTransactions->size()\n  )\n\nTechnical constraints:\n- last_year represents exactly resolvedYear - 1 and applies the identical calculation rules as this_year.\n- If the user had no eligible accounts or completed transactions in year - 1, each of the 12 entries for last_year shall have amount = 0.00 and transaction_count = 0.",
+      "context": "SavingsService::getSavingsSummary(userId : Integer, year : Integer) : SavingsSummaryResponseDto",
+      "enforcement_layers": ["backend"],
+      "failure_behavior": "Symmetrical calculation for year - 1; users without history in year - 1 receive zeroes without runtime errors.",
+      "traceability": ["Use cases!A332:B351", "UC-16 Basic Flow 6", "API-SAVINGS-SUMMARY"]
+    },
+    {
+      "br_id": "BR-SAV-06",
+      "name": "Future months zero-capping and missing period normalization",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context SavingsService::getSavingsSummary(\n  userId : Integer,\n  year : Integer\n) : SavingsSummaryResponseDto\n\npost BR_SAV_06_FutureMonthsZeroCapped:\n  (year = currentYear()) implies\n    result.summary.this_year->forAll(dto |\n      dto.month.toInteger() > currentMonth() implies\n        (dto.amount = 0 and dto.transaction_count = 0)\n    )\n\npost BR_SAV_06_MissingPeriodZeroFilled:\n  result.summary.this_year->forAll(dto |\n    let monthNumber : Integer = dto.month.toInteger() in\n    let matchingTxns = Transaction.allInstances()->select(t |\n      Account.allInstances()->exists(a |\n        a.accountId = t.accountId and\n        a.userId = userId and\n        (a.accountType = AccountType::CHECKING or a.accountType = AccountType::SAVINGS)\n      ) and\n      yearOf(t.transactionDate) = year and\n      monthOf(t.transactionDate) = monthNumber and\n      t.status = TransactionStatus::COMPLETE\n    ) in\n    matchingTxns->isEmpty() implies (dto.amount = 0 and dto.transaction_count = 0)\n  )\n\nTechnical constraints:\n- When the evaluated year is the current calendar year, all future months (month > currentMonth()) shall have amount = 0.00 and transaction_count = 0 regardless of whether scheduled or post-dated transactions exist in the database.\n- For elapsed months with no completed transactions, or if the user owns no eligible accounts, amount shall be 0.00 and transaction_count shall be 0.",
+      "context": "SavingsService::getSavingsSummary(userId : Integer, year : Integer) : SavingsSummaryResponseDto",
+      "enforcement_layers": ["backend"],
+      "failure_behavior": "Future months in the current year are strictly clamped to amount=0.00 and count=0. Missing periods or accounts return zeros.",
+      "traceability": ["Use cases!A332:B351", "UC-16 AF-2", "API-SAVINGS-SUMMARY"]
+    },
+    {
+      "br_id": "BR-SAV-07",
+      "name": "Accounting-grade decimal precision and half-up rounding",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context SavingsService::getSavingsSummary(\n  userId : Integer,\n  year : Integer\n) : SavingsSummaryResponseDto\n\npost BR_SAV_07_PrecisionAndHalfUpRounding:\n  result.summary.this_year->forAll(dto |\n    dto.amount = roundToTwoDecimals(dto.amount) and\n    (dto.amount = 0 implies dto.amount >= 0)\n  ) and\n  result.summary.last_year->forAll(dto |\n    dto.amount = roundToTwoDecimals(dto.amount) and\n    (dto.amount = 0 implies dto.amount >= 0)\n  )\n\nTechnical constraints:\n- Monthly aggregation of Revenue and Expense amounts shall maintain full decimal precision before difference subtraction.\n- The resulting net savings amount shall be rounded using round-half-up to exactly two decimal places.\n- Any negative zero representation (-0.00) resulting from floating-point arithmetic shall be normalized to 0.00.",
+      "context": "SavingsService::getSavingsSummary(userId : Integer, year : Integer) : SavingsSummaryResponseDto",
+      "enforcement_layers": ["backend"],
+      "failure_behavior": "Full precision aggregation with final round-half-up to 2 decimals; negative zero is normalized to positive 0.",
+      "traceability": ["Use cases!A332:B351", "UC-16 Basic Flow 7", "API-SAVINGS-SUMMARY"]
+    },
+    {
+      "br_id": "BR-SAV-08",
+      "name": "Idempotent read-only execution, audit immutability, and safe error containment",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context SavingsService::getSavingsSummary(\n  userId : Integer,\n  year : Integer\n) : SavingsSummaryResponseDto\n\npost BR_SAV_08_StrictDatabaseImmutability:\n  Account.allInstances()->collect(a | a.accountId)->asSet() =\n    Account.allInstances()@pre->collect(a | a.accountId)->asSet() and\n  Transaction.allInstances()->collect(t | t.transactionId)->asSet() =\n    Transaction.allInstances()@pre->collect(t | t.transactionId)->asSet() and\n  User.allInstances()->collect(u | u.userId)->asSet() =\n    User.allInstances()@pre->collect(u | u.userId)->asSet()\n\nTechnical constraints:\n- Retrieving the savings summary is strictly read-only and idempotent; it shall never create, mutate, or delete records in Users, Accounts, Transactions, Goals, or Bills tables.\n- Database queries shall execute under READ COMMITTED transaction isolation to avoid dirty reads during concurrent writes.\n- Unexpected database or computation failures shall return HTTP 500 Internal Server Error without exposing internal query syntax or stack traces.",
+      "context": "SavingsService::getSavingsSummary(userId : Integer, year : Integer) : SavingsSummaryResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "Pure read-only operation; database remains completely unmodified; errors produce standard HTTP 500.",
+      "traceability": ["Use cases!A332:B351", "UC-16 POST-3", "UC-16 EF-2", "API-SAVINGS-SUMMARY"]
+    },
+    {
+      "br_id": "BR-SAV-09",
+      "name": "Interactive point hover parity and signed currency tooltip",
+      "representation": "ocl_pre_postcondition",
+      "expression_or_text": "context SavingsSummaryChart::hoverPoint(\n  series : SavingsSeries,\n  month : String\n) : SavingsTooltip\n\npre BR_SAV_09_ChartDisplayed:\n  self.isChartVisible = true\n\npre BR_SAV_09_PointExists:\n  (series = SavingsSeries::THIS_YEAR implies self.summary.this_year->exists(p | p.month = month)) and\n  (series = SavingsSeries::LAST_YEAR implies self.summary.last_year->exists(p | p.month = month))\n\npost BR_SAV_09_TooltipVisibleAndParity:\n  result.visible = true and\n  (\n    series = SavingsSeries::THIS_YEAR implies\n      self.summary.this_year->exists(p |\n        p.month = month and\n        result.month = p.month and\n        result.amount = p.amount and\n        result.series = series\n      )\n  ) and\n  (\n    series = SavingsSeries::LAST_YEAR implies\n      self.summary.last_year->exists(p |\n        p.month = month and\n        result.month = p.month and\n        result.amount = p.amount and\n        result.series = series\n      )\n  )\n\ncontext SavingsSummaryChart::leavePoint()\n\npost BR_SAV_09_TooltipHidden:\n  self.tooltip.visible = false\n\nTechnical constraints:\n- Hovering over any rendered data point in either yearly series shall display an interactive tooltip showing the month label, series indicator, formatted currency amount with explicit sign ('+' for positive, '-' for negative), and transaction count.\n- Moving the pointer away from the data point shall immediately hide the tooltip.",
+      "context": "SavingsSummaryChart::hoverPoint(series : SavingsSeries, month : String) : SavingsTooltip",
+      "enforcement_layers": ["frontend"],
+      "failure_behavior": "Point hover renders signed currency tooltip with transaction count; mouse leave hides tooltip.",
+      "traceability": ["Use cases!A332:B351", "UC-16 Basic Flow 8", "SavingsSummaryChart"]
+    }
+  ],
+  "ordered_br_ids": [
+    "BR-SAV-01",
+    "BR-SAV-02",
+    "BR-SAV-03",
+    "BR-SAV-04",
+    "BR-SAV-05",
+    "BR-SAV-06",
+    "BR-SAV-07",
+    "BR-SAV-08",
+    "BR-SAV-09"
+  ],
+  "unresolved_items": []
+}

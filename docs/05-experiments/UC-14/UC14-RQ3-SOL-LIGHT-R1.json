@@ -1,0 +1,693 @@
+{
+  "run_id": "UC14-RQ3-SOL-LIGHT-R1",
+  "run_status": "blocked_pending_schema_approval",
+  "hold_gate": "schema_approval_required",
+  "experiment_configuration": {
+    "configuration_id": "CFG-UC14-RQ3-SOL-LIGHT-20260903",
+    "comparison_group_id": "CG-UC14-RQ3-SOL-LIGHT-20260903",
+    "researcher_id": "kien",
+    "artifact": "docs/05-experiments/configurations/CFG-UC14-RQ3-SOL-LIGHT-20260903.json",
+    "checksum": "sha256:c3c280d7a331fa02f6e08e25d5f340fb40a13ee2aa750708c077341f61edb645",
+    "run_activation": "docs/02-construction/implementation/UC-14/runs/UC14-RQ3-SOL-LIGHT-R1/run-activation.json"
+  },
+  "uc_id": "UC-14",
+  "uc_name": "Create a Financial Goal",
+  "replicate_index": 1,
+  "run_order": 1,
+  "audit_protocol": "matched",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "low",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null,
+    "effective_snapshot_unavailable_reason": "The runtime session telemetry exposed the model family but no provider snapshot identifier.",
+    "codex_client_version": "codex-cli 0.151.0-alpha.7.2"
+  },
+  "audit_model": {
+    "assignment": "same-as-generation",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null,
+    "unavailable_reason": null
+  },
+  "timing_wall_clock": {
+    "initial_started_at": "2026-09-03T17:56:26.827+07:00",
+    "initial_started_epoch_ms": 1788432986827,
+    "initial_ended_at": "2026-09-03T18:02:56.182+07:00",
+    "initial_ended_epoch_ms": 1788433376183
+  },
+  "timing_seconds": {
+    "initial": 389.356,
+    "repairs": 509.107,
+    "total": 898.463
+  },
+  "tokens": {
+    "initial_total": 5951236,
+    "repair_total": null,
+    "total": null,
+    "telemetry_source": "C:\\Users\\User\\.codex\\sessions\\2026\\09\\03\\rollout-2026-09-03T17-43-08-01a066dd-8316-7380-87fb-84b70096dd05.jsonl",
+    "details": {
+      "initial": {
+        "turn_id": 6,
+        "input": 94281,
+        "cache_read": 5821440,
+        "total_input": 5915721,
+        "output": 35515,
+        "reasoning": 6856,
+        "cost_usd": 4.4476,
+        "duration_seconds": 854.504
+      },
+      "repairs": {
+        "count": 9,
+        "total_tokens": null,
+        "cost_usd": null,
+        "unavailable_reason": "The active repair turn has not emitted terminal runner telemetry; no token value is inferred."
+      }
+    }
+  },
+  "first_pass_source": {
+    "revision": "sha256:43681c68624e8b11b00ddb953f634e220c433ac98b443c770a72326b0cea0175",
+    "evidence": "docs/02-construction/implementation/UC-14/runs/UC14-RQ3-SOL-LIGHT-R1/first-pass-generation.json"
+  },
+  "methodological_limitations": [
+    "RQ3 context isolation is not guaranteed because Phase 1 and Phase 2 continued in the same conversation and UC-14 Business Rule content had been loaded before first-pass generation.",
+    "The active MySQL database has no Goals table, so goal creation, persistence, HTTP responses, and browser behavior could not be observed against a healthy current-source runtime.",
+    "The eight applied repairs share one authorized repair-turn context. Per-repair token attribution and intermediate global source hashes are unavailable; batch endpoints and the final source revision are retained."
+  ],
+  "checks": {
+    "host_backend_targeted_lint": "PASS: targeted ESLint completed with zero warnings for the UC-14 goal module and migration",
+    "host_backend_repository_lint": "FAIL: 16 cumulative pre-existing errors remain outside UC-14 source; the three first-pass UC-14 errors are resolved",
+    "host_backend_build": "PASS: Nest production build completed after authorized repairs",
+    "host_frontend_targeted_lint": "PASS: targeted ESLint completed with zero warnings for repaired UC-14 frontend files and Layout integration",
+    "host_frontend_build": "PASS: TypeScript and Vite production build completed after authorized repairs",
+    "figma_dataset": "PASS: frozen dataset 2026-08-29-005 node 416:6052 resolved complete with valid checksums",
+    "docker_review": "PASS: Docker 29.2.1 daemon and Compose v5.0.2 are available; configuration validates",
+    "docker_rebuild_build": "PASS: repaired backend and frontend images rebuilt successfully through Docker Compose",
+    "docker_rebuild_runtime": "BLOCKED: backend startup migration failed because the active database has no Goals table; frontend remained blocked on backend health",
+    "runtime_observation": "not_evaluable: backend health, frontend reachability, authenticated creation, persistence, and response behavior could not be observed",
+    "tests_created_or_run": false
+  },
+  "technical_findings": [
+    {
+      "status": "resolved",
+      "trigger": "lint",
+      "fingerprint": "uc14-migration-query-result-unsafe-assignment",
+      "evidence": "finalsource/be/src/database/migrations/20260903105627-make-goals-category-nullable.ts:13 assigns QueryRunner.query() any output to a typed array; targeted ESLint reports @typescript-eslint/no-unsafe-assignment.",
+      "repair_authorized": true,
+      "repair_id": "UC14-RQ3-SOL-LIGHT-R1-REPAIR-001"
+    },
+    {
+      "status": "blocked",
+      "trigger": "runtime",
+      "fingerprint": "backend-startup-goals-table-missing-during-nullability-migration",
+      "evidence": "Docker backend logs show MySQL ER_NO_SUCH_TABLE for Goals during MakeGoalsCategoryNullable; incident DEP-20260903-001 records the bounded evidence.",
+      "repair_authorized": true,
+      "repair_id": "UC14-RQ3-SOL-LIGHT-R1-REPAIR-009"
+    }
+  ],
+  "business_rules": {
+    "baseline": "docs/02-construction/implementation/UC-14/business-rule-baseline.json",
+    "source_revision": "sha256:f48a6bd37a60afce460d408eb8f6362e970964421069cd991af457ed7e5583a6",
+    "ordered_br_ids": [
+      "BR-GOAL-04",
+      "BR-GOAL-05",
+      "BR-GOAL-06",
+      "BR-GOAL-07",
+      "BR-GOAL-08",
+      "BR-GOAL-09",
+      "BR-GOAL-10",
+      "BR-GOAL-11"
+    ],
+    "initial": {
+      "requirements": [
+        {
+          "br_id": "BR-GOAL-04",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/goal/dto/create-goal.dto.ts:13-15 requires goal_type and restricts it to the GoalType enum",
+            "finalsource/be/src/modules/goal/goal.service.ts:26-46 creates directly without counting active goals or checking for an existing active Saving goal",
+            "Repository inspection finds no active-goal quota or single-active-saving-goal predicate in the UC-14 backend path"
+          ],
+          "rationale": "Allowed goal types are enforced, but the active-goal quota and single-active Saving constraint are absent."
+        },
+        {
+          "br_id": "BR-GOAL-05",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/goal/dto/create-goal.dto.ts:31-34 accepts any decimal amount at least 0.01",
+            "finalsource/fe/src/components/Goals/CreateGoalModal.tsx:98-110 validates only that targetAmount is positive",
+            "Neither layer enforces the 100000 through 1000000000 VND range or the 10000 VND rounding step"
+          ],
+          "rationale": "The first pass implements generic positive-number validation but omits every domain threshold and rounding constraint."
+        },
+        {
+          "br_id": "BR-GOAL-06",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/goal/dto/create-goal.dto.ts:23-29 enforces strict ISO date-string syntax",
+            "finalsource/fe/src/components/Goals/CreateGoalModal.tsx:32-36 and 104-105 reject invalid YYYY-MM-DD values",
+            "No backend or frontend code enforces the start-date horizon or the 7 through 365 day duration window"
+          ],
+          "rationale": "Date presence and format are implemented, but both required temporal windows are absent."
+        },
+        {
+          "br_id": "BR-GOAL-07",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/Goals/CreateGoalModal.tsx:106-109 requires a loaded category for Expense_Limit and lines 92-95 clear category selection for Saving",
+            "finalsource/be/src/modules/goal/goal.service.ts:28-34 validates only a supplied category and permits Expense_Limit without category_id",
+            "finalsource/be/src/modules/goal/goal.service.ts:36-44 contains no overlapping interval query and permits a direct Saving request to persist a supplied category"
+          ],
+          "rationale": "Client UX covers part of category selection, but authoritative backend category requirements, overlap rejection, and Saving normalization are incomplete."
+        },
+        {
+          "br_id": "BR-GOAL-08",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/goal/goal.controller.ts:34-52 guards the endpoint and passes the validated JWT userId to GoalService",
+            "finalsource/be/src/modules/goal/goal.service.ts:36-43 maps that userId into the created Goal",
+            "GoalService injects no Account repository and performs no active-account prerequisite check"
+          ],
+          "rationale": "Authenticated ownership is enforced, but creation is not rejected when the application user has no bank account."
+        },
+        {
+          "br_id": "BR-GOAL-09",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/goal/goal.service.ts:36-46 maps one entity and invokes one repository save",
+            "The active Docker database has no Goals table, and the current-source backend fails during migration before any Goal can be persisted",
+            "For a direct Saving request with category_id, the service maps and would persist that identifier rather than normalized null"
+          ],
+          "rationale": "The source contains one intended insert path, but its complete persistence contract is contradicted by category mapping and the missing runtime table."
+        },
+        {
+          "br_id": "BR-GOAL-10",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/goal/goal.controller.ts:41-52 declares HTTP 201 and maps message 'Goal created successfully' with data.goal_id",
+            "finalsource/be/src/modules/goal/goal.service.ts:44-46 derives goal_id from the saved entity",
+            "The Docker backend cannot start because the Goals table is absent, so the successful response cannot be produced by the active runtime"
+          ],
+          "rationale": "The response mapping is correct in source, but the implementation cannot reach a successful persisted creation in the active runtime."
+        },
+        {
+          "br_id": "BR-GOAL-11",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/goal/goal.service.ts:26-54 uses repositories directly with no TypeORM transaction, locking, or isolation control",
+            "The quota, Saving conflict, amount rules, date windows, duration, Expense_Limit category requirement, overlap rule, and account prerequisite are not authoritatively rejected",
+            "finalsource/be/src/modules/goal/goal.service.ts:51-53 uses the API-contract server message rather than the distinct exact failure message required by this rule",
+            "Docker runtime startup is blocked by the missing Goals table"
+          ],
+          "rationale": "Required validation failures, atomic transactionality, concurrency safety, and the exact repository-failure behavior are incomplete."
+        }
+      ],
+      "total": 8,
+      "unmet": 8,
+      "met": 0,
+      "not_evaluable": 0,
+      "acceptance_percent": 0.0
+    },
+    "final": {
+      "requirements": [
+        {
+          "br_id": "BR-GOAL-04",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/goal/goal.service.ts:48-63 counts goals active on the current date, rejects a sixth active goal, and rejects another active Saving goal",
+            "finalsource/be/src/modules/goal/goal.service.ts:27-33 executes the checks after a pessimistic lock in a SERIALIZABLE transaction",
+            "Targeted backend ESLint and the production build passed"
+          ],
+          "rationale": "The allowed DTO enum, active quota, single active Saving rule, and same-user concurrency boundary are inspectable and build-clean."
+        },
+        {
+          "br_id": "BR-GOAL-05",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/goal/dto/create-goal.dto.ts:33-38 enforces 100000 through 1000000000 and divisibility by 10000",
+            "finalsource/fe/src/components/Goals/CreateGoalModal.tsx:110-117 mirrors the exact range and step before submission",
+            "Targeted backend/frontend ESLint and both production builds passed"
+          ],
+          "rationale": "The complete amount domain is enforced authoritatively and mirrored in the client UX."
+        },
+        {
+          "br_id": "BR-GOAL-06",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/goal/goal.service.ts:123-149 enforces the start-date horizon and 7 through 365 day duration",
+            "finalsource/be/src/modules/goal/dto/create-goal.dto.ts retains strict YYYY-MM-DD validation",
+            "finalsource/fe/src/components/Goals/CreateGoalModal.tsx:118-137 and 209-213 mirror the date windows",
+            "Targeted backend/frontend ESLint and both production builds passed"
+          ],
+          "rationale": "Date syntax, start horizon, minimum duration, and maximum duration are all enforced."
+        },
+        {
+          "br_id": "BR-GOAL-07",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/goal/goal.service.ts:68-98 normalizes Saving category to null, requires/validates Expense Limit category, and rejects inclusive interval overlap",
+            "Targeted backend ESLint and production build passed",
+            "Docker runtime remains unable to persist any Goal because the active database has no Goals table"
+          ],
+          "rationale": "The source-side boundary is repaired, but the rule's required database persistence cannot be satisfied by the active schema."
+        },
+        {
+          "br_id": "BR-GOAL-08",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/goal/goal.controller.ts keeps POST /api/v1/goals protected and supplies the authenticated userId",
+            "finalsource/be/src/modules/goal/goal.service.ts:30-41 locks the authenticated User row and rejects creation when no Account belongs to that user",
+            "finalsource/be/src/modules/goal/goal.service.ts:100-109 maps the same userId to the one created entity",
+            "Targeted backend ESLint and production build passed"
+          ],
+          "rationale": "Authenticated ownership and the bank-account prerequisite are both enforced at the backend boundary."
+        },
+        {
+          "br_id": "BR-GOAL-09",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/goal/goal.service.ts:100-110 creates and saves one explicitly mapped Goal inside one transaction",
+            "Saving requests are normalized to a null category and Expense Limit requests retain the validated category",
+            "Docker backend startup fails before persistence because the active database has no Goals table"
+          ],
+          "rationale": "The one-record transactional persistence path is correct in source, but the required record cannot exist until the missing table is approved and created."
+        },
+        {
+          "br_id": "BR-GOAL-10",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/goal/goal.controller.ts declares HTTP 201 and maps Goal created successfully plus saved goal_id",
+            "The repaired service returns the identifier from manager.save",
+            "Docker backend cannot start, so no HTTP 201 response backed by persisted data can be produced"
+          ],
+          "rationale": "The response code is intact, but its required persisted-goal postcondition remains impossible in the active runtime."
+        },
+        {
+          "br_id": "BR-GOAL-11",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/goal/goal.service.ts:27-111 runs validations and persistence in a SERIALIZABLE transaction after a pessimistic User lock",
+            "The repaired DTO/service implement the quota, Saving conflict, amount, date, category, overlap, and account failures as HTTP 400",
+            "finalsource/be/src/modules/goal/goal.service.ts:112-120 preserves HTTP exceptions and maps unexpected failures to the exact frozen Vietnamese message",
+            "Docker startup remains blocked because the Goals table is absent"
+          ],
+          "rationale": "The source now implements validation, rollback, concurrency, and failure behavior, but the database schema still prevents the creation flow from executing."
+        }
+      ],
+      "total": 8,
+      "unmet": 4,
+      "met": 4,
+      "not_evaluable": 0,
+      "acceptance_percent": 50.0
+    }
+  },
+  "repairs": [
+    {
+      "repair_id": "UC14-RQ3-SOL-LIGHT-R1-REPAIR-001",
+      "repair_index": 1,
+      "sub_prompt": "docs/02-construction/implementation/UC-14/runs/UC14-RQ3-SOL-LIGHT-R1/repairs/repair-001-migration-query-result-lint.md",
+      "category": "technical",
+      "trigger": "lint",
+      "fingerprint": "uc14-migration-query-result-unsafe-assignment",
+      "affected_br_ids": [],
+      "source_revision_before": "sha256:43681c68624e8b11b00ddb953f634e220c433ac98b443c770a72326b0cea0175",
+      "source_revision_after": "sha256:f48a6bd37a60afce460d408eb8f6362e970964421069cd991af457ed7e5583a6",
+      "source_revision_note": "Shared repair-batch endpoints; intermediate global source revision was not frozen.",
+      "status": "complete",
+      "model": {
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "low"
+      },
+      "timing": {
+        "started_at": "2026-09-03T11:44:12.443Z",
+        "started_epoch_ms": 1788435852443,
+        "ended_at": "2026-09-03T11:44:22.619Z",
+        "ended_epoch_ms": 1788435862619,
+        "duration_seconds": 10.176
+      },
+      "tokens": {
+        "total": null,
+        "shared_session_turn_id": 7,
+        "reason": "Per-repair attribution unavailable"
+      },
+      "changed_files": [
+        "finalsource/be/src/database/migrations/20260903105627-make-goals-category-nullable.ts"
+      ],
+      "verification": [
+        "Targeted backend ESLint passed",
+        "Backend production build passed"
+      ],
+      "result": "Migration query-result lint fingerprint resolved."
+    },
+    {
+      "repair_id": "UC14-RQ3-SOL-LIGHT-R1-REPAIR-002",
+      "repair_index": 2,
+      "sub_prompt": "docs/02-construction/implementation/UC-14/runs/UC14-RQ3-SOL-LIGHT-R1/repairs/repair-002-goal-entity-unused-imports.md",
+      "category": "technical",
+      "trigger": "lint",
+      "fingerprint": "uc14-goal-entity-unused-typeorm-imports",
+      "affected_br_ids": [],
+      "source_revision_before": "sha256:43681c68624e8b11b00ddb953f634e220c433ac98b443c770a72326b0cea0175",
+      "source_revision_after": "sha256:f48a6bd37a60afce460d408eb8f6362e970964421069cd991af457ed7e5583a6",
+      "source_revision_note": "Shared repair-batch endpoints; intermediate global source revision was not frozen.",
+      "status": "complete",
+      "model": {
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "low"
+      },
+      "timing": {
+        "started_at": "2026-09-03T11:44:22.620Z",
+        "started_epoch_ms": 1788435862620,
+        "ended_at": "2026-09-03T11:44:28.907Z",
+        "ended_epoch_ms": 1788435868907,
+        "duration_seconds": 6.287
+      },
+      "tokens": {
+        "total": null,
+        "shared_session_turn_id": 7,
+        "reason": "Per-repair attribution unavailable"
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/goal/goal.entity.ts"
+      ],
+      "verification": [
+        "Targeted backend ESLint passed",
+        "Backend production build passed"
+      ],
+      "result": "UC-14 Goal entity lint fingerprint resolved."
+    },
+    {
+      "repair_id": "UC14-RQ3-SOL-LIGHT-R1-REPAIR-003",
+      "repair_index": 3,
+      "sub_prompt": "docs/02-construction/implementation/UC-14/runs/UC14-RQ3-SOL-LIGHT-R1/repairs/repair-003-active-goal-constraints.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-goal-04-active-quota-and-saving-conflict-absent",
+      "affected_br_ids": [
+        "BR-GOAL-04",
+        "BR-GOAL-11"
+      ],
+      "source_revision_before": "sha256:43681c68624e8b11b00ddb953f634e220c433ac98b443c770a72326b0cea0175",
+      "source_revision_after": "sha256:f48a6bd37a60afce460d408eb8f6362e970964421069cd991af457ed7e5583a6",
+      "source_revision_note": "Shared repair-batch endpoints; intermediate global source revision was not frozen.",
+      "status": "complete",
+      "model": {
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "low"
+      },
+      "timing": {
+        "started_at": "2026-09-03T11:44:28.908Z",
+        "started_epoch_ms": 1788435868908,
+        "ended_at": "2026-09-03T11:44:45.238Z",
+        "ended_epoch_ms": 1788435885238,
+        "duration_seconds": 16.33
+      },
+      "tokens": {
+        "total": null,
+        "shared_session_turn_id": 7,
+        "reason": "Per-repair attribution unavailable"
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/goal/goal.service.ts"
+      ],
+      "verification": [
+        "Targeted backend ESLint passed",
+        "Backend production build passed"
+      ],
+      "result": "BR-GOAL-04 reassessed from unmet to met."
+    },
+    {
+      "repair_id": "UC14-RQ3-SOL-LIGHT-R1-REPAIR-004",
+      "repair_index": 4,
+      "sub_prompt": "docs/02-construction/implementation/UC-14/runs/UC14-RQ3-SOL-LIGHT-R1/repairs/repair-004-target-amount-domain.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-goal-05-target-range-and-rounding-absent",
+      "affected_br_ids": [
+        "BR-GOAL-05",
+        "BR-GOAL-11"
+      ],
+      "source_revision_before": "sha256:43681c68624e8b11b00ddb953f634e220c433ac98b443c770a72326b0cea0175",
+      "source_revision_after": "sha256:f48a6bd37a60afce460d408eb8f6362e970964421069cd991af457ed7e5583a6",
+      "source_revision_note": "Shared repair-batch endpoints; intermediate global source revision was not frozen.",
+      "status": "complete",
+      "model": {
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "low"
+      },
+      "timing": {
+        "started_at": "2026-09-03T11:44:45.239Z",
+        "started_epoch_ms": 1788435885239,
+        "ended_at": "2026-09-03T11:44:58.449Z",
+        "ended_epoch_ms": 1788435898449,
+        "duration_seconds": 13.21
+      },
+      "tokens": {
+        "total": null,
+        "shared_session_turn_id": 7,
+        "reason": "Per-repair attribution unavailable"
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/goal/dto/create-goal.dto.ts",
+        "finalsource/fe/src/components/Goals/CreateGoalModal.tsx"
+      ],
+      "verification": [
+        "Targeted backend/frontend ESLint passed",
+        "Backend/frontend production builds passed"
+      ],
+      "result": "BR-GOAL-05 reassessed from unmet to met."
+    },
+    {
+      "repair_id": "UC14-RQ3-SOL-LIGHT-R1-REPAIR-005",
+      "repair_index": 5,
+      "sub_prompt": "docs/02-construction/implementation/UC-14/runs/UC14-RQ3-SOL-LIGHT-R1/repairs/repair-005-goal-date-windows.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-goal-06-date-horizon-and-duration-absent",
+      "affected_br_ids": [
+        "BR-GOAL-06",
+        "BR-GOAL-11"
+      ],
+      "source_revision_before": "sha256:43681c68624e8b11b00ddb953f634e220c433ac98b443c770a72326b0cea0175",
+      "source_revision_after": "sha256:f48a6bd37a60afce460d408eb8f6362e970964421069cd991af457ed7e5583a6",
+      "source_revision_note": "Shared repair-batch endpoints; intermediate global source revision was not frozen.",
+      "status": "complete",
+      "model": {
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "low"
+      },
+      "timing": {
+        "started_at": "2026-09-03T11:44:58.450Z",
+        "started_epoch_ms": 1788435898450,
+        "ended_at": "2026-09-03T11:46:00.207Z",
+        "ended_epoch_ms": 1788435960207,
+        "duration_seconds": 61.757
+      },
+      "tokens": {
+        "total": null,
+        "shared_session_turn_id": 7,
+        "reason": "Per-repair attribution unavailable"
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/goal/goal.service.ts",
+        "finalsource/fe/src/components/Goals/CreateGoalModal.tsx"
+      ],
+      "verification": [
+        "Targeted backend/frontend ESLint passed",
+        "Backend/frontend production builds passed"
+      ],
+      "result": "BR-GOAL-06 reassessed from unmet to met."
+    },
+    {
+      "repair_id": "UC14-RQ3-SOL-LIGHT-R1-REPAIR-006",
+      "repair_index": 6,
+      "sub_prompt": "docs/02-construction/implementation/UC-14/runs/UC14-RQ3-SOL-LIGHT-R1/repairs/repair-006-category-overlap-persistence.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-goal-07-category-boundary-and-overlap-incomplete",
+      "affected_br_ids": [
+        "BR-GOAL-07",
+        "BR-GOAL-09",
+        "BR-GOAL-11"
+      ],
+      "source_revision_before": "sha256:43681c68624e8b11b00ddb953f634e220c433ac98b443c770a72326b0cea0175",
+      "source_revision_after": "sha256:f48a6bd37a60afce460d408eb8f6362e970964421069cd991af457ed7e5583a6",
+      "source_revision_note": "Shared repair-batch endpoints; intermediate global source revision was not frozen.",
+      "status": "complete",
+      "model": {
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "low"
+      },
+      "timing": {
+        "started_at": "2026-09-03T11:46:00.208Z",
+        "started_epoch_ms": 1788435960208,
+        "ended_at": "2026-09-03T11:46:19.861Z",
+        "ended_epoch_ms": 1788435979861,
+        "duration_seconds": 19.653
+      },
+      "tokens": {
+        "total": null,
+        "shared_session_turn_id": 7,
+        "reason": "Per-repair attribution unavailable"
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/goal/goal.service.ts"
+      ],
+      "verification": [
+        "Targeted backend ESLint passed",
+        "Backend production build passed",
+        "Docker runtime remained blocked"
+      ],
+      "result": "Source defect resolved; persistence-dependent BRs remain unmet due the missing Goals table."
+    },
+    {
+      "repair_id": "UC14-RQ3-SOL-LIGHT-R1-REPAIR-007",
+      "repair_index": 7,
+      "sub_prompt": "docs/02-construction/implementation/UC-14/runs/UC14-RQ3-SOL-LIGHT-R1/repairs/repair-007-account-prerequisite.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-goal-08-account-prerequisite-absent",
+      "affected_br_ids": [
+        "BR-GOAL-08",
+        "BR-GOAL-11"
+      ],
+      "source_revision_before": "sha256:43681c68624e8b11b00ddb953f634e220c433ac98b443c770a72326b0cea0175",
+      "source_revision_after": "sha256:f48a6bd37a60afce460d408eb8f6362e970964421069cd991af457ed7e5583a6",
+      "source_revision_note": "Shared repair-batch endpoints; intermediate global source revision was not frozen.",
+      "status": "complete",
+      "model": {
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "low"
+      },
+      "timing": {
+        "started_at": "2026-09-03T11:46:19.862Z",
+        "started_epoch_ms": 1788435979862,
+        "ended_at": "2026-09-03T11:46:30.099Z",
+        "ended_epoch_ms": 1788435990099,
+        "duration_seconds": 10.237
+      },
+      "tokens": {
+        "total": null,
+        "shared_session_turn_id": 7,
+        "reason": "Per-repair attribution unavailable"
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/goal/goal.module.ts",
+        "finalsource/be/src/modules/goal/goal.service.ts"
+      ],
+      "verification": [
+        "Targeted backend ESLint passed",
+        "Backend production build passed"
+      ],
+      "result": "BR-GOAL-08 reassessed from unmet to met."
+    },
+    {
+      "repair_id": "UC14-RQ3-SOL-LIGHT-R1-REPAIR-008",
+      "repair_index": 8,
+      "sub_prompt": "docs/02-construction/implementation/UC-14/runs/UC14-RQ3-SOL-LIGHT-R1/repairs/repair-008-atomic-concurrency-failure.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-goal-11-transaction-lock-and-repository-error-absent",
+      "affected_br_ids": [
+        "BR-GOAL-04",
+        "BR-GOAL-07",
+        "BR-GOAL-08",
+        "BR-GOAL-09",
+        "BR-GOAL-11"
+      ],
+      "source_revision_before": "sha256:43681c68624e8b11b00ddb953f634e220c433ac98b443c770a72326b0cea0175",
+      "source_revision_after": "sha256:f48a6bd37a60afce460d408eb8f6362e970964421069cd991af457ed7e5583a6",
+      "source_revision_note": "Shared repair-batch endpoints; intermediate global source revision was not frozen.",
+      "status": "complete",
+      "model": {
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "low"
+      },
+      "timing": {
+        "started_at": "2026-09-03T11:46:30.100Z",
+        "started_epoch_ms": 1788435990100,
+        "ended_at": "2026-09-03T11:47:41.894Z",
+        "ended_epoch_ms": 1788436061894,
+        "duration_seconds": 71.794
+      },
+      "tokens": {
+        "total": null,
+        "shared_session_turn_id": 7,
+        "reason": "Per-repair attribution unavailable"
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/goal/goal.module.ts",
+        "finalsource/be/src/modules/goal/goal.service.ts"
+      ],
+      "verification": [
+        "Targeted backend ESLint passed",
+        "Backend production build passed",
+        "Docker backend/frontend image builds passed",
+        "Docker runtime remained blocked"
+      ],
+      "result": "Transaction, locking, rollback, and exact error behavior are repaired in source; persistence-dependent BRs remain unmet."
+    },
+    {
+      "repair_id": "UC14-RQ3-SOL-LIGHT-R1-REPAIR-009",
+      "repair_index": 9,
+      "sub_prompt": "docs/02-construction/implementation/UC-14/runs/UC14-RQ3-SOL-LIGHT-R1/repairs/repair-009-missing-goals-table.md",
+      "category": "technical",
+      "trigger": "runtime",
+      "fingerprint": "backend-startup-goals-table-missing-during-nullability-migration",
+      "affected_br_ids": [
+        "BR-GOAL-07",
+        "BR-GOAL-09",
+        "BR-GOAL-10",
+        "BR-GOAL-11"
+      ],
+      "source_revision_before": "sha256:f48a6bd37a60afce460d408eb8f6362e970964421069cd991af457ed7e5583a6",
+      "source_revision_after": "sha256:f48a6bd37a60afce460d408eb8f6362e970964421069cd991af457ed7e5583a6",
+      "status": "blocked_pending_schema_approval",
+      "model": {
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "low"
+      },
+      "timing": {
+        "started_at": "2026-09-03T11:47:41.895Z",
+        "started_epoch_ms": 1788436061895,
+        "ended_at": "2026-09-03T11:52:41.558Z",
+        "ended_epoch_ms": 1788436361558,
+        "duration_seconds": 299.663
+      },
+      "tokens": {
+        "total": null,
+        "shared_session_turn_id": 7,
+        "reason": "Per-repair attribution unavailable"
+      },
+      "changed_files": [],
+      "verification": [
+        "Docker backend/frontend image builds passed",
+        "Backend startup reproduced MySQL ER_NO_SUCH_TABLE for Goals",
+        "Backend and frontend stopped without deleting volumes"
+      ],
+      "result": "Blocked: creating the missing Goals table requires explicit researcher approval of the pending schema proposal."
+    }
+  ],
+  "manual_estimates_minutes": [],
+  "ui_accuracy_percent": 100.0,
+  "ui_accuracy": {
+    "structural_coverage": "The Figma shell groups, Goals summary cards, chart, category cards, dimmed overlay, modal visual language, and UC-required Create Goal controls are represented in source.",
+    "deterministic_similarity": null,
+    "limitation": "The repaired frontend production build and Docker image build passed, but the container could not start because its backend health dependency failed; no deterministic browser or pixel comparison was measured."
+  },
+  "flow_accuracy_percent": null,
+  "flow_accuracy": {
+    "source_checkpoints": "Trigger, modal state, category loading, exact client validation, authenticated POST, transactional domain validation, locking, persistence mapping, normalized response mapping, cancellation, and success refresh are inspectable.",
+    "limitation": "The database-backed creation, persistence, HTTP status/envelope, modal close, notification, and refreshed list could not be runtime-observed because the Goals table is absent."
+  },
+  "complexity": {
+    "actors": 1,
+    "main_flow_steps": 11,
+    "alternate_exception_flows": 7,
+    "data_entities": 3,
+    "integrations": 3,
+    "business_rules": 8,
+    "ui_states": 7
+  },
+  "all_sub_prompt_count": 9
+}

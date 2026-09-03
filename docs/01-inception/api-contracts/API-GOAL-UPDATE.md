@@ -31,7 +31,7 @@ PUT
 
 ### Description
 
-Update the target amount of a goal owned by the authenticated user.
+Update an existing financial goal for the authenticated user.
 
 ### Authentication
 
@@ -39,7 +39,7 @@ Bearer JWT
 
 ### Authorization
 
-Goal owner
+Authenticated user
 
 ## Request Header(s)
 
@@ -68,9 +68,9 @@ Example: application/json
 ### path.goalId
 
 Type: integer; Required: Yes; Nullable: No
-Validation: The controller applies parseInt(goalId, 10) and does not explicitly reject NaN before calling the service.
+Validation: Must be a valid integer goal identifier.
 Trigger: Every goal update request.
-Description: Goal identifier as parsed by the controller.
+Description: Unique identifier of the financial goal.
 Example: 5
 
 ## Request Body
@@ -78,9 +78,9 @@ Example: 5
 ### target_amount
 
 Type: number; Format: decimal; Required: Yes; Nullable: No
-Validation: Must be greater than 0.
+Validation: Must be a valid positive number.
 Trigger: Goal update request.
-Description: New target amount.
+Description: Updated target monetary amount for the financial goal.
 Example: 12000000
 
 ## Success Response — HTTP 200
@@ -88,7 +88,7 @@ Example: 12000000
 ### message
 
 Type: string; Required: Yes; Nullable: No
-Trigger: The goal is updated.
+Trigger: The goal is successfully updated.
 Description: Update success message.
 Example: Goal updated successfully
 
@@ -96,7 +96,7 @@ Example: Goal updated successfully
 ### updated_goal.goal_id
 
 Type: integer; Required: Yes; Nullable: No
-Trigger: The goal is updated.
+Trigger: The goal is successfully updated.
 Description: Updated goal identifier.
 Example: 5
 
@@ -104,7 +104,7 @@ Example: 5
 ### updated_goal.target_amount
 
 Type: number; Required: Yes; Nullable: No
-Trigger: The goal is updated.
+Trigger: The goal is successfully updated.
 Description: Updated target amount.
 Example: 12000000
 
@@ -113,9 +113,9 @@ Example: 12000000
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: target_amount fails UpdateGoalDto validation.
-Description: Validation errors for the request body.
-Example: ["target_amount must be a positive number"]
+Trigger: Request parameters or body fields fail validation or violate business constraints.
+Description: Error description returned by the global HTTP exception filter.
+Example: Invalid goal update data
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 401
@@ -133,9 +133,9 @@ Note: The error envelope also contains success=false and may contain an error fi
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: The goal belongs to another user.
+Trigger: The authenticated user is not authorized to modify the specified goal.
 Description: Error description returned by the global HTTP exception filter.
-Example: Bạn không có quyền chỉnh sửa mục tiêu này.
+Example: Forbidden resource
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 404
@@ -143,9 +143,9 @@ Note: The error envelope also contains success=false and may contain an error fi
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: The goal does not exist.
+Trigger: The requested goal cannot be found.
 Description: Error description returned by the global HTTP exception filter.
-Example: Mục tiêu không tồn tại.
+Example: Resource not found
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 500
@@ -153,7 +153,7 @@ Note: The error envelope also contains success=false and may contain an error fi
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: The goal update cannot be saved.
+Trigger: An unexpected server error occurs during processing.
 Description: Error description returned by the global HTTP exception filter.
-Example: Không thể lưu thay đổi lúc này. Vui lòng thử lại sau.
+Example: Đã xảy ra lỗi hệ thống khi cập nhật mục tiêu. Vui lòng thử lại sau.
 Note: The error envelope also contains success=false and may contain an error field.

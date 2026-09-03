@@ -1,0 +1,87 @@
+{
+  "artifact_type": "database-schema",
+  "uc_id": "UC-14",
+  "status": "Approved",
+  "source_use_case": "docs/01-inception/use-cases/uc-14-create-financial-goal.md",
+  "source_prompt": "docs/02-construction/coding-prompts/UC-14-rq3-coding-prompt.md",
+  "created_at": "2026-09-03T10:53:07.9180159Z",
+  "contract": {
+    "change_type": "alter-column-nullability",
+    "table": "Goals",
+    "column": "category_id",
+    "current_mapping": {
+      "typeorm": "@Column({ name: 'category_id', type: 'int' })",
+      "nullable": false
+    },
+    "proposed_mapping": {
+      "typeorm": "@Column({ name: 'category_id', type: 'int', nullable: true })",
+      "database": "ALTER TABLE Goals MODIFY category_id INT NULL",
+      "nullable": true
+    },
+    "relationship": {
+      "target_table": "Categories",
+      "foreign_key_behavior": "Preserve the existing foreign key and relation; no cascade change."
+    },
+    "reason": "UC-14 UML defines Goal.categoryId as optional [0..1], and API-GOAL-CREATE defines category_id as optional and nullable so Saving goals can be created without a category.",
+    "migration": {
+      "required": true,
+      "approach": "Add one TypeORM migration that changes only Goals.category_id from NOT NULL to NULL while preserving its type and existing foreign key.",
+      "data_impact": "No existing values are rewritten or deleted; the change only permits future NULL values.",
+      "rollback": "Before restoring NOT NULL, verify no Goals rows contain category_id IS NULL. Rollback must stop if such rows exist unless the researcher separately approves a data remediation plan."
+    },
+    "out_of_scope": [
+      "No new table or column",
+      "No index, uniqueness, cascade, or foreign-key target change",
+      "No destructive data migration",
+      "No changes for goal tracking, contributions, or milestones"
+    ]
+  },
+  "assumptions": [
+    "The deployed Goals.category_id column currently follows the non-nullable TypeORM entity mapping; runtime schema will be verified through Docker after approval and implementation.",
+    "Existing non-null category references remain valid after the nullability change."
+  ],
+  "approval": {
+    "researcher_id": "kien",
+    "approved_at": "2026-09-03T10:55:58.6574857Z",
+    "scope": "Approve the proposed Goals.category_id nullability change for UC-14.",
+    "evidence": "The researcher re-invoked $gen-source-code after receiving the schema proposal and explicit approval request."
+  },
+  "repair_proposal": {
+    "status": "Approved",
+    "trigger": "Docker runtime observation after authorized sub-prompt repairs",
+    "fingerprint": "backend-startup-goals-table-missing-during-nullability-migration",
+    "change_type": "create-missing-table",
+    "table": "Goals",
+    "columns": [
+      "goal_id INT AUTO_INCREMENT PRIMARY KEY",
+      "user_id INT UNSIGNED NOT NULL",
+      "goal_type ENUM('Saving','Expense_Limit') NOT NULL",
+      "category_id INT UNSIGNED NULL",
+      "start_date DATE NOT NULL",
+      "end_date DATE NOT NULL",
+      "target_amount DECIMAL(15,2) NOT NULL"
+    ],
+    "relationships": [
+      "FOREIGN KEY user_id REFERENCES users(id)",
+      "FOREIGN KEY category_id REFERENCES categories(category_id)"
+    ],
+    "indexes": [
+      "INDEX on user_id and end_date for active-goal quota checks",
+      "INDEX on user_id, goal_type, category_id, start_date, and end_date for Saving-conflict and Expense-Limit overlap checks"
+    ],
+    "migration_approach": "Add an earlier idempotent TypeORM migration that creates Goals only when absent; retain the already-approved nullable-category migration for environments where Goals already exists.",
+    "data_impact": "No existing rows are rewritten or deleted. Existing environments that already contain Goals are left unchanged by the create-if-absent step.",
+    "rollback": "Drop Goals only when the migration itself created an empty table. Refuse rollback when rows exist; no automatic data deletion.",
+    "runtime_schema_resolution": {
+      "observed_at": "2026-09-03T12:10:37.202Z",
+      "evidence": "Read-only information_schema inspection confirmed users.id and categories.category_id are unsigned primary keys; the existing User entity maps userId to database column id.",
+      "decision": "Resolve the approved relationships against the actual primary-key column names and signedness without changing ownership or category semantics."
+    },
+    "approval": {
+      "researcher_id": "kien",
+      "approved_at": "2026-09-03T12:07:14.118Z",
+      "scope": "Approve the idempotent create-missing-Goals-table migration defined by this repair proposal.",
+      "evidence": "The researcher replied 'xác nhận' immediately after the explicit schema-approval request for repair 009."
+    }
+  }
+}

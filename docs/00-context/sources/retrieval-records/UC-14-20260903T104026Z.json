@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "source-retrieval-record",
+  "status": "Frozen",
+  "retrieval_id": "SRC-UC14-20260903T104026Z",
+  "retrieved_at": "2026-09-03T10:40:26.000Z",
+  "authorization": {
+    "actor": "researcher",
+    "decision": "confirmed",
+    "scope": "Refresh the frozen UC-14 projection and API-GOAL-CREATE contract to sanitize Business Rule leaks in functional specifications and upgrade BR-GOAL-04..11 with non-trivial domain rules."
+  },
+  "source": {
+    "type": "google-sheets",
+    "spreadsheet_id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "sheet": "Use cases",
+    "range": "A295:B313",
+    "retrieval_method": "connected-google-drive-get-spreadsheet-range"
+  },
+  "projection": {
+    "path": "docs/01-inception/use-cases/uc-14-create-financial-goal.md",
+    "previous_sha256": "sha256:79d5685c91f701675889c5171e686de7d18270ce186a749adbf80a267e7edc31",
+    "refreshed_sha256": "sha256:5745e236a1fbd9a12fb9ed0aad8011cc11877b26c33c6dac43ff487ff3ab097b",
+    "status": "Frozen"
+  },
+  "api_contract": {
+    "path": "docs/01-inception/api-contracts/API-GOAL-CREATE.md",
+    "previous_sha256": "sha256:a77165465ae6d77e61937434e615af72525baa6ee95baa98b794328961c9276df",
+    "refreshed_sha256": "sha256:d25cda0121d7654905844759e446ed4c1b148ec7630cfa1400bb2e09e183da87",
+    "status": "Frozen"
+  },
+  "sanitized_sections": [
+    "UC-14 Pre-Conditions (PRE-2)",
+    "UC-14 Post-Conditions (POST-1, POST-2)",
+    "UC-14 Basic Flow (Step 1..11)",
+    "UC-14 Alternative Flow (AF-1, AF-2, AF-3)",
+    "UC-14 Exception Flow (EF-1, EF-2, EF-3, EF-4)",
+    "UC-14 Notes",
+    "API-GOAL-CREATE Description",
+    "API-GOAL-CREATE Request Body validation rules (category_id, end_date, target_amount)",
+    "API-GOAL-CREATE Success Response triggers (HTTP 201)",
+    "API-GOAL-CREATE Error Response triggers and examples (HTTP 400, HTTP 500)"
+  ],
+  "verification": {
+    "spreadsheet_id_matches_project_context": true,
+    "sheet_and_range_match_projection_provenance": true,
+    "ordered_business_rule_ids": [
+      "BR-GOAL-04",
+      "BR-GOAL-05",
+      "BR-GOAL-06",
+      "BR-GOAL-07",
+      "BR-GOAL-08",
+      "BR-GOAL-09",
+      "BR-GOAL-10",
+      "BR-GOAL-11"
+    ],
+    "business_rule_text_changed": true,
+    "rule_count": 8,
+    "unresolved_items": []
+  }
+}

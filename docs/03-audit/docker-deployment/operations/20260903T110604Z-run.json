@@ -1,0 +1,18 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-09-03T11:06:04.8136788Z",
+  "mode": "run",
+  "source_revision": "sha256:43681c68624e8b11b00ddb953f634e220c433ac98b443c770a72326b0cea0175",
+  "commands": [
+    { "id": "compose-config", "exit_code": 0, "result": "Configuration validated without exposing environment values" },
+    { "id": "compose-up-build", "exit_code": 1, "result": "Backend and frontend images built; backend startup failed before frontend health dependency could start" },
+    { "id": "bounded-backend-logs", "exit_code": 0, "result": "Migration failed with ER_NO_SUCH_TABLE because the Goals table is absent" },
+    { "id": "compose-stop-failed-services", "exit_code": 0, "result": "Stopped backend restart loop and left the healthy database service running" }
+  ],
+  "status": "BLOCKED",
+  "error_excerpt": "MakeGoalsCategoryNullable migration cannot alter Goals.category_id because table Goals does not exist.",
+  "limitations": [
+    "Backend health, frontend reachability, authenticated creation, persistence, and normalized runtime responses could not be observed.",
+    "No credential, token, account identifier, category identifier, or financial payload was persisted in this record."
+  ]
+}

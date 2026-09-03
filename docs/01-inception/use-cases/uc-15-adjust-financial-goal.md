@@ -7,7 +7,7 @@ source_type: google-sheets
 source_spreadsheet_id: 1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM
 source_sheet: "Use cases"
 source_range: "A314:B331"
-retrieved_at: 2026-08-27T03:49:28.570Z
+retrieved_at: 2026-09-03T10:57:46.000Z
 ---
 
 # UC-15: Adjust a Financial Goal
@@ -43,44 +43,43 @@ The user selects Edit on a displayed Saving or Expense_Limit goal.
 ### Pre-Condition(s)
 
 PRE-1: The user is authenticated.
-PRE-2: The selected goal exists and belongs to the authenticated user.
+PRE-2: The financial goal adjustment interface is accessible.
 
 ### Post-Condition(s)
 
-POST-1: On success, only targetAmount is changed.
-POST-2: The modal closes, a success toast appears, and GoalsPage refreshes.
-POST-3: On failure, the previous target amount remains stored.
+POST-1: On success, the financial goal is updated, the modal closes, a success notification appears, and the goals list refreshes.
+POST-2: On failure, the goal remains unchanged and an appropriate error notification is displayed.
 
 ### Basic Flow
 
-1. The user selects Edit for a displayed goal.
-2. AdjustGoalModal opens with the current target amount.
-3. The user enters a new target amount and selects Save.
-4. The frontend requires a numeric amount greater than zero.
-5. The frontend sends PUT /api/v1/goals/:goalId with target_amount.
-6. ValidationPipe validates UpdateGoalDto.
-7. GoalService finds the goal, verifies that goal.userId equals the authenticated userId, and overwrites only targetAmount.
-8. The backend returns the goal ID and updated target amount.
-9. The frontend displays a success toast, closes the modal, and refreshes goals.
+1. The user selects Edit for a displayed goal on the Goals page.
+2. The modal opens displaying the current goal details.
+3. The user modifies the target amount and submits the form.
+4. The frontend performs preliminary validation on the entered target amount.
+5. The frontend sends the update request (PUT /api/v1/goals/:goalId) to the backend API.
+6. The backend authenticates the request and validates all update inputs according to established business rules.
+7. Upon successful validation, the backend updates the goal record.
+8. The backend returns a success response with the updated goal details.
+9. The frontend displays a success notification, closes the modal, and refreshes the goals list.
 
 ### Alternative Flow
 
-AF-1: Cancel
-3a. The user closes or cancels the modal and no update request is sent.
+AF-1: Form cancellation
+3a. The user closes or cancels the modal, and the frontend terminates the operation without submitting data.
 
 ### Exception Flow
 
-EF-1: Invalid target amount
-4a. The frontend displays an input error, or the backend returns HTTP 400.
+EF-1: Client-side validation failure
+4a. If preliminary validation fails, the modal displays field errors and halts submission.
 
-EF-2: Goal not found
-7a. The backend returns HTTP 404.
+EF-2: Unauthorized request
+6a. If user authentication is missing or expired, the backend rejects the request and the user is prompted to authenticate.
 
-EF-3: Goal belongs to another user
-7a. The backend returns HTTP 403.
+EF-3: Business validation or permission failure
+6b. If the update request violates business constraints or security rules, the backend rejects the request and the frontend displays the returned error notification.
 
-EF-4: Storage failure
-7a. The backend returns HTTP 500 and the modal displays its save failure message.
+EF-4: Server or persistence failure
+7a. If an unexpected error occurs during processing or storage, the backend returns an error and the frontend displays a failure notification.
 
 ### Related UI
 
@@ -92,7 +91,7 @@ API-GOAL-UPDATE
 
 ### Notes
 
-Not specified
+Scope clarification: This use case handles adjusting existing financial goals. Goal creation, deletion, and manual contribution entries are outside scope.
 
 ## UML Model
 
@@ -178,7 +177,7 @@ UpdatedGoalDto ..> Goal : maps from
 The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
 
 ~~~text
-BR-GOAL-12: Positive updated target amount
+BR-GOAL-12: Target amount domain thresholds, currency rounding, and non-identical value requirement
 
 context GoalService::updateGoal(
   userId : Integer,
@@ -189,11 +188,27 @@ context GoalService::updateGoal(
 pre BR_GOAL_12_TargetDefined:
   not dto.target_amount.oclIsUndefined()
 
-pre BR_GOAL_12_TargetPositive:
-  dto.target_amount > 0
+pre BR_GOAL_12_TargetRange:
+  dto.target_amount >= 100000 and
+  dto.target_amount <= 1000000000
+
+pre BR_GOAL_12_CurrencyRoundingStep:
+  dto.target_amount.mod(10000) = 0
+
+pre BR_GOAL_12_TargetAmountChanged:
+  Goal.allInstances()->exists(g |
+    g.goalId = goalId and
+    g.targetAmount <> dto.target_amount
+  )
+
+Technical constraints:
+- target_amount shall be at least 100,000 VND and at most 1,000,000,000 VND.
+- target_amount shall be an exact multiple of 10,000 VND.
+- The new target_amount shall be different from the currently stored targetAmount of the goal.
+- Any amount violating these thresholds or matching the current target amount shall result in HTTP 400 Bad Request.
 
 
-BR-GOAL-13: Existing goal required
+BR-GOAL-13: Existing goal and active period requirement
 
 context GoalService::updateGoal(
   userId : Integer,
@@ -206,8 +221,15 @@ pre BR_GOAL_13_GoalExists:
     g.goalId = goalId
   )
 
-Technical constraint:
-- If no Goal exists with goalId, the backend shall return HTTP 404 Not Found with message "Goal does not exist."
+pre BR_GOAL_13_GoalIsActive:
+  Goal.allInstances()->exists(g |
+    g.goalId = goalId and
+    g.endDate >= currentDate()
+  )
+
+Technical constraints:
+- If no Goal exists with goalId, the backend shall return HTTP 404 Not Found with message "Mục tiêu không tồn tại."
+- If the goal exists but has already expired (endDate < currentDate()), the backend shall return HTTP 400 Bad Request with message "Không thể điều chỉnh mục tiêu tài chính đã kết thúc."
 
 
 BR-GOAL-14: Authenticated goal ownership
@@ -225,11 +247,11 @@ pre BR_GOAL_14_OwnedByAuthenticatedUser:
   )
 
 Technical constraints:
-- userId shall be obtained from the validated JWT.
-- If the goal belongs to another user, the backend shall return HTTP 403 Forbidden with message "You do not have permission to edit this goal."
+- userId shall be obtained from the validated JWT access token.
+- If the goal belongs to another user, the backend shall return HTTP 403 Forbidden with message "Bạn không có quyền chỉnh sửa mục tiêu này."
 
 
-BR-GOAL-15: Target-only goal update
+BR-GOAL-15: Target-only goal update and structural field immutability
 
 context GoalService::updateGoal(
   userId : Integer,
@@ -264,6 +286,10 @@ post BR_GOAL_15_OnlyTargetAmountChanged:
       implies updated.categoryId = original.categoryId
     )
 
+Technical constraints:
+- Only targetAmount shall be updated; all other fields (userId, goalType, startDate, endDate, categoryId) must remain strictly unchanged.
+- The update operation shall not create or delete any Goal records.
+
 
 BR-GOAL-16: Successful update response
 
@@ -283,15 +309,8 @@ post BR_GOAL_16_Response:
     g.targetAmount = dto.target_amount
   )
 
-
-BR-GOAL-17: Update failure handling
-
 Technical constraints:
-- An invalid or non-positive target_amount shall result in HTTP 400 Bad Request.
-- A failed or rejected update shall not persist a changed targetAmount.
-- If the goal does not exist, the backend shall return HTTP 404 Not Found.
-- If the goal belongs to another user, the backend shall return HTTP 403 Forbidden.
-- An unexpected repository/database failure while saving shall result in HTTP 500 Internal Server Error with message "Unable to save changes at this time. Please try again later."
-- The controller parses goalId with parseInt(goalId, 10) and does not explicitly reject NaN before calling the service.
-~~~
+- On successful update, the backend shall return HTTP 200 OK with success envelope containing message="Goal updated successfully" and updated_goal payload containing goal_id and target_amount.
+
+
 

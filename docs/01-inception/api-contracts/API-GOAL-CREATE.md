@@ -31,7 +31,7 @@ POST
 
 ### Description
 
-Create a saving or expense-limit goal for the authenticated user.
+Create a new financial goal record for the authenticated user.
 
 ### Authentication
 
@@ -77,10 +77,10 @@ Example: Saving
 
 ### category_id
 
-Type: integer; Required: Conditional; Nullable: Yes
-Validation: Required and must reference an existing category when goal_type is Expense_Limit.
+Type: integer; Required: No; Nullable: Yes
+Validation: When supplied, must be an integer category identifier.
 Trigger: Goal creation request.
-Description: Category for an expense-limit goal.
+Description: Identifier of the category associated with the goal.
 Example: 3
 
 
@@ -96,7 +96,7 @@ Example: 2025-11-01
 ### end_date
 
 Type: string; Format: YYYY-MM-DD; Required: Yes; Nullable: No
-Validation: Must be a valid date later than start_date.
+Validation: Must be a valid date string formatted as YYYY-MM-DD.
 Trigger: Goal creation request.
 Description: Goal end date.
 Example: 2025-11-30
@@ -105,9 +105,9 @@ Example: 2025-11-30
 ### target_amount
 
 Type: number; Format: decimal; Required: Yes; Nullable: No
-Validation: Must be greater than 0.
+Validation: Must be a valid positive number.
 Trigger: Goal creation request.
-Description: Target amount.
+Description: Target monetary amount for the financial goal.
 Example: 10000000
 
 ## Success Response — HTTP 201
@@ -115,7 +115,7 @@ Example: 10000000
 ### message
 
 Type: string; Required: Yes; Nullable: No
-Trigger: The goal is stored.
+Trigger: The goal is successfully created.
 Description: Creation success message.
 Example: Goal created successfully
 
@@ -123,7 +123,7 @@ Example: Goal created successfully
 ### goal_id
 
 Type: integer; Required: Yes; Nullable: No
-Trigger: The goal is stored.
+Trigger: The goal is successfully created.
 Description: Created goal identifier.
 Example: 5
 
@@ -132,9 +132,9 @@ Example: 5
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: Input validation fails, end_date is not after start_date, or an expense-limit category is missing or invalid.
+Trigger: Request body fields fail validation or violate business constraints.
 Description: Error description returned by the global HTTP exception filter.
-Example: target_amount phải lớn hơn 0.
+Example: Invalid or missing goal data
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 401
@@ -152,7 +152,7 @@ Note: The error envelope also contains success=false and may contain an error fi
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: The goal cannot be stored.
+Trigger: An unexpected server error occurs during processing.
 Description: Error description returned by the global HTTP exception filter.
-Example: Không thể tạo mục tiêu lúc này. Vui lòng thử lại sau.
+Example: Đã xảy ra lỗi hệ thống khi tạo mục tiêu. Vui lòng thử lại sau.
 Note: The error envelope also contains success=false and may contain an error field.

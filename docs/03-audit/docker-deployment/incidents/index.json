@@ -54,6 +54,18 @@
       "fingerprint": "frontend-runtime-api-base-url-unbound-port",
       "path": "docs/03-audit/docker-deployment/incidents/frontend-runtime-api-base-url-unbound-port.json",
       "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260903-001",
+      "fingerprint": "backend-startup-goals-table-missing-during-nullability-migration",
+      "path": "docs/03-audit/docker-deployment/incidents/backend-startup-goals-table-missing-during-nullability-migration.json",
+      "outcome": "blocked"
+    },
+    {
+      "incident_id": "DEP-20260903-002",
+      "fingerprint": "frontend-build-typescript-goal-design-card-union-narrowing",
+      "path": "docs/03-audit/docker-deployment/incidents/frontend-build-typescript-goal-design-card-union-narrowing.json",
+      "outcome": "resolved"
     }
   ]
 }

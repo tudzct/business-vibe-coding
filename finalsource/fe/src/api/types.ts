@@ -108,10 +108,56 @@ export interface Goal {
   goal_id: number
   user_id: number
   goal_type: 'Saving' | 'Expense_Limit'
-  category_id: number
+  category_id: number | null
   start_date: string
   end_date: string
   target_amount: number
   target_achieved: boolean
   last_updated: string
+}
+
+export interface CreateGoalRequest {
+  goal_type: 'Saving' | 'Expense_Limit'
+  category_id?: number
+  start_date: string
+  end_date: string
+  target_amount: number
+}
+
+export interface CreateGoalResult {
+  goal_id: number
+}
+
+export interface UpdateGoalRequest {
+  target_amount: number
+}
+
+export interface UpdatedGoal {
+  goal_id: number
+  target_amount: number
+}
+
+export interface UpdateGoalResult {
+  updated_goal: UpdatedGoal
+}
+
+export interface SavingGoalListItem {
+  goal_id: number
+  goal_type: 'Saving'
+  target_amount: number
+  target_achieved: number
+  start_date: string
+  end_date: string
+}
+
+export interface ExpenseGoalListItem {
+  goal_id: number
+  category: string
+  target_amount: number
+  current_expense: number
+}
+
+export interface GoalListResult {
+  savingGoal: SavingGoalListItem | null
+  expenseGoals: ExpenseGoalListItem[]
 }

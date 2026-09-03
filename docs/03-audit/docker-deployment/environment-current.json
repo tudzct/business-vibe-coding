@@ -1,8 +1,8 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-09-02T18:00:13Z",
-  "repository_revision": "399001997a1feb03bdd0a77390d4078ce9bdc2ea",
-  "source_revision": "sha256:28693b164bc42c1d84c04ff32e87ab8a9be96933cd8d9906f9233393eefb609e",
+  "observed_at": "2026-09-03T13:38:53.2590816Z",
+  "repository_revision": "85473a73626e3d41aaf33801cfed8c6158d384c8",
+  "source_revision": "sha256:d28db3ad68b644ed0f1adb5865bec1eb179b3f23532e67b96aa464e52ffa8015",
   "docker": {
     "cli": "Docker 29.2.1",
     "compose": "Docker Compose v5.0.2",
@@ -15,11 +15,11 @@
     "compose_valid": true
   },
   "services": {
-    "database": "healthy",
-    "backend": "current UC-04 image rebuilt and healthy; bounded invalid-date, Cash-limit, and insufficient-balance observations returned HTTP 400",
-    "frontend": "current UC-04 image rebuilt, healthy, and reachable with HTTP 200"
+    "database": "healthy container",
+    "backend": "healthy current-source container; health endpoint returned HTTP 200",
+    "frontend": "healthy current-source container; root returned HTTP 200"
   },
   "status": "READY",
   "blocking_incident": null,
-  "next_action": "Keep Docker Desktop running for any additional researcher-authorized observations."
+  "next_action": "Researcher may verify the Edit action in an authenticated browser session with an existing goal."
 }

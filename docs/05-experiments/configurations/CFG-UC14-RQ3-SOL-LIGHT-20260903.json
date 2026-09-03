@@ -1,0 +1,44 @@
+{
+  "schema_version": "2.0",
+  "artifact_type": "experiment-configuration",
+  "status": "Confirmed",
+  "configuration_id": "CFG-UC14-RQ3-SOL-LIGHT-20260903",
+  "comparison_group_id": "CG-UC14-RQ3-SOL-LIGHT-20260903",
+  "researcher_id": "kien",
+  "decided_at": "2026-09-03T10:51:57.1599661Z",
+  "sheet_revision": "Use cases!A295:B313@sha256:5745e236a1fbd9a12fb9ed0aad8011cc11877b26c33c6dac43ff487ff3ab097b",
+  "audit_design": {
+    "protocol": "matched",
+    "fixed_auditor": null
+  },
+  "use_cases": [
+    {
+      "uc_id": "UC-14",
+      "ordered_br_ids": [
+        "BR-GOAL-04",
+        "BR-GOAL-05",
+        "BR-GOAL-06",
+        "BR-GOAL-07",
+        "BR-GOAL-08",
+        "BR-GOAL-09",
+        "BR-GOAL-10",
+        "BR-GOAL-11"
+      ],
+      "business_rule_baseline": "docs/02-construction/implementation/UC-14/business-rule-baseline.json"
+    }
+  ],
+  "runs": [
+    {
+      "run_id": "UC14-RQ3-SOL-LIGHT-R1",
+      "uc_id": "UC-14",
+      "prompt_variant": "rq3",
+      "requested_label": "Sol Light",
+      "requested_model_id": "gpt-5.6-sol",
+      "requested_reasoning_effort": "low",
+      "requested_reasoning_mode": "standard",
+      "replicate_index": 1,
+      "run_order": 1,
+      "auditor_assignment": "same-as-generation"
+    }
+  ]
+}

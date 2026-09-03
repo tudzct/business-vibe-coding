@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-14",
+  "use_case_path": "docs/01-inception/use-cases/uc-14-create-financial-goal.md",
+  "use_case_sha256": "sha256:5745e236a1fbd9a12fb9ed0aad8011cc11877b26c33c6dac43ff487ff3ab097b",
+  "business_rule_resource_path": "docs/02-construction/business-rules/UC-14-business-rules.json",
+  "business_rule_resource_sha256": "sha256:bb23d883ee6b6ef14da0165772f7989675de898a2d28a4a1ca029459dd328167",
+  "spreadsheet_source": "Use cases!A295:B313",
+  "ordered_br_ids": [
+    "BR-GOAL-04",
+    "BR-GOAL-05",
+    "BR-GOAL-06",
+    "BR-GOAL-07",
+    "BR-GOAL-08",
+    "BR-GOAL-09",
+    "BR-GOAL-10",
+    "BR-GOAL-11"
+  ],
+  "frozen_at": "2026-09-03T10:40:26.000Z"
+}
