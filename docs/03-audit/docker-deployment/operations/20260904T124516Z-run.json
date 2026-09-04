@@ -1,0 +1,17 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-09-04T12:45:16.623Z",
+  "mode": "run",
+  "uc_id": "UC-06",
+  "run_id": "UC06-SOL-MEDIUM-R1",
+  "source_revision": "sha256:1d002fd40957b533fe94b3caf0f722a8ca2583f593697a474d49731a78009e68",
+  "commands": [
+    { "id": "docker-version", "exit_code": 1 },
+    { "id": "docker-compose-version", "exit_code": 1 },
+    { "id": "docker-info", "exit_code": 1 },
+    { "id": "env-presence-ignore-track-review", "exit_code": 0 }
+  ],
+  "status": "BLOCKED",
+  "error_excerpt": "The docker command is not recognized in the task execution environment.",
+  "sensitive_values_recorded": false
+}

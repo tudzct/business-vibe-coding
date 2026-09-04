@@ -1,7 +1,7 @@
 ---
 artifact_type: business-coding-prompt
 prompt_variant: full-a-f
-status: Draft
+status: Approved
 uc_id: UC-06
 uc_name: Add a Bank Account
 source_use_case: docs/01-inception/use-cases/uc-06-add-bank-account.md

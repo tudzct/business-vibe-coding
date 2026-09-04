@@ -54,6 +54,12 @@
       "fingerprint": "frontend-runtime-api-base-url-unbound-port",
       "path": "docs/03-audit/docker-deployment/incidents/frontend-runtime-api-base-url-unbound-port.json",
       "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260904-001",
+      "fingerprint": "docker-cli-compose-unavailable-in-task-environment",
+      "path": "docs/03-audit/docker-deployment/incidents/docker-cli-compose-unavailable-in-task-environment.json",
+      "outcome": "blocked"
     }
   ]
 }

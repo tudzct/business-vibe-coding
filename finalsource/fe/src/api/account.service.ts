@@ -1,5 +1,5 @@
 import axiosInstance from './axiosInstance'
-import { ApiResponse, Account, AccountListData } from './types'
+import { ApiResponse, Account, AccountListData, CreateAccountData, CreateAccountPayload } from './types'
 
 export const accountService = {
   // Lấy danh sách tài khoản của user
@@ -15,8 +15,8 @@ export const accountService = {
   },
 
   // Tạo tài khoản mới
-  createAccount: async (data: Omit<Account, 'account_id'>): Promise<ApiResponse<Account>> => {
-    const response = await axiosInstance.post('/accounts', data)
+  createAccount: async (data: CreateAccountPayload): Promise<ApiResponse<CreateAccountData>> => {
+    const response = await axiosInstance.post<ApiResponse<CreateAccountData>>('/v1/accounts', data)
     return response.data
   },
 

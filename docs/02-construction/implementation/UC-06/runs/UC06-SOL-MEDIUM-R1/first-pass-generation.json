@@ -1,0 +1,44 @@
+{
+  "artifact_type": "first-pass-generation",
+  "status": "Frozen",
+  "uc_id": "UC-06",
+  "run_id": "UC06-SOL-MEDIUM-R1",
+  "prompt_variant": "full",
+  "source_prompt": "docs/02-construction/coding-prompts/UC-06-business-coding-prompt.md",
+  "source_prompt_sha256": "sha256:1dc3630459321593cff79c9202b6343ba128ca0b217e78b4741bb10289f25b1a",
+  "run_activation": "docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/run-activation.json",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "effective_model_unavailable_reason": "The active desktop tool context does not expose an authoritative effective model or snapshot identifier.",
+    "codex_client_version": "codex-cli 0.153.0"
+  },
+  "timing_wall_clock": {
+    "started_at": "2026-09-04T19:36:01.802+07:00",
+    "started_epoch_ms": 1788525361802,
+    "ended_at": "2026-09-04T19:39:16.331+07:00",
+    "ended_epoch_ms": 1788525556332,
+    "duration_seconds": 194.53
+  },
+  "tokens": {
+    "initial_total": 5028317,
+    "telemetry_source": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\04\\rollout-2026-09-04T19-31-15-01a06c66-dc35-7ee0-a40b-dc5667ce86bf.jsonl",
+    "turn_id": 1,
+    "input": 150091,
+    "cache_read": 4843904,
+    "total_input": 4993995,
+    "output": 34322,
+    "reasoning": 4621,
+    "cost_usd": 4.2021,
+    "limitation": "The runner exposes telemetry at turn granularity; first-pass generation and bounded repairs occurred in the same active turn, so repair-specific token totals cannot be separated authoritatively."
+  },
+  "source_revision": {
+    "sha256": "sha256:146ba2e5b284962cc06cbadd8d56895d3045ba20f9c8e8aaa27d13d2350ec652",
+    "file_count": 95,
+    "method": "SHA-256 over sorted relative path, NUL, per-file SHA-256 and newline entries; node_modules, dist and .env files excluded."
+  },
+  "repairs_applied": 0
+}

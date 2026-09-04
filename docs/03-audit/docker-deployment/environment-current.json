@@ -1,8 +1,8 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-09-02T11:50:09Z",
-  "repository_revision": "123ac73d113997a1201522f2d492ac488a2218a3",
-  "source_revision": "sha256:be1e7ae2ece811f4110925fae26d74451d296851a667c9118cf82af7a70cbd2e",
+  "observed_at": "2026-09-04T12:45:16.623Z",
+  "repository_revision": "c8e437540b7bc905dfcc0d6fa9002d2a8c2a2a50",
+  "source_revision": "sha256:1d002fd40957b533fe94b3caf0f722a8ca2583f593697a474d49731a78009e68",
   "docker": {
     "cli": null,
     "compose": null,
@@ -16,10 +16,10 @@
   },
   "services": {
     "database": "not observed from the current execution environment",
-    "backend": "current UC-05 image could not be rebuilt or observed",
-    "frontend": "current UC-05 image could not be rebuilt or observed"
+    "backend": "current UC-06 image could not be rebuilt or observed",
+    "frontend": "current UC-06 image could not be rebuilt or observed"
   },
   "status": "BLOCKED",
-  "blocking_incident": "Docker CLI and Compose v2 are not callable or present at the standard Docker Desktop binary path in the current execution environment.",
-  "next_action": "Expose Docker Desktop's docker.exe to this task environment, then rebuild with docker compose --env-file finalsource/.env -f finalsource/compose.yaml up -d --build and repeat bounded UC-05 observations."
+  "blocking_incident": "DEP-20260904-001: Docker CLI, Compose v2 and daemon are not callable from the current execution environment.",
+  "next_action": "Expose Docker Desktop's docker.exe and Linux engine to this task environment, then rebuild with docker compose --env-file finalsource/.env -f finalsource/compose.yaml up --build -d and repeat bounded UC-06 observations."
 }

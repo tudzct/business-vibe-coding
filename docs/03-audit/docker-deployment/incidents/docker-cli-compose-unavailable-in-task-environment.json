@@ -1,0 +1,23 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260904-001",
+  "observed_at": "2026-09-04T12:45:16.623Z",
+  "layer": "host-docker",
+  "fingerprint": "docker-cli-compose-unavailable-in-task-environment",
+  "symptom": "Docker CLI, Compose v2 and daemon checks cannot be invoked, so current UC-06 images cannot be rebuilt or observed.",
+  "evidence": "PowerShell reports that the docker command is not recognized; the ignored and untracked finalsource/.env exists.",
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "The Docker executable is not exposed to this task environment."
+  },
+  "actions": [
+    "Checked Docker CLI, Compose v2 and daemon availability.",
+    "Verified only the presence, ignore status and untracked status of finalsource/.env without reading values.",
+    "Stopped before Compose build because the mandatory runtime is unavailable."
+  ],
+  "files_changed": [],
+  "commands_rerun": ["docker-version", "docker-compose-version", "docker-info"],
+  "outcome": "blocked",
+  "reusable_resolution": "Expose Docker Desktop's docker.exe and a running Linux engine to the Codex task, then rerun the root Compose command.",
+  "prevention": "Verify Docker CLI and daemon availability before the runtime stage of each research run."
+}
