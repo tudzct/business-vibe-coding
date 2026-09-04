@@ -1,6 +1,6 @@
 {
   "run_id": "UC06-SOL-MEDIUM-R1",
-  "run_status": "repair_required",
+  "run_status": "blocked",
   "hold_gate": "satisfied",
   "experiment_configuration": {
     "configuration_id": "CFG-UC06-GPT56SOL-MEDIUM-R1-20260903",
@@ -38,13 +38,13 @@
   },
   "timing_seconds": {
     "initial": 177.311,
-    "repairs": 357.425,
-    "total": 534.736
+    "repairs": 654.775,
+    "total": 832.086
   },
   "tokens": {
     "initial_total": 1790315,
-    "repair_total": 10464558,
-    "total": 12254873,
+    "repair_total": 14512414,
+    "total": 16302729,
     "telemetry_source": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\03\\rollout-2026-09-03T20-23-55-01a06770-b8f6-7891-baa9-aa806f7894db.jsonl",
     "details": {
       "initial": {
@@ -58,9 +58,9 @@
         "duration_seconds": 543.771
       },
       "repairs": {
-        "count": 7,
-        "total_tokens": 10464558,
-        "cost_usd": 6.7531
+        "count": 9,
+        "total_tokens": 14512414,
+        "cost_usd": 9.6744
       }
     }
   },
@@ -95,7 +95,12 @@
     "repair_006_frontend_build": "PASS: tsc -b and vite build completed",
     "repair_007_targeted_lint": "PASS: account.service.ts and AddAccountForm.tsx ESLint completed with zero warnings",
     "repair_007_backend_build": "PASS: nest build completed",
-    "repair_007_frontend_build": "PASS: tsc -b and vite build completed"
+    "repair_007_frontend_build": "PASS: tsc -b and vite build completed",
+    "repair_008_targeted_backend_lint": "PASS: account.service.ts ESLint completed with zero warnings",
+    "repair_008_backend_build": "PASS: nest build completed",
+    "repair_009_targeted_backend_lint": "PASS: account entity, account service and owner/account-number uniqueness migration ESLint completed with zero warnings",
+    "repair_009_backend_build": "PASS: nest build completed",
+    "repair_009_migration_runtime": "not_evaluable: Docker Compose runtime remains inaccessible, so the approved migration was not executed"
   },
   "first_pass_defects": [
     {
@@ -116,7 +121,7 @@
   ],
   "business_rules": {
     "baseline": "docs/02-construction/implementation/UC-06/business-rule-baseline.json",
-    "source_revision": "sha256:4c4d7bdeb8417515e5dbd85c2ec4deb689e5c2058b218489c0143077ca74694c",
+    "source_revision": "sha256:86782777bd1b825cf388f734a2f458532338469420a3b23408155ccbc358760f",
     "ordered_br_ids": [
       "BR-ACC-07",
       "BR-ACC-08",
@@ -270,11 +275,17 @@
         },
         {
           "br_id": "BR-ACC-10",
-          "status": "unmet",
+          "status": "met",
           "evidence": [
-            "Same as the immutable initial assessment; no repair has been authorized."
+            "finalsource/be/src/modules/account/account.service.ts:102 and :148-169 perform an authenticated-owner-scoped lookup and return the established safe HTTP 409 conflict when the number already exists",
+            "finalsource/be/src/modules/account/account.entity.ts:21-27 declares the approved unique index over userId and accountNumberFull",
+            "finalsource/be/src/database/migrations/1788495106545-add-accounts-owner-account-number-unique.ts:9-39 blocks on existing duplicate groups and creates the unique database index over user_id and account_number_full",
+            "finalsource/be/src/modules/account/account.service.ts:126-145 retains duplicate-key-to-HTTP-409 mapping for concurrent insert races",
+            "Targeted ESLint passed with zero warnings for the account entity, service and migration",
+            "Backend production build passed",
+            "Repair record: docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/repairs/009-br-acc-10-owner-account-uniqueness.md"
           ],
-          "rationale": "No repair has been applied."
+          "rationale": "The normal path rejects an existing full account number for the authenticated owner, and the approved database constraint closes the concurrent-request race while allowing the same number for different owners."
         },
         {
           "br_id": "BR-ACC-11",
@@ -330,18 +341,22 @@
         },
         {
           "br_id": "BR-ACC-16",
-          "status": "unmet",
+          "status": "met",
           "evidence": [
-            "Same as the immutable initial assessment; no repair has been authorized."
+            "finalsource/be/src/modules/account/account.service.ts:93-101 invokes the capacity lookup only for Investment and rejects totals below 100000",
+            "finalsource/be/src/modules/account/account.service.ts:146-164 scopes the aggregate by authenticated userId and Checking/Savings types, then safely handles invalid aggregates or storage failures",
+            "Targeted account-service ESLint passed with zero warnings",
+            "Backend production build passed",
+            "Repair record: docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/repairs/008-br-acc-16-investment-capacity.md"
           ],
-          "rationale": "No repair has been applied."
+          "rationale": "Investment creation is now blocked unless the authenticated owner's existing Checking and Savings balances total at least 100,000."
         }
       ],
       "total": 10,
-      "unmet": 2,
+      "unmet": 0,
       "not_evaluable": 0,
-      "met": 8,
-      "acceptance_percent": 80.0
+      "met": 10,
+      "acceptance_percent": 100.0
     }
   },
   "repairs": [
@@ -635,11 +650,11 @@
         "duration_seconds": 51.513
       },
       "tokens": {
-        "total": 1425833,
-        "input": 12217,
-        "cache_read": 1409408,
-        "output": 4208,
-        "cost_usd": 0.892
+        "total": 1843929,
+        "input": 16613,
+        "cache_read": 1822464,
+        "output": 4852,
+        "cost_usd": 1.1399
       },
       "changed_files": [
         "finalsource/be/src/modules/account/account.service.ts",
@@ -652,6 +667,98 @@
         "Source inspection confirms the type-specific and general balance floors."
       ],
       "result": "BR-ACC-15 reassessed from unmet to met without changing the immutable initial assessment."
+    },
+    {
+      "repair_id": "UC06-SOL-MEDIUM-R1-REPAIR-008",
+      "repair_index": 8,
+      "sub_prompt": "docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/repairs/008-br-acc-16-investment-capacity.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-acc-16-investment-capacity-query-missing",
+      "affected_br_ids": [
+        "BR-ACC-16"
+      ],
+      "source_revision_before": "sha256:4c4d7bdeb8417515e5dbd85c2ec4deb689e5c2058b218489c0143077ca74694c",
+      "source_revision_after": "sha256:825acac014118ff8f5d6559724261967927143a952d823d6b7b199e1c761bd79",
+      "status": "complete",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "effective_model_id": null,
+        "effective_snapshot": null,
+        "effective_model_unavailable_reason": "The active desktop tool context does not expose an authoritative effective model or snapshot identifier."
+      },
+      "timing": {
+        "started_at": "2026-09-03T21:48:34.1269131+07:00",
+        "started_epoch_ms": 1788446914130,
+        "ended_at": "2026-09-03T21:49:29.8193518+07:00",
+        "ended_epoch_ms": 1788446969819,
+        "duration_seconds": 55.689
+      },
+      "tokens": {
+        "total": 1978788,
+        "input": 16681,
+        "cache_read": 1956608,
+        "output": 5499,
+        "cost_usd": 1.2267
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/account/account.service.ts"
+      ],
+      "verification": [
+        "Targeted account.service.ts ESLint passed with zero warnings.",
+        "Backend TypeScript/Nest production build passed.",
+        "Source inspection confirms the owner-scoped type-filtered aggregate, threshold rejection, and safe lookup failure path."
+      ],
+      "result": "BR-ACC-16 reassessed from unmet to met without changing the immutable initial assessment."
+    },
+    {
+      "repair_id": "UC06-SOL-MEDIUM-R1-REPAIR-009",
+      "repair_index": 9,
+      "sub_prompt": "docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/repairs/009-br-acc-10-owner-account-uniqueness.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-acc-10-owner-account-number-uniqueness",
+      "affected_br_ids": [
+        "BR-ACC-10"
+      ],
+      "source_revision_before": "sha256:825acac014118ff8f5d6559724261967927143a952d823d6b7b199e1c761bd79",
+      "source_revision_after": "sha256:86782777bd1b825cf388f734a2f458532338469420a3b23408155ccbc358760f",
+      "status": "complete",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "effective_model_id": null,
+        "effective_snapshot": null,
+        "effective_model_unavailable_reason": "The active desktop tool context does not expose an authoritative effective model or snapshot identifier."
+      },
+      "timing": {
+        "started_at": "2026-09-04T11:11:46.5454784+07:00",
+        "started_epoch_ms": 1788495106545,
+        "ended_at": "2026-09-04T11:15:48.2061611+07:00",
+        "ended_epoch_ms": 1788495348206,
+        "duration_seconds": 241.661
+      },
+      "tokens": {
+        "total": 1650972,
+        "input": 66864,
+        "cache_read": 1573248,
+        "output": 10860,
+        "cost_usd": 1.4467
+      },
+      "changed_files": [
+        "docs/02-construction/implementation/UC-06/schema.json",
+        "finalsource/be/src/modules/account/account.entity.ts",
+        "finalsource/be/src/modules/account/account.service.ts",
+        "finalsource/be/src/database/migrations/1788495106545-add-accounts-owner-account-number-unique.ts"
+      ],
+      "verification": [
+        "Targeted ESLint passed for the account entity, account service and migration with zero warnings.",
+        "Backend TypeScript/Nest production build passed.",
+        "Source inspection confirms owner-scoped precheck enforcement, database-backed concurrency enforcement, safe HTTP 409 mapping, and non-destructive duplicate preflight behavior.",
+        "Migration runtime observation remains unavailable because Docker Compose is inaccessible."
+      ],
+      "result": "BR-ACC-10 reassessed from unmet to met without changing the immutable initial assessment."
     }
   ],
   "manual_estimates_minutes": [],
@@ -675,5 +782,5 @@
     "business_rules": 10,
     "ui_states": 5
   },
-  "all_sub_prompt_count": 7
+  "all_sub_prompt_count": 9
 }

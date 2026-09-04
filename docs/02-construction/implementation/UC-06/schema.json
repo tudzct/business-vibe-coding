@@ -1,0 +1,109 @@
+{
+  "artifact_type": "database-schema",
+  "uc_id": "UC-06",
+  "status": "Approved",
+  "source_use_case": "docs/01-inception/use-cases/uc-06-add-bank-account.md",
+  "source_prompt": "docs/02-construction/coding-prompts/UC-06-rq3-coding-prompt.md",
+  "active_run": "docs/02-construction/implementation/UC-06/runs/UC06-SOL-MEDIUM-R1/run-activation.json",
+  "created_at": "2026-09-04T11:07:41.6181998+07:00",
+  "contract": {
+    "evidence_and_scope": {
+      "uc_and_api": [
+        "UC-06 Add Bank Account",
+        "POST /api/accounts"
+      ],
+      "source_fields_and_business_rules": [
+        "authenticated owner identity (user_id)",
+        "account_number_full",
+        "BR-ACC-10: account number must be unique per owner"
+      ],
+      "existing_entities_and_migrations_inspected": [
+        "finalsource/be/src/modules/account/account.entity.ts",
+        "finalsource/be/src/modules/account/account.service.ts",
+        "finalsource/be/src/config/database.config.ts",
+        "finalsource/be/src/database/migrations (no existing migration files)"
+      ],
+      "change_required": "Add a database-enforced composite unique constraint for Accounts(user_id, account_number_full), expose the same constraint in TypeORM entity metadata, and add an owner-scoped service precheck for a clear conflict response. The database constraint remains authoritative for concurrent requests.",
+      "out_of_scope": [
+        "No public request or success-response changes",
+        "No account-number normalization or case-folding rule",
+        "No global uniqueness across different owners",
+        "No ownership, relationship, cascade, retention, or deletion changes",
+        "No automatic deletion, merge, or rewriting of existing duplicate rows",
+        "No changes to other Business Rules"
+      ]
+    },
+    "columns": [
+      {
+        "typescript_entity_property": "Account.userId + Account.accountNumberFull",
+        "table": "Accounts",
+        "columns": [
+          "user_id",
+          "account_number_full"
+        ],
+        "mysql_types": [
+          "INT",
+          "VARCHAR(255)"
+        ],
+        "nullability": "Both columns remain NOT NULL",
+        "default": null,
+        "constraint_and_index": "Composite unique constraint uq_accounts_user_id_account_number_full on (user_id, account_number_full)",
+        "source_rationale": "BR-ACC-10 permits the same account number for different owners but forbids duplicate account numbers belonging to one owner. A database constraint is required for race-safe enforcement."
+      }
+    ],
+    "relationships_and_ownership": {
+      "changes": [],
+      "statement": "Ownership remains derived from the authenticated user and persisted as Accounts.user_id. The service precheck and database constraint use user_id together with account_number_full; no client-provided owner ID is accepted as authorization."
+    },
+    "sensitive_data_and_exposure": {
+      "storage_protection": "The full account number remains stored under the existing schema contract; this proposal does not introduce encryption or masking-at-rest behavior absent from the frozen UC.",
+      "default_selection": "account_number_full remains excluded from account list and create response allowlists.",
+      "api_response_allowlist": [
+        "id",
+        "user_id",
+        "bank_name",
+        "account_type",
+        "branch_name",
+        "account_number_last_4",
+        "balance"
+      ],
+      "retention_or_deletion": "Unchanged.",
+      "logging_and_export": "Do not log or export account_number_full. Duplicate conflict responses must not disclose the full number."
+    },
+    "migration_plan": {
+      "name": "1788495106545-add-accounts-owner-account-number-unique.ts",
+      "preflight": [
+        "Query Accounts grouped by user_id and account_number_full and stop if any count is greater than one.",
+        "Report duplicate owner/number groups without exposing full account numbers in application logs or repair artifacts.",
+        "Require a separate researcher data-resolution decision if duplicates exist; do not delete, merge, or rewrite rows automatically."
+      ],
+      "forward_operations": [
+        "Run the duplicate preflight and fail without mutation when duplicate groups exist.",
+        "Create composite unique constraint uq_accounts_user_id_account_number_full on Accounts(user_id, account_number_full)."
+      ],
+      "entity_mapping": "Add @Index('uq_accounts_user_id_account_number_full', ['userId', 'accountNumberFull'], { unique: true }) to Account.",
+      "service_behavior": [
+        "Before save, perform an owner-scoped lookup using userId and accountNumberFull and return the established safe HTTP 409 conflict when found.",
+        "Retain ER_DUP_ENTRY-to-HTTP-409 mapping so a concurrent insert rejected by the database produces the same safe conflict behavior."
+      ],
+      "rollback_operations": [
+        "Drop only the named uq_accounts_user_id_account_number_full constraint/index."
+      ],
+      "data_loss_risk": "Forward and rollback operations do not delete or rewrite account data. Forward migration is deliberately blocked by existing duplicates until the researcher approves a separate data-resolution action.",
+      "deployment_considerations": "Creating the unique index may lock or scan Accounts depending on MySQL version and table size. Apply through the configured TypeORM migration mechanism during an approved deployment window.",
+      "synchronize_remains_false": true
+    }
+  },
+  "assumptions": [
+    "The physical table and columns remain Accounts.user_id and Accounts.account_number_full as declared by the current entity mapping; renaming the legacy table is outside this repair.",
+    "Uniqueness compares the persisted account_number_full value using the database column's existing collation; normalization beyond the frozen format rule is not authorized.",
+    "The same account_number_full value may be used by different authenticated owners because BR-ACC-10 is owner-scoped.",
+    "A service precheck improves the normal conflict path but does not replace the composite unique constraint required for concurrency safety.",
+    "No cascade, foreign-key, nullability, length, precision, or default changes are required."
+  ],
+  "approval": {
+    "approved_by_researcher": true,
+    "approved_via": "researcher confirmation in active Codex session",
+    "approved_at": "2026-09-04T11:11:46.5454784+07:00"
+  }
+}

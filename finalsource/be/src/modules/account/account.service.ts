@@ -27,6 +27,10 @@ export interface CreatedAccount extends AccountListItem {
   user_id: number;
 }
 
+interface BalanceTotalRow {
+  total: string | number | null;
+}
+
 @Injectable()
 export class AccountService {
   constructor(
@@ -86,6 +90,17 @@ export class AccountService {
       );
     }
 
+    if (dto.account_type === AccountType.INVESTMENT) {
+      const qualifyingBalance = await this.getInvestmentCapacity(userId);
+      if (qualifyingBalance < 100000) {
+        throw new BadRequestException(
+          'Investment accounts require at least 100000 in existing Checking and Savings balances.',
+        );
+      }
+    }
+
+    await this.ensureAccountNumberAvailable(userId, dto.account_number_full);
+
     const account = this.accounts.create({
       userId,
       bankName: dto.bank_name,
@@ -128,5 +143,48 @@ export class AccountService {
       'code' in driverError &&
       driverError.code === 'ER_DUP_ENTRY'
     );
+  }
+
+  private async ensureAccountNumberAvailable(
+    userId: number,
+    accountNumberFull: string,
+  ): Promise<void> {
+    let existingAccount: Account | null;
+    try {
+      existingAccount = await this.accounts.findOne({
+        where: { userId, accountNumberFull },
+        select: { accountId: true },
+      });
+    } catch {
+      throw new InternalServerErrorException(
+        'An internal server error occurred while processing your request. Please try again later.',
+      );
+    }
+
+    if (existingAccount) {
+      throw new ConflictException(
+        'The submitted resource conflicts with an existing record in the system.',
+      );
+    }
+  }
+
+  private async getInvestmentCapacity(userId: number): Promise<number> {
+    try {
+      const row = await this.accounts
+        .createQueryBuilder('account')
+        .select('COALESCE(SUM(account.balance), 0)', 'total')
+        .where('account.userId = :userId', { userId })
+        .andWhere('account.accountType IN (:...accountTypes)', {
+          accountTypes: [AccountType.CHECKING, AccountType.SAVINGS],
+        })
+        .getRawOne<BalanceTotalRow>();
+      const total = Number(row?.total ?? 0);
+      if (!Number.isFinite(total)) throw new Error('Invalid balance aggregate');
+      return total;
+    } catch {
+      throw new InternalServerErrorException(
+        'An internal server error occurred while processing your request. Please try again later.',
+      );
+    }
   }
 }
