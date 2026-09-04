@@ -1,8 +1,8 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-09-02T11:50:09Z",
-  "repository_revision": "123ac73d113997a1201522f2d492ac488a2218a3",
-  "source_revision": "sha256:be1e7ae2ece811f4110925fae26d74451d296851a667c9118cf82af7a70cbd2e",
+  "observed_at": "2026-09-03T13:30:30.3951727Z",
+  "repository_revision": "e076268c31cde96fa3def7d58dfe334ed72c69c0",
+  "source_revision": "sha256:8028afedea2bc59c2acf1b99b9f6c9989975a5adbcf7159e639ac2373862f10d",
   "docker": {
     "cli": null,
     "compose": null,
@@ -16,10 +16,10 @@
   },
   "services": {
     "database": "not observed from the current execution environment",
-    "backend": "current UC-05 image could not be rebuilt or observed",
-    "frontend": "current UC-05 image could not be rebuilt or observed"
+    "backend": "current UC-06 image could not be rebuilt or observed",
+    "frontend": "current UC-06 image could not be rebuilt or observed"
   },
   "status": "BLOCKED",
   "blocking_incident": "Docker CLI and Compose v2 are not callable or present at the standard Docker Desktop binary path in the current execution environment.",
-  "next_action": "Expose Docker Desktop's docker.exe to this task environment, then rebuild with docker compose --env-file finalsource/.env -f finalsource/compose.yaml up -d --build and repeat bounded UC-05 observations."
+  "next_action": "Expose Docker Desktop's docker.exe to this task environment, then obtain researcher authorization to rebuild and run Compose for bounded UC-06 observations."
 }

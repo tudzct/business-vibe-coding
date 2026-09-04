@@ -5,8 +5,7 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
+  Index,
 } from 'typeorm';
 import { User } from '../user/user.entity';
 import { Transaction } from '../transaction/transaction.entity';
@@ -20,6 +19,11 @@ export enum AccountType {
 }
 
 @Entity('Accounts')
+@Index(
+  'uq_accounts_user_id_account_number_full',
+  ['userId', 'accountNumberFull'],
+  { unique: true },
+)
 export class Account {
   @PrimaryGeneratedColumn({ name: 'account_id' })
   accountId!: number;
@@ -42,7 +46,7 @@ export class Account {
   accountType!: AccountType;
 
   @Column({ name: 'branch_name', type: 'varchar', length: 255, nullable: true })
-  branchName!: string;
+  branchName!: string | null;
 
   @Column({ name: 'account_number_full', type: 'varchar', length: 255 })
   accountNumberFull!: string;

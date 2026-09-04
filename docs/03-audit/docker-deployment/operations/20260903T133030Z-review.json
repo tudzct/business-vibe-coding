@@ -1,0 +1,16 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "mode": "review",
+  "observed_at": "2026-09-03T13:30:30.3951727Z",
+  "source_revision": "sha256:8028afedea2bc59c2acf1b99b9f6c9989975a5adbcf7159e639ac2373862f10d",
+  "commands": {
+    "docker_version": 1,
+    "docker_compose_version": 1,
+    "docker_info": 1,
+    "git_check_ignore_finalsource_env": 0,
+    "git_ls_files_finalsource_env": 1
+  },
+  "result": "BLOCKED",
+  "bounded_error": "The docker command is not recognized; Docker CLI, Compose v2, and daemon status cannot be observed. finalsource/.env exists, is ignored, and is not tracked.",
+  "secrets_recorded": false
+}
