@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-06",
+  "use_case_path": "docs/01-inception/use-cases/uc-06-add-bank-account.md",
+  "use_case_sha256": "sha256:f55e4b9b0e131a8b7d214b7184b1e742044001482a59507b57c7fc43249eee9f",
+  "business_rule_resource_path": "docs/02-construction/business-rules/UC-06-business-rules.json",
+  "business_rule_resource_sha256": "sha256:18816714cee5c6e29b69321bd52f4b9a1808577a10d46ba2650c20b5478a2ea1",
+  "spreadsheet_source": "Use cases!A106:B130",
+  "ordered_br_ids": [
+    "BR-ACC-07",
+    "BR-ACC-08",
+    "BR-ACC-09",
+    "BR-ACC-10",
+    "BR-ACC-11",
+    "BR-ACC-12",
+    "BR-ACC-13",
+    "BR-ACC-14",
+    "BR-ACC-15",
+    "BR-ACC-16"
+  ],
+  "frozen_at": "2026-09-03T13:17:49.1994874Z"
+}

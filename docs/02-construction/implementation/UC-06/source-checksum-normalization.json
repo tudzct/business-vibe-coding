@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "source-checksum-normalization",
+  "status": "Frozen",
+  "uc_id": "UC-06",
+  "source_path": "docs/01-inception/use-cases/uc-06-add-bank-account.md",
+  "algorithm": "sha256",
+  "retained_checksum": "sha256:f55e4b9b0e131a8b7d214b7184b1e742044001482a59507b57c7fc43249eee9f",
+  "checkout_raw_checksum": "sha256:e534c7bc4a17968d5eaa06c9a341ac650a2e767573b1f6425005a823c80a4fb3",
+  "canonical_lf_checksum": "sha256:f55e4b9b0e131a8b7d214b7184b1e742044001482a59507b57c7fc43249eee9f",
+  "canonical_crlf_checksum": "sha256:e534c7bc4a17968d5eaa06c9a341ac650a2e767573b1f6425005a823c80a4fb3",
+  "matched_via": "canonical-lf",
+  "verified_at": "2026-09-04T12:04:31.0903845Z",
+  "verification_command": "python .codex/skills/gen-business-rule-resource/scripts/verify_uc_checksum.py docs/01-inception/use-cases/uc-06-add-bank-account.md --expected f55e4b9b0e131a8b7d214b7184b1e742044001482a59507b57c7fc43249eee9f",
+  "note": "The checkout differs from the retained source only by CRLF versus LF line endings. The frozen UC was not rewritten."
+}
