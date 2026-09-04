@@ -12,7 +12,8 @@ import {
   YAxis,
 } from 'recharts'
 import { expenseService } from '../../api/expense.service'
-import type { ExpenseSummaryItem } from '../../api/types'
+import type { BreakdownResult, ExpenseSummaryItem, ExpenseSubCategory } from '../../api/types'
+import ExpensesBreakdown from '../../components/ExpensesBreakdown/ExpensesBreakdown'
 import { useAuth } from '../../context/AuthContext'
 
 const monthNames = [
@@ -43,6 +44,13 @@ const formatAxisAmount = (value: number): string =>
     maximumFractionDigits: 1,
   }).format(value)
 
+const getCurrentMonth = (): string => {
+  const today = new Date()
+  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`
+}
+
+const isValidMonth = (value: string): boolean => /^\d{4}-(0[1-9]|1[0-2])$/.test(value)
+
 const isExpenseSummaryItem = (value: unknown): value is ExpenseSummaryItem => {
   if (typeof value !== 'object' || value === null) {
     return false
@@ -52,6 +60,35 @@ const isExpenseSummaryItem = (value: unknown): value is ExpenseSummaryItem => {
     typeof item.month === 'string' &&
     typeof item.totalExpense === 'number' &&
     Number.isFinite(item.totalExpense)
+  )
+}
+
+const isExpenseSubCategory = (value: unknown): value is ExpenseSubCategory => {
+  if (typeof value !== 'object' || value === null) {
+    return false
+  }
+  const item = value as Record<string, unknown>
+  return (
+    typeof item.item_description === 'string' &&
+    typeof item.amount === 'number' &&
+    Number.isFinite(item.amount) &&
+    typeof item.date === 'string'
+  )
+}
+
+const isBreakdownResult = (value: unknown): value is BreakdownResult => {
+  if (typeof value !== 'object' || value === null) {
+    return false
+  }
+  const item = value as Record<string, unknown>
+  return (
+    typeof item.category === 'string' &&
+    typeof item.total === 'number' &&
+    Number.isFinite(item.total) &&
+    (item.changePercent === null ||
+      (typeof item.changePercent === 'number' && Number.isFinite(item.changePercent))) &&
+    Array.isArray(item.subCategories) &&
+    item.subCategories.every(isExpenseSubCategory)
   )
 }
 
@@ -70,6 +107,11 @@ const getSafeErrorMessage = (error: unknown): string => {
   }
   return 'Unable to load expense data. Please try again.'
 }
+
+const getErrorStatus = (error: unknown): number | null =>
+  axios.isAxiosError(error) && typeof error.response?.status === 'number'
+    ? error.response.status
+    : null
 
 const ExpenseSummaryChart = ({ data }: { readonly data: ChartItem[] }) => {
   const currentMonth = monthNames[new Date().getMonth()]
@@ -127,15 +169,21 @@ const Expenses = () => {
   const [summary, setSummary] = useState<ExpenseSummaryItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const activeRequest = useRef<AbortController | null>(null)
+  const [selectedMonth, setSelectedMonth] = useState(getCurrentMonth)
+  const [breakdown, setBreakdown] = useState<BreakdownResult[]>([])
+  const [isBreakdownLoading, setIsBreakdownLoading] = useState(true)
+  const [breakdownError, setBreakdownError] = useState<string | null>(null)
+  const [noDataMessage, setNoDataMessage] = useState<string | null>(null)
+  const summaryRequest = useRef<AbortController | null>(null)
+  const breakdownRequest = useRef<{ month: string; controller: AbortController } | null>(null)
 
   const fetchExpenseSummary = useCallback(async () => {
-    if (activeRequest.current) {
+    if (summaryRequest.current) {
       return
     }
 
     const controller = new AbortController()
-    activeRequest.current = controller
+    summaryRequest.current = controller
     setIsLoading(true)
     setError(null)
 
@@ -151,9 +199,56 @@ const Expenses = () => {
         setError(getSafeErrorMessage(requestError))
       }
     } finally {
-      if (activeRequest.current === controller) {
-        activeRequest.current = null
+      if (summaryRequest.current === controller) {
+        summaryRequest.current = null
         setIsLoading(false)
+      }
+    }
+  }, [])
+
+  const fetchExpensesBreakdown = useCallback(async (month: string) => {
+    if (!isValidMonth(month)) {
+      breakdownRequest.current?.controller.abort()
+      breakdownRequest.current = null
+      setBreakdown([])
+      setNoDataMessage(null)
+      setBreakdownError('Please select a valid calendar month in YYYY-MM format.')
+      setIsBreakdownLoading(false)
+      return
+    }
+
+    if (breakdownRequest.current?.month === month) {
+      return
+    }
+
+    breakdownRequest.current?.controller.abort()
+    const controller = new AbortController()
+    breakdownRequest.current = { month, controller }
+    setIsBreakdownLoading(true)
+    setBreakdownError(null)
+    setNoDataMessage(null)
+
+    try {
+      const response = await expenseService.getExpensesBreakdown(month, controller.signal)
+      if (!response.success || !Array.isArray(response.data) || !response.data.every(isBreakdownResult)) {
+        throw new Error('Malformed expense breakdown response')
+      }
+      setBreakdown(response.data)
+    } catch (requestError: unknown) {
+      if (!axios.isCancel(requestError)) {
+        setBreakdown([])
+        if (getErrorStatus(requestError) === 404) {
+          setNoDataMessage(getSafeErrorMessage(requestError))
+          setBreakdownError(null)
+        } else {
+          setNoDataMessage(null)
+          setBreakdownError(getSafeErrorMessage(requestError))
+        }
+      }
+    } finally {
+      if (breakdownRequest.current?.controller === controller) {
+        breakdownRequest.current = null
+        setIsBreakdownLoading(false)
       }
     }
   }, [])
@@ -161,10 +256,18 @@ const Expenses = () => {
   useEffect(() => {
     void fetchExpenseSummary()
     return () => {
-      activeRequest.current?.abort()
-      activeRequest.current = null
+      summaryRequest.current?.abort()
+      summaryRequest.current = null
     }
   }, [fetchExpenseSummary])
+
+  useEffect(() => {
+    void fetchExpensesBreakdown(selectedMonth)
+    return () => {
+      breakdownRequest.current?.controller.abort()
+      breakdownRequest.current = null
+    }
+  }, [fetchExpensesBreakdown, selectedMonth])
 
   const chartData = useMemo<ChartItem[]>(() => {
     const returnedByMonth = new Map(summary.map((item) => [item.month, item.totalExpense]))
@@ -275,6 +378,16 @@ const Expenses = () => {
 
               {!isLoading && !error && summary.length > 0 && <ExpenseSummaryChart data={chartData} />}
             </section>
+
+            <ExpensesBreakdown
+              selectedMonth={selectedMonth}
+              data={breakdown}
+              isLoading={isBreakdownLoading}
+              error={breakdownError}
+              noDataMessage={noDataMessage}
+              onMonthChange={setSelectedMonth}
+              onRetry={() => void fetchExpensesBreakdown(selectedMonth)}
+            />
           </div>
         </main>
       </div>

@@ -1,0 +1,366 @@
+{
+  "run_id": "RQ3-SOL-MEDIUM-R1-UC11",
+  "run_status": "blocked_runtime",
+  "hold_gate": "satisfied_repair_authorized",
+  "experiment_configuration": {
+    "configuration_id": "CFG-UC11-RQ3-SOL-MEDIUM-R1-20260831",
+    "comparison_group_id": "CG-RQ3-SOL-MEDIUM-16UC-20260829",
+    "researcher_id": "tu",
+    "artifact": "docs/05-experiments/configurations/CFG-UC11-RQ3-SOL-MEDIUM-R1-20260831.json",
+    "checksum": "sha256:2620a915abe7bc553b35648029be320a1729de8be9c1e89ac8534417da70d04e",
+    "run_activation": "docs/02-construction/implementation/UC-11/runs/RQ3-SOL-MEDIUM-R1-UC11/run-activation.json"
+  },
+  "uc_id": "UC-11",
+  "uc_name": "View Expenses by Category",
+  "replicate_index": 1,
+  "run_order": 2,
+  "audit_protocol": "matched",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null,
+    "effective_snapshot_unavailable_reason": "The session telemetry exposes the effective model family but not an authoritative snapshot identifier.",
+    "codex_client_version": "codex-cli 0.149.1"
+  },
+  "audit_model": {
+    "assignment": "same-as-generation",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null,
+    "unavailable_reason": "The session telemetry exposes the effective model family but not an authoritative snapshot identifier."
+  },
+  "timing_wall_clock": {
+    "initial_started_at": "2026-08-31T12:43:58.691930Z",
+    "initial_started_epoch_ms": 1788180238692,
+    "initial_ended_at": "2026-08-31T12:50:23.825702Z",
+    "initial_ended_epoch_ms": 1788180623826
+  },
+  "timing_seconds": {
+    "initial": 385.134,
+    "repairs": 179.351,
+    "total": 564.485
+  },
+  "tokens": {
+    "initial_total": 1329611,
+    "repair_total": 4575287,
+    "total": 5904898,
+    "telemetry_source": "/Users/ldt/.codex/sessions/2026/08/31/rollout-2026-08-31T19-25-23-01a057c8-0e64-78a2-bfda-6580aa00bf37.jsonl",
+    "details": {
+      "initial": {
+        "turn_id": 3,
+        "input": 45638,
+        "cache_read": 1271168,
+        "total_input": 1316806,
+        "output": 12805,
+        "reasoning": 3696,
+        "cutoff_at": "2026-08-31T12:50:23.825702Z",
+        "last_token_event_at_or_before_cutoff": "2026-08-31T12:49:58.053Z"
+      },
+      "repairs": {
+        "count": 3,
+        "shared_turn_id": 4,
+        "repair_ids": [
+          "RQ3-SOL-MEDIUM-R1-UC11-REPAIR-001",
+          "RQ3-SOL-MEDIUM-R1-UC11-REPAIR-002",
+          "RQ3-SOL-MEDIUM-R1-UC11-REPAIR-003"
+        ],
+        "input": 222434,
+        "cache_read": 4346112,
+        "total_input": 4568546,
+        "output": 6741,
+        "reasoning": 1332,
+        "total_tokens": 4575287,
+        "cutoff_at": "2026-09-01T09:16:38.268237Z",
+        "last_token_event_at_or_before_cutoff": "2026-09-01T09:16:28.261Z",
+        "attribution_note": "All three authorized bounded repairs were performed in one Codex turn, so only aggregate repair-turn telemetry is attributable."
+      }
+    }
+  },
+  "first_pass_source": {
+    "revision": "sha256:aa5767ed73145d73f30c477096275d6a0645ca584b91eb09128a28cf8b30c120",
+    "evidence": "docs/02-construction/implementation/UC-11/runs/RQ3-SOL-MEDIUM-R1-UC11/first-pass-generation.json"
+  },
+  "checks": {
+    "host_backend_lint": "not_evaluable: eslint executable absent because host dependencies are not installed",
+    "host_backend_build": "not_evaluable: nest executable absent because host dependencies are not installed",
+    "host_frontend_lint": "not_evaluable: eslint executable absent because host dependencies are not installed",
+    "host_frontend_build": "not_evaluable: tsc executable absent because host dependencies are not installed",
+    "docker_compose_config": "PASS: Compose configuration validated with the ignored, untracked finalsource/.env",
+    "docker_rebuild_build": "PASS: the repaired backend Nest production build passed and its image was rebuilt; the unchanged frontend TypeScript/Vite production build had already passed in the first-pass image",
+    "docker_runtime_health": "PASS: database, repaired backend, and frontend containers are running and healthy",
+    "frontend_reachability": "PASS: GET /expenses returned HTTP 200 through the current frontend container",
+    "openapi_contract": "PASS: /api/v1/expenses/breakdown is protected by JWT-auth, requires the month query pattern, and documents 200/400/401/404/500",
+    "authentication_exception": "PASS: unauthenticated GET /api/v1/expenses/breakdown?month=2026-08 returned normalized HTTP 401",
+    "authenticated_breakdown": "not_evaluable: no researcher-supplied authenticated session was used and the retained Docker incident records that Account and Transaction domain tables are absent",
+    "valid_month_no_data": "not_evaluable: the configured HTTP 404 path is inspectable in source, but the missing domain tables prevent bounded authenticated observation",
+    "browser_visual_observation": "not_evaluable: no signed-in browser session was supplied; frozen Figma and source structural evidence were retained"
+  },
+  "business_rules": {
+    "baseline": "docs/02-construction/implementation/UC-11/business-rule-baseline.json",
+    "source_revision": "sha256:dcdfeff6a8a3fa93dfd24a303dff1e26dc56c05c54631c851f015b042f1ef095",
+    "ordered_br_ids": [
+      "BR-EXP-CAT-01",
+      "BR-EXP-CAT-02",
+      "BR-EXP-CAT-03",
+      "BR-EXP-CAT-04",
+      "BR-EXP-CAT-05",
+      "BR-EXP-CAT-06",
+      "BR-EXP-CAT-07"
+    ],
+    "initial": {
+      "total": 7,
+      "met": 4,
+      "unmet": 3,
+      "not_evaluable": 0,
+      "requirements": [
+        {
+          "br_id": "BR-EXP-CAT-01",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/expenses/expenses.controller.ts:18-21 and 48-55 protect the endpoint and pass only request.user.userId to the service",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:139-151 joins Account and scopes both selected and previous-period queries by account.userId",
+            "Bounded Docker observation returned the normalized HTTP 401 envelope for an unauthenticated request"
+          ],
+          "rationale": "The validated JWT identity is authoritative and both contributing query periods are scoped through accounts owned by that identity."
+        },
+        {
+          "br_id": "BR-EXP-CAT-02",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/expenses/expenses.service.ts:139-154 filters account.userId, TransactionType.EXPENSE, and inclusive-start/exclusive-end transactionDate bounds",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:157-170 derives the selected calendar-month bounds including December-to-January rollover",
+            "No transaction.status predicate appears in the selected-month query"
+          ],
+          "rationale": "Returned detail candidates are constrained by ownership, Expense type, and the selected month without excluding any status."
+        },
+        {
+          "br_id": "BR-EXP-CAT-03",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/expenses/expenses.service.ts:93 and 102 maps every missing joined Category to Uncategorized",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:147 uses a left join, so a non-null categoryId whose Category row is unresolved is indistinguishable from a null categoryId in the mapping"
+          ],
+          "rationale": "The implementation does not produce the required Unknown classification for an unresolved non-null categoryId."
+        },
+        {
+          "br_id": "BR-EXP-CAT-04",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/expenses/expenses.service.ts:100-115 accumulates every returned detail amount into the same group's total",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:109-113 maps itemDescription, numeric amount, and transactionDate to item_description, amount, and ISO date",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:117-127 returns each accumulated total with the identical detail collection"
+          ],
+          "rationale": "Each returned group total is constructed from its returned details, and all required detail fields are explicitly mapped."
+        },
+        {
+          "br_id": "BR-EXP-CAT-05",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/expenses/expenses.service.ts:81-85 and 157-170 queries the immediately preceding month and handles January rollover",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:91-98 and 117-125 computes category previous totals and the percentage formula",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:123-125 always returns 100 when previousTotal is zero, including when the current total is zero",
+            "The previous-period classification reuses the incomplete mapping identified for BR-EXP-CAT-03"
+          ],
+          "rationale": "The preceding-month period and main formula are present, but the zero-current/zero-previous case returns 100 instead of null and the comparison does not use the complete required classification semantics."
+        },
+        {
+          "br_id": "BR-EXP-CAT-06",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/expenses/expenses.service.ts:152-153 orders transaction details by date ascending with transactionId as a deterministic tie-breaker",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:117-128 returns Map insertion order and does not sort category groups by total descending",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:108 and 121-125 returns accumulated totals and calculated percentages without explicit two-decimal rounding"
+          ],
+          "rationale": "Detail ordering is implemented, but required rounding and descending category-total ordering are absent."
+        },
+        {
+          "br_id": "BR-EXP-CAT-07",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/expenses/expenses.service.ts:87-89 returns the configured HTTP 404 no-data exception whenever the selected query has no rows, including the no-owned-account case",
+            "finalsource/fe/src/pages/Expenses/Expenses.tsx:237-246 maps HTTP 404 to a cleared breakdown and no-data message",
+            "finalsource/fe/src/components/ExpensesBreakdown/ExpensesBreakdown.tsx:121-126 renders the no-data state instead of cards"
+          ],
+          "rationale": "Both no-account and no-eligible-row outcomes yield the configured backend no-data response and frontend no-data state."
+        }
+      ],
+      "acceptance_percent": 57.14
+    },
+    "final": {
+      "total": 7,
+      "met": 7,
+      "unmet": 0,
+      "not_evaluable": 0,
+      "requirements": [
+        {
+          "br_id": "BR-EXP-CAT-01",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/expenses/expenses.controller.ts:18-21 and 48-55 protect the endpoint and pass only request.user.userId to the service",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:146-161 scopes both periods through account.userId",
+            "Post-repair bounded Docker observation returned the normalized HTTP 401 envelope for an unauthenticated request"
+          ],
+          "rationale": "The repairs did not alter the authoritative JWT ownership boundary or query scope."
+        },
+        {
+          "br_id": "BR-EXP-CAT-02",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/expenses/expenses.service.ts:146-161 filters account.userId, Expense type, and inclusive-start/exclusive-end date bounds",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:164-177 derives calendar-month bounds including year rollover without filtering transaction status"
+          ],
+          "rationale": "Selected-month expense eligibility remains correctly bounded and status-independent."
+        },
+        {
+          "br_id": "BR-EXP-CAT-03",
+          "status": "met",
+          "evidence": [
+            "Repair RQ3-SOL-MEDIUM-R1-UC11-REPAIR-001",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:93,102 reuses one classification for both periods",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:180-185 returns the resolved name, Uncategorized for null categoryId, and Unknown for unresolved non-null categoryId"
+          ],
+          "rationale": "All three frozen category-classification cases are now represented exactly."
+        },
+        {
+          "br_id": "BR-EXP-CAT-04",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/expenses/expenses.service.ts:100-115 accumulates every detail amount into its returned group",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:125-131 returns each group total with the same mapped detail collection"
+          ],
+          "rationale": "Each group total remains the sum of its returned detail rows with all required detail fields."
+        },
+        {
+          "br_id": "BR-EXP-CAT-05",
+          "status": "met",
+          "evidence": [
+            "Repairs RQ3-SOL-MEDIUM-R1-UC11-REPAIR-001 and RQ3-SOL-MEDIUM-R1-UC11-REPAIR-002",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:81-98 queries the immediately preceding month and applies the shared category classification",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:117-124 applies the percentage formula, returns 100 only for a positive current total over zero previous total, and null when both are zero",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:164-177 handles January-to-December rollover"
+          ],
+          "rationale": "The previous-period comparison now uses complete classification semantics and all frozen zero-baseline cases."
+        },
+        {
+          "br_id": "BR-EXP-CAT-06",
+          "status": "met",
+          "evidence": [
+            "Repair RQ3-SOL-MEDIUM-R1-UC11-REPAIR-003",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:125-135 rounds totals and non-null percentage changes to two decimals and sorts groups by total descending with a deterministic category tie-breaker",
+            "finalsource/be/src/modules/expenses/expenses.service.ts:159-160 orders details by transaction date ascending with a deterministic transactionId tie-breaker",
+            "Post-repair Docker backend production build passed"
+          ],
+          "rationale": "Required monetary/percentage rounding and both group/detail orderings are now explicit."
+        },
+        {
+          "br_id": "BR-EXP-CAT-07",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/expenses/expenses.service.ts:87-89 returns HTTP 404 when the selected-month owned-expense query has no rows",
+            "finalsource/fe/src/pages/Expenses/Expenses.tsx:237-246 maps HTTP 404 to the no-data state",
+            "Post-repair OpenAPI observation retained documented 404 behavior"
+          ],
+          "rationale": "No-account and no-eligible-row outcomes continue to use the required no-data response and UI state."
+        }
+      ],
+      "acceptance_percent": 100.0
+    }
+  },
+  "ui_accuracy": {
+    "design_dataset": "2026-08-29-005",
+    "node_id": "66:5698",
+    "structural_evidence": "The source preserves the 280 px dark sidebar, top header, #F4F5F7 page, shared comparison area, Expenses Breakdown heading, responsive three-column cards, gray card headers, teal accent, comparison indicators, month input, and loading/no-data/error states.",
+    "deterministic_similarity": null,
+    "limitation": "No authenticated browser screenshot was captured for pixel-level comparison."
+  },
+  "flow_accuracy": {
+    "checkpoints_total": 12,
+    "checkpoints_satisfied": 10,
+    "checkpoints_not_evaluable": 2,
+    "satisfied": [
+      "protected /expenses route",
+      "current-calendar-month initial selection",
+      "month-change breakdown request",
+      "client and backend YYYY-MM calendar-month validation",
+      "Bearer JWT attachment and verification",
+      "authenticated identity passed to the service",
+      "normalized unauthenticated exception flow",
+      "typed loading/error/no-data/success frontend states",
+      "current backend and frontend production image builds",
+      "frontend route and backend route reachability"
+    ],
+    "not_evaluable": [
+      "authenticated selected-month success response against persisted expense data",
+      "authenticated no-data response and rendered populated/no-data card transition"
+    ]
+  },
+  "complexity": {
+    "actors": 1,
+    "main_flow_steps": 7,
+    "alternative_flows": 2,
+    "exception_flows": 3,
+    "entities": 3,
+    "integrations": 2,
+    "business_rules": 7,
+    "ui_states": 5
+  },
+  "repairs": [
+    {
+      "repair_id": "RQ3-SOL-MEDIUM-R1-UC11-REPAIR-001",
+      "artifact": "docs/02-construction/implementation/UC-11/runs/RQ3-SOL-MEDIUM-R1-UC11/repairs/001-category-classification.md",
+      "affected_br_ids": [
+        "BR-EXP-CAT-03",
+        "BR-EXP-CAT-05"
+      ],
+      "status": "complete",
+      "started_at": "2026-09-01T09:13:06.937809Z",
+      "ended_at": "2026-09-01T09:13:47.144261Z",
+      "duration_seconds": 40.206,
+      "source_revision_before": "sha256:aa5767ed73145d73f30c477096275d6a0645ca584b91eb09128a28cf8b30c120",
+      "source_revision_after": "sha256:fc09e369fc9614d45921ad5ac2b617a5d56df713f3200c95a01332882e2663b0",
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "reasoning_mode": "standard",
+      "tokens": null,
+      "token_note": "Shared aggregate repair-turn telemetry; per-repair attribution unavailable."
+    },
+    {
+      "repair_id": "RQ3-SOL-MEDIUM-R1-UC11-REPAIR-002",
+      "artifact": "docs/02-construction/implementation/UC-11/runs/RQ3-SOL-MEDIUM-R1-UC11/repairs/002-zero-baseline-change-percent.md",
+      "affected_br_ids": [
+        "BR-EXP-CAT-05"
+      ],
+      "status": "complete",
+      "started_at": "2026-09-01T09:14:02.691515Z",
+      "ended_at": "2026-09-01T09:14:37.673262Z",
+      "duration_seconds": 34.982,
+      "source_revision_before": "sha256:fc09e369fc9614d45921ad5ac2b617a5d56df713f3200c95a01332882e2663b0",
+      "source_revision_after": "sha256:5d9291fa75188c835a7310d544445c52402136bf9ba32d303fd265a6f2cc0f41",
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "reasoning_mode": "standard",
+      "tokens": null,
+      "token_note": "Shared aggregate repair-turn telemetry; per-repair attribution unavailable."
+    },
+    {
+      "repair_id": "RQ3-SOL-MEDIUM-R1-UC11-REPAIR-003",
+      "artifact": "docs/02-construction/implementation/UC-11/runs/RQ3-SOL-MEDIUM-R1-UC11/repairs/003-rounding-and-group-ordering.md",
+      "affected_br_ids": [
+        "BR-EXP-CAT-06"
+      ],
+      "status": "complete",
+      "started_at": "2026-09-01T09:14:54.105002Z",
+      "ended_at": "2026-09-01T09:16:38.268237Z",
+      "duration_seconds": 104.163,
+      "source_revision_before": "sha256:5d9291fa75188c835a7310d544445c52402136bf9ba32d303fd265a6f2cc0f41",
+      "source_revision_after": "sha256:dcdfeff6a8a3fa93dfd24a303dff1e26dc56c05c54631c851f015b042f1ef095",
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "reasoning_mode": "standard",
+      "tokens": null,
+      "token_note": "Shared aggregate repair-turn telemetry; per-repair attribution unavailable."
+    }
+  ],
+  "all_sub_prompt_count": 3
+}

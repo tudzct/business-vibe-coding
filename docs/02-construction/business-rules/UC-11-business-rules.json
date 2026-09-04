@@ -1,0 +1,155 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-resource",
+  "status": "Frozen",
+  "uc_id": "UC-11",
+  "source_use_case": "docs/01-inception/use-cases/uc-11-view-expenses-by-category.md",
+  "source_use_case_sha256": "sha256:b1aa742337d80cd75581afcb19a01a6f8d316e447b5b9515b4e0bcaaf96ad521",
+  "spreadsheet": {
+    "id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "tab": "Use cases",
+    "range": "A238:B256",
+    "retrieved_at": "2026-08-31T12:21:01.000Z"
+  },
+  "ocl_utility_source": "Use cases!A2:B2",
+  "rules": [
+    {
+      "br_id": "BR-EXP-CAT-01",
+      "name": "Authenticated ownership scope",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context ExpensesService::getExpensesBreakdown(userId : Integer, month : String) : Sequence(BreakdownResult)\npre BR_EXP_CAT_01_AuthenticatedIdentity:\n  not userId.oclIsUndefined()\npost BR_EXP_CAT_01_OwnedTransactionsOnly:\n  result->forAll(item |\n    item.subCategories->forAll(detail |\n      Transaction.allInstances()->exists(t |\n        Account.allInstances()->exists(a |\n          a.accountId = t.accountId and a.userId = userId\n        ) and\n        t.itemDescription = detail.item_description and\n        t.amount = detail.amount and\n        toIsoDate(t.transactionDate) = detail.date\n      )\n    )\n  )\n\nTechnical constraints:\n- The userId used for the breakdown shall come from the validated JWT.\n- Transactions belonging to accounts owned by another user shall not contribute to the breakdown.",
+      "context": "ExpensesService::getExpensesBreakdown(userId : Integer, month : String) : Sequence(BreakdownResult)",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "A missing, invalid, or expired JWT is rejected with HTTP 401; a successful breakdown uses the validated JWT userId and excludes transactions from accounts owned by other users.",
+      "traceability": [
+        "Use cases!A238:B256",
+        "UC-11 PRE-1",
+        "UC-11 Basic Flow 3-5",
+        "UC-11 EF-1",
+        "API-EXPENSE-BREAKDOWN"
+      ]
+    },
+    {
+      "br_id": "BR-EXP-CAT-02",
+      "name": "Eligible selected-month expenses",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context ExpensesService::getExpensesBreakdown(userId : Integer, month : String) : Sequence(BreakdownResult)\npost BR_EXP_CAT_02_EligibleRowsOnly:\n  result->forAll(item |\n    item.subCategories->forAll(detail |\n      Transaction.allInstances()->exists(t |\n        Account.allInstances()->exists(a |\n          a.accountId = t.accountId and a.userId = userId\n        ) and\n        t.type = TransactionType::Expense and\n        isWithinInclusiveMonth(t.transactionDate, month) and\n        t.itemDescription = detail.item_description and\n        t.amount = detail.amount and\n        toIsoDate(t.transactionDate) = detail.date\n      )\n    )\n  )\n\nTechnical constraint:\n- Transaction status is not an eligibility predicate; a row is eligible when the ownership, type, and selected-month conditions are satisfied.",
+      "context": "ExpensesService::getExpensesBreakdown(userId : Integer, month : String) : Sequence(BreakdownResult)",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "Only owned Expense transactions within the selected month contribute, regardless of transaction status; the source defines no separate error response for an eligibility violation.",
+      "traceability": [
+        "Use cases!A238:B256",
+        "UC-11 PRE-2",
+        "UC-11 Basic Flow 2-6",
+        "UC-11 AF-1",
+        "API-EXPENSE-BREAKDOWN"
+      ]
+    },
+    {
+      "br_id": "BR-EXP-CAT-03",
+      "name": "Category classification",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context ExpensesService::getExpensesBreakdown(userId : Integer, month : String) : Sequence(BreakdownResult)\npost BR_EXP_CAT_03_CategoryDefined:\n  result->forAll(item | not item.category.oclIsUndefined())\n\nTechnical constraints:\n- Eligible transactions shall be grouped by categoryId.\n- A null categoryId shall be classified as Uncategorized.\n- A non-null categoryId that cannot be resolved to a Category shall be classified as Unknown.\n- A resolved categoryId shall use the corresponding Category.categoryName.",
+      "context": "ExpensesService::getExpensesBreakdown(userId : Integer, month : String) : Sequence(BreakdownResult)",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "Every eligible transaction is grouped by categoryId and returned with the defined resolved, Uncategorized, or Unknown label; the source defines no separate error response for a classification violation.",
+      "traceability": [
+        "Use cases!A238:B256",
+        "UC-11 Basic Flow 5-7",
+        "UC-11 UML Category and Transaction.categoryId",
+        "API-EXPENSE-BREAKDOWN"
+      ]
+    },
+    {
+      "br_id": "BR-EXP-CAT-04",
+      "name": "Category totals and detail mapping",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context ExpensesService::getExpensesBreakdown(userId : Integer, month : String) : Sequence(BreakdownResult)\npost BR_EXP_CAT_04_CategoryTotal:\n  result->forAll(item |\n    item.total = item.subCategories->collect(detail | detail.amount)->sum()\n  )\npost BR_EXP_CAT_04_DetailDefined:\n  result->forAll(item |\n    item.subCategories->forAll(detail |\n      not detail.item_description.oclIsUndefined() and\n      not detail.amount.oclIsUndefined() and\n      not detail.date.oclIsUndefined()\n    )\n  )\n\nTechnical constraint:\n- Each detail item shall map Transaction.itemDescription, amount, and transactionDate to item_description, numeric amount, and an ISO YYYY-MM-DD date string.",
+      "context": "ExpensesService::getExpensesBreakdown(userId : Integer, month : String) : Sequence(BreakdownResult)",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "Each category total equals its returned detail sum and each detail exposes the defined description, numeric amount, and ISO date mapping; processing failures return HTTP 500 with the source-defined safe message.",
+      "traceability": [
+        "Use cases!A238:B256",
+        "UC-11 Basic Flow 5-7",
+        "UC-11 UML BreakdownResult and ExpenseSubCategory",
+        "UC-11 EF-3",
+        "API-EXPENSE-BREAKDOWN"
+      ]
+    },
+    {
+      "br_id": "BR-EXP-CAT-05",
+      "name": "Previous-month comparison",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context ExpensesService::getExpensesBreakdown(userId : Integer, month : String) : Sequence(BreakdownResult)\npost BR_EXP_CAT_05_ChangePercent:\n  result->forAll(item |\n    let previousTotal : Decimal = previousMonthExpenseTotal(userId, month, item.category)\n    in\n      if previousTotal = 0 then\n        if item.total > 0 then item.changePercent = 100\n        else item.changePercent.oclIsUndefined()\n        endif\n      else\n        item.changePercent = ((item.total - previousTotal) / previousTotal) * 100\n      endif\n  )\n\nTechnical constraints:\n- The comparison period is the immediately preceding calendar month.\n- January shall compare with December of the preceding year.\n- Previous-month totals shall use the same ownership, Expense eligibility, selected-period, and category-classification rules as the current month.",
+      "context": "ExpensesService::getExpensesBreakdown(userId : Integer, month : String) : Sequence(BreakdownResult)",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "Each category's changePercent follows the defined immediately preceding calendar-month comparison, including the zero baseline and January rollover cases; the source defines no separate error response for a comparison violation.",
+      "traceability": [
+        "Use cases!A238:B256",
+        "UC-11 Basic Flow 5-7",
+        "UC-11 UML BreakdownResult.changePercent",
+        "API-EXPENSE-BREAKDOWN"
+      ]
+    },
+    {
+      "br_id": "BR-EXP-CAT-06",
+      "name": "Rounding and deterministic ordering",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context ExpensesService::getExpensesBreakdown(userId : Integer, month : String) : Sequence(BreakdownResult)\npost BR_EXP_CAT_06_RoundedValues:\n  result->forAll(item |\n    item.total = round2(item.total) and\n    (item.changePercent.oclIsUndefined() or item.changePercent = round2(item.changePercent))\n  )\npost BR_EXP_CAT_06_GroupsSortedDescending:\n  Sequence{1..result->size()}->forAll(i |\n    i < result->size() implies result->at(i).total >= result->at(i + 1).total\n  )\npost BR_EXP_CAT_06_DetailsSortedAscending:\n  result->forAll(item |\n    Sequence{1..item.subCategories->size()}->forAll(i |\n      i < item.subCategories->size() implies\n      item.subCategories->at(i).date <= item.subCategories->at(i + 1).date\n    )\n  )",
+      "context": "ExpensesService::getExpensesBreakdown(userId : Integer, month : String) : Sequence(BreakdownResult)",
+      "enforcement_layers": [
+        "backend"
+      ],
+      "failure_behavior": "Returned totals and non-null change percentages are rounded to two decimals, groups are sorted by total descending, and details are sorted by date ascending; the source defines no separate error response for a formatting or ordering violation.",
+      "traceability": [
+        "Use cases!A238:B256",
+        "UC-11 Basic Flow 5-7",
+        "UC-11 UML ordered response collections",
+        "API-EXPENSE-BREAKDOWN"
+      ]
+    },
+    {
+      "br_id": "BR-EXP-CAT-07",
+      "name": "No-data outcome",
+      "representation": "natural_language",
+      "expression_or_text": "Technical constraints:\n- If the authenticated user owns no accounts, the breakdown has no data for the selected month.\n- If no eligible current-month Expense transaction exists, the breakdown has no data for the selected month.\n- The backend shall return the API's configured no-data response, and the frontend shall display its no-data state.",
+      "context": "UC-11 expense-breakdown backend and frontend no-data flow",
+      "enforcement_layers": [
+        "backend",
+        "frontend"
+      ],
+      "failure_behavior": "When the user owns no accounts or has no eligible current-month Expense transaction, the backend returns HTTP 404 with \"Không có dữ liệu chi tiêu cho tháng này.\" and the frontend displays its no-data state.",
+      "traceability": [
+        "Use cases!A238:B256",
+        "UC-11 POST-2",
+        "UC-11 AF-2",
+        "API-EXPENSE-BREAKDOWN HTTP 404"
+      ]
+    }
+  ],
+  "ordered_br_ids": [
+    "BR-EXP-CAT-01",
+    "BR-EXP-CAT-02",
+    "BR-EXP-CAT-03",
+    "BR-EXP-CAT-04",
+    "BR-EXP-CAT-05",
+    "BR-EXP-CAT-06",
+    "BR-EXP-CAT-07"
+  ],
+  "unresolved_items": []
+}

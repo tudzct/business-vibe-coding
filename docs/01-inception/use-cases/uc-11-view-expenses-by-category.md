@@ -7,12 +7,12 @@ source_type: google-sheets
 source_spreadsheet_id: 1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM
 source_sheet: "Use cases"
 source_range: "A238:B256"
-retrieved_at: 2026-08-27T03:49:28.570Z
+retrieved_at: 2026-08-31T12:21:01.000Z
 ---
 
 # UC-11: View Expenses by Category
 
-> Canonical source: [Financial Management Specification](https://docs.google.com/spreadsheets/d/1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM/edit?gid=0#gid=0), tab Use cases, columns A-B. This frozen repository projection is read-only; source corrections must be made in the spreadsheet and imported as a new revision.
+> Canonical source: [Financial Management Specification](https://docs.google.com/spreadsheets/d/1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM/edit?gid=0#gid=0), tab `Use cases`, range `A238:B256`. This frozen repository projection was refreshed from the source on 2026-08-31.
 
 ## Functional Use-Case Specification
 
@@ -26,7 +26,7 @@ View Expenses by Category
 
 ### Description
 
-As an authenticated user, I want to view one month's Expense transactions grouped by category and compared with the previous month.
+As an authenticated user, I want to view my expenses by category for a selected month so that I can understand how my spending is distributed.
 
 ### Actor(s)
 
@@ -38,65 +38,63 @@ Not Specified
 
 ### Trigger
 
-The user opens the Expenses page or changes the month input.
+The user opens the Expenses page or selects another month.
 
 ### Pre-Condition(s)
 
 PRE-1: The user is authenticated.
-PRE-2: selectedMonth is initialized to the current month in YYYY-MM form.
+
+PRE-2: A selected month is available for the expense-breakdown request.
 
 ### Post-Condition(s)
 
-POST-1: The page displays category totals, changePercent, and underlying transactions for the selected month.
-POST-2: Category groups are sorted by total descending.
-POST-3: If no data exists, the frontend displays its no-data message.
+POST-1: After processing, the expense breakdown for the selected month is displayed on /expenses.
+
+POST-2: If no breakdown data is available, the page displays its no-data state.
+
+POST-3: The operation does not modify stored financial data.
 
 ### Basic Flow
 
-1. The user opens /expenses.
-2. ExpensesPage initializes selectedMonth to the current YYYY-MM value.
-3. ExpensesBreakdown sends GET /api/v1/expenses/breakdown?month=selectedMonth.
-4. The controller requires month to match four digits, a hyphen, and two digits.
-5. ExpensesService loads account IDs owned by the user and parses year and month number.
-6. The service queries current-month and previous-month Expense transactions for those accounts.
-7. Current-month rows are grouped by categoryId; previous-month totals are grouped by the same key.
-8. The service labels categoryId 0 as Uncategorized, unresolved category IDs as Unknown, calculates changePercent, rounds totals and percentages to two decimals, and sorts category groups by total descending.
-9. The frontend displays each category, total, change percentage, and subcategory transaction rows.
+1. The user opens the Expenses page.
+2. The frontend determines the selected month for the breakdown request.
+3. The frontend requests the user's expense breakdown for the selected month.
+4. The backend authenticates the request.
+5. The backend retrieves and processes the relevant expense data according to the applicable business rules.
+6. The backend returns the expense breakdown.
+7. The frontend displays the category breakdown on the Expenses page.
 
 ### Alternative Flow
 
 AF-1: Select another month
-2a. The user changes the HTML month input.
-3a. The component requests the new selectedMonth.
 
-AF-2: Uncategorized transaction
-8a. A transaction with null categoryId is returned under Uncategorized.
+2a. The user selects a different month.
+3a. The frontend requests the expense breakdown for the new selected month.
+4a. The flow continues from Step 4.
 
-AF-3: Previous category total equals zero
-8a. changePercent is 100 when the current total is positive; otherwise it is null.
+AF-2: No breakdown data
+
+6a. The backend reports that no breakdown data is available for the selected month.
+7a. The frontend displays its no-data state instead of the category breakdown.
 
 ### Exception Flow
 
-EF-1: Invalid month syntax
-4a. The controller returns HTTP 400.
+EF-1: Authentication failure
 
-EF-2: No accounts, invalid month number, or no current-month expense rows
-5a. The service returns HTTP 404 with its no-data error.
+4a. The backend cannot authenticate the request.
+4b. The backend returns HTTP 401.
+4c. The frontend applies the application's authentication-error handling.
 
-EF-3: Retrieval failure
-6a. The backend returns HTTP 500 and the frontend displays its error state.
+EF-2: Invalid month request
 
-### Related UI
+5a. The backend rejects an invalid month request with HTTP 400.
+5b. The frontend displays its request-error state.
 
-ExpensesPage; ExpensesBreakdown; month input; route /expenses
+EF-3: Retrieval or processing failure
 
-### Related API IDs
-
-API-EXPENSE-BREAKDOWN
-
-### Notes
-
-Not specified
+5a. An unexpected error occurs while retrieving or processing the breakdown data.
+5b. The backend returns HTTP 500.
+5c. The frontend displays its expense-breakdown error state.
 
 ## UML Model
 
@@ -153,7 +151,9 @@ class BreakdownResult <<DTO>> {
 }
 
 class ExpenseBreakdownResponse <<DTO>> {
-  data: BreakdownResult [1..*] {ordered}
+  success: Boolean [1]
+  message: String [1]
+  data: BreakdownResult [0..*] {ordered}
 }
 
 class JwtAuthGuard <<Guard>> {
@@ -178,58 +178,39 @@ class ExpensesBreakdown <<UI>> {
   fetchExpensesBreakdown(month: String)
 }
 
-Account "1" -- "0..*" Transaction : owns transactions
-Category "0..1" -- "0..*" Transaction : classifies
-ExpensesController ..> JwtAuthGuard : protected by
+Account "1" -- "0..*" Transaction
+Category "0..1" -- "0..*" Transaction
+ExpensesController ..> JwtAuthGuard
 ExpensesController ..> ExpensesService
-ExpensesController ..> ExpenseBreakdownResponse : returns { data }
-ExpensesService ..> Account : resolves owned accountIds
-ExpensesService ..> Transaction : loads current/previous Expense rows
-ExpensesService ..> Category : resolves categoryName
+ExpensesController ..> ExpenseBreakdownResponse
+ExpensesService ..> Account
+ExpensesService ..> Transaction
+ExpensesService ..> Category
 ExpenseBreakdownResponse --> BreakdownResult
 BreakdownResult --> ExpenseSubCategory
-ExpensesPage --> ExpensesBreakdown : passes selectedMonth
-ExpensesBreakdown ..> ExpenseBreakdownResponse : GET /api/v1/expenses/breakdown
-
-note right of ExpensesService
-  Current-month and previous-month queries use inclusive
-  calendar-month boundaries. January compares with December
-  of the preceding year. Groups are sorted by total descending.
-end note
-
-note right of ExpensesBreakdown
-  Figma 109. Expenses shows category cards with total,
-  comparison to last month, and transaction description,
-  amount, and date rows.
-end note
+ExpensesPage --> ExpensesBreakdown
+ExpensesBreakdown ..> ExpenseBreakdownResponse
 
 @enduml
 ~~~
 
 ## Business Rules
 
-The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+The following rules are authoritative for Prompt E. OCL is preserved verbatim from the Sheet.
 
 ~~~text
-BR-EXP-07: Authenticated ownership scope
+BR-EXP-CAT-01: Authenticated ownership scope
 
-context ExpensesService::getExpensesBreakdown(
-  userId : Integer,
-  month : String
-) : Sequence(BreakdownResult)
-
-pre BR_EXP_07_AuthenticatedIdentity:
+context ExpensesService::getExpensesBreakdown(userId : Integer, month : String) : Sequence(BreakdownResult)
+pre BR_EXP_CAT_01_AuthenticatedIdentity:
   not userId.oclIsUndefined()
-
-post BR_EXP_07_OwnedAccountsOnly:
+post BR_EXP_CAT_01_OwnedTransactionsOnly:
   result->forAll(item |
     item.subCategories->forAll(detail |
       Transaction.allInstances()->exists(t |
         Account.allInstances()->exists(a |
-          a.accountId = t.accountId and
-          a.userId = userId
+          a.accountId = t.accountId and a.userId = userId
         ) and
-        t.type = TransactionType::Expense and
         t.itemDescription = detail.item_description and
         t.amount = detail.amount and
         toIsoDate(t.transactionDate) = detail.date
@@ -238,48 +219,13 @@ post BR_EXP_07_OwnedAccountsOnly:
   )
 
 Technical constraints:
-- JwtAuthGuard shall validate a Bearer JWT before the controller reads request.user.userId.
-- Transactions owned by another user shall never contribute to the breakdown.
+- The userId used for the breakdown shall come from the validated JWT.
+- Transactions belonging to accounts owned by another user shall not contribute to the breakdown.
 
-BR-EXP-08: Breakdown month syntax
+BR-EXP-CAT-02: Eligible selected-month expenses
 
-context ExpensesService::getExpensesBreakdown(
-  userId : Integer,
-  month : String
-) : Sequence(BreakdownResult)
-
-pre BR_EXP_08_Defined:
-  not month.oclIsUndefined()
-
-pre BR_EXP_08_ValidSyntax:
-  matches(month, '^\d{4}-\d{2}$')
-
-Technical constraint:
-- A missing month or a value that does not match YYYY-MM shall be rejected by ExpensesController with HTTP 400.
-
-BR-EXP-09: Valid breakdown calendar month
-
-context ExpensesService::getExpensesBreakdown(
-  userId : Integer,
-  month : String
-) : Sequence(BreakdownResult)
-
-pre BR_EXP_09_ValidMonthNumber:
-  let monthNum : Integer = month.substring(6, 7).toInteger()
-  in
-    monthNum >= 1 and monthNum <= 12
-
-Technical constraint:
-- A syntactically valid value whose MM portion is outside 01..12 shall produce the service's HTTP 404 no-data response.
-
-BR-EXP-10: Eligible current-month expenses and no-data handling
-
-context ExpensesService::getExpensesBreakdown(
-  userId : Integer,
-  month : String
-) : Sequence(BreakdownResult)
-
-post BR_EXP_10_CurrentMonthExpenseOnly:
+context ExpensesService::getExpensesBreakdown(userId : Integer, month : String) : Sequence(BreakdownResult)
+post BR_EXP_CAT_02_EligibleRowsOnly:
   result->forAll(item |
     item.subCategories->forAll(detail |
       Transaction.allInstances()->exists(t |
@@ -295,29 +241,29 @@ post BR_EXP_10_CurrentMonthExpenseOnly:
     )
   )
 
+Technical constraint:
+- Transaction status is not an eligibility predicate; a row is eligible when the ownership, type, and selected-month conditions are satisfied.
+
+BR-EXP-CAT-03: Category classification
+
+context ExpensesService::getExpensesBreakdown(userId : Integer, month : String) : Sequence(BreakdownResult)
+post BR_EXP_CAT_03_CategoryDefined:
+  result->forAll(item | not item.category.oclIsUndefined())
+
 Technical constraints:
-- The service shall return HTTP 404 when the user owns no Accounts or when no eligible current-month Expense transactions exist.
-- No Transactions.status predicate is applied; Complete, Pending, and Failed rows are eligible when the other predicates match.
+- Eligible transactions shall be grouped by categoryId.
+- A null categoryId shall be classified as Uncategorized.
+- A non-null categoryId that cannot be resolved to a Category shall be classified as Unknown.
+- A resolved categoryId shall use the corresponding Category.categoryName.
 
-BR-EXP-11: Category grouping, totals, and detail mapping
+BR-EXP-CAT-04: Category totals and detail mapping
 
-context ExpensesService::getExpensesBreakdown(
-  userId : Integer,
-  month : String
-) : Sequence(BreakdownResult)
-
-post BR_EXP_11_OneGroupPerCategory:
-  result->isUnique(item | item.category)
-
-post BR_EXP_11_CategoryTotal:
+context ExpensesService::getExpensesBreakdown(userId : Integer, month : String) : Sequence(BreakdownResult)
+post BR_EXP_CAT_04_CategoryTotal:
   result->forAll(item |
-    item.total =
-      item.subCategories
-        ->collect(detail | detail.amount)
-        ->sum()
+    item.total = item.subCategories->collect(detail | detail.amount)->sum()
   )
-
-post BR_EXP_11_DetailMapping:
+post BR_EXP_CAT_04_DetailDefined:
   result->forAll(item |
     item.subCategories->forAll(detail |
       not detail.item_description.oclIsUndefined() and
@@ -326,94 +272,71 @@ post BR_EXP_11_DetailMapping:
     )
   )
 
-Technical constraints:
-- Current-month rows shall be grouped by categoryId; null categoryId is normalized to key 0.
-- Key 0 shall be labeled Uncategorized. An unresolved non-null categoryId shall be labeled Unknown.
-- Each detail shall map Transaction.itemDescription to item_description, Number(Transaction.amount) to amount, and transactionDate to an ISO YYYY-MM-DD date string.
+Technical constraint:
+- Each detail item shall map Transaction.itemDescription, amount, and transactionDate to item_description, numeric amount, and an ISO YYYY-MM-DD date string.
 
-BR-EXP-12: Previous-month comparison
+BR-EXP-CAT-05: Previous-month comparison
 
-context ExpensesService::getExpensesBreakdown(
-  userId : Integer,
-  month : String
-) : Sequence(BreakdownResult)
-
-post BR_EXP_12_ChangePercent:
+context ExpensesService::getExpensesBreakdown(userId : Integer, month : String) : Sequence(BreakdownResult)
+post BR_EXP_CAT_05_ChangePercent:
   result->forAll(item |
-    let previousTotal : Decimal =
-      previousMonthExpenseTotal(userId, month, item.category)
+    let previousTotal : Decimal = previousMonthExpenseTotal(userId, month, item.category)
     in
       if previousTotal = 0 then
-        if item.total > 0 then
-          item.changePercent = 100
-        else
-          item.changePercent.oclIsUndefined()
+        if item.total > 0 then item.changePercent = 100
+        else item.changePercent.oclIsUndefined()
         endif
       else
-        item.changePercent =
-          ((item.total - previousTotal) / previousTotal) * 100
+        item.changePercent = ((item.total - previousTotal) / previousTotal) * 100
       endif
   )
 
 Technical constraints:
 - The comparison period is the immediately preceding calendar month.
-- For January, the previous period is December of the preceding year.
-- Previous-month rows use the same ownership, Expense type, inclusive date-boundary, and normalized category-key rules as current-month rows.
+- January shall compare with December of the preceding year.
+- Previous-month totals shall use the same ownership, Expense eligibility, selected-period, and category-classification rules as the current month.
 
-BR-EXP-13: Rounding and deterministic ordering
+BR-EXP-CAT-06: Rounding and deterministic ordering
 
-context ExpensesService::getExpensesBreakdown(
-  userId : Integer,
-  month : String
-) : Sequence(BreakdownResult)
-
-post BR_EXP_13_RoundedValues:
+context ExpensesService::getExpensesBreakdown(userId : Integer, month : String) : Sequence(BreakdownResult)
+post BR_EXP_CAT_06_RoundedValues:
   result->forAll(item |
     item.total = round2(item.total) and
-    (item.changePercent.oclIsUndefined() or
-     item.changePercent = round2(item.changePercent))
+    (item.changePercent.oclIsUndefined() or item.changePercent = round2(item.changePercent))
   )
-
-post BR_EXP_13_GroupsSortedDescending:
+post BR_EXP_CAT_06_GroupsSortedDescending:
   Sequence{1..result->size()}->forAll(i |
-    i < result->size() implies
-      result->at(i).total >= result->at(i + 1).total
+    i < result->size() implies result->at(i).total >= result->at(i + 1).total
   )
-
-post BR_EXP_13_DetailsSortedAscending:
+post BR_EXP_CAT_06_DetailsSortedAscending:
   result->forAll(item |
     Sequence{1..item.subCategories->size()}->forAll(i |
       i < item.subCategories->size() implies
-        item.subCategories->at(i).date <=
-        item.subCategories->at(i + 1).date
+      item.subCategories->at(i).date <= item.subCategories->at(i + 1).date
     )
   )
 
-BR-EXP-14: Selected-month UI and Figma breakdown mapping
+BR-EXP-CAT-07: No-data outcome
 
 Technical constraints:
-- ExpensesPage shall initialize selectedMonth to the client's current YYYY-MM value.
-- Changing the month input shall cause ExpensesBreakdown to request GET /api/v1/expenses/breakdown with query.month equal to selectedMonth.
-- Each returned BreakdownResult shall be rendered as a breakdown card containing category, total, changePercent compared with the previous month, and its transaction description, amount, and date rows, consistent with Figma frame 109. Expenses.
-- A null changePercent shall display as N/A. Loading, no-data, and error states shall replace the card grid when applicable.
-
-BR-EXP-15: Read-only operation and response envelope
-
-context ExpensesService::getExpensesBreakdown(
-  userId : Integer,
-  month : String
-) : Sequence(BreakdownResult)
-
-post BR_EXP_15_AccountIdentityUnchanged:
-  Account.allInstances()->collect(a | a.accountId)->asSet() =
-  Account.allInstances()@pre->collect(a | a.accountId)->asSet()
-
-post BR_EXP_15_TransactionIdentityUnchanged:
-  Transaction.allInstances()->collect(t | t.transactionId)->asSet() =
-  Transaction.allInstances()@pre->collect(t | t.transactionId)->asSet()
-
-Technical constraints:
-- The operation shall not create, update, or delete Accounts, Transactions, or Categories.
-- On HTTP 200, ExpensesController shall return exactly { data: BreakdownResult[] }; it shall not add success or message fields.
+- If the authenticated user owns no accounts, the breakdown has no data for the selected month.
+- If no eligible current-month Expense transaction exists, the breakdown has no data for the selected month.
+- The backend shall return the API's configured no-data response, and the frontend shall display its no-data state.
 ~~~
 
+## Related UI
+
+ExpensesPage; ExpensesBreakdown; month input; route /expenses
+
+## Related API IDs
+
+API-EXPENSE-BREAKDOWN
+
+## Notes
+
+Experiment isolation:
+- BR-EXP-CAT-01 through BR-EXP-CAT-07 are the treatment-sensitive Business Rules for UC-11.
+- Description, pre/post-conditions, flows, UML, and non-BR API fields intentionally avoid restating these business semantics.
+- Month syntax/format validation is part of the API interface contract, not a treatment-sensitive Business Rule.
+- Figma layout/styling requirements are UI evidence and are not part of the core Business Rule effectiveness score.
+- Read-only HTTP semantics and the standard success/error response envelope are project-constrained and are not core treatment-sensitive BRs.
