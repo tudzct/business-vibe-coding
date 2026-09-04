@@ -14,7 +14,7 @@ export class AddAccountsOwnerAccountNumberUnique1788495106545
       SELECT COUNT(*) AS duplicateGroupCount
       FROM (
         SELECT 1
-        FROM Accounts
+        FROM accounts
         GROUP BY user_id, account_number_full
         HAVING COUNT(*) > 1
       ) AS duplicateGroups
@@ -28,7 +28,7 @@ export class AddAccountsOwnerAccountNumberUnique1788495106545
     }
 
     await queryRunner.createIndex(
-      'Accounts',
+      'accounts',
       new TableIndex({
         name: 'uq_accounts_user_id_account_number_full',
         columnNames: ['user_id', 'account_number_full'],
@@ -38,14 +38,14 @@ export class AddAccountsOwnerAccountNumberUnique1788495106545
   }
 
   async down(queryRunner: QueryRunner): Promise<void> {
-    const table = await queryRunner.getTable('Accounts');
+    const table = await queryRunner.getTable('accounts');
     const index = table?.indices.find(
       (candidate) =>
         candidate.name === 'uq_accounts_user_id_account_number_full',
     );
 
     if (index) {
-      await queryRunner.dropIndex('Accounts', index);
+      await queryRunner.dropIndex('accounts', index);
     }
   }
 }
