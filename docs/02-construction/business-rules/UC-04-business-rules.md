@@ -3,7 +3,7 @@ artifact_type: business-rule-resource
 status: Frozen
 uc_id: UC-04
 source_use_case: docs/01-inception/use-cases/uc-04-create-transaction.md
-source_use_case_sha256: sha256:0d6d0bc1aaa9e393bbeac88f9bc75420954049f4f6067de631ea45a876b17893
+source_use_case_sha256: sha256:1fe38316635ece4af2d7a9a774fd2efdd731c25d3b74c5aaeb5f3e9b9eb04f43
 ---
 
 # UC-04 Business Rule Resource
@@ -13,13 +13,13 @@ source_use_case_sha256: sha256:0d6d0bc1aaa9e393bbeac88f9bc75420954049f4f6067de63
 - Spreadsheet: `1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM`
 - Tab/range: `Use cases!A64:B82`
 - OCL utilities: `Use cases!A2:B2`
-- Retrieved at: `2026-09-01T01:22:04.719Z`
+- Retrieved at: `2026-09-02T20:55:00.000Z`
 
 ## Ordered Business Rules
 
-### BR-TXN-08 - Required transaction data
+### BR-TXN-08 - Required transaction data, date horizon, and cash payment threshold
 
-- Representation: `ocl_precondition`
+- Representation: `OCL precondition`
 - Expression / authoritative text:
 
 ~~~text
@@ -40,16 +40,23 @@ pre BR_TXN_08_RequiredFields:
   trim(dto.paymentMethod).size() > 0 and
   not dto.amount.oclIsUndefined() and
   dto.amount >= 0.01
+
+pre BR_TXN_08_DateWindow:
+  dto.transactionDate <= currentDate() + 1 and
+  dto.transactionDate >= currentDate() - 365
+
+pre BR_TXN_08_CashLimit:
+  dto.paymentMethod = 'Cash' implies dto.amount <= 50000000
 ~~~
 
 - Context: `TransactionService::create(user_id : Integer, dto : CreateTransactionDto) : CreateTransactionResponseDto`
 - Enforcement layer(s): `frontend`, `backend`
-- Failure behavior: Client field errors prevent submission for missing or invalid required values; backend independently rejects invalid or missing transaction data with HTTP 400 through the standard error envelope.
-- Traceability: `Use cases!A64:B82`; UC-04 Basic Flow 6 and 9; UC-04 EF-2 and EF-4; `API-TRANSACTION-CREATE`
+- Failure behavior: Client-applicable invalid fields prevent submission and display field errors; backend validation or constraint violations return HTTP 400 and no transaction is created.
+- Traceability: `Use cases!A64:B82`; `UC-04 Basic Flow 3-7`; `UC-04 EF-2`; `UC-04 EF-4`; `API-TRANSACTION-CREATE`
 
-### BR-TXN-09 - Allowed transaction type and status
+### BR-TXN-09 - Account type eligibility, allowed transaction types, and default status
 
-- Representation: `ocl_precondition`
+- Representation: `OCL precondition`
 - Expression / authoritative text:
 
 ~~~text
@@ -57,6 +64,12 @@ context TransactionService::create(
   user_id : Integer,
   dto : CreateTransactionDto
 ) : CreateTransactionResponseDto
+
+pre BR_TXN_09_EligibleAccountType:
+  Account.allInstances()->exists(a |
+    a.account_id = dto.accountId and
+    Set{AccountType::Checking, AccountType::Savings, AccountType::Credit_Card}->includes(a.account_type)
+  )
 
 pre BR_TXN_09_AllowedType:
   dto.type = TransactionType::Revenue or
@@ -76,13 +89,13 @@ post BR_TXN_09_DefaultStatus:
 ~~~
 
 - Context: `TransactionService::create(user_id : Integer, dto : CreateTransactionDto) : CreateTransactionResponseDto`
-- Enforcement layer(s): `frontend`, `backend`
-- Failure behavior: Invalid type or supplied status is rejected with HTTP 400; when status is omitted, the stored and returned status is Complete.
-- Traceability: `Use cases!A64:B82`; UC-04 Basic Flow 4, 6, and 11; UC-04 AF-1; UC-04 EF-2 and EF-4; `API-TRANSACTION-CREATE`
+- Enforcement layer(s): `frontend`, `backend`, `database`
+- Failure behavior: Unsupported account, transaction type, or supplied status produces HTTP 400; an omitted status is persisted and returned as Complete.
+- Traceability: `Use cases!A64:B82`; `UC-04 PRE-2`; `UC-04 Basic Flow 2-9`; `UC-04 AF-1`; `UC-04 EF-1`; `UC-04 EF-4`; `API-TRANSACTION-CREATE`; `API-ACCOUNT-LIST`
 
 ### BR-TXN-10 - Optional category must be valid when supplied
 
-- Representation: `ocl_precondition`
+- Representation: `OCL precondition`
 - Expression / authoritative text:
 
 ~~~text
@@ -105,13 +118,13 @@ post BR_TXN_10_CategoryStored:
 ~~~
 
 - Context: `TransactionService::create(user_id : Integer, dto : CreateTransactionDto) : CreateTransactionResponseDto`
-- Enforcement layer(s): `backend`, `database`
-- Failure behavior: An omitted category remains null and is not an error; a supplied nonexistent category is rejected with HTTP 400 and no transaction is created.
-- Traceability: `Use cases!A64:B82`; UC-04 PRE-4; UC-04 AF-2 and AF-3; UC-04 EF-4; `API-TRANSACTION-CREATE`; `API-CATEGORY-LIST`
+- Enforcement layer(s): `frontend`, `backend`, `database`
+- Failure behavior: An invalid supplied category produces HTTP 400; an omitted category remains null and does not prevent creation.
+- Traceability: `Use cases!A64:B82`; `UC-04 Basic Flow 2-9`; `UC-04 AF-2`; `UC-04 AF-3`; `UC-04 EF-4`; `API-TRANSACTION-CREATE`; `API-CATEGORY-LIST`
 
-### BR-TXN-11 - Account ownership
+### BR-TXN-11 - Account ownership scope
 
-- Representation: `ocl_precondition`
+- Representation: `OCL precondition`
 - Expression / authoritative text:
 
 ~~~text
@@ -128,13 +141,13 @@ pre BR_TXN_11_AccountOwnedByUser:
 ~~~
 
 - Context: `TransactionService::create(user_id : Integer, dto : CreateTransactionDto) : CreateTransactionResponseDto`
-- Enforcement layer(s): `backend`
-- Failure behavior: A nonexistent or non-owned account is rejected with HTTP 400 and no transaction or balance change is committed.
-- Traceability: `Use cases!A64:B82`; UC-04 PRE-2 and PRE-3; UC-04 Basic Flow 8 and 9; UC-04 EF-4; `API-TRANSACTION-CREATE`; `API-ACCOUNT-LIST`
+- Enforcement layer(s): `backend`, `database`
+- Failure behavior: A missing or non-owned account produces HTTP 400 and no transaction is created; missing or expired authentication produces HTTP 401.
+- Traceability: `Use cases!A64:B82`; `UC-04 PRE-1`; `UC-04 PRE-2`; `UC-04 Basic Flow 2 and 7`; `UC-04 EF-3`; `UC-04 EF-4`; `API-TRANSACTION-CREATE`; `API-ACCOUNT-LIST`
 
-### BR-TXN-12 - Sufficient balance for Expense
+### BR-TXN-12 - Sufficient balance for Expense with Savings maintaining reserve
 
-- Representation: `ocl_precondition`
+- Representation: `OCL precondition`
 - Expression / authoritative text:
 
 ~~~text
@@ -148,18 +161,19 @@ pre BR_TXN_12_SufficientExpenseBalance:
     Account.allInstances()->exists(a |
       a.account_id = dto.accountId and
       a.user_id = user_id and
-      a.balance >= dto.amount
+      ((a.account_type = AccountType::Savings and a.balance - dto.amount >= 50000) or
+       (a.account_type <> AccountType::Savings and a.balance >= dto.amount))
     )
 ~~~
 
 - Context: `TransactionService::create(user_id : Integer, dto : CreateTransactionDto) : CreateTransactionResponseDto`
 - Enforcement layer(s): `backend`, `database`
-- Failure behavior: An Expense that exceeds the owned account balance is rejected with HTTP 400 and no transaction or balance change is committed; Revenue is not subject to this check.
-- Traceability: `Use cases!A64:B82`; UC-04 Basic Flow 10; UC-04 AF-1; UC-04 EF-4; `API-TRANSACTION-CREATE`
+- Failure behavior: An Expense that exceeds the available balance or violates the Savings reserve produces HTTP 400 and no transaction or balance change is committed.
+- Traceability: `Use cases!A64:B82`; `UC-04 Basic Flow 7-8`; `UC-04 EF-4`; `API-TRANSACTION-CREATE`
 
-### BR-TXN-13 - Account balance adjustment
+### BR-TXN-13 - Status-dependent account balance adjustment and user total balance sync
 
-- Representation: `ocl_postcondition`
+- Representation: `OCL postcondition`
 - Expression / authoritative text:
 
 ~~~text
@@ -168,24 +182,31 @@ context TransactionService::create(
   dto : CreateTransactionDto
 ) : CreateTransactionResponseDto
 
-post BR_TXN_13_BalanceAdjusted:
+post BR_TXN_13_AccountBalanceAdjusted:
   Account.allInstances()->exists(a |
     a.account_id = dto.accountId and
-    ((dto.type = TransactionType::Revenue and
-      a.balance = a.balance@pre + dto.amount) or
-     (dto.type = TransactionType::Expense and
-      a.balance = a.balance@pre - dto.amount))
+    ((result.data.status = TransactionStatus::Complete and dto.type = TransactionType::Revenue and a.balance = a.balance@pre + dto.amount) or
+     (result.data.status = TransactionStatus::Complete and dto.type = TransactionType::Expense and a.balance = a.balance@pre - dto.amount) or
+     (result.data.status <> TransactionStatus::Complete and a.balance = a.balance@pre))
+  )
+
+post BR_TXN_13_UserTotalBalanceSynced:
+  User.allInstances()->exists(u |
+    u.user_id = user_id and
+    ((result.data.status = TransactionStatus::Complete and dto.type = TransactionType::Revenue and u.total_balance = u.total_balance@pre + dto.amount) or
+     (result.data.status = TransactionStatus::Complete and dto.type = TransactionType::Expense and u.total_balance = u.total_balance@pre - dto.amount) or
+     (result.data.status <> TransactionStatus::Complete and u.total_balance = u.total_balance@pre))
   )
 ~~~
 
 - Context: `TransactionService::create(user_id : Integer, dto : CreateTransactionDto) : CreateTransactionResponseDto`
 - Enforcement layer(s): `backend`, `database`
-- Failure behavior: On successful commit, Revenue increases and Expense decreases the selected account balance by exactly the transaction amount; a failure rolls the balance change back.
-- Traceability: `Use cases!A64:B82`; UC-04 POST-3 and POST-4; UC-04 Basic Flow 12; UC-04 AF-1; UC-04 EF-5; `API-TRANSACTION-CREATE`
+- Failure behavior: Complete transactions adjust both account and user totals according to type; non-Complete transactions adjust neither. A failed update or synchronization rolls back the request and returns HTTP 500.
+- Traceability: `Use cases!A64:B82`; `UC-04 Basic Flow 7-9`; `UC-04 AF-1`; `UC-04 EF-5`; `API-TRANSACTION-CREATE`
 
 ### BR-TXN-14 - Created transaction maps to the request and database
 
-- Representation: `ocl_postcondition`
+- Representation: `OCL postcondition`
 - Expression / authoritative text:
 
 ~~~text
@@ -218,29 +239,30 @@ post BR_TXN_14_PersistedTransaction:
 
 - Context: `TransactionService::create(user_id : Integer, dto : CreateTransactionDto) : CreateTransactionResponseDto`
 - Enforcement layer(s): `backend`, `database`
-- Failure behavior: Success creates exactly one mapped Transactions row and returns its created fields; persistence failure returns HTTP 500 and leaves no new row committed.
-- Traceability: `Use cases!A64:B82`; UC-04 POST-1 and POST-2; UC-04 Basic Flow 11; UC-04 EF-5; `API-TRANSACTION-CREATE`
+- Failure behavior: Success creates exactly one mapped transaction; a persistence failure creates none after rollback and returns HTTP 500.
+- Traceability: `Use cases!A64:B82`; `UC-04 POST-1`; `UC-04 Basic Flow 3 and 8-9`; `UC-04 AF-2`; `UC-04 EF-5`; `UC-04 UML`; `API-TRANSACTION-CREATE`
 
-### BR-TXN-15 - Atomic transaction creation
+### BR-TXN-15 - Atomic transaction creation, concurrency safety, and rollback
 
-- Representation: `natural_language`
+- Representation: `natural language`
 - Expression / authoritative text:
 
 ~~~text
 Technical constraints:
-- The Transactions insert and Accounts.balance update shall execute in one database transaction.
-- If any validation, persistence, or balance-update step fails before commit, the operation shall roll back and leave both Transactions and Accounts unchanged by this request.
-- shopName maps to Transactions.shop_name and paymentMethod maps to Transactions.payment_method; both are mandatory and shall not be null or empty.
+- The Transactions insert, Accounts.balance update, and Users.total_balance sync shall execute inside a single atomic database transaction.
+- If any validation, persistence, balance-update, or synchronization step fails before commit, the operation shall roll back and leave all tables unchanged by this request.
+- Database locking or isolation shall prevent race conditions during concurrent balance updates on the same account.
+- shopName maps to Transactions.shop_name and paymentMethod maps to Transactions.payment_method; both are mandatory and shall be trimmed non-empty strings.
 - category_id maps to Transactions.category_id and remains optional/nullable.
 ~~~
 
-- Context: Transaction creation persistence, account balance update, and request-to-database field mapping
-- Enforcement layer(s): `frontend`, `backend`, `database`
-- Failure behavior: Any failure before commit rolls back both the Transactions insert and Accounts.balance update; invalid mandatory mapped fields are rejected, while category_id remains optional and nullable.
-- Traceability: `Use cases!A64:B82`; UC-04 POST-2 and POST-4; UC-04 Basic Flow 6, 11, and 12; UC-04 EF-2, EF-4, and EF-5; `API-TRANSACTION-CREATE`
+- Context: `Transaction creation persistence, balance updates, synchronization, and concurrent requests`
+- Enforcement layer(s): `backend`, `database`
+- Failure behavior: Any pre-commit failure rolls back all request changes and returns the source-defined validation or server error; locking or isolation prevents lost concurrent balance updates.
+- Traceability: `Use cases!A64:B82`; `UC-04 POST-1`; `UC-04 Basic Flow 7-9`; `UC-04 AF-2`; `UC-04 EF-5`; `UC-04 UML`; `API-TRANSACTION-CREATE`
 
 ## Unresolved items
 
-None.
+None. The researcher explicitly confirmed that the frozen UC-04 projection is the governing source for this generation despite the later live-Sheet mismatch observed in `Use cases!B71:B78`.
 
 This artifact contains every BR in source order. It does not select, paraphrase or add rules, and it does not generate tests.

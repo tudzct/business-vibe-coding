@@ -1,12 +1,12 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-09-01T11:17:48.9780044Z",
-  "repository_revision": null,
-  "source_revision": "sha256:cc6d74b91c95d043cb4974d5b439e3e9e76dba3b14d6ba90aa9fc655ff6006bf",
+  "observed_at": "2026-09-04T10:47:21.9173106Z",
+  "repository_revision": "6f29e27a771b660ef74a05a2f0557f990ef2240e",
+  "source_revision": "sha256:7f1de770f933825ae26ce954170be2602f54826e75aaaa90edd48510348195b4",
   "docker": {
-    "cli": "29.2.1",
-    "compose": "v5.0.2",
-    "daemon": "29.2.1"
+    "cli": "Docker 29.2.1",
+    "compose": "Docker Compose v5.0.2",
+    "daemon": "available (server 29.2.1)"
   },
   "configuration": {
     "env_present": true,
@@ -15,11 +15,11 @@
     "compose_valid": true
   },
   "services": {
-    "database": "healthy",
-    "backend": "final UC-04 image built, running and healthy; health/category HTTP 200; authenticated success and bounded HTTP 400 exception observations passed",
-    "frontend": "Repair 008 transaction-navigation image built, recreated, running and healthy; /transactions and /transactions/add returned HTTP 200"
+    "database": "healthy container",
+    "backend": "healthy UC-16 final-source container; health HTTP 200; savings HTTP 401 unauthenticated and HTTP 200 authenticated",
+    "frontend": "healthy UC-16 final-source container; root returned HTTP 200"
   },
-  "status": "PASS",
+  "status": "READY",
   "blocking_incident": null,
-  "next_action": "Researcher hard-refreshes /transactions, confirms the tabs, and uses Add Transaction to perform the end-to-end UI flow; no connected browser was available for automated click verification."
+  "next_action": "UC-16 run is terminal; optionally inspect the authenticated chart hover visually."
 }

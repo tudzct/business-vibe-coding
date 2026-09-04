@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-15",
+  "use_case_path": "docs/01-inception/use-cases/uc-15-adjust-financial-goal.md",
+  "use_case_sha256": "sha256:8a0a1b0255e499a2d35494b400951ee712825b6f8471143894a9884b6e51e096",
+  "business_rule_resource_path": "docs/02-construction/business-rules/UC-15-business-rules.json",
+  "business_rule_resource_sha256": "sha256:1e8993726629cc532e59aa4b03b19153aba17978b4e9f7ea5f5b7a266bd5840f",
+  "spreadsheet_source": "Use cases!A314:B331",
+  "ordered_br_ids": [
+    "BR-GOAL-12",
+    "BR-GOAL-13",
+    "BR-GOAL-14",
+    "BR-GOAL-15",
+    "BR-GOAL-16",
+    "BR-GOAL-17"
+  ],
+  "frozen_at": "2026-09-03T10:57:46.000Z"
+}

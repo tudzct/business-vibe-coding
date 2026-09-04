@@ -1,0 +1,18 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "mode": "run-and-troubleshoot",
+  "observed_at": "2026-09-03T11:52:41.558Z",
+  "repository_revision": "85473a73626e3d41aaf33801cfed8c6158d384c8",
+  "source_revision": "sha256:f48a6bd37a60afce460d408eb8f6362e970964421069cd991af457ed7e5583a6",
+  "commands": [
+    { "id": "docker-compose-up-build", "exit_code": 1 },
+    { "id": "docker-compose-ps", "exit_code": 0 },
+    { "id": "docker-compose-bounded-backend-logs", "exit_code": 0 },
+    { "id": "docker-compose-stop-backend-frontend", "exit_code": 0 }
+  ],
+  "build_result": "PASS: repaired backend and frontend images built from current source",
+  "runtime_result": "BLOCKED: backend migration failed because the active database has no Goals table; frontend could not satisfy its backend-health dependency",
+  "bounded_error": "MakeGoalsCategoryNullable: MySQL ER_NO_SUCH_TABLE for Goals",
+  "incident_id": "DEP-20260903-001",
+  "secrets_persisted": false
+}

@@ -19,8 +19,9 @@ export interface User {
 }
 
 export interface Account {
-  account_id: number
-  user_id: number
+  id: number
+  account_id?: number
+  user_id?: number
   bank_name: string
   account_type: 'Checking' | 'Credit Card' | 'Savings' | 'Investment' | 'Loan'
   branch_name?: string
@@ -57,10 +58,12 @@ export interface AccountListItem {
   balance: number
 }
 
-export interface AccountListResponse {
+export interface AccountListResult {
   user_id: number
-  accounts: AccountListItem[]
+  accounts: Account[]
 }
+
+export type AccountListResponse = AccountListResult
 
 export type TransactionFilter = 'All' | 'Revenue' | 'Expense'
 
@@ -70,15 +73,17 @@ export interface TransactionListQuery {
   offset?: number
 }
 
-export interface TransactionListResponse {
+export interface TransactionListResult {
   data: Transaction[]
   total: number
   hasMore: boolean
 }
 
+export type TransactionListResponse = TransactionListResult
+
 export type TransactionStatus = 'Complete' | 'Pending' | 'Failed'
 
-export interface CreateTransactionPayload {
+export interface CreateTransactionRequest {
   accountId: number
   transactionDate: string
   type: 'Revenue' | 'Expense'
@@ -89,6 +94,8 @@ export interface CreateTransactionPayload {
   paymentMethod: string
   status?: TransactionStatus
 }
+
+export type CreateTransactionPayload = CreateTransactionRequest
 
 export interface CreatedTransaction {
   transactionId: number
@@ -119,7 +126,7 @@ export interface Goal {
   goal_id: number
   user_id: number
   goal_type: 'Saving' | 'Expense_Limit'
-  category_id: number
+  category_id: number | null
   start_date: string
   end_date: string
   target_amount: number
@@ -143,4 +150,67 @@ export interface BreakdownResult {
   total: number
   changePercent: number | null
   subCategories: ExpenseSubCategory[]
+}
+
+export interface CreateGoalRequest {
+  goal_type: 'Saving' | 'Expense_Limit'
+  category_id?: number
+  start_date: string
+  end_date: string
+  target_amount: number
+}
+
+export interface CreateGoalResult {
+  goal_id: number
+}
+
+export interface UpdateGoalRequest {
+  target_amount: number
+}
+
+export interface UpdatedGoal {
+  goal_id: number
+  target_amount: number
+}
+
+export interface UpdateGoalResult {
+  updated_goal: UpdatedGoal
+}
+
+export interface SavingGoalListItem {
+  goal_id: number
+  goal_type: 'Saving'
+  target_amount: number
+  target_achieved: number
+  start_date: string
+  end_date: string
+}
+
+export interface ExpenseGoalListItem {
+  goal_id: number
+  category: string
+  target_amount: number
+  current_expense: number
+}
+
+export interface GoalListResult {
+  savingGoal: SavingGoalListItem | null
+  expenseGoals: ExpenseGoalListItem[]
+}
+
+export interface MonthlySavings {
+  month: string
+  amount: number
+  transaction_count: number
+}
+
+export interface SavingsSummaryData {
+  this_year: MonthlySavings[]
+  last_year: MonthlySavings[]
+}
+
+export interface SavingsSummaryResult {
+  user_id: number
+  year: number
+  summary: SavingsSummaryData
 }

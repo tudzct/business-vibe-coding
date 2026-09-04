@@ -69,6 +69,7 @@ async function bootstrap() {
     .addTag('goals', 'Quản lý mục tiêu')
     .addTag('expenses', 'Quản lý chi tiêu')
     .addTag('categories', 'Quản lý danh mục')
+    .addTag('savings', 'Tổng hợp tiết kiệm')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

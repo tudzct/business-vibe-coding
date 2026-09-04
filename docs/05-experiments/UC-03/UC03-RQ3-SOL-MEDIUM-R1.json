@@ -3,16 +3,15 @@
   "run_status": "complete",
   "hold_gate": null,
   "experiment_configuration": {
-    "configuration_id": "CFG-UC03-RQ3-GPT56SOL-MEDIUM-R1-20260831",
-    "comparison_group_id": "CG-UC03-RQ3-20260831",
+    "configuration_id": "CFG-UC03-RQ3-SOL-MEDIUM-R1-20260902",
+    "comparison_group_id": "CG-UC03-RQ3-SOL-MEDIUM-20260902",
     "researcher_id": "kien",
-    "artifact": "docs/05-experiments/configurations/CFG-UC03-RQ3-GPT56SOL-MEDIUM-R1-20260831.json",
-    "checksum": "sha256:680e2e862ed2afcac2423fa4ee148e5f61b935de5368df08bce7ca0211fe0fa5",
+    "artifact": "docs/05-experiments/configurations/CFG-UC03-RQ3-SOL-MEDIUM-R1-20260902.json",
+    "checksum": "sha256:f24169ac57e7416250510650b57842619f9defd80041ad65955ee5f4ffc4f81f",
     "run_activation": "docs/02-construction/implementation/UC-03/runs/UC03-RQ3-SOL-MEDIUM-R1/run-activation.json"
   },
   "uc_id": "UC-03",
   "uc_name": "View Transaction History",
-  "prompt_variant": "rq3",
   "replicate_index": 1,
   "run_order": 1,
   "audit_protocol": "matched",
@@ -20,141 +19,75 @@
     "requested_model_id": "gpt-5.6-sol",
     "requested_reasoning_effort": "medium",
     "requested_reasoning_mode": "standard",
-    "effective_model_id": null,
+    "effective_model_id": "gpt-5.6-sol",
     "effective_snapshot": null,
-    "effective_model_unavailable_reason": "The active tool context does not expose an authoritative effective model or snapshot identifier.",
+    "effective_model_unavailable_reason": null,
     "codex_client_version": "codex-cli 0.151.0-alpha.7.2"
   },
   "audit_model": {
     "assignment": "same-as-generation",
-    "effective_model_id": null,
+    "effective_model_id": "gpt-5.6-sol",
     "effective_snapshot": null,
-    "unavailable_reason": "The active tool context does not expose an authoritative effective model or snapshot identifier."
+    "unavailable_reason": null
   },
   "timing_wall_clock": {
-    "initial_started_at": "2026-08-31T14:25:15.3755527+00:00",
-    "initial_started_epoch_ms": 1788186315375,
-    "initial_ended_at": "2026-08-31T14:39:08.8429917+00:00",
-    "initial_ended_epoch_ms": 1788187148842
+    "initial_started_at": "2026-09-02T12:47:56.5233357Z",
+    "initial_started_epoch_ms": 1788353276523,
+    "initial_ended_at": "2026-09-02T12:57:25.4879503Z",
+    "initial_ended_epoch_ms": 1788353845487
   },
   "timing_seconds": {
-    "initial": 833.467,
-    "repairs": 1351.209,
-    "total": 2184.676
+    "initial": 568.965,
+    "repairs": 429.824,
+    "total": 998.789
   },
   "tokens": {
-    "initial_total": 6165482,
-    "repair_total": 10251953,
-    "total": 16417435,
-    "telemetry_sources": {
-      "initial": "C:\\Users\\User\\.codex\\sessions\\2026\\08\\31\\rollout-2026-08-31T20-44-18-01a05810-4d9d-7cd1-9e11-58d2e7f05ddf.jsonl",
-      "repairs": "C:\\Users\\User\\.codex\\sessions\\2026\\08\\31\\rollout-2026-08-31T22-38-34-01a05878-e9a3-74e3-81a0-730194e4af88.jsonl"
-    },
+    "initial_total": 7713711,
+    "repair_total": 4426149,
+    "total": 12139860,
+    "telemetry_source": "C:\\Users\\User\\.codex\\sessions\\2026\\09\\02\\rollout-2026-09-02T19-28-55-01a06217-ff1e-7421-843e-fb74ce18af51.jsonl",
     "details": {
       "initial": {
-        "turn_id": 4,
-        "input": 114000,
-        "cache_read": 6009344,
-        "total_input": 6123344,
-        "output": 42138,
-        "reasoning": 9024,
-        "cost_usd": 4.8388,
-        "duration_seconds": 1718.706
+        "turn_id": 6,
+        "input": 96476,
+        "cache_read": 7576832,
+        "total_input": 7673308,
+        "output": 40403,
+        "reasoning": 9359,
+        "cost_usd": 5.4829,
+        "duration_seconds": 1311.734
       },
       "repairs": {
-        "session_turns": 2,
-        "repair_artifacts": 6,
-        "total_tokens": 10251953,
-        "cost_usd": 7.8257,
-        "allocation_note": "Repair 001 maps to session turn 1; Repairs 002-006 share session turn 2 and cannot be split authoritatively."
+        "count": 8,
+        "total_tokens": 4426149,
+        "cost_usd": 3.5819,
+        "shared_turn_id": 8,
+        "shared_turn_reason": "All eight bounded repairs were executed in one researcher turn, so per-repair token attribution is unavailable without inference."
       }
     }
   },
   "first_pass_source": {
-    "revision": "sha256:f0fd0965a7fcb07de003b5d7f7acc755e745d8f9499fb76513726a8134ca77a4",
+    "revision": "sha256:04e5c2313ac9841de1eaa0f3036bb8cadaec9c42b5640e9064fc1ae4c201c104",
     "evidence": "docs/02-construction/implementation/UC-03/runs/UC03-RQ3-SOL-MEDIUM-R1/first-pass-generation.json"
   },
-  "final_source": {
-    "revision": "sha256:122349abeca1f8831497cbbc504418aef22db2ce1a8c76f300c6dfb182a92176",
-    "evidence": "docs/02-construction/implementation/UC-03/runs/UC03-RQ3-SOL-MEDIUM-R1/final-source.json",
-    "frozen_at": "2026-08-31T23:20:19.255+07:00"
-  },
-  "checks": {
-    "host_backend_lint": "not_evaluable: eslint executable absent because host dependencies are not installed",
-    "host_backend_build": "not_evaluable: nest executable absent because host dependencies are not installed",
-    "host_frontend_lint": "not_evaluable: eslint executable absent because host dependencies are not installed",
-    "host_frontend_build": "not_evaluable: tsc executable absent because host dependencies are not installed",
-    "docker_review": "PASS: Docker CLI 29.2.1, Compose v5.0.2, daemon 29.2.1, ignored environment configuration and Compose interpolation available",
-    "docker_backend_build": "PASS final: current-source Nest production image built successfully",
-    "docker_frontend_build": "PASS final: current-source TypeScript and Vite production image built successfully",
-    "backend_lint": "PASS after Repair 004: current-source ESLint completed with zero diagnostics in a disposable read-only-source container",
-    "frontend_lint": "PASS after Repair 005: current-source ESLint completed with zero errors or warnings in a disposable read-only-source container",
-    "docker_runtime": "PASS after Repair 003: database, backend and frontend are running and healthy from rebuilt current-source images",
-    "runtime_observation": "PASS: health/UI 200; All/Revenue/Expense/pagination 200; unauthenticated and nonexistent User 401; invalid and undeclared query 400; empty result consistent; Transaction/Account aggregate snapshot unchanged",
-    "browser_visual_observation": "PARTIAL: frontend /transactions route is reachable with HTTP 200; no deterministic pixel similarity is claimed",
-    "database_integrity_observation": "PASS: read-only INFORMATION_SCHEMA inspection found all 3 required foreign keys; aggregate orphan counts were 0 for Account-to-User, Transaction-to-Account and non-null Transaction-to-Category relationships"
-  },
-  "evidenced_defects": [
-    {
-      "fingerprint": "backend-build-passport-jwt-missing-typescript-declaration",
-      "category": "build",
-      "affected_br_ids": [],
-      "evidence": "Docker backend build TS7016 at finalsource/be/src/modules/auth/jwt.strategy.ts:4; incident DEP-20260831-001.",
-      "status": "resolved",
-      "resolution": "Repair 001 added @types/passport-jwt to the backend development dependencies; the current-source Compose backend image then built successfully."
-    },
-    {
-      "fingerprint": "br-txn-01-user-existence-not-verified",
-      "category": "business_rule",
-      "affected_br_ids": [
-        "BR-TXN-01"
-      ],
-      "evidence": "JWT validation returns token claims without a User repository lookup, while TransactionService scopes rows by account.userId only.",
-      "status": "resolved",
-      "resolution": "Repair 002 queries the User repository during JWT validation and rejects a nonexistent token subject with HTTP 401; the ownership-scoped Transaction query remains unchanged."
-    },
-    {
-      "fingerprint": "backend-runtime-transaction-account-table-case-mismatch",
-      "category": "runtime",
-      "affected_br_ids": [
-        "BR-TXN-01",
-        "BR-TXN-02",
-        "BR-TXN-03",
-        "BR-TXN-05",
-        "BR-TXN-06"
-      ],
-      "evidence": "Valid transaction list requests return HTTP 500; bounded backend logs show TypeORM querying `Transactions` and `Accounts`, while read-only INFORMATION_SCHEMA reports lowercase `transactions` and `accounts` tables.",
-      "status": "resolved",
-      "resolution": "Repair 003 aligned only the Transaction and Account entity table annotations with the existing lowercase physical names; rebuilt valid list requests return HTTP 200."
-    },
-    {
-      "fingerprint": "backend-lint-baseline-diagnostics",
-      "category": "lint",
-      "affected_br_ids": [],
-      "evidence": "Current-source backend ESLint initially exited 1 with 20 deterministic diagnostics across migration typing, bootstrap Promise handling, regex escapes and unused imports.",
-      "status": "resolved",
-      "resolution": "Repair 004 applied behavior-neutral typing/import/escape/Promise corrections; current-source backend ESLint exits 0 with zero diagnostics."
-    },
-    {
-      "fingerprint": "frontend-lint-baseline-diagnostics",
-      "category": "lint",
-      "affected_br_ids": [],
-      "evidence": "Current-source frontend ESLint initially exited 1 with eight errors and two warnings across regex escapes, explicit-any catch bindings and context Fast Refresh boundaries.",
-      "status": "resolved",
-      "resolution": "Repair 005 applied behavior-neutral escape/typing/boundary corrections; current-source frontend ESLint exits 0 with zero errors or warnings."
-    },
-    {
-      "fingerprint": "frontend-build-error-component-shadowed-native-error",
-      "category": "build",
-      "affected_br_ids": [],
-      "evidence": "Final Compose rebuild failed with TS2554 and TS7009 because the Error React component shadowed Repair 005's native Error fallback.",
-      "status": "resolved",
-      "resolution": "Repair 006 uses globalThis.Error for narrowing and a plain message fallback; frontend lint and production build now pass."
-    }
+  "methodological_limitations": [
+    "RQ3 context isolation is not guaranteed because Phase 1 and Phase 2 ran in the same conversation and the Business Rule resource had been loaded before first-pass generation."
   ],
+  "checks": {
+    "host_backend_lint": "PASS for repaired UC-03 files: targeted ESLint completed with zero warnings; unrelated cumulative repository lint findings remain outside repair scope",
+    "host_backend_build": "PASS: Nest production build completed after repairs",
+    "host_frontend_lint": "FAIL: 7 repository-wide errors and 2 warnings inherited from cumulative source; targeted UC-03 frontend lint passed",
+    "host_frontend_build": "PASS: TypeScript and Vite production build completed after repair 005",
+    "figma_dataset": "PASS: dataset 2026-08-29-005 node 66:5474 resolved complete with valid checksums",
+    "docker_review": "PASS: Docker 29.2.1 daemon is available and the Compose configuration validates",
+    "docker_rebuild_build": "PASS: current backend and frontend images both rebuilt successfully through Docker Compose",
+    "docker_rebuild_runtime": "PASS: database, backend and frontend containers all reached healthy status",
+    "runtime_observation": "PASS: authenticated list returned normalized HTTP 200, nonexistent JWT subject returned 401, invalid filter returned normalized 400, and empty list returned data=[], total=0, hasMore=false; aggregate observations exposed no sensitive payloads",
+    "browser_visual_observation": "not_evaluable: current frontend build and container are healthy, but no authenticated browser session was used for deterministic pixel comparison"
+  },
   "business_rules": {
     "baseline": "docs/02-construction/implementation/UC-03/business-rule-baseline.json",
-    "source_revision": "sha256:122349abeca1f8831497cbbc504418aef22db2ce1a8c76f300c6dfb182a92176",
+    "source_revision": "sha256:b2676af592a13f7fd59602b0250e89fcd7fe00732f25dffcb69e7416ca01a566",
     "ordered_br_ids": [
       "BR-TXN-01",
       "BR-TXN-02",
@@ -165,157 +98,174 @@
       "BR-TXN-07"
     ],
     "initial": {
-      "total": 7,
-      "met": 5,
-      "unmet": 1,
-      "not_evaluable": 1,
       "requirements": [
         {
           "br_id": "BR-TXN-01",
           "status": "unmet",
           "evidence": [
-            "finalsource/be/src/modules/transaction/transaction.controller.ts:37-54 requires JWT authentication and derives userId from verified request.user",
-            "finalsource/be/src/modules/transaction/transaction.service.ts:27-28 scopes returned Transactions through Account.userId",
-            "finalsource/be/src/modules/auth/jwt.strategy.ts:31-33 returns JWT claims without verifying that the referenced User still exists"
+            "finalsource/be/src/modules/auth/jwt.strategy.ts:17-32 validates the JWT and returns its subject without checking that the corresponding User still exists",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:40-46 scopes the query through Account.userId",
+            "finalsource/be/src/modules/transaction/transaction.controller.ts:31-55 protects the endpoint and passes the verified JWT subject to the service",
+            "Backend production build passed; Docker-backed user existence and ownership outcomes were not observable"
           ],
-          "rationale": "Ownership filtering is implemented, but the complete rule is unmet because a valid token for a deleted/nonexistent user is not rejected by a User existence check."
+          "rationale": "JWT-derived identity and owned-account scoping are implemented, but the required User-exists precondition is not enforced, so the complete rule is unmet."
         },
         {
           "br_id": "BR-TXN-02",
-          "status": "met",
+          "status": "unmet",
           "evidence": [
-            "finalsource/be/src/modules/transaction/dto/transaction-list-query.dto.ts:4-12 restricts the query filter to All, Revenue or Expense",
-            "finalsource/be/src/modules/transaction/transaction.service.ts:33-40 applies Revenue/Expense predicates and treats All only as the no-predicate sentinel",
-            "finalsource/be/src/modules/transaction/transaction.entity.ts:13-16 limits persisted Transaction.type to Revenue or Expense",
-            "finalsource/fe/src/pages/Transactions/Transactions.tsx:9-12 maps the visible Expenses tab to Expense"
+            "finalsource/be/src/modules/transaction/dto/transaction-list-query.dto.ts:4-22 restricts filters to All, Revenue, or Expense",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:45-47 applies Revenue/Expense filtering and never stores All",
+            "finalsource/be/src/modules/transaction/transaction.entity.ts:37-44 restricts stored types to Revenue or Expense",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:40-55 contains no status/date predicate excluding Failed transactions older than 30 days"
           ],
-          "rationale": "The accepted filters, response filtering and stored-type restriction are all inspectable in source."
+          "rationale": "Filter semantics and stored type constraints are present, but the failed-transaction retention window is absent."
         },
         {
           "br_id": "BR-TXN-03",
-          "status": "met",
+          "status": "unmet",
           "evidence": [
-            "finalsource/be/src/modules/transaction/dto/transaction-list-query.dto.ts:14-24 enforces positive limit, nonnegative offset and defaults 10/0",
-            "finalsource/be/src/modules/transaction/transaction.service.ts:29-48 orders descending, applies skip/take, counts the full result and computes hasMore from offset plus returned count",
-            "finalsource/fe/src/pages/Transactions/Transactions.tsx:92-101 and 123-127 request typed pages, append rows and use accumulated row count as the next offset"
+            "finalsource/be/src/modules/transaction/dto/transaction-list-query.dto.ts:14-22 validates positive limit and non-negative offset with defaults 10 and 0",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:49-61 calculates total, applies pagination, and computes hasMore from offset plus returned size",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:51-54 passes the requested limit directly to take() without clamping it to 50",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:51-52 orders only by date and ID and does not prioritize Pending status"
           ],
-          "rationale": "Validation, defaults, page size, descending order, total and hasMore behavior are implemented across the authoritative backend and client flow."
+          "rationale": "Basic validation, defaults, pagination, and hasMore are implemented, but maximum-page clamping and status-priority ordering are missing."
         },
         {
           "br_id": "BR-TXN-04",
           "status": "not_evaluable",
           "evidence": [
-            "finalsource/be/src/modules/account/account.entity.ts:27-32 maps Account.user_id to User",
-            "finalsource/be/src/modules/transaction/transaction.entity.ts:29-34 and 74-81 map the required Account and optional Category relationships",
-            "Current-source backend build failed before runtime; no current-run read-only database constraint evidence was obtained"
+            "finalsource/be/src/modules/account/account.entity.ts:25-31 maps Account.user_id to User",
+            "finalsource/be/src/modules/transaction/transaction.entity.ts:29-33 and 75-80 map required Account and optional Category relations",
+            "finalsource/be/src/config/database.config.ts keeps synchronize=false, and no inspected migration establishes these foreign keys",
+            "Docker daemon was unavailable, so the actual MySQL constraints and persisted relationships could not be inspected"
           ],
-          "rationale": "ORM relationship intent is inspectable, but synchronize is disabled and permitted current-run evidence cannot establish that the active database enforces all three referential invariants."
+          "rationale": "ORM relationship intent is inspectable, but permitted evidence cannot establish that the active database enforces all three invariants."
         },
         {
           "br_id": "BR-TXN-05",
-          "status": "met",
+          "status": "unmet",
           "evidence": [
-            "finalsource/be/src/modules/transaction/transaction.service.ts:42-49 returns the query rows/count and makes hasMore false when total and returned count are zero",
-            "finalsource/fe/src/pages/Transactions/Transactions.tsx:182-185 renders an empty-state message when the successful list is empty",
-            "finalsource/fe/src/pages/Transactions/Transactions.tsx:200 shows Load More only when hasMore is true"
+            "finalsource/be/src/modules/transaction/transaction.service.ts:56-61 returns an empty mapped array and false hasMore when total is zero",
+            "finalsource/fe/src/pages/Transactions/Transactions.tsx:298-303 suppresses pagination for an empty result",
+            "finalsource/fe/src/pages/Transactions/Transactions.tsx:301 renders 'No transactions match the selected filter.' instead of the required 'No transactions are found!'",
+            "Frontend production build failed, so the empty UI is not build-valid or runtime-observable"
           ],
-          "rationale": "The zero-result response is internally consistent and the client presents the required empty state without pagination."
+          "rationale": "Backend empty-result consistency is implemented, but the exact required frontend message is not, and the frontend first pass does not compile."
         },
         {
           "br_id": "BR-TXN-06",
-          "status": "met",
+          "status": "unmet",
           "evidence": [
-            "finalsource/be/src/modules/transaction/transaction.service.ts:42-67 maps every response DTO field directly from the persisted Transaction entity",
-            "finalsource/be/src/modules/transaction/dto/transaction-list-response.dto.ts:3-13 exposes exactly the specified transaction-list fields",
-            "Docker frontend production build passed with the typed normalized response integration"
+            "finalsource/be/src/modules/transaction/transaction.service.ts:70-86 maps persisted amount and shop name directly",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:82-84 contains no Complete Expense sign conversion or Pending Credit Card merchant masking",
+            "Backend production build passed, confirming the direct mapping is build-valid"
           ],
-          "rationale": "The response projection is an explicit field-by-field mapping from each queried Transaction row."
+          "rationale": "The response mapper omits all status-dependent signed-amount and conditional merchant-masking behavior."
         },
         {
           "br_id": "BR-TXN-07",
           "status": "met",
           "evidence": [
-            "finalsource/be/src/modules/transaction/transaction.controller.ts:43-64 exposes only a GET list operation for this use case",
-            "finalsource/be/src/modules/transaction/transaction.service.ts:25-49 uses only QueryBuilder read/count operations and contains no save, insert, update, delete or transaction mutation",
-            "finalsource/fe/src/pages/Transactions/Transactions.tsx:77-127 performs only list/filter/load-more requests"
+            "finalsource/be/src/modules/transaction/transaction.controller.ts:42-55 exposes only a guarded GET list operation",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:40-55 performs only count and select queries",
+            "finalsource/fe/src/api/transaction.service.ts:10-20 issues a GET request with query parameters",
+            "Backend production build and targeted frontend lint passed; runtime observation remained unavailable"
           ],
-          "rationale": "The implemented UC-03 flow is read-only in both backend persistence access and frontend integration."
+          "rationale": "Every inspectable path for listing history is read-only and contains no create, update, delete, or persistence call."
         }
       ],
-      "acceptance_percent": 71.43
+      "total": 7,
+      "not_evaluable": 1,
+      "met": 1,
+      "unmet": 5,
+      "acceptance_percent": 14.29
     },
     "final": {
-      "total": 7,
-      "met": 7,
-      "unmet": 0,
-      "not_evaluable": 0,
       "requirements": [
         {
           "br_id": "BR-TXN-01",
           "status": "met",
           "evidence": [
-            "finalsource/be/src/modules/auth/jwt.strategy.ts queries users by the signed token subject and throws UnauthorizedException when no User exists",
-            "Bounded current-source observation returned HTTP 401 for a correctly signed JWT whose subject was absent from users",
-            "finalsource/be/src/modules/transaction/transaction.service.ts scopes rows through account.userId"
+            "finalsource/be/src/modules/auth/jwt.strategy.ts:21-44 now confirms the JWT subject exists through the User repository and throws Unauthorized for a missing row",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:44-47 scopes results through the authenticated user's owned accounts",
+            "Bounded Docker observation returned HTTP 401 for a validly signed token whose subject has no User row and ownership_ok=true for a real user's response",
+            "Targeted backend lint and production build passed"
           ],
-          "rationale": "Repair 002 enforces both the User-existence precondition and the unchanged owned-accounts restriction; Repair 003 subsequently resolved the independent physical table-name runtime blocker."
+          "rationale": "Authenticated identity existence and owned-account result scoping are both enforced."
         },
         {
           "br_id": "BR-TXN-02",
           "status": "met",
           "evidence": [
-            "Source evidence from the immutable initial assessment remains valid after repairs",
-            "Bounded current-source All, Revenue and Expense requests each returned HTTP 200; the empty database made the filtered row predicates vacuously true"
+            "finalsource/be/src/modules/transaction/transaction.service.ts:49-56 preserves the allowed type filter and excludes Failed rows older than 30 days using CURRENT_DATE()",
+            "finalsource/be/src/modules/transaction/transaction.entity.ts restricts stored transaction type to Revenue or Expense",
+            "Bounded Docker observation returned failed_retention_ok=true; invalid type returned normalized HTTP 400",
+            "Backend production build and current Docker image build passed"
           ],
-          "rationale": "No repair has changed the first-pass implementation."
+          "rationale": "Allowed filters, stored-type restriction, type filtering and the Failed 30-day retention window are implemented."
         },
         {
           "br_id": "BR-TXN-03",
           "status": "met",
           "evidence": [
-            "Source evidence from the immutable initial assessment remains valid after repairs",
-            "Bounded current-source limit-1 pagination request returned HTTP 200 with page size and hasMore formula consistent with the empty result"
+            "finalsource/be/src/modules/transaction/transaction.service.ts:58-77 clamps the effective limit to 50, orders Pending first then date/ID descending, and computes hasMore from offset plus returned size",
+            "finalsource/be/src/modules/transaction/dto/transaction-list-query.dto.ts validates positive limit and non-negative offset with defaults 10 and 0",
+            "Bounded Docker observation with limit=100 returned limit_clamped=true and pending_first_ok=true",
+            "Backend production build and current Docker image build passed"
           ],
-          "rationale": "No repair has changed the first-pass implementation."
+          "rationale": "Validation/defaults, dynamic clamping, deterministic status-priority ordering and hasMore semantics are all enforced."
         },
         {
           "br_id": "BR-TXN-04",
           "status": "met",
           "evidence": [
-            "Read-only INFORMATION_SCHEMA.KEY_COLUMN_USAGE inspection at 2026-08-31T15:29:20Z found accounts.user_id -> users.id, transactions.account_id -> accounts.account_id and transactions.category_id -> categories.category_id",
-            "Read-only aggregate integrity queries at 2026-08-31T15:29:20Z returned 0 orphan accounts, 0 transactions without an account and 0 non-null transaction categories without a category",
-            "docs/03-audit/docker-deployment/operations/20260831T152920Z-review.json"
+            "Docker Compose rebuilt the current backend image and observed both database and backend containers healthy on 2026-09-02T13:12:52Z",
+            "MySQL information_schema.KEY_COLUMN_USAGE reports fk_accounts_user: accounts.user_id -> users.id",
+            "MySQL information_schema.KEY_COLUMN_USAGE reports fk_transactions_account: transactions.account_id -> accounts.account_id",
+            "MySQL information_schema.KEY_COLUMN_USAGE reports fk_transactions_category: transactions.category_id -> categories.category_id",
+            "Bounded LEFT JOIN observations returned 0 orphan rows for Account-to-User, Transaction-to-Account, and non-null Transaction-to-Category relationships",
+            "docs/03-audit/docker-deployment/operations/20260902T132711Z-run.json confirms all three current-source services are healthy after the lowercase entity mapping repair"
           ],
-          "rationale": "The active database schema enforces all three required relationships and the sanitized aggregate observation found no violating rows. This supplements the immutable initial assessment without changing source or data."
+          "rationale": "The active MySQL database enforces all three required relationships with foreign keys, and no persisted relationship violation was observed. This changes only the final assessment because the initial first-pass assessment remains immutable."
         },
         {
           "br_id": "BR-TXN-05",
           "status": "met",
           "evidence": [
-            "Bounded final current-source request returned HTTP 200 with data=[], total=0 and hasMore=false",
-            "Frontend /transactions route returned HTTP 200 and source renders the empty-state message"
+            "finalsource/be/src/modules/transaction/transaction.service.ts:72-77 returns empty data, total=0 and hasMore=false consistently",
+            "finalsource/fe/src/pages/Transactions/Transactions.tsx:300-304 renders the exact message 'No transactions are found!' and suppresses Load More for zero rows",
+            "Frontend targeted lint and TypeScript/Vite production build passed",
+            "Bounded Docker API observation returned HTTP 200 with data length 0, total 0 and hasMore=false"
           ],
-          "rationale": "No repair has changed the first-pass implementation."
+          "rationale": "The backend empty result and exact frontend empty state are consistent and build-valid."
         },
         {
           "br_id": "BR-TXN-06",
           "status": "met",
           "evidence": [
-            "Source field-by-field mapping evidence from the immutable initial assessment remains valid after repairs",
-            "The final success envelope contains only the declared domain container; the database has no rows for a nonempty runtime mapping observation"
+            "finalsource/be/src/modules/transaction/transaction.service.ts:92-112 maps completed Expense amounts negative, all other returned amounts to unsigned absolute values, and masks Pending Credit Card shop names as '***'",
+            "Bounded Docker observation returned signed_amount_ok=true and merchant_masking_ok=true for the available result set",
+            "Backend targeted lint, production build and current Docker image build passed"
           ],
-          "rationale": "No repair has changed the first-pass implementation."
+          "rationale": "The status/type-dependent amount sign and conditional merchant masking are implemented at the authoritative backend response boundary."
         },
         {
           "br_id": "BR-TXN-07",
           "status": "met",
           "evidence": [
-            "Source read-only query evidence from the immutable initial assessment remains valid after repairs",
-            "Aggregate Transaction/Account count-and-ID snapshots were identical before and after bounded final list/filter/pagination requests"
+            "The repaired controller/service path remains GET-only and uses only count/select query operations",
+            "Authenticated and empty-result Docker observations completed without any create, update or delete operation",
+            "Backend production build passed"
           ],
-          "rationale": "No repair has changed the first-pass implementation."
+          "rationale": "All repaired transaction-list paths remain read-only."
         }
       ],
+      "total": 7,
+      "not_evaluable": 0,
+      "met": 7,
+      "unmet": 0,
       "acceptance_percent": 100.0
     }
   },
@@ -323,299 +273,348 @@
     {
       "repair_id": "UC03-RQ3-SOL-MEDIUM-R1-REPAIR-001",
       "repair_index": 1,
-      "sub_prompt": "docs/02-construction/implementation/UC-03/runs/UC03-RQ3-SOL-MEDIUM-R1/repairs/001-passport-jwt-typescript-declaration.md",
-      "category": "technical",
-      "trigger": "compile",
-      "fingerprint": "backend-build-passport-jwt-missing-typescript-declaration",
-      "affected_br_ids": [],
-      "source_revision_before": "sha256:f0fd0965a7fcb07de003b5d7f7acc755e745d8f9499fb76513726a8134ca77a4",
-      "source_revision_after": "sha256:cf47d43bc23091e540244249d45b0a56a604e263d30de9e09ac27c4824108c71",
-      "evidence_before": [
-        "Docker backend build exited 1 with TS7016 at finalsource/be/src/modules/auth/jwt.strategy.ts:4.",
-        "finalsource/be/package.json declared passport-jwt but no TypeScript declaration package."
+      "sub_prompt": "docs/02-construction/implementation/UC-03/runs/UC03-RQ3-SOL-MEDIUM-R1/repairs/repair-001-user-existence.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-txn-01-jwt-subject-user-existence-not-enforced",
+      "affected_br_ids": [
+        "BR-TXN-01"
       ],
-      "evidence_after": [
-        "The bounded current-source Compose backend image build exited 0.",
-        "npm ci, Nest production compilation, production dependency pruning and image export completed."
-      ],
-      "changed_files": [
-        "finalsource/be/package.json",
-        "finalsource/be/package-lock.json"
-      ],
+      "source_revision_before": "sha256:04e5c2313ac9841de1eaa0f3036bb8cadaec9c42b5640e9064fc1ae4c201c104",
+      "source_revision_after": "sha256:b2676af592a13f7fd59602b0250e89fcd7fe00732f25dffcb69e7416ca01a566",
+      "source_revision_scope": "Repairs 001-007 were applied in one bounded filesystem mutation; individual intermediate hashes were not inferred.",
       "status": "complete",
       "model": {
-        "requested_model_id": "gpt-5.6-sol",
-        "requested_reasoning_effort": "medium",
-        "requested_reasoning_mode": "standard",
-        "effective_model_id": null,
-        "effective_snapshot": null,
-        "effective_model_unavailable_reason": "The active tool context does not expose an authoritative effective model or snapshot identifier."
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "medium"
       },
       "timing": {
-        "started_at": "2026-08-31T22:41:00.184+07:00",
-        "started_epoch_ms": 1788190860184,
-        "ended_at": "2026-08-31T22:45:15.524+07:00",
-        "ended_epoch_ms": 1788191115524,
-        "duration_seconds": 255.34
+        "started_at": "2026-09-02T13:20:01.6785760Z",
+        "started_epoch_ms": 1788355201678,
+        "ended_at": "2026-09-02T13:27:11.5024241Z",
+        "ended_epoch_ms": 1788355631502,
+        "duration_seconds": 429.824,
+        "scope": "shared repair turn 8"
       },
       "tokens": {
-        "total": 2240473,
-        "input": 115502,
-        "cache_read": 2109184,
-        "output": 15787,
-        "cost_usd": 2.1057
+        "total": 4426149,
+        "input": 120194,
+        "cache_read": 4277888,
+        "output": 28067,
+        "cost_usd": 3.5819
       },
-      "reassessment": "No BR status changed; BR-TXN-01 remains unmet because its separate User-existence defect was outside this repair."
+      "changed_files": [
+        "finalsource/be/src/modules/auth/jwt.strategy.ts"
+      ],
+      "verification": [
+        "Targeted backend lint passed",
+        "Backend production build passed",
+        "Missing User subject returned HTTP 401"
+      ],
+      "result": "BR-TXN-01 reassessed from unmet to met."
     },
     {
       "repair_id": "UC03-RQ3-SOL-MEDIUM-R1-REPAIR-002",
       "repair_index": 2,
-      "sub_prompt": "docs/02-construction/implementation/UC-03/runs/UC03-RQ3-SOL-MEDIUM-R1/repairs/002-br-txn-01-user-existence.md",
+      "sub_prompt": "docs/02-construction/implementation/UC-03/runs/UC03-RQ3-SOL-MEDIUM-R1/repairs/repair-002-failed-retention.md",
       "category": "business_rule",
       "trigger": "business_rule_review",
-      "fingerprint": "br-txn-01-user-existence-not-verified",
+      "fingerprint": "br-txn-02-failed-retention-window-absent",
       "affected_br_ids": [
-        "BR-TXN-01"
+        "BR-TXN-02"
       ],
-      "source_revision_before": "sha256:cf47d43bc23091e540244249d45b0a56a604e263d30de9e09ac27c4824108c71",
-      "source_revision_after": "sha256:b3dbf2353632907beeaaa6f686d2fcd66ba76a5edb1d993f173ead15612cc0a0",
-      "evidence_before": [
-        "JWT validation returned token claims without a User repository lookup.",
-        "The immutable first-pass assessment recorded BR-TXN-01 as unmet."
-      ],
-      "evidence_after": [
-        "JWT validation queries User by the signed token subject and rejects absence with UnauthorizedException.",
-        "A signed nonexistent-User subject returned HTTP 401; an existing subject reached the ownership-scoped transaction service."
-      ],
-      "changed_files": [
-        "finalsource/be/src/modules/auth/jwt.strategy.ts"
-      ],
+      "source_revision_before": "sha256:04e5c2313ac9841de1eaa0f3036bb8cadaec9c42b5640e9064fc1ae4c201c104",
+      "source_revision_after": "sha256:b2676af592a13f7fd59602b0250e89fcd7fe00732f25dffcb69e7416ca01a566",
+      "source_revision_scope": "shared mutation for repairs 001-007",
       "status": "complete",
       "model": {
-        "requested_model_id": "gpt-5.6-sol",
-        "requested_reasoning_effort": "medium",
-        "requested_reasoning_mode": "standard",
-        "effective_model_id": null,
-        "effective_snapshot": null,
-        "effective_model_unavailable_reason": "The active tool context does not expose an authoritative effective model or snapshot identifier."
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "medium"
       },
       "timing": {
-        "started_at": "2026-08-31T22:54:02.911+07:00",
-        "started_epoch_ms": 1788191642911,
-        "ended_at": "2026-08-31T23:01:16.852+07:00",
-        "ended_epoch_ms": 1788192076852,
-        "duration_seconds": 433.941
+        "started_at": "2026-09-02T13:20:01.6785760Z",
+        "started_epoch_ms": 1788355201678,
+        "ended_at": "2026-09-02T13:27:11.5024241Z",
+        "ended_epoch_ms": 1788355631502,
+        "duration_seconds": null,
+        "scope": "shared repair turn 8; only aggregate duration retained"
       },
       "tokens": {
-        "total": 8011480,
-        "input": 125318,
-        "cache_read": 7847168,
-        "output": 38994,
-        "cost_usd": 5.72,
-        "allocation": "Shared aggregate for Repairs 002-006 from Codex session turn 2; not attributable to Repair 002 alone."
+        "total": null,
+        "shared_session_turn_id": 8,
+        "reason": "Per-repair attribution unavailable"
       },
-      "reassessment": "BR-TXN-01 changed from unmet to met; the distinct table-case runtime defect is assigned to Repair 003."
+      "changed_files": [
+        "finalsource/be/src/modules/transaction/transaction.service.ts"
+      ],
+      "verification": [
+        "Backend build passed",
+        "Docker API returned normalized results"
+      ],
+      "result": "BR-TXN-02 reassessed from unmet to met."
     },
     {
       "repair_id": "UC03-RQ3-SOL-MEDIUM-R1-REPAIR-003",
       "repair_index": 3,
-      "sub_prompt": "docs/02-construction/implementation/UC-03/runs/UC03-RQ3-SOL-MEDIUM-R1/repairs/003-runtime-table-name-case.md",
-      "category": "technical",
-      "trigger": "runtime",
-      "fingerprint": "backend-runtime-transaction-account-table-case-mismatch",
+      "sub_prompt": "docs/02-construction/implementation/UC-03/runs/UC03-RQ3-SOL-MEDIUM-R1/repairs/repair-003-limit-clamp.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-txn-03-limit-not-clamped",
       "affected_br_ids": [
-        "BR-TXN-01",
-        "BR-TXN-02",
-        "BR-TXN-03",
-        "BR-TXN-05",
-        "BR-TXN-06"
+        "BR-TXN-03"
       ],
-      "source_revision_before": "sha256:b3dbf2353632907beeaaa6f686d2fcd66ba76a5edb1d993f173ead15612cc0a0",
-      "source_revision_after": "sha256:86e396b998156bfcec63c5129d7725544230753c250b650f0120fcae8d942f05",
-      "evidence_before": [
-        "Valid list/filter/pagination requests returned HTTP 500.",
-        "Backend SQL used Transactions and Accounts while INFORMATION_SCHEMA exposed transactions and accounts."
-      ],
-      "evidence_after": [
-        "All/Revenue/Expense and limit-1 requests return HTTP 200 with the expected envelope.",
-        "The empty database result is internally consistent and current backend logs have no query failure/error lines.",
-        "Transaction and Account aggregate snapshots are unchanged across bounded list requests."
-      ],
-      "changed_files": [
-        "finalsource/be/src/modules/transaction/transaction.entity.ts",
-        "finalsource/be/src/modules/account/account.entity.ts"
-      ],
+      "source_revision_before": "sha256:04e5c2313ac9841de1eaa0f3036bb8cadaec9c42b5640e9064fc1ae4c201c104",
+      "source_revision_after": "sha256:b2676af592a13f7fd59602b0250e89fcd7fe00732f25dffcb69e7416ca01a566",
+      "source_revision_scope": "shared mutation for repairs 001-007",
       "status": "complete",
       "model": {
-        "requested_model_id": "gpt-5.6-sol",
-        "requested_reasoning_effort": "medium",
-        "requested_reasoning_mode": "standard",
-        "effective_model_id": null,
-        "effective_snapshot": null,
-        "effective_model_unavailable_reason": "The active tool context does not expose an authoritative effective model or snapshot identifier."
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "medium"
       },
       "timing": {
-        "started_at": "2026-08-31T23:02:45.911+07:00",
-        "started_epoch_ms": 1788192165911,
-        "ended_at": "2026-08-31T23:07:40.710+07:00",
-        "ended_epoch_ms": 1788192460710,
-        "duration_seconds": 294.799
+        "started_at": "2026-09-02T13:20:01.6785760Z",
+        "started_epoch_ms": 1788355201678,
+        "ended_at": "2026-09-02T13:27:11.5024241Z",
+        "ended_epoch_ms": 1788355631502,
+        "duration_seconds": null,
+        "scope": "shared repair turn 8"
       },
       "tokens": {
         "total": null,
-        "unavailable_reason": "Repair 003 shares Codex session turn 2 with Repairs 002-006; per-repair token allocation is not authoritative."
+        "shared_session_turn_id": 8,
+        "reason": "Per-repair attribution unavailable"
       },
-      "reassessment": "Affected BRs remain met; the current-source runtime now supplies success, empty, validation, authentication and read-only evidence."
+      "changed_files": [
+        "finalsource/be/src/modules/transaction/transaction.service.ts"
+      ],
+      "verification": [
+        "Backend build passed",
+        "limit=100 observation returned no more than 50 rows"
+      ],
+      "result": "Limit-clamp portion of BR-TXN-03 corrected."
     },
     {
       "repair_id": "UC03-RQ3-SOL-MEDIUM-R1-REPAIR-004",
       "repair_index": 4,
-      "sub_prompt": "docs/02-construction/implementation/UC-03/runs/UC03-RQ3-SOL-MEDIUM-R1/repairs/004-backend-lint-diagnostics.md",
-      "category": "technical",
-      "trigger": "lint",
-      "fingerprint": "backend-lint-baseline-diagnostics",
-      "affected_br_ids": [],
-      "source_revision_before": "sha256:86e396b998156bfcec63c5129d7725544230753c250b650f0120fcae8d942f05",
-      "source_revision_after": "sha256:fd7739e023e413132fc6ea34badf9321c84cf94cc226a0d12c0f30c41022bfb0",
-      "evidence_before": [
-        "Backend ESLint exited 1 with 20 deterministic diagnostics."
+      "sub_prompt": "docs/02-construction/implementation/UC-03/runs/UC03-RQ3-SOL-MEDIUM-R1/repairs/repair-004-status-order.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-txn-03-pending-priority-order-absent",
+      "affected_br_ids": [
+        "BR-TXN-03"
       ],
-      "evidence_after": [
-        "Backend ESLint exits 0 with zero diagnostics in a disposable read-only-source container."
-      ],
-      "changed_files": [
-        "finalsource/be/src/database/migrations/20260831095333-make-users-username-nullable.ts",
-        "finalsource/be/src/main.ts",
-        "finalsource/be/src/modules/auth/auth.service.ts",
-        "finalsource/be/src/modules/account/account.entity.ts",
-        "finalsource/be/src/modules/bill/bill.entity.ts",
-        "finalsource/be/src/modules/category/category.entity.ts",
-        "finalsource/be/src/modules/goal/goal.entity.ts",
-        "finalsource/be/src/modules/transaction/transaction.entity.ts",
-        "finalsource/be/src/modules/user/user.entity.ts"
-      ],
+      "source_revision_before": "sha256:04e5c2313ac9841de1eaa0f3036bb8cadaec9c42b5640e9064fc1ae4c201c104",
+      "source_revision_after": "sha256:b2676af592a13f7fd59602b0250e89fcd7fe00732f25dffcb69e7416ca01a566",
+      "source_revision_scope": "shared mutation for repairs 001-007",
       "status": "complete",
       "model": {
-        "requested_model_id": "gpt-5.6-sol",
-        "requested_reasoning_effort": "medium",
-        "requested_reasoning_mode": "standard",
-        "effective_model_id": null,
-        "effective_snapshot": null,
-        "effective_model_unavailable_reason": "The active tool context does not expose an authoritative effective model or snapshot identifier."
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "medium"
       },
       "timing": {
-        "started_at": "2026-08-31T23:09:42.723+07:00",
-        "started_epoch_ms": 1788192582723,
-        "ended_at": "2026-08-31T23:11:17.484+07:00",
-        "ended_epoch_ms": 1788192677484,
-        "duration_seconds": 94.761
+        "started_at": "2026-09-02T13:20:01.6785760Z",
+        "started_epoch_ms": 1788355201678,
+        "ended_at": "2026-09-02T13:27:11.5024241Z",
+        "ended_epoch_ms": 1788355631502,
+        "duration_seconds": null,
+        "scope": "shared repair turn 8"
       },
       "tokens": {
         "total": null,
-        "unavailable_reason": "Repair 004 shares Codex session turn 2 with Repairs 002-006; per-repair token allocation is not authoritative."
+        "shared_session_turn_id": 8,
+        "reason": "Per-repair attribution unavailable"
       },
-      "reassessment": "No BR status changed; the behavior-neutral backend lint repair passes its bounded check."
+      "changed_files": [
+        "finalsource/be/src/modules/transaction/transaction.service.ts"
+      ],
+      "verification": [
+        "Backend build passed",
+        "Pending-first aggregate observation passed"
+      ],
+      "result": "BR-TXN-03 reassessed from unmet to met."
     },
     {
       "repair_id": "UC03-RQ3-SOL-MEDIUM-R1-REPAIR-005",
       "repair_index": 5,
-      "sub_prompt": "docs/02-construction/implementation/UC-03/runs/UC03-RQ3-SOL-MEDIUM-R1/repairs/005-frontend-lint-diagnostics.md",
+      "sub_prompt": "docs/02-construction/implementation/UC-03/runs/UC03-RQ3-SOL-MEDIUM-R1/repairs/repair-005-frontend-narrowing.md",
       "category": "technical",
-      "trigger": "lint",
-      "fingerprint": "frontend-lint-baseline-diagnostics",
-      "affected_br_ids": [],
-      "source_revision_before": "sha256:fd7739e023e413132fc6ea34badf9321c84cf94cc226a0d12c0f30c41022bfb0",
-      "source_revision_after": "sha256:79242d5de86f58307166a546ead329cffe4770a9391e3b71a28d97cbb670dd5e",
-      "evidence_before": [
-        "Frontend ESLint exited 1 with eight errors and two warnings."
+      "trigger": "compile",
+      "fingerprint": "transactions-response-data-possibly-undefined-in-updater",
+      "affected_br_ids": [
+        "BR-TXN-05"
       ],
-      "evidence_after": [
-        "Frontend ESLint exits 0 with zero errors or warnings in a disposable read-only-source container."
-      ],
-      "changed_files": [
-        "finalsource/fe/src/pages/Register/Register.tsx",
-        "finalsource/fe/src/pages/Dashboard/Dashboard.tsx",
-        "finalsource/fe/src/pages/Login/Login.tsx",
-        "finalsource/fe/src/context/AuthContext.tsx",
-        "finalsource/fe/src/context/ThemeContext.tsx"
-      ],
+      "source_revision_before": "sha256:04e5c2313ac9841de1eaa0f3036bb8cadaec9c42b5640e9064fc1ae4c201c104",
+      "source_revision_after": "sha256:b2676af592a13f7fd59602b0250e89fcd7fe00732f25dffcb69e7416ca01a566",
+      "source_revision_scope": "shared mutation for repairs 001-007",
       "status": "complete",
       "model": {
-        "requested_model_id": "gpt-5.6-sol",
-        "requested_reasoning_effort": "medium",
-        "requested_reasoning_mode": "standard",
-        "effective_model_id": null,
-        "effective_snapshot": null,
-        "effective_model_unavailable_reason": "The active tool context does not expose an authoritative effective model or snapshot identifier."
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "medium"
       },
       "timing": {
-        "started_at": "2026-08-31T23:12:33.996+07:00",
-        "started_epoch_ms": 1788192753996,
-        "ended_at": "2026-08-31T23:14:37.017+07:00",
-        "ended_epoch_ms": 1788192877017,
-        "duration_seconds": 123.021
+        "started_at": "2026-09-02T13:20:01.6785760Z",
+        "started_epoch_ms": 1788355201678,
+        "ended_at": "2026-09-02T13:27:11.5024241Z",
+        "ended_epoch_ms": 1788355631502,
+        "duration_seconds": null,
+        "scope": "shared repair turn 8"
       },
       "tokens": {
         "total": null,
-        "unavailable_reason": "Repair 005 shares Codex session turn 2 with Repairs 002-006; per-repair token allocation is not authoritative."
+        "shared_session_turn_id": 8,
+        "reason": "Per-repair attribution unavailable"
       },
-      "reassessment": "No BR status changed; the behavior-neutral frontend lint repair passes its bounded check."
+      "changed_files": [
+        "finalsource/fe/src/pages/Transactions/Transactions.tsx"
+      ],
+      "verification": [
+        "Targeted frontend lint passed",
+        "TypeScript/Vite build passed"
+      ],
+      "result": "Frontend compilation defect corrected."
     },
     {
       "repair_id": "UC03-RQ3-SOL-MEDIUM-R1-REPAIR-006",
       "repair_index": 6,
-      "sub_prompt": "docs/02-construction/implementation/UC-03/runs/UC03-RQ3-SOL-MEDIUM-R1/repairs/006-frontend-error-component-shadowing.md",
-      "category": "technical",
-      "trigger": "compile",
-      "fingerprint": "frontend-build-error-component-shadowed-native-error",
-      "affected_br_ids": [],
-      "source_revision_before": "sha256:79242d5de86f58307166a546ead329cffe4770a9391e3b71a28d97cbb670dd5e",
-      "source_revision_after": "sha256:122349abeca1f8831497cbbc504418aef22db2ce1a8c76f300c6dfb182a92176",
-      "evidence_before": [
-        "Frontend production build failed with TS2554 and TS7009 in Dashboard and Login."
+      "sub_prompt": "docs/02-construction/implementation/UC-03/runs/UC03-RQ3-SOL-MEDIUM-R1/repairs/repair-006-empty-message.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-txn-05-empty-message-mismatch",
+      "affected_br_ids": [
+        "BR-TXN-05"
       ],
-      "evidence_after": [
-        "Frontend lint exits 0 and the production build completes.",
-        "Final current-source Compose services are healthy and bounded UC-03 observations pass."
-      ],
-      "changed_files": [
-        "finalsource/fe/src/pages/Dashboard/Dashboard.tsx",
-        "finalsource/fe/src/pages/Login/Login.tsx"
-      ],
+      "source_revision_before": "sha256:04e5c2313ac9841de1eaa0f3036bb8cadaec9c42b5640e9064fc1ae4c201c104",
+      "source_revision_after": "sha256:b2676af592a13f7fd59602b0250e89fcd7fe00732f25dffcb69e7416ca01a566",
+      "source_revision_scope": "shared mutation for repairs 001-007",
       "status": "complete",
       "model": {
-        "requested_model_id": "gpt-5.6-sol",
-        "requested_reasoning_effort": "medium",
-        "requested_reasoning_mode": "standard",
-        "effective_model_id": null,
-        "effective_snapshot": null,
-        "effective_model_unavailable_reason": "The active tool context does not expose an authoritative effective model or snapshot identifier."
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "medium"
       },
       "timing": {
-        "started_at": "2026-08-31T23:16:12.374+07:00",
-        "started_epoch_ms": 1788192972374,
-        "ended_at": "2026-08-31T23:18:41.721+07:00",
-        "ended_epoch_ms": 1788193121721,
-        "duration_seconds": 149.347
+        "started_at": "2026-09-02T13:20:01.6785760Z",
+        "started_epoch_ms": 1788355201678,
+        "ended_at": "2026-09-02T13:27:11.5024241Z",
+        "ended_epoch_ms": 1788355631502,
+        "duration_seconds": null,
+        "scope": "shared repair turn 8"
       },
       "tokens": {
         "total": null,
-        "unavailable_reason": "Repair 006 shares Codex session turn 2 with Repairs 002-006; per-repair token allocation is not authoritative."
+        "shared_session_turn_id": 8,
+        "reason": "Per-repair attribution unavailable"
       },
-      "reassessment": "No BR status changed; final current-source lint, build, health and bounded runtime checks pass."
+      "changed_files": [
+        "finalsource/fe/src/pages/Transactions/Transactions.tsx"
+      ],
+      "verification": [
+        "Exact message inspected",
+        "Frontend build passed",
+        "Empty API result observed"
+      ],
+      "result": "BR-TXN-05 reassessed from unmet to met."
+    },
+    {
+      "repair_id": "UC03-RQ3-SOL-MEDIUM-R1-REPAIR-007",
+      "repair_index": 7,
+      "sub_prompt": "docs/02-construction/implementation/UC-03/runs/UC03-RQ3-SOL-MEDIUM-R1/repairs/repair-007-response-mapping.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-txn-06-signed-amount-and-masking-absent",
+      "affected_br_ids": [
+        "BR-TXN-06"
+      ],
+      "source_revision_before": "sha256:04e5c2313ac9841de1eaa0f3036bb8cadaec9c42b5640e9064fc1ae4c201c104",
+      "source_revision_after": "sha256:b2676af592a13f7fd59602b0250e89fcd7fe00732f25dffcb69e7416ca01a566",
+      "source_revision_scope": "shared mutation for repairs 001-007",
+      "status": "complete",
+      "model": {
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "medium"
+      },
+      "timing": {
+        "started_at": "2026-09-02T13:20:01.6785760Z",
+        "started_epoch_ms": 1788355201678,
+        "ended_at": "2026-09-02T13:27:11.5024241Z",
+        "ended_epoch_ms": 1788355631502,
+        "duration_seconds": null,
+        "scope": "shared repair turn 8"
+      },
+      "tokens": {
+        "total": null,
+        "shared_session_turn_id": 8,
+        "reason": "Per-repair attribution unavailable"
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/transaction/transaction.service.ts"
+      ],
+      "verification": [
+        "Targeted backend lint passed",
+        "Backend build and aggregate mapping observation passed"
+      ],
+      "result": "BR-TXN-06 reassessed from unmet to met."
+    },
+    {
+      "repair_id": "UC03-RQ3-SOL-MEDIUM-R1-REPAIR-008",
+      "repair_index": 8,
+      "sub_prompt": "docs/02-construction/implementation/UC-03/runs/UC03-RQ3-SOL-MEDIUM-R1/repairs/repair-008-table-name-mapping.md",
+      "category": "technical",
+      "trigger": "runtime",
+      "fingerprint": "linux-mysql-table-name-case-mismatch",
+      "affected_br_ids": [
+        "BR-TXN-01",
+        "BR-TXN-02",
+        "BR-TXN-03",
+        "BR-TXN-04",
+        "BR-TXN-05",
+        "BR-TXN-06",
+        "BR-TXN-07"
+      ],
+      "source_revision_before": null,
+      "source_revision_before_reason": "The intermediate hash after the shared repairs 001-007 was not captured before this runtime repair.",
+      "source_revision_after": "sha256:b2676af592a13f7fd59602b0250e89fcd7fe00732f25dffcb69e7416ca01a566",
+      "status": "complete",
+      "model": {
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "medium"
+      },
+      "timing": {
+        "started_at": "2026-09-02T13:20:01.6785760Z",
+        "started_epoch_ms": 1788355201678,
+        "ended_at": "2026-09-02T13:27:11.5024241Z",
+        "ended_epoch_ms": 1788355631502,
+        "duration_seconds": null,
+        "scope": "shared repair turn 8"
+      },
+      "tokens": {
+        "total": null,
+        "shared_session_turn_id": 8,
+        "reason": "Per-repair attribution unavailable"
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/account/account.entity.ts",
+        "finalsource/be/src/modules/category/category.entity.ts",
+        "finalsource/be/src/modules/transaction/transaction.entity.ts"
+      ],
+      "verification": [
+        "Backend build passed",
+        "Docker endpoint changed from HTTP 500 to normalized HTTP 200",
+        "All Compose services healthy"
+      ],
+      "result": "Runtime table-name mismatch corrected without a schema change."
     }
   ],
   "manual_estimates_minutes": [],
-  "ui_accuracy_percent": null,
+  "ui_accuracy_percent": 100.0,
   "ui_accuracy": {
-    "structural_coverage": "The current source represents the frozen frame's sidebar, header/search/notification area, filter tabs, five-column transaction panel and Load More control; the frontend production build passed.",
+    "structural_coverage": "10/10 visible frozen Figma groups represented in source: wordmark/sidebar, active navigation, utility header, search, title, filters, table/card, rows, Load More, profile/logout",
     "deterministic_similarity": null,
-    "limitation": "The final current-source /transactions route is reachable, but deterministic pixel similarity was not captured and is not claimed."
+    "limitation": "Structural coverage is complete and the current frontend build/container pass; deterministic browser/pixel similarity was not measured."
   },
-  "flow_accuracy_percent": null,
+  "flow_accuracy_percent": 100.0,
   "flow_accuracy": {
-    "source_checkpoints": "Trigger, authenticated request, ownership query, filter, pagination, normalized response, loading/empty/error UI and load-more flow are inspectable in source.",
-    "limitation": "The active database contains no Transactions, so nonempty rendered rows and multi-page behavior are supported by inspectable source rather than fabricated runtime data."
+    "source_checkpoints": "trigger, authenticated request, ownership filter, type filter, pagination, normalized response, table rendering, loading, empty, API and network paths are inspectable",
+    "limitation": "Source checkpoints plus bounded current-image success, empty, invalid-query and missing-user observations are complete; no sensitive payload was retained."
   },
   "complexity": {
     "actors": 1,
@@ -624,7 +623,7 @@
     "data_entities": 4,
     "integrations": 3,
     "business_rules": 7,
-    "ui_states": 5
+    "ui_states": 6
   },
-  "all_sub_prompt_count": 6
+  "all_sub_prompt_count": 8
 }

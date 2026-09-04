@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 import { accountService } from '../../api/account.service'
 import { transactionService } from '../../api/transaction.service'
 import { Account, Transaction } from '../../api/types'
 import Loading from '../../components/Loading/Loading'
-import Error from '../../components/Error/Error'
+import ErrorDisplay from '../../components/Error/Error'
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth()
@@ -23,16 +23,15 @@ const Dashboard: React.FC = () => {
         ])
 
         if (accountsRes.success && accountsRes.data) {
-          setAccounts(accountsRes.data)
+          setAccounts(accountsRes.data.accounts)
         }
 
         if (transactionsRes.success && transactionsRes.data) {
           // Lấy 5 giao dịch gần nhất
           setRecentTransactions(transactionsRes.data.data.slice(0, 5))
         }
-      } catch (caught: unknown) {
-        const err = caught instanceof globalThis.Error ? caught : { message: '' }
-        setError(err.message || 'Không thể tải dữ liệu')
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'Không thể tải dữ liệu')
       } finally {
         setIsLoading(false)
       }
@@ -46,7 +45,7 @@ const Dashboard: React.FC = () => {
   }
 
   if (error) {
-    return <Error message={error} onRetry={() => window.location.reload()} />
+    return <ErrorDisplay message={error} onRetry={() => window.location.reload()} />
   }
 
   const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0)
@@ -84,7 +83,7 @@ const Dashboard: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {accounts.map((account) => (
               <div
-                key={account.account_id}
+                key={account.id}
                 className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
               >
                 <h3 className="font-semibold text-gray-900 dark:text-white">

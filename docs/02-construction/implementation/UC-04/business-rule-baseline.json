@@ -4,9 +4,9 @@
   "status": "Frozen",
   "uc_id": "UC-04",
   "use_case_path": "docs/01-inception/use-cases/uc-04-create-transaction.md",
-  "use_case_sha256": "sha256:0d6d0bc1aaa9e393bbeac88f9bc75420954049f4f6067de631ea45a876b17893",
+  "use_case_sha256": "sha256:1fe38316635ece4af2d7a9a774fd2efdd731c25d3b74c5aaeb5f3e9b9eb04f43",
   "business_rule_resource_path": "docs/02-construction/business-rules/UC-04-business-rules.json",
-  "business_rule_resource_sha256": "sha256:abd3d7401fb81af39f092c5598423fe9917130bc9e55a3d566b2680dd56c9e01",
+  "business_rule_resource_sha256": "sha256:a0d59ebaf72b88abd9c55389cc5b264cf2d4aa5e40214426629c92615b31c63a",
   "spreadsheet_source": "Use cases!A64:B82",
   "ordered_br_ids": [
     "BR-TXN-08",
@@ -18,5 +18,5 @@
     "BR-TXN-14",
     "BR-TXN-15"
   ],
-  "frozen_at": "2026-09-01T01:25:41.276Z"
+  "frozen_at": "2026-09-02T14:25:30.2549339Z"
 }

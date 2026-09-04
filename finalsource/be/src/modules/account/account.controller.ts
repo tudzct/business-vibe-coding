@@ -1,4 +1,4 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Request as RequestDecorator, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiInternalServerErrorResponse,
@@ -6,8 +6,14 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { AuthenticatedRequest, JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { AccountOption, AccountService } from './account.service';
+import type { Request } from 'express';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import type { AuthenticatedUser } from '../auth/jwt.strategy';
+import { AccountListDataDto, AccountService } from './account.service';
+
+interface AuthenticatedRequest extends Request {
+  readonly user: AuthenticatedUser;
+}
 
 @ApiTags('accounts')
 @ApiBearerAuth('JWT-auth')
@@ -17,15 +23,13 @@ export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
   @Get()
-  @ApiOkResponse({ description: 'Authenticated account options' })
+  @ApiOkResponse({ description: 'Account list retrieved successfully.' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiInternalServerErrorResponse({ description: 'Account retrieval failed safely' })
-  async list(@Req() request: AuthenticatedRequest): Promise<{
-    success: true;
-    message: string;
-    data: { accounts: AccountOption[] };
-  }> {
-    const accounts = await this.accountService.findOptions(request.user.userId);
-    return { success: true, message: 'Accounts retrieved successfully', data: { accounts } };
+  async findAll(@RequestDecorator() request: AuthenticatedRequest) {
+    const data: AccountListDataDto = await this.accountService.findAllByUserId(
+      request.user.userId,
+    );
+    return { success: true, message: 'Account list retrieved successfully.', data };
   }
 }

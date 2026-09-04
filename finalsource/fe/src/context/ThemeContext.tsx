@@ -1,13 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-
-type Theme = 'light' | 'dark'
-
-interface ThemeContextType {
-  theme: Theme
-  toggleTheme: () => void
-}
-
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
+import React, { useState, useEffect, ReactNode } from 'react'
+import { Theme, ThemeContext } from './theme-context'
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<Theme>(() => {
@@ -33,14 +25,5 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       {children}
     </ThemeContext.Provider>
   )
-}
-
-// eslint-disable-next-line react-refresh/only-export-components -- Provider and hook intentionally share one context instance.
-export const useTheme = () => {
-  const context = useContext(ThemeContext)
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider')
-  }
-  return context
 }
 

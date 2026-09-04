@@ -1,0 +1,66 @@
+{
+  "artifact_type": "first-pass-generation",
+  "status": "Frozen",
+  "uc_id": "UC-14",
+  "run_id": "UC14-RQ3-SOL-LIGHT-R1",
+  "prompt_variant": "rq3",
+  "source_prompt": "docs/02-construction/coding-prompts/UC-14-rq3-coding-prompt.md",
+  "source_prompt_sha256": "sha256:3ddfac422e04e79937b48350af32b442ff66d595f69279b952f43999f57ed2ac",
+  "run_activation": "docs/02-construction/implementation/UC-14/runs/UC14-RQ3-SOL-LIGHT-R1/run-activation.json",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "low",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": null,
+    "effective_model_unavailable_reason": "The runtime did not expose the effective provider model identifier.",
+    "effective_snapshot": null,
+    "effective_snapshot_unavailable_reason": "The runtime did not expose a provider snapshot identifier.",
+    "codex_client_version": "codex-cli 0.151.0-alpha.7.2"
+  },
+  "timing_wall_clock": {
+    "started_at": "2026-09-03T17:56:26.827+07:00",
+    "started_epoch_ms": 1788432986827,
+    "ended_at": "2026-09-03T18:02:56.182+07:00",
+    "ended_epoch_ms": 1788433376183,
+    "duration_seconds": 389.356
+  },
+  "tokens": {
+    "initial_total": 5951236,
+    "session_turn_id": 6,
+    "input": 94281,
+    "cache_read": 5821440,
+    "total_input": 5915721,
+    "output": 35515,
+    "reasoning": 6856,
+    "cost_usd": 4.4476,
+    "telemetry_source": "C:\\Users\\User\\.codex\\sessions\\2026\\09\\03\\rollout-2026-09-03T17-43-08-01a066dd-8316-7380-87fb-84b70096dd05.jsonl",
+    "attribution_note": "Phase 2 generation and its first-pass audit share one researcher turn, so telemetry is retained at turn granularity without inferred subdivision."
+  },
+  "source_revision_before": {
+    "sha256": "sha256:28693b164bc42c1d84c04ff32e87ab8a9be96933cd8d9906f9233393eefb609e",
+    "method": "SHA-256 over sorted relative path, NUL, per-file SHA-256 and newline entries; node_modules, dist, generated .tsbuildinfo and .env files excluded."
+  },
+  "source_revision": {
+    "sha256": "sha256:43681c68624e8b11b00ddb953f634e220c433ac98b443c770a72326b0cea0175",
+    "method": "SHA-256 over sorted relative path, NUL, per-file SHA-256 and newline entries; node_modules, dist, generated .tsbuildinfo and .env files excluded."
+  },
+  "changed_files": [
+    "finalsource/be/src/app.module.ts",
+    "finalsource/be/src/database/migrations/20260903105627-make-goals-category-nullable.ts",
+    "finalsource/be/src/modules/goal/dto/create-goal.dto.ts",
+    "finalsource/be/src/modules/goal/goal.controller.ts",
+    "finalsource/be/src/modules/goal/goal.entity.ts",
+    "finalsource/be/src/modules/goal/goal.module.ts",
+    "finalsource/be/src/modules/goal/goal.service.ts",
+    "finalsource/fe/src/api/goal.service.ts",
+    "finalsource/fe/src/api/types.ts",
+    "finalsource/fe/src/components/Goals/CreateGoalModal.tsx",
+    "finalsource/fe/src/components/Layout/Layout.tsx",
+    "finalsource/fe/src/pages/Goals/Goals.tsx"
+  ],
+  "context_isolation": {
+    "status": "not_isolated",
+    "reason": "Phase 1 and Phase 2 continued in the same conversation, and UC-14 Business Rule content had been loaded before first-pass generation."
+  },
+  "repairs_applied": 0
+}

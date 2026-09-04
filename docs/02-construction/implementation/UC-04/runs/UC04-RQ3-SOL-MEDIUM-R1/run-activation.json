@@ -4,8 +4,8 @@
   "uc_id": "UC-04",
   "run_id": "UC04-RQ3-SOL-MEDIUM-R1",
   "prompt_variant": "rq3",
-  "configuration_artifact": "docs/05-experiments/configurations/CFG-UC04-RQ3-GPT56SOL-MEDIUM-R1-20260901.json",
-  "configuration_checksum": "sha256:f2d5c3a875e198cfa89cc252e16c7f9fec58023be735ef4adc6977c8134f84a2",
-  "activated_at": "2026-09-01T00:36:37.225711Z",
+  "configuration_artifact": "docs/05-experiments/configurations/CFG-UC04-RQ3-SOL-MEDIUM-R1-20260902.json",
+  "configuration_checksum": "sha256:1e4efecc5a758ca9eee11ac74c2a280c95bb1a6a3f6a1ecf298e4d0b035aefe4",
+  "activated_at": "2026-09-02T15:29:08.793110Z",
   "status": "Confirmed"
 }

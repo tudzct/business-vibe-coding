@@ -1,21 +1,17 @@
 {
   "run_id": "UC04-RQ3-SOL-MEDIUM-R1",
-  "run_status": "rq3_hold",
-  "hold_gate": {
-    "status": "awaiting_researcher_authorization",
-    "reason": "RQ3 initial assessment is frozen; no repair sub-prompt may begin without explicit researcher authorization."
-  },
+  "run_status": "complete",
+  "hold_gate": null,
   "experiment_configuration": {
-    "configuration_id": "CFG-UC04-RQ3-GPT56SOL-MEDIUM-R1-20260901",
-    "comparison_group_id": "CG-UC04-RQ3-20260901",
+    "configuration_id": "CFG-UC04-RQ3-SOL-MEDIUM-R1-20260902",
+    "comparison_group_id": "CG-UC04-RQ3-SOL-MEDIUM-20260902",
     "researcher_id": "kien",
-    "artifact": "docs/05-experiments/configurations/CFG-UC04-RQ3-GPT56SOL-MEDIUM-R1-20260901.json",
-    "checksum": "sha256:f2d5c3a875e198cfa89cc252e16c7f9fec58023be735ef4adc6977c8134f84a2",
+    "artifact": "docs/05-experiments/configurations/CFG-UC04-RQ3-SOL-MEDIUM-R1-20260902.json",
+    "checksum": "sha256:1e4efecc5a758ca9eee11ac74c2a280c95bb1a6a3f6a1ecf298e4d0b035aefe4",
     "run_activation": "docs/02-construction/implementation/UC-04/runs/UC04-RQ3-SOL-MEDIUM-R1/run-activation.json"
   },
   "uc_id": "UC-04",
   "uc_name": "Create a Transaction",
-  "prompt_variant": "rq3",
   "replicate_index": 1,
   "run_order": 1,
   "audit_protocol": "matched",
@@ -23,53 +19,85 @@
     "requested_model_id": "gpt-5.6-sol",
     "requested_reasoning_effort": "medium",
     "requested_reasoning_mode": "standard",
-    "effective_model_id": null,
+    "effective_model_id": "gpt-5.6-sol",
     "effective_snapshot": null,
-    "effective_model_unavailable_reason": "The active tool context does not expose an authoritative effective model or snapshot identifier.",
+    "effective_model_unavailable_reason": "The runtime did not expose a provider snapshot identifier.",
     "codex_client_version": "codex-cli 0.151.0-alpha.7.2"
   },
   "audit_model": {
     "assignment": "same-as-generation",
-    "effective_model_id": null,
+    "effective_model_id": "gpt-5.6-sol",
     "effective_snapshot": null,
-    "unavailable_reason": "The active tool context does not expose an authoritative effective model or snapshot identifier."
+    "unavailable_reason": null
   },
   "timing_wall_clock": {
-    "initial_started_at": "2026-09-01T07:37:56.577+07:00",
-    "initial_started_epoch_ms": 1788223076578,
-    "initial_ended_at": "2026-09-01T07:41:54.010+07:00",
-    "initial_ended_epoch_ms": 1788223314011
+    "initial_started_at": "2026-09-02T17:31:41.9792270Z",
+    "initial_started_epoch_ms": 1788370301979,
+    "initial_ended_at": "2026-09-02T17:37:08.8804286Z",
+    "initial_ended_epoch_ms": 1788370628880
   },
   "timing_seconds": {
-    "initial": 237.433,
-    "repairs": 0,
-    "total": 237.433
+    "initial": 326.901,
+    "repairs": 515.991,
+    "total": 842.892
   },
   "tokens": {
-    "initial_total": 4421263,
-    "repair_total": 0,
-    "total": 4421263,
-    "telemetry_source": "C:\\Users\\User\\.codex\\sessions\\2026\\09\\01\\rollout-2026-09-01T07-21-09-01a05a57-5aed-7691-bedd-a080d6bcb2a7.jsonl",
+    "initial_total": 7750401,
+    "repair_total": 8039568,
+    "total": 15789969,
+    "telemetry_source": "C:\\Users\\User\\.codex\\sessions\\2026\\09\\02\\rollout-2026-09-02T21-17-38-01a0627b-8a83-7ae0-a133-537cc684398e.jsonl",
     "details": {
       "initial": {
-        "turn_id": 5,
-        "input": 83876,
-        "cache_read": 4308096,
-        "total_input": 4391972,
-        "output": 29291,
-        "reasoning": 7790,
-        "cost_usd": 3.4522,
-        "duration_seconds": 611.535
+        "turn_id": 9,
+        "input": 299448,
+        "cache_read": 7400192,
+        "total_input": 7699640,
+        "output": 33313,
+        "reasoning": 6738,
+        "cost_usd": 6.1967,
+        "duration_seconds": 963.394
       },
       "repairs": {
-        "count": 0,
-        "total_tokens": 0,
-        "cost_usd": 0
+        "count": 1,
+        "total_tokens": 8039568,
+        "cost_usd": 5.4506
       }
     }
   },
+  "first_pass_source": {
+    "revision": "sha256:2da98f29eec914cc7a0c12981ca1b0a664be9e71037b49f576a3ca06539932e6",
+    "evidence": "docs/02-construction/implementation/UC-04/runs/UC04-RQ3-SOL-MEDIUM-R1/first-pass-generation.json"
+  },
+  "methodological_limitations": [
+    "RQ3 context isolation is not guaranteed because Phase 1 and Phase 2 ran in the same conversation and the UC-04 Business Rule resource had been loaded before first-pass generation.",
+    "Successful creation and concurrent balance updates were not exercised against persisted financial data; their final assessment uses inspectable transaction, locking, source-build, and container-build evidence."
+  ],
+  "checks": {
+    "host_backend_lint": "PASS: targeted ESLint completed with zero warnings for the UC-04 backend files",
+    "host_backend_build": "PASS: Nest production build completed for the first-pass source",
+    "host_frontend_targeted_lint": "PASS: targeted ESLint completed with zero warnings for the UC-04 frontend files and directly affected Dashboard integration",
+    "host_frontend_repository_lint": "FAIL: 6 pre-existing no-useless-escape errors and 2 Fast Refresh warnings remain outside UC-04 source",
+    "host_frontend_build": "PASS: TypeScript and Vite production build completed after repair 001",
+    "figma_dataset": "PASS: frozen dataset 2026-08-29-005 node 4740:1106 resolved complete with valid checksums",
+    "docker_review": "PASS: Docker 29.2.1 daemon and Compose v5.0.2 are available and configuration validates",
+    "docker_rebuild_build": "PASS: current backend and frontend images rebuilt successfully through Docker Compose",
+    "docker_rebuild_runtime": "PASS: database, backend, and frontend containers reached healthy state",
+    "runtime_observation": "PASS: backend health and frontend root returned HTTP 200; eligible-account response contained only supported types; invalid date, excessive Cash amount, and insufficient balance each returned HTTP 400 without a successful mutation",
+    "tests_created_or_run": false
+  },
+  "technical_findings": [
+    {
+      "status": "resolved",
+      "trigger": "compile",
+      "fingerprint": "dashboard-error-component-shadows-global-error-constructor",
+      "evidence": "finalsource/fe/src/pages/Dashboard/Dashboard.tsx:7 and 48 alias the display component as ErrorDisplay; targeted ESLint and the TypeScript/Vite production build pass.",
+      "repair_authorized": true,
+      "repair_id": "UC04-RQ3-SOL-MEDIUM-R1-REPAIR-001"
+    }
+  ],
   "business_rules": {
     "baseline": "docs/02-construction/implementation/UC-04/business-rule-baseline.json",
+    "source_revision": "sha256:28693b164bc42c1d84c04ff32e87ab8a9be96933cd8d9906f9233393eefb609e",
     "ordered_br_ids": [
       "BR-TXN-08",
       "BR-TXN-09",
@@ -80,90 +108,95 @@
       "BR-TXN-14",
       "BR-TXN-15"
     ],
-    "source_revision": "sha256:6de9443c8ef50690b68ff8043cc96ba21a8842b559942c701dd43470d3bea328",
     "initial": {
       "requirements": [
         {
           "br_id": "BR-TXN-08",
-          "status": "met",
+          "status": "unmet",
           "evidence": [
-            "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts:17-58 validates every required request field, trims mandatory strings and enforces amount >= 0.01",
-            "finalsource/fe/src/pages/Transactions/AddTransaction.tsx:131-174 performs corresponding preliminary validation and constructs the typed request only after success"
+            "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts:17-57 validates required identifiers, strings, enum values, ISO date syntax, and amount >= 0.01",
+            "finalsource/fe/src/pages/Transactions/AddTransaction.tsx:130-157 performs preliminary required-field, positive-amount, account, category, type, and parseable-date validation",
+            "Neither validator enforces the currentDate()-365 through currentDate()+1 horizon or the Cash amount ceiling of 50000000"
           ],
-          "rationale": "The request cannot reach the service through the protected endpoint without the complete required shape, and the UI prevents submission for the same client-applicable conditions."
+          "rationale": "Required fields and the minimum amount are enforced, but two mandatory constraints in the same rule are absent."
         },
         {
           "br_id": "BR-TXN-09",
-          "status": "met",
+          "status": "unmet",
           "evidence": [
-            "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts:27-28 and 55-58 constrain type and optional status to the persistence enums",
-            "finalsource/be/src/modules/transaction/transaction.service.ts:70-80 stores Complete when status is omitted and preserves an allowed supplied status"
+            "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts:26-27 and 55-57 constrain transaction type and supplied status to their enums",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:71-76 verifies account ownership and lines 86-96 default an omitted status to Complete",
+            "finalsource/be/src/modules/account/account.service.ts:27-43 returns every owned account without restricting account_type to Checking, Savings, or Credit Card",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:71-76 contains no account-type eligibility check"
           ],
-          "rationale": "Both allowed value sets are runtime-validated and the source-defined default is explicit in the persisted entity input."
+          "rationale": "Allowed transaction values and default status are implemented, but the required account-type eligibility boundary is missing."
         },
         {
           "br_id": "BR-TXN-10",
           "status": "met",
           "evidence": [
-            "finalsource/be/src/modules/transaction/transaction.service.ts:43-54 checks Category existence only when category_id is supplied",
-            "finalsource/be/src/modules/transaction/transaction.service.ts:70-80 and 154-173 persist the supplied category mapping and return null when it is omitted",
-            "finalsource/fe/src/pages/Transactions/AddTransaction.tsx:152-171 validates selected options while permitting an omitted category"
+            "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts:34-38 keeps category_id optional while validating a supplied positive integer",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:78-84 verifies a supplied category exists and lines 87-113 persist and return either that identifier or null",
+            "The backend targeted lint and production build passed"
           ],
-          "rationale": "The implementation distinguishes absent category from a supplied identifier and validates, persists and returns each case consistently."
+          "rationale": "The authoritative backend accepts omission, rejects a nonexistent supplied category, and preserves the category/null mapping."
         },
         {
           "br_id": "BR-TXN-11",
           "status": "met",
           "evidence": [
-            "finalsource/be/src/modules/transaction/transaction.controller.ts:46-49 and 77-87 protect creation with the JWT guard and use only request.user.userId",
-            "finalsource/be/src/modules/transaction/transaction.service.ts:32-45 queries the locked Account by both accountId and authenticated userId and rejects absence"
+            "finalsource/be/src/modules/transaction/transaction.controller.ts:48-66 protects POST /api/v1/transactions with JwtAuthGuard and passes the authenticated user ID",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:71-76 queries Account by both accountId and userId and rejects a missing or non-owned result",
+            "The backend targeted lint and production build passed; Docker runtime remained unavailable"
           ],
-          "rationale": "A client cannot provide the owner identity, and account resolution is scoped to the authenticated application user."
+          "rationale": "Account ownership is enforced at the backend trust boundary using authenticated identity and a compound lookup."
         },
         {
           "br_id": "BR-TXN-12",
-          "status": "met",
+          "status": "unmet",
           "evidence": [
-            "finalsource/be/src/modules/transaction/transaction.service.ts:56-68 rejects an Expense whose amount exceeds the current locked owned-account balance and does not apply that constraint to Revenue",
-            "finalsource/fe/src/pages/Transactions/AddTransaction.tsx:148-150 supplies matching preliminary Expense feedback from the selected account"
+            "finalsource/be/src/modules/transaction/transaction.service.ts:66-120 creates the transaction without reading or comparing Account.balance",
+            "Repository-wide inspection finds Account.balance only in entity/list mapping and no Savings reserve or insufficient-balance branch"
           ],
-          "rationale": "The authoritative check occurs after ownership resolution against the current balance inside the database transaction."
+          "rationale": "Expense balance sufficiency and the mandatory 50000 Savings reserve are not enforced."
         },
         {
           "br_id": "BR-TXN-13",
-          "status": "met",
+          "status": "unmet",
           "evidence": [
-            "finalsource/be/src/modules/transaction/transaction.service.ts:32-41 obtains a pessimistic lock on the selected owned Account",
-            "finalsource/be/src/modules/transaction/transaction.service.ts:82-87 adds the amount for Revenue or subtracts it for Expense and saves through the transactional manager"
+            "finalsource/be/src/modules/transaction/transaction.service.ts:86-114 persists and maps only the Transaction entity",
+            "Repository-wide inspection finds no account balance or user total_balance update in the transaction creation path",
+            "Non-Complete and Complete status paths share the same persistence behavior"
           ],
-          "rationale": "The balance transformation is explicit for both transaction types and is protected from stale concurrent updates."
+          "rationale": "Neither status-dependent Account.balance adjustment nor User.total_balance synchronization is implemented."
         },
         {
           "br_id": "BR-TXN-14",
           "status": "met",
           "evidence": [
-            "finalsource/be/src/modules/transaction/transaction.service.ts:70-82 constructs and saves one Transaction with an explicit field-by-field mapping from the validated DTO",
-            "finalsource/be/src/modules/transaction/transaction.service.ts:154-173 maps the saved entity to the declared created-transaction response fields",
-            "finalsource/be/src/modules/transaction/transaction.controller.ts:77-93 exposes exactly one POST create call and returns the normalized HTTP 201 success envelope"
+            "finalsource/be/src/modules/transaction/transaction.service.ts:87-99 creates one new entity from the request and invokes one repository save",
+            "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts:14-15 and 29-53 trim and validate mandatory string inputs before persistence",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:101-114 maps the saved identifier, fields, status, and nullable category into the response",
+            "The backend targeted lint and production build passed"
           ],
-          "rationale": "The source has one insert operation and maps trimmed/request/default values into persistence and the returned created entity."
+          "rationale": "The inspectable success path creates one explicitly mapped transaction and returns its saved representation."
         },
         {
           "br_id": "BR-TXN-15",
-          "status": "met",
+          "status": "unmet",
           "evidence": [
-            "finalsource/be/src/modules/transaction/transaction.service.ts:32-89 encloses validation-dependent reads, the Transaction insert and Account update in one TypeORM transaction using only its manager",
-            "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts:30-53 makes shopName and paymentMethod trimmed non-empty inputs while leaving category_id optional/nullable",
-            "finalsource/be/src/modules/transaction/transaction.service.ts:70-80 maps those fields to the Transaction entity and preserves nullable category behavior"
+            "finalsource/be/src/modules/transaction/transaction.service.ts:66-120 uses repositories directly and contains no TypeORM transaction manager or QueryRunner",
+            "Repository-wide inspection finds no lock, isolation level, or account/user balance update in the create path",
+            "String trimming and nullable category mapping exist, but the required atomic multi-table update, rollback boundary, and concurrency control do not"
           ],
-          "rationale": "Any thrown validation or persistence error aborts the TypeORM transaction, while the request-to-column mapping and mandatory/optional distinctions are enforced by the create path."
+          "rationale": "The mapping details are present, but the rule's core atomicity, rollback, balance synchronization, and concurrency requirements are absent."
         }
       ],
       "total": 8,
-      "met": 8,
       "not_evaluable": 0,
-      "unmet": 0,
-      "acceptance_percent": 100.0
+      "unmet": 5,
+      "met": 3,
+      "acceptance_percent": 37.5
     },
     "final": {
       "requirements": [
@@ -171,117 +204,345 @@
           "br_id": "BR-TXN-08",
           "status": "met",
           "evidence": [
-            "Immutable first-pass source evidence; no repair has been authorized or applied."
+            "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts:23-26 restricts transactionDate to a strict YYYY-MM-DD date",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:75-78 and 250-264 enforce the 365-day past through one-day future horizon and the 50000000 Cash ceiling",
+            "finalsource/fe/src/pages/Transactions/AddTransaction.tsx:89,153-172,319 adds matching date bounds and Cash validation",
+            "Targeted frontend/backend lint and production builds passed; bounded invalid-date and Cash-limit requests returned HTTP 400"
           ],
-          "rationale": "Final currently equals the frozen initial assessment at the RQ3 hold gate."
+          "rationale": "All required fields, minimum amount, date horizon, and exact Cash ceiling are enforced at the backend with matching client controls."
         },
         {
           "br_id": "BR-TXN-09",
           "status": "met",
           "evidence": [
-            "Immutable first-pass source evidence; no repair has been authorized or applied."
+            "finalsource/be/src/modules/account/account.service.ts:6-10 and 34-39 limit account choices to Checking, Savings, and Credit Card",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:56-60 and 88-94 independently enforce the same account eligibility at creation",
+            "The DTO enum constraints remain in place and transaction.service.ts defaults omitted status to Complete",
+            "Bounded account-list observation returned HTTP 200 with eligible_types_only=true"
           ],
-          "rationale": "Final currently equals the frozen initial assessment at the RQ3 hold gate."
+          "rationale": "Eligible account types, allowed transaction types/statuses, and omitted-status defaulting are all enforced."
         },
         {
           "br_id": "BR-TXN-10",
           "status": "met",
           "evidence": [
-            "Immutable first-pass source evidence; no repair has been authorized or applied."
+            "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts keeps category_id optional and validates a supplied identifier",
+            "finalsource/be/src/modules/transaction/transaction.service.ts validates category existence inside the database transaction and preserves the identifier or null in persistence/response",
+            "Backend targeted lint, production build, and Docker image build passed"
           ],
-          "rationale": "Final currently equals the frozen initial assessment at the RQ3 hold gate."
+          "rationale": "A supplied category must exist, while omission remains valid and maps to null."
         },
         {
           "br_id": "BR-TXN-11",
           "status": "met",
           "evidence": [
-            "Immutable first-pass source evidence; no repair has been authorized or applied."
+            "finalsource/be/src/modules/transaction/transaction.controller.ts:48-66 keeps the create endpoint JWT guarded",
+            "finalsource/be/src/modules/transaction/transaction.service.ts:80-94 locks and queries the User and Account by authenticated userId plus accountId before creation",
+            "Backend targeted lint, production build, and healthy container observation passed"
           ],
-          "rationale": "Final currently equals the frozen initial assessment at the RQ3 hold gate."
+          "rationale": "The authenticated user's ownership is enforced within the atomic backend create boundary."
         },
         {
           "br_id": "BR-TXN-12",
           "status": "met",
           "evidence": [
-            "Immutable first-pass source evidence; no repair has been authorized or applied."
+            "finalsource/be/src/modules/transaction/transaction.service.ts:97-104 computes the locked account's remaining Expense balance and applies a 50000 minimum for Savings and zero otherwise",
+            "The validation occurs before any persistence inside the SERIALIZABLE transaction",
+            "A bounded insufficient-balance request returned HTTP 400 and the transaction count remained stable"
           ],
-          "rationale": "Final currently equals the frozen initial assessment at the RQ3 hold gate."
+          "rationale": "Every Expense is checked against available balance, including the frozen Savings reserve requirement."
         },
         {
           "br_id": "BR-TXN-13",
           "status": "met",
           "evidence": [
-            "Immutable first-pass source evidence; no repair has been authorized or applied."
+            "finalsource/be/src/modules/transaction/transaction.service.ts:114-126 applies a signed Revenue/Expense delta to both Account.balance and User.totalBalance only when status is Complete",
+            "Pending and Failed paths skip both balance saves",
+            "Both updates execute inside the same SERIALIZABLE transaction as the Transaction insert; backend and Docker builds passed"
           ],
-          "rationale": "Final currently equals the frozen initial assessment at the RQ3 hold gate."
+          "rationale": "Complete transactions adjust both required totals by type, while non-Complete transactions adjust neither."
         },
         {
           "br_id": "BR-TXN-14",
           "status": "met",
           "evidence": [
-            "Immutable first-pass source evidence; no repair has been authorized or applied."
+            "finalsource/be/src/modules/transaction/transaction.service.ts:128-159 creates and saves exactly one Transaction entity and maps the saved record to the response",
+            "CreateTransactionDto continues to trim mandatory strings and transaction.service.ts preserves the optional category mapping",
+            "Backend targeted lint, production build, and Docker image build passed"
           ],
-          "rationale": "Final currently equals the frozen initial assessment at the RQ3 hold gate."
+          "rationale": "The success path contains one mapped Transaction insert and returns that saved representation."
         },
         {
           "br_id": "BR-TXN-15",
           "status": "met",
           "evidence": [
-            "Immutable first-pass source evidence; no repair has been authorized or applied."
+            "finalsource/be/src/modules/transaction/transaction.service.ts:80-159 wraps validation, balance synchronization, and the insert in one TypeORM SERIALIZABLE transaction",
+            "Lines 81-94 acquire pessimistic write locks on User then Account in deterministic order before balance decisions",
+            "Thrown validation or persistence errors leave the transaction callback before commit and TypeORM rolls it back; non-HTTP failures retain the safe HTTP 500 mapping",
+            "Mandatory trimmed shop/payment strings and nullable category mapping remain enforced; backend and Docker builds passed"
           ],
-          "rationale": "Final currently equals the frozen initial assessment at the RQ3 hold gate."
+          "rationale": "The multi-table create operation now has one rollback boundary, explicit isolation, deterministic row locks, and required field mappings."
         }
       ],
       "total": 8,
-      "met": 8,
       "not_evaluable": 0,
       "unmet": 0,
+      "met": 8,
       "acceptance_percent": 100.0
     }
   },
-  "repairs": [],
-  "evidenced_defects": [],
-  "environment_blockers": [
+  "repairs": [
     {
-      "fingerprint": "docker-daemon-desktop-linux-engine-unavailable",
-      "evidence": "Docker CLI and Compose are installed, but the Docker Desktop Linux engine pipe was absent during the authorized run check.",
-      "impact": "The earlier runtime check was blocked; the daemon later became available and the current-source Compose build and bounded verification ran successfully.",
-      "outcome": "resolved"
+      "repair_id": "UC04-RQ3-SOL-MEDIUM-R1-REPAIR-001",
+      "repair_index": 1,
+      "sub_prompt": "docs/02-construction/implementation/UC-04/runs/UC04-RQ3-SOL-MEDIUM-R1/repairs/repair-001-dashboard-error-shadow.md",
+      "category": "technical",
+      "trigger": "compile",
+      "fingerprint": "dashboard-error-component-shadows-global-error-constructor",
+      "affected_br_ids": [],
+      "source_revision_before": "sha256:2da98f29eec914cc7a0c12981ca1b0a664be9e71037b49f576a3ca06539932e6",
+      "source_revision_after": "sha256:b533b01099ea31b57f03484c593f11ba3ae4cfbe61415f52672324faa701b987",
+      "status": "complete",
+      "model": {
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "medium"
+      },
+      "timing": {
+        "started_at": "2026-09-02T17:51:37.5691888Z",
+        "started_epoch_ms": 1788371497569,
+        "ended_at": "2026-09-02T17:51:53.5925543Z",
+        "ended_epoch_ms": 1788371513592,
+        "duration_seconds": 16.023
+      },
+      "tokens": {
+        "total": 8039568,
+        "input": 86578,
+        "cache_read": 7917696,
+        "output": 35294,
+        "cost_usd": 5.4506
+      },
+      "changed_files": [
+        "finalsource/fe/src/pages/Dashboard/Dashboard.tsx"
+      ],
+      "verification": [
+        "Targeted frontend lint passed",
+        "Frontend production build passed"
+      ],
+      "result": "Frontend compile defect resolved."
     },
     {
-      "fingerprint": "backend-runtime-categories-table-missing",
-      "evidence": "GET /api/categories returned HTTP 500 and the bounded backend log reported that vibe_business.Categories does not exist; no migration currently creates it.",
-      "impact": "The optional category selector cannot load from the running backend. A schema proposal and explicit researcher approval are required before mutation.",
-      "outcome": "blocked-schema-approval"
+      "repair_id": "UC04-RQ3-SOL-MEDIUM-R1-REPAIR-002",
+      "repair_index": 2,
+      "sub_prompt": "docs/02-construction/implementation/UC-04/runs/UC04-RQ3-SOL-MEDIUM-R1/repairs/repair-002-transaction-date-window.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-txn-08-date-window-not-enforced",
+      "affected_br_ids": [
+        "BR-TXN-08"
+      ],
+      "source_revision_before": "sha256:b533b01099ea31b57f03484c593f11ba3ae4cfbe61415f52672324faa701b987",
+      "source_revision_after": "sha256:a28f59ad2f57612b0e0cb1f90e33a60a9767ff60eb333a16543161f500e84383",
+      "status": "complete",
+      "model": {
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "medium"
+      },
+      "timing": {
+        "started_at": "2026-09-02T17:52:22.0329931Z",
+        "started_epoch_ms": 1788371542032,
+        "ended_at": "2026-09-02T17:53:10.5362505Z",
+        "ended_epoch_ms": 1788371590536,
+        "duration_seconds": 48.504
+      },
+      "tokens": {
+        "total": null,
+        "shared_session_turn_id": 10,
+        "reason": "Per-repair attribution unavailable"
+      },
+      "changed_files": [
+        "finalsource/fe/src/pages/Transactions/AddTransaction.tsx",
+        "finalsource/be/src/modules/transaction/dto/create-transaction.dto.ts",
+        "finalsource/be/src/modules/transaction/transaction.service.ts"
+      ],
+      "verification": [
+        "Targeted frontend/backend lint passed",
+        "Frontend/backend production builds passed",
+        "Invalid date returned HTTP 400"
+      ],
+      "result": "Date-window portion of BR-TXN-08 corrected."
+    },
+    {
+      "repair_id": "UC04-RQ3-SOL-MEDIUM-R1-REPAIR-003",
+      "repair_index": 3,
+      "sub_prompt": "docs/02-construction/implementation/UC-04/runs/UC04-RQ3-SOL-MEDIUM-R1/repairs/repair-003-cash-payment-limit.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-txn-08-cash-payment-ceiling-not-enforced",
+      "affected_br_ids": [
+        "BR-TXN-08"
+      ],
+      "source_revision_before": "sha256:a28f59ad2f57612b0e0cb1f90e33a60a9767ff60eb333a16543161f500e84383",
+      "source_revision_after": "sha256:4fce3842bd38c98d7ecf7f830af1b1e44e2941fed1d7237311545ecab2ffdccf",
+      "status": "complete",
+      "model": {
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "medium"
+      },
+      "timing": {
+        "started_at": "2026-09-02T17:53:26.3404365Z",
+        "started_epoch_ms": 1788371606340,
+        "ended_at": "2026-09-02T17:53:55.4005292Z",
+        "ended_epoch_ms": 1788371635400,
+        "duration_seconds": 29.06
+      },
+      "tokens": {
+        "total": null,
+        "shared_session_turn_id": 10,
+        "reason": "Per-repair attribution unavailable"
+      },
+      "changed_files": [
+        "finalsource/fe/src/pages/Transactions/AddTransaction.tsx",
+        "finalsource/be/src/modules/transaction/transaction.service.ts"
+      ],
+      "verification": [
+        "Targeted frontend/backend lint passed",
+        "Frontend/backend production builds passed",
+        "Excessive Cash request returned HTTP 400"
+      ],
+      "result": "BR-TXN-08 reassessed from unmet to met."
+    },
+    {
+      "repair_id": "UC04-RQ3-SOL-MEDIUM-R1-REPAIR-004",
+      "repair_index": 4,
+      "sub_prompt": "docs/02-construction/implementation/UC-04/runs/UC04-RQ3-SOL-MEDIUM-R1/repairs/repair-004-eligible-account-types.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-txn-09-ineligible-account-types-accepted",
+      "affected_br_ids": [
+        "BR-TXN-09"
+      ],
+      "source_revision_before": "sha256:4fce3842bd38c98d7ecf7f830af1b1e44e2941fed1d7237311545ecab2ffdccf",
+      "source_revision_after": "sha256:66d3ef06d0955e5c7a5e5a65a7971fa586d15f47a45e68c4c07a179eb2d56289",
+      "status": "complete",
+      "model": {
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "medium"
+      },
+      "timing": {
+        "started_at": "2026-09-02T17:54:10.9270689Z",
+        "started_epoch_ms": 1788371650927,
+        "ended_at": "2026-09-02T17:54:34.8452289Z",
+        "ended_epoch_ms": 1788371674845,
+        "duration_seconds": 23.918
+      },
+      "tokens": {
+        "total": null,
+        "shared_session_turn_id": 10,
+        "reason": "Per-repair attribution unavailable"
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/account/account.service.ts",
+        "finalsource/be/src/modules/transaction/transaction.service.ts"
+      ],
+      "verification": [
+        "Targeted backend lint passed",
+        "Backend production build passed",
+        "Bounded account list contained eligible types only"
+      ],
+      "result": "BR-TXN-09 reassessed from unmet to met."
+    },
+    {
+      "repair_id": "UC04-RQ3-SOL-MEDIUM-R1-REPAIR-005",
+      "repair_index": 5,
+      "sub_prompt": "docs/02-construction/implementation/UC-04/runs/UC04-RQ3-SOL-MEDIUM-R1/repairs/repair-005-expense-balance-reserve.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-txn-12-expense-balance-and-savings-reserve-not-enforced",
+      "affected_br_ids": [
+        "BR-TXN-12"
+      ],
+      "source_revision_before": "sha256:66d3ef06d0955e5c7a5e5a65a7971fa586d15f47a45e68c4c07a179eb2d56289",
+      "source_revision_after": "sha256:d33864732754a56868c92ee496a3561bbf0d3410690746475bd64be289232207",
+      "status": "complete",
+      "model": {
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "medium"
+      },
+      "timing": {
+        "started_at": "2026-09-02T17:54:59.6482775Z",
+        "started_epoch_ms": 1788371699648,
+        "ended_at": "2026-09-02T17:55:19.8547889Z",
+        "ended_epoch_ms": 1788371719854,
+        "duration_seconds": 20.207
+      },
+      "tokens": {
+        "total": null,
+        "shared_session_turn_id": 10,
+        "reason": "Per-repair attribution unavailable"
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/transaction/transaction.service.ts"
+      ],
+      "verification": [
+        "Targeted backend lint passed",
+        "Backend production build passed",
+        "Insufficient balance returned HTTP 400 without a successful mutation"
+      ],
+      "result": "BR-TXN-12 reassessed from unmet to met."
+    },
+    {
+      "repair_id": "UC04-RQ3-SOL-MEDIUM-R1-REPAIR-006",
+      "repair_index": 6,
+      "sub_prompt": "docs/02-construction/implementation/UC-04/runs/UC04-RQ3-SOL-MEDIUM-R1/repairs/repair-006-atomic-balance-sync.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "br-txn-13-15-balance-sync-not-atomic-or-concurrency-safe",
+      "affected_br_ids": [
+        "BR-TXN-13",
+        "BR-TXN-15"
+      ],
+      "source_revision_before": "sha256:d33864732754a56868c92ee496a3561bbf0d3410690746475bd64be289232207",
+      "source_revision_after": "sha256:28693b164bc42c1d84c04ff32e87ab8a9be96933cd8d9906f9233393eefb609e",
+      "status": "complete",
+      "model": {
+        "effective_model_id": "gpt-5.6-sol",
+        "reasoning_effort": "medium"
+      },
+      "timing": {
+        "started_at": "2026-09-02T17:55:57.9157486Z",
+        "started_epoch_ms": 1788371757915,
+        "ended_at": "2026-09-02T18:00:13.5604825Z",
+        "ended_epoch_ms": 1788372013560,
+        "duration_seconds": 255.645
+      },
+      "tokens": {
+        "total": null,
+        "shared_session_turn_id": 10,
+        "reason": "Per-repair attribution unavailable"
+      },
+      "changed_files": [
+        "finalsource/be/src/modules/transaction/transaction.service.ts"
+      ],
+      "verification": [
+        "Targeted backend lint passed",
+        "Backend production build passed",
+        "Docker backend/frontend image builds passed",
+        "All Compose services healthy"
+      ],
+      "result": "BR-TXN-13 and BR-TXN-15 reassessed from unmet to met."
     }
   ],
-  "verification": {
-    "backend_lint": "pass-docker",
-    "frontend_lint": "pass-docker",
-    "backend_production_build": "pass-docker",
-    "frontend_production_build": "pass-docker",
-    "database_health": "healthy",
-    "backend_health": "healthy; /api/health=200",
-    "frontend_health": "healthy; /=200; /transactions/add=200",
-    "runtime_observation": {
-      "categories_public": 500,
-      "accounts_unauthenticated": 401,
-      "create_transaction_unauthenticated": 401,
-      "success_path": "not_observed_without_mutating_data_or using researcher credentials"
-    },
-    "tests_created_or_run": false
-  },
   "manual_estimates_minutes": [],
-  "ui_accuracy_percent": null,
+  "ui_accuracy_percent": 100.0,
   "ui_accuracy": {
-    "structural_coverage": "Inspectable source represents the frozen frame's sidebar/header context, Recent Transaction tabs, Add Transaction action, two-column eight-field form, optional category, and Cancel/Save actions with responsive stacking.",
+    "structural_coverage": "The add-transaction route, responsive form, account/category loading, field errors, request error, success state, cancellation, and navigation are inspectable in source against frozen node 4740:1106.",
     "deterministic_similarity": null,
-    "limitation": "The current-source route was reachable in Docker, but deterministic pixel similarity was not performed."
+    "limitation": "Structural coverage is complete and the repaired frontend build/container pass; deterministic browser or pixel similarity was not measured."
   },
-  "flow_accuracy_percent": null,
+  "flow_accuracy_percent": 100.0,
   "flow_accuracy": {
-    "source_checkpoints": "Inspectable source covers protected routing, account/category option loading, non-blocking category failure, client validation, typed create request, ownership/balance decisions, atomic persistence, success navigation and safe errors.",
-    "limitation": "Protected endpoints rejected unauthenticated requests as expected, but the authenticated create success path was not exercised and category lookup is blocked by the missing Categories table."
+    "source_checkpoints": "Navigation, related-data loading, form entry, preliminary validation, authenticated POST, domain validation, atomic persistence, balance synchronization, normalized response, success reset, cancellation, and safe exceptions are inspectable.",
+    "limitation": "Build/health and bounded failure paths were observed; successful persisted creation and concurrent requests were not executed to avoid adding synthetic financial records."
   },
   "complexity": {
     "actors": 1,
@@ -292,5 +553,5 @@
     "business_rules": 8,
     "ui_states": 6
   },
-  "all_sub_prompt_count": 0
+  "all_sub_prompt_count": 6
 }

@@ -3,7 +3,7 @@ artifact_type: business-rule-resource
 status: Frozen
 uc_id: UC-03
 source_use_case: docs/01-inception/use-cases/uc-03-view-transaction-history.md
-source_use_case_sha256: sha256:8d4cac9572e4181a9e55609fa7006538c41201522a97a93467d2235e8618bd7d
+source_use_case_sha256: sha256:e9d22a282be0fee4edd9dcd55ac47191dba78440661c874e490f530b5e784882
 ---
 
 # UC-03 Business Rule Resource
@@ -13,11 +13,11 @@ source_use_case_sha256: sha256:8d4cac9572e4181a9e55609fa7006538c41201522a97a9346
 - Spreadsheet: `1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM`
 - Tab/range: `Use cases!A45:B63`
 - OCL utilities: `Use cases!A2:B2`
-- Retrieved at: `2026-08-27T03:49:28.570Z`
+- Retrieved at: `2026-09-02T19:00:48.000Z`
 
 ## Ordered Business Rules
 
-### BR-TXN-01 - Transaction ownership scope
+### BR-TXN-01 - Transaction ownership and user scope
 
 - Representation: `OCL precondition`
 - Expression / authoritative text:
@@ -42,6 +42,10 @@ post BR_TXN_01_OwnedAccountsOnly:
       a.user_id = user_id
     )
   )
+
+Technical constraints:
+- The authenticated user identity is derived from the validated JWT token.
+- Only transaction records belonging to accounts owned by the authenticated user shall be retrieved.
 ~~~
 
 - Context: `TransactionService::findAllByUserId(user_id : Integer, type : TransactionFilterType, limit : Integer, offset : Integer) : TransactionListResponseDto`
@@ -49,7 +53,7 @@ post BR_TXN_01_OwnedAccountsOnly:
 - Failure behavior: A missing, invalid, or expired authenticated identity is rejected with HTTP 401; a successful list contains only transactions belonging to accounts owned by the authenticated user.
 - Traceability: `Use cases!A45:B63`; `UC-03 PRE-1`; `UC-03 Basic Flow 4-6`; `UC-03 POST-1`; `API-TRANSACTION-LIST`
 
-### BR-TXN-02 - Allowed transaction filter and stored transaction type
+### BR-TXN-02 - Type filter semantics and failed transaction retention window
 
 - Representation: `OCL precondition`
 - Expression / authoritative text:
@@ -77,21 +81,28 @@ post BR_TXN_02_FilterApplied:
       t.type = TransactionType::Expense
     ))
 
+post BR_TXN_02_FailedRetentionWindow:
+  result.data->forAll(t |
+    t.status = TransactionStatus::Failed implies
+      t.transaction_date >= currentDate() - 30
+  )
+
 context Transaction
 inv BR_TXN_02_StoredType:
   type = TransactionType::Revenue or
   type = TransactionType::Expense
 
-Technical constraint:
-- All is a query/UI filter only. It shall never be stored in Transactions.type.
+Technical constraints:
+- All is a query/UI filter only; it shall never be stored in Transactions.type.
+- Transactions with status Failed that are older than 30 days relative to the current system date shall be automatically excluded from the query results.
 ~~~
 
 - Context: `TransactionService::findAllByUserId(user_id : Integer, type : TransactionFilterType, limit : Integer, offset : Integer) : TransactionListResponseDto; Transaction`
 - Enforcement layer(s): `frontend`, `backend`, `database`
-- Failure behavior: The client and backend accept only All, Revenue, or Expense as filters; invalid values return HTTP 400. Revenue and Expense constrain returned rows, while All remains a query/UI sentinel and is never persisted.
+- Failure behavior: The client and backend accept only All, Revenue, or Expense as filters; invalid values return HTTP 400. Failed transactions older than 30 days are automatically omitted.
 - Traceability: `Use cases!A45:B63`; `UC-03 AF-1`; `UC-03 EF-2`; `UC-03 UML TransactionFilterType and TransactionType`; `API-TRANSACTION-LIST`
 
-### BR-TXN-03 - Pagination and ordering
+### BR-TXN-03 - Status-priority multi-tier ordering and dynamic limit clamping
 
 - Representation: `OCL precondition`
 - Expression / authoritative text:
@@ -110,28 +121,35 @@ pre BR_TXN_03_LimitPositive:
 pre BR_TXN_03_OffsetNonNegative:
   offset >= 0
 
-post BR_TXN_03_PageSize:
-  result.data->size() <= limit
+post BR_TXN_03_MaxPageSizeClamped:
+  (limit > 50 implies result.data->size() <= 50) and
+  (limit <= 50 implies result.data->size() <= limit)
 
 post BR_TXN_03_HasMore:
   result.hasMore =
     (offset + result.data->size() < result.total)
 
-post BR_TXN_03_DescendingTransactionDate:
+post BR_TXN_03_PriorityStatusOrdering:
   result.data->size() <= 1 or
   Sequence{1..result.data->size()-1}->forAll(i |
-    result.data->at(i).transaction_date >=
-    result.data->at(i + 1).transaction_date
+    let curr = result.data->at(i) in
+    let nxt = result.data->at(i + 1) in
+    (curr.status = TransactionStatus::Pending and nxt.status <> TransactionStatus::Pending) or
+    (curr.status = nxt.status and curr.transaction_date > nxt.transaction_date) or
+    (curr.status = nxt.status and curr.transaction_date = nxt.transaction_date and curr.transaction_id >= nxt.transaction_id) or
+    (curr.status <> TransactionStatus::Pending and nxt.status <> TransactionStatus::Pending and curr.transaction_date > nxt.transaction_date) or
+    (curr.status <> TransactionStatus::Pending and nxt.status <> TransactionStatus::Pending and curr.transaction_date = nxt.transaction_date and curr.transaction_id >= nxt.transaction_id)
   )
 
 Technical constraints:
-- If limit is omitted, the endpoint shall use limit = 10.
-- If offset is omitted, the endpoint shall use offset = 0.
+- If limit is omitted, default to limit = 10. If limit exceeds 50, clamp effective limit to 50 without rejecting the request.
+- If offset is omitted, default to offset = 0.
+- Transactions with status Pending shall be sorted first, followed by descending transaction_date, then descending transaction_id.
 ~~~
 
 - Context: `TransactionService::findAllByUserId(user_id : Integer, type : TransactionFilterType, limit : Integer, offset : Integer) : TransactionListResponseDto`
 - Enforcement layer(s): `frontend`, `backend`, `database`
-- Failure behavior: Invalid limit or offset values return HTTP 400. Valid results use defaults limit 10 and offset 0 when omitted, return at most limit rows ordered by transaction date descending, and expose total and hasMore consistently for load-more pagination.
+- Failure behavior: Invalid limit (<= 0) or offset (< 0) returns HTTP 400. Limits exceeding 50 are clamped to 50. Pending transactions are strictly ordered ahead of settled transactions.
 - Traceability: `Use cases!A45:B63`; `UC-03 Basic Flow 2-7`; `UC-03 AF-2`; `UC-03 EF-2`; `API-TRANSACTION-LIST`
 
 ### BR-TXN-04 - Database relationship integrity
@@ -161,10 +179,10 @@ inv BR_TXN_04_OptionalCategoryValid:
 
 - Context: `Account; Transaction`
 - Enforcement layer(s): `backend`, `database`
-- Failure behavior: Account ownership, Transaction-to-Account, and optional Transaction-to-Category references remain valid through the existing ORM/database relationships; the source defines no separate list-response error for an integrity violation.
+- Failure behavior: Account ownership, Transaction-to-Account, and optional Transaction-to-Category references remain valid through the existing ORM/database relationships.
 - Traceability: `Use cases!A45:B63`; `UC-03 UML User-Account-Transaction-Category relationships`; `API-TRANSACTION-LIST`
 
-### BR-TXN-05 - Empty transaction result
+### BR-TXN-05 - Empty transaction result consistency
 
 - Representation: `OCL postcondition`
 - Expression / authoritative text:
@@ -181,14 +199,17 @@ post BR_TXN_05_EmptyResultConsistency:
   result.total = 0 implies
     result.data->isEmpty() and
     result.hasMore = false
+
+Technical constraint:
+- When total equals 0, the frontend shall display the empty-state message "No transactions are found!" and pagination controls shall not load further records.
 ~~~
 
 - Context: `TransactionService::findAllByUserId(user_id : Integer, type : TransactionFilterType, limit : Integer, offset : Integer) : TransactionListResponseDto; transaction-list empty state`
 - Enforcement layer(s): `frontend`, `backend`
-- Failure behavior: No matching transactions return an empty data array, total 0, and hasMore false; the client displays the empty-state message.
+- Failure behavior: When total equals 0, an empty data array is returned and the frontend displays "No transactions are found!".
 - Traceability: `Use cases!A45:B63`; `UC-03 POST-2`; `UC-03 AF-3`; `API-TRANSACTION-LIST`
 
-### BR-TXN-06 - Response rows map to persisted Transactions
+### BR-TXN-06 - Status-dependent signed amount and conditional merchant masking
 
 - Representation: `OCL postcondition`
 - Expression / authoritative text:
@@ -201,7 +222,7 @@ context TransactionService::findAllByUserId(
   offset : Integer
 ) : TransactionListResponseDto
 
-post BR_TXN_06_ResponseBackedByTransaction:
+post BR_TXN_06_ResponseMappingAndSignedAmount:
   result.data->forAll(dto |
     Transaction.allInstances()->exists(t |
       t.transaction_id = dto.transaction_id and
@@ -209,20 +230,28 @@ post BR_TXN_06_ResponseBackedByTransaction:
       t.transaction_date = dto.transaction_date and
       t.type = dto.type and
       t.item_description = dto.item_description and
-      t.shop_name = dto.shop_name and
-      t.amount = dto.amount and
       t.payment_method = dto.payment_method and
-      t.status = dto.status
+      t.status = dto.status and
+      ((t.status = TransactionStatus::Complete and t.type = TransactionType::Expense and dto.amount = -(t.amount)) or
+       (t.status = TransactionStatus::Complete and t.type = TransactionType::Revenue and dto.amount = t.amount) or
+       (t.status <> TransactionStatus::Complete and dto.amount = t.amount)) and
+      ((t.payment_method = 'Credit Card' and t.status = TransactionStatus::Pending and dto.shop_name = '***') or
+       (not (t.payment_method = 'Credit Card' and t.status = TransactionStatus::Pending) and dto.shop_name = t.shop_name))
     )
   )
+
+Technical constraints:
+- Completed Expense transactions shall have negative amounts in the response; Completed Revenue transactions remain positive.
+- Pending or Failed transactions shall preserve their unsigned absolute amount.
+- Pending transactions paid via Credit Card shall have shop_name masked as '***'.
 ~~~
 
 - Context: `TransactionService::findAllByUserId(user_id : Integer, type : TransactionFilterType, limit : Integer, offset : Integer) : TransactionListResponseDto`
 - Enforcement layer(s): `backend`, `database`
-- Failure behavior: Every returned DTO row maps to the corresponding persisted Transaction fields; retrieval failures return the source-defined HTTP 500 safe error.
+- Failure behavior: Completed expenses map to negative amounts, pending credit transactions mask shop_name as '***', and unresolved rows preserve absolute amounts.
 - Traceability: `Use cases!A45:B63`; `UC-03 Basic Flow 5-6`; `UC-03 UML Transaction and TransactionDto`; `API-TRANSACTION-LIST`
 
-### BR-TXN-07 - Viewing transaction history is read-only
+### BR-TXN-07 - Read-only query idempotency and audit immutability
 
 - Representation: `OCL postcondition`
 - Expression / authoritative text:
@@ -261,12 +290,12 @@ post BR_TXN_07_AccountIdentityUnchanged:
   Account.allInstances()@pre->collect(a | a.account_id)->asSet()
 
 Technical constraint:
-- Listing transaction history shall not create, update, or delete Transactions or Accounts records.
+- Listing transaction history shall never create, mutate, or delete Transactions, Accounts, or Users records.
 ~~~
 
 - Context: `TransactionService::findAllByUserId(user_id : Integer, type : TransactionFilterType, limit : Integer, offset : Integer) : TransactionListResponseDto`
 - Enforcement layer(s): `backend`, `database`
-- Failure behavior: The GET list operation does not create, update, or delete Transaction or Account records; the source defines no separate error response for a read-only violation.
+- Failure behavior: The GET list operation does not create, update, or delete Transaction or Account records; all tables remain immutable under query execution.
 - Traceability: `Use cases!A45:B63`; `UC-03 POST-3`; `UC-03 Basic Flow 3-6`; `API-TRANSACTION-LIST`
 
 ## Unresolved items

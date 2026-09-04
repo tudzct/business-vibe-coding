@@ -1,29 +1,29 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Repository } from 'typeorm';
 import { User } from '../user/user.entity';
 
 interface JwtPayload {
-  sub: number;
-  email: string;
+  readonly sub: number;
+  readonly email: string;
 }
 
 export interface AuthenticatedUser {
-  userId: number;
-  email: string;
+  readonly userId: number;
+  readonly email: string;
 }
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    configService: ConfigService,
+    config: ConfigService,
     @InjectRepository(User)
     private readonly users: Repository<User>,
   ) {
-    const secret = configService.get<string>('JWT_SECRET');
+    const secret = config.get<string>('JWT_SECRET');
     if (!secret) {
       throw new Error('JWT_SECRET is required');
     }
@@ -36,12 +36,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JwtPayload): Promise<AuthenticatedUser> {
-    const user = await this.users.findOne({
-      select: { userId: true },
-      where: { userId: payload.sub },
-    });
-    if (!user) {
-      throw new UnauthorizedException();
+    const userExists = await this.users.existsBy({ userId: payload.sub });
+    if (!userExists) {
+      throw new UnauthorizedException('Unauthorized');
     }
 
     return { userId: payload.sub, email: payload.email };

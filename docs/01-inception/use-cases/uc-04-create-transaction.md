@@ -7,7 +7,7 @@ source_type: google-sheets
 source_spreadsheet_id: 1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM
 source_sheet: "Use cases"
 source_range: "A64:B82"
-retrieved_at: 2026-09-01T01:22:04.719Z
+retrieved_at: 2026-09-02T20:55:00.000Z
 ---
 
 # UC-04: Create a Transaction
@@ -42,68 +42,59 @@ The user selects Add Transaction from the Transactions page.
 
 ### Pre-Condition(s)
 
-PRE-1: The user is authenticated and the validated JWT identifies an existing Users.user_id.
-PRE-2: At least one Accounts row exists with Accounts.user_id equal to the authenticated user_id.
-PRE-3: The selected account exists and is owned by the authenticated user.
-PRE-4: A category is optional. If category_id is supplied, it must reference an existing Categories.category_id.
+PRE-1: The user is authenticated.
+PRE-2: The user has at least one active bank account eligible for transactions.
 
 ### Post-Condition(s)
 
-POST-1: On success, exactly one new Transactions row is stored for the selected account.
-POST-2: The stored transaction has type Revenue or Expense, amount > 0, and non-empty item_description, shop_name, and payment_method. category_id may be null.
-POST-3: For Revenue, the selected Accounts.balance increases by amount; for Expense, it decreases by amount.
-POST-4: The Transactions insert and Accounts.balance update are committed atomically; on failure neither partial change remains.
-POST-5: The frontend shows a success toast, resets the form, and navigates to /transactions after 1.5 seconds.
+POST-1: On success, the transaction is created and persisted, and the user receives a success confirmation.
+POST-2: On failure, no transaction is created and an appropriate error message is displayed.
 
 ### Basic Flow
 
-1. The user opens /transactions/add.
-2. AddTransactionForm loads the user's accounts and loads categories for optional classification.
-3. The user enters itemDescription, amount, transaction type, account, transaction date, shopName, and paymentMethod; the user may optionally select a category.
-4. The form defaults type to Expense, transactionDate to today, and submitted status to Complete.
-5. The user selects Save.
-6. The frontend validates accountId, transactionDate, type, non-empty itemDescription, non-empty shopName, non-empty paymentMethod, and amount >= 0.01. category_id is not required.
-7. The frontend sends POST /api/v1/transactions.
-8. JwtAuthGuard validates the JWT and supplies the authenticated identifier corresponding to Users.user_id.
-9. The backend validates CreateTransactionDto, verifies category_id only when supplied, and verifies that accountId references an Accounts row owned by the authenticated user_id.
-10. For Expense, the backend verifies Accounts.balance >= amount.
-11. The backend creates the Transactions row, mapping accountId -> account_id, transactionDate -> transaction_date, itemDescription -> item_description, shopName -> shop_name, and paymentMethod -> payment_method. If status is omitted, Complete is used.
-12. In the same database transaction, the backend updates Accounts.balance by +amount for Revenue or -amount for Expense and commits both changes.
-13. The frontend displays a success toast, resets fields, and navigates to /transactions after 1.5 seconds.
+1. The user navigates to the transaction creation screen (/transactions/add).
+2. The form loads the user's available accounts and available transaction categories.
+3. The user fills in the transaction details (description, amount, type, account, date, counterparty/shop, payment method, and optional category).
+4. The user submits the transaction form.
+5. The frontend performs preliminary validation on the entered transaction details.
+6. The frontend sends the creation request (POST /api/v1/transactions) to the backend API.
+7. The backend authenticates the request and validates all transaction inputs according to established business rules.
+8. Upon successful validation, the backend creates and persists the new transaction record.
+9. The backend returns a success response with the created transaction details.
+10. The frontend displays a success notification, clears form fields, and navigates back to the transactions list.
 
 ### Alternative Flow
 
-AF-1: Create Revenue
-4a. The user selects Revenue.
-10a. The insufficient-balance check is not applied.
-12a. The backend increases Accounts.balance by amount.
+AF-1: Revenue transaction
+3a. The user selects a Revenue transaction type.
+8a. The system processes and records the revenue transaction.
 
-AF-2: Create transaction without category
-3a. The user leaves category unselected.
-9a. The backend does not require a category lookup and stores Transactions.category_id = null.
+AF-2: Transaction without category
+3b. The user leaves the optional category unselected.
+8b. The system records the transaction without assigning a category classification.
 
 AF-3: Category list unavailable
-2a. If categories cannot be loaded, the frontend shows a warning but still allows creation without category because category_id is optional.
+2a. If category options cannot be loaded, the frontend notifies the user while allowing transaction creation to continue.
 
-AF-4: Cancel
-5a. The user selects Cancel and the frontend navigates to /transactions without submitting.
+AF-4: Form cancellation
+4a. The user cancels the operation and the frontend returns to the transaction list without submitting.
 
 ### Exception Flow
 
-EF-1: Accounts cannot be loaded
-2a. If the user's accounts cannot be loaded, the frontend displays an error and cannot submit because accountId is required.
+EF-1: Account data unavailable
+2b. If the user's accounts cannot be retrieved, the frontend informs the user and disables submission until an account is available.
 
 EF-2: Client-side validation failure
-6a. If accountId, transactionDate, type, itemDescription, shopName, or paymentMethod is missing/empty, or amount < 0.01, the frontend displays field errors and does not send the request.
+5a. If required fields fail preliminary validation, the frontend displays field errors and prevents submission.
 
 EF-3: Unauthorized request
-8a. If the JWT is missing, invalid, or expired, the backend returns HTTP 401.
+7a. If authentication is missing or expired, the backend rejects the request and the user is redirected to login.
 
-EF-4: Backend validation or business-rule failure
-9a. Invalid required input, an invalid supplied category_id, a non-owned account, or insufficient Expense balance produces HTTP 400; the frontend displays the returned error.
+EF-4: Business validation failure
+7b. If the transaction violates business constraints, the backend rejects the request and the frontend displays the returned error.
 
-EF-5: Database failure
-12a. The backend rolls back the database transaction so neither the Transactions row nor Accounts.balance is partially changed, and returns HTTP 500.
+EF-5: Processing failure
+8c. If a server or persistence error occurs, the backend rejects the request and the frontend displays an error notification.
 
 ### Related UI
 
@@ -115,7 +106,7 @@ API-TRANSACTION-CREATE; API-ACCOUNT-LIST; API-CATEGORY-LIST
 
 ### Notes
 
-Specification alignment: Transaction ownership follows Users → Accounts → Transactions. category_id is optional/nullable; shopName and paymentMethod are required and must be non-empty. BR-TXN-08..15 belong to UC-04 and are intentionally distinct from UC-03 rules BR-TXN-01..07.
+Scope clarification: This use case handles direct transaction creation for user bank accounts. Receipt file attachment and recurring schedule setup are outside scope.
 
 ## UML Model
 
@@ -237,7 +228,7 @@ CreateTransactionDataDto ..> Transaction : maps from
 The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
 
 ~~~text
-BR-TXN-08: Required transaction data
+BR-TXN-08: Required transaction data, date horizon, and cash payment threshold
 context TransactionService::create(
   user_id : Integer,
   dto : CreateTransactionDto
@@ -256,11 +247,24 @@ pre BR_TXN_08_RequiredFields:
   not dto.amount.oclIsUndefined() and
   dto.amount >= 0.01
 
-BR-TXN-09: Allowed transaction type and status
+pre BR_TXN_08_DateWindow:
+  dto.transactionDate <= currentDate() + 1 and
+  dto.transactionDate >= currentDate() - 365
+
+pre BR_TXN_08_CashLimit:
+  dto.paymentMethod = 'Cash' implies dto.amount <= 50000000
+
+BR-TXN-09: Account type eligibility, allowed transaction types, and default status
 context TransactionService::create(
   user_id : Integer,
   dto : CreateTransactionDto
 ) : CreateTransactionResponseDto
+
+pre BR_TXN_09_EligibleAccountType:
+  Account.allInstances()->exists(a |
+    a.account_id = dto.accountId and
+    Set{AccountType::Checking, AccountType::Savings, AccountType::Credit_Card}->includes(a.account_type)
+  )
 
 pre BR_TXN_09_AllowedType:
   dto.type = TransactionType::Revenue or
@@ -296,7 +300,7 @@ post BR_TXN_10_CategoryStored:
   (not dto.category_id.oclIsUndefined() implies
     result.data.category_id = dto.category_id)
 
-BR-TXN-11: Account ownership
+BR-TXN-11: Account ownership scope
 context TransactionService::create(
   user_id : Integer,
   dto : CreateTransactionDto
@@ -308,7 +312,7 @@ pre BR_TXN_11_AccountOwnedByUser:
     a.user_id = user_id
   )
 
-BR-TXN-12: Sufficient balance for Expense
+BR-TXN-12: Sufficient balance for Expense with Savings maintaining reserve
 context TransactionService::create(
   user_id : Integer,
   dto : CreateTransactionDto
@@ -319,22 +323,30 @@ pre BR_TXN_12_SufficientExpenseBalance:
     Account.allInstances()->exists(a |
       a.account_id = dto.accountId and
       a.user_id = user_id and
-      a.balance >= dto.amount
+      ((a.account_type = AccountType::Savings and a.balance - dto.amount >= 50000) or
+       (a.account_type <> AccountType::Savings and a.balance >= dto.amount))
     )
 
-BR-TXN-13: Account balance adjustment
+BR-TXN-13: Status-dependent account balance adjustment and user total balance sync
 context TransactionService::create(
   user_id : Integer,
   dto : CreateTransactionDto
 ) : CreateTransactionResponseDto
 
-post BR_TXN_13_BalanceAdjusted:
+post BR_TXN_13_AccountBalanceAdjusted:
   Account.allInstances()->exists(a |
     a.account_id = dto.accountId and
-    ((dto.type = TransactionType::Revenue and
-      a.balance = a.balance@pre + dto.amount) or
-     (dto.type = TransactionType::Expense and
-      a.balance = a.balance@pre - dto.amount))
+    ((result.data.status = TransactionStatus::Complete and dto.type = TransactionType::Revenue and a.balance = a.balance@pre + dto.amount) or
+     (result.data.status = TransactionStatus::Complete and dto.type = TransactionType::Expense and a.balance = a.balance@pre - dto.amount) or
+     (result.data.status <> TransactionStatus::Complete and a.balance = a.balance@pre))
+  )
+
+post BR_TXN_13_UserTotalBalanceSynced:
+  User.allInstances()->exists(u |
+    u.user_id = user_id and
+    ((result.data.status = TransactionStatus::Complete and dto.type = TransactionType::Revenue and u.total_balance = u.total_balance@pre + dto.amount) or
+     (result.data.status = TransactionStatus::Complete and dto.type = TransactionType::Expense and u.total_balance = u.total_balance@pre - dto.amount) or
+     (result.data.status <> TransactionStatus::Complete and u.total_balance = u.total_balance@pre))
   )
 
 BR-TXN-14: Created transaction maps to the request and database
@@ -364,11 +376,12 @@ post BR_TXN_14_PersistedTransaction:
       t.category_id = dto.category_id))
   )
 
-BR-TXN-15: Atomic transaction creation
+BR-TXN-15: Atomic transaction creation, concurrency safety, and rollback
 Technical constraints:
-- The Transactions insert and Accounts.balance update shall execute in one database transaction.
-- If any validation, persistence, or balance-update step fails before commit, the operation shall roll back and leave both Transactions and Accounts unchanged by this request.
-- shopName maps to Transactions.shop_name and paymentMethod maps to Transactions.payment_method; both are mandatory and shall not be null or empty.
+- The Transactions insert, Accounts.balance update, and Users.total_balance sync shall execute inside a single atomic database transaction.
+- If any validation, persistence, balance-update, or synchronization step fails before commit, the operation shall roll back and leave all tables unchanged by this request.
+- Database locking or isolation shall prevent race conditions during concurrent balance updates on the same account.
+- shopName maps to Transactions.shop_name and paymentMethod maps to Transactions.payment_method; both are mandatory and shall be trimmed non-empty strings.
 - category_id maps to Transactions.category_id and remains optional/nullable.
 ~~~
 

@@ -8,49 +8,33 @@ source_use_case: docs/01-inception/use-cases/uc-03-view-transaction-history.md
 figma_dataset_id: 2026-08-29-005
 figma_node_id: "66:5474"
 figma_manifest_sha256: sha256:41d825cfd36250aa54c87f29ab10e2fbd48df15f9531e9ec7cfab81b4184a0d1
-generated_at: 2026-08-31T13:51:55.7244405Z
+generated_at: 2026-09-02T12:34:57.8584901Z
+approved_by_researcher_id: kien
+approved_at: 2026-09-02T12:40:06.1445325Z
 ---
 
 # UC-03 Business Coding Prompt (RQ3) - View Transaction History
 
 ## Prompt A: Backend API
 
-### Objective: Build the protected transaction-list endpoint, query validation, ownership-scoped retrieval, pagination, and server-side error handling.
+### Objective: Build the protected transaction-list endpoint, filtering and pagination logic, validation, and server-side error handling.
 
 Create the protected `GET /api/v1/transactions` endpoint for `API-TRANSACTION-LIST` in the NestJS backend under `finalsource/be`.
 
-- Add the transaction module, controller, service, query DTO, and response DTO under the existing `src/modules/transaction` structure, and register the module with the application.
-- Protect the endpoint with the project's Bearer JWT authentication mechanism. Derive the authenticated user's ID from the validated token; do not accept a user ID from the query or request body.
-- Keep the operation read-only. It must not create, update, or delete Transaction or Account records.
-- Do not alter the database schema for this use case.
+- Require a valid, unexpired Bearer JWT and authorize the request as the authenticated application user.
+- Read the authenticated user identity from the validated authentication context; do not accept a user ID from the query string or request body.
+- Define and validate a transaction-list query DTO with `type`, `limit`, and `offset`.
+- `type` is required, non-null, and must be exactly `All`, `Revenue`, or `Expense`.
+- `limit` is an optional positive integer and defaults to `10` when omitted.
+- `offset` is an optional non-negative integer and defaults to `0` when omitted.
+- Accept no request body.
+- Implement the list flow in the existing transaction module conventions. Add the smallest required controller, service, DTO, repository/module registration, and application-module wiring where they do not yet exist.
+- Retrieve only transactions associated with accounts belonging to the authenticated user.
+- Apply the requested transaction-type filter and pagination parameters and compute the total matching record count and whether another page is available.
+- Map each returned record to the API fields `transaction_id`, `account_id`, `transaction_date`, `type`, `item_description`, `shop_name`, `amount`, `payment_method`, and `status`.
+- Keep this GET operation read-only; it must not create, update, or delete transaction records.
 
-### Request Format
-
-The request has no body. Accept these query parameters:
-
-- `type`: required, non-null string; exactly `All`, `Revenue`, or `Expense`.
-- `limit`: optional integer greater than 0; default `10` when omitted.
-- `offset`: optional integer greater than or equal to 0; default `0` when omitted.
-
-Reject undeclared query parameters through the existing validation pipeline. Parse numeric query values as integers and return HTTP 400 when validation fails.
-
-### Logic
-
-Implement `TransactionService.findAllByUserId(userId, type, limit, offset)` with the existing TypeORM mappings.
-
-- Query only Transactions whose related Account belongs to the authenticated user.
-- For `Revenue` or `Expense`, return only rows with the matching persisted transaction type. For `All`, do not add a transaction-type predicate.
-- Order returned rows by `transaction_date` descending.
-- Apply `offset` and `limit` after ownership and type filtering.
-- Compute `total` from the full matching result set before page slicing.
-- Compute `hasMore` as `offset + returnedCount < total`.
-- Map each row to exactly these response fields: `transaction_id`, `account_id`, `transaction_date` as `YYYY-MM-DD`, `type`, `item_description`, `shop_name`, `amount`, `payment_method`, and `status`.
-- When no rows match, return an empty array with `total: 0` and `hasMore: false`.
-- Do not expose receipt, category, Account, User, or other undeclared fields.
-
-### Success Response
-
-For HTTP 200, wrap the domain response as:
+For HTTP 200, return the domain result inside the standard success envelope:
 
 ```json
 {
@@ -76,20 +60,22 @@ For HTTP 200, wrap the domain response as:
 }
 ```
 
-### Error Handling
+An empty matching result remains HTTP 200 with an empty inner `data` array, `total: 0`, and the corresponding boolean `hasMore` value.
 
-- Invalid `type`, `limit`, `offset`, or an undeclared query parameter: preserve HTTP 400 and the validation message or message array.
-- Missing, invalid, or expired JWT: preserve HTTP 401 with `Unauthorized` semantics.
-- Transaction or database retrieval failure: preserve HTTP 500 with the safe message `Đã xảy ra lỗi hệ thống khi lấy danh sách giao dịch. Vui lòng thử lại sau.`
+Error handling:
+
+- Invalid query parameters: preserve HTTP 400 and the source validation message or message array, such as `"Invalid transaction query parameter"`.
+- Missing, invalid, or expired authentication: preserve HTTP 401 with `"Unauthorized"`.
+- Unexpected transaction retrieval or database failure: preserve HTTP 500 with the safe message `"Đã xảy ra lỗi hệ thống khi lấy danh sách giao dịch. Vui lòng thử lại sau."`.
 - Wrap every error as `{ "success": false, "statusCode": <status>, "message": <string-or-string-array>, "timestamp": "<ISO-8601>", "path": "/api/v1/transactions" }`.
 
-Follow the existing NestJS architecture and installed dependencies. Avoid a duplicated `/api` prefix when combining the global prefix with the controller route. Do not create or run tests.
+Follow the existing NestJS 11, TypeORM/MySQL, class-validator, Passport JWT, Swagger, validation-pipe, and exception-filter conventions. Do not introduce unrelated layers or dependencies. Use existing entity mappings and do not alter the database schema for this use case. Do not create or run tests.
 
 ## Prompt B: Frontend UI
 
-### Objective: Build the transaction-history interface according to the frozen Figma evidence and UC-03 functional scope.
+### Objective: Build the protected transaction-history interface according to the frozen Figma evidence and UC-03 functional scope.
 
-Replace the placeholder `/transactions` page in `finalsource/fe/src/pages/Transactions/Transactions.tsx` using React 18, TypeScript, Vite, Tailwind, React Router, and the project's existing component conventions.
+Create or replace the `/transactions` route page in `finalsource/fe/src/pages/Transactions/Transactions.tsx` using React 18, TypeScript, Vite, Tailwind, React Router, and the project's existing component conventions.
 
 ### Figma Design Scope
 
@@ -99,69 +85,83 @@ The exact target is:
 
 - `107. Transactions` — node `66:5474`, 1440×1024.
 
-Reconstruct the page as accessible React UI; do not use `screenshot.png`, `export.png`, or the flattened design image as the interactive page.
+Reconstruct the page as accessible React UI; do not use `screenshot.png` or `export.png` as the interactive page.
 
-- Match the 280 px dark sidebar, `FINEbank.IO` wordmark, teal active Transactions navigation item, pale `#F4F5F7` main background, top date/breadcrumb area, notification control, and rounded search field.
-- Show the `Recent Transaction` heading and the `All`, `Revenue`, and `Expenses` filter tabs. Map the visible `Expenses` tab to the API value `Expense`.
-- Render the rounded white transaction panel with columns `Items`, `Shop Name`, `Date`, `Payment Method`, and `Amount`, matching the frame's spacing, typography, dividers, row icons, and right-aligned bold amounts.
-- Format the API date for display in the design's human-readable style and render amounts with the design's dollar prefix and two decimal places without changing the underlying numeric value.
-- Show the centered teal `Load More` button only while another page is available.
-- Keep the search field, notification control, and any navigation destinations outside UC-03 as design-only or existing behavior; do not add an unsupported search API or notification flow.
-- Preserve the desktop composition and adapt it with existing responsive conventions so filters, rows, and pagination remain usable on narrower screens.
-- Provide design-consistent loading, empty, validation-error, and service-error states within the main content area.
+- Match the desktop composition: a dark left navigation sidebar, light `#F4F5F7` main background, compact top utility row, `Recent Transaction` heading, filter tabs, and a large rounded white transaction card.
+- Preserve the `FINEbank.IO` wordmark, sidebar navigation labels and icons, teal active `Transactions` item, logout/profile area, top date, notification icon, and rounded search control shown in the frame.
+- Render the filter tabs `All`, `Revenue`, and `Expenses`; map the visible `Expenses` label to the API value `Expense`.
+- Render the table headers `Items`, `Shop Name`, `Date`, `Payment Method`, and `Amount` with design-consistent spacing, typography, dividers, row icons, and amount alignment.
+- Render transaction values from `item_description`, `shop_name`, `transaction_date`, `payment_method`, and `amount` without changing the underlying domain values.
+- Show the centered teal `Load More` control only when additional results are available.
+- When no records match the selected criteria, replace the rows with a clear, design-consistent empty-state message and do not offer further pagination.
+- Include stable loading and error areas that do not unnecessarily shift the page composition.
+- Keep search, notification, profile-menu, and navigation controls that lack UC/API behavior visual-only unless equivalent behavior already exists in the project.
+- Keep `/transactions` behind the existing protected-route mechanism. Reuse or adapt the shared layout and navigation where possible while matching the frozen frame.
+- Preserve the desktop hierarchy and make the table, tabs, and actions usable on narrower screens using existing responsive conventions without inventing new content.
 
 Do not create or run tests.
 
 ## Prompt C: Frontend Logic and API Integration
 
-### Objective: Connect the transaction page to the list API and implement filtering and load-more pagination.
+### Objective: Connect the transaction page to the list API and implement filtering and incremental pagination.
 
-Continue in `Transactions.tsx`, `finalsource/fe/src/api/transaction.service.ts`, and `finalsource/fe/src/api/types.ts`.
+Continue in `finalsource/fe/src/pages/Transactions/Transactions.tsx`, `finalsource/fe/src/api/transaction.service.ts`, and the shared API types.
 
-- Define a filter type of `All | Revenue | Expense` and a typed domain response `{ data: Transaction[]; total: number; hasMore: boolean }`.
-- Align the `Transaction` response type with the API fields and requiredness for `API-TRANSACTION-LIST`.
-- Update `transactionService.getTransactions` to accept exactly `{ type; limit?; offset? }` for this list flow and return the normalized domain response.
-- Because the existing Axios base URL includes `/api`, call the relative path `/v1/transactions`.
-- Initialize the page with `type=All`, `limit=10`, and `offset=0`, then fetch the first page when the authenticated user opens `/transactions`.
-- Read the normalized envelope from Axios `response.data` and the domain response from `response.data.data`.
-- On a filter-tab change, clear the current rows, reset `offset` to 0, and request the first page for the selected API filter.
-- On `Load More`, request the next page using the current accumulated row count as `offset`, append the returned rows in response order, and update `total` and `hasMore` from the response.
-- Replace, rather than append, data for an initial or filter-reset request.
-- Do not mutate transaction or account data from this page.
+- Define the filter type as `All | Revenue | Expense` and the list result as `{ data: Transaction[]; total: number; hasMore: boolean }`.
+- Keep state for the selected filter, transaction rows, total count, `hasMore`, offset, loading mode, and request error.
+- Initialize the page with `type=All`, `limit=10`, and `offset=0`.
+- Update `transactionService.getTransactions` to send a typed `GET` request through the existing Axios instance. Because its base URL already includes `/api`, call the relative path `/v1/transactions`.
+- Send query parameters only; send no request body:
+
+```text
+type=All|Revenue|Expense&limit=<positive-integer>&offset=<non-negative-integer>
+```
+
+- Let the existing Axios interceptor attach the Bearer token.
+- Read the normalized envelope from Axios `response.data` and the transaction-list domain result from `response.data.data`.
+- On initial page entry, request the first page and replace the displayed rows with the returned inner `data` array.
+- When the user changes the filter, reset the offset and current rows, request the first page for the selected type, and render the replacement result.
+- When the user activates `Load More`, request the subsequent offset and append the returned inner `data` array to the existing rows without duplicating the current page.
+- Update `total`, `hasMore`, and offset from the successful result and the number of records already loaded. Hide or disable `Load More` when `hasMore` is false.
+- Format the API date and amount for the Figma presentation using existing project utilities while preserving the returned values and field meanings.
+- Do not mutate transaction records as part of viewing, filtering, or pagination.
 
 Do not create or run tests.
 
 ## Prompt D: Validation and Error Handling
 
-### Objective: Complete client-side query validation, loading states, empty-state handling, and API error handling.
+### Objective: Complete client-side query validation, loading states, empty results, and API error handling.
 
-Refine the transaction-loading flow and page controls.
+Refine the transaction-list request flow and `/transactions` page.
 
 ### Loading State
 
-- Set the loading state immediately before a valid request and always settle it after success or failure.
-- During the initial or filter-reset request, show a design-consistent loading state in the transaction panel.
-- During a load-more request, disable the `Load More` button, show loading feedback in the button, and prevent duplicate requests without hiding existing rows.
-- Disable filter actions that would issue duplicate requests while a request is already in flight.
+- Set loading state immediately before each valid request and always settle it after success or failure.
+- During the initial request or filter replacement, prevent duplicate requests and show design-consistent loading feedback in the transaction card.
+- During incremental pagination, disable the `Load More` control, prevent duplicate submissions, and show loading feedback without clearing previously loaded rows.
+- Prevent filter changes from triggering duplicate requests while the replacement request is in progress.
+- Clear stale request errors before a new valid request.
 
 ### Client-Side Validation
 
 Before calling the API:
 
-- Ensure the selected API filter is exactly `All`, `Revenue`, or `Expense`.
-- Ensure `limit` is an integer greater than 0.
-- Ensure `offset` is an integer greater than or equal to 0.
-- Do not call the API when client-side query validation fails; display the message near the filter or pagination control that caused it.
+- Require `type` to be exactly `All`, `Revenue`, or `Expense`.
+- Require `limit` to be a positive integer.
+- Require `offset` to be a non-negative integer.
+- Do not call the API when these client-side query values are invalid.
+- Display an accessible validation message in the transaction-card error area if invalid internal query state is encountered.
 
-Backend validation remains authoritative. Do not infer additional filters, date ranges, account IDs, categories, sorting options, or page-size choices.
+Backend validation remains authoritative. Do not infer additional filter values, limits, date ranges, account filters, category filters, or search behavior that are absent from the functional specification and API contract.
 
-### Empty and API Error States
+### API, Empty, and Network Results
 
-- When a successful response has no rows, display an appropriate empty transaction-history message and do not show `Load More`.
-- HTTP 400: display the returned validation message or message array near the filter/pagination area without discarding previously loaded rows during a load-more failure.
-- HTTP 401: rely on the existing authentication handling to clear the invalid session and redirect to `/login`.
-- HTTP 500: display the returned safe server message as a visible error notification in the transaction content area.
-- Network or unavailable-service failure: display a general transaction-retrieval failure message and keep the application user on `/transactions`.
-- Do not render raw server objects, stack traces, JWTs, or sensitive payloads in errors or logs.
+- HTTP 400: display the returned validation message or message array in the transaction-card error area and keep the selected filter available for correction.
+- HTTP 401: allow the existing authentication handling to clear the invalid session and redirect the application user to `/login`.
+- HTTP 500: display the returned safe server message in the transaction-card error area.
+- Network or unavailable-service failure: display a general transaction-loading failure message and keep the application user on `/transactions` when authentication remains valid.
+- A successful empty array is not an error. Display the empty state, retain the selected filter, and offer no further load action.
+- On a failed `Load More` request, preserve the rows already displayed and allow a later retry.
+- Never render raw server objects, stack traces, JWTs, full account numbers, or sensitive payloads in errors or logs.
 
 Do not create or run tests.

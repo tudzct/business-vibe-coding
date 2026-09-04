@@ -1,0 +1,20 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "mode": "repair-run",
+  "observed_at": "2026-09-03T13:38:53.2590816Z",
+  "repository_revision": "85473a73626e3d41aaf33801cfed8c6158d384c8",
+  "source_revision": "sha256:d28db3ad68b644ed0f1adb5865bec1eb179b3f23532e67b96aa464e52ffa8015",
+  "commands": [
+    { "id": "backend-targeted-eslint-and-build", "exit_code": 0 },
+    { "id": "frontend-targeted-eslint-and-build", "exit_code": 0 },
+    { "id": "docker-compose-build", "exit_code": 0 },
+    { "id": "docker-compose-up-wait", "exit_code": 0 },
+    { "id": "bounded-http-observation", "exit_code": 0 }
+  ],
+  "build_result": "PASS: current backend and frontend images built successfully",
+  "runtime_result": "PASS: database, backend, and frontend are healthy; backend health and frontend root returned HTTP 200; protected goal list returned HTTP 401 without JWT",
+  "bounded_error": null,
+  "resolved_incident_id": "DEP-20260903-002",
+  "authenticated_ui_observation": "NOT_EVALUABLE: no browser surface or authenticated session was connected",
+  "secrets_persisted": false
+}

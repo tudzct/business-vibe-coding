@@ -7,46 +7,50 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Matches,
   Min,
 } from 'class-validator';
 import { TransactionStatus, TransactionType } from '../transaction.entity';
 
-const trimRequiredText = (value: unknown): unknown =>
+const trimString = ({ value }: { value: unknown }): unknown =>
   typeof value === 'string' ? value.trim() : value;
 
 export class CreateTransactionDto {
   @Type(() => Number)
   @IsInt()
+  @Min(1)
   readonly accountId!: number;
 
   @IsDateString({ strict: true })
+  @Matches(/^\d{4}-\d{2}-\d{2}$/)
   readonly transactionDate!: string;
 
   @IsEnum(TransactionType)
   readonly type!: TransactionType;
 
+  @Transform(trimString)
   @IsString()
-  @Transform(({ value }) => trimRequiredText(value))
   @IsNotEmpty()
   readonly itemDescription!: string;
 
   @IsOptional()
   @Type(() => Number)
   @IsInt()
+  @Min(1)
   readonly category_id?: number | null;
 
+  @Transform(trimString)
   @IsString()
-  @Transform(({ value }) => trimRequiredText(value))
   @IsNotEmpty()
   readonly shopName!: string;
 
   @Type(() => Number)
-  @IsNumber({ maxDecimalPlaces: 2, allowInfinity: false, allowNaN: false })
+  @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0.01)
   readonly amount!: number;
 
+  @Transform(trimString)
   @IsString()
-  @Transform(({ value }) => trimRequiredText(value))
   @IsNotEmpty()
   readonly paymentMethod!: string;
 

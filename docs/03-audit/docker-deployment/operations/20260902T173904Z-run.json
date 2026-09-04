@@ -1,0 +1,33 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-09-02T17:39:04Z",
+  "mode": "run",
+  "source_revision": "sha256:2da98f29eec914cc7a0c12981ca1b0a664be9e71037b49f576a3ca06539932e6",
+  "commands": [
+    {
+      "id": "docker-cli-version",
+      "exit_code": 0,
+      "result": "Docker 29.2.1"
+    },
+    {
+      "id": "docker-compose-version",
+      "exit_code": 0,
+      "result": "Docker Compose v5.0.2"
+    },
+    {
+      "id": "docker-daemon-info",
+      "exit_code": 1,
+      "result": "Docker Desktop Linux engine pipe is absent"
+    },
+    {
+      "id": "environment-safety",
+      "exit_code": 0,
+      "result": "finalsource/.env is present, ignored, and untracked"
+    }
+  ],
+  "status": "BLOCKED",
+  "incident": "docs/03-audit/docker-deployment/incidents/docker-daemon-desktop-linux-engine-unavailable.json",
+  "limitations": [
+    "No images were rebuilt and no container, API, database, or browser runtime outcome was observed."
+  ]
+}

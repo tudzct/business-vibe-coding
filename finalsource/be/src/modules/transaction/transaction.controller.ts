@@ -6,7 +6,7 @@ import {
   HttpStatus,
   Post,
   Query,
-  Req,
+  Request as RequestDecorator,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -18,22 +18,31 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { AuthenticatedRequest, JwtAuthGuard } from '../auth/jwt-auth.guard';
+import type { Request } from 'express';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import type { AuthenticatedUser } from '../auth/jwt.strategy';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { TransactionListQueryDto } from './dto/transaction-list-query.dto';
-import { TransactionListResponseDto } from './dto/transaction-list-response.dto';
-import { CreatedTransactionPayload, TransactionService } from './transaction.service';
+import {
+  TransactionListResponseDto,
+  CreateTransactionDataDto,
+  TransactionService,
+} from './transaction.service';
 
-interface CreateTransactionResponse {
-  success: true;
-  message: string;
-  data: CreatedTransactionPayload;
+interface AuthenticatedRequest extends Request {
+  readonly user: AuthenticatedUser;
 }
 
-interface TransactionListSuccessResponse {
-  success: true;
-  message: string;
-  data: TransactionListResponseDto;
+interface TransactionListEnvelope {
+  readonly success: true;
+  readonly message: 'Transactions retrieved successfully.';
+  readonly data: TransactionListResponseDto;
+}
+
+interface CreateTransactionEnvelope {
+  readonly success: true;
+  readonly message: 'Transaction created successfully';
+  readonly data: CreateTransactionDataDto;
 }
 
 @ApiTags('transactions')
@@ -43,41 +52,33 @@ interface TransactionListSuccessResponse {
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  @ApiCreatedResponse({ description: 'Transaction created successfully' })
+  @ApiBadRequestResponse({ description: 'Invalid or missing transaction data' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @ApiInternalServerErrorResponse({ description: 'Transaction creation failed safely' })
+  async create(
+    @RequestDecorator() request: AuthenticatedRequest,
+    @Body() dto: CreateTransactionDto,
+  ): Promise<CreateTransactionEnvelope> {
+    const data = await this.transactionService.create(request.user.userId, dto);
+    return { success: true, message: 'Transaction created successfully', data };
+  }
+
   @Get()
-  @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ description: 'Transactions retrieved successfully.' })
   @ApiBadRequestResponse({ description: 'Invalid transaction query parameter' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiInternalServerErrorResponse({ description: 'Transaction retrieval failed safely' })
   async findAll(
-    @Req() request: AuthenticatedRequest,
+    @RequestDecorator() request: AuthenticatedRequest,
     @Query() query: TransactionListQueryDto,
-  ): Promise<TransactionListSuccessResponse> {
+  ): Promise<TransactionListEnvelope> {
     const data = await this.transactionService.findAllByUserId(
       request.user.userId,
-      query.type,
-      query.limit,
-      query.offset,
+      query,
     );
-
-    return {
-      success: true,
-      message: 'Transactions retrieved successfully.',
-      data,
-    };
-  }
-
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  @ApiCreatedResponse({ description: 'Transaction created successfully' })
-  @ApiBadRequestResponse({ description: 'Invalid transaction request' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiInternalServerErrorResponse({ description: 'Transaction persistence failed safely' })
-  async create(
-    @Req() request: AuthenticatedRequest,
-    @Body() dto: CreateTransactionDto,
-  ): Promise<CreateTransactionResponse> {
-    const data = await this.transactionService.create(request.user.userId, dto);
-    return { success: true, message: 'Transaction created successfully', data };
+    return { success: true, message: 'Transactions retrieved successfully.', data };
   }
 }

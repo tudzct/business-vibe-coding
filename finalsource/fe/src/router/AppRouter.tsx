@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Layout from '../components/Layout/Layout'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../hooks/useAuth'
 import Loading from '../components/Loading/Loading'
 
 // Lazy load pages
@@ -11,7 +11,7 @@ const Register = React.lazy(() => import('../pages/Register/Register'))
 const Dashboard = React.lazy(() => import('../pages/Dashboard/Dashboard'))
 const Bills = React.lazy(() => import('../pages/Bills/Bills'))
 const Transactions = React.lazy(() => import('../pages/Transactions/Transactions'))
-const AddTransactionPage = React.lazy(() => import('../pages/AddTransaction/AddTransactionPage'))
+const AddTransaction = React.lazy(() => import('../pages/Transactions/AddTransaction'))
 const Account = React.lazy(() => import('../pages/Account/Account'))
 const Goals = React.lazy(() => import('../pages/Goals/Goals'))
 const Expenses = React.lazy(() => import('../pages/Expenses/Expenses'))
@@ -68,7 +68,7 @@ const AppRouter: React.FC = () => {
               path="/transactions/add"
               element={
                 <ProtectedRoute>
-                  <AddTransactionPage />
+                  <AddTransaction />
                 </ProtectedRoute>
               }
             />

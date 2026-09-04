@@ -1,5 +1,5 @@
-import { Type } from 'class-transformer';
-import { IsEnum, IsInt, IsOptional, Min } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsEnum, IsInt, Min } from 'class-validator';
 
 export enum TransactionFilterType {
   ALL = 'All',
@@ -11,14 +11,12 @@ export class TransactionListQueryDto {
   @IsEnum(TransactionFilterType)
   readonly type!: TransactionFilterType;
 
-  @IsOptional()
-  @Type(() => Number)
+  @Transform(({ value }) => (value === undefined ? 10 : Number(value)))
   @IsInt()
   @Min(1)
   readonly limit: number = 10;
 
-  @IsOptional()
-  @Type(() => Number)
+  @Transform(({ value }) => (value === undefined ? 0 : Number(value)))
   @IsInt()
   @Min(0)
   readonly offset: number = 0;

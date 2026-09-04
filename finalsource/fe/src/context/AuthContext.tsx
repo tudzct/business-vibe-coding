@@ -1,18 +1,7 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { useEffect, useState, ReactNode } from 'react'
 import { User } from '../api/types'
 import { authService, LoginRequest, RegisterRequest, RegistrationPayload } from '../api/auth.service'
-
-interface AuthContextType {
-  user: User | null
-  isAuthenticated: boolean
-  isLoading: boolean
-  login: (data: LoginRequest) => Promise<void>
-  register: (data: RegisterRequest) => Promise<RegistrationPayload>
-  logout: () => void
-  updateUser: (userData: User) => void
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+import { AuthContext } from './auth-context'
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
@@ -73,11 +62,3 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   )
 }
 
-// eslint-disable-next-line react-refresh/only-export-components -- Provider and hook intentionally share one context instance.
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider')
-  }
-  return context
-}

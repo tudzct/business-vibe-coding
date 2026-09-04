@@ -2,21 +2,22 @@ import axiosInstance from './axiosInstance'
 import {
   ApiResponse,
   CreatedTransaction,
-  CreateTransactionPayload,
+  CreateTransactionRequest,
   Transaction,
   TransactionListQuery,
-  TransactionListResponse,
+  TransactionListResult,
 } from './types'
-
-export type CreateTransactionRequest = CreateTransactionPayload
 
 export const transactionService = {
   // Lấy danh sách giao dịch
   getTransactions: async (
-    params?: TransactionListQuery,
-    signal?: AbortSignal,
-  ): Promise<ApiResponse<TransactionListResponse>> => {
-    const response = await axiosInstance.get('/v1/transactions', { params, signal })
+    params: TransactionListQuery = { type: 'All', limit: 10, offset: 0 },
+    signal?: AbortSignal
+  ): Promise<ApiResponse<TransactionListResult>> => {
+    const response = await axiosInstance.get<ApiResponse<TransactionListResult>>('/v1/transactions', {
+      params,
+      signal,
+    })
     return response.data
   },
 
@@ -27,18 +28,13 @@ export const transactionService = {
   },
 
   // Tạo giao dịch mới
-  createTransaction: async (
-    data: CreateTransactionPayload,
-  ): Promise<ApiResponse<CreatedTransaction>> => {
-    const response = await axiosInstance.post('/v1/transactions', data)
+  createTransaction: async (data: CreateTransactionRequest): Promise<ApiResponse<CreatedTransaction>> => {
+    const response = await axiosInstance.post<ApiResponse<CreatedTransaction>>('/v1/transactions', data)
     return response.data
   },
 
   // Cập nhật giao dịch
-  updateTransaction: async (
-    transactionId: number,
-    data: Partial<Transaction>,
-  ): Promise<ApiResponse<Transaction>> => {
+  updateTransaction: async (transactionId: number, data: Partial<Transaction>): Promise<ApiResponse<Transaction>> => {
     const response = await axiosInstance.put(`/transactions/${transactionId}`, data)
     return response.data
   },
@@ -49,3 +45,4 @@ export const transactionService = {
     return response.data
   },
 }
+

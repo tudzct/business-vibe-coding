@@ -1,27 +1,10 @@
 import axiosInstance from './axiosInstance'
-import { Account, ApiResponse } from './types'
-
-export interface AccountOption {
-  id: number
-  bankName: string
-  accountType: string
-  accountNumberLast4: string
-  balance: number
-}
-
-interface AccountOptionsData {
-  accounts: AccountOption[]
-}
+import { ApiResponse, Account, AccountListResult } from './types'
 
 export const accountService = {
-  getAccountOptions: async (signal?: AbortSignal): Promise<ApiResponse<AccountOptionsData>> => {
-    const response = await axiosInstance.get('/v1/accounts', { signal })
-    return response.data
-  },
-
   // Lấy danh sách tài khoản của user
-  getAccounts: async (): Promise<ApiResponse<Account[]>> => {
-    const response = await axiosInstance.get('/accounts')
+  getAccounts: async (signal?: AbortSignal): Promise<ApiResponse<AccountListResult>> => {
+    const response = await axiosInstance.get<ApiResponse<AccountListResult>>('/v1/accounts', { signal })
     return response.data
   },
 
@@ -49,3 +32,4 @@ export const accountService = {
     return response.data
   },
 }
+

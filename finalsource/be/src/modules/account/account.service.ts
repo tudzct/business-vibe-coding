@@ -1,14 +1,26 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Account } from './account.entity';
+import { In, Repository } from 'typeorm';
+import { Account, AccountType } from './account.entity';
 
-export interface AccountOption {
-  id: number;
-  bankName: string;
-  accountType: string;
-  accountNumberLast4: string;
-  balance: number;
+const TRANSACTION_ACCOUNT_TYPES = [
+  AccountType.CHECKING,
+  AccountType.SAVINGS,
+  AccountType.CREDIT_CARD,
+] as const;
+
+export interface AccountListItemDto {
+  readonly id: number;
+  readonly bank_name: string;
+  readonly account_type: string;
+  readonly branch_name: string | null;
+  readonly account_number_last_4: string;
+  readonly balance: number;
+}
+
+export interface AccountListDataDto {
+  readonly user_id: number;
+  readonly accounts: AccountListItemDto[];
 }
 
 @Injectable()
@@ -18,27 +30,30 @@ export class AccountService {
     private readonly accounts: Repository<Account>,
   ) {}
 
-  async findOptions(userId: number): Promise<AccountOption[]> {
+  async findAllByUserId(userId: number): Promise<AccountListDataDto> {
     try {
-      const rows = await this.accounts.find({
-        where: { userId },
+      const accounts = await this.accounts.find({
+        where: {
+          userId,
+          accountType: In([...TRANSACTION_ACCOUNT_TYPES]),
+        },
         order: { accountId: 'ASC' },
       });
-      return rows.map((account) => ({
-        id: account.accountId,
-        bankName: account.bankName,
-        accountType: account.accountType,
-        accountNumberLast4: account.accountNumberLast4,
-        balance: Number(account.balance),
-      }));
+      return {
+        user_id: userId,
+        accounts: accounts.map((account) => ({
+          id: account.accountId,
+          bank_name: account.bankName,
+          account_type: account.accountType,
+          branch_name: account.branchName,
+          account_number_last_4: account.accountNumberLast4,
+          balance: Number(account.balance),
+        })),
+      };
     } catch {
       throw new InternalServerErrorException(
-        'Đã xảy ra lỗi hệ thống khi lấy danh sách tài khoản. Vui lòng thử lại sau.',
+        'system error occurred. Please try again later.',
       );
     }
-  }
-
-  async findAllByUserId(userId: number) {
-    return this.findOptions(userId);
   }
 }

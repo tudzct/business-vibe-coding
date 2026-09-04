@@ -1,360 +1,332 @@
-import { useEffect, useMemo, useState } from 'react'
 import axios from 'axios'
+import React, { useEffect, useRef, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { transactionService } from '../../api/transaction.service'
-import type { Transaction } from '../../api/types'
-import { useAuth } from '../../context/AuthContext'
+import type { Transaction, TransactionFilter } from '../../api/types'
+import { useAuth } from '../../hooks/useAuth'
 
-const navigation = [
-  ['Overview', '/dashboard', 'overview'],
-  ['Balances', '/account', 'balances'],
-  ['Transactions', '/transactions', 'transactions'],
-  ['Bills', '/bills', 'bills'],
-  ['Expenses', '/expenses', 'expenses'],
-  ['Goals', '/goals', 'goals'],
-] as const
+const pageSize = 10
+const filters: ReadonlyArray<{ readonly label: string; readonly value: TransactionFilter }> = [
+  { label: 'All', value: 'All' },
+  { label: 'Revenue', value: 'Revenue' },
+  { label: 'Expenses', value: 'Expense' },
+]
 
-type Filter = 'All' | 'Revenue' | 'Expenses'
-type IconName = (typeof navigation)[number][2] | 'settings' | 'logout' | 'chevrons' | 'bell' | 'search' | 'more'
+type LoadingMode = 'idle' | 'replace' | 'more'
 
-function Icon({ name, className = 'h-5 w-5' }: { name: IconName; className?: string }) {
-  const common = {
-    className,
-    viewBox: '0 0 24 24',
-    fill: 'none',
-    stroke: 'currentColor',
-    strokeWidth: 1.8,
-    strokeLinecap: 'round' as const,
-    strokeLinejoin: 'round' as const,
-    'aria-hidden': true,
+interface SafeRequestError {
+  readonly status?: number
+  readonly message: string
+}
+
+const getRequestError = (error: unknown): SafeRequestError => {
+  if (!axios.isAxiosError(error)) {
+    return { message: 'Unable to load transactions. Please try again.' }
   }
-  switch (name) {
-    case 'overview':
-      return (
-        <svg {...common}>
-          <rect x="3" y="3" width="7" height="7" />
-          <rect x="14" y="3" width="7" height="7" />
-          <rect x="3" y="14" width="7" height="7" />
-          <rect x="14" y="14" width="7" height="7" />
-        </svg>
-      )
-    case 'balances':
-      return (
-        <svg {...common}>
-          <path d="M4 6.5h13a2 2 0 0 1 2 2v9H5a2 2 0 0 1-2-2v-11a2 2 0 0 1 2-2h12" />
-          <path d="M15 11h6v4h-6a2 2 0 0 1 0-4Z" />
-        </svg>
-      )
-    case 'transactions':
-      return (
-        <svg {...common}>
-          <path d="M7 7h11l-3-3" />
-          <path d="m18 7-3 3" />
-          <path d="M17 17H6l3 3" />
-          <path d="m6 17 3-3" />
-        </svg>
-      )
-    case 'bills':
-      return (
-        <svg {...common}>
-          <path d="M6 3h12v18l-3-2-3 2-3-2-3 2V3Z" />
-          <path d="M9 8h6M9 12h6M9 16h3" />
-        </svg>
-      )
-    case 'expenses':
-      return (
-        <svg {...common}>
-          <rect x="3" y="5" width="18" height="14" rx="2" />
-          <path d="M3 9h18M12 12v4M10 14h4" />
-        </svg>
-      )
-    case 'goals':
-      return (
-        <svg {...common}>
-          <circle cx="12" cy="12" r="9" />
-          <path d="M12 3v4M12 17v4M3 12h4M17 12h4" />
-        </svg>
-      )
-    case 'settings':
-      return (
-        <svg {...common}>
-          <circle cx="12" cy="12" r="3" />
-          <path d="M19 15a2 2 0 0 0 .4 2l-2.4 2.4a2 2 0 0 0-2-.4 2 2 0 0 0-1.3 1.6H10A2 2 0 0 0 8.6 19a2 2 0 0 0-2 .4L4.2 17a2 2 0 0 0 .4-2A2 2 0 0 0 3 13.7v-3.4A2 2 0 0 0 4.6 9a2 2 0 0 0-.4-2L6.6 4.6a2 2 0 0 0 2 .4A2 2 0 0 0 10 3.4h3.4A2 2 0 0 0 15 5a2 2 0 0 0 2-.4L19.4 7a2 2 0 0 0-.4 2 2 2 0 0 0 1.6 1.3v3.4A2 2 0 0 0 19 15Z" />
-        </svg>
-      )
-    case 'logout':
-      return (
-        <svg {...common}>
-          <path d="M10 5H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h5" />
-          <path d="m14 8 4 4-4 4M18 12H8" />
-        </svg>
-      )
-    case 'chevrons':
-      return (
-        <svg {...common}>
-          <path d="m5 8 4 4-4 4M12 8l4 4-4 4" />
-        </svg>
-      )
-    case 'bell':
-      return (
-        <svg {...common}>
-          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
-          <path d="M10 21h4" />
-        </svg>
-      )
-    case 'search':
-      return (
-        <svg {...common}>
-          <circle cx="11" cy="11" r="7" />
-          <path d="m20 20-4-4" />
-        </svg>
-      )
-    case 'more':
-      return (
-        <svg {...common}>
-          <circle cx="12" cy="5" r="1" fill="currentColor" stroke="none" />
-          <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none" />
-          <circle cx="12" cy="19" r="1" fill="currentColor" stroke="none" />
-        </svg>
-      )
+
+  const body: unknown = error.response?.data
+  if (typeof body === 'object' && body !== null && 'message' in body) {
+    const message = body.message
+    if (typeof message === 'string') {
+      return { status: error.response?.status, message }
+    }
+    if (Array.isArray(message) && message.every((item) => typeof item === 'string')) {
+      return { status: error.response?.status, message: message.join(' ') }
+    }
+  }
+
+  return {
+    status: error.response?.status,
+    message: 'Unable to load transactions. Please try again.',
   }
 }
 
-const formatDate = (value: string) => {
-  const date = new Date(value)
-  return Number.isNaN(date.getTime())
-    ? value
-    : new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).format(date)
+const formatTransactionDate = (date: string): string => {
+  const parsed = new Date(`${date}T00:00:00`)
+  if (Number.isNaN(parsed.getTime())) return date
+  return new Intl.DateTimeFormat('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  }).format(parsed)
 }
 
-const formatAmount = (value: number) =>
-  new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(value))
+const formatAmount = (amount: number): string =>
+  new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+  }).format(amount)
 
-export default function Transactions() {
+const Transactions: React.FC = () => {
+  const { user, logout } = useAuth()
   const navigate = useNavigate()
-  const { logout, user } = useAuth()
+  const requestSequence = useRef(0)
+  const [selectedFilter, setSelectedFilter] = useState<TransactionFilter>('All')
   const [transactions, setTransactions] = useState<Transaction[]>([])
-  const [activeFilter, setActiveFilter] = useState<Filter>('All')
-  const [search, setSearch] = useState('')
-  const [visibleCount, setVisibleCount] = useState(7)
-  const [loading, setLoading] = useState(true)
-  const [loadError, setLoadError] = useState<string | null>(null)
+  const [total, setTotal] = useState(0)
+  const [hasMore, setHasMore] = useState(false)
+  const [loadingMode, setLoadingMode] = useState<LoadingMode>('replace')
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    let active = true
-    const loadTransactions = async () => {
+    const controller = new AbortController()
+    const requestId = ++requestSequence.current
+
+    const loadFirstPage = async (): Promise<void> => {
+      setLoadingMode('replace')
+      setError('')
+      setTransactions([])
+
       try {
-        const response = await transactionService.getTransactions()
-        if (active) {
-          const list = response.data?.data ?? (Array.isArray(response.data) ? response.data : [])
-          setTransactions(list)
+        const response = await transactionService.getTransactions(
+          { type: selectedFilter, limit: pageSize, offset: 0 },
+          controller.signal
+        )
+        if (requestId !== requestSequence.current) return
+        if (!response.success || !response.data) {
+          setError(response.message || 'Unable to load transactions. Please try again.')
+          return
         }
-      } catch (error: unknown) {
-        if (active && !axios.isCancel(error)) {
-          setLoadError('Transaction history is currently unavailable. You can still add a transaction.')
-        }
+        setTransactions(response.data.data)
+        setTotal(response.data.total)
+        setHasMore(response.data.hasMore)
+      } catch (requestError: unknown) {
+        if (controller.signal.aborted || requestId !== requestSequence.current) return
+        const failure = getRequestError(requestError)
+        if (failure.status !== 401) setError(failure.message)
       } finally {
-        if (active) setLoading(false)
+        if (requestId === requestSequence.current) setLoadingMode('idle')
       }
     }
-    void loadTransactions()
-    return () => {
-      active = false
+
+    void loadFirstPage()
+    return () => controller.abort()
+  }, [selectedFilter])
+
+  const loadMore = async (): Promise<void> => {
+    if (loadingMode !== 'idle' || !hasMore) return
+    const offset = transactions.length
+    if (!Number.isInteger(offset) || offset < 0 || !Number.isInteger(pageSize) || pageSize <= 0) {
+      setError('The transaction pagination values are invalid.')
+      return
     }
-  }, [])
 
-  const filteredTransactions = useMemo(() => {
-    const query = search.trim().toLowerCase()
-    return transactions.filter((transaction) => {
-      const matchesType =
-        activeFilter === 'All' ||
-        transaction.type === (activeFilter === 'Expenses' ? 'Expense' : 'Revenue')
-      const matchesSearch =
-        !query ||
-        [transaction.item_description, transaction.shop_name, transaction.payment_method].some((value) =>
-          value?.toLowerCase().includes(query),
-        )
-      return matchesType && matchesSearch
-    })
-  }, [activeFilter, search, transactions])
-
-  const selectFilter = (filter: Filter) => {
-    setActiveFilter(filter)
-    setVisibleCount(7)
+    const requestId = ++requestSequence.current
+    setLoadingMode('more')
+    setError('')
+    try {
+      const response = await transactionService.getTransactions({
+        type: selectedFilter,
+        limit: pageSize,
+        offset,
+      })
+      if (requestId !== requestSequence.current) return
+      if (!response.success || !response.data) {
+        setError(response.message || 'Unable to load more transactions. Please try again.')
+        return
+      }
+      const page = response.data
+      setTransactions((current) => [...current, ...page.data])
+      setTotal(page.total)
+      setHasMore(page.hasMore)
+    } catch (requestError: unknown) {
+      if (requestId !== requestSequence.current) return
+      const failure = getRequestError(requestError)
+      if (failure.status !== 401) setError(failure.message)
+    } finally {
+      if (requestId === requestSequence.current) setLoadingMode('idle')
+    }
   }
 
+  const navigation = [
+    { label: 'Overview', path: '/dashboard', icon: '▦' },
+    { label: 'Balances', path: '/account', icon: '▣' },
+    { label: 'Transactions', path: '/transactions', icon: '⇄' },
+    { label: 'Bills', path: '/bills', icon: '▤' },
+    { label: 'Expenses', path: '/expenses', icon: '▧' },
+    { label: 'Goals', path: '/goals', icon: '◉' },
+  ] as const
+
+  const displayName = user?.fullName || user?.full_name || user?.username || 'Account User'
+  const topDate = new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(new Date())
+
   return (
-    <div className="min-h-screen bg-[#F4F5F7] font-sans text-[#1F1F1F] lg:flex lg:min-h-[1024px]">
-      <aside className="flex bg-[#191919] px-7 py-7 text-white lg:min-h-[1024px] lg:w-[280px] lg:flex-none lg:flex-col lg:pb-[68px] lg:pt-12">
-        <div className="text-[24px] font-bold leading-8 tracking-[0.04em]">FINEbank.IO</div>
-        <nav
-          className="mt-10 grid flex-1 grid-cols-2 gap-2 sm:grid-cols-3 lg:flex lg:flex-none lg:flex-col lg:gap-4"
-          aria-label="Primary navigation"
-        >
-          {navigation.map(([label, path, icon]) => (
-            <NavLink
-              key={path}
-              to={path}
-              className={({ isActive }) =>
-                `flex h-12 items-center gap-3 rounded-[4px] px-4 text-[16px] font-medium transition ${
-                  isActive ? 'bg-[#2FA096] text-white' : 'text-[#B8B8B8] hover:bg-white/10 hover:text-white'
-                }`
-              }
+    <div className="min-h-screen bg-[#F4F5F7] text-[#252525] lg:flex">
+      <aside className="flex bg-[#191919] text-[#bdbdbd] lg:min-h-screen lg:w-[280px] lg:flex-col">
+        <div className="flex w-full items-center gap-5 overflow-x-auto px-5 py-4 lg:block lg:overflow-visible lg:px-7 lg:py-12">
+          <div className="mr-4 shrink-0 text-2xl font-bold tracking-[0.06em] text-white lg:mb-12 lg:px-7">
+            FINE<span className="font-medium">bank.IO</span>
+          </div>
+          <nav aria-label="Primary" className="flex gap-2 lg:block lg:space-y-4">
+            {navigation.map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) =>
+                  `flex min-w-max items-center gap-4 rounded px-4 py-3 text-sm font-medium transition-colors lg:w-full ${
+                    isActive
+                      ? 'bg-[#299D91] text-white'
+                      : 'hover:bg-white/10 hover:text-white focus-visible:bg-white/10'
+                  }`
+                }
+              >
+                <span aria-hidden="true" className="w-5 text-center text-xl">{item.icon}</span>
+                {item.label}
+              </NavLink>
+            ))}
+            <button type="button" disabled className="flex min-w-max cursor-default items-center gap-4 rounded px-4 py-3 text-sm font-medium lg:w-full">
+              <span aria-hidden="true" className="w-5 text-center text-xl">⚙</span>
+              Settings
+            </button>
+          </nav>
+
+          <div className="hidden lg:mt-auto lg:block lg:pt-52">
+            <button
+              type="button"
+              onClick={() => {
+                logout()
+                navigate('/login')
+              }}
+              className="flex w-full items-center gap-4 rounded bg-white/[0.06] px-4 py-3 text-sm font-semibold hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#299D91]"
             >
-              <Icon name={icon} className="h-6 w-6 flex-none" />
-              <span>{label}</span>
-            </NavLink>
-          ))}
-          <div className="flex h-12 items-center gap-3 rounded-[4px] px-4 text-[16px] font-medium text-[#B8B8B8]">
-            <Icon name="settings" className="h-6 w-6" />
-            <span>Settings</span>
+              <span aria-hidden="true" className="text-xl">↪</span>
+              Logout
+            </button>
+            <div className="mt-11 border-t border-white/10 pt-8">
+              <div className="flex items-center gap-3">
+                <div className="grid h-9 w-9 place-items-center rounded-full bg-[#3b3b3b] text-sm font-semibold text-white">
+                  {displayName.charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-white">{displayName}</p>
+                  <p className="text-xs">View profile</p>
+                </div>
+                <span aria-hidden="true" className="text-xl text-white">⋮</span>
+              </div>
+            </div>
           </div>
-        </nav>
-        <button
-          type="button"
-          onClick={() => {
-            logout()
-            navigate('/login')
-          }}
-          className="mt-8 flex h-12 w-full items-center gap-3 rounded-[4px] bg-white/[0.06] px-4 text-left text-[16px] font-semibold text-[#C9C9C9] hover:bg-white/10 lg:mt-auto"
-        >
-          <Icon name="logout" className="h-6 w-6" />
-          <span>Logout</span>
-        </button>
-        <div className="mt-11 flex items-center border-t border-white/10 pt-8 text-sm">
-          <div className="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-[#303030] text-xs font-semibold">
-            {(user?.fullName ?? user?.full_name ?? user?.email ?? 'TR').slice(0, 2).toUpperCase()}
-          </div>
-          <div className="ml-4 min-w-0 flex-1">
-            <p className="truncate text-[16px] font-semibold text-[#F1F1F1]">
-              {user?.fullName ?? user?.full_name ?? user?.email ?? 'Tanzir Rahman'}
-            </p>
-            <p className="mt-0.5 text-xs text-[#B8B8B8]">View profile</p>
-          </div>
-          <Icon name="more" className="h-6 w-6" />
         </div>
       </aside>
 
       <main className="min-w-0 flex-1">
-        <header className="flex min-h-[88px] flex-wrap items-center justify-between gap-4 border-b border-[#E7E8EA] px-6 py-4">
-          <span className="flex items-center gap-1 text-sm text-[#A1A1A1]">
-            <Icon name="chevrons" className="h-5 w-5" />
-            {new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(
-              new Date(),
-            )}
-          </span>
-          <div className="flex items-center gap-10">
-            <span className="relative text-[#656565]" aria-label="Notifications">
-              <Icon name="bell" className="h-6 w-6" />
-              <span className="absolute right-0 top-0 h-2 w-2 rounded-full border border-[#F4F5F7] bg-[#2FA096]" />
-            </span>
-            <div className="relative hidden sm:block">
-              <label className="sr-only" htmlFor="transaction-search">
-                Search transactions
-              </label>
-              <input
-                id="transaction-search"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                className="h-12 w-[352px] rounded-2xl bg-white pl-8 pr-14 text-sm shadow-[0_14px_28px_rgba(31,36,41,0.08)] outline-none placeholder:text-[#A0A0A0] focus:ring-2 focus:ring-[#2FA096]/30"
-                placeholder="Search here"
-              />
-              <Icon
-                name="search"
-                className="pointer-events-none absolute right-6 top-1/2 h-6 w-6 -translate-y-1/2 text-[#555555]"
-              />
-            </div>
+        <header className="flex h-[88px] items-center justify-between border-b border-black/5 px-6 lg:px-7">
+          <div className="flex items-center gap-2 text-sm text-[#9d9d9d]">
+            <span aria-hidden="true" className="text-2xl">»</span>
+            {topDate}
+          </div>
+          <div className="flex items-center gap-7">
+            <button type="button" disabled aria-label="Notifications" className="relative cursor-default text-xl text-[#555]">
+              ●<span className="absolute -right-0.5 top-0 h-2 w-2 rounded-full bg-[#299D91]" />
+            </button>
+            <label className="hidden h-12 w-[352px] items-center rounded-xl bg-white px-8 shadow-[0_12px_32px_rgba(0,0,0,0.05)] sm:flex">
+              <span className="sr-only">Search</span>
+              <input readOnly value="" placeholder="Search here" className="min-w-0 flex-1 bg-transparent text-sm text-[#666] outline-none" />
+              <span aria-hidden="true" className="text-2xl text-[#555]">⌕</span>
+            </label>
           </div>
         </header>
 
-        <section className="px-6 pb-6 pt-[18px]">
-          <h1 className="text-2xl font-normal text-[#8B8B8B]">Recent Transaction</h1>
-          <div className="mt-1 flex min-h-[55px] flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-6 text-sm font-semibold" role="tablist" aria-label="Transaction type">
-              {(['All', 'Revenue', 'Expenses'] as const).map((filter) => (
+        <section className="px-6 pb-10 pt-5 lg:px-6">
+          <h1 className="text-2xl font-normal text-[#8a8a8a]">Recent Transaction</h1>
+          <div className="mt-5 flex gap-9" role="tablist" aria-label="Transaction type">
+            {filters.map((filter) => {
+              const active = selectedFilter === filter.value
+              return (
                 <button
-                  key={filter}
+                  key={filter.value}
                   type="button"
                   role="tab"
-                  aria-selected={activeFilter === filter}
-                  onClick={() => selectFilter(filter)}
-                  className={`border-b-2 px-2 py-3 ${
-                    activeFilter === filter
-                      ? 'border-[#2FA096] text-[#2FA096]'
-                      : 'border-transparent text-[#55565A] hover:text-[#2FA096]'
+                  aria-selected={active}
+                  disabled={loadingMode === 'replace'}
+                  onClick={() => setSelectedFilter(filter.value)}
+                  className={`border-b-2 px-2 pb-2 text-sm font-semibold transition-colors disabled:cursor-wait ${
+                    active ? 'border-[#299D91] text-[#299D91]' : 'border-transparent text-[#555]'
                   }`}
                 >
-                  {filter}
+                  {filter.label}
                 </button>
-              ))}
-            </div>
-            <button
-              type="button"
-              onClick={() => navigate('/transactions/add')}
-              className="flex h-[46px] w-[173px] items-center justify-center gap-2 rounded-[4px] bg-[#2FA096] text-sm font-semibold text-white hover:bg-[#278d84] focus:outline-none focus:ring-2 focus:ring-[#2FA096]/40"
-            >
-              <span className="text-lg leading-none">+</span>
-              <span>Add Transaction</span>
-            </button>
+              )
+            })}
           </div>
 
-          <div className="mt-4 min-h-[704px] overflow-x-auto rounded-2xl bg-white px-6 py-3 shadow-[0_12px_30px_rgba(31,36,41,0.10)] lg:px-7">
-            {loading ? <p className="py-16 text-center text-[#777]">Loading transactions...</p> : null}
-            {!loading && loadError ? (
-              <div className="mx-auto mt-16 max-w-lg rounded-lg bg-[#F4F5F7] px-6 py-5 text-center text-sm text-[#666]">
-                {loadError}
+          <div className="mt-4 min-h-[704px] overflow-hidden rounded-2xl bg-white px-7 py-3 shadow-[0_14px_34px_rgba(0,0,0,0.06)]">
+            {error && (
+              <div role="alert" className="my-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                {error}
               </div>
-            ) : null}
-            {!loading && !loadError && filteredTransactions.length === 0 ? (
-              <div className="py-20 text-center">
-                <p className="font-semibold text-[#444]">No transactions found</p>
-                <p className="mt-2 text-sm text-[#777]">Choose “Add Transaction” to create one.</p>
-              </div>
-            ) : null}
-            {!loading && !loadError && filteredTransactions.length > 0 ? (
-              <table className="w-full min-w-[820px] border-collapse text-left">
+            )}
+
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[850px] table-fixed text-left">
                 <thead>
-                  <tr className="h-14 border-b border-[#ECECEC] text-sm">
-                    <th className="px-2 font-semibold">Items</th>
-                    <th className="px-2 font-semibold">Shop Name</th>
-                    <th className="px-2 font-semibold">Date</th>
-                    <th className="px-2 font-semibold">Payment Method</th>
-                    <th className="px-2 text-right font-semibold">Amount</th>
+                  <tr className="border-b border-[#eeeeee] text-sm font-semibold text-[#242424]">
+                    <th className="w-[25%] px-2 py-4">Items</th>
+                    <th className="w-[22%] px-2 py-4">Shop Name</th>
+                    <th className="w-[20%] px-2 py-4">Date</th>
+                    <th className="w-[20%] px-2 py-4">Payment Method</th>
+                    <th className="w-[13%] px-2 py-4 text-right">Amount</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredTransactions.slice(0, visibleCount).map((transaction) => (
-                    <tr key={transaction.transaction_id} className="h-[72px] border-b border-[#ECECEC] last:border-0">
-                      <td className="px-2 font-semibold">{transaction.item_description}</td>
-                      <td className="px-2 text-[#666]">{transaction.shop_name || '—'}</td>
-                      <td className="px-2 text-[#666]">{formatDate(transaction.transaction_date)}</td>
-                      <td className="px-2 text-[#666]">{transaction.payment_method || '—'}</td>
-                      <td
-                        className={`px-2 text-right font-semibold ${
-                          transaction.type === 'Expense' ? 'text-[#1F1F1F]' : 'text-[#2FA096]'
-                        }`}
-                      >
-                        {formatAmount(transaction.amount)}
+                  {transactions.map((transaction) => (
+                    <tr key={transaction.transaction_id} className="border-b border-[#eeeeee] last:border-b-0">
+                      <td className="px-2 py-5 text-sm font-semibold">
+                        <span className="mr-4 inline-grid h-6 w-6 place-items-center rounded border border-[#777] text-xs text-[#666]" aria-hidden="true">
+                          {transaction.type === 'Revenue' ? '+' : '–'}
+                        </span>
+                        {transaction.item_description}
                       </td>
+                      <td className="px-2 py-5 text-sm text-[#666]">{transaction.shop_name}</td>
+                      <td className="px-2 py-5 text-sm text-[#666]">{formatTransactionDate(transaction.transaction_date)}</td>
+                      <td className="px-2 py-5 text-sm text-[#666]">{transaction.payment_method}</td>
+                      <td className="px-2 py-5 text-right text-sm font-semibold">{formatAmount(transaction.amount)}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            ) : null}
-            {!loading && !loadError && visibleCount < filteredTransactions.length ? (
-              <div className="flex justify-center py-8">
+            </div>
+
+            {loadingMode === 'replace' && (
+              <div role="status" className="grid min-h-[420px] place-items-center text-sm text-[#777]">
+                Loading transactions…
+              </div>
+            )}
+
+            {loadingMode !== 'replace' && transactions.length === 0 && !error && (
+              <div className="grid min-h-[420px] place-items-center text-sm text-[#777]">
+                No transactions are found!
+              </div>
+            )}
+
+            {transactions.length > 0 && hasMore && (
+              <div className="flex justify-center py-12">
                 <button
                   type="button"
-                  onClick={() => setVisibleCount((count) => count + 7)}
-                  className="h-12 w-48 rounded-[4px] bg-[#2FA096] text-sm font-semibold text-white hover:bg-[#278d84]"
+                  disabled={loadingMode !== 'idle'}
+                  onClick={() => void loadMore()}
+                  className="min-w-48 rounded bg-[#299D91] px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#23877d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#299D91] disabled:cursor-wait disabled:opacity-70"
                 >
-                  Load More
+                  {loadingMode === 'more' ? 'Loading…' : 'Load More'}
                 </button>
               </div>
-            ) : null}
+            )}
+
+            {transactions.length > 0 && (
+              <p className="pb-4 text-center text-xs text-[#999]" aria-live="polite">
+                Showing {transactions.length} of {total}
+              </p>
+            )}
           </div>
         </section>
       </main>
     </div>
   )
 }
+
+export default Transactions
+

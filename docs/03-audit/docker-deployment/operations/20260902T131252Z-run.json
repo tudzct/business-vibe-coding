@@ -1,0 +1,65 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-09-02T13:12:52Z",
+  "mode": "run",
+  "source_revision": "sha256:04e5c2313ac9841de1eaa0f3036bb8cadaec9c42b5640e9064fc1ae4c201c104",
+  "commands": [
+    {
+      "id": "docker-daemon-info",
+      "exit_code": 0,
+      "result": "Docker server 29.2.1 is available"
+    },
+    {
+      "id": "docker-compose-config",
+      "exit_code": 0,
+      "result": "Compose configuration is valid"
+    },
+    {
+      "id": "docker-compose-up-database-backend",
+      "exit_code": 0,
+      "result": "Current backend image built; database and backend started healthy"
+    },
+    {
+      "id": "backend-health",
+      "exit_code": 0,
+      "result": "GET /api/health returned success=true and data.status=ok"
+    },
+    {
+      "id": "br-txn-04-foreign-key-observation",
+      "exit_code": 0,
+      "result": "Observed accounts.user_id -> users.id, transactions.account_id -> accounts.account_id, and transactions.category_id -> categories.category_id in information_schema"
+    },
+    {
+      "id": "br-txn-04-orphan-observation",
+      "exit_code": 0,
+      "result": "All three bounded relationship orphan counts were zero"
+    }
+  ],
+  "docker": {
+    "cli": "29.2.1",
+    "compose": "v5.0.2",
+    "daemon": "29.2.1"
+  },
+  "services": {
+    "database": "healthy",
+    "backend": "healthy"
+  },
+  "business_rule_observation": {
+    "br_id": "BR-TXN-04",
+    "status": "met",
+    "foreign_keys": [
+      "fk_accounts_user: accounts.user_id -> users.id",
+      "fk_transactions_account: transactions.account_id -> accounts.account_id",
+      "fk_transactions_category: transactions.category_id -> categories.category_id"
+    ],
+    "orphan_counts": {
+      "accounts_user": 0,
+      "transactions_account": 0,
+      "transactions_category": 0
+    }
+  },
+  "status": "PASS",
+  "limitations": [
+    "The frontend current source was not rebuilt because its already-recorded TypeScript compile error is unrelated to the database-only BR-TXN-04 observation."
+  ]
+}

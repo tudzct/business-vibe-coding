@@ -1,0 +1,35 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260903-002",
+  "observed_at": "2026-09-03T13:13:46.9300300Z",
+  "layer": "frontend build",
+  "fingerprint": "frontend-build-typescript-goal-design-card-union-narrowing",
+  "symptom": "The current-source frontend image could not be built, so Compose did not replace the running stack.",
+  "evidence": "TypeScript TS2339 at Goals.tsx lines 128-129 reports that label and icon do not exist on the Goal side of a Goal/design-card union.",
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "A conditional array expression produces a union whose item type is not narrowed sufficiently before the fallback design-card properties are read."
+  },
+  "actions_attempted": [
+    "Validated Compose interpolation and Docker daemon availability.",
+    "Ran targeted frontend lint successfully.",
+    "Observed the same TypeScript error in the host production build and Docker frontend build.",
+    "Inspected Compose state and classified all healthy application containers as stale-image evidence.",
+    "After researcher authorization, introduced an explicit ExpenseGoalCard view model and rebuilt the frontend and backend images.",
+    "Recreated the application containers and waited for all services to become healthy."
+  ],
+  "files_changed": [
+    "finalsource/fe/src/pages/Goals/Goals.tsx"
+  ],
+  "commands_rerun": [
+    "targeted frontend eslint",
+    "frontend production build",
+    "docker compose up --build -d",
+    "docker compose ps",
+    "docker compose build",
+    "docker compose up -d --wait"
+  ],
+  "outcome": "resolved",
+  "reusable_resolution": "Separate fetched Goal rows from fallback design-card rows or add an explicit type guard before accessing label and icon.",
+  "prevention": "Avoid mapping directly over conditional arrays whose branches have unrelated structural types under strict TypeScript."
+}

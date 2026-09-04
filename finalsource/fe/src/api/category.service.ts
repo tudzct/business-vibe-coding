@@ -4,7 +4,7 @@ import { ApiResponse, Category } from './types'
 export const categoryService = {
   // Lấy danh sách tất cả categories
   getCategories: async (signal?: AbortSignal): Promise<ApiResponse<Category[]>> => {
-    const response = await axiosInstance.get('/categories', { signal })
+    const response = await axiosInstance.get<ApiResponse<Category[]>>('/categories', { signal })
     return response.data
   },
 

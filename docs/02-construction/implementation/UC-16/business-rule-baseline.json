@@ -1,0 +1,23 @@
+﻿{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-16",
+  "use_case_path": "docs/01-inception/use-cases/uc-16-view-savings-summary.md",
+  "use_case_sha256": "sha256:d4abbcbfcd5bb2f77acc9bc3209fa5b843a2f379bbd706b5fee8ce550b493a8a",
+  "business_rule_resource_path": "docs/02-construction/business-rules/UC-16-business-rules.json",
+  "business_rule_resource_sha256": "sha256:593fd79bf2455a0c2d5fc705840e80f26975bb849d79c33400cb2cffe64ac690",
+  "spreadsheet_source": "Use cases!A332:B351",
+  "ordered_br_ids": [
+    "BR-SAV-01",
+    "BR-SAV-02",
+    "BR-SAV-03",
+    "BR-SAV-04",
+    "BR-SAV-05",
+    "BR-SAV-06",
+    "BR-SAV-07",
+    "BR-SAV-08",
+    "BR-SAV-09"
+  ],
+  "frozen_at": "2026-09-03T13:33:06.000Z"
+}

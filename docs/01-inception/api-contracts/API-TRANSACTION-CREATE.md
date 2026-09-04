@@ -31,7 +31,7 @@ POST
 
 ### Description
 
-Create a revenue or expense transaction and update the account balance atomically.
+Create a new transaction record for an account.
 
 ### Authentication
 
@@ -39,7 +39,7 @@ Bearer JWT
 
 ### Authorization
 
-Owner of the referenced account
+Authenticated user
 
 ## Request Header(s)
 
@@ -68,7 +68,7 @@ Example: application/json
 ### accountId
 
 Type: integer; Required: Yes; Nullable: No
-Validation: Must reference Accounts.account_id owned by the authenticated Users.user_id.
+Validation: Must be a valid integer account identifier.
 Trigger: Transaction creation request.
 Description: Account identifier.
 Example: 3
@@ -105,7 +105,7 @@ Example: Movie Ticket
 ### category_id
 
 Type: integer; Required: No; Nullable: Yes
-Validation: When supplied, must reference an existing Categories.category_id.
+Validation: When supplied, must be an integer category identifier.
 Trigger: Transaction creation request.
 Description: Optional transaction category; maps to Transactions.category_id.
 Example: 3
@@ -124,7 +124,7 @@ Example: Cinema
 ### amount
 
 Type: number; Format: decimal; Required: Yes; Nullable: No
-Validation: Must be at least 0.01. For Expense, must not exceed the selected account balance.
+Validation: Must be a valid positive number.
 Trigger: Transaction creation request.
 Description: Maps to Transactions.amount.
 Example: 150000
@@ -154,7 +154,7 @@ Example: Complete
 ### message
 
 Type: string; Required: Yes; Nullable: No
-Trigger: The transaction and account balance are committed.
+Trigger: The transaction is successfully created.
 Description: Creation success message.
 Example: Transaction created successfully
 
@@ -162,7 +162,7 @@ Example: Transaction created successfully
 ### data.transactionId
 
 Type: integer; Required: Yes; Nullable: No
-Trigger: The transaction and account balance are committed.
+Trigger: The transaction is successfully created.
 Description: Created transaction identifier.
 Example: 8
 
@@ -170,7 +170,7 @@ Example: 8
 ### data.accountId
 
 Type: integer; Required: Yes; Nullable: No
-Trigger: The transaction and account balance are committed.
+Trigger: The transaction is successfully created.
 Description: Related account identifier.
 Example: 3
 
@@ -178,7 +178,7 @@ Example: 3
 ### data.transactionDate
 
 Type: string; Format: date-time; Required: Yes; Nullable: No
-Trigger: The transaction and account balance are committed.
+Trigger: The transaction is successfully created.
 Description: Stored transaction date.
 
 
@@ -186,7 +186,7 @@ Description: Stored transaction date.
 
 Type: string; Required: Yes; Nullable: No
 Allowed values: Revenue; Expense
-Trigger: The transaction and account balance are committed.
+Trigger: The transaction is successfully created.
 Description: Stored transaction type.
 Example: Expense
 
@@ -194,7 +194,7 @@ Example: Expense
 ### data.itemDescription
 
 Type: string; Required: Yes; Nullable: No
-Trigger: The transaction and account balance are committed.
+Trigger: The transaction is successfully created.
 Description: Stored description.
 Example: Movie Ticket
 
@@ -202,7 +202,7 @@ Example: Movie Ticket
 ### data.shopName
 
 Type: string; Required: Yes; Nullable: No
-Trigger: The transaction and account balance are committed.
+Trigger: The transaction is successfully created.
 Description: Stored merchant name from Transactions.shop_name.
 Example: Cinema
 
@@ -210,7 +210,7 @@ Example: Cinema
 ### data.amount
 
 Type: number; Required: Yes; Nullable: No
-Trigger: The transaction and account balance are committed.
+Trigger: The transaction is successfully created.
 Description: Stored amount.
 Example: 150000
 
@@ -218,7 +218,7 @@ Example: 150000
 ### data.paymentMethod
 
 Type: string; Required: Yes; Nullable: No
-Trigger: The transaction and account balance are committed.
+Trigger: The transaction is successfully created.
 Description: Stored payment method from Transactions.payment_method.
 Example: Credit Card
 
@@ -227,7 +227,7 @@ Example: Credit Card
 
 Type: string; Required: Yes; Nullable: No
 Allowed values: Complete; Pending; Failed
-Trigger: The transaction and account balance are committed.
+Trigger: The transaction is successfully created.
 Description: Stored status.
 Example: Complete
 
@@ -235,7 +235,7 @@ Example: Complete
 ### data.receiptId
 
 Type: string; Required: Yes; Nullable: Yes
-Trigger: The transaction and account balance are committed.
+Trigger: The transaction is successfully created.
 Description: Receipt identifier.
 Example: null
 
@@ -243,14 +243,14 @@ Example: null
 ### data.createdAt
 
 Type: string; Format: date-time; Required: Yes; Nullable: No
-Trigger: The transaction and account balance are committed.
+Trigger: The transaction is successfully created.
 Description: Response-time timestamp generated with new Date(); it is not read from a persisted Transaction entity column.
 
 
 ### data.category_id
 
 Type: integer; Required: Yes; Nullable: Yes
-Trigger: The transaction and account balance are committed.
+Trigger: The transaction is successfully created.
 Description: Stored optional category identifier.
 Example: 3
 
@@ -259,10 +259,10 @@ Example: 3
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: Required input is missing/invalid; shopName or paymentMethod is empty/missing; a supplied category_id does not exist; accountId is not owned by the authenticated user; type/status is invalid; or an Expense exceeds the account balance.
+Trigger: Request body fields fail validation or violate business constraints.
 Description: Error description returned by the global HTTP exception filter.
 Example: Invalid or missing transaction data
-Note: Omitting category_id by itself is not an error because Transactions.category_id is nullable. The error envelope also contains success=false and may contain an error field.
+Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 401
 
@@ -279,7 +279,7 @@ Note: The error envelope also contains success=false and may contain an error fi
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: The database transaction fails.
+Trigger: An unexpected server error occurs during processing.
 Description: Error description returned by the global HTTP exception filter.
 Example: Error when creating transaction. Try it again later.
 Note: The error envelope also contains success=false and may contain an error field.

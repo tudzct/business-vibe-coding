@@ -1,0 +1,33 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-09-02T13:00:54Z",
+  "mode": "run",
+  "source_revision": "sha256:04e5c2313ac9841de1eaa0f3036bb8cadaec9c42b5640e9064fc1ae4c201c104",
+  "commands": [
+    {
+      "id": "docker-cli-version",
+      "exit_code": 0,
+      "result": "Docker 29.2.1"
+    },
+    {
+      "id": "docker-compose-version",
+      "exit_code": 0,
+      "result": "Docker Compose v5.0.2"
+    },
+    {
+      "id": "docker-daemon-info",
+      "exit_code": 1,
+      "result": "Docker Desktop Linux engine pipe is absent"
+    }
+  ],
+  "docker": {
+    "cli": "29.2.1",
+    "compose": "v5.0.2",
+    "daemon": null
+  },
+  "status": "BLOCKED",
+  "limitations": [
+    "No current-image Compose build, service healthcheck, API request, or browser observation could be performed for UC-03."
+  ],
+  "matching_incident": "docs/03-audit/docker-deployment/incidents/docker-daemon-desktop-linux-engine-unavailable.json"
+}

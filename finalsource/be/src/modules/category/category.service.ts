@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from './category.entity';
 
-export interface CategoryDto {
-  category_id: number;
-  category_name: string;
+export interface CategoryListItemDto {
+  readonly category_id: number;
+  readonly category_name: string;
 }
 
 @Injectable()
@@ -15,16 +15,16 @@ export class CategoryService {
     private readonly categories: Repository<Category>,
   ) {}
 
-  async findAll(): Promise<CategoryDto[]> {
+  async findAll(): Promise<CategoryListItemDto[]> {
     try {
-      const rows = await this.categories.find({ order: { categoryId: 'ASC' } });
-      return rows.map((category) => ({
+      const categories = await this.categories.find({ order: { categoryName: 'ASC' } });
+      return categories.map((category) => ({
         category_id: category.categoryId,
         category_name: category.categoryName,
       }));
     } catch {
       throw new InternalServerErrorException(
-        'Đã xảy ra lỗi hệ thống khi lấy danh sách danh mục. Vui lòng thử lại sau.',
+        'The category list could not be loaded. Please try again later.',
       );
     }
   }
