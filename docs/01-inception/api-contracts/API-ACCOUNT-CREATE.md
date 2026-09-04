@@ -46,7 +46,6 @@ Authenticated user
 ### headers.Authorization
 
 Type: string; Format: Bearer <JWT>; Required: Yes; Nullable: No
-Validation: Must contain a valid, unexpired JWT access token.
 Trigger: Every protected request.
 Description: Authenticates the current user.
 Example: Bearer eyJhbGciOiJIUzI1NiIs...
@@ -58,7 +57,6 @@ Note: Added by the frontend Axios interceptor.
 Type: string; Format: MIME type; Required: Yes; Nullable: No
 Default: application/json
 Allowed values: application/json
-Validation: Request body must be JSON.
 Trigger: Every request containing a JSON body.
 Description: Declares the request body format.
 Example: application/json
@@ -68,7 +66,6 @@ Example: application/json
 ### bank_name
 
 Type: string; Required: Yes; Nullable: No
-Validation: Must be a non-empty string.
 Trigger: Account creation request.
 Description: Bank name.
 Example: Vietcombank
@@ -78,7 +75,6 @@ Example: Vietcombank
 
 Type: string; Required: Yes; Nullable: No
 Allowed values: Checking; Credit Card; Savings; Investment; Loan
-Validation: Must be one of the allowed account types.
 Trigger: Account creation request.
 Description: Account type.
 Example: Checking
@@ -87,7 +83,6 @@ Example: Checking
 ### branch_name
 
 Type: string; Required: No; Nullable: Yes
-Validation: If supplied, must be a string.
 Trigger: Account creation request.
 Description: Optional branch name.
 Example: Hanoi Branch
@@ -96,7 +91,6 @@ Example: Hanoi Branch
 ### account_number_full
 
 Type: string; Required: Yes; Nullable: No
-Validation: Must be a numeric string between 8 and 34 characters, and must be unique for the current user.
 Trigger: Account creation request.
 Description: Full account number.
 Example: 9704221234567890123
@@ -105,7 +99,6 @@ Example: 9704221234567890123
 ### balance
 
 Type: number; Format: decimal; Required: Yes; Nullable: No
-Validation: Must be a number greater than or equal to 0.
 Trigger: Account creation request.
 Description: Initial balance.
 Example: 4500000
@@ -181,9 +174,9 @@ Example: 4500000
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: Request validation fails.
+Trigger: Request validation fails due to malformed payload or missing required fields.
 Description: Error description returned by the global HTTP exception filter.
-Example: The balance must be greater than or equal to 0.
+Example: Invalid input formatting or missing required parameters.
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 401
@@ -193,7 +186,17 @@ Note: The error envelope also contains success=false and may contain an error fi
 Type: string | string[]; Required: Yes; Nullable: No
 Trigger: The JWT is missing, invalid, or expired.
 Description: Error description returned by the global HTTP exception filter.
-Example: Unauthorized
+Example: Unauthorized access. Please log in again.
+Note: The error envelope also contains success=false and may contain an error field.
+
+## Error Response — HTTP 403
+
+### message
+
+Type: string | string[]; Required: Yes; Nullable: No
+Trigger: The authenticated user is denied access to perform the requested operation on this resource.
+Description: Error description returned by the global HTTP exception filter.
+Example: Forbidden. You do not have sufficient privileges to execute this action.
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 409
@@ -201,9 +204,9 @@ Note: The error envelope also contains success=false and may contain an error fi
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: The full account number already exists for the current user.
+Trigger: A unique constraint violation occurred during data insertion.
 Description: Error description returned by the global HTTP exception filter.
-Example: This account already exists in your account list.
+Example: The submitted resource conflicts with an existing record in the system.
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 500
@@ -211,7 +214,7 @@ Note: The error envelope also contains success=false and may contain an error fi
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: The account cannot be stored.
+Trigger: An unexpected server error prevents the resource from being saved.
 Description: Error description returned by the global HTTP exception filter.
-Example: Unable to add the account at this time. Please try again later.
+Example: An internal server error occurred while processing your request. Please try again later.
 Note: The error envelope also contains success=false and may contain an error field.
