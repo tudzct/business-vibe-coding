@@ -1,0 +1,20 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "mode": "repair-run",
+  "observed_at": "2026-09-04T10:47:21.9173106Z",
+  "repository_revision": "6f29e27a771b660ef74a05a2f0557f990ef2240e",
+  "source_revision": "sha256:7f1de770f933825ae26ce954170be2602f54826e75aaaa90edd48510348195b4",
+  "commands": [
+    {"id": "backend-repository-eslint-and-build", "exit_code": 0},
+    {"id": "frontend-repository-eslint-and-build", "exit_code": 0},
+    {"id": "docker-compose-up-build", "exit_code": 0},
+    {"id": "docker-compose-health-and-http-observation", "exit_code": 0},
+    {"id": "authenticated-savings-sanitized-observation", "exit_code": 0}
+  ],
+  "build_result": "PASS: current backend and frontend images built successfully",
+  "runtime_result": "PASS: database, backend, and frontend are healthy; frontend root and backend health returned HTTP 200; protected savings returned HTTP 401 without JWT and HTTP 200 with an in-container JWT",
+  "authenticated_observation": "PASS: only sanitized booleans were emitted for resolved year, identity parity, cardinality/order, counts, and future-month capping",
+  "bounded_warning": "The backend image prune reported one moderate npm advisory; it did not fail lint, build, startup, health, or the bounded UC runtime flow.",
+  "bounded_error": null,
+  "secrets_persisted": false
+}

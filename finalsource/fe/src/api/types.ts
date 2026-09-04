@@ -161,3 +161,20 @@ export interface GoalListResult {
   savingGoal: SavingGoalListItem | null
   expenseGoals: ExpenseGoalListItem[]
 }
+
+export interface MonthlySavings {
+  month: string
+  amount: number
+  transaction_count: number
+}
+
+export interface SavingsSummaryData {
+  this_year: MonthlySavings[]
+  last_year: MonthlySavings[]
+}
+
+export interface SavingsSummaryResult {
+  user_id: number
+  year: number
+  summary: SavingsSummaryData
+}

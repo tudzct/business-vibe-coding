@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { transactionService } from '../../api/transaction.service'
 import type { Transaction, TransactionFilter } from '../../api/types'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 
 const pageSize = 10
 const filters: ReadonlyArray<{ readonly label: string; readonly value: TransactionFilter }> = [

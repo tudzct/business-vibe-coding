@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
-import { useTheme } from '../../context/ThemeContext'
+import { useAuth } from '../../hooks/useAuth'
+import { useTheme } from '../../hooks/useTheme'
 import NavigationBar from '../NavigationBar/NavigationBar'
 
 interface LayoutProps {

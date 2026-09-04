@@ -5,7 +5,7 @@ import { accountService } from '../../api/account.service'
 import { categoryService } from '../../api/category.service'
 import { transactionService } from '../../api/transaction.service'
 import type { Account, Category, CreateTransactionRequest } from '../../api/types'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 
 interface FormState {
   accountId: string

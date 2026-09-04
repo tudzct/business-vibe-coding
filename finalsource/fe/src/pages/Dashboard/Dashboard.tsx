@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 import { accountService } from '../../api/account.service'
 import { transactionService } from '../../api/transaction.service'
 import { Account, Transaction } from '../../api/types'

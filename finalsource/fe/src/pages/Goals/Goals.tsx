@@ -8,7 +8,8 @@ import type {
 } from '../../api/types'
 import AdjustGoalModal from '../../components/Goals/AdjustGoalModal'
 import CreateGoalModal from '../../components/Goals/CreateGoalModal'
-import { useAuth } from '../../context/AuthContext'
+import SavingsSummaryChart from '../../components/Goals/SavingsSummaryChart'
+import { useAuth } from '../../hooks/useAuth'
 
 const navigation = [
   { label: 'Overview', path: '/dashboard', icon: '◇' },
@@ -134,12 +135,7 @@ const Goals: React.FC = () => {
               <button type="button" disabled={!savingGoal || Boolean(adjustingGoal)} onClick={() => { if (savingGoal) { setSuccessMessage(''); setAdjustingGoal({ goal_id: savingGoal.goal_id, target_amount: savingGoal.target_amount }) } }} className="mt-6 w-full rounded border border-[#299D91] py-2 text-sm text-[#299D91] hover:bg-[#299D91]/5 focus:outline-none focus:ring-2 focus:ring-[#299D91]/30 disabled:cursor-not-allowed disabled:opacity-50">Adjust Goal &nbsp;✎</button>
             </article>
 
-            <article className="min-h-[292px] rounded-xl bg-white px-7 py-6 shadow-[0_14px_34px_rgba(0,0,0,0.08)]">
-              <div className="flex flex-wrap items-center justify-between gap-3"><div className="flex items-center gap-8"><h2 className="font-semibold text-[#4d4d4d]">Saving Summary</h2><span className="text-xs text-[#777]">Mar 2022⌄</span></div><div className="flex gap-5 text-xs text-[#777]"><span><i className="mr-2 inline-block h-2 w-4 rounded bg-[#299D91]" />This month</span><span><i className="mr-2 inline-block h-2 w-4 rounded bg-[#c5c8c8]" />Same period last month</span></div></div>
-              <div className="mt-6 h-48 overflow-hidden" aria-label="Saving summary chart">
-                <svg viewBox="0 0 720 190" className="h-full w-full" role="img" aria-label="Decorative saving summary line chart"><g stroke="#e8e8e8" strokeWidth="1"><path d="M70 10V165M160 10V165M250 10V165M340 10V165M430 10V165M520 10V165M610 10V165M700 10V165" /></g><path d="M20 105 C75 80,95 128,145 92 S220 70,260 102 S340 70,380 88 S445 45,485 78 S550 60,590 76 S650 110,710 54 L710 165 L20 165 Z" fill="#299D91" fillOpacity="0.18" /><path d="M20 105 C75 80,95 128,145 92 S220 70,260 102 S340 70,380 88 S445 45,485 78 S550 60,590 76 S650 110,710 54" fill="none" stroke="#299D91" strokeWidth="2" /><path d="M20 125 C90 112,130 132,185 110 S270 128,330 105 S420 126,480 104 S570 95,630 111 S680 103,710 92" fill="none" stroke="#bfc3c3" strokeDasharray="5 5" /></svg>
-              </div>
-            </article>
+            <SavingsSummaryChart />
           </div>
 
           <section className="mt-7">

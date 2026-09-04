@@ -7,6 +7,7 @@ import { TransactionModule } from './modules/transaction/transaction.module';
 import { AccountModule } from './modules/account/account.module';
 import { CategoryModule } from './modules/category/category.module';
 import { GoalModule } from './modules/goal/goal.module';
+import { SavingsModule } from './modules/savings/savings.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { GoalModule } from './modules/goal/goal.module';
     AccountModule,
     CategoryModule,
     GoalModule,
+    SavingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,8 +1,8 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-09-03T13:38:53.2590816Z",
-  "repository_revision": "85473a73626e3d41aaf33801cfed8c6158d384c8",
-  "source_revision": "sha256:d28db3ad68b644ed0f1adb5865bec1eb179b3f23532e67b96aa464e52ffa8015",
+  "observed_at": "2026-09-04T10:47:21.9173106Z",
+  "repository_revision": "6f29e27a771b660ef74a05a2f0557f990ef2240e",
+  "source_revision": "sha256:7f1de770f933825ae26ce954170be2602f54826e75aaaa90edd48510348195b4",
   "docker": {
     "cli": "Docker 29.2.1",
     "compose": "Docker Compose v5.0.2",
@@ -16,10 +16,10 @@
   },
   "services": {
     "database": "healthy container",
-    "backend": "healthy current-source container; health endpoint returned HTTP 200",
-    "frontend": "healthy current-source container; root returned HTTP 200"
+    "backend": "healthy UC-16 final-source container; health HTTP 200; savings HTTP 401 unauthenticated and HTTP 200 authenticated",
+    "frontend": "healthy UC-16 final-source container; root returned HTTP 200"
   },
   "status": "READY",
   "blocking_incident": null,
-  "next_action": "Researcher may verify the Edit action in an authenticated browser session with an existing goal."
+  "next_action": "UC-16 run is terminal; optionally inspect the authenticated chart hover visually."
 }

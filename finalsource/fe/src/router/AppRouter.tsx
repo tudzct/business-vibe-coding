@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Layout from '../components/Layout/Layout'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../hooks/useAuth'
 import Loading from '../components/Loading/Loading'
 
 // Lazy load pages
