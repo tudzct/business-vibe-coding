@@ -54,6 +54,12 @@
       "fingerprint": "frontend-runtime-api-base-url-unbound-port",
       "path": "docs/03-audit/docker-deployment/incidents/frontend-runtime-api-base-url-unbound-port.json",
       "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260831-001",
+      "fingerprint": "backend-runtime-expense-summary-domain-tables-absent",
+      "path": "docs/03-audit/docker-deployment/incidents/backend-runtime-expense-summary-domain-tables-absent.json",
+      "outcome": "blocked"
     }
   ]
 }

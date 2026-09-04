@@ -1,162 +1,31 @@
 ---
-artifact_type: business-use-case-specification
+artifact_type: business-rule-resource
 status: Frozen
 uc_id: UC-10
-uc_name: "View Monthly Expense Summary"
-source_type: google-sheets
-source_spreadsheet_id: 1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM
-source_sheet: "Use cases"
-source_range: "A219:B237"
-retrieved_at: 2026-08-31T02:49:48.000Z
+source_use_case: docs/01-inception/use-cases/uc-10-view-monthly-expense-summary.md
+source_use_case_sha256: sha256:1d2306543086e50d0769eaa91cf6934f2b41393d381163e18bd494dc91e46f13
 ---
 
-# UC-10: View Monthly Expense Summary
+# UC-10 Business Rule Resource
 
-> Canonical source: [Financial Management Specification](https://docs.google.com/spreadsheets/d/1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM/edit?gid=0#gid=0), tab `Use cases`, range `A219:B237`. This frozen repository projection was refreshed from the source on 2026-08-31.
+## Source provenance
 
-## Functional Use-Case Specification
+- Spreadsheet: `1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM`
+- Tab/range: `Use cases!A219:B237`
+- OCL utilities: `Use cases!A2:B2`
+- Retrieved at: `2026-08-31T02:49:48.000Z`
 
-### Use Case ID
+## Ordered Business Rules
 
-UC-10
+### BR-EXP-01 - Ownership scope
 
-### Use Case Name
-
-View Monthly Expense Summary
-
-### Description
-
-As an authenticated user, I want to view a monthly expense comparison so that I can understand my spending over time.
-
-### Actor(s)
-
-Authenticated User
-
-### Priority
-
-Not Specified
-
-### Trigger
-
-The user opens the Expenses page.
-
-### Pre-Condition(s)
-
-PRE-1: The user is authenticated.
-
-### Post-Condition(s)
-
-POST-1: If expense summary data is available, the monthly expense comparison is displayed.
-
-POST-2: If no expense summary data is available, the no-data state is displayed.
-
-POST-3: The operation does not intentionally modify financial data.
-
-### Basic Flow
-
-1. The user opens the Expenses page.
-2. The frontend requests the user's monthly expense summary.
-3. The backend authenticates the request.
-4. The backend retrieves and aggregates the relevant expense data.
-5. The backend returns the monthly expense summary.
-6. The frontend prepares the returned data for visualization.
-7. The frontend displays the monthly expense comparison chart.
-
-### Alternative Flow
-
-AF-1: No expense summary data
-
-5a. The backend returns an empty summary.
-6a. The frontend does not prepare chart data.
-7a. The frontend displays the no-data state.
-
-AF-2: Partial monthly data
-
-5b. The backend returns the available monthly summary data.
-6b. The frontend prepares the data according to the applicable business rules.
-7b. The frontend displays the resulting chart.
-
-### Exception Flow
-
-EF-1: Authentication failure
-
-3a. Authentication fails.
-3b. The backend returns HTTP 401.
-3c. The frontend applies the application's authentication-error handling.
-
-EF-2: Retrieval or aggregation failure
-
-4a. An unexpected retrieval or aggregation error occurs.
-4b. The backend returns HTTP 500.
-4c. The frontend displays its expense-loading error state.
-
-## UML Model
-
-~~~plantuml
-@startuml
-
-class Account <<Entity>> {
-  accountId: Integer [1]
-  userId: Integer [1]
-}
-
-class Transaction <<Entity>> {
-  transactionId: Integer [1]
-  accountId: Integer [1]
-  transactionDate: Date [1]
-  type: TransactionType [1]
-  amount: Decimal [1]
-  status: TransactionStatus [1]
-}
-
-enum TransactionType {
-  Revenue
-  Expense
-}
-
-class AuthenticatedRequest <<DTO>> {
-  userId: Integer [1]
-}
-
-class ExpenseSummaryItem <<DTO>> {
-  month: String [1]
-  totalExpense: Decimal [1]
-}
-
-class ExpenseSummaryResponseDto <<DTO>> {
-  data: ExpenseSummaryItem [0..*]
-}
-
-class JwtAuthGuard <<Guard>> {
-  validate(token: BearerJWT): AuthenticatedRequest
-}
-
-class ExpensesController <<Controller>> {
-  getExpenseSummary(request: AuthenticatedRequest): ExpenseSummaryResponseDto
-}
-
-class ExpensesService <<Service>> {
-  getExpenseSummary(userId: Integer): Sequence(ExpenseSummaryItem)
-}
-
-Account "1" -- "0..*" Transaction : contains
-ExpensesController ..> JwtAuthGuard : protected by
-ExpensesController ..> ExpensesService
-ExpensesController ..> ExpenseSummaryResponseDto : returns
-ExpensesService ..> Account
-ExpensesService ..> Transaction
-ExpenseSummaryResponseDto --> ExpenseSummaryItem
-
-@enduml
-~~~
-
-## Business Rules
-
-The following rules are authoritative for Prompt E. OCL is preserved verbatim from the Sheet.
+- Representation: `ocl_precondition`
+- Context: `ExpensesService::getExpenseSummary(userId : Integer) : Sequence(ExpenseSummaryItem)`
+- Enforcement layers: `backend`, `database`
+- Failure behavior: A missing, invalid, or expired authenticated identity is rejected with HTTP 401; successful aggregation uses the validated JWT userId and only transactions from that user's accounts.
+- Traceability: `Use cases!A219:B237`, UC-10 PRE-1, Basic Flow 2-4, EF-1, `API-EXPENSE-SUMMARY`
 
 ~~~text
-BR-EXP-01: Ownership scope
-
 context ExpensesService::getExpenseSummary(
   userId : Integer
 ) : Sequence(ExpenseSummaryItem)
@@ -186,9 +55,17 @@ post BR_EXP_01_OwnedTransactionsOnly:
 Technical constraints:
 - Only transactions associated with accounts owned by the authenticated user may contribute to the expense summary.
 - The aggregation userId shall come from the validated JWT and shall not be supplied or overridden by the client.
+~~~
 
-BR-EXP-02: Expense eligibility
+### BR-EXP-02 - Expense eligibility
 
+- Representation: `ocl_postcondition`
+- Context: `ExpensesService::getExpenseSummary(userId : Integer) : Sequence(ExpenseSummaryItem)`
+- Enforcement layers: `backend`, `database`
+- Failure behavior: Only Expense transactions contribute to returned totals; the source defines no separate error response for an eligibility violation.
+- Traceability: `Use cases!A219:B237`, UC-10 Basic Flow 4-5, `API-EXPENSE-SUMMARY`
+
+~~~text
 context ExpensesService::getExpenseSummary(
   userId : Integer
 ) : Sequence(ExpenseSummaryItem)
@@ -210,9 +87,17 @@ post BR_EXP_02_ExpenseOnly:
 Technical constraints:
 - Only transactions with `type = Expense` contribute to the summary.
 - Revenue transactions shall not contribute to any monthly expense total.
+~~~
 
-BR-EXP-03: Reporting period
+### BR-EXP-03 - Reporting period
 
+- Representation: `ocl_postcondition`
+- Context: `ExpensesService::getExpenseSummary(userId : Integer) : Sequence(ExpenseSummaryItem)`
+- Enforcement layers: `backend`, `database`
+- Failure behavior: Only transactions in the backend server's current calendar year contribute, and no client year parameter is accepted; the source defines no separate error response for a reporting-period violation.
+- Traceability: `Use cases!A219:B237`, UC-10 Basic Flow 4-5, `API-EXPENSE-SUMMARY`
+
+~~~text
 context ExpensesService::getExpenseSummary(
   userId : Integer
 ) : Sequence(ExpenseSummaryItem)
@@ -234,9 +119,17 @@ post BR_EXP_03_CurrentCalendarYearOnly:
 Technical constraints:
 - Only transactions whose `transactionDate` falls in the backend server's current calendar year are included.
 - The endpoint does not accept a year parameter.
+~~~
 
-BR-EXP-04: Monthly attribution
+### BR-EXP-04 - Monthly attribution
 
+- Representation: `ocl_postcondition`
+- Context: `ExpensesService::getExpenseSummary(userId : Integer) : Sequence(ExpenseSummaryItem)`
+- Enforcement layers: `backend`, `database`
+- Failure behavior: Each contribution is attributed by transactionDate month; the source defines no separate error response for a monthly-attribution violation.
+- Traceability: `Use cases!A219:B237`, UC-10 Basic Flow 4-5, UML `Transaction.transactionDate`, `API-EXPENSE-SUMMARY`
+
+~~~text
 context ExpensesService::getExpenseSummary(
   userId : Integer
 ) : Sequence(ExpenseSummaryItem)
@@ -253,9 +146,17 @@ post BR_EXP_04_TransactionDateDeterminesMonth:
 
 Technical constraints:
 - A transaction belongs to the month represented by its `transactionDate`, not another system timestamp.
+~~~
 
-BR-EXP-05: Monthly aggregation
+### BR-EXP-05 - Monthly aggregation
 
+- Representation: `ocl_postcondition`
+- Context: `ExpensesService::getExpenseSummary(userId : Integer) : Sequence(ExpenseSummaryItem)`
+- Enforcement layers: `backend`, `database`
+- Failure behavior: Each totalExpense is the sum of all eligible transaction amounts assigned to that month; aggregation failures return HTTP 500 with the source-defined safe message.
+- Traceability: `Use cases!A219:B237`, UC-10 Basic Flow 4-5, EF-2, `API-EXPENSE-SUMMARY`
+
+~~~text
 context ExpensesService::getExpenseSummary(
   userId : Integer
 ) : Sequence(ExpenseSummaryItem)
@@ -289,9 +190,17 @@ post BR_EXP_05_MonthlyExpenseTotal:
 
 Technical constraints:
 - A month's `totalExpense` equals the sum of `amount` for all eligible transactions assigned to that month.
+~~~
 
-BR-EXP-06: Backend result semantics
+### BR-EXP-06 - Backend result semantics
 
+- Representation: `ocl_postcondition`
+- Context: `ExpensesService::getExpenseSummary(userId : Integer) : Sequence(ExpenseSummaryItem)`
+- Enforcement layers: `backend`, `database`
+- Failure behavior: The backend returns a sparse, unique, chronologically ordered sequence using valid Jan-Dec abbreviations; the source defines no separate error response for a result-semantics violation.
+- Traceability: `Use cases!A219:B237`, UC-10 AF-1, AF-2, UML `ExpenseSummaryItem`, `API-EXPENSE-SUMMARY`
+
+~~~text
 context ExpensesService::getExpenseSummary(
   userId : Integer
 ) : Sequence(ExpenseSummaryItem)
@@ -319,9 +228,17 @@ Technical constraints:
 - Each returned month shall appear at most once and results shall be ordered chronologically.
 - `month` shall use Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, or Dec.
 - The backend shall not generate zero-valued entries solely to fill missing calendar months.
+~~~
 
-BR-EXP-07: Missing-month normalization
+### BR-EXP-07 - Missing-month normalization
 
+- Representation: `ocl_precondition`
+- Context: `ExpenseSummaryChart::buildChartData(summaryData : Sequence(ExpenseSummaryItem)) : Sequence(ExpenseChartItem)`
+- Enforcement layer: `frontend`
+- Failure behavior: When summary data is non-empty, the frontend preserves returned totals and supplies zero for every missing Jan-Dec month; an empty summary displays the no-data state rather than preparing chart data.
+- Traceability: `Use cases!A219:B237`, UC-10 Basic Flow 6-7, AF-1, AF-2, `ExpensesPage`, `ExpenseSummaryChart`
+
+~~~text
 context ExpenseSummaryChart::buildChartData(
   summaryData : Sequence(ExpenseSummaryItem)
 ) : Sequence(ExpenseChartItem)
@@ -367,18 +284,8 @@ Technical constraints:
 - When at least one monthly result exists, the frontend constructs Jan–Dec and assigns `0` to missing months.
 ~~~
 
-## Related UI
+## Unresolved items
 
-ExpensesPage; ExpenseSummaryChart; route /expenses
+None.
 
-## Related API IDs
-
-API-EXPENSE-SUMMARY
-
-## Notes
-
-Experiment classification:
-- BR-EXP-01 through BR-EXP-07 are the treatment-sensitive Business Rules used for the core Business Rule effectiveness score.
-- The current-month color treatment is a Figma-derived UI requirement and is not a core Business Rule.
-- Read-only behavior is redundantly constrained by the GET method.
-- The successful response envelope is project-constrained by PROJECT_CONTEXT.md and AGENTS.md.
+This artifact contains every BR in source order. It does not select, paraphrase or add rules, and it does not generate tests.

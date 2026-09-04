@@ -1,0 +1,23 @@
+{
+  "artifact_type": "source-retrieval-record",
+  "status": "recorded",
+  "retrieved_at": "2026-08-31T02:49:48.000Z",
+  "source": {
+    "spreadsheet_id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "url": "https://docs.google.com/spreadsheets/d/1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM/edit?gid=0#gid=0"
+  },
+  "retrievals": [
+    {
+      "artifact": "docs/01-inception/use-cases/uc-10-view-monthly-expense-summary.md",
+      "sheet": "Use cases",
+      "range": "A219:B237"
+    },
+    {
+      "artifact": "docs/01-inception/api-contracts/API-EXPENSE-SUMMARY.md",
+      "sheet": "API contract",
+      "range": "A206:B221"
+    }
+  ],
+  "method": "Google Drive Sheets connector; exact bounded range reads",
+  "result": "UC-10 and API-EXPENSE-SUMMARY projections refreshed from the authoritative Sheet."
+}

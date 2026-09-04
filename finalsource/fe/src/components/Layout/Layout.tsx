@@ -18,8 +18,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     location.pathname === '/register' ||
     location.pathname === '/login' ||
     location.pathname === '/account' ||
+    location.pathname === '/expenses' ||
     location.pathname.startsWith('/accounts')
   ) {
+  if (location.pathname === '/register' || ) {
     return <>{children}</>
   }
 
@@ -109,4 +111,3 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 }
 
 export default Layout
-
