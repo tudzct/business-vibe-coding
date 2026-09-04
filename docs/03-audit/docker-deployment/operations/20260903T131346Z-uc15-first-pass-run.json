@@ -1,0 +1,17 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "mode": "run",
+  "observed_at": "2026-09-03T13:13:46.9300300Z",
+  "repository_revision": "85473a73626e3d41aaf33801cfed8c6158d384c8",
+  "source_revision": "sha256:6380e8bbdc80c221a213b2309fa9fdbf8d59b416ac912df5a3292d01918113c7",
+  "commands": [
+    { "id": "docker-compose-config", "exit_code": 0 },
+    { "id": "docker-compose-up-build", "exit_code": 1 },
+    { "id": "docker-compose-ps", "exit_code": 0 }
+  ],
+  "build_result": "BLOCKED: current frontend image TypeScript build failed; backend build was canceled by the parallel Compose build",
+  "runtime_result": "NOT_EVALUABLE: healthy containers are pre-existing stale images and are not evidence for the current UC-15 source",
+  "bounded_error": "Goals.tsx: TypeScript cannot narrow the Goal/design-card union before reading label and icon",
+  "incident_id": "DEP-20260903-002",
+  "secrets_persisted": false
+}

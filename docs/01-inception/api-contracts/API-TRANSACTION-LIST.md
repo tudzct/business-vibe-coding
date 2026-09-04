@@ -58,7 +58,7 @@ Note: Added by the frontend Axios interceptor.
 
 Type: string; Required: Yes; Nullable: No
 Allowed values: All; Revenue; Expense
-Validation: Must be All, Revenue, or Expense. All is a filtering sentinel and is not a persisted Transactions.type value.
+Validation: Must be one of the allowed values: All, Revenue, Expense.
 Trigger: Transaction list request.
 Description: Transaction type filter.
 Example: All
@@ -68,7 +68,7 @@ Example: All
 
 Type: integer; Required: No; Nullable: No
 Default: 10
-Validation: Must parse as an integer and must be greater than 0.
+Validation: Must be a positive integer.
 Trigger: Transaction list request.
 Description: Maximum number of returned records.
 Example: 10
@@ -78,9 +78,9 @@ Example: 10
 
 Type: integer; Required: No; Nullable: No
 Default: 0
-Validation: Must parse as an integer and must be greater than or equal to 0.
+Validation: Must be a non-negative integer.
 Trigger: Transaction list request.
-Description: Zero-based pagination offset.
+Description: Pagination offset.
 Example: 0
 
 ## Request Body
@@ -93,7 +93,7 @@ None
 
 Type: array<object>; Required: Yes; Nullable: No
 Trigger: The query is valid.
-Description: Transaction array. May be empty.
+Description: Array of transactions matching the request. May be empty.
 Example: []
 
 
@@ -101,7 +101,7 @@ Example: []
 
 Type: integer; Required: Yes; Nullable: No
 Trigger: The query is valid.
-Description: Transactions.transaction_id.
+Description: Unique identifier of the transaction.
 Example: 8
 
 
@@ -109,7 +109,7 @@ Example: 8
 
 Type: integer; Required: Yes; Nullable: No
 Trigger: The query is valid.
-Description: Transactions.account_id; references an account owned by the authenticated user.
+Description: Identifier of the account associated with the transaction.
 Example: 3
 
 
@@ -117,7 +117,7 @@ Example: 3
 
 Type: string; Format: date; Required: Yes; Nullable: No
 Trigger: The query is valid.
-Description: Transactions.transaction_date.
+Description: Date when the transaction occurred.
 Example: 2025-11-01
 
 
@@ -126,7 +126,7 @@ Example: 2025-11-01
 Type: string; Required: Yes; Nullable: No
 Allowed values: Revenue; Expense
 Trigger: The query is valid.
-Description: Transactions.type. All is never returned as a stored type.
+Description: Type of the transaction.
 Example: Expense
 
 
@@ -134,7 +134,7 @@ Example: Expense
 
 Type: string; Required: Yes; Nullable: No
 Trigger: The query is valid.
-Description: Transactions.item_description.
+Description: Description of the transaction item.
 Example: Movie Ticket
 
 
@@ -142,7 +142,7 @@ Example: Movie Ticket
 
 Type: string; Required: Yes; Nullable: No
 Trigger: The query is valid.
-Description: Transactions.shop_name.
+Description: Name of the shop or merchant.
 Example: Cinema
 
 
@@ -150,7 +150,7 @@ Example: Cinema
 
 Type: number; Required: Yes; Nullable: No
 Trigger: The query is valid.
-Description: Transactions.amount.
+Description: Transaction monetary amount.
 Example: 150000
 
 
@@ -158,7 +158,7 @@ Example: 150000
 
 Type: string; Required: Yes; Nullable: No
 Trigger: The query is valid.
-Description: Transactions.payment_method.
+Description: Payment method used for the transaction.
 Example: Credit Card
 
 
@@ -167,7 +167,7 @@ Example: Credit Card
 Type: string; Required: Yes; Nullable: No
 Allowed values: Complete; Pending; Failed
 Trigger: The query is valid.
-Description: Transactions.status.
+Description: Processing status of the transaction.
 Example: Complete
 
 
@@ -175,7 +175,7 @@ Example: Complete
 
 Type: integer; Required: Yes; Nullable: No
 Trigger: The query is valid.
-Description: Total records matching the ownership scope and selected filter.
+Description: Total number of records matching the query filter.
 Example: 25
 
 
@@ -183,7 +183,7 @@ Example: 25
 
 Type: boolean; Required: Yes; Nullable: No
 Trigger: The query is valid.
-Description: Whether another page exists; computed as offset + returnedCount < total.
+Description: Indicates whether additional pages of records are available.
 Example: true
 
 ## Error Response — HTTP 400
@@ -191,7 +191,7 @@ Example: true
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: type is not All, Revenue, or Expense; limit cannot be parsed or is less than or equal to 0; or offset cannot be parsed or is less than 0.
+Trigger: Query parameters fail validation.
 Description: Error description returned by the global HTTP exception filter.
 Example: Invalid transaction query parameter
 Note: The error envelope also contains success=false and may contain an error field.
@@ -201,7 +201,7 @@ Note: The error envelope also contains success=false and may contain an error fi
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: The JWT is missing, invalid, or expired.
+Trigger: The authentication token is missing, invalid, or expired.
 Description: Error description returned by the global HTTP exception filter.
 Example: Unauthorized
 Note: The error envelope also contains success=false and may contain an error field.
@@ -211,7 +211,7 @@ Note: The error envelope also contains success=false and may contain an error fi
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: Transaction retrieval fails.
+Trigger: An unexpected server error occurs during processing.
 Description: Error description returned by the global HTTP exception filter.
 Example: Đã xảy ra lỗi hệ thống khi lấy danh sách giao dịch. Vui lòng thử lại sau.
 Note: The error envelope also contains success=false and may contain an error field.

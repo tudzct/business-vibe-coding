@@ -1,0 +1,11 @@
+{
+  "artifact_type": "run-activation",
+  "gate_version": 3,
+  "uc_id": "UC-16",
+  "run_id": "UC16-RQ3-SOL-LIGHT-R1",
+  "prompt_variant": "rq3",
+  "configuration_artifact": "docs/05-experiments/configurations/CFG-UC16-RQ3-SOL-LIGHT-20260903.json",
+  "configuration_checksum": "sha256:e9c7870c66da96cf7aa929110255356f64f49b7741a2e5776ec661aee62851c8",
+  "activated_at": "2026-09-03T14:04:24.980841Z",
+  "status": "Confirmed"
+}

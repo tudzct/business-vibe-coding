@@ -1,0 +1,60 @@
+﻿{
+  "schema_version": "1.0",
+  "artifact_type": "source-retrieval-record",
+  "status": "Frozen",
+  "retrieval_id": "SRC-UC16-20260903T133306Z",
+  "retrieved_at": "2026-09-03T13:33:06.000Z",
+  "authorization": {
+    "actor": "researcher",
+    "decision": "confirmed",
+    "scope": "Refresh the frozen UC-16 projection and API-SAVINGS-SUMMARY contract to sanitize Business Rule leaks in functional specifications and upgrade BR-SAV-01..09 with non-trivial domain rules."
+  },
+  "source": {
+    "type": "google-sheets",
+    "spreadsheet_id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "sheet": "Use cases",
+    "range": "A332:B351",
+    "retrieval_method": "connected-google-drive-get-spreadsheet-range"
+  },
+  "projection": {
+    "path": "docs/01-inception/use-cases/uc-16-view-savings-summary.md",
+    "previous_sha256": "sha256:a08b4d85bb006754b57c7069345e2b78b4ace1f8b7246166ec82b8f04f8508bc",
+    "refreshed_sha256": "sha256:d4abbcbfcd5bb2f77acc9bc3209fa5b843a2f379bbd706b5fee8ce550b493a8a",
+    "status": "Frozen"
+  },
+  "api_contract": {
+    "path": "docs/01-inception/api-contracts/API-SAVINGS-SUMMARY.md",
+    "previous_sha256": "sha256:17a435d2b2b55fb23321dc4e43b137e1b63881c501264d3878d3b25d5bb7b6df",
+    "refreshed_sha256": "sha256:2209f5621184e78470ce80044dd869bbed2588e5dfdd6c13e85cf232deaa498b",
+    "status": "Frozen"
+  },
+  "sanitized_sections": [
+    "UC-16 Pre-Conditions (PRE-2)",
+    "UC-16 Post-Conditions (POST-1, POST-2, POST-3)",
+    "UC-16 Basic Flow (Step 1..8)",
+    "UC-16 Alternative Flow (AF-1, AF-2)",
+    "UC-16 Exception Flow (EF-1, EF-2)",
+    "UC-16 Notes",
+    "API-SAVINGS-SUMMARY Query Parameter validation rules (query.year)",
+    "API-SAVINGS-SUMMARY Success Response triggers (HTTP 200)",
+    "API-SAVINGS-SUMMARY Response field descriptions (summary.this_year, summary.this_year[].amount, summary.this_year[].transaction_count, summary.last_year, summary.last_year[].amount, summary.last_year[].transaction_count)"
+  ],
+  "verification": {
+    "spreadsheet_id_matches_project_context": true,
+    "sheet_and_range_match_projection_provenance": true,
+    "ordered_business_rule_ids": [
+      "BR-SAV-01",
+      "BR-SAV-02",
+      "BR-SAV-03",
+      "BR-SAV-04",
+      "BR-SAV-05",
+      "BR-SAV-06",
+      "BR-SAV-07",
+      "BR-SAV-08",
+      "BR-SAV-09"
+    ],
+    "business_rule_text_changed": true,
+    "rule_count": 9,
+    "unresolved_items": []
+  }
+}

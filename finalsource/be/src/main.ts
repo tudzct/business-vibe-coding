@@ -69,6 +69,7 @@ async function bootstrap() {
     .addTag('goals', 'Quản lý mục tiêu')
     .addTag('expenses', 'Quản lý chi tiêu')
     .addTag('categories', 'Quản lý danh mục')
+    .addTag('savings', 'Tổng hợp tiết kiệm')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
@@ -82,4 +83,4 @@ async function bootstrap() {
   console.log(`🚀 Application is running on: http://localhost:${process.env.PORT ?? 8000}`);
   console.log(`📚 Swagger documentation: http://localhost:${process.env.PORT ?? 8000}/api/docs`);
 }
-bootstrap();
+void bootstrap();

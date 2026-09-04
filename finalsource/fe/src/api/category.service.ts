@@ -3,8 +3,8 @@ import { ApiResponse, Category } from './types'
 
 export const categoryService = {
   // Lấy danh sách tất cả categories
-  getCategories: async (): Promise<ApiResponse<Category[]>> => {
-    const response = await axiosInstance.get('/categories')
+  getCategories: async (signal?: AbortSignal): Promise<ApiResponse<Category[]>> => {
+    const response = await axiosInstance.get<ApiResponse<Category[]>>('/categories', { signal })
     return response.data
   },
 

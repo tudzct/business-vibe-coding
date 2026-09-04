@@ -1,0 +1,39 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-08-31T14:47:07Z",
+  "mode": "run",
+  "source_revision": "sha256:f0fd0965a7fcb07de003b5d7f7acc755e745d8f9499fb76513726a8134ca77a4",
+  "commands": [
+    {
+      "id": "compose-config-quiet",
+      "exit_code": 0,
+      "result": "configuration valid; required secret values present, non-placeholder and not persisted"
+    },
+    {
+      "id": "compose-up-build-current-source",
+      "exit_code": 1,
+      "result": "backend TypeScript build failed with TS7016 for passport-jwt; stack was not recreated from current source"
+    },
+    {
+      "id": "compose-build-frontend",
+      "exit_code": 0,
+      "result": "frontend TypeScript and Vite production build passed"
+    },
+    {
+      "id": "disposable-container-lint",
+      "exit_code": 1,
+      "result": "backend and frontend retain baseline lint diagnostics; backend also reports unresolved passport-jwt typing"
+    }
+  ],
+  "docker": {
+    "cli": "29.2.1",
+    "compose": "5.0.2",
+    "daemon": "29.2.1"
+  },
+  "status": "BLOCKED",
+  "incidents_opened": ["DEP-20260831-001"],
+  "limitations": [
+    "No current-source backend runtime or bounded API observation is valid because the backend image did not build.",
+    "Existing healthy containers were excluded because they predate the current source hash."
+  ]
+}

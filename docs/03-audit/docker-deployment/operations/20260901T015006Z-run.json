@@ -1,0 +1,20 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-09-01T01:50:06.8448568Z",
+  "mode": "run",
+  "source_revision": "sha256:4cd90dd4af2e3df8170aee70838c976d21dda9f0d4adf417bd646af7cb1e9c16",
+  "commands": [
+    { "id": "docker-cli-compose-daemon-review", "exit_code": 0, "result": "Docker 29.2.1, Compose v5.0.2 and daemon 29.2.1 available" },
+    { "id": "compose-config-validation", "exit_code": 0, "result": "configuration valid; env present, ignored and untracked" },
+    { "id": "compose-build-and-start-current-stack", "exit_code": 1, "result": "frontend TypeScript build rejected AccountOptionsData as Dashboard Account[] state" },
+    { "id": "compose-build-backend", "exit_code": 0, "result": "current backend production image built" },
+    { "id": "compose-start-current-backend", "exit_code": 0, "result": "backend running healthy; health HTTP 200; protected create HTTP 401 normalized" }
+  ],
+  "docker": { "cli": "29.2.1", "compose": "v5.0.2", "daemon": "29.2.1" },
+  "status": "BLOCKED",
+  "limitations": [
+    "Current frontend image and full-stack runtime could not be observed.",
+    "Category-list runtime returned a normalized HTTP 500 response.",
+    "Authenticated transaction success and persistence paths were not exercised."
+  ]
+}

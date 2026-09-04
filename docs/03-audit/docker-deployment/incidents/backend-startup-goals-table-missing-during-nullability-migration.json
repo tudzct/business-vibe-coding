@@ -1,0 +1,38 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260903-001",
+  "observed_at": "2026-09-03T11:52:41.558Z",
+  "layer": "backend startup/database migration",
+  "fingerprint": "backend-startup-goals-table-missing-during-nullability-migration",
+  "symptom": "The backend remained unhealthy and the frontend dependency did not start.",
+  "evidence": "TypeORM migration MakeGoalsCategoryNullable failed with MySQL ER_NO_SUCH_TABLE for Goals and rolled back.",
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "The persistent vibe_business database has no Goals table, while the approved first-pass migration assumes the table already exists and only changes category_id nullability."
+  },
+  "actions_attempted": [
+    "Validated Compose interpolation.",
+    "Built current backend and frontend images.",
+    "Attempted to start the stack and inspected bounded backend logs.",
+    "Stopped the failing backend and dependent frontend without deleting containers or volumes.",
+    "Applied authorized non-schema UC-14 repair sub-prompts and passed targeted lint plus both production builds.",
+    "Rebuilt both repaired images and confirmed the same missing-table fingerprint remains."
+  ],
+  "files_changed": [
+    "finalsource/be/src/database/migrations/20260903105627-make-goals-category-nullable.ts",
+    "finalsource/be/src/modules/goal/dto/create-goal.dto.ts",
+    "finalsource/be/src/modules/goal/goal.entity.ts",
+    "finalsource/be/src/modules/goal/goal.module.ts",
+    "finalsource/be/src/modules/goal/goal.service.ts",
+    "finalsource/fe/src/components/Goals/CreateGoalModal.tsx"
+  ],
+  "commands_rerun": [
+    "targeted backend/frontend eslint",
+    "backend/frontend production build",
+    "docker compose up -d --build",
+    "docker compose ps and bounded backend logs"
+  ],
+  "outcome": "blocked",
+  "reusable_resolution": "Approve and add the proposed idempotent missing-Goals-table initialization migration before retrying the nullable-category migration; do not reset the persistent database volume.",
+  "prevention": "Schema proposals should verify whether the target table exists in the active Docker database before selecting alter-only migration scope."
+}

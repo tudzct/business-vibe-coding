@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 import { accountService } from '../../api/account.service'
 import { transactionService } from '../../api/transaction.service'
 import type { AccountListItem, Transaction } from '../../api/types'
 import Loading from '../../components/Loading/Loading'
-import Error from '../../components/Error/Error'
+import ErrorDisplay from '../../components/Error/Error'
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth()
@@ -19,7 +19,7 @@ const Dashboard: React.FC = () => {
         setIsLoading(true)
         const [accountsRes, transactionsRes] = await Promise.all([
           accountService.getAccounts(),
-          transactionService.getTransactions({}),
+          transactionService.getTransactions({ type: 'All', limit: 5, offset: 0 }),
         ])
 
         if (accountsRes.success && accountsRes.data) {
@@ -28,10 +28,10 @@ const Dashboard: React.FC = () => {
 
         if (transactionsRes.success && transactionsRes.data) {
           // Lấy 5 giao dịch gần nhất
-          setRecentTransactions(transactionsRes.data.slice(0, 5))
+          setRecentTransactions(transactionsRes.data.data.slice(0, 5))
         }
-      } catch (err: any) {
-        setError(err.message || 'Không thể tải dữ liệu')
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'Không thể tải dữ liệu')
       } finally {
         setIsLoading(false)
       }
@@ -45,7 +45,7 @@ const Dashboard: React.FC = () => {
   }
 
   if (error) {
-    return <Error message={error} onRetry={() => window.location.reload()} />
+    return <ErrorDisplay message={error} onRetry={() => window.location.reload()} />
   }
 
   const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0)

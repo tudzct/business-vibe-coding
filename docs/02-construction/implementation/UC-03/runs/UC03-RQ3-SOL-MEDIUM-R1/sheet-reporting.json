@@ -1,0 +1,27 @@
+{
+  "artifact_type": "experiment-sheet-reporting-receipt",
+  "status": "verified",
+  "run_id": "UC03-RQ3-SOL-MEDIUM-R1",
+  "spreadsheet_id": "1bxVKta6-jkRyN1FN4rknT8ACP9ruVhn4gLBo-g6xThY",
+  "sheet_name": "RQ3 - Both off",
+  "sheet_id": 1314047564,
+  "row": 7,
+  "written_ranges": ["C7:H7", "L7:R7"],
+  "preserved_range": "I7:K7",
+  "reported_values": {
+    "business_rules_total": 7,
+    "correct_first_generation": 1,
+    "incorrect_or_not_evaluable_first_generation": 6,
+    "first_generation_seconds": 568.965,
+    "sub_prompt_count": 8,
+    "sub_prompt_seconds": 429.824,
+    "first_generation_tokens": 7713711,
+    "sub_prompt_tokens": 4426149,
+    "total_tokens": 12139860,
+    "ui_accuracy_percent": 100,
+    "operational_flow_accuracy_percent": 100,
+    "complexity": "Easy"
+  },
+  "verified_at": "2026-09-02T13:34:33.9984195Z",
+  "verification": "Live CellData re-read confirmed all written values and preserved number/percent/wrap formatting."
+}

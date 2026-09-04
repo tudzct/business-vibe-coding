@@ -14,7 +14,7 @@ import {
 import { expenseService } from '../../api/expense.service'
 import type { BreakdownResult, ExpenseSummaryItem, ExpenseSubCategory } from '../../api/types'
 import ExpensesBreakdown from '../../components/ExpensesBreakdown/ExpensesBreakdown'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 
 const monthNames = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',

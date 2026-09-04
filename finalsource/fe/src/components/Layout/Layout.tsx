@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
-import { useTheme } from '../../context/ThemeContext'
+import { useAuth } from '../../hooks/useAuth'
+import { useTheme } from '../../hooks/useTheme'
 import NavigationBar from '../NavigationBar/NavigationBar'
 
 interface LayoutProps {
@@ -16,12 +16,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   if (
     location.pathname === '/register' ||
-    location.pathname === '/login' ||
+    location.pathname.startsWith('/transactions') ||
+    location.pathname.startsWith('/expenses') ||
+    location.pathname.startsWith('/accounts') ||
     location.pathname === '/account' ||
-    location.pathname === '/expenses' ||
-    location.pathname.startsWith('/accounts')
+    location.pathname === '/goals'
   ) {
-  if (location.pathname === '/register' || ) {
     return <>{children}</>
   }
 
@@ -59,31 +59,30 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   </span>
                   <button
                     onClick={handleLogout}
-                    className="px-4 py-2 text-sm text-white bg-red-600 rounded-md hover:bg-red-700"
+                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium"
                   >
                     Đăng xuất
                   </button>
                 </>
               ) : (
-                <>
+                <div className="space-x-2">
                   <Link
                     to="/login"
-                    className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                    className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium"
                   >
                     Đăng nhập
                   </Link>
                   <Link
                     to="/register"
-                    className="px-4 py-2 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
                   >
                     Đăng ký
                   </Link>
-                </>
+                </div>
               )}
-
               <button
                 onClick={toggleTheme}
-                className="p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+                className="p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 aria-label="Toggle theme"
               >
                 {theme === 'light' ? '🌙' : '☀️'}
@@ -101,7 +100,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Footer */}
       <footer className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <p className="text-center text-gray-600 dark:text-gray-400 text-sm">
+          <p className="text-center text-gray-500 dark:text-gray-400 text-sm">
             © 2024 Financial Management App. All rights reserved.
           </p>
         </div>

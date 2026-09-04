@@ -58,7 +58,7 @@ Note: Added by the frontend Axios interceptor.
 
 Type: integer; Format: YYYY; Required: No; Nullable: No
 Default: Current year
-Validation: The controller applies parseInt(year, 10). Missing, NaN, <1900, or >2100 values use the current year. A leading numeric prefix is accepted by parseInt.
+Validation: Optional year parameter; validated and resolved according to established business rules.
 Trigger: Savings summary request.
 Description: Optional target year resolved by the controller.
 Example: 2025
@@ -72,7 +72,7 @@ None
 ### user_id
 
 Type: integer; Required: Yes; Nullable: No
-Trigger: The summary is calculated; missing data produces zero-valued months.
+Trigger: The savings summary request is successfully processed.
 Description: Authenticated user identifier.
 Example: 1
 
@@ -80,7 +80,7 @@ Example: 1
 ### year
 
 Type: integer; Required: Yes; Nullable: No
-Trigger: The summary is calculated; missing data produces zero-valued months.
+Trigger: The savings summary request is successfully processed.
 Description: Resolved target year.
 Example: 2025
 
@@ -88,15 +88,15 @@ Example: 2025
 ### summary.this_year
 
 Type: array<object>; Required: Yes; Nullable: No
-Trigger: The summary is calculated; missing data produces zero-valued months.
-Description: Twelve monthly savings values for the selected year.
+Trigger: The savings summary request is successfully processed.
+Description: Monthly savings dataset for the selected year.
 Example: []
 
 
 ### summary.this_year[].month
 
 Type: string; Required: Yes; Nullable: No
-Trigger: The summary is calculated; missing data produces zero-valued months.
+Trigger: The savings summary request is successfully processed.
 Description: Two-digit month number.
 Example: 01
 
@@ -104,23 +104,31 @@ Example: 01
 ### summary.this_year[].amount
 
 Type: number; Required: Yes; Nullable: No
-Trigger: The summary is calculated; missing data produces zero-valued months.
-Description: Revenue minus expense for the month.
+Trigger: The savings summary request is successfully processed.
+Description: Net savings amount for the specified month.
 Example: 1500000
+
+
+### summary.this_year[].transaction_count
+
+Type: integer; Required: Yes; Nullable: No
+Trigger: The savings summary request is successfully processed.
+Description: Total count of eligible completed transactions in the month.
+Example: 8
 
 
 ### summary.last_year
 
 Type: array<object>; Required: Yes; Nullable: No
-Trigger: The summary is calculated; missing data produces zero-valued months.
-Description: Twelve monthly savings values for the previous year.
+Trigger: The savings summary request is successfully processed.
+Description: Monthly savings dataset for the previous year.
 Example: []
 
 
 ### summary.last_year[].month
 
 Type: string; Required: Yes; Nullable: No
-Trigger: The summary is calculated; missing data produces zero-valued months.
+Trigger: The savings summary request is successfully processed.
 Description: Two-digit month number.
 Example: 01
 
@@ -128,9 +136,17 @@ Example: 01
 ### summary.last_year[].amount
 
 Type: number; Required: Yes; Nullable: No
-Trigger: The summary is calculated; missing data produces zero-valued months.
-Description: Revenue minus expense for the month.
+Trigger: The savings summary request is successfully processed.
+Description: Net savings amount for the specified month.
 Example: 1200000
+
+
+### summary.last_year[].transaction_count
+
+Type: integer; Required: Yes; Nullable: No
+Trigger: The savings summary request is successfully processed.
+Description: Total count of eligible completed transactions in the month.
+Example: 6
 
 ## Error Response — HTTP 401
 

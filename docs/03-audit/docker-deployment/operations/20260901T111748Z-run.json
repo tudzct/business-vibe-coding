@@ -1,0 +1,18 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-09-01T11:17:48.9780044Z",
+  "mode": "run",
+  "source_revision": "sha256:cc6d74b91c95d043cb4974d5b439e3e9e76dba3b14d6ba90aa9fc655ff6006bf",
+  "commands": [
+    { "id": "resolve-frozen-figma-uc03", "exit_code": 0, "result": "dataset 2026-08-29-005 node 66:5474 complete; checksums valid" },
+    { "id": "targeted-transactions-eslint", "exit_code": 0, "result": "Transactions and Layout ESLint passed with zero warnings" },
+    { "id": "compose-build-frontend", "exit_code": 0, "result": "TypeScript and Vite production build passed" },
+    { "id": "compose-recreate-frontend", "exit_code": 0, "result": "frontend image recreated and healthcheck passed" },
+    { "id": "bounded-reachability", "exit_code": 0, "result": "/transactions, /transactions/add, and /api/health returned HTTP 200; database, backend and frontend healthy" }
+  ],
+  "docker": { "cli": "29.2.1", "compose": "v5.0.2", "daemon": "29.2.1" },
+  "status": "PASS",
+  "limitations": [
+    "No connected browser was available for post-repair clicking or rendered comparison."
+  ]
+}

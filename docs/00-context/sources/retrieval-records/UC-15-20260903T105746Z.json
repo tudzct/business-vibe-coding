@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "source-retrieval-record",
+  "status": "Frozen",
+  "retrieval_id": "SRC-UC15-20260903T105746Z",
+  "retrieved_at": "2026-09-03T10:57:46.000Z",
+  "authorization": {
+    "actor": "researcher",
+    "decision": "confirmed",
+    "scope": "Refresh the frozen UC-15 projection and API-GOAL-UPDATE contract to sanitize Business Rule leaks in functional specifications and upgrade BR-GOAL-12..17 with non-trivial domain rules."
+  },
+  "source": {
+    "type": "google-sheets",
+    "spreadsheet_id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "sheet": "Use cases",
+    "range": "A314:B331",
+    "retrieval_method": "connected-google-drive-get-spreadsheet-range"
+  },
+  "projection": {
+    "path": "docs/01-inception/use-cases/uc-15-adjust-financial-goal.md",
+    "previous_sha256": "sha256:6451a5ccf519558a9e8b64bfd198280d4e4d78296f3387dfa22181059bf51362",
+    "refreshed_sha256": "sha256:8a0a1b0255e499a2d35494b400951ee712825b6f8471143894a9884b6e51e096",
+    "status": "Frozen"
+  },
+  "api_contract": {
+    "path": "docs/01-inception/api-contracts/API-GOAL-UPDATE.md",
+    "previous_sha256": "sha256:12c98d2d9624086b1e0c7341d79a4c3de82be3bef9403e487ff9f2e31e87703a",
+    "refreshed_sha256": "sha256:883264de0e144f953fc0d5c2fc172d8c62edc0581b90f1bef45fd0552d6035d8",
+    "status": "Frozen"
+  },
+  "sanitized_sections": [
+    "UC-15 Pre-Conditions (PRE-2)",
+    "UC-15 Post-Conditions (POST-1, POST-2)",
+    "UC-15 Basic Flow (Step 1..9)",
+    "UC-15 Alternative Flow (AF-1)",
+    "UC-15 Exception Flow (EF-1, EF-2, EF-3, EF-4)",
+    "UC-15 Notes",
+    "API-GOAL-UPDATE Description & Authorization",
+    "API-GOAL-UPDATE Path Parameter validation rules (path.goalId)",
+    "API-GOAL-UPDATE Request Body validation rules (target_amount)",
+    "API-GOAL-UPDATE Success Response triggers (HTTP 200)",
+    "API-GOAL-UPDATE Error Response triggers and examples (HTTP 400, HTTP 403, HTTP 404, HTTP 500)"
+  ],
+  "verification": {
+    "spreadsheet_id_matches_project_context": true,
+    "sheet_and_range_match_projection_provenance": true,
+    "ordered_business_rule_ids": [
+      "BR-GOAL-12",
+      "BR-GOAL-13",
+      "BR-GOAL-14",
+      "BR-GOAL-15",
+      "BR-GOAL-16",
+      "BR-GOAL-17"
+    ],
+    "business_rule_text_changed": true,
+    "rule_count": 6,
+    "unresolved_items": []
+  }
+}

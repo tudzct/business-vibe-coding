@@ -17,7 +17,7 @@
       "incident_id": "DEP-20260828-002",
       "fingerprint": "docker-daemon-desktop-linux-engine-unavailable",
       "path": "docs/03-audit/docker-deployment/incidents/docker-daemon-desktop-linux-engine-unavailable.json",
-      "outcome": "blocked"
+      "outcome": "resolved"
     },
     {
       "incident_id": "DEP-20260829-001",
@@ -57,9 +57,45 @@
     },
     {
       "incident_id": "DEP-20260831-001",
+      "fingerprint": "backend-build-passport-jwt-missing-typescript-declaration",
+      "path": "docs/03-audit/docker-deployment/incidents/backend-build-passport-jwt-missing-typescript-declaration.json",
+      "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260831-002",
+      "fingerprint": "backend-runtime-transaction-account-table-case-mismatch",
+      "path": "docs/03-audit/docker-deployment/incidents/backend-runtime-transaction-account-table-case-mismatch.json",
+      "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260831-003",
+      "fingerprint": "frontend-build-error-component-shadowed-native-error",
+      "path": "docs/03-audit/docker-deployment/incidents/frontend-build-error-component-shadowed-native-error.json",
+      "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260831-004",
       "fingerprint": "backend-runtime-expense-summary-domain-tables-absent",
       "path": "docs/03-audit/docker-deployment/incidents/backend-runtime-expense-summary-domain-tables-absent.json",
+      "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260901-001",
+      "fingerprint": "frontend-build-account-options-dashboard-contract",
+      "path": "docs/03-audit/docker-deployment/incidents/frontend-build-account-options-dashboard-contract.json",
+      "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260903-001",
+      "fingerprint": "backend-startup-goals-table-missing-during-nullability-migration",
+      "path": "docs/03-audit/docker-deployment/incidents/backend-startup-goals-table-missing-during-nullability-migration.json",
       "outcome": "blocked"
+    },
+    {
+      "incident_id": "DEP-20260903-002",
+      "fingerprint": "frontend-build-typescript-goal-design-card-union-narrowing",
+      "path": "docs/03-audit/docker-deployment/incidents/frontend-build-typescript-goal-design-card-union-narrowing.json",
+      "outcome": "resolved"
     }
   ]
 }

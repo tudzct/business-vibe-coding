@@ -18,7 +18,7 @@ export enum AccountType {
   LOAN = 'Loan',
 }
 
-@Entity('Accounts')
+@Entity('accounts')
 @Index(
   'uq_accounts_user_id_account_number_full',
   ['userId', 'accountNumberFull'],

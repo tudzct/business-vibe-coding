@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "source-retrieval-record",
+  "status": "Frozen",
+  "retrieval_id": "SRC-UC04-20260902T205500Z",
+  "retrieved_at": "2026-09-02T20:55:00.000Z",
+  "authorization": {
+    "actor": "researcher",
+    "decision": "confirmed",
+    "scope": "Refresh the frozen UC-04 projection and API-TRANSACTION-CREATE contract to sanitize Business Rule leaks in functional specifications and upgrade BR-TXN-08..15 with non-trivial domain rules."
+  },
+  "source": {
+    "type": "google-sheets",
+    "spreadsheet_id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "sheet": "Use cases",
+    "range": "A64:B82",
+    "retrieval_method": "connected-google-drive-get-spreadsheet-range"
+  },
+  "projection": {
+    "path": "docs/01-inception/use-cases/uc-04-create-transaction.md",
+    "previous_sha256": "sha256:ae0185a8d42a037253d3a7208135679f0f29ab90dc2f48d9796237dfd147846a",
+    "refreshed_sha256": "sha256:1fe38316635ece4af2d7a9a774fd2efdd731c25d3b74c5aaeb5f3e9b9eb04f43",
+    "status": "Frozen"
+  },
+  "api_contract": {
+    "path": "docs/01-inception/api-contracts/API-TRANSACTION-CREATE.md",
+    "previous_sha256": "sha256:b843a0aec95a92b66c7b0dc2e8dacf2ad017259bd3c1fc0c8252bff48a98137f",
+    "refreshed_sha256": "sha256:7955c31c028b6c1965bb6a3e2593a4121525023d4085239d87f828ac556b0ff6",
+    "status": "Frozen"
+  },
+  "sanitized_sections": [
+    "UC-04 Post-Conditions (POST-1, POST-2)",
+    "UC-04 Basic Flow (Step 7, Step 8)",
+    "UC-04 Alternative Flow (AF-1, AF-3)",
+    "UC-04 Exception Flow (EF-4, EF-5)",
+    "UC-04 Notes",
+    "API-TRANSACTION-CREATE Description & Authorization",
+    "API-TRANSACTION-CREATE Request Body validation rules (accountId, category_id, amount)",
+    "API-TRANSACTION-CREATE Success Response triggers",
+    "API-TRANSACTION-CREATE Error Response triggers (HTTP 400, HTTP 500)"
+  ],
+  "verification": {
+    "spreadsheet_id_matches_project_context": true,
+    "sheet_and_range_match_projection_provenance": true,
+    "ordered_business_rule_ids": [
+      "BR-TXN-08",
+      "BR-TXN-09",
+      "BR-TXN-10",
+      "BR-TXN-11",
+      "BR-TXN-12",
+      "BR-TXN-13",
+      "BR-TXN-14",
+      "BR-TXN-15"
+    ],
+    "business_rule_text_changed": true,
+    "rule_count": 8,
+    "unresolved_items": []
+  }
+}

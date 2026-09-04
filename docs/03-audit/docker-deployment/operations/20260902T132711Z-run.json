@@ -1,0 +1,16 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-09-02T13:27:11Z",
+  "mode": "run",
+  "source_revision": "sha256:b2676af592a13f7fd59602b0250e89fcd7fe00732f25dffcb69e7416ca01a566",
+  "commands": [
+    {"id": "compose-build", "exit_code": 0, "result": "Backend and frontend current-source images built successfully"},
+    {"id": "compose-health", "exit_code": 0, "result": "Database, backend and frontend healthy"},
+    {"id": "authenticated-list", "exit_code": 0, "result": "HTTP 200 normalized response; aggregate ownership, retention, ordering, amount and masking checks passed"},
+    {"id": "missing-user", "exit_code": 0, "result": "Validly signed token for nonexistent User returned HTTP 401"},
+    {"id": "invalid-filter", "exit_code": 0, "result": "Invalid filter returned normalized HTTP 400"},
+    {"id": "empty-result", "exit_code": 0, "result": "HTTP 200 with data length 0, total 0 and hasMore false"}
+  ],
+  "status": "PASS",
+  "limitations": ["Runtime output was restricted to aggregate booleans and counts; no token, email, transaction payload or account number was retained."]
+}

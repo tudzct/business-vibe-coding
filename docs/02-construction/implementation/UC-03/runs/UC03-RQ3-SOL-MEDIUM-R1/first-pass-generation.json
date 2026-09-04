@@ -1,0 +1,45 @@
+{
+  "artifact_type": "first-pass-generation",
+  "status": "Frozen",
+  "uc_id": "UC-03",
+  "run_id": "UC03-RQ3-SOL-MEDIUM-R1",
+  "prompt_variant": "rq3",
+  "source_prompt": "docs/02-construction/coding-prompts/UC-03-rq3-coding-prompt.md",
+  "source_prompt_sha256": "sha256:76065b515f1e89d4504c0c65f059071fdac3f8254745fe7de66fe4100857aa23",
+  "run_activation": "docs/02-construction/implementation/UC-03/runs/UC03-RQ3-SOL-MEDIUM-R1/run-activation.json",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null,
+    "effective_model_unavailable_reason": null,
+    "codex_client_version": "codex-cli 0.151.0-alpha.7.2",
+    "codex_client_version_unavailable_reason": null
+  },
+  "timing_wall_clock": {
+    "started_at": "2026-09-02T12:47:56.5233357Z",
+    "started_epoch_ms": 1788353276523,
+    "ended_at": "2026-09-02T12:57:25.4879503Z",
+    "ended_epoch_ms": 1788353845487,
+    "duration_seconds": 568.965
+  },
+  "tokens": {
+    "initial_total": 5919151,
+    "session_turn_id": 6,
+    "input": 87962,
+    "cache_read": 5795584,
+    "output": 35605,
+    "cost_usd": 4.4058,
+    "telemetry_source": "C:\\Users\\User\\.codex\\sessions\\2026\\09\\02\\rollout-2026-09-02T19-28-55-01a06217-ff1e-7421-843e-fb74ce18af51.jsonl"
+  },
+  "source_revision": {
+    "sha256": "sha256:04e5c2313ac9841de1eaa0f3036bb8cadaec9c42b5640e9064fc1ae4c201c104",
+    "method": "SHA-256 over sorted relative path, NUL, per-file SHA-256 and newline entries; node_modules, dist, generated .tsbuildinfo and .env files excluded."
+  },
+  "context_isolation": {
+    "status": "not_isolated",
+    "reason": "Phase 1 prompt generation and Phase 2 source generation occurred in the same conversation; the frozen Business Rule resource had been loaded earlier in the session."
+  },
+  "repairs_applied": 0
+}

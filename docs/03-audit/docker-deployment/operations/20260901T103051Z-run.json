@@ -1,0 +1,19 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-09-01T10:30:51.6186930Z",
+  "mode": "run",
+  "source_revision": "sha256:5c48eada0b9a90bf43af67bcfb9b8063b64920c9215c8e9f4269ce3e9f9a1ed5",
+  "commands": [
+    { "id": "approved-receipt-nullability-migration", "exit_code": 0, "result": "migration applied; receipt_id confirmed nullable" },
+    { "id": "authenticated-revenue-creation-observation", "exit_code": 0, "result": "one row created; balance increased from 100.0000 to 110.0000; normalized response returned null receipt/category" },
+    { "id": "whitespace-and-insufficient-expense-observation", "exit_code": 0, "result": "both returned HTTP 400; balance remained 100.0000 and transaction count remained zero" },
+    { "id": "targeted-uc04-lint", "exit_code": 0, "result": "DTO and migration targeted ESLint checks passed" },
+    { "id": "final-compose-build-start-health", "exit_code": 0, "result": "database, backend and frontend healthy; API/category/root/add-route HTTP 200" }
+  ],
+  "docker": { "cli": "29.2.1", "compose": "v5.0.2", "daemon": "29.2.1" },
+  "status": "PASS",
+  "limitations": [
+    "Repository-wide lint still reports cumulative/baseline diagnostics outside the bounded UC-04 repair scope.",
+    "No in-app or extension browser was available for rendered visual comparison."
+  ]
+}

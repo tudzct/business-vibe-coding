@@ -1,0 +1,67 @@
+{
+  "artifact_type": "database-schema",
+  "uc_id": "UC-04",
+  "status": "Approved",
+  "source_use_case": "docs/01-inception/use-cases/uc-04-create-transaction.md",
+  "source_prompt": "docs/02-construction/coding-prompts/UC-04-rq3-coding-prompt.md",
+  "active_run": "docs/02-construction/implementation/UC-04/runs/UC04-SOL-MEDIUM-R1/run-activation.json",
+  "created_at": "2026-09-01T10:19:31.3153292Z",
+  "contract": {
+    "evidence_and_scope": {
+      "uc_and_api": [
+        "UC-04 Create a Transaction",
+        "API-TRANSACTION-CREATE POST /api/v1/transactions"
+      ],
+      "existing_schema_inspected": "Read-only MySQL DESCRIBE transactions on the active Compose database",
+      "existing_mapping_inspected": "finalsource/be/src/modules/transaction/transaction.entity.ts",
+      "trigger_evidence": "The physical transactions.receipt_id column is INT UNSIGNED NOT NULL with no default, while the approved prompt defines receiptId as integer | null and supplies no receipt field when creating a transaction.",
+      "change_required": "Allow transactions.receipt_id to be NULL so UC-04 can create a transaction without fabricating a receipt identifier.",
+      "out_of_scope": [
+        "No new table or column",
+        "No account, category, user, ownership, relationship, cascade, index, or uniqueness change",
+        "No public request or response field change",
+        "No backfill or fabricated receipt identifier",
+        "No data deletion or Docker volume reset"
+      ]
+    },
+    "columns": [
+      {
+        "typescript_entity_property": "Transaction.receiptId",
+        "table": "transactions",
+        "column": "receipt_id",
+        "mysql_type": "INT UNSIGNED",
+        "current_nullability": "NOT NULL",
+        "proposed_nullability": "NULL",
+        "default": null,
+        "source_rationale": "UC-04 does not accept or create a receipt. The approved prompt explicitly requires the response field to permit null, so inventing a persisted receipt value would violate the source contract."
+      }
+    ],
+    "relationships_and_ownership": {
+      "changes": [],
+      "statement": "The proposal changes only receipt_id nullability. Transaction ownership continues through the selected account and authenticated user."
+    },
+    "migration_plan": {
+      "name": "20260901101931-make-transactions-receipt-id-nullable.ts",
+      "forward_operations": [
+        "Alter transactions.receipt_id from INT UNSIGNED NOT NULL to INT UNSIGNED NULL."
+      ],
+      "rollback_operations": [
+        "Refuse rollback while any transactions row has receipt_id IS NULL.",
+        "After an explicit data-resolution decision, alter receipt_id back to INT UNSIGNED NOT NULL."
+      ],
+      "data_loss_risk": "The forward migration is non-destructive and does not rewrite existing non-null receipt identifiers. Rollback is blocked after nullable UC-04 rows exist unless the researcher separately resolves those rows.",
+      "deployment_considerations": "The ALTER may take a metadata or table lock depending on MySQL state and table size. Apply through the existing TypeORM migrations with synchronize=false.",
+      "synchronize_remains_false": true
+    }
+  },
+  "assumptions": [
+    "The active physical table is lowercase transactions, as confirmed by read-only metadata.",
+    "No receipt is created elsewhere in UC-04 and no valid receipt identifier can be derived from the request.",
+    "Nullable receipt_id is the smallest schema change compatible with the approved prompt."
+  ],
+  "approval": {
+    "approved_by_researcher": true,
+    "approved_via": "researcher confirmation in active Codex session",
+    "approved_at": "2026-09-01T10:23:04.3054851Z"
+  }
+}

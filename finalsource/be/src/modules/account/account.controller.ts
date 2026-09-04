@@ -1,29 +1,32 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Request, UseGuards } from '@nestjs/common';
 import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Request as RequestDecorator,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
-  ApiBadRequestResponse,
   ApiForbiddenResponse,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import type { Request as ExpressRequest } from 'express';
+import type { Request } from 'express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import type { AuthenticatedUser } from '../auth/jwt.strategy';
-import { AccountListData, AccountService, CreatedAccount } from './account.service';
+import { AccountListDataDto, AccountService, CreatedAccount } from './account.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 
-interface AuthenticatedRequest extends ExpressRequest {
-  user: AuthenticatedUser;
-}
-
-interface AccountListResponse {
-  success: true;
-  message: 'Account list retrieved successfully.';
-  data: AccountListData;
+interface AuthenticatedRequest extends Request {
+  readonly user: AuthenticatedUser;
 }
 
 interface AccountCreateResponse {
@@ -43,13 +46,11 @@ export class AccountController {
   @ApiOkResponse({ description: 'Account list retrieved successfully.' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
   @ApiInternalServerErrorResponse({ description: 'Account retrieval failed safely' })
-  async findAll(@Request() request: AuthenticatedRequest): Promise<AccountListResponse> {
-    const data = await this.accountService.findAllForUser(request.user.userId);
-    return {
-      success: true,
-      message: 'Account list retrieved successfully.',
-      data,
-    };
+  async findAll(@RequestDecorator() request: AuthenticatedRequest) {
+    const data: AccountListDataDto = await this.accountService.findAllByUserId(
+      request.user.userId,
+    );
+    return { success: true, message: 'Account list retrieved successfully.', data };
   }
 
   @Post()
@@ -61,7 +62,7 @@ export class AccountController {
   @ApiConflictResponse({ description: 'Account creation conflict' })
   @ApiInternalServerErrorResponse({ description: 'Account creation failed safely' })
   async create(
-    @Request() request: AuthenticatedRequest,
+    @RequestDecorator() request: AuthenticatedRequest,
     @Body() dto: CreateAccountDto,
   ): Promise<AccountCreateResponse> {
     const account = await this.accountService.createForUser(request.user.userId, dto);

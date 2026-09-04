@@ -21,8 +21,8 @@ export interface AuthenticatedSession {
 
 export type RegistrationPayload = AuthenticatedSession;
 
-const permittedPasswordPattern = /^[A-Za-z0-9!@#$%^&*(){}_+=\[\],.\/<>?\\|:;\-]+$/;
-const specialCharacterPattern = /[!@#$%^&*(){}_+=\[\],.\/<>?\\|:;\-]/;
+const permittedPasswordPattern = /^[A-Za-z0-9!@#$%^&*(){}_+=[\],./<>?\\|:;-]+$/;
+const specialCharacterPattern = /[!@#$%^&*(){}_+=[\],./<>?\\|:;-]/;
 
 @Injectable()
 export class AuthService {

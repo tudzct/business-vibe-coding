@@ -1,6 +1,6 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import AddAccountForm from '../../components/AddAccountForm/AddAccountForm'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 
 const navigation = [
   { path: '/dashboard', label: 'Overview', icon: '▦' },

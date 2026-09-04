@@ -1,0 +1,22 @@
+{
+  "incident_id": "DEP-20260901-001",
+  "observed_at": "2026-09-01T01:50:06.8448568Z",
+  "layer": "frontend-build",
+  "fingerprint": "frontend-build-account-options-dashboard-contract",
+  "symptom": "The current frontend production image fails TypeScript compilation before Vite output is produced.",
+  "evidence": "Dashboard.tsx passes accountService.getAccounts().data to Account[] state, while the UC-04 first-pass service contract types data as AccountOptionsData containing an accounts collection.",
+  "root_cause": {
+    "status": "confirmed",
+    "detail": "The cumulative Dashboard consumer and the new normalized account-options response were not reconciled in the first-pass diff."
+  },
+  "actions_attempted": [
+    "Ran the authorized full Compose rebuild from current source.",
+    "Built the backend separately and started the current backend image for bounded observations.",
+    "Preserved the frontend error for the mandatory RQ3 hold gate without applying a repair."
+  ],
+  "files_changed": ["finalsource/fe/src/api/account.service.ts", "finalsource/fe/src/pages/AddTransaction/AddTransactionPage.tsx"],
+  "commands_rerun": ["docker compose up --build -d", "docker compose build backend", "docker compose up -d --no-deps backend"],
+  "outcome": "resolved",
+  "reusable_resolution": "Keep the normalized account-list response while exposing a backward-compatible service method or update every typed consumer in one bounded repair.",
+  "prevention": "Inspect all cumulative callers before changing a shared API service return type, then run the permitted production build before terminal source freeze."
+}

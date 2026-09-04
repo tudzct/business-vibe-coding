@@ -1,0 +1,788 @@
+{
+  "run_id": "UC16-RQ3-SOL-LIGHT-R1",
+  "run_status": "complete",
+  "hold_gate": "rq3_repair_completed",
+  "experiment_configuration": {
+    "configuration_id": "CFG-UC16-RQ3-SOL-LIGHT-20260903",
+    "comparison_group_id": "CG-UC16-RQ3-SOL-LIGHT-20260903",
+    "researcher_id": "kien",
+    "artifact": "docs/05-experiments/configurations/CFG-UC16-RQ3-SOL-LIGHT-20260903.json",
+    "checksum": "sha256:e9c7870c66da96cf7aa929110255356f64f49b7741a2e5776ec661aee62851c8",
+    "run_activation": "docs/02-construction/implementation/UC-16/runs/UC16-RQ3-SOL-LIGHT-R1/run-activation.json"
+  },
+  "uc_id": "UC-16",
+  "uc_name": "View Savings Summary",
+  "replicate_index": 1,
+  "run_order": 1,
+  "audit_protocol": "matched",
+  "generation_model": {
+    "requested_label": "Sol Light",
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "low",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": null,
+    "effective_model_unavailable_reason": "The runtime did not expose an effective provider model identifier.",
+    "effective_snapshot": null,
+    "effective_snapshot_unavailable_reason": "The runtime did not expose a provider snapshot identifier.",
+    "codex_client_version": "codex-cli 0.151.0-alpha.7.2"
+  },
+  "audit_model": {
+    "assignment": "same-as-generation",
+    "effective_model_id": null,
+    "effective_model_unavailable_reason": "The runtime did not expose an effective provider model identifier.",
+    "effective_snapshot": null,
+    "effective_snapshot_unavailable_reason": "The runtime did not expose a provider snapshot identifier."
+  },
+  "timing_wall_clock": {
+    "initial_started_at": "2026-09-03T14:04:38.2811144Z",
+    "initial_started_epoch_ms": 1788444278281,
+    "initial_ended_at": "2026-09-03T14:07:36.6873842Z",
+    "initial_ended_epoch_ms": 1788444456687,
+    "repair_001_started_at": "2026-09-04T10:24:27.7676910Z",
+    "repair_001_started_epoch_ms": 1788517467781,
+    "repair_001_ended_at": "2026-09-04T10:28:29.0479878Z",
+    "repair_001_ended_epoch_ms": 1788517709047,
+    "repairs_final_ended_at": "2026-09-04T10:44:44.5829856Z",
+    "repairs_final_ended_epoch_ms": 1788518684582
+  },
+  "timing_seconds": {
+    "initial": 178.406,
+    "repairs": 698.202,
+    "total": 876.608
+  },
+  "tokens": {
+    "initial_total": 3540588,
+    "repair_total": 11064441,
+    "total": 14605029,
+    "telemetry_source": "C:\\Users\\User\\.codex\\sessions\\2026\\09\\03\\rollout-2026-09-03T20-47-08-01a06785-fa50-7222-820e-beb38c27385d.jsonl",
+    "details": {
+      "initial": {
+        "turn_id": 4,
+        "input": 64212,
+        "cache_read": 3455104,
+        "total_input": 3519316,
+        "output": 21272,
+        "reasoning": 4462,
+        "cost_usd": 2.6868,
+        "duration_seconds": 518.384
+      },
+      "repairs": {
+        "count": 11,
+        "total_tokens": 11064441,
+        "cost_usd": 7.8329,
+        "telemetry_source": "C:\\Users\\User\\.codex\\sessions\\2026\\09\\04\\rollout-2026-09-04T17-23-25-01a06bf1-d245-7e03-a374-91ead343e5f9.jsonl",
+        "turns": [
+          {"turn_id": 1, "repairs": [1], "total_tokens": 1389290, "input": 100196, "cache_read": 1278208, "output": 10886, "reasoning": null, "cost_usd": 1.4667},
+          {"turn_id": 2, "repairs": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "total_tokens": 9675151, "input": 90971, "cache_read": 9546240, "output": 37940, "reasoning": null, "cost_usd": 6.3662}
+        ],
+        "capture_note": "Telemetry checkpoint captured before the active turn finalized; the aggregate is exact through the last runner token event, while per-repair splits for Repairs 2-11 are unavailable."
+      }
+    }
+  },
+  "first_pass_source": {
+    "revision": "sha256:f71cd05b00b9a89046d5c1503bcdf407c895a7a88579f1da9fc9c7f8544cdee1",
+    "evidence": "docs/02-construction/implementation/UC-16/runs/UC16-RQ3-SOL-LIGHT-R1/first-pass-generation.json"
+  },
+  "methodological_limitations": [
+    "RQ3 context isolation is not guaranteed because Phase 1 and Phase 2 continued in the same conversation and UC-16 Business Rule content had been loaded before first-pass generation.",
+    "Repairs 2 through 11 share one researcher turn, so runner telemetry supports their aggregate token total but not a defensible per-repair token split.",
+    "The authenticated API flow was observed with sanitized assertions, but an authenticated browser hover interaction was not directly observed."
+  ],
+  "checks": {
+    "host_backend_targeted_lint": "PASS: all repaired backend files pass targeted ESLint.",
+    "host_backend_repository_lint": "PASS: repository ESLint completed with zero diagnostics after Repairs 7-10.",
+    "host_backend_build": "PASS: Nest production build completed after the final repairs.",
+    "host_frontend_targeted_lint": "PASS: repaired UC-16 and context files pass targeted ESLint.",
+    "host_frontend_repository_lint": "PASS: repository ESLint completed with zero errors and zero warnings after Repairs 1, 8, and 11.",
+    "host_frontend_build": "PASS: TypeScript and Vite production build completed after the final repairs.",
+    "figma_dataset": "PASS: frozen dataset 2026-08-29-005 node 66:5829 resolved complete with valid checksums.",
+    "docker_review": "PASS: Docker 29.2.1 daemon and Compose v5.0.2 are available; configuration validates.",
+    "docker_rebuild_build": "PASS: backend and frontend images rebuilt from final source.",
+    "docker_rebuild_runtime": "PASS: database, backend, and frontend containers are running and healthy.",
+    "runtime_observation": "PASS: frontend and backend health returned HTTP 200; unauthenticated savings returned 401; authenticated savings returned 200 with sanitized assertions for fallback year, identity, 12-month cardinality/order, non-negative counts, and future-month zero capping.",
+    "tests_created_or_run": false
+  },
+  "technical_findings": [
+    {
+      "status": "resolved",
+      "trigger": "build",
+      "fingerprint": "frontend-recharts-tooltip-content-props-ts2739",
+      "evidence": "frontend production build reports TS2739 at finalsource/fe/src/components/Goals/SavingsSummaryChart.tsx:222.",
+      "repair_authorized": true,
+      "repair_id": "UC16-RQ3-SOL-LIGHT-R1-REPAIR-001",
+      "resolution": "Resolved by passing the custom tooltip as a Recharts content renderer with the library's default TooltipContentProps generic domain; targeted ESLint and frontend production build pass."
+    },
+    {
+      "status": "resolved",
+      "trigger": "lint",
+      "fingerprint": "backend-main-bootstrap-floating-promise",
+      "evidence": "targeted and repository backend ESLint report @typescript-eslint/no-floating-promises at finalsource/be/src/main.ts:86; the bootstrap call predates UC-16.",
+      "repair_authorized": true,
+      "repair_id": "UC16-RQ3-SOL-LIGHT-R1-REPAIR-007",
+      "resolution": "Resolved with an explicit void bootstrap invocation; final repository backend ESLint passes."
+    }
+  ],
+  "ui_accuracy": {
+    "dataset_id": "2026-08-29-005",
+    "node_id": "66:5829",
+    "structural_targets": 10,
+    "structural_implemented_in_source": 10,
+    "rendered_verification": "reachable_not_authenticated",
+    "rendered_verification_reason": "The rebuilt frontend root is healthy and reachable; authenticated chart hover was not directly observed in a browser.",
+    "deterministic_similarity": null
+  },
+  "flow_accuracy": {
+    "checkpoints": 8,
+    "source_evaluable": 8,
+    "source_satisfied": 8,
+    "runtime_evaluable": 7,
+    "runtime_satisfied": 7,
+    "blocking_checkpoint": null
+  },
+  "complexity": {
+    "actors": 1,
+    "main_flow_steps": 8,
+    "alternate_exception_flows": 4,
+    "data_entities": 3,
+    "integrations": 2,
+    "business_rules": 9,
+    "ui_states": 5
+  },
+  "business_rules": {
+    "baseline": "docs/02-construction/implementation/UC-16/business-rule-baseline.json",
+    "resource": "docs/02-construction/business-rules/UC-16-business-rules.json",
+    "source_revision": "sha256:7f1de770f933825ae26ce954170be2602f54826e75aaaa90edd48510348195b4",
+    "ordered_br_ids": [
+      "BR-SAV-01",
+      "BR-SAV-02",
+      "BR-SAV-03",
+      "BR-SAV-04",
+      "BR-SAV-05",
+      "BR-SAV-06",
+      "BR-SAV-07",
+      "BR-SAV-08",
+      "BR-SAV-09"
+    ],
+    "initial": {
+      "requirements": [
+        {
+          "br_id": "BR-SAV-01",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/savings/savings.controller.ts:36 and 47-55 protect the endpoint and pass the validated JWT userId into the service.",
+            "finalsource/be/src/modules/savings/savings.service.ts:44-56 scopes transactions to owned accounts but contains no accountType predicate, so Credit Card, Loan, and Investment accounts remain eligible."
+          ],
+          "rationale": "JWT identity and ownership scope are present, but the required eligible-account-type restriction is absent."
+        },
+        {
+          "br_id": "BR-SAV-02",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/savings/dto/savings-summary-query.dto.ts:5-11 accepts any integer from 1000 through 9999 rather than the rolling current-year window.",
+            "finalsource/be/src/modules/savings/savings.controller.ts:51 defaults only a missing year; invalid and out-of-window values are not clamped to the current year."
+          ],
+          "rationale": "The required rolling window and fallback behavior are not implemented."
+        },
+        {
+          "br_id": "BR-SAV-03",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/savings/savings.service.ts:107-114 constructs ordered two-digit 12-month series when at least one row exists.",
+            "finalsource/be/src/modules/savings/savings.service.ts:73-78 returns zero-length arrays when no rows exist.",
+            "finalsource/be/src/modules/savings/savings.service.ts:55 counts all selected transactions rather than the exact eligible completed set."
+          ],
+          "rationale": "Month formatting is present, but exact cardinality and transaction-count semantics are incomplete."
+        },
+        {
+          "br_id": "BR-SAV-04",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/savings/savings.service.ts:48-54 subtracts Expense from Revenue.",
+            "The query at finalsource/be/src/modules/savings/savings.service.ts:43-70 has no TransactionStatus.COMPLETE predicate and no eligible account-type predicate."
+          ],
+          "rationale": "The net formula exists, but Pending/Failed transactions and ineligible account types can contribute."
+        },
+        {
+          "br_id": "BR-SAV-05",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/savings/savings.service.ts:85-86 derives last_year from year - 1 using the same series builder.",
+            "finalsource/be/src/modules/savings/savings.service.ts:73-78 returns empty arrays rather than 12 zero entries when the user has no qualifying history.",
+            "The shared aggregation lacks required eligibility and completion filtering."
+          ],
+          "rationale": "The preceding-year selection is symmetrical, but its required calculation set and zero-filled ceiling are incomplete."
+        },
+        {
+          "br_id": "BR-SAV-06",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/savings/savings.service.ts:107-114 zero-fills absent months only when at least one aggregate row exists.",
+            "The date query at finalsource/be/src/modules/savings/savings.service.ts:57-64 includes the entire current year and contains no future-month cap.",
+            "The zero-row branch at lines 73-78 returns empty arrays instead of zero-filled months."
+          ],
+          "rationale": "Missing-period normalization is partial and future-month zero-capping is absent."
+        },
+        {
+          "br_id": "BR-SAV-07",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/savings/savings.service.ts:48-54 lets MySQL aggregate decimal values, but lines 112-113 convert raw results directly with Number().",
+            "No source applies explicit round-half-up to two decimals or normalizes negative zero."
+          ],
+          "rationale": "The implementation does not establish all required accounting-grade output semantics."
+        },
+        {
+          "br_id": "BR-SAV-08",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/savings/savings.service.ts:42-70 performs only a SELECT aggregation, and lines 90-94 safely map unexpected failures to HTTP 500.",
+            "The service uses the repository directly without an explicit READ COMMITTED transaction boundary."
+          ],
+          "rationale": "Read-only behavior and safe error containment are implemented, but the required isolation level is not."
+        },
+        {
+          "br_id": "BR-SAV-09",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/fe/src/components/Goals/SavingsSummaryChart.tsx:63-93 defines a tooltip with month, series, signed nonzero currency, and transaction count.",
+            "finalsource/fe/src/components/Goals/SavingsSummaryChart.tsx:222 supplies the tooltip as a JSX element that fails TypeScript TS2739, preventing the component from entering a production build."
+          ],
+          "rationale": "The interaction is represented in source but is not buildable in the first-pass application."
+        }
+      ],
+      "total": 9,
+      "met": 0,
+      "not_evaluable": 0,
+      "unmet": 9,
+      "acceptance_percent": 0.0
+    },
+    "final": {
+      "requirements": [
+        {
+          "br_id": "BR-SAV-01",
+          "status": "met",
+          "evidence": [
+            "savings.service.ts:65-69 restricts the owned-account query to Checking/Savings and Complete transactions.",
+            "Authenticated Docker observation confirmed HTTP 200 and that the response user identity matches the JWT-backed user."
+          ],
+          "rationale": "The final query enforces authenticated ownership and the complete eligible account-type set."
+        },
+        {
+          "br_id": "BR-SAV-02",
+          "status": "met",
+          "evidence": [
+            "savings.controller.ts:51 and 63-72 resolve only four-digit years inside [currentYear - 5, currentYear] and otherwise use currentYear.",
+            "Authenticated Docker observation with a non-numeric year confirmed HTTP 200 and current-year fallback."
+          ],
+          "rationale": "Missing, invalid, future, and too-old years now follow the required silent fallback."
+        },
+        {
+          "br_id": "BR-SAV-03",
+          "status": "met",
+          "evidence": [
+            "savings.service.ts:92-93 and 103-127 always build two ordered 12-month series and use filtered aggregate counts.",
+            "Authenticated Docker assertions confirmed both lengths are 12, months are ordered 01-12, and counts are non-negative integers."
+          ],
+          "rationale": "Both series now have exact ordered cardinality and eligible completed transaction counts."
+        },
+        {
+          "br_id": "BR-SAV-04",
+          "status": "met",
+          "evidence": [
+            "savings.service.ts:56-70 calculates rounded Revenue minus Expense only for Complete transactions on eligible owned accounts."
+          ],
+          "rationale": "The final aggregation implements the complete target-year calculation set and signed net formula."
+        },
+        {
+          "br_id": "BR-SAV-05",
+          "status": "met",
+          "evidence": [
+            "savings.service.ts:92-93 applies the identical filtered builder to year and year - 1.",
+            "savings.service.ts:103-127 zero-fills every absent last-year month."
+          ],
+          "rationale": "The preceding-year series is symmetrical and always returns its 12 zero-filled periods when history is absent."
+        },
+        {
+          "br_id": "BR-SAV-06",
+          "status": "met",
+          "evidence": [
+            "savings.service.ts:116-124 zeroes future current-year months and every missing aggregate period.",
+            "Authenticated Docker assertions confirmed all months after the current month have zero amount and count."
+          ],
+          "rationale": "Future and missing periods are explicitly normalized to zero."
+        },
+        {
+          "br_id": "BR-SAV-07",
+          "status": "met",
+          "evidence": [
+            "savings.service.ts:56-62 performs final MySQL exact-value ROUND(..., 2) after DECIMAL aggregation.",
+            "savings.service.ts:120-124 normalizes converted negative zero to positive zero."
+          ],
+          "rationale": "The final amount boundary establishes two-decimal half-up behavior and positive zero normalization."
+        },
+        {
+          "br_id": "BR-SAV-08",
+          "status": "met",
+          "evidence": [
+            "savings.service.ts:47-87 executes only the SELECT aggregation through a transaction-scoped repository under READ COMMITTED.",
+            "savings.service.ts:96-100 maps unexpected failures to the safe HTTP 500 message; Docker runtime returned a normalized 401 for missing authentication."
+          ],
+          "rationale": "Execution is read-only, explicitly isolated, idempotent, and safely error-contained."
+        },
+        {
+          "br_id": "BR-SAV-09",
+          "status": "met",
+          "evidence": [
+            "finalsource/fe/src/components/Goals/SavingsSummaryChart.tsx:63-94 renders month, series, explicitly signed nonzero currency amount, and transaction count from the hovered Recharts payload.",
+            "finalsource/fe/src/components/Goals/SavingsSummaryChart.tsx:222 passes SavingsTooltip as the Recharts content renderer using the library's compatible default TooltipContentProps generic domain.",
+            "Repair 1 targeted ESLint passes and the frontend production build completes successfully with the repaired tooltip integration."
+          ],
+          "rationale": "The tooltip interaction is inspectable and its repaired Recharts integration now enters a successful production bundle."
+        }
+      ],
+      "total": 9,
+      "met": 9,
+      "not_evaluable": 0,
+      "unmet": 0,
+      "acceptance_percent": 100.0
+    }
+  },
+  "repairs": [
+    {
+      "repair_id": "UC16-RQ3-SOL-LIGHT-R1-REPAIR-001",
+      "repair_index": 1,
+      "sub_prompt_path": "docs/02-construction/implementation/UC-16/runs/UC16-RQ3-SOL-LIGHT-R1/repairs/repair-001.md",
+      "category": "technical",
+      "trigger": "compile",
+      "fingerprint": "frontend-recharts-tooltip-content-props-ts2739",
+      "affected_br_ids": [
+        "BR-SAV-09"
+      ],
+      "status": "completed",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "low",
+        "effective_model_id": null,
+        "effective_model_unavailable_reason": "The runtime did not expose an effective provider model identifier."
+      },
+      "timing_wall_clock": {
+        "started_at": "2026-09-04T10:24:27.7676910Z",
+        "started_epoch_ms": 1788517467781,
+        "ended_at": "2026-09-04T10:28:29.0479878Z",
+        "ended_epoch_ms": 1788517709047,
+        "duration_seconds": 241.266
+      },
+      "tokens": {
+        "total": 1389290,
+        "telemetry_turn_id": 1
+      },
+      "source_revision_before": "sha256:f71cd05b00b9a89046d5c1503bcdf407c895a7a88579f1da9fc9c7f8544cdee1",
+      "source_revision_after": "sha256:9fe295ab0170c24e09cca5bc1465dc39cf3ab9e6469eb87e7818627b68a3b252",
+      "changed_files": [
+        "finalsource/fe/src/components/Goals/SavingsSummaryChart.tsx"
+      ],
+      "evidence_before": "Frontend production build reports TS2739 at SavingsSummaryChart.tsx:222 for the JSX Tooltip content element.",
+      "evidence_after": [
+        "Targeted ESLint for SavingsSummaryChart.tsx passes with zero diagnostics.",
+        "Frontend production build passes; TypeScript and Vite complete and 679 modules are transformed."
+      ],
+      "tests_created_or_run": false
+    },
+    {
+      "repair_id": "UC16-RQ3-SOL-LIGHT-R1-REPAIR-002",
+      "repair_index": 2,
+      "sub_prompt_path": "docs/02-construction/implementation/UC-16/runs/UC16-RQ3-SOL-LIGHT-R1/repairs/repair-002.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "savings-aggregation-ineligible-account-and-status-set",
+      "affected_br_ids": [
+        "BR-SAV-01",
+        "BR-SAV-03",
+        "BR-SAV-04",
+        "BR-SAV-05",
+        "BR-SAV-06"
+      ],
+      "status": "completed",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "low",
+        "effective_model_id": null
+      },
+      "timing_wall_clock": {
+        "started_at": "2026-09-04T10:34:00.4710051Z",
+        "started_epoch_ms": 1788518040478,
+        "ended_at": "2026-09-04T10:35:39.9299648Z",
+        "ended_epoch_ms": 1788518139929,
+        "duration_seconds": 99.451
+      },
+      "tokens": {
+        "total": null,
+        "unavailable_reason": "Repairs 2-11 share one researcher turn; only aggregate turn telemetry is defensible."
+      },
+      "source_revision_before": "sha256:9fe295ab0170c24e09cca5bc1465dc39cf3ab9e6469eb87e7818627b68a3b252",
+      "source_revision_after": "sha256:7f9b09c388b5a6fdc557b55f936897dba24e86716fbafc5073ce6a1e35367c17",
+      "changed_files": [
+        "finalsource/be/src/modules/savings/savings.service.ts"
+      ],
+      "evidence_before": "Owned-account aggregation lacked eligible account-type and Complete-status predicates.",
+      "evidence_after": [
+        "Targeted ESLint and backend production build pass with parameterized eligibility predicates."
+      ],
+      "tests_created_or_run": false
+    },
+    {
+      "repair_id": "UC16-RQ3-SOL-LIGHT-R1-REPAIR-003",
+      "repair_index": 3,
+      "sub_prompt_path": "docs/02-construction/implementation/UC-16/runs/UC16-RQ3-SOL-LIGHT-R1/repairs/repair-003.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "savings-month-series-empty-and-future-normalization",
+      "affected_br_ids": [
+        "BR-SAV-03",
+        "BR-SAV-05",
+        "BR-SAV-06"
+      ],
+      "status": "completed",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "low",
+        "effective_model_id": null
+      },
+      "timing_wall_clock": {
+        "started_at": "2026-09-04T10:35:59.1763189Z",
+        "started_epoch_ms": 1788518159181,
+        "ended_at": "2026-09-04T10:36:39.0896669Z",
+        "ended_epoch_ms": 1788518199089,
+        "duration_seconds": 39.908
+      },
+      "tokens": {
+        "total": null,
+        "unavailable_reason": "Repairs 2-11 share one researcher turn; only aggregate turn telemetry is defensible."
+      },
+      "source_revision_before": "sha256:7f9b09c388b5a6fdc557b55f936897dba24e86716fbafc5073ce6a1e35367c17",
+      "source_revision_after": "sha256:ae4639d3ffc6aaf2f5d5f2ab2c50a3a473eaba95c5d072d5ae79b8e186717631",
+      "changed_files": [
+        "finalsource/be/src/modules/savings/savings.service.ts"
+      ],
+      "evidence_before": "Zero-row summaries returned empty arrays and future current-year months were not capped.",
+      "evidence_after": [
+        "Targeted ESLint/build pass; authenticated runtime confirms ordered 12-month series and future zero capping."
+      ],
+      "tests_created_or_run": false
+    },
+    {
+      "repair_id": "UC16-RQ3-SOL-LIGHT-R1-REPAIR-004",
+      "repair_index": 4,
+      "sub_prompt_path": "docs/02-construction/implementation/UC-16/runs/UC16-RQ3-SOL-LIGHT-R1/repairs/repair-004.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "savings-year-window-rejected-instead-of-fallback",
+      "affected_br_ids": [
+        "BR-SAV-02"
+      ],
+      "status": "completed",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "low",
+        "effective_model_id": null
+      },
+      "timing_wall_clock": {
+        "started_at": "2026-09-04T10:36:57.7181827Z",
+        "started_epoch_ms": 1788518217723,
+        "ended_at": "2026-09-04T10:37:37.9461668Z",
+        "ended_epoch_ms": 1788518257946,
+        "duration_seconds": 40.223
+      },
+      "tokens": {
+        "total": null,
+        "unavailable_reason": "Repairs 2-11 share one researcher turn; only aggregate turn telemetry is defensible."
+      },
+      "source_revision_before": "sha256:ae4639d3ffc6aaf2f5d5f2ab2c50a3a473eaba95c5d072d5ae79b8e186717631",
+      "source_revision_after": "sha256:1b023531feecc403f46bb2365f73685be51e38c5cb37edf332fc477e5cf1cd0f",
+      "changed_files": [
+        "finalsource/be/src/modules/savings/dto/savings-summary-query.dto.ts",
+        "finalsource/be/src/modules/savings/savings.controller.ts"
+      ],
+      "evidence_before": "Invalid/out-of-window years produced validation errors instead of current-year fallback.",
+      "evidence_after": [
+        "Targeted ESLint/build pass; authenticated invalid-year runtime resolves to current year."
+      ],
+      "tests_created_or_run": false
+    },
+    {
+      "repair_id": "UC16-RQ3-SOL-LIGHT-R1-REPAIR-005",
+      "repair_index": 5,
+      "sub_prompt_path": "docs/02-construction/implementation/UC-16/runs/UC16-RQ3-SOL-LIGHT-R1/repairs/repair-005.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "savings-net-amount-rounding-and-negative-zero",
+      "affected_br_ids": [
+        "BR-SAV-04",
+        "BR-SAV-07"
+      ],
+      "status": "completed",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "low",
+        "effective_model_id": null
+      },
+      "timing_wall_clock": {
+        "started_at": "2026-09-04T10:37:57.8798299Z",
+        "started_epoch_ms": 1788518277883,
+        "ended_at": "2026-09-04T10:38:35.6361750Z",
+        "ended_epoch_ms": 1788518315642,
+        "duration_seconds": 37.759
+      },
+      "tokens": {
+        "total": null,
+        "unavailable_reason": "Repairs 2-11 share one researcher turn; only aggregate turn telemetry is defensible."
+      },
+      "source_revision_before": "sha256:1b023531feecc403f46bb2365f73685be51e38c5cb37edf332fc477e5cf1cd0f",
+      "source_revision_after": "sha256:9a877b0cb413f18bdecbec5499d9d14793a8189b7951b38d41eeaee85421556c",
+      "changed_files": [
+        "finalsource/be/src/modules/savings/savings.service.ts"
+      ],
+      "evidence_before": "Final half-up rounding and negative-zero normalization were absent.",
+      "evidence_after": [
+        "Targeted ESLint/build pass with exact-value ROUND(..., 2) and positive-zero normalization."
+      ],
+      "tests_created_or_run": false
+    },
+    {
+      "repair_id": "UC16-RQ3-SOL-LIGHT-R1-REPAIR-006",
+      "repair_index": 6,
+      "sub_prompt_path": "docs/02-construction/implementation/UC-16/runs/UC16-RQ3-SOL-LIGHT-R1/repairs/repair-006.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "savings-query-missing-read-committed-boundary",
+      "affected_br_ids": [
+        "BR-SAV-08"
+      ],
+      "status": "completed",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "low",
+        "effective_model_id": null
+      },
+      "timing_wall_clock": {
+        "started_at": "2026-09-04T10:38:56.2695129Z",
+        "started_epoch_ms": 1788518336274,
+        "ended_at": "2026-09-04T10:39:32.6966321Z",
+        "ended_epoch_ms": 1788518372699,
+        "duration_seconds": 36.425
+      },
+      "tokens": {
+        "total": null,
+        "unavailable_reason": "Repairs 2-11 share one researcher turn; only aggregate turn telemetry is defensible."
+      },
+      "source_revision_before": "sha256:9a877b0cb413f18bdecbec5499d9d14793a8189b7951b38d41eeaee85421556c",
+      "source_revision_after": "sha256:c80721425ca58cd55e278b286eaa9cb64a48609e6db9a7c2ea1d0d66a5ef7fe5",
+      "changed_files": [
+        "finalsource/be/src/modules/savings/savings.service.ts"
+      ],
+      "evidence_before": "Read query had no explicit READ COMMITTED boundary.",
+      "evidence_after": [
+        "Targeted ESLint/build pass with transaction-scoped repository under READ COMMITTED."
+      ],
+      "tests_created_or_run": false
+    },
+    {
+      "repair_id": "UC16-RQ3-SOL-LIGHT-R1-REPAIR-007",
+      "repair_index": 7,
+      "sub_prompt_path": "docs/02-construction/implementation/UC-16/runs/UC16-RQ3-SOL-LIGHT-R1/repairs/repair-007.md",
+      "category": "technical",
+      "trigger": "lint",
+      "fingerprint": "backend-main-bootstrap-floating-promise",
+      "affected_br_ids": [],
+      "status": "completed",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "low",
+        "effective_model_id": null
+      },
+      "timing_wall_clock": {
+        "started_at": "2026-09-04T10:40:16.4540968Z",
+        "started_epoch_ms": 1788518416458,
+        "ended_at": "2026-09-04T10:40:37.6259968Z",
+        "ended_epoch_ms": 1788518437630,
+        "duration_seconds": 21.172
+      },
+      "tokens": {
+        "total": null,
+        "unavailable_reason": "Repairs 2-11 share one researcher turn; only aggregate turn telemetry is defensible."
+      },
+      "source_revision_before": "sha256:c80721425ca58cd55e278b286eaa9cb64a48609e6db9a7c2ea1d0d66a5ef7fe5",
+      "source_revision_after": "sha256:99c5cffa0cdecf709c9518f369ad10e33159a40d9e0a201b9563707f078a48bc",
+      "changed_files": [
+        "finalsource/be/src/main.ts"
+      ],
+      "evidence_before": "Repository ESLint reported a floating bootstrap promise.",
+      "evidence_after": [
+        "Targeted and final repository ESLint pass."
+      ],
+      "tests_created_or_run": false
+    },
+    {
+      "repair_id": "UC16-RQ3-SOL-LIGHT-R1-REPAIR-008",
+      "repair_index": 8,
+      "sub_prompt_path": "docs/02-construction/implementation/UC-16/runs/UC16-RQ3-SOL-LIGHT-R1/repairs/repair-008.md",
+      "category": "technical",
+      "trigger": "lint",
+      "fingerprint": "shared-password-regex-useless-escapes",
+      "affected_br_ids": [],
+      "status": "completed",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "low",
+        "effective_model_id": null
+      },
+      "timing_wall_clock": {
+        "started_at": "2026-09-04T10:40:56.4069291Z",
+        "started_epoch_ms": 1788518456414,
+        "ended_at": "2026-09-04T10:41:39.0601825Z",
+        "ended_epoch_ms": 1788518499061,
+        "duration_seconds": 42.647
+      },
+      "tokens": {
+        "total": null,
+        "unavailable_reason": "Repairs 2-11 share one researcher turn; only aggregate turn telemetry is defensible."
+      },
+      "source_revision_before": "sha256:99c5cffa0cdecf709c9518f369ad10e33159a40d9e0a201b9563707f078a48bc",
+      "source_revision_after": "sha256:ab754e00717c759b3581657dba193d8adb1a847655d491d15875b1b3d8d2d0d4",
+      "changed_files": [
+        "finalsource/be/src/modules/auth/auth.service.ts",
+        "finalsource/fe/src/pages/Register/Register.tsx"
+      ],
+      "evidence_before": "Equivalent password regexes produced no-useless-escape diagnostics.",
+      "evidence_after": [
+        "Targeted backend/frontend and final repository ESLint pass without changing the character set."
+      ],
+      "tests_created_or_run": false
+    },
+    {
+      "repair_id": "UC16-RQ3-SOL-LIGHT-R1-REPAIR-009",
+      "repair_index": 9,
+      "sub_prompt_path": "docs/02-construction/implementation/UC-16/runs/UC16-RQ3-SOL-LIGHT-R1/repairs/repair-009.md",
+      "category": "technical",
+      "trigger": "lint",
+      "fingerprint": "entity-commented-timestamp-unused-imports",
+      "affected_br_ids": [],
+      "status": "completed",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "low",
+        "effective_model_id": null
+      },
+      "timing_wall_clock": {
+        "started_at": "2026-09-04T10:41:44.1844990Z",
+        "started_epoch_ms": 1788518504187,
+        "ended_at": "2026-09-04T10:42:13.8023151Z",
+        "ended_epoch_ms": 1788518533808,
+        "duration_seconds": 29.621
+      },
+      "tokens": {
+        "total": null,
+        "unavailable_reason": "Repairs 2-11 share one researcher turn; only aggregate turn telemetry is defensible."
+      },
+      "source_revision_before": "sha256:ab754e00717c759b3581657dba193d8adb1a847655d491d15875b1b3d8d2d0d4",
+      "source_revision_after": "sha256:a6bfbcb34707e60fc2d12eeb4853a9abb254442b22960b0cb9a070910d658528",
+      "changed_files": [
+        "finalsource/be/src/modules/account/account.entity.ts",
+        "finalsource/be/src/modules/bill/bill.entity.ts",
+        "finalsource/be/src/modules/category/category.entity.ts",
+        "finalsource/be/src/modules/user/user.entity.ts"
+      ],
+      "evidence_before": "Four entities imported unused timestamp decorators for commented properties.",
+      "evidence_after": [
+        "Targeted and final repository ESLint pass; entity mappings remain unchanged."
+      ],
+      "tests_created_or_run": false
+    },
+    {
+      "repair_id": "UC16-RQ3-SOL-LIGHT-R1-REPAIR-010",
+      "repair_index": 10,
+      "sub_prompt_path": "docs/02-construction/implementation/UC-16/runs/UC16-RQ3-SOL-LIGHT-R1/repairs/repair-010.md",
+      "category": "technical",
+      "trigger": "lint",
+      "fingerprint": "migration-query-result-unsafe-assignment",
+      "affected_br_ids": [],
+      "status": "completed",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "low",
+        "effective_model_id": null
+      },
+      "timing_wall_clock": {
+        "started_at": "2026-09-04T10:42:33.0322357Z",
+        "started_epoch_ms": 1788518553036,
+        "ended_at": "2026-09-04T10:43:14.9141543Z",
+        "ended_epoch_ms": 1788518594917,
+        "duration_seconds": 41.881
+      },
+      "tokens": {
+        "total": null,
+        "unavailable_reason": "Repairs 2-11 share one researcher turn; only aggregate turn telemetry is defensible."
+      },
+      "source_revision_before": "sha256:a6bfbcb34707e60fc2d12eeb4853a9abb254442b22960b0cb9a070910d658528",
+      "source_revision_after": "sha256:1738c8febf1072b1071ed557b9b1f8a8eb08a0dfd5e313b91007da8d5a1d0626",
+      "changed_files": [
+        "finalsource/be/src/database/migrations/20260831095333-make-users-username-nullable.ts"
+      ],
+      "evidence_before": "TypeORM QueryRunner result was unsafely assigned.",
+      "evidence_after": [
+        "Targeted ESLint/build pass after unknown-result narrowing; migration behavior remains unchanged."
+      ],
+      "tests_created_or_run": false
+    },
+    {
+      "repair_id": "UC16-RQ3-SOL-LIGHT-R1-REPAIR-011",
+      "repair_index": 11,
+      "sub_prompt_path": "docs/02-construction/implementation/UC-16/runs/UC16-RQ3-SOL-LIGHT-R1/repairs/repair-011.md",
+      "category": "technical",
+      "trigger": "lint",
+      "fingerprint": "react-refresh-provider-hook-mixed-exports",
+      "affected_br_ids": [],
+      "status": "completed",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "low",
+        "effective_model_id": null
+      },
+      "timing_wall_clock": {
+        "started_at": "2026-09-04T10:43:36.7294874Z",
+        "started_epoch_ms": 1788518616733,
+        "ended_at": "2026-09-04T10:44:44.5829856Z",
+        "ended_epoch_ms": 1788518684582,
+        "duration_seconds": 67.849
+      },
+      "tokens": {
+        "total": null,
+        "unavailable_reason": "Repairs 2-11 share one researcher turn; only aggregate turn telemetry is defensible."
+      },
+      "source_revision_before": "sha256:1738c8febf1072b1071ed557b9b1f8a8eb08a0dfd5e313b91007da8d5a1d0626",
+      "source_revision_after": "sha256:7f1de770f933825ae26ce954170be2602f54826e75aaaa90edd48510348195b4",
+      "changed_files": [
+        "finalsource/fe/src/context/AuthContext.tsx",
+        "finalsource/fe/src/context/ThemeContext.tsx",
+        "finalsource/fe/src/context/auth-context.ts",
+        "finalsource/fe/src/context/theme-context.ts",
+        "finalsource/fe/src/hooks/useAuth.ts",
+        "finalsource/fe/src/hooks/useTheme.ts",
+        "finalsource/fe/src/context/index.ts",
+        "frontend useAuth/useTheme consumer imports"
+      ],
+      "evidence_before": "Provider files mixed component and hook exports, producing two Fast Refresh warnings.",
+      "evidence_after": [
+        "Frontend repository ESLint passes with zero errors/warnings and production build passes."
+      ],
+      "tests_created_or_run": false
+    }
+  ],
+  "repair_authorization": {
+    "status": "authorized",
+    "requested_at": "2026-09-03T14:07:36.6873842Z",
+    "authorized_at": "2026-09-04T10:24:27.7676910Z",
+    "authorization_basis": "Researcher explicitly requested: Chạy subprompt cho uc-16 đi"
+  },
+  "all_sub_prompt_count": 11
+}

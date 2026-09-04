@@ -1,0 +1,25 @@
+{
+  "artifact_type": "final-source-revision",
+  "status": "Frozen",
+  "uc_id": "UC-16",
+  "run_id": "UC16-RQ3-SOL-LIGHT-R1",
+  "source_revision": "sha256:7f1de770f933825ae26ce954170be2602f54826e75aaaa90edd48510348195b4",
+  "hash_method": "SHA-256 over sorted relative path, NUL, per-file SHA-256 and newline entries; node_modules, dist, generated .tsbuildinfo and .env files excluded.",
+  "frozen_at": "2026-09-04T10:47:21.9173106Z",
+  "verification": {
+    "frontend_repository_lint": "pass_zero_diagnostics",
+    "frontend_production_build": "pass",
+    "backend_repository_lint": "pass_zero_diagnostics",
+    "backend_production_build": "pass",
+    "docker_images_rebuilt": true,
+    "database_health": "healthy",
+    "backend_health": "healthy",
+    "frontend_health": "healthy",
+    "frontend_http_status": 200,
+    "backend_health_http_status": 200,
+    "unauthenticated_savings_status": 401,
+    "authenticated_savings_status": 200,
+    "authenticated_sanitized_assertions": "pass: fallback year, JWT identity parity, two ordered 12-month series, non-negative integer counts, and future-month zero capping",
+    "tests_created_or_run": false
+  }
+}

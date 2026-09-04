@@ -4,8 +4,6 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
 import { Category } from '../category/category.entity';
@@ -20,7 +18,7 @@ export class Goal {
   @PrimaryGeneratedColumn({ name: 'goal_id' })
   goalId!: number;
 
-  @Column({ name: 'user_id', type: 'int' })
+  @Column({ name: 'user_id', type: 'int', unsigned: true })
   userId!: number;
 
   @ManyToOne(() => User, (user) => user.goals)
@@ -34,12 +32,12 @@ export class Goal {
   })
   goalType!: GoalType;
 
-  @Column({ name: 'category_id', type: 'int' })
-  categoryId!: number;
+  @Column({ name: 'category_id', type: 'int', unsigned: true, nullable: true })
+  categoryId!: number | null;
 
-  @ManyToOne(() => Category, (category) => category.goals)
+  @ManyToOne(() => Category, (category) => category.goals, { nullable: true })
   @JoinColumn({ name: 'category_id' })
-  category!: Category;
+  category!: Category | null;
 
   @Column({ name: 'start_date', type: 'date' })
   startDate!: Date;

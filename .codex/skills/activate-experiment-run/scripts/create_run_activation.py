@@ -44,7 +44,10 @@ def validate_configuration(root: Path, configuration: Path) -> None:
 
 def load_json(path: Path, label: str) -> dict:
     try:
-        data = json.loads(path.read_text(encoding="utf-8"))
+        # Frozen JSON artifacts created by Windows tooling may carry a UTF-8 BOM.
+        # utf-8-sig accepts both BOM-prefixed and ordinary UTF-8 without changing
+        # the immutable artifact bytes used by checksum evidence.
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
     except (OSError, json.JSONDecodeError) as exc:
         fail(f"cannot read {label}: {exc}")
     if not isinstance(data, dict):

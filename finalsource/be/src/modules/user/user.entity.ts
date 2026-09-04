@@ -3,8 +3,6 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToMany,
-  CreateDateColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 import { Account } from '../account/account.entity';
 import { Bill } from '../bill/bill.entity';

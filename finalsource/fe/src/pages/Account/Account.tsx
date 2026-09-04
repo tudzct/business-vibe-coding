@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { accountService } from '../../api/account.service'
 import type { AccountListItem } from '../../api/types'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 
 const navigation = [
   { path: '/dashboard', label: 'Overview', icon: '▦' },

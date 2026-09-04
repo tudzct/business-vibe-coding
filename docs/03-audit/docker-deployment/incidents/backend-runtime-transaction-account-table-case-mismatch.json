@@ -1,0 +1,23 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260831-002",
+  "observed_at": "2026-08-31T15:58:00Z",
+  "resolved_at": "2026-08-31T16:07:40.710Z",
+  "layer": "backend-runtime",
+  "fingerprint": "backend-runtime-transaction-account-table-case-mismatch",
+  "symptom": "Authenticated valid transaction-list requests returned HTTP 500.",
+  "evidence": [
+    "Bounded logs reported that the mixed-case Transactions table did not exist.",
+    "Read-only metadata exposed the physical tables as lowercase transactions and accounts."
+  ],
+  "root_cause": { "status": "confirmed", "summary": "Transaction and Account entity annotations did not match case-sensitive physical table names." },
+  "files_changed_during_troubleshooting": [
+    "finalsource/be/src/modules/transaction/transaction.entity.ts",
+    "finalsource/be/src/modules/account/account.entity.ts"
+  ],
+  "commands_rerun": ["compose-up-build-backend", "bounded-uc03-runtime-observation"],
+  "outcome": "resolved",
+  "resolution_evidence": "Valid All, Revenue, Expense and pagination requests returned 200 after rebuild; current backend logs contain no query failures.",
+  "reusable_resolution": "Align ORM table annotations with read-only INFORMATION_SCHEMA evidence without changing schema.",
+  "prevention": "Validate entity table-name case against the approved physical schema before runtime observation."
+}

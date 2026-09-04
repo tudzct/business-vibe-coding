@@ -2,15 +2,15 @@ import axiosInstance from './axiosInstance'
 import {
   ApiResponse,
   Account,
-  AccountListData,
+  AccountListResult,
   CreateAccountData,
   CreateAccountRequest,
 } from './types'
 
 export const accountService = {
   // Lấy danh sách tài khoản của user
-  getAccounts: async (signal?: AbortSignal): Promise<ApiResponse<AccountListData>> => {
-    const response = await axiosInstance.get<ApiResponse<AccountListData>>('/v1/accounts', { signal })
+  getAccounts: async (signal?: AbortSignal): Promise<ApiResponse<AccountListResult>> => {
+    const response = await axiosInstance.get<ApiResponse<AccountListResult>>('/v1/accounts', { signal })
     return response.data
   },
 

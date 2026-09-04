@@ -9,22 +9,25 @@ import { QueryFailedError, Repository } from 'typeorm';
 import { Account, AccountType } from './account.entity';
 import { CreateAccountDto } from './dto/create-account.dto';
 
-export interface AccountListItem {
-  id: number;
-  bank_name: string;
-  account_type: AccountType;
-  branch_name: string | null;
-  account_number_last_4: string;
-  balance: number;
+export interface AccountListItemDto {
+  readonly id: number;
+  readonly bank_name: string;
+  readonly account_type: string;
+  readonly branch_name: string | null;
+  readonly account_number_last_4: string;
+  readonly balance: number;
 }
 
-export interface AccountListData {
-  user_id: number;
-  accounts: AccountListItem[];
+export interface AccountListDataDto {
+  readonly user_id: number;
+  readonly accounts: AccountListItemDto[];
 }
 
-export interface CreatedAccount extends AccountListItem {
-  user_id: number;
+export type AccountListItem = AccountListItemDto;
+export type AccountListData = AccountListDataDto;
+
+export interface CreatedAccount extends AccountListItemDto {
+  readonly user_id: number;
 }
 
 interface BalanceTotalRow {
@@ -38,21 +41,12 @@ export class AccountService {
     private readonly accounts: Repository<Account>,
   ) {}
 
-  async findAllForUser(userId: number): Promise<AccountListData> {
+  async findAllByUserId(userId: number): Promise<AccountListDataDto> {
     try {
       const accounts = await this.accounts.find({
         where: { userId },
-        select: {
-          accountId: true,
-          bankName: true,
-          accountType: true,
-          branchName: true,
-          accountNumberLast4: true,
-          balance: true,
-        },
         order: { accountId: 'ASC' },
       });
-
       return {
         user_id: userId,
         accounts: accounts.map((account) => ({
@@ -69,6 +63,10 @@ export class AccountService {
         'system error occurred. Please try again later.',
       );
     }
+  }
+
+  async findAllForUser(userId: number): Promise<AccountListDataDto> {
+    return this.findAllByUserId(userId);
   }
 
   async createForUser(userId: number, dto: CreateAccountDto): Promise<CreatedAccount> {
