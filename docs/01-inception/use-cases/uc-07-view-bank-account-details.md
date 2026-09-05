@@ -47,8 +47,8 @@ PRE-2: The path contains an account identifier.
 
 ### Post-Condition(s)
 
-POST-1: On success, the page displays account information and at most five recent transactions.
-POST-2: Expense amounts in recent_transactions are returned as negative values.
+POST-1: On success, the page displays account information and recent transactions.
+POST-2: Transaction data is formatted for display.
 POST-3: Unauthorized account data is not returned.
 
 ### Basic Flow
@@ -57,9 +57,9 @@ POST-3: Unauthorized account data is not returned.
 2. AccountDetailPage requests GET /api/v1/accounts/:id.
 3. The controller validates authentication and parses id as an integer.
 4. AccountService loads the account by accountId.
-5. AccountService verifies account.userId equals the authenticated userId.
-6. AccountService loads at most five transactions for the account, ordered by transactionDate descending.
-7. AccountService maps transaction dates to YYYY-MM-DD and makes Expense amounts negative.
+5. AccountService verifies access authorization. 
+6. AccountService loads recent transactions for the account.
+7. AccountService formats the transactions for the response.
 8. The frontend displays bank name, type, branch, full account number, balance, and recent transactions.
 
 ### Alternative Flow
@@ -76,7 +76,7 @@ EF-1: Invalid account ID
 EF-2: Account not found
 4a. The backend returns HTTP 404.
 
-EF-3: Account belongs to another user
+EF-3: Authorization failure
 5a. The backend returns HTTP 403.
 
 EF-4: Retrieval failure
