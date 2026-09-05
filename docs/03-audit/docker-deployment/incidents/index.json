@@ -102,6 +102,12 @@
       "fingerprint": "backend-startup-auth-module-unknown-jwt-guard-export",
       "path": "docs/03-audit/docker-deployment/incidents/backend-startup-auth-module-unknown-jwt-guard-export.json",
       "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260905-001",
+      "fingerprint": "database-startup-host-port-3306-in-use",
+      "path": "docs/03-audit/docker-deployment/incidents/database-startup-host-port-3306-in-use.json",
+      "outcome": "blocked"
     }
   ]
 }

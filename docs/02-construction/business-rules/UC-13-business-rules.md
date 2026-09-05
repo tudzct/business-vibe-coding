@@ -1,219 +1,31 @@
 ---
-artifact_type: business-use-case-specification
+artifact_type: business-rule-resource
 status: Frozen
 uc_id: UC-13
-uc_name: "View Financial Goals"
-source_type: google-sheets
-source_spreadsheet_id: 1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM
-source_sheet: "Use cases"
-source_range: "A276:B294"
-retrieved_at: 2026-09-05T08:24:09.000Z
+source_use_case: docs/01-inception/use-cases/uc-13-view-financial-goals.md
+source_use_case_sha256: sha256:3becb7b921eaa09e29efa66a64b4a1ed55b16de7cdc02cd5d50646742e31af21
 ---
 
-# UC-13: View Financial Goals
+# UC-13 Business Rule Resource
 
-> Canonical source: [Financial Management Specification](https://docs.google.com/spreadsheets/d/1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM/edit?gid=0#gid=0), tab `Use cases`, range `A276:B294`. This frozen repository projection is read-only; source corrections must be made in the spreadsheet and imported as a new revision.
+## Source provenance
 
-## Functional Use-Case Specification
+- Spreadsheet: `1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM`
+- Tab/range: `Use cases!A276:B294`
+- OCL utilities: `Use cases!A2:B2`
+- Retrieved at: `2026-09-05T08:24:09.000Z`
 
-### Use Case ID
+## Ordered Business Rules
 
-UC-13
+### BR-GOAL-VIEW-01 - Authenticated ownership scope
 
-### Use Case Name
-
-View Financial Goals
-
-### Description
-
-As an authenticated user, I want to view my financial goals and their progress so that I can understand my current goal status.
-
-### Actor(s)
-
-Authenticated User
-
-### Priority
-
-Not Specified
-
-### Trigger
-
-The user opens the Goals page.
-
-### Pre-Condition(s)
-
-PRE-1: The user is authenticated.
-
-### Post-Condition(s)
-
-POST-1: After processing, the applicable financial-goal information and calculated progress are displayed on /goals.
-POST-2: If no applicable goal data is available, the page displays its no-goals state.
-POST-3: The operation does not modify stored goal, account, category, or transaction data.
-
-### Basic Flow
-
-1. The user opens the Goals page.
-2. The frontend requests the user's financial-goal data.
-3. The backend authenticates the request.
-4. The backend retrieves and processes the relevant goal and financial data according to the applicable business rules.
-5. The backend returns the resulting goal data.
-6. The frontend prepares the returned data for presentation.
-7. The frontend displays the financial-goal view on the Goals page.
-
-### Alternative Flow
-
-AF-1: No applicable goal data
-5a. The backend returns goal data with no applicable goal items.
-6a. The frontend does not prepare goal cards.
-7a. The frontend displays its no-goals state and the available Create Goal action.
-
-AF-2: Partial goal data
-5b. The backend returns the applicable subset of goal data.
-6b. The frontend prepares only the returned goal sections.
-7b. The frontend displays the available goal sections.
-
-### Exception Flow
-
-EF-1: Authentication failure
-3a. The backend cannot authenticate the request.
-3b. The backend returns HTTP 401.
-3c. The frontend applies the application's authentication-error handling.
-
-EF-2: Retrieval or processing failure
-4a. An unexpected error occurs while retrieving or processing goal data.
-4b. The backend returns HTTP 500.
-4c. The frontend displays its retryable goal-loading error state.
-
-### Related UI
-
-GoalsPage; saving and expense goal cards; route /goals
-
-### Related API IDs
-
-API-GOAL-LIST
-
-### Notes
-
-Experiment isolation:
-- BR-GOAL-VIEW-01 through BR-GOAL-VIEW-07 are the treatment-sensitive Business Rules for UC-13.
-- Description, pre/post-conditions, flows, UML, and the non-BR API contract intentionally avoid restating saving-goal selection, date-overlap calculation, category fallback, exact-coverage, and priority-ordering semantics.
-- The API contract defines only interface structure, authentication requirements, response fields, and error contracts.
-- Read-only behavior is redundantly constrained by the GET operation and is not a core treatment-sensitive Business Rule.
-- Authentication failure, retrieval failure, and the project-standard response envelope are project/API concerns rather than core Business Rules.
-- Figma layout/styling requirements are UI evidence and are not part of the core Business Rule score.
-
-## UML Model
-
-~~~plantuml
-@startuml
-
-enum GoalType {
-  SAVING
-  EXPENSE_LIMIT
-}
-
-enum TransactionType {
-  REVENUE
-  EXPENSE
-}
-
-class AuthenticatedRequest <<SecurityContext>> {
-  userId: Integer [1]
-}
-
-class Goal <<Entity>> {
-  goalId: Integer [1]
-  userId: Integer [1]
-  goalType: GoalType [1]
-  categoryId: Integer [0..1]
-  startDate: Date [1]
-  endDate: Date [1]
-  targetAmount: Decimal [1]
-}
-
-class Account <<Entity>> {
-  accountId: Integer [1]
-  userId: Integer [1]
-}
-
-class Transaction <<Entity>> {
-  transactionId: Integer [1]
-  accountId: Integer [1]
-  categoryId: Integer [0..1]
-  transactionDate: Date [1]
-  type: TransactionType [1]
-  amount: Decimal [1]
-}
-
-class Category <<Entity>> {
-  categoryId: Integer [1]
-  categoryName: String [1]
-}
-
-class SavingGoalDto <<DTO>> {
-  goalId: Integer [1]
-  goalType: GoalType [1]
-  targetAmount: Decimal [1]
-  targetAchieved: Decimal [1]
-  startDate: String [1]
-  endDate: String [1]
-}
-
-class ExpenseGoalDto <<DTO>> {
-  goalId: Integer [1]
-  category: String [1]
-  targetAmount: Decimal [1]
-  currentExpense: Decimal [1]
-}
-
-class GoalDataDto <<DTO>> {
-  savingGoal: SavingGoalDto [0..1]
-  expenseGoals: ExpenseGoalDto [*] {ordered}
-}
-
-class GoalListResponseDto <<DTO>> {
-  success: Boolean [1]
-  message: String [1]
-  data: GoalDataDto [1]
-}
-
-class GoalController <<Controller>> {
-  getGoals(request: AuthenticatedRequest): GoalListResponseDto
-}
-
-class GoalService <<Service>> {
-  getGoals(userId: Integer): GoalListResponseDto
-}
-
-class GoalsPage <<UI>>
-
-GoalController ..> AuthenticatedRequest
-GoalController ..> GoalService
-GoalController ..> GoalListResponseDto
-GoalService ..> Goal
-GoalService ..> Account
-GoalService ..> Transaction
-GoalService ..> Category
-GoalListResponseDto --> GoalDataDto
-GoalDataDto --> SavingGoalDto
-GoalDataDto --> ExpenseGoalDto
-SavingGoalDto ..> Goal
-ExpenseGoalDto ..> Goal
-Transaction --> Account
-Goal --> Category : category [0..1]
-Transaction --> Category : category [0..1]
-GoalsPage ..> GoalListResponseDto
-
-@enduml
-~~~
-
-## Business Rules
-
-The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+- Representation: `ocl_precondition`
+- Context: `GoalService::getGoals(userId : Integer) : GoalListResponseDto`
+- Enforcement layers: `backend`, `database`
+- Failure behavior: A missing, invalid, or expired JWT is rejected with HTTP 401; successful retrieval uses the validated authenticated userId and excludes other users' goals, accounts, transactions, and calculated values.
+- Traceability: `Use cases!A276:B294`, UC-13 PRE-1, Basic Flow 2-5, EF-1, `API-GOAL-LIST`
 
 ~~~text
-BR-GOAL-VIEW-01: Authenticated ownership scope
-
 context GoalService::getGoals(userId : Integer) : GoalListResponseDto
 
 pre BR_GOAL_VIEW_01_AuthenticatedIdentity:
@@ -239,9 +51,17 @@ Technical constraints:
 - The userId used by GoalService shall come from the validated authenticated request context.
 - A client-supplied user identifier shall not override the authenticated userId.
 - Goals, accounts, and transactions owned by another user shall not contribute to any returned goal or calculated progress value.
+~~~
 
-BR-GOAL-VIEW-02: Deterministic saving-goal selection
+### BR-GOAL-VIEW-02 - Deterministic saving-goal selection
 
+- Representation: `ocl_postcondition`
+- Context: `GoalService::getGoals(userId : Integer) : GoalListResponseDto`
+- Enforcement layers: `backend`, `database`
+- Failure behavior: A successful response returns no saving goal when no eligible candidate exists; otherwise it returns the uniquely selected eligible saving goal defined by the date and goalId tie-breakers.
+- Traceability: `Use cases!A276:B294`, UC-13 Basic Flow 4-7, AF-1, UML `Goal` and `SavingGoalDto`
+
+~~~text
 context GoalService::getGoals(userId : Integer) : GoalListResponseDto
 
 post BR_GOAL_VIEW_02_SavingSelection:
@@ -270,9 +90,17 @@ Technical constraints:
 - A Saving goal is eligible only when its persisted date range is valid and overlaps the current calendar month.
 - If multiple eligible Saving goals exist, select the one with the latest startDate; if multiple candidates share that startDate, select the one with the highest goalId.
 - For the OCL in UC-13, currentMonthStart() and currentMonthEnd() denote the first and last instants of the backend server's current calendar month.
+~~~
 
-BR-GOAL-VIEW-03: Expense-limit goal eligibility and exact coverage
+### BR-GOAL-VIEW-03 - Expense-limit goal eligibility and exact coverage
 
+- Representation: `ocl_postcondition`
+- Context: `GoalService::getGoals(userId : Integer) : GoalListResponseDto`
+- Enforcement layers: `backend`, `database`
+- Failure behavior: A successful response includes every eligible expense-limit goal exactly once and excludes every ineligible goal; when none is eligible, expenseGoals is empty.
+- Traceability: `Use cases!A276:B294`, UC-13 Basic Flow 4-7, AF-1, AF-2, UML `GoalDataDto`
+
+~~~text
 context GoalService::getGoals(userId : Integer) : GoalListResponseDto
 
 post BR_GOAL_VIEW_03_AllAndOnlyEligibleExpenseGoals:
@@ -296,9 +124,17 @@ post BR_GOAL_VIEW_03_AllAndOnlyEligibleExpenseGoals:
 Technical constraints:
 - Expired, not-yet-active, invalid-range, or other-user Expense_Limit goals shall not be returned.
 - Every eligible Expense_Limit goal shall appear exactly once.
+~~~
 
-BR-GOAL-VIEW-04: Saving progress uses the goal/month overlap interval
+### BR-GOAL-VIEW-04 - Saving progress uses the goal/month overlap interval
 
+- Representation: `ocl_postcondition`
+- Context: `GoalService::getGoals(userId : Integer) : GoalListResponseDto`
+- Enforcement layers: `backend`, `database`
+- Failure behavior: When a saving goal is returned, targetAchieved equals owned revenue minus owned expense within the inclusive goal/month overlap; empty sums are zero and negative results remain negative.
+- Traceability: `Use cases!A276:B294`, UC-13 Basic Flow 4-7, UML `Account`, `Transaction`, and `SavingGoalDto`
+
+~~~text
 context GoalService::getGoals(userId : Integer) : GoalListResponseDto
 
 post BR_GOAL_VIEW_04_SavingTargetAchieved:
@@ -341,9 +177,17 @@ Technical constraints:
 - Transactions outside that intersection shall not contribute even if they are in the same calendar month.
 - If no owned account or no matching transaction exists, the corresponding sum is treated as 0.
 - Negative targetAchieved values are allowed and shall not be clamped to zero.
+~~~
 
-BR-GOAL-VIEW-05: Expense-limit progress uses category and goal/month overlap
+### BR-GOAL-VIEW-05 - Expense-limit progress uses category and goal/month overlap
 
+- Representation: `ocl_postcondition`
+- Context: `GoalService::getGoals(userId : Integer) : GoalListResponseDto`
+- Enforcement layers: `backend`, `database`
+- Failure behavior: Each returned expense goal's currentExpense contains only owned expense transactions in the matching category and inclusive goal/month overlap; empty sums are zero.
+- Traceability: `Use cases!A276:B294`, UC-13 Basic Flow 4-7, UML `Goal`, `Account`, `Transaction`, and `ExpenseGoalDto`
+
+~~~text
 context GoalService::getGoals(userId : Integer) : GoalListResponseDto
 
 post BR_GOAL_VIEW_05_CurrentExpense:
@@ -377,9 +221,17 @@ Technical constraints:
 - Expense progress is calculated only for the intersection between each Expense_Limit goal's date interval and the current calendar month.
 - Only transactions whose categoryId equals the goal's categoryId contribute.
 - If no owned account or no matching transaction exists, currentExpense is 0.
+~~~
 
-BR-GOAL-VIEW-06: Category resolution and numeric normalization
+### BR-GOAL-VIEW-06 - Category resolution and numeric normalization
 
+- Representation: `ocl_postcondition`
+- Context: `GoalService::getGoals(userId : Integer) : GoalListResponseDto`
+- Enforcement layer: `backend`
+- Failure behavior: Successful goal DTOs use the defined category fallback and trimming rules, and all returned saving and expense monetary values are rounded to two decimal places.
+- Traceability: `Use cases!A276:B294`, UC-13 Basic Flow 4-6, UML `Category`, `SavingGoalDto`, and `ExpenseGoalDto`, `API-GOAL-LIST`
+
+~~~text
 context GoalService::getGoals(userId : Integer) : GoalListResponseDto
 
 post BR_GOAL_VIEW_06_CategoryAndAmounts:
@@ -409,9 +261,17 @@ Technical constraints:
 - A non-null categoryId with no resolvable non-blank category name is represented as Unknown.
 - A resolved category name is trimmed before being returned.
 - Saving and expense monetary values returned by this use case shall be rounded to two decimal places.
+~~~
 
-BR-GOAL-VIEW-07: Deterministic expense-goal priority ordering
+### BR-GOAL-VIEW-07 - Deterministic expense-goal priority ordering
 
+- Representation: `ocl_postcondition`
+- Context: `GoalService::getGoals(userId : Integer) : GoalListResponseDto`
+- Enforcement layers: `backend`, `database`
+- Failure behavior: Successful expenseGoals arrays use the defined exceeded-status, endDate, targetAmount, and goalId priority order deterministically.
+- Traceability: `Use cases!A276:B294`, UC-13 Basic Flow 4-7, UML `Goal` and `GoalDataDto`
+
+~~~text
 context GoalService::getGoals(userId : Integer) : GoalListResponseDto
 
 post BR_GOAL_VIEW_07_ExpenseGoalOrder:
@@ -435,3 +295,7 @@ Technical constraints:
 - Within the same exceeded/not-exceeded group, order by endDate ascending, then targetAmount ascending, then goalId ascending.
 - The ordering shall be deterministic for the same persisted data and calculation date.
 ~~~
+
+## Unresolved items
+
+None.

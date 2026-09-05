@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "source-retrieval-record",
+  "status": "Frozen",
+  "retrieval_id": "SRC-UC14-20260905T082409Z",
+  "retrieved_at": "2026-09-05T08:24:09.000Z",
+  "authorization": {
+    "actor": "researcher",
+    "decision": "confirmed",
+    "scope": "Refresh the frozen UC-14 projection and its related API-GOAL-CREATE and API-CATEGORY-LIST contracts from the connected Google Sheet."
+  },
+  "sources": [
+    {
+      "type": "google-sheets",
+      "spreadsheet_id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+      "sheet": "Use cases",
+      "range": "A295:B313",
+      "retrieval_method": "connected-google-drive-get-spreadsheet-cells"
+    },
+    {
+      "type": "google-sheets",
+      "spreadsheet_id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+      "sheet": "API contract",
+      "range": "A274:B289",
+      "retrieval_method": "connected-google-drive-get-spreadsheet-cells"
+    },
+    {
+      "type": "google-sheets",
+      "spreadsheet_id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+      "sheet": "API contract",
+      "range": "A173:B186",
+      "retrieval_method": "connected-google-drive-get-spreadsheet-cells"
+    }
+  ],
+  "projections": [
+    {
+      "path": "docs/01-inception/use-cases/uc-14-create-financial-goal.md",
+      "previous_sha256": "sha256:697d853ebd5826617b24b4ce6c962917a32fe7aa3670dd0d677faa9f953a683a",
+      "refreshed_sha256": "sha256:7c567846c8c0a4d1060f1d7fa66816f8286ab213b80ca3b93c9553a130b9a7d6",
+      "status": "Frozen"
+    },
+    {
+      "path": "docs/01-inception/api-contracts/API-GOAL-CREATE.md",
+      "previous_sha256": "sha256:29a2dadf845f3098e22ed0191f52d591171d155105334ec653f0670a6b3301f9",
+      "refreshed_sha256": "sha256:d0d6213ea460cc4d3bcc2c1bb8d68d6bb1bbe1c98cb38c519d830917f7c7eb5d",
+      "status": "Frozen"
+    },
+    {
+      "path": "docs/01-inception/api-contracts/API-CATEGORY-LIST.md",
+      "previous_sha256": "sha256:d36f0972ab88eb82d788774a2fd876c2b4441e0cad3764529d15477c0800931b",
+      "refreshed_sha256": "sha256:de6f4cd47914ef2d1e01ac6d34e5a573d9250ba9f4d5a28dc57eedf351129dc8",
+      "status": "Frozen"
+    }
+  ],
+  "verification": {
+    "spreadsheet_id_matches_project_context": true,
+    "sheet_and_ranges_match_projection_provenance": true,
+    "ordered_business_rule_ids": [
+      "BR-GOAL-CREATE-01",
+      "BR-GOAL-CREATE-02",
+      "BR-GOAL-CREATE-03",
+      "BR-GOAL-CREATE-04",
+      "BR-GOAL-CREATE-05",
+      "BR-GOAL-CREATE-06",
+      "BR-GOAL-CREATE-07"
+    ],
+    "rule_count": 7,
+    "unresolved_items": []
+  }
+}

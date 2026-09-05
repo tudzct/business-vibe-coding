@@ -1,8 +1,8 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-09-04T13:30:41Z",
+  "observed_at": "2026-09-05T08:49:55Z",
   "repository_revision": "uncommitted-worktree",
-  "source_revision": "sha256:6fca554a282c38c8f3a3d6492f2dfe59a33df3fd22d60c41748fda92e3717736",
+  "source_revision": "sha256:82349a96eb71b73cdbfdb40f932c5ba0ab31f744601fdf9d0afb8fedd0b7b45c",
   "docker": {
     "cli": "29.6.1",
     "compose": "v5.3.0",
@@ -15,11 +15,11 @@
     "compose_valid": true
   },
   "services": {
-    "database": "runtime observation passed its healthcheck; stopped after evidence capture with its volume preserved",
-    "backend": "fresh repaired image built; JWT guard initialization passed, then database initialization was blocked by the known absent Accounts table; stopped after evidence capture",
-    "frontend": "fresh image built; runtime blocked by backend health dependency; stopped after evidence capture"
+    "database": "runtime start blocked because host port 3306 is owned by a researcher-controlled mysqld process; recreated container remains stopped and its volume is preserved",
+    "backend": "fresh UC-13 first-pass image built successfully; runtime did not start because the database dependency could not bind its host port",
+    "frontend": "fresh image build blocked by an existing Bills.tsx import of a non-exported AuthContext member; runtime did not start"
   },
   "status": "BLOCKED",
-  "blocking_incident": "DEP-20260831-001",
-  "next_action": "Activate a researcher-approved domain schema/runtime baseline containing the required Account, Transaction, and Bill tables, then repeat Compose health and bounded UC-12 observations. No container remains in a restart loop."
+  "blocking_incident": "DEP-20260905-001",
+  "next_action": "After the UC-13 RQ3 hold gate is explicitly released, repair the evidenced frontend compile defect and use a researcher-approved non-conflicting MySQL host-port mapping before repeating Compose health and bounded UC-13 observations."
 }

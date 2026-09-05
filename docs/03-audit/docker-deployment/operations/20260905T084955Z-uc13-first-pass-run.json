@@ -1,0 +1,20 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-09-05T08:49:55Z",
+  "mode": "run",
+  "uc_id": "UC-13",
+  "run_id": "RQ3-SOL-MEDIUM-R1-UC13",
+  "source_revision": "sha256:82349a96eb71b73cdbfdb40f932c5ba0ab31f744601fdf9d0afb8fedd0b7b45c",
+  "commands": [
+    { "id": "docker-version", "exit_code": 0 },
+    { "id": "compose-version", "exit_code": 0 },
+    { "id": "docker-daemon-version", "exit_code": 0 },
+    { "id": "compose-config-quiet", "exit_code": 0 },
+    { "id": "compose-build-backend-frontend", "exit_code": 1, "bounded_error": "Frontend TypeScript build: Bills.tsx imports a non-exported useAuth member from AuthContext." },
+    { "id": "compose-build-backend", "exit_code": 0 },
+    { "id": "compose-up-database-backend", "exit_code": 1, "bounded_error": "Database host port 3306 is already in use by a host mysqld process." },
+    { "id": "compose-ps-all", "exit_code": 0 }
+  ],
+  "outcome": "BLOCKED",
+  "incident": "DEP-20260905-001"
+}

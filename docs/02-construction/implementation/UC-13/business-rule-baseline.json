@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-13",
+  "use_case_path": "docs/01-inception/use-cases/uc-13-view-financial-goals.md",
+  "use_case_sha256": "sha256:3becb7b921eaa09e29efa66a64b4a1ed55b16de7cdc02cd5d50646742e31af21",
+  "business_rule_resource_path": "docs/02-construction/business-rules/UC-13-business-rules.json",
+  "business_rule_resource_sha256": "sha256:0fc9d4b1289e19e8c4bc7cc71bbad4cd1a5c814086bc69c883bed584974f4b2e",
+  "spreadsheet_source": "Use cases!A276:B294",
+  "ordered_br_ids": [
+    "BR-GOAL-VIEW-01",
+    "BR-GOAL-VIEW-02",
+    "BR-GOAL-VIEW-03",
+    "BR-GOAL-VIEW-04",
+    "BR-GOAL-VIEW-05",
+    "BR-GOAL-VIEW-06",
+    "BR-GOAL-VIEW-07"
+  ],
+  "frozen_at": "2026-09-05T08:33:13Z"
+}
