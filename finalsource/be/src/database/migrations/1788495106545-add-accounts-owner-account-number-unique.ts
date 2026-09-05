@@ -10,6 +10,31 @@ export class AddAccountsOwnerAccountNumberUnique1788495106545
   name = 'AddAccountsOwnerAccountNumberUnique1788495106545';
 
   async up(queryRunner: QueryRunner): Promise<void> {
+    const table = await queryRunner.getTable('accounts');
+    if (!table) {
+      throw new Error(
+        'Cannot add owner/account-number uniqueness because accounts is absent.',
+      );
+    }
+    const existingIndex = table.indices.find(
+      (candidate) =>
+        candidate.name === 'uq_accounts_user_id_account_number_full',
+    );
+    if (existingIndex) {
+      const expectedColumns = ['user_id', 'account_number_full'];
+      const hasExactColumns =
+        existingIndex.columnNames.length === expectedColumns.length
+        && existingIndex.columnNames.every(
+          (columnName, index) => columnName === expectedColumns[index],
+        );
+      if (!existingIndex.isUnique || !hasExactColumns) {
+        throw new Error(
+          'Existing uq_accounts_user_id_account_number_full index is incompatible with the approved uniqueness contract.',
+        );
+      }
+      return;
+    }
+
     const rows = (await queryRunner.query(`
       SELECT COUNT(*) AS duplicateGroupCount
       FROM (

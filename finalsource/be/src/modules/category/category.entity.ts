@@ -9,7 +9,7 @@ import { Goal } from '../goal/goal.entity';
 
 @Entity('categories')
 export class Category {
-  @PrimaryGeneratedColumn({ name: 'category_id' })
+  @PrimaryGeneratedColumn({ name: 'category_id', unsigned: true })
   categoryId!: number;
 
   @Column({ name: 'category_name', type: 'varchar', length: 255, unique: true })

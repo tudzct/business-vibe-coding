@@ -1,0 +1,36 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260905-003",
+  "observed_at": "2026-09-05T09:28:11Z",
+  "layer": "backend-runtime",
+  "fingerprint": "backend-startup-goals-category-foreign-key-signedness-mismatch",
+  "symptom": "After the approved prerequisite-table recovery completed, the backend remained unhealthy while the existing Goals migration attempted to create its category foreign key.",
+  "evidence": {
+    "primary_error": "ER_FK_INCOMPATIBLE_COLUMNS: Goals.category_id and categories.category_id are incompatible.",
+    "metadata": "Read-only metadata reports categories.category_id as INT signed while the existing Goals migration defines Goals.category_id as INT UNSIGNED.",
+    "previous_repair": "categories, accounts and transactions now exist; receipt_id is INT UNSIGNED NULL and the receipt migration is recorded",
+    "schema_mutation_after_detection": "none"
+  },
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "The approved UC-13 recovery proposal specified a signed categories primary key, but the already-approved Goals schema references an unsigned category identifier. MySQL requires identical signedness for this foreign key."
+  },
+  "actions_attempted": [
+    "Built the approved recovery migration successfully.",
+    "Ran it through Docker Compose against the preserved volume.",
+    "Captured bounded logs and read-only column/migration metadata.",
+    "Stopped the stack without deleting the volume."
+  ],
+  "files_changed": [
+    "finalsource/be/src/database/migrations/20260901101931-make-transactions-receipt-id-nullable.ts"
+  ],
+  "commands_rerun": [
+    "compose-build-backend",
+    "compose-up-wait-with-host-port-3307",
+    "read-only-schema-and-migration-metadata",
+    "compose-stop-preserve-volume"
+  ],
+  "outcome": "resolved",
+  "resolution": "Researcher-approved amendment UC-13-SCHEMA-RUNTIME-001 aligned categories.category_id and transactions.category_id to INT UNSIGNED while preserving their relationship. The existing Goals migration then completed with matching signedness.",
+  "prevention": "Verify referenced and referencing integer signedness together in schema proposals before creating foreign-key prerequisite tables."
+}

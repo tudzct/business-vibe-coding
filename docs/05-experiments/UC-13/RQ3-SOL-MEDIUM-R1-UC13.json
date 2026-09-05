@@ -1,7 +1,7 @@
 {
   "run_id": "RQ3-SOL-MEDIUM-R1-UC13",
-  "run_status": "awaiting_repair_authorization",
-  "hold_gate": "rq3_repair_authorization_required",
+  "run_status": "complete",
+  "hold_gate": "satisfied_repair_authorized",
   "prompt_variant": "rq3",
   "experiment_configuration": {
     "configuration_id": "CFG-UC13-RQ3-SOL-MEDIUM-R1-20260905",
@@ -39,12 +39,12 @@
   },
   "timing_seconds": {
     "initial": 269.0,
-    "repairs": 0,
-    "total": 269.0
+    "repairs": 871.501,
+    "total": 1140.501
   },
   "tokens": {
     "initial_total": null,
-    "repair_total": 0,
+    "repair_total": 19684564,
     "total": null,
     "telemetry_source": "/Users/ldt/.codex/sessions/2026/09/05/rollout-2026-09-05T15-30-02-01a070b0-620b-7b72-b678-aaa41301be77.jsonl",
     "details": {
@@ -60,9 +60,27 @@
         "unavailable_reason": "The required extractor was run for turn 4, but its aggregate includes post-generation validation and audit work. The runner emitted no token-count event at or before the frozen first-pass cutoff, so initial-generation-only token attribution is unavailable."
       },
       "repairs": {
-        "count": 0,
-        "total_tokens": 0,
-        "cost_usd": 0
+        "count": 10,
+        "shared_turn_ids": [
+          5,
+          9,
+          10
+        ],
+        "repair_ids": [
+          "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-001",
+          "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-002",
+          "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-003",
+          "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-004",
+          "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-005",
+          "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-006",
+          "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-007",
+          "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-008",
+          "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-009",
+          "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-010"
+        ],
+        "total_tokens": 19684564,
+        "cost_usd": 12.8049,
+        "attribution_note": "The ten repair artifacts span three aggregate runner turns; individual repair attribution is unavailable."
       }
     }
   },
@@ -70,23 +88,28 @@
     "revision": "sha256:82349a96eb71b73cdbfdb40f932c5ba0ab31f744601fdf9d0afb8fedd0b7b45c",
     "evidence": "docs/02-construction/implementation/UC-13/runs/RQ3-SOL-MEDIUM-R1-UC13/first-pass-generation.json"
   },
+  "final_source": {
+    "revision": "sha256:7f8cedb214cc4555a61ea2d70c3750e0772d44020a172e32f54f512c06df3e54",
+    "evidence": "docs/02-construction/implementation/UC-13/runs/RQ3-SOL-MEDIUM-R1-UC13/final-source-amended.json",
+    "superseded_evidence": "docs/02-construction/implementation/UC-13/runs/RQ3-SOL-MEDIUM-R1-UC13/final-source.json"
+  },
   "checks": {
     "host_backend_lint": "not_evaluable: eslint executable absent because host dependencies are not installed",
     "host_backend_build": "not_evaluable: nest executable absent because host dependencies are not installed",
     "host_frontend_lint": "not_evaluable: eslint executable absent because host dependencies are not installed",
     "host_frontend_build": "not_evaluable: tsc executable absent because host dependencies are not installed",
     "docker_compose_config": "PASS: Docker 29.6.1 daemon and Compose v5.3.0 are available; configuration validated with the ignored, untracked finalsource/.env",
-    "docker_backend_build": "PASS: the fresh NestJS production image built successfully from first-pass source",
-    "docker_frontend_build": "BLOCKED: the fresh frontend build stops at existing finalsource/fe/src/pages/Bills/Bills.tsx:7 because AuthContext exports no useAuth member; the UC-13 diff does not modify that file",
-    "docker_runtime_health": "BLOCKED: database startup cannot bind host port 3306 because a researcher-controlled host mysqld process already listens on that port; backend and frontend remain unstarted",
-    "frontend_reachability": "not_evaluable: no fresh frontend image was available and Compose runtime did not start",
-    "authentication_exception": "not_evaluable: backend runtime did not start, so bounded HTTP 401 observation was unavailable",
-    "authenticated_goal_success": "not_evaluable: backend runtime did not start and no researcher-supplied authenticated session was used",
-    "empty_partial_error_states_runtime": "not_evaluable: frontend runtime did not start; inspectable source evidence is retained"
+    "docker_backend_build": "PASS: the fresh NestJS production image built successfully after every backend repair",
+    "docker_frontend_build": "PASS: the fresh React/Vite production image built successfully after the bounded cumulative import repair",
+    "docker_runtime_health": "PASS: database, backend, and frontend are healthy through the non-conflicting host-port override after all approved migrations completed",
+    "frontend_reachability": "PASS: configured frontend root returned HTTP 200 on host port 8081",
+    "authentication_exception": "PASS: unauthenticated GET /api/v1/goals returned HTTP 401 with the normalized error envelope and expected path",
+    "authenticated_goal_success": "not_evaluable: the active database has five users but no accounts or goals, and no researcher-supplied authenticated session was available; no credentials or data were invented",
+    "empty_partial_error_states_runtime": "not_evaluable: authenticated browser state transitions require a researcher-supplied session; inspectable source evidence is retained"
   },
   "business_rules": {
     "baseline": "docs/02-construction/implementation/UC-13/business-rule-baseline.json",
-    "source_revision": "sha256:82349a96eb71b73cdbfdb40f932c5ba0ab31f744601fdf9d0afb8fedd0b7b45c",
+    "source_revision": "sha256:7f8cedb214cc4555a61ea2d70c3750e0772d44020a172e32f54f512c06df3e54",
     "ordered_br_ids": [
       "BR-GOAL-VIEW-01",
       "BR-GOAL-VIEW-02",
@@ -175,72 +198,72 @@
           "br_id": "BR-GOAL-VIEW-01",
           "status": "met",
           "evidence": [
-            "finalsource/be/src/modules/goal/goal.controller.ts:59-75 protects GET /api/v1/goals with JwtAuthGuard and passes only request.user.userId to GoalService",
-            "finalsource/be/src/modules/goal/goal.service.ts:72-87 scopes saving goals, expense goals, and accounts by the authenticated userId",
-            "finalsource/be/src/modules/goal/goal.service.ts:89-95 restricts contributing transactions to account IDs obtained from that owned-account query"
+            "finalsource/be/src/modules/goal/goal.controller.ts:59-75 protects GET /api/v1/goals with JwtAuthGuard and passes request.user.userId only",
+            "finalsource/be/src/modules/goal/goal.service.ts:72-100 scopes both goal queries and the account query to that authenticated userId",
+            "finalsource/be/src/modules/goal/goal.service.ts:101-123 limits contributing transactions to IDs from the owned-account query"
           ],
-          "rationale": "The endpoint derives identity from the validated JWT request context, accepts no client user identifier, and source-scopes all goals, accounts, and contributing transactions to that identity."
+          "rationale": "Identity is derived from the JWT context and all goal, account, and transaction source paths are ownership-scoped."
         },
         {
           "br_id": "BR-GOAL-VIEW-02",
-          "status": "unmet",
+          "status": "met",
           "evidence": [
-            "finalsource/be/src/modules/goal/goal.service.ts:72-74 calls findOne using only userId and SAVING type",
-            "The saving-goal query has no valid-range or current-month-overlap predicate and no latest-start/highest-goalId ordering"
+            "finalsource/be/src/modules/goal/goal.service.ts:72-83 filters owned Saving goals to valid ranges overlapping the current month",
+            "finalsource/be/src/modules/goal/goal.service.ts:81-83 selects latest startDate then highest goalId"
           ],
-          "rationale": "An ineligible or nondeterministically chosen saving goal can be returned when multiple persisted saving goals exist."
+          "rationale": "The selected Saving goal is eligible and deterministic."
         },
         {
           "br_id": "BR-GOAL-VIEW-03",
-          "status": "unmet",
+          "status": "met",
           "evidence": [
-            "finalsource/be/src/modules/goal/goal.service.ts:75-83 filters owned expense-limit goals by month overlap",
-            "The query does not enforce startDate <= endDate and therefore does not establish all-and-only valid-range eligibility"
+            "finalsource/be/src/modules/goal/goal.service.ts:84-94 retrieves all owned ExpenseLimit rows with startDate <= endDate and current-month overlap",
+            "The query has no result-collapsing operation, so every eligible persisted goal remains represented once"
           ],
-          "rationale": "Ownership, type, and overlap are present, but invalid persisted ranges can satisfy the two independent overlap predicates and be returned."
+          "rationale": "Expense-goal eligibility is enforced by owner, type, valid range, and overlap."
         },
         {
           "br_id": "BR-GOAL-VIEW-04",
-          "status": "unmet",
+          "status": "met",
           "evidence": [
-            "finalsource/be/src/modules/goal/goal.service.ts:90-95 loads transactions for the entire current calendar month",
-            "finalsource/be/src/modules/goal/goal.service.ts:97-110 calculates saving progress from that full-month set without intersecting the selected goal's own startDate/endDate"
+            "finalsource/be/src/modules/goal/goal.service.ts:109-123 loads owned-account transactions inside the inclusive Saving-goal/current-month intersection",
+            "finalsource/be/src/modules/goal/goal.service.ts:125-130 and 181-190 compute revenue minus expense without clamping and preserve zero sums"
           ],
-          "rationale": "Owned revenue-minus-expense and negative values are preserved, but transactions outside a shorter goal interval can contribute."
+          "rationale": "Saving progress uses exactly the owned overlap set and preserves negative and zero values."
         },
         {
           "br_id": "BR-GOAL-VIEW-05",
-          "status": "unmet",
+          "status": "met",
           "evidence": [
-            "finalsource/be/src/modules/goal/goal.service.ts:90-95 retrieves one shared full-month transaction set",
-            "finalsource/be/src/modules/goal/goal.service.ts:115-124 filters by expense type and category but not by each expense goal's own startDate/endDate overlap interval"
+            "finalsource/be/src/modules/goal/goal.service.ts:132-152 derives each goal/month intersection and sums only owned matching-category Expense transactions",
+            "finalsource/be/src/modules/goal/goal.service.ts:144-152 returns the empty-set sum as zero"
           ],
-          "rationale": "Category, expense type, and ownership are enforced, but a transaction outside an individual goal interval can contribute to currentExpense."
+          "rationale": "Each currentExpense is restricted by ownership, category, type, and the inclusive goal/month overlap."
         },
         {
           "br_id": "BR-GOAL-VIEW-06",
-          "status": "unmet",
+          "status": "met",
           "evidence": [
-            "finalsource/be/src/modules/goal/goal.service.ts:109-110 and 118-124 convert monetary values to numbers but do not explicitly round them to two decimal places",
-            "finalsource/be/src/modules/goal/goal.service.ts:117 returns Unknown for both null categoryId and unresolved category names and does not trim a resolved name"
+            "finalsource/be/src/modules/goal/goal.service.ts:143-163 trims resolved category names, uses Uncategorized for null IDs, and Unknown for unresolved or blank non-null categories",
+            "finalsource/be/src/modules/goal/goal.service.ts:161-162 and 186-187 apply round2 to all returned monetary values"
           ],
-          "rationale": "The required null-category fallback, resolved-name trimming, and complete two-decimal normalization are absent."
+          "rationale": "Category labels and monetary response fields follow the required normalization rules."
         },
         {
           "br_id": "BR-GOAL-VIEW-07",
-          "status": "unmet",
+          "status": "met",
           "evidence": [
-            "finalsource/be/src/modules/goal/goal.service.ts:75-83 calls Repository.find without an order option",
-            "finalsource/be/src/modules/goal/goal.service.ts:115-125 maps expense goals in repository-returned order and the frontend preserves that array order"
+            "finalsource/be/src/modules/goal/goal.service.ts:167-179 sorts exceeded goals first, then endDate, target amount, and goal ID ascending",
+            "finalsource/be/src/modules/goal/goal.service.ts:192 returns DTOs in the sorted order"
           ],
-          "rationale": "The exceeded-status priority and endDate, targetAmount, and goalId tie-breaker order are not implemented."
+          "rationale": "The expense-goal priority order and all deterministic tie-breakers are implemented."
         }
       ],
       "total": 7,
-      "unmet": 6,
+      "unmet": 0,
       "not_evaluable": 0,
-      "met": 1,
-      "acceptance_percent": 14.29
+      "met": 7,
+      "acceptance_percent": 100.0
     }
   },
   "ui_accuracy": {
@@ -248,12 +271,12 @@
     "node_id": "66:5829",
     "structural_evidence": "The source reconstructs the dark 280 px navigation, top header, #F4F5F7 canvas, Goals heading, saving-goal and expense-category cards, teal accent, returned progress values, responsive grids, and typed loading, empty, partial, error, and retry states while retaining the shared savings-summary component.",
     "deterministic_similarity": null,
-    "limitation": "The frontend image is blocked by a pre-existing Bills.tsx TypeScript error, and Compose cannot bind the researcher-controlled host MySQL port, so authenticated browser comparison is unavailable."
+    "limitation": "The frontend is healthy and reachable, but authenticated browser comparison remains unavailable because no researcher-supplied session or goal/account data was available."
   },
   "flow_accuracy": {
     "checkpoints_total": 13,
-    "checkpoints_satisfied": 9,
-    "checkpoints_not_evaluable": 4,
+    "checkpoints_satisfied": 11,
+    "checkpoints_not_evaluable": 2,
     "satisfied": [
       "protected /goals frontend route",
       "Bearer JWT attachment through the existing Axios interceptor",
@@ -263,11 +286,11 @@
       "normalized success response source path",
       "malformed-response rejection and stale-response prevention",
       "typed loading, empty, partial, error, success, and retry frontend states",
-      "fresh backend production image build"
+      "fresh backend production image build",
+      "fresh frontend production image build and HTTP 200 reachability",
+      "bounded unauthenticated HTTP 401 normalized-envelope observation"
     ],
     "not_evaluable": [
-      "fresh frontend production image and reachability",
-      "bounded unauthenticated HTTP 401 observation",
       "authenticated financial-goal success observation",
       "rendered populated, empty, partial, and retry transitions"
     ]
@@ -282,12 +305,202 @@
     "business_rules": 7,
     "ui_states": 5
   },
-  "repairs": [],
+  "repairs": [
+    {
+      "repair_id": "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-001",
+      "artifact": "docs/02-construction/implementation/UC-13/runs/RQ3-SOL-MEDIUM-R1-UC13/repairs/001-saving-goal-selection.md",
+      "affected_br_ids": [
+        "BR-GOAL-VIEW-02"
+      ],
+      "status": "complete",
+      "started_at": "2026-09-05T15:55:30.905+07:00",
+      "ended_at": "2026-09-05T15:55:59.397+07:00",
+      "duration_seconds": 28.492,
+      "source_revision_before": "sha256:82349a96eb71b73cdbfdb40f932c5ba0ab31f744601fdf9d0afb8fedd0b7b45c",
+      "source_revision_after": "sha256:bfb102f19ba7718bff9094867ea92f2a23ddb5e9ff07d269e9b606f3931b73ca",
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "reasoning_mode": "standard",
+      "tokens": null,
+      "token_note": "Shared aggregate repair-turn telemetry; per-repair attribution unavailable."
+    },
+    {
+      "repair_id": "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-002",
+      "artifact": "docs/02-construction/implementation/UC-13/runs/RQ3-SOL-MEDIUM-R1-UC13/repairs/002-expense-goal-eligibility.md",
+      "affected_br_ids": [
+        "BR-GOAL-VIEW-03"
+      ],
+      "status": "complete",
+      "started_at": "2026-09-05T15:56:05.995+07:00",
+      "ended_at": "2026-09-05T15:56:34.003+07:00",
+      "duration_seconds": 28.008,
+      "source_revision_before": "sha256:bfb102f19ba7718bff9094867ea92f2a23ddb5e9ff07d269e9b606f3931b73ca",
+      "source_revision_after": "sha256:f9df9c43ed5e99f26e173ebff9297cc0e60d689b67c4242e9f9837a114d5c12e",
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "reasoning_mode": "standard",
+      "tokens": null,
+      "token_note": "Shared aggregate repair-turn telemetry; per-repair attribution unavailable."
+    },
+    {
+      "repair_id": "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-003",
+      "artifact": "docs/02-construction/implementation/UC-13/runs/RQ3-SOL-MEDIUM-R1-UC13/repairs/003-saving-progress-overlap.md",
+      "affected_br_ids": [
+        "BR-GOAL-VIEW-04"
+      ],
+      "status": "complete",
+      "started_at": "2026-09-05T15:56:39.110+07:00",
+      "ended_at": "2026-09-05T15:57:17.322+07:00",
+      "duration_seconds": 38.213,
+      "source_revision_before": "sha256:f9df9c43ed5e99f26e173ebff9297cc0e60d689b67c4242e9f9837a114d5c12e",
+      "source_revision_after": "sha256:80b9de61a75dccdc18976dbe705dbe52302f7802de35af94b587c02232b97666",
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "reasoning_mode": "standard",
+      "tokens": null,
+      "token_note": "Shared aggregate repair-turn telemetry; per-repair attribution unavailable."
+    },
+    {
+      "repair_id": "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-004",
+      "artifact": "docs/02-construction/implementation/UC-13/runs/RQ3-SOL-MEDIUM-R1-UC13/repairs/004-expense-progress-overlap.md",
+      "affected_br_ids": [
+        "BR-GOAL-VIEW-05"
+      ],
+      "status": "complete",
+      "started_at": "2026-09-05T15:57:23.696+07:00",
+      "ended_at": "2026-09-05T15:58:06.436+07:00",
+      "duration_seconds": 42.739,
+      "source_revision_before": "sha256:80b9de61a75dccdc18976dbe705dbe52302f7802de35af94b587c02232b97666",
+      "source_revision_after": "sha256:792b4af1eb0a5da9b9ab0b59a2567bd9bbe1a3c58cec64fe024407d80c5d9537",
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "reasoning_mode": "standard",
+      "tokens": null,
+      "token_note": "Shared aggregate repair-turn telemetry; per-repair attribution unavailable."
+    },
+    {
+      "repair_id": "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-005",
+      "artifact": "docs/02-construction/implementation/UC-13/runs/RQ3-SOL-MEDIUM-R1-UC13/repairs/005-goal-response-normalization.md",
+      "affected_br_ids": [
+        "BR-GOAL-VIEW-06"
+      ],
+      "status": "complete",
+      "started_at": "2026-09-05T15:58:13.700+07:00",
+      "ended_at": "2026-09-05T15:58:52.340+07:00",
+      "duration_seconds": 38.64,
+      "source_revision_before": "sha256:792b4af1eb0a5da9b9ab0b59a2567bd9bbe1a3c58cec64fe024407d80c5d9537",
+      "source_revision_after": "sha256:abf7d4c646bfd1e58d448979d3d9d5f367c5a3f5acafc4ad3892546606933051",
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "reasoning_mode": "standard",
+      "tokens": null,
+      "token_note": "Shared aggregate repair-turn telemetry; per-repair attribution unavailable."
+    },
+    {
+      "repair_id": "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-006",
+      "artifact": "docs/02-construction/implementation/UC-13/runs/RQ3-SOL-MEDIUM-R1-UC13/repairs/006-expense-goal-ordering.md",
+      "affected_br_ids": [
+        "BR-GOAL-VIEW-07"
+      ],
+      "status": "complete",
+      "started_at": "2026-09-05T15:58:59.983+07:00",
+      "ended_at": "2026-09-05T15:59:48.538+07:00",
+      "duration_seconds": 48.555,
+      "source_revision_before": "sha256:abf7d4c646bfd1e58d448979d3d9d5f367c5a3f5acafc4ad3892546606933051",
+      "source_revision_after": "sha256:7ecb037e81527edb265d18e3469ddf7a180d0436507229ae26476a9ac7c1aa1b",
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "reasoning_mode": "standard",
+      "tokens": null,
+      "token_note": "Shared aggregate repair-turn telemetry; per-repair attribution unavailable."
+    },
+    {
+      "repair_id": "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-007",
+      "artifact": "docs/02-construction/implementation/UC-13/runs/RQ3-SOL-MEDIUM-R1-UC13/repairs/007-frontend-use-auth-import.md",
+      "affected_br_ids": [],
+      "status": "complete",
+      "started_at": "2026-09-05T15:59:54.163+07:00",
+      "ended_at": "2026-09-05T16:00:20.692+07:00",
+      "duration_seconds": 26.529,
+      "source_revision_before": "sha256:7ecb037e81527edb265d18e3469ddf7a180d0436507229ae26476a9ac7c1aa1b",
+      "source_revision_after": "sha256:67cb2da43f7fc890d57309db479a446854cd3f292363cd07925e1870818ff06b",
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "reasoning_mode": "standard",
+      "tokens": null,
+      "token_note": "Shared aggregate repair-turn telemetry; per-repair attribution unavailable."
+    },
+    {
+      "repair_id": "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-008",
+      "artifact": "docs/02-construction/implementation/UC-13/runs/RQ3-SOL-MEDIUM-R1-UC13/repairs/008-schema-baseline-recovery.md",
+      "affected_br_ids": [
+        "BR-GOAL-VIEW-01",
+        "BR-GOAL-VIEW-03",
+        "BR-GOAL-VIEW-04",
+        "BR-GOAL-VIEW-05",
+        "BR-GOAL-VIEW-06"
+      ],
+      "status": "complete",
+      "started_at": "2026-09-05T16:23:05.287+07:00",
+      "ended_at": "2026-09-05T16:28:59.811+07:00",
+      "duration_seconds": 353.525,
+      "source_revision_before": "sha256:67cb2da43f7fc890d57309db479a446854cd3f292363cd07925e1870818ff06b",
+      "source_revision_after": "sha256:807d6f6260fd36aee0732f115032f7c049cb3d0af4f7e39dba90df3b02bd93c7",
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "reasoning_mode": "standard",
+      "tokens": null,
+      "token_note": "Schema-repair turn telemetry is aggregate and not individually attributable.",
+      "runtime_result": "Prerequisite recovery complete; blocked on newly exposed category foreign-key signedness mismatch DEP-20260905-003."
+    },
+    {
+      "repair_id": "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-009",
+      "artifact": "docs/02-construction/implementation/UC-13/runs/RQ3-SOL-MEDIUM-R1-UC13/repairs/009-category-id-signedness.md",
+      "affected_br_ids": [
+        "BR-GOAL-VIEW-03",
+        "BR-GOAL-VIEW-05",
+        "BR-GOAL-VIEW-06"
+      ],
+      "status": "complete",
+      "started_at": "2026-09-05T16:35:13.022+07:00",
+      "ended_at": "2026-09-05T16:37:48.686+07:00",
+      "duration_seconds": 155.664,
+      "source_revision_before": "sha256:807d6f6260fd36aee0732f115032f7c049cb3d0af4f7e39dba90df3b02bd93c7",
+      "source_revision_after": "sha256:2b1c2d8218bf20fed76d1e9bb8a6e09a8d1989028f244982fca08caa0e58304d",
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "reasoning_mode": "standard",
+      "tokens": null,
+      "token_note": "Shared aggregate repair-turn telemetry; per-repair attribution unavailable.",
+      "runtime_result": "Signedness migration completed; first retry exposed repair 010's duplicate-index fingerprint."
+    },
+    {
+      "repair_id": "RQ3-SOL-MEDIUM-R1-UC13-REPAIR-010",
+      "artifact": "docs/02-construction/implementation/UC-13/runs/RQ3-SOL-MEDIUM-R1-UC13/repairs/010-account-unique-migration-idempotency.md",
+      "affected_br_ids": [
+        "BR-GOAL-VIEW-01",
+        "BR-GOAL-VIEW-04",
+        "BR-GOAL-VIEW-05"
+      ],
+      "status": "complete",
+      "started_at": "2026-09-05T16:37:48.686+07:00",
+      "ended_at": "2026-09-05T16:39:39.822+07:00",
+      "duration_seconds": 111.136,
+      "source_revision_before": "sha256:2b1c2d8218bf20fed76d1e9bb8a6e09a8d1989028f244982fca08caa0e58304d",
+      "source_revision_after": "sha256:7f8cedb214cc4555a61ea2d70c3750e0772d44020a172e32f54f512c06df3e54",
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "reasoning_mode": "standard",
+      "tokens": null,
+      "token_note": "Shared aggregate repair-turn telemetry; per-repair attribution unavailable.",
+      "runtime_result": "Database, backend, and frontend healthy; backend and frontend HTTP 200 checks and normalized goals HTTP 401 observation passed."
+    }
+  ],
   "manual_estimates_minutes": [],
   "repair_authorization": {
-    "status": "required",
+    "status": "authorized_and_completed",
     "reason": "RQ3 mandatory hold gate after frozen first-pass assessment",
-    "authorized_at": null
+    "authorized_at": "2026-09-05T15:55:30.905+07:00"
   },
-  "all_sub_prompt_count": 0
+  "all_sub_prompt_count": 10
 }

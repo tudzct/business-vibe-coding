@@ -107,7 +107,25 @@
       "incident_id": "DEP-20260905-001",
       "fingerprint": "database-startup-host-port-3306-in-use",
       "path": "docs/03-audit/docker-deployment/incidents/database-startup-host-port-3306-in-use.json",
-      "outcome": "blocked"
+      "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260905-002",
+      "fingerprint": "backend-startup-transactions-table-missing-during-nullability-migration",
+      "path": "docs/03-audit/docker-deployment/incidents/backend-startup-transactions-table-missing-during-nullability-migration.json",
+      "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260905-003",
+      "fingerprint": "backend-startup-goals-category-foreign-key-signedness-mismatch",
+      "path": "docs/03-audit/docker-deployment/incidents/backend-startup-goals-category-foreign-key-signedness-mismatch.json",
+      "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260905-004",
+      "fingerprint": "backend-startup-account-unique-index-already-exists",
+      "path": "docs/03-audit/docker-deployment/incidents/backend-startup-account-unique-index-already-exists.json",
+      "outcome": "resolved"
     }
   ]
 }

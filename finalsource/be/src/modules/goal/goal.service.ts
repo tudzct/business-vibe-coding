@@ -69,60 +69,127 @@ export class GoalService {
       ));
 
       const goalRepository = this.dataSource.getRepository(Goal);
-      const savingGoal = await goalRepository.findOne({
-        where: { userId, goalType: GoalType.SAVING },
-      });
-      const expenseGoals = await goalRepository.find({
-        where: {
-          userId,
-          goalType: GoalType.EXPENSE_LIMIT,
-          startDate: LessThanOrEqual(monthEnd),
-          endDate: MoreThanOrEqual(monthStart),
-        },
-        relations: { category: true },
-      });
+      const savingGoal = await goalRepository
+        .createQueryBuilder('goal')
+        .where('goal.userId = :userId', { userId })
+        .andWhere('goal.goalType = :savingType', {
+          savingType: GoalType.SAVING,
+        })
+        .andWhere('goal.startDate <= goal.endDate')
+        .andWhere('goal.startDate <= :monthEnd', { monthEnd })
+        .andWhere('goal.endDate >= :monthStart', { monthStart })
+        .orderBy('goal.startDate', 'DESC')
+        .addOrderBy('goal.goalId', 'DESC')
+        .getOne();
+      const expenseGoals = await goalRepository
+        .createQueryBuilder('goal')
+        .leftJoinAndSelect('goal.category', 'category')
+        .where('goal.userId = :userId', { userId })
+        .andWhere('goal.goalType = :expenseType', {
+          expenseType: GoalType.EXPENSE_LIMIT,
+        })
+        .andWhere('goal.startDate <= goal.endDate')
+        .andWhere('goal.startDate <= :monthEnd', { monthEnd })
+        .andWhere('goal.endDate >= :monthStart', { monthStart })
+        .getMany();
 
       const accounts = await this.dataSource.getRepository(Account).find({
         select: { accountId: true },
         where: { userId },
       });
       const accountIds = accounts.map((account) => account.accountId);
-      const transactions = accountIds.length === 0
+      const transactionRepository = this.dataSource.getRepository(Transaction);
+      const monthTransactions = accountIds.length === 0
         ? []
-        : await this.dataSource.getRepository(Transaction).findBy({
+        : await transactionRepository.findBy({
             accountId: In(accountIds),
             transactionDate: Between(monthStart, monthEnd),
           });
 
+      const savingTransactions = savingGoal && accountIds.length > 0
+        ? await transactionRepository.findBy({
+            accountId: In(accountIds),
+            transactionDate: Between(
+              new Date(Math.max(
+                monthStart.getTime(),
+                new Date(`${this.toIsoDate(savingGoal.startDate)}T00:00:00.000Z`).getTime(),
+              )),
+              new Date(Math.min(
+                monthEnd.getTime(),
+                new Date(`${this.toIsoDate(savingGoal.endDate)}T00:00:00.000Z`).getTime(),
+              )),
+            ),
+          })
+        : [];
+
       const totalRevenue = this.sumTransactions(
-        transactions.filter((transaction) => transaction.type === TransactionType.REVENUE),
+        savingTransactions.filter((transaction) => transaction.type === TransactionType.REVENUE),
       );
       const totalExpense = this.sumTransactions(
-        transactions.filter((transaction) => transaction.type === TransactionType.EXPENSE),
+        savingTransactions.filter((transaction) => transaction.type === TransactionType.EXPENSE),
       );
+
+      const expenseGoalData = expenseGoals.map((goal) => {
+        const monthStartIso = this.toIsoDate(monthStart);
+        const monthEndIso = this.toIsoDate(monthEnd);
+        const goalStartIso = this.toIsoDate(goal.startDate);
+        const goalEndIso = this.toIsoDate(goal.endDate);
+        const periodStart = goalStartIso > monthStartIso
+          ? goalStartIso
+          : monthStartIso;
+        const periodEnd = goalEndIso < monthEndIso
+          ? goalEndIso
+          : monthEndIso;
+        const categoryName = goal.category?.categoryName.trim();
+        const currentExpense = this.sumTransactions(
+          monthTransactions.filter((transaction) => {
+            const transactionDate = this.toIsoDate(transaction.transactionDate);
+            return transaction.type === TransactionType.EXPENSE
+              && transaction.categoryId === goal.categoryId
+              && transactionDate >= periodStart
+              && transactionDate <= periodEnd;
+          }),
+        );
+
+        return {
+          goal,
+          dto: {
+            goal_id: goal.goalId,
+            category: goal.categoryId === null
+              ? 'Uncategorized'
+              : (categoryName || 'Unknown'),
+            target_amount: this.round2(Number(goal.targetAmount)),
+            current_expense: this.round2(currentExpense),
+          },
+        };
+      });
+
+      expenseGoalData.sort((left, right) => {
+        const leftExceeded = left.dto.current_expense >= left.dto.target_amount;
+        const rightExceeded = right.dto.current_expense >= right.dto.target_amount;
+        if (leftExceeded !== rightExceeded) return leftExceeded ? -1 : 1;
+
+        const endDateOrder = this.toIsoDate(left.goal.endDate)
+          .localeCompare(this.toIsoDate(right.goal.endDate));
+        if (endDateOrder !== 0) return endDateOrder;
+
+        const targetOrder = left.dto.target_amount - right.dto.target_amount;
+        if (targetOrder !== 0) return targetOrder;
+        return left.dto.goal_id - right.dto.goal_id;
+      });
 
       return {
         savingGoal: savingGoal
           ? {
               goal_id: savingGoal.goalId,
               goal_type: GoalType.SAVING,
-              target_amount: Number(savingGoal.targetAmount),
-              target_achieved: totalRevenue - totalExpense,
+              target_amount: this.round2(Number(savingGoal.targetAmount)),
+              target_achieved: this.round2(totalRevenue - totalExpense),
               start_date: this.toIsoDate(savingGoal.startDate),
               end_date: this.toIsoDate(savingGoal.endDate),
             }
           : null,
-        expenseGoals: expenseGoals.map((goal) => ({
-          goal_id: goal.goalId,
-          category: goal.category?.categoryName ?? 'Unknown',
-          target_amount: Number(goal.targetAmount),
-          current_expense: this.sumTransactions(
-            transactions.filter((transaction) => (
-              transaction.type === TransactionType.EXPENSE
-              && transaction.categoryId === goal.categoryId
-            )),
-          ),
-        })),
+        expenseGoals: expenseGoalData.map(({ dto }) => dto),
       };
     } catch {
       throw new InternalServerErrorException(
@@ -313,6 +380,12 @@ export class GoalService {
       (total, transaction) => total + Number(transaction.amount),
       0,
     );
+  }
+
+  private round2(value: number): number {
+    return Math.sign(value)
+      * Math.round((Math.abs(value) + Number.EPSILON) * 100)
+      / 100;
   }
 
   private toIsoDate(value: Date | string): string {

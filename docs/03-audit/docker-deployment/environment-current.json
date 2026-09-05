@@ -1,8 +1,8 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-09-05T08:49:55Z",
+  "observed_at": "2026-09-05T09:39:39Z",
   "repository_revision": "uncommitted-worktree",
-  "source_revision": "sha256:82349a96eb71b73cdbfdb40f932c5ba0ab31f744601fdf9d0afb8fedd0b7b45c",
+  "source_revision": "sha256:7f8cedb214cc4555a61ea2d70c3750e0772d44020a172e32f54f512c06df3e54",
   "docker": {
     "cli": "29.6.1",
     "compose": "v5.3.0",
@@ -15,11 +15,11 @@
     "compose_valid": true
   },
   "services": {
-    "database": "runtime start blocked because host port 3306 is owned by a researcher-controlled mysqld process; recreated container remains stopped and its volume is preserved",
-    "backend": "fresh UC-13 first-pass image built successfully; runtime did not start because the database dependency could not bind its host port",
-    "frontend": "fresh image build blocked by an existing Bills.tsx import of a non-exported AuthContext member; runtime did not start"
+    "database": "healthy on host port 3307 through the temporary non-repository override; all approved migrations are recorded and the persistent volume is preserved",
+    "backend": "healthy on host port 3001; /api/health returned HTTP 200 and unauthenticated /api/v1/goals returned normalized HTTP 401",
+    "frontend": "healthy and reachable on configured host port 8081 with HTTP 200"
   },
-  "status": "BLOCKED",
-  "blocking_incident": "DEP-20260905-001",
-  "next_action": "After the UC-13 RQ3 hold gate is explicitly released, repair the evidenced frontend compile defect and use a researcher-approved non-conflicting MySQL host-port mapping before repeating Compose health and bounded UC-13 observations."
+  "status": "PASS_WITH_LIMITATION",
+  "blocking_incident": null,
+  "next_action": "Use a researcher-supplied authenticated session and representative existing goal/account data only if populated and rendered UC-13 runtime observation is required; do not invent credentials or seed data."
 }

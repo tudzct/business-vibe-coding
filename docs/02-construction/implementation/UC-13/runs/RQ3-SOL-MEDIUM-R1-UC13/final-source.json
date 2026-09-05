@@ -1,0 +1,21 @@
+{
+  "artifact_type": "final-source-revision",
+  "status": "Frozen",
+  "uc_id": "UC-13",
+  "run_id": "RQ3-SOL-MEDIUM-R1-UC13",
+  "source_revision": "sha256:67cb2da43f7fc890d57309db479a446854cd3f292363cd07925e1870818ff06b",
+  "hash_method": "SHA-256 over sorted relative path, NUL, per-file SHA-256 and newline entries for finalsource/be/src and finalsource/fe/src; node_modules, dist and .env files excluded.",
+  "file_count": 115,
+  "frozen_at": "2026-09-05T16:08:12.087+07:00",
+  "terminal_condition": "All authorized bounded repairs are complete and all seven frozen Business Rules are met by inspectable source; runtime observation remains blocked by DEP-20260905-002, which requires separate researcher approval for a domain schema baseline.",
+  "verification": {
+    "backend_production_build": "pass",
+    "frontend_production_build": "pass",
+    "database_health": "pass through temporary non-repository host-port override",
+    "backend_health": "not_evaluable: existing migration requires the absent transactions table",
+    "frontend_health": "not_evaluable: backend health dependency failed",
+    "unauthenticated_goal_status": null,
+    "authenticated_goal_success": null,
+    "tests_created_or_run": false
+  }
+}

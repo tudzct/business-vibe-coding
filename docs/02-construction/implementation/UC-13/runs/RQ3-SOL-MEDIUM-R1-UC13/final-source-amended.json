@@ -1,0 +1,23 @@
+{
+  "artifact_type": "final-source-revision",
+  "status": "Frozen",
+  "uc_id": "UC-13",
+  "run_id": "RQ3-SOL-MEDIUM-R1-UC13",
+  "source_revision": "sha256:7f8cedb214cc4555a61ea2d70c3750e0772d44020a172e32f54f512c06df3e54",
+  "hash_method": "SHA-256 over sorted relative path, NUL, per-file SHA-256 and newline entries for finalsource/be/src and finalsource/fe/src; node_modules, dist and .env files excluded.",
+  "file_count": 116,
+  "frozen_at": "2026-09-05T16:39:39.822+07:00",
+  "supersedes": "docs/02-construction/implementation/UC-13/runs/RQ3-SOL-MEDIUM-R1-UC13/final-source.json",
+  "terminal_condition": "All authorized repairs and approved schema amendments are complete; database, backend and frontend are healthy and bounded unauthenticated runtime observations pass. Authenticated success remains not evaluable without a researcher-supplied session and existing goal/account data.",
+  "verification": {
+    "backend_production_build": "pass",
+    "frontend_production_build": "pass from unchanged frontend source",
+    "database_health": "pass through temporary non-repository host-port override",
+    "backend_health": "pass: HTTP 200",
+    "frontend_health": "pass: HTTP 200 on configured host port 8081",
+    "unauthenticated_goal_status": 401,
+    "unauthenticated_error_envelope": "pass",
+    "authenticated_goal_success": "not_evaluable: no researcher-supplied session; active database has no accounts or goals",
+    "tests_created_or_run": false
+  }
+}

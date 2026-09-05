@@ -1,0 +1,32 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260905-002",
+  "observed_at": "2026-09-05T09:02:00Z",
+  "layer": "backend-runtime",
+  "fingerprint": "backend-startup-transactions-table-missing-during-nullability-migration",
+  "symptom": "The UC-13 backend did not reach healthy after MySQL became healthy on the non-conflicting host port.",
+  "evidence": {
+    "primary_error": "Migration MakeTransactionsReceiptIdNullable20260901101931 failed because table transactions does not exist.",
+    "database_health": "healthy on host port 3307 through a temporary non-repository override",
+    "schema_mutation": "none",
+    "source_builds": "fresh backend and frontend production images both passed"
+  },
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "The active persistent database baseline lacks the transactions table required by an existing migration that runs before application startup."
+  },
+  "actions_attempted": [
+    "Resolved the host-port conflict with a temporary non-repository override that preserves Compose-internal port 3306.",
+    "Started database, backend, and frontend with bounded Compose health waiting.",
+    "Captured bounded backend logs and stopped all three services without deleting the persistent volume."
+  ],
+  "files_changed": [],
+  "commands_rerun": [
+    "docker compose -f finalsource/compose.yaml -f /private/tmp/uc13-compose-port-override.yaml up -d --wait --wait-timeout 60",
+    "docker compose -f finalsource/compose.yaml -f /private/tmp/uc13-compose-port-override.yaml logs --no-color --tail 120 backend",
+    "docker compose -f finalsource/compose.yaml -f /private/tmp/uc13-compose-port-override.yaml stop backend frontend database"
+  ],
+  "outcome": "resolved",
+  "resolution": "The approved UC-13 recovery path created the missing categories, accounts and transactions prerequisites without seed data or volume reset; MakeTransactionsReceiptIdNullable20260901101931 completed and is recorded in the migrations table.",
+  "prevention": "Activate a researcher-approved domain schema baseline before migrations that alter the transactions table; do not create or mutate missing domain tables implicitly."
+}

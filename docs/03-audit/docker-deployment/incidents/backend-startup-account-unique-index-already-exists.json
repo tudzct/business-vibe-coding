@@ -1,0 +1,35 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260905-004",
+  "observed_at": "2026-09-05T09:37:30Z",
+  "layer": "backend-runtime",
+  "fingerprint": "backend-startup-account-unique-index-already-exists",
+  "symptom": "After the category signedness migration completed, an older pending migration attempted to create the account owner/account-number unique index already created by the approved recovery path.",
+  "evidence": {
+    "primary_error": "Duplicate key name uq_accounts_user_id_account_number_full.",
+    "existing_definition": "The recovery path created the exact approved unique index over user_id and account_number_full.",
+    "data_mutation": "none"
+  },
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "The historical account-uniqueness migration lacked an idempotency guard for an exact pre-existing approved index."
+  },
+  "actions_attempted": [
+    "Added a bounded source guard that accepts only the exact named unique index with the exact ordered columns.",
+    "Retained the historical duplicate-row check and create path when the index is absent.",
+    "Rebuilt the backend and repeated Compose startup against the preserved volume.",
+    "Verified all three services healthy and bounded HTTP reachability."
+  ],
+  "files_changed": [
+    "finalsource/be/src/database/migrations/1788495106545-add-accounts-owner-account-number-unique.ts"
+  ],
+  "commands_rerun": [
+    "compose-build-backend",
+    "compose-up-wait-host-port-3307",
+    "compose-ps",
+    "bounded-health-and-goals-http-observation"
+  ],
+  "outcome": "resolved",
+  "resolution": "The historical migration now returns only for an exact compatible unique index and rejects an incompatible same-name definition.",
+  "prevention": "Make cumulative constraint migrations verify and accept exact compatible definitions before attempting creation."
+}
