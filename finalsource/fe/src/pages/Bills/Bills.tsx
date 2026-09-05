@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { billService } from '../../api/bill.service'
 import type { UpcomingBill } from '../../api/types'
 import UpcomingBills from '../../components/UpcomingBills/UpcomingBills'
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 
 const navigationItems = [
   { path: '/dashboard', label: 'Overview', icon: '▦' },

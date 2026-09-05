@@ -3,6 +3,11 @@ artifact_type: api-contract
 status: Frozen
 api_id: API-CATEGORY-LIST
 related_uc_ids: [UC-04, UC-11, UC-14]
+source_type: google-sheets
+source_spreadsheet_id: 1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM
+source_sheet: "API contract"
+source_range: "A173:B186"
+retrieved_at: 2026-09-05T08:24:09.000Z
 ---
 
 # API-CATEGORY-LIST: List Categories
@@ -41,6 +46,10 @@ Public
 
 None
 
+## Business Rules / Validation Constraints
+
+BR-CAT-01 — Alphabetical category list: Categories shall be returned ordered by categoryName ascending.
+
 ## Request Body
 
 None
@@ -54,14 +63,12 @@ Trigger: Categories are retrieved.
 Description: Indicates successful retrieval.
 Example: true
 
-
 ### message
 
 Type: string; Required: Yes; Nullable: No
 Trigger: Categories are retrieved.
 Description: Human-readable success message.
 Example: Lấy danh sách danh mục thành công
-
 
 ### data
 
@@ -70,14 +77,12 @@ Trigger: Categories are retrieved.
 Description: Category array. May be empty.
 Example: []
 
-
 ### data[].category_id
 
 Type: integer; Required: Yes; Nullable: No
 Trigger: Categories are retrieved.
 Description: Category identifier.
 Example: 3
-
 
 ### data[].category_name
 

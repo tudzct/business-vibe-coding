@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-resource",
+  "status": "Frozen",
+  "uc_id": "UC-13",
+  "source_use_case": "docs/01-inception/use-cases/uc-13-view-financial-goals.md",
+  "source_use_case_sha256": "sha256:3becb7b921eaa09e29efa66a64b4a1ed55b16de7cdc02cd5d50646742e31af21",
+  "spreadsheet": {
+    "id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "tab": "Use cases",
+    "range": "A276:B294",
+    "retrieved_at": "2026-09-05T08:24:09.000Z"
+  },
+  "ocl_utility_source": "Use cases!A2:B2",
+  "rules": [
+    {
+      "br_id": "BR-GOAL-VIEW-01",
+      "name": "Authenticated ownership scope",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context GoalService::getGoals(userId : Integer) : GoalListResponseDto\n\npre BR_GOAL_VIEW_01_AuthenticatedIdentity:\n  not userId.oclIsUndefined()\n\npost BR_GOAL_VIEW_01_OwnedGoalsOnly:\n  result.success implies\n    (\n      result.data.savingGoal.oclIsUndefined() or\n      Goal.allInstances()->exists(g |\n        g.goalId = result.data.savingGoal.goalId and\n        g.userId = userId\n      )\n    ) and\n    result.data.expenseGoals->forAll(dto |\n      Goal.allInstances()->exists(g |\n        g.goalId = dto.goalId and\n        g.userId = userId\n      )\n    )\n\nTechnical constraints:\n- The userId used by GoalService shall come from the validated authenticated request context.\n- A client-supplied user identifier shall not override the authenticated userId.\n- Goals, accounts, and transactions owned by another user shall not contribute to any returned goal or calculated progress value.",
+      "context": "GoalService::getGoals(userId : Integer) : GoalListResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "A missing, invalid, or expired JWT is rejected with HTTP 401; successful retrieval uses the validated authenticated userId and excludes other users' goals, accounts, transactions, and calculated values.",
+      "traceability": ["Use cases!A276:B294", "UC-13 PRE-1", "UC-13 Basic Flow 2-5", "UC-13 EF-1", "API-GOAL-LIST"]
+    },
+    {
+      "br_id": "BR-GOAL-VIEW-02",
+      "name": "Deterministic saving-goal selection",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context GoalService::getGoals(userId : Integer) : GoalListResponseDto\n\npost BR_GOAL_VIEW_02_SavingSelection:\n  let candidates : Set(Goal) =\n    Goal.allInstances()\n      ->select(g |\n        g.userId = userId and\n        g.goalType = GoalType::SAVING and\n        g.startDate <= g.endDate and\n        g.startDate <= currentMonthEnd() and\n        g.endDate >= currentMonthStart()\n      )\n      ->asSet()\n  in\n    if candidates->isEmpty() then\n      result.data.savingGoal.oclIsUndefined()\n    else\n      let latestStart : Date = candidates->collect(g | g.startDate)->max() in\n      let latestStartCandidates : Set(Goal) = candidates->select(g | g.startDate = latestStart)->asSet() in\n      let selectedId : Integer = latestStartCandidates->collect(g | g.goalId)->max() in\n        not result.data.savingGoal.oclIsUndefined() and\n        result.data.savingGoal.goalId = selectedId\n    endif\n\nTechnical constraints:\n- A Saving goal is eligible only when its persisted date range is valid and overlaps the current calendar month.\n- If multiple eligible Saving goals exist, select the one with the latest startDate; if multiple candidates share that startDate, select the one with the highest goalId.\n- For the OCL in UC-13, currentMonthStart() and currentMonthEnd() denote the first and last instants of the backend server's current calendar month.",
+      "context": "GoalService::getGoals(userId : Integer) : GoalListResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "A successful response returns no saving goal when no eligible candidate exists; otherwise it returns the uniquely selected eligible saving goal defined by the date and goalId tie-breakers.",
+      "traceability": ["Use cases!A276:B294", "UC-13 Basic Flow 4-7", "UC-13 AF-1", "UC-13 UML Goal and SavingGoalDto"]
+    },
+    {
+      "br_id": "BR-GOAL-VIEW-03",
+      "name": "Expense-limit goal eligibility and exact coverage",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context GoalService::getGoals(userId : Integer) : GoalListResponseDto\n\npost BR_GOAL_VIEW_03_AllAndOnlyEligibleExpenseGoals:\n  let eligible : Set(Goal) =\n    Goal.allInstances()\n      ->select(g |\n        g.userId = userId and\n        g.goalType = GoalType::EXPENSE_LIMIT and\n        g.startDate <= g.endDate and\n        g.startDate <= currentMonthEnd() and\n        g.endDate >= currentMonthStart()\n      )\n      ->asSet()\n  in\n    result.data.expenseGoals->size() = eligible->size() and\n    result.data.expenseGoals->isUnique(dto | dto.goalId) and\n    result.data.expenseGoals->forAll(dto |\n      eligible->exists(g | g.goalId = dto.goalId)\n    )\n\nTechnical constraints:\n- Expired, not-yet-active, invalid-range, or other-user Expense_Limit goals shall not be returned.\n- Every eligible Expense_Limit goal shall appear exactly once.",
+      "context": "GoalService::getGoals(userId : Integer) : GoalListResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "A successful response includes every eligible expense-limit goal exactly once and excludes every ineligible goal; when none is eligible, expenseGoals is empty.",
+      "traceability": ["Use cases!A276:B294", "UC-13 Basic Flow 4-7", "UC-13 AF-1", "UC-13 AF-2", "UC-13 UML GoalDataDto"]
+    },
+    {
+      "br_id": "BR-GOAL-VIEW-04",
+      "name": "Saving progress uses the goal/month overlap interval",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context GoalService::getGoals(userId : Integer) : GoalListResponseDto\n\npost BR_GOAL_VIEW_04_SavingTargetAchieved:\n  not result.data.savingGoal.oclIsUndefined()\n  implies\n    let goal : Goal = Goal.allInstances()->any(g | g.goalId = result.data.savingGoal.goalId) in\n    let periodStart : Date = if goal.startDate > currentMonthStart() then goal.startDate else currentMonthStart() endif in\n    let periodEnd : Date = if goal.endDate < currentMonthEnd() then goal.endDate else currentMonthEnd() endif in\n    let ownedAccountIds : Set(Integer) =\n      Account.allInstances()\n        ->select(a | a.userId = userId)\n        ->collect(a | a.accountId)\n        ->asSet()\n    in\n    let periodTransactions : Set(Transaction) =\n      Transaction.allInstances()\n        ->select(t |\n          ownedAccountIds->includes(t.accountId) and\n          t.transactionDate >= periodStart and\n          t.transactionDate <= periodEnd\n        )\n        ->asSet()\n    in\n    let revenue : Decimal =\n      periodTransactions\n        ->select(t | t.type = TransactionType::REVENUE)\n        ->collect(t | t.amount)\n        ->sum()\n    in\n    let expense : Decimal =\n      periodTransactions\n        ->select(t | t.type = TransactionType::EXPENSE)\n        ->collect(t | t.amount)\n        ->sum()\n    in\n      result.data.savingGoal.targetAchieved = revenue - expense\n\nTechnical constraints:\n- Saving progress is calculated only for the intersection between the selected Saving goal's date interval and the current calendar month.\n- Transactions outside that intersection shall not contribute even if they are in the same calendar month.\n- If no owned account or no matching transaction exists, the corresponding sum is treated as 0.\n- Negative targetAchieved values are allowed and shall not be clamped to zero.",
+      "context": "GoalService::getGoals(userId : Integer) : GoalListResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "When a saving goal is returned, targetAchieved equals owned revenue minus owned expense within the inclusive goal/month overlap; empty sums are zero and negative results remain negative.",
+      "traceability": ["Use cases!A276:B294", "UC-13 Basic Flow 4-7", "UC-13 UML Account, Transaction, and SavingGoalDto"]
+    },
+    {
+      "br_id": "BR-GOAL-VIEW-05",
+      "name": "Expense-limit progress uses category and goal/month overlap",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context GoalService::getGoals(userId : Integer) : GoalListResponseDto\n\npost BR_GOAL_VIEW_05_CurrentExpense:\n  result.data.expenseGoals->forAll(dto |\n    let goal : Goal = Goal.allInstances()->any(g | g.goalId = dto.goalId) in\n    let periodStart : Date = if goal.startDate > currentMonthStart() then goal.startDate else currentMonthStart() endif in\n    let periodEnd : Date = if goal.endDate < currentMonthEnd() then goal.endDate else currentMonthEnd() endif in\n    let ownedAccountIds : Set(Integer) =\n      Account.allInstances()\n        ->select(a | a.userId = userId)\n        ->collect(a | a.accountId)\n        ->asSet()\n    in\n    let expectedExpense : Decimal =\n      Transaction.allInstances()\n        ->select(t |\n          ownedAccountIds->includes(t.accountId) and\n          t.type = TransactionType::EXPENSE and\n          t.categoryId = goal.categoryId and\n          t.transactionDate >= periodStart and\n          t.transactionDate <= periodEnd\n        )\n        ->collect(t | t.amount)\n        ->sum()\n    in\n      dto.currentExpense = expectedExpense\n  )\n\nTechnical constraints:\n- Revenue transactions never contribute to currentExpense.\n- Expense progress is calculated only for the intersection between each Expense_Limit goal's date interval and the current calendar month.\n- Only transactions whose categoryId equals the goal's categoryId contribute.\n- If no owned account or no matching transaction exists, currentExpense is 0.",
+      "context": "GoalService::getGoals(userId : Integer) : GoalListResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "Each returned expense goal's currentExpense contains only owned expense transactions in the matching category and inclusive goal/month overlap; empty sums are zero.",
+      "traceability": ["Use cases!A276:B294", "UC-13 Basic Flow 4-7", "UC-13 UML Goal, Account, Transaction, and ExpenseGoalDto"]
+    },
+    {
+      "br_id": "BR-GOAL-VIEW-06",
+      "name": "Category resolution and numeric normalization",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context GoalService::getGoals(userId : Integer) : GoalListResponseDto\n\npost BR_GOAL_VIEW_06_CategoryAndAmounts:\n  result.data.expenseGoals->forAll(dto |\n    let goal : Goal = Goal.allInstances()->any(g | g.goalId = dto.goalId) in\n      dto.targetAmount = round2(goal.targetAmount) and\n      dto.currentExpense = round2(dto.currentExpense) and\n      (\n        (goal.categoryId.oclIsUndefined() and dto.category = 'Uncategorized') or\n        (not goal.categoryId.oclIsUndefined() and\n          Category.allInstances()->exists(c |\n            c.categoryId = goal.categoryId and\n            StringNormalizer.trim(c.categoryName).size() > 0 and\n            dto.category = StringNormalizer.trim(c.categoryName)\n          )) or\n        (not goal.categoryId.oclIsUndefined() and\n          not Category.allInstances()->exists(c |\n            c.categoryId = goal.categoryId and\n            StringNormalizer.trim(c.categoryName).size() > 0\n          ) and\n          dto.category = 'Unknown')\n      )\n  )\n\nTechnical constraints:\n- A null categoryId is represented as Uncategorized.\n- A non-null categoryId with no resolvable non-blank category name is represented as Unknown.\n- A resolved category name is trimmed before being returned.\n- Saving and expense monetary values returned by this use case shall be rounded to two decimal places.",
+      "context": "GoalService::getGoals(userId : Integer) : GoalListResponseDto",
+      "enforcement_layers": ["backend"],
+      "failure_behavior": "Successful goal DTOs use the defined category fallback and trimming rules, and all returned saving and expense monetary values are rounded to two decimal places.",
+      "traceability": ["Use cases!A276:B294", "UC-13 Basic Flow 4-6", "UC-13 UML Category, SavingGoalDto, and ExpenseGoalDto", "API-GOAL-LIST"]
+    },
+    {
+      "br_id": "BR-GOAL-VIEW-07",
+      "name": "Deterministic expense-goal priority ordering",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context GoalService::getGoals(userId : Integer) : GoalListResponseDto\n\npost BR_GOAL_VIEW_07_ExpenseGoalOrder:\n  result.data.expenseGoals->size() <= 1 or\n  Sequence{1..result.data.expenseGoals->size() - 1}->forAll(i |\n    let a : ExpenseGoalDto = result.data.expenseGoals->at(i),\n        b : ExpenseGoalDto = result.data.expenseGoals->at(i + 1),\n        ga : Goal = Goal.allInstances()->any(g | g.goalId = a.goalId),\n        gb : Goal = Goal.allInstances()->any(g | g.goalId = b.goalId),\n        aExceeded : Boolean = a.currentExpense >= a.targetAmount,\n        bExceeded : Boolean = b.currentExpense >= b.targetAmount\n    in\n      (aExceeded and not bExceeded) or\n      (aExceeded = bExceeded and ga.endDate < gb.endDate) or\n      (aExceeded = bExceeded and ga.endDate = gb.endDate and a.targetAmount < b.targetAmount) or\n      (aExceeded = bExceeded and ga.endDate = gb.endDate and a.targetAmount = b.targetAmount and a.goalId < b.goalId)\n  )\n\nTechnical constraints:\n- Goals that have reached or exceeded their target amount shall be listed before goals still below their limit.\n- Within the same exceeded/not-exceeded group, order by endDate ascending, then targetAmount ascending, then goalId ascending.\n- The ordering shall be deterministic for the same persisted data and calculation date.",
+      "context": "GoalService::getGoals(userId : Integer) : GoalListResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "Successful expenseGoals arrays use the defined exceeded-status, endDate, targetAmount, and goalId priority order deterministically.",
+      "traceability": ["Use cases!A276:B294", "UC-13 Basic Flow 4-7", "UC-13 UML Goal and GoalDataDto"]
+    }
+  ],
+  "ordered_br_ids": [
+    "BR-GOAL-VIEW-01",
+    "BR-GOAL-VIEW-02",
+    "BR-GOAL-VIEW-03",
+    "BR-GOAL-VIEW-04",
+    "BR-GOAL-VIEW-05",
+    "BR-GOAL-VIEW-06",
+    "BR-GOAL-VIEW-07"
+  ],
+  "unresolved_items": []
+}

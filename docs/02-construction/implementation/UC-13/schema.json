@@ -1,0 +1,166 @@
+{
+  "artifact_type": "database-schema",
+  "uc_id": "UC-13",
+  "status": "Approved",
+  "source_use_case": "docs/01-inception/use-cases/uc-13-view-financial-goals.md",
+  "source_prompt": "docs/02-construction/coding-prompts/UC-13-rq3-coding-prompt.md",
+  "active_run": "docs/02-construction/implementation/UC-13/runs/RQ3-SOL-MEDIUM-R1-UC13/run-activation.json",
+  "created_at": "2026-09-05T09:18:56Z",
+  "trigger": {
+    "incident": "DEP-20260905-002",
+    "observed_behavior": "MySQL reaches healthy, but the backend repeatedly fails before health because MakeTransactionsReceiptIdNullable20260901101931 calls changeColumn on an absent transactions table.",
+    "bounded_error": "TypeORMError: Table transactions does not exist.",
+    "known_baseline_evidence": "The repository contains entity mappings for accounts, categories, transactions and Goals, but no migration creates the first three tables. The existing Goals create-if-absent migration runs only after the failing transactions migration.",
+    "source_builds": "Fresh backend and frontend production images pass."
+  },
+  "contract": {
+    "change_type": "recover-missing-read-domain-prerequisite-tables",
+    "migration": {
+      "target": "finalsource/be/src/database/migrations/20260901101931-make-transactions-receipt-id-nullable.ts",
+      "approach": "Extend the currently pending migration with an idempotent create-if-absent path for categories, accounts and transactions before retaining its existing receipt_id-nullability behavior. Existing compatible tables and all existing rows remain untouched.",
+      "ordering_reason": "This migration is the active startup failure and executes before the existing Goals create-if-absent migration. Extending it avoids adding a later migration that cannot be reached.",
+      "synchronize_remains_false": true
+    },
+    "tables": [
+      {
+        "name": "categories",
+        "create_only_when_absent": true,
+        "columns": [
+          "category_id INT AUTO_INCREMENT PRIMARY KEY",
+          "category_name VARCHAR(255) NOT NULL UNIQUE"
+        ],
+        "relationships": [],
+        "indexes": [
+          "UNIQUE(category_name)"
+        ]
+      },
+      {
+        "name": "accounts",
+        "create_only_when_absent": true,
+        "columns": [
+          "account_id INT AUTO_INCREMENT PRIMARY KEY",
+          "user_id INT UNSIGNED NOT NULL",
+          "bank_name VARCHAR(255) NOT NULL",
+          "account_type ENUM('Checking','Credit Card','Savings','Investment','Loan') NOT NULL",
+          "branch_name VARCHAR(255) NULL",
+          "account_number_full VARCHAR(255) NOT NULL",
+          "account_number_last_4 VARCHAR(4) NOT NULL",
+          "balance DECIMAL(15,2) NOT NULL DEFAULT 0.00"
+        ],
+        "relationships": [
+          "FOREIGN KEY user_id REFERENCES users(id) with no cascade change"
+        ],
+        "indexes": [
+          "UNIQUE uq_accounts_user_id_account_number_full(user_id, account_number_full)",
+          "INDEX IDX_accounts_user_id(user_id)"
+        ]
+      },
+      {
+        "name": "transactions",
+        "create_only_when_absent": true,
+        "columns": [
+          "transaction_id INT AUTO_INCREMENT PRIMARY KEY",
+          "account_id INT NOT NULL",
+          "transaction_date DATE NOT NULL",
+          "type ENUM('Revenue','Expense') NOT NULL",
+          "item_description VARCHAR(500) NOT NULL",
+          "shop_name VARCHAR(255) NULL",
+          "amount DECIMAL(15,2) NOT NULL",
+          "payment_method VARCHAR(100) NULL",
+          "status ENUM('Complete','Pending','Failed') NOT NULL DEFAULT 'Pending'",
+          "receipt_id INT UNSIGNED NULL",
+          "category_id INT NULL"
+        ],
+        "relationships": [
+          "FOREIGN KEY account_id REFERENCES accounts(account_id) with no cascade change",
+          "FOREIGN KEY category_id REFERENCES categories(category_id) with no cascade change"
+        ],
+        "indexes": [
+          "INDEX IDX_transactions_account_date(account_id, transaction_date)"
+        ]
+      }
+    ],
+    "compatibility_preflight": [
+      "Require users to exist with unsigned primary key users.id before creating accounts; otherwise stop without mutation.",
+      "For any prerequisite table that already exists, validate the columns and referenced-key signedness needed by UC-13 before continuing; stop on an incompatible partial schema rather than altering it implicitly.",
+      "Create missing tables in categories, accounts, transactions order so every foreign-key target exists.",
+      "When transactions already exists, retain the previously approved UC-04 behavior that changes only receipt_id to INT UNSIGNED NULL.",
+      "When transactions is newly created with receipt_id already nullable, do not perform a redundant destructive rewrite."
+    ],
+    "data_and_rollback": {
+      "forward_data_impact": "Additive only for absent tables. No existing row is rewritten or deleted and no seed or fabricated financial data is introduced.",
+      "rollback": "Use migration-specific table comments to identify tables created by this recovery path. Drop only migration-created tables, in transactions, accounts, categories order, and only while each is empty. Refuse rollback when any such table contains rows or when ownership cannot be proven.",
+      "persistent_volume": "Preserve the existing Docker volume; no reset, prune or down -v operation is authorized."
+    },
+    "runtime_verification_after_implementation": [
+      "Rebuild the backend production image through Docker Compose.",
+      "Start the existing persistent MySQL volume through the non-conflicting host-port override.",
+      "Verify database, backend and frontend health separately.",
+      "Perform only bounded UC-13 health, unauthenticated 401 and researcher-authorized authenticated goal observations.",
+      "Do not create or run tests."
+    ],
+    "out_of_scope": [
+      "No users, Goals, bills or other table redesign",
+      "No seed data, backfill, data deletion or volume reset",
+      "No cascade behavior",
+      "No public API or Business Rule change",
+      "No TypeORM synchronize enablement",
+      "No correction of unrelated receipt_id TypeScript/API mapping drift",
+      "No test or test-case creation or execution"
+    ]
+  },
+  "assumptions": [
+    "The current failure proves transactions is absent but does not, by itself, prove whether accounts and categories are absent because migration execution stops first.",
+    "The create-if-absent and compatibility-preflight behavior is required to handle either a fully missing or partially present cumulative baseline without overwriting existing data.",
+    "The physical receipt_id contract remains INT UNSIGNED NULL as already approved in docs/02-construction/implementation/UC-04/schema.json; UC-13 does not read or expose receipt identifiers.",
+    "The existing Goals create-if-absent migration remains responsible for Goals after these prerequisite tables are available."
+  ],
+  "approval": {
+    "required": true,
+    "approved_by_researcher": true,
+    "approved_at": "2026-09-05T16:23:05.287+07:00",
+    "approved_via": "The researcher replied 'approve' immediately after the explicit request to approve the UC-13 schema proposal.",
+    "scope": "Approve the exact idempotent categories/accounts/transactions recovery contract above and the bounded migration implementation; approval does not authorize destructive rollback, seed data, or Docker volume reset."
+  },
+  "pending_amendment": {
+    "amendment_id": "UC-13-SCHEMA-RUNTIME-001",
+    "status": "Approved",
+    "created_at": "2026-09-05T16:28:59.811+07:00",
+    "trigger_incident": "DEP-20260905-003",
+    "trigger_evidence": "The approved recovery created empty categories, accounts and transactions tables and the receipt migration was recorded successfully. The following Goals migration then failed with ER_FK_INCOMPATIBLE_COLUMNS because Goals.category_id is INT UNSIGNED while categories.category_id is INT signed.",
+    "observed_metadata": [
+      "categories.category_id: INT signed, NOT NULL",
+      "transactions.category_id: INT signed, NULL",
+      "transactions.receipt_id: INT UNSIGNED, NULL",
+      "MakeTransactionsReceiptIdNullable20260901101931 is recorded in the migrations table",
+      "Goals was not created"
+    ],
+    "required_change": {
+      "migration": "Add one TypeORM migration ordered immediately before CreateGoalsTableIfMissing20260903105626.",
+      "operations": [
+        "Preflight categories and transactions and refuse any negative category identifiers.",
+        "Drop only the existing transactions.category_id foreign key temporarily.",
+        "Alter categories.category_id from INT signed to INT UNSIGNED without changing values, primary-key status or generation behavior.",
+        "Alter transactions.category_id from INT signed NULL to INT UNSIGNED NULL.",
+        "Recreate the transactions.category_id foreign key with its existing no-cascade behavior.",
+        "Update Category.categoryId and Transaction.categoryId TypeORM mappings to unsigned so source and physical schema agree.",
+        "Leave the already-approved Goals migration unchanged; it can then create its unsigned category foreign key."
+      ]
+    },
+    "data_impact": "No rows are created, rewritten or deleted. The migration must refuse execution if a negative category identifier exists. The Docker volume remains preserved.",
+    "rollback": "Before reverting to signed INT, remove only the affected category foreign keys, restore both columns to signed INT with their existing nullability, and recreate the original no-cascade transaction foreign key. Never drop a table or row.",
+    "out_of_scope": [
+      "No Goal table redesign or change to the already-approved Goals migration",
+      "No receipt, account, user, bill, public API or Business Rule change",
+      "No seed data, volume reset or destructive cleanup",
+      "No tests"
+    ],
+    "approval": {
+      "required": true,
+      "approved_by_researcher": true,
+      "approved_at": "2026-09-05T16:35:13.022+07:00",
+      "approved_via": "The researcher replied 'approve' immediately after the explicit UC-13-SCHEMA-RUNTIME-001 amendment request.",
+      "scope": "Approve unsigned category identifiers in categories and transactions, their matching TypeORM mappings, and the bounded foreign-key-preserving migration described above."
+    }
+  }
+}

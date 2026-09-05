@@ -11,8 +11,8 @@ import type {
 
 export const goalService = {
   // Lấy danh sách mục tiêu của user
-  getGoals: async (): Promise<ApiResponse<GoalListResult>> => {
-    const response = await axiosInstance.get<ApiResponse<GoalListResult>>('/v1/goals')
+  getGoals: async (signal?: AbortSignal): Promise<ApiResponse<GoalListResult>> => {
+    const response = await axiosInstance.get<ApiResponse<GoalListResult>>('/v1/goals', { signal })
     return response.data
   },
 
@@ -53,4 +53,3 @@ export const goalService = {
     return response.data
   },
 }
-

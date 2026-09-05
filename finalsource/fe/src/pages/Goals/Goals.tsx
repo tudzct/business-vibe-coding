@@ -1,8 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import axios from 'axios'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { goalService } from '../../api/goal.service'
 import type {
   ExpenseGoalListItem,
+  GoalListResult,
   SavingGoalListItem,
   UpdatedGoal,
 } from '../../api/types'
@@ -20,43 +22,104 @@ const navigation = [
   { label: 'Goals', path: '/goals', icon: '◉' },
 ] as const
 
-const expenseCards = [
-  { label: 'Housing', icon: '⌂' },
-  { label: 'Transportation', icon: '▦' },
-  { label: 'Entertainment', icon: '▰' },
-  { label: 'Shopping', icon: '▢' },
-  { label: 'Others', icon: '▦' },
-] as const
+const expenseIcons = ['⌂', '▦', '▰', '▢', '▦'] as const
 
-interface ExpenseGoalCard {
-  readonly label: string
-  readonly icon: string
-  readonly goal?: UpdatedGoal
+const isRecord = (value: unknown): value is Record<string, unknown> => (
+  typeof value === 'object' && value !== null
+)
+
+const isFiniteNumber = (value: unknown): value is number => (
+  typeof value === 'number' && Number.isFinite(value)
+)
+
+const isSavingGoal = (value: unknown): value is SavingGoalListItem => {
+  if (!isRecord(value)) return false
+  return isFiniteNumber(value.goal_id)
+    && value.goal_type === 'Saving'
+    && isFiniteNumber(value.target_amount)
+    && isFiniteNumber(value.target_achieved)
+    && typeof value.start_date === 'string'
+    && typeof value.end_date === 'string'
 }
+
+const isExpenseGoal = (value: unknown): value is ExpenseGoalListItem => {
+  if (!isRecord(value)) return false
+  return isFiniteNumber(value.goal_id)
+    && typeof value.category === 'string'
+    && isFiniteNumber(value.target_amount)
+    && isFiniteNumber(value.current_expense)
+}
+
+const isGoalListResult = (value: unknown): value is GoalListResult => {
+  if (!isRecord(value) || !Array.isArray(value.expenseGoals)) return false
+  return (value.savingGoal === null || isSavingGoal(value.savingGoal))
+    && value.expenseGoals.every(isExpenseGoal)
+}
+
+const getSafeErrorMessage = (error: unknown): string => {
+  if (!axios.isAxiosError(error)) return 'Unable to load goals. Please try again.'
+  const responseData: unknown = error.response?.data
+  if (isRecord(responseData)) {
+    const message = responseData.message
+    if (typeof message === 'string' && message.trim()) return message
+    if (Array.isArray(message) && message.every((item) => typeof item === 'string')) {
+      return message.join(', ')
+    }
+  }
+  return 'Unable to load goals. Please try again.'
+}
+
+const formatAmount = (amount: number): string => (
+  `${new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(amount)} VND`
+)
 
 const Goals: React.FC = () => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const activeRequest = useRef<AbortController | null>(null)
+  const latestRequestId = useRef(0)
   const [createOpen, setCreateOpen] = useState(false)
   const [adjustingGoal, setAdjustingGoal] = useState<UpdatedGoal | null>(null)
   const [successMessage, setSuccessMessage] = useState('')
   const [savingGoal, setSavingGoal] = useState<SavingGoalListItem | null>(null)
   const [expenseGoals, setExpenseGoals] = useState<ExpenseGoalListItem[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
 
   const refreshGoals = useCallback(async (): Promise<void> => {
+    activeRequest.current?.abort()
+    const controller = new AbortController()
+    const requestId = latestRequestId.current + 1
+    activeRequest.current = controller
+    latestRequestId.current = requestId
+    setIsLoading(true)
+    setLoadError(null)
+
     try {
-      const response = await goalService.getGoals()
-      if (response.success && response.data) {
-        setSavingGoal(response.data.savingGoal)
-        setExpenseGoals(response.data.expenseGoals)
+      const response = await goalService.getGoals(controller.signal)
+      if (requestId !== latestRequestId.current) return
+      if (!response.success || !isGoalListResult(response.data)) {
+        throw new Error('Malformed goal response')
       }
-    } catch {
-      // The create result stays visible if the existing list endpoint is unavailable.
+      setSavingGoal(response.data.savingGoal)
+      setExpenseGoals(response.data.expenseGoals)
+    } catch (error: unknown) {
+      if (controller.signal.aborted || requestId !== latestRequestId.current) return
+      setSavingGoal(null)
+      setExpenseGoals([])
+      if (axios.isAxiosError(error) && error.response?.status === 401) return
+      setLoadError(getSafeErrorMessage(error))
+    } finally {
+      if (requestId === latestRequestId.current) setIsLoading(false)
     }
   }, [])
 
   useEffect(() => {
     void refreshGoals()
+    return () => {
+      activeRequest.current?.abort()
+      latestRequestId.current += 1
+    }
   }, [refreshGoals])
 
   const handleCreated = (message: string, goalId: number): void => {
@@ -77,17 +140,16 @@ const Goals: React.FC = () => {
     void refreshGoals()
   }
 
-  const expenseGoalCards: ExpenseGoalCard[] = expenseGoals.length > 0
-    ? expenseGoals.map((goal, index) => ({
-        label: goal.category,
-        icon: expenseCards[index % expenseCards.length].icon,
-        goal: { goal_id: goal.goal_id, target_amount: goal.target_amount },
-      }))
-    : expenseCards.map((card) => card)
-  const formatVnd = (amount: number): string => `${new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(amount)} VND`
-
   const displayName = user?.fullName || user?.full_name || user?.username || 'Account User'
-  const topDate = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(new Date())
+  const topDate = new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }).format(new Date())
+  const hasGoals = savingGoal !== null || expenseGoals.length > 0
+  const progressPercent = savingGoal && savingGoal.target_amount > 0
+    ? Math.max(0, Math.min(100, (savingGoal.target_achieved / savingGoal.target_amount) * 100))
+    : 0
 
   return (
     <div className="min-h-screen bg-[#F4F5F7] text-[#252525] lg:flex">
@@ -125,28 +187,74 @@ const Goals: React.FC = () => {
           </div>
           <div aria-live="polite" className="mt-3 min-h-6 text-sm font-semibold text-[#23877d]">{successMessage}</div>
 
-          <div className="mt-2 grid gap-6 xl:grid-cols-[368px_minmax(0,1fr)]">
-            <article className="rounded-xl bg-white px-6 py-6 shadow-[0_14px_34px_rgba(0,0,0,0.08)]">
-              <div className="flex items-center justify-between border-b border-[#ececec] pb-5"><h2 className="font-semibold text-[#4d4d4d]">Savings Goal</h2><button type="button" disabled className="rounded border border-[#d7d7d7] bg-[#f6f6f6] px-4 py-2 text-xs text-[#777]">01 May ~ 31 May⌄</button></div>
-              <div className="mt-6 grid grid-cols-2 gap-4">
-                <div className="space-y-5 text-sm text-[#888]"><div><p>♕ &nbsp;Target Achieved</p><p className="ml-6 mt-1 text-lg font-bold text-[#222]">$12,500</p></div><div><p>◎ &nbsp;This month Target</p><p className="ml-6 mt-1 text-lg font-bold text-[#222]">{savingGoal ? formatVnd(savingGoal.target_amount) : '$20,000'}</p></div></div>
-                <div className="flex flex-col items-center justify-center"><div className="relative h-24 w-32 overflow-hidden"><div className="absolute left-2 top-3 h-24 w-28 rotate-[-40deg] rounded-full border-[12px] border-[#e3e7e7] border-r-[#299D91] border-t-[#299D91]" /><div className="absolute bottom-0 left-1/2 h-2 w-2 -translate-x-1/2 rounded-full bg-[#299D91]" /></div><p className="text-xs font-semibold">Target vs Achievement</p></div>
-              </div>
-              <button type="button" disabled={!savingGoal || Boolean(adjustingGoal)} onClick={() => { if (savingGoal) { setSuccessMessage(''); setAdjustingGoal({ goal_id: savingGoal.goal_id, target_amount: savingGoal.target_amount }) } }} className="mt-6 w-full rounded border border-[#299D91] py-2 text-sm text-[#299D91] hover:bg-[#299D91]/5 focus:outline-none focus:ring-2 focus:ring-[#299D91]/30 disabled:cursor-not-allowed disabled:opacity-50">Adjust Goal &nbsp;✎</button>
-            </article>
-
-            <SavingsSummaryChart />
-          </div>
-
-          <section className="mt-7">
-            <h2 className="text-2xl font-normal text-[#777]">Expenses Goals by Category</h2>
-            <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {expenseGoalCards.map(({ goal, icon, label }) => {
-                return <article key={goal?.goal_id ?? label} className="flex items-center gap-4 rounded-xl bg-white px-6 py-5 shadow-[0_10px_28px_rgba(0,0,0,0.07)]"><div className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f0f1f1] text-xl text-[#555]">{icon}</div><div className="min-w-0 flex-1"><p className="text-sm text-[#8a8a8a]">{label}</p><p className="text-xl font-bold text-[#242424]">{goal ? formatVnd(goal.target_amount) : '$250.00'}</p></div><button type="button" disabled={!goal || Boolean(adjustingGoal)} onClick={() => { if (goal) { setSuccessMessage(''); setAdjustingGoal(goal) } }} className="rounded border border-[#299D91] px-4 py-2 text-sm text-[#299D91] hover:bg-[#299D91]/5 focus:outline-none focus:ring-2 focus:ring-[#299D91]/30 disabled:cursor-not-allowed disabled:opacity-50">Adjust &nbsp;✎</button></article>
-              })}
+          {isLoading && (
+            <div role="status" aria-label="Loading goals" className="mt-2 grid animate-pulse gap-6 xl:grid-cols-[368px_minmax(0,1fr)]">
+              <div className="h-[292px] rounded-xl bg-white shadow-[0_14px_34px_rgba(0,0,0,0.08)]" />
+              <div className="h-[292px] rounded-xl bg-white shadow-[0_14px_34px_rgba(0,0,0,0.08)]" />
+              <span className="sr-only">Loading financial goals</span>
             </div>
-          </section>
-          <p className="sr-only" aria-live="polite">{(savingGoal ? 1 : 0) + expenseGoals.length} goals loaded.</p>
+          )}
+
+          {!isLoading && loadError && (
+            <div role="alert" className="mt-2 rounded-xl bg-white px-8 py-12 text-center shadow-[0_14px_34px_rgba(0,0,0,0.08)]">
+              <h2 className="text-lg font-semibold text-[#4d4d4d]">Goals could not be loaded</h2>
+              <p className="mt-2 text-sm text-[#777]">{loadError}</p>
+              <button type="button" onClick={() => void refreshGoals()} disabled={isLoading} className="mt-6 rounded border border-[#299D91] px-5 py-2 text-sm font-semibold text-[#299D91] hover:bg-[#299D91]/5 focus:outline-none focus:ring-2 focus:ring-[#299D91]/30 disabled:opacity-50">Retry</button>
+            </div>
+          )}
+
+          {!isLoading && !loadError && (
+            <>
+              {!hasGoals && (
+                <div className="mt-2 rounded-xl bg-white px-8 py-12 text-center shadow-[0_14px_34px_rgba(0,0,0,0.08)]">
+                  <h2 className="text-lg font-semibold text-[#4d4d4d]">No financial goals yet</h2>
+                  <p className="mt-2 text-sm text-[#777]">Create a goal to start tracking your progress.</p>
+                  <button type="button" onClick={() => setCreateOpen(true)} className="mt-6 rounded border border-[#299D91] px-5 py-2 text-sm font-semibold text-[#299D91] hover:bg-[#299D91]/5 focus:outline-none focus:ring-2 focus:ring-[#299D91]/30">Create Goal</button>
+                </div>
+              )}
+
+              <div className="mt-2 grid gap-6 xl:grid-cols-[368px_minmax(0,1fr)]">
+                {savingGoal && (
+                  <article className="rounded-xl bg-white px-6 py-6 shadow-[0_14px_34px_rgba(0,0,0,0.08)]">
+                    <div className="flex items-center justify-between gap-3 border-b border-[#ececec] pb-5">
+                      <h2 className="font-semibold text-[#4d4d4d]">Savings Goal</h2>
+                      <span className="rounded border border-[#d7d7d7] bg-[#f6f6f6] px-3 py-2 text-xs text-[#777]">{savingGoal.start_date} – {savingGoal.end_date}</span>
+                    </div>
+                    <div className="mt-6 space-y-5 text-sm text-[#888]">
+                      <div><p>♕ &nbsp;Target Achieved</p><p className="ml-6 mt-1 text-lg font-bold text-[#222]">{formatAmount(savingGoal.target_achieved)}</p></div>
+                      <div><p>◎ &nbsp;Target Amount</p><p className="ml-6 mt-1 text-lg font-bold text-[#222]">{formatAmount(savingGoal.target_amount)}</p></div>
+                      <div>
+                        <div className="flex items-center justify-between text-xs font-semibold text-[#555]"><span>Target vs Achievement</span><span>{progressPercent.toFixed(0)}%</span></div>
+                        <progress aria-label="Saving goal progress" className="mt-2 h-3 w-full accent-[#299D91]" max={100} value={progressPercent} />
+                      </div>
+                    </div>
+                    <button type="button" disabled={Boolean(adjustingGoal)} onClick={() => { setSuccessMessage(''); setAdjustingGoal({ goal_id: savingGoal.goal_id, target_amount: savingGoal.target_amount }) }} className="mt-6 w-full rounded border border-[#299D91] py-2 text-sm text-[#299D91] hover:bg-[#299D91]/5 focus:outline-none focus:ring-2 focus:ring-[#299D91]/30 disabled:cursor-not-allowed disabled:opacity-50">Adjust Goal &nbsp;✎</button>
+                  </article>
+                )}
+
+                <SavingsSummaryChart />
+              </div>
+
+              {expenseGoals.length > 0 && (
+                <section className="mt-7">
+                  <h2 className="text-2xl font-normal text-[#777]">Expenses Goals by Category</h2>
+                  <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    {expenseGoals.map((goal, index) => (
+                      <article key={goal.goal_id} className="rounded-xl bg-white px-6 py-5 shadow-[0_10px_28px_rgba(0,0,0,0.07)]">
+                        <div className="flex items-center gap-4">
+                          <div aria-hidden="true" className="flex h-12 w-12 items-center justify-center rounded-lg bg-[#f0f1f1] text-xl text-[#555]">{expenseIcons[index % expenseIcons.length]}</div>
+                          <div className="min-w-0 flex-1"><p className="truncate text-sm text-[#8a8a8a]">{goal.category}</p><p className="text-xl font-bold text-[#242424]">{formatAmount(goal.target_amount)}</p></div>
+                          <button type="button" disabled={Boolean(adjustingGoal)} onClick={() => { setSuccessMessage(''); setAdjustingGoal({ goal_id: goal.goal_id, target_amount: goal.target_amount }) }} className="rounded border border-[#299D91] px-4 py-2 text-sm text-[#299D91] hover:bg-[#299D91]/5 focus:outline-none focus:ring-2 focus:ring-[#299D91]/30 disabled:cursor-not-allowed disabled:opacity-50">Adjust &nbsp;✎</button>
+                        </div>
+                        <div className="mt-4 border-t border-[#ececec] pt-3 text-xs text-[#777]"><span className="font-semibold text-[#4d4d4d]">Current expense:</span> {formatAmount(goal.current_expense)}</div>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+              )}
+              <p className="sr-only" aria-live="polite">{(savingGoal ? 1 : 0) + expenseGoals.length} goals loaded.</p>
+            </>
+          )}
         </section>
       </main>
 

@@ -1,0 +1,24 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-09-05T09:02:00Z",
+  "mode": "run",
+  "uc_id": "UC-13",
+  "run_id": "RQ3-SOL-MEDIUM-R1-UC13",
+  "source_revision": "sha256:67cb2da43f7fc890d57309db479a446854cd3f292363cd07925e1870818ff06b",
+  "commands": [
+    { "id": "docker-version", "exit_code": 0 },
+    { "id": "compose-version", "exit_code": 0 },
+    { "id": "docker-daemon-version", "exit_code": 0 },
+    { "id": "compose-config-quiet", "exit_code": 0 },
+    { "id": "compose-build-backend-frontend", "exit_code": 1, "bounded_error": "Frontend TypeScript build: Bills.tsx imports a non-exported useAuth member from AuthContext." },
+    { "id": "compose-build-backend", "exit_code": 0 },
+    { "id": "compose-up-database-backend", "exit_code": 1, "bounded_error": "Database host port 3306 is already in use by a host mysqld process." },
+    { "id": "compose-ps-all", "exit_code": 0 },
+    { "id": "repair-build-backend", "exit_code": 0, "bounded_result": "Fresh backend production image passed after all six BR repairs." },
+    { "id": "repair-build-frontend", "exit_code": 0, "bounded_result": "Fresh frontend production image passed after the bounded cumulative import repair." },
+    { "id": "compose-up-with-temporary-host-port-3307", "exit_code": 1, "bounded_error": "Database became healthy; backend migration MakeTransactionsReceiptIdNullable20260901101931 failed because table transactions does not exist." },
+    { "id": "compose-stop-preserve-volume", "exit_code": 0 }
+  ],
+  "outcome": "BLOCKED",
+  "incident": "DEP-20260905-002"
+}

@@ -1,0 +1,17 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-09-05T09:28:59Z",
+  "mode": "troubleshoot",
+  "uc_id": "UC-13",
+  "run_id": "RQ3-SOL-MEDIUM-R1-UC13",
+  "source_revision": "sha256:807d6f6260fd36aee0732f115032f7c049cb3d0af4f7e39dba90df3b02bd93c7",
+  "commands": [
+    { "id": "compose-build-backend", "exit_code": 0 },
+    { "id": "compose-up-wait-host-port-3307", "exit_code": 1, "bounded_error": "Goals.category_id INT UNSIGNED cannot reference categories.category_id INT signed." },
+    { "id": "read-only-schema-migration-metadata", "exit_code": 0 },
+    { "id": "compose-stop-preserve-volume", "exit_code": 0 }
+  ],
+  "outcome": "BLOCKED_PENDING_SCHEMA_AMENDMENT",
+  "resolved_incident": "DEP-20260905-002",
+  "blocking_incident": "DEP-20260905-003"
+}

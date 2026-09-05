@@ -7,12 +7,12 @@ source_type: google-sheets
 source_spreadsheet_id: 1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM
 source_sheet: "Use cases"
 source_range: "A295:B313"
-retrieved_at: 2026-09-03T10:40:26.000Z
+retrieved_at: 2026-09-05T08:24:09.000Z
 ---
 
 # UC-14: Create a Financial Goal
 
-> Canonical source: [Financial Management Specification](https://docs.google.com/spreadsheets/d/1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM/edit?gid=0#gid=0), tab Use cases, columns A-B. This frozen repository projection is read-only; source corrections must be made in the spreadsheet and imported as a new revision.
+> Canonical source: [Financial Management Specification](https://docs.google.com/spreadsheets/d/1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM/edit?gid=0#gid=0), tab `Use cases`, range `A295:B313`. This frozen repository projection is read-only; source corrections must be made in the spreadsheet and imported as a new revision.
 
 ## Functional Use-Case Specification
 
@@ -26,7 +26,7 @@ Create a Financial Goal
 
 ### Description
 
-As an authenticated user, I want to create a Saving or Expense_Limit goal.
+As an authenticated user, I want to create a financial goal so that I can track a desired financial outcome.
 
 ### Actor(s)
 
@@ -43,53 +43,52 @@ The user selects Create Goal on the Goals page.
 ### Pre-Condition(s)
 
 PRE-1: The user is authenticated.
-PRE-2: The category reference data service is operational and accessible.
 
 ### Post-Condition(s)
 
-POST-1: On success, the financial goal is created and persisted, the modal closes, a success notification appears, and the goals list refreshes.
-POST-2: On failure, no goal is created and an appropriate error notification is displayed.
+POST-1: After successful processing, the new financial goal is persisted in the database.
+POST-2: After the goal is created successfully, the Create Goal modal closes and the user remains on /goals with the goal list refreshed.
+POST-3: The page displays the successful creation feedback.
 
 ### Basic Flow
 
-1. The user opens the Create Goal modal on the Goals page.
-2. The modal loads available categories.
-3. The form initializes default fields.
-4. The user enters goal details: goal type, target amount, start date, end date, and category selection.
-5. The user submits the goal creation form.
-6. The frontend performs preliminary validation on the entered goal details.
-7. The frontend sends the creation request (POST /api/v1/goals) to the backend API.
-8. The backend authenticates the request and validates all goal inputs according to established business rules.
-9. Upon successful validation, the backend creates and persists the new goal record.
-10. The backend returns a success response with the created goal details.
-11. The frontend displays a success notification, closes the modal, and refreshes the goals list.
+1. The user opens the Create Goal modal.
+2. The frontend prepares the information required by the goal-creation form.
+3. The user enters the financial-goal information.
+4. The user submits the form.
+5. The frontend sends a goal-creation request.
+6. The backend authenticates the request and validates the submitted data according to the applicable business rules.
+7. The backend creates and persists the new goal.
+8. The backend returns the creation result.
+9. The frontend closes the modal, refreshes the goal list, and displays the updated Goals page.
 
 ### Alternative Flow
 
-AF-1: Saving goal creation
-4a. The user selects a Saving goal type.
-9a. The system processes and records the saving goal.
+AF-1: Select a different goal type
+3a. The user selects another supported goal type.
+3b. The frontend updates the form fields applicable to the selected type.
+3c. The flow continues from Step 3.
 
-AF-2: Expense limit goal creation
-4b. The user selects an Expense Limit goal type and chooses a category.
-9b. The system processes and records the expense limit goal.
-
-AF-3: Form cancellation
-5a. The user closes or cancels the modal, and the frontend terminates the operation without submitting data.
+AF-2: Cancel creation
+4a. The user closes or cancels the modal.
+4b. No goal-creation request is sent and the use case ends.
 
 ### Exception Flow
 
-EF-1: Client-side validation failure
-6a. If preliminary validation fails, the modal displays field errors and halts submission.
+EF-1: Submitted data is rejected
+6a. The submitted goal data does not satisfy the applicable validation or business rules.
+6b. The backend returns HTTP 400.
+6c. The modal displays the returned validation message and remains open.
 
-EF-2: Unauthorized request
-8a. If user authentication is missing or expired, the backend rejects the request and the user is prompted to authenticate.
+EF-2: Authentication failure
+6a. The backend cannot authenticate the request.
+6b. The backend returns HTTP 401.
+6c. The frontend applies the application's authentication-error handling.
 
-EF-3: Business validation failure
-8b. If the goal inputs violate business constraints, the backend rejects the request and the modal displays the returned error message.
-
-EF-4: Server or persistence failure
-9a. If an unexpected error occurs during processing or storage, the backend returns an error and the frontend displays a failure notification.
+EF-3: Persistence or processing failure
+7a. An unexpected error occurs while creating the goal.
+7b. The backend returns HTTP 500.
+7c. The modal displays its create-goal failure state.
 
 ### Related UI
 
@@ -101,7 +100,12 @@ API-GOAL-CREATE; API-CATEGORY-LIST
 
 ### Notes
 
-Scope clarification: This use case handles the direct creation of financial goals (savings and expense limits). Goal tracking, contribution adjustments, and milestone calculations are outside scope.
+Experiment isolation:
+- BR-GOAL-CREATE-01 through BR-GOAL-CREATE-07 are the treatment-sensitive Business Rules for UC-14.
+- Description, pre/post-conditions, flows, UML, and the non-BR API contract intentionally avoid restating ownership authority, category semantics, target precision, prospective date limits, overlap conflicts, exact persistence, and atomicity semantics.
+- The API contract defines only endpoint structure, authentication, request/response field shapes, and generic error contracts.
+- The standard response envelope and HTTP transport behavior are project/API concerns and are not part of the core Business Rule effectiveness score.
+- Figma layout/styling requirements are UI evidence and are not part of the core Business Rule score.
 
 ## UML Model
 
@@ -112,11 +116,6 @@ enum GoalType {
   SAVING
   EXPENSE_LIMIT
 }
-
-note right of GoalType
-  SAVING maps to "Saving".
-  EXPENSE_LIMIT maps to "Expense_Limit".
-end note
 
 class AuthenticatedRequest <<SecurityContext>> {
   userId: Integer [1]
@@ -155,33 +154,26 @@ class CreateGoalResponseDto <<DTO>> {
 }
 
 class GoalController <<Controller>> {
-  createGoal(
-    request: AuthenticatedRequest,
-    dto: CreateGoalDto
-  ): CreateGoalResponseDto
+  createGoal(request: AuthenticatedRequest, dto: CreateGoalDto): CreateGoalResponseDto
 }
 
 class GoalService <<Service>> {
-  createGoal(
-    userId: Integer,
-    dto: CreateGoalDto
-  ): Goal
-
-  isValidDate(value: String): Boolean {query}
-  toDate(value: String): Date {query}
+  createGoal(userId: Integer, dto: CreateGoalDto): Goal
 }
+
+class GoalsPage <<UI>>
+class CreateGoalModal <<UI>>
 
 User "1" -- "0..*" Goal : owns
 Category "0..1" -- "0..*" Goal : categorizes
-
 GoalController ..> AuthenticatedRequest
 GoalController ..> CreateGoalDto
 GoalController ..> CreateGoalResponseDto
 GoalController ..> GoalService
-
 GoalService ..> Goal
 GoalService ..> Category
-GoalService ..> CreateGoalDto
+GoalsPage --> CreateGoalModal
+CreateGoalModal ..> CreateGoalResponseDto
 
 @enduml
 ~~~
@@ -191,206 +183,147 @@ GoalService ..> CreateGoalDto
 The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
 
 ~~~text
-BR-GOAL-04: Allowed goal type, active goals quota, and single active saving goal
+Specification helper semantics used only by the UC-14 Business Rules:
+- parseIsoDate(s): parses s only when s is a valid calendar date written exactly as YYYY-MM-DD.
+- todayAtMidnight(): returns the backend server's current calendar date with the time component normalized to 00:00:00.000.
+- calendarDaysBetween(a, b): returns the number of calendar-day boundaries from a to b.
+- decimalScale(x): returns the number of fractional decimal digits in x after removing insignificant trailing zeros.
 
-context GoalService::createGoal(
-  userId : Integer,
-  dto : CreateGoalDto
-) : Goal
+BR-GOAL-CREATE-01: Authenticated ownership is authoritative
 
-pre BR_GOAL_04_GoalTypeDefined:
-  not dto.goal_type.oclIsUndefined()
+context GoalService::createGoal(userId : Integer, dto : CreateGoalDto) : Goal
 
-pre BR_GOAL_04_AllowedGoalType:
-  Set{
-    GoalType::SAVING,
-    GoalType::EXPENSE_LIMIT
-  }->includes(dto.goal_type)
+pre BR_GOAL_CREATE_01_AuthenticatedIdentity:
+  not userId.oclIsUndefined()
 
-pre BR_GOAL_04_MaxActiveGoalsLimit:
-  Goal.allInstances()->select(g |
-    g.userId = userId and
-    g.endDate >= currentDate()
-  )->size() < 5
-
-pre BR_GOAL_04_SingleActiveSavingGoal:
-  dto.goal_type = GoalType::SAVING implies
-    not Goal.allInstances()->exists(g |
-      g.userId = userId and
-      g.goalType = GoalType::SAVING and
-      g.endDate >= currentDate()
-    )
-
-Technical constraints:
-- A user shall have at most 5 active goals (where endDate >= currentDate()) at any given time.
-- A user shall have at most 1 active Saving goal at any given time.
-- Creating a goal that exceeds the active quota or creates a concurrent active Saving goal shall result in HTTP 400 Bad Request.
-
-
-BR-GOAL-05: Target amount domain thresholds and currency rounding
-
-context GoalService::createGoal(
-  userId : Integer,
-  dto : CreateGoalDto
-) : Goal
-
-pre BR_GOAL_05_TargetDefined:
-  not dto.target_amount.oclIsUndefined()
-
-pre BR_GOAL_05_TargetRange:
-  dto.target_amount >= 100000 and
-  dto.target_amount <= 1000000000
-
-pre BR_GOAL_05_CurrencyRoundingStep:
-  dto.target_amount.mod(10000) = 0
-
-Technical constraints:
-- target_amount shall be at least 100,000 VND and at most 1,000,000,000 VND.
-- target_amount shall be an exact multiple of 10,000 VND.
-- Any amount violating these thresholds shall result in HTTP 400 Bad Request.
-
-
-BR-GOAL-06: Goal date horizon, minimum duration, and maximum duration window
-
-context GoalService::createGoal(
-  userId : Integer,
-  dto : CreateGoalDto
-) : Goal
-
-pre BR_GOAL_06_DatesDefined:
-  not dto.start_date.oclIsUndefined() and
-  not dto.end_date.oclIsUndefined()
-
-pre BR_GOAL_06_ValidDates:
-  self.isValidDate(dto.start_date) and
-  self.isValidDate(dto.end_date)
-
-pre BR_GOAL_06_StartDateHorizon:
-  self.toDate(dto.start_date) >= currentDate() - 7 and
-  self.toDate(dto.start_date) <= currentDate() + 30
-
-pre BR_GOAL_06_DurationIntervalWindow:
-  self.toDate(dto.end_date) >= self.toDate(dto.start_date) + 7 and
-  self.toDate(dto.end_date) <= self.toDate(dto.start_date) + 365
-
-Technical constraints:
-- start_date and end_date shall use valid YYYY-MM-DD date strings.
-- start_date shall not be more than 7 days in the past and not more than 30 days in the future relative to currentDate().
-- The goal duration (end_date - start_date) shall be at least 7 days and at most 365 days.
-
-
-BR-GOAL-07: Category requirements, non-overlapping expense limit periods, and persistence
-
-context GoalService::createGoal(
-  userId : Integer,
-  dto : CreateGoalDto
-) : Goal
-
-pre BR_GOAL_07_ExpenseCategoryRequiredAndExists:
-  dto.goal_type = GoalType::EXPENSE_LIMIT implies
-    (not dto.category_id.oclIsUndefined() and
-     Category.allInstances()->exists(c |
-       c.categoryId = dto.category_id
-     ))
-
-pre BR_GOAL_07_NoOverlappingExpenseLimitForCategory:
-  dto.goal_type = GoalType::EXPENSE_LIMIT implies
-    not Goal.allInstances()->exists(g |
-      g.userId = userId and
-      g.goalType = GoalType::EXPENSE_LIMIT and
-      g.categoryId = dto.category_id and
-      g.startDate <= self.toDate(dto.end_date) and
-      g.endDate >= self.toDate(dto.start_date)
-    )
-
-post BR_GOAL_07_CategoryPersisted:
-  (dto.goal_type = GoalType::SAVING implies
-    result.categoryId.oclIsUndefined()) and
-  (dto.goal_type = GoalType::EXPENSE_LIMIT implies
-    result.categoryId = dto.category_id)
-
-Technical constraints:
-- Expense_Limit goals require a valid, existing category_id.
-- For Expense_Limit, no two goals for the same user and category may have overlapping date intervals ([startDate, endDate] overlap where existing.startDate <= new.endDate and existing.endDate >= new.startDate).
-- Any category_id supplied for a Saving goal is not persisted; Saving goals are stored with categoryId = null.
-
-
-BR-GOAL-08: Authenticated goal ownership and active account prerequisite
-
-context GoalService::createGoal(
-  userId : Integer,
-  dto : CreateGoalDto
-) : Goal
-
-pre BR_GOAL_08_UserHasActiveAccount:
-  Account.allInstances()->exists(a |
-    a.user_id = userId
-  )
-
-post BR_GOAL_08_OwnedByAuthenticatedUser:
+post BR_GOAL_CREATE_01_Ownership:
   result.userId = userId
 
 Technical constraints:
-- The authenticated user shall own at least one bank account (Accounts record with user_id = userId) to establish a financial goal.
-- userId shall be obtained from the validated JWT access token.
-- The client shall not determine the owner through the request body.
+- userId shall come from the validated authentication context.
+- The client shall not provide, select, or override the owner of the created goal.
+- No goal belonging to another user may be modified as part of this operation.
 
+BR-GOAL-CREATE-02: Goal type determines category semantics
 
-BR-GOAL-09: Created goal persistence and initial progress state
+context GoalService::createGoal(userId : Integer, dto : CreateGoalDto) : Goal
 
-context GoalService::createGoal(
-  userId : Integer,
-  dto : CreateGoalDto
-) : Goal
+pre BR_GOAL_CREATE_02_AllowedType:
+  Set{GoalType::SAVING, GoalType::EXPENSE_LIMIT}->includes(dto.goal_type)
 
-post BR_GOAL_09_ExactlyOneGoalCreated:
-  Goal.allInstances()->size() =
-    Goal.allInstances()@pre->size() + 1
+pre BR_GOAL_CREATE_02_CategorySemantics:
+  (dto.goal_type = GoalType::SAVING implies dto.category_id.oclIsUndefined()) and
+  (dto.goal_type = GoalType::EXPENSE_LIMIT implies
+    not dto.category_id.oclIsUndefined() and
+    Category.allInstances()->exists(c | c.categoryId = dto.category_id))
 
-post BR_GOAL_09_PersistedValues:
+post BR_GOAL_CREATE_02_CategoryPersisted:
+  (dto.goal_type = GoalType::SAVING implies result.categoryId.oclIsUndefined()) and
+  (dto.goal_type = GoalType::EXPENSE_LIMIT implies result.categoryId = dto.category_id)
+
+Technical constraints:
+- A Saving goal request containing a non-null category_id is invalid; the category value shall not be silently discarded.
+- An Expense_Limit goal requires a category_id that resolves to an existing Category.
+
+BR-GOAL-CREATE-03: Target amount precision and positivity
+
+context GoalService::createGoal(userId : Integer, dto : CreateGoalDto) : Goal
+
+pre BR_GOAL_CREATE_03_TargetDefined:
+  not dto.target_amount.oclIsUndefined()
+
+pre BR_GOAL_CREATE_03_TargetPositive:
+  dto.target_amount > 0
+
+pre BR_GOAL_CREATE_03_TargetScale:
+  decimalScale(dto.target_amount) <= 2
+
+post BR_GOAL_CREATE_03_TargetPreserved:
+  result.targetAmount = dto.target_amount
+
+Technical constraints:
+- target_amount shall be a finite decimal value greater than zero.
+- More than two significant fractional decimal digits shall be rejected rather than silently rounded.
+
+BR-GOAL-CREATE-04: Prospective bounded date interval
+
+context GoalService::createGoal(userId : Integer, dto : CreateGoalDto) : Goal
+
+pre BR_GOAL_CREATE_04_StrictDates:
+  parseIsoDate(dto.start_date) is defined and
+  parseIsoDate(dto.end_date) is defined
+
+pre BR_GOAL_CREATE_04_ProspectiveInterval:
+  parseIsoDate(dto.start_date) >= todayAtMidnight() and
+  parseIsoDate(dto.end_date) > parseIsoDate(dto.start_date)
+
+pre BR_GOAL_CREATE_04_MaxDuration:
+  calendarDaysBetween(parseIsoDate(dto.start_date), parseIsoDate(dto.end_date)) <= 366
+
+Technical constraints:
+- start_date and end_date shall be valid calendar dates written exactly as YYYY-MM-DD.
+- A goal may start today or in the future, but shall not start before the backend server's current calendar date.
+- end_date shall be strictly later than start_date.
+- A single goal interval shall not exceed 366 calendar days.
+
+BR-GOAL-CREATE-05: Conflicting goal intervals are prohibited
+
+context GoalService::createGoal(userId : Integer, dto : CreateGoalDto) : Goal
+
+pre BR_GOAL_CREATE_05_NoConflictingOverlap:
+  let newStart : Date = parseIsoDate(dto.start_date),
+      newEnd : Date = parseIsoDate(dto.end_date)
+  in
+    if dto.goal_type = GoalType::SAVING then
+      Goal.allInstances()
+        ->select(g | g.userId = userId and g.goalType = GoalType::SAVING)
+        ->forAll(g | not (g.startDate <= newEnd and g.endDate >= newStart))
+    else
+      Goal.allInstances()
+        ->select(g |
+          g.userId = userId and
+          g.goalType = GoalType::EXPENSE_LIMIT and
+          g.categoryId = dto.category_id
+        )
+        ->forAll(g | not (g.startDate <= newEnd and g.endDate >= newStart))
+    endif
+
+Technical constraints:
+- Date intervals are inclusive for conflict detection.
+- Two Saving goals owned by the same user shall not have overlapping intervals.
+- Two Expense_Limit goals owned by the same user for the same category shall not have overlapping intervals.
+- Expense_Limit goals for different categories may overlap.
+- Because interval boundaries are inclusive, an existing goal ending on the requested start_date is considered conflicting.
+
+BR-GOAL-CREATE-06: Exact persistence with existing-goal preservation
+
+context GoalService::createGoal(userId : Integer, dto : CreateGoalDto) : Goal
+
+post BR_GOAL_CREATE_06_ExactlyOneCreated:
+  Goal.allInstances()->size() = Goal.allInstances()@pre->size() + 1
+
+post BR_GOAL_CREATE_06_PersistedValues:
   Goal.allInstances()->one(g |
     g.goalId = result.goalId and
     g.userId = userId and
     g.goalType = dto.goal_type and
-    g.startDate = self.toDate(dto.start_date) and
-    g.endDate = self.toDate(dto.end_date) and
+    g.startDate = parseIsoDate(dto.start_date) and
+    g.endDate = parseIsoDate(dto.end_date) and
     g.targetAmount = dto.target_amount and
     ((dto.goal_type = GoalType::SAVING and g.categoryId.oclIsUndefined()) or
      (dto.goal_type = GoalType::EXPENSE_LIMIT and g.categoryId = dto.category_id))
   )
 
 Technical constraints:
-- Exactly one new Goal record shall be inserted into the database.
-- The created goal values must exactly reflect the validated input and normalized category assignment.
+- A successful operation shall insert exactly one new Goal record.
+- Existing Goal records shall not be updated or deleted by creation.
+- The returned goal_id shall identify the newly persisted Goal record.
 
-
-BR-GOAL-10: Successful creation response
-
-context GoalController::createGoal(
-  request : AuthenticatedRequest,
-  dto : CreateGoalDto
-) : CreateGoalResponseDto
-
-post BR_GOAL_10_Response:
-  result.message = 'Goal created successfully' and
-  Goal.allInstances()->exists(g |
-    g.goalId = result.goal_id and
-    g.userId = request.userId
-  )
+BR-GOAL-CREATE-07: Validation, conflict, and persistence failures are atomic
 
 Technical constraints:
-- On successful creation, the backend shall return HTTP 201 Created with JSON structure containing success=true, message="Goal created successfully", and data containing the created goal_id.
-
-
-BR-GOAL-11: Creation failure handling, transactionality, and concurrency safety
-
-Technical constraints:
-- Any validation failure (invalid goal type, active goal quota reached, concurrent saving goal conflict, amount out of range, unrounded amount, date window violation, goal duration outside [7, 365] days, missing/invalid category, or overlapping expense-limit interval) shall result in HTTP 400 Bad Request.
-- If the authenticated user has no existing bank account, creation shall be rejected with HTTP 400 Bad Request.
-- Validation or business constraint failures shall not persist any Goal record.
-- Goal creation shall execute inside a database transaction to prevent partial persistence and ensure atomicity.
-- Concurrency control or database locking shall prevent race conditions during concurrent goal creation requests for the same user.
-- An unexpected repository/database failure shall result in HTTP 500 Internal Server Error with message:
-  "Không thể tạo mục tiêu lúc này. Vui lòng thử lại sau."
+- Any violation of BR-GOAL-CREATE-01 through BR-GOAL-CREATE-05 shall reject the request with HTTP 400 and shall not persist a Goal record.
+- An unexpected repository or database failure shall return HTTP 500 and shall not leave a partially persisted Goal record.
+- The conflict check in BR-GOAL-CREATE-05 and insertion of the new Goal shall be executed atomically, transactionally, or with an equivalent concurrency-safe mechanism so that two concurrent conflicting requests cannot both succeed.
+- Success shall be reported only after persistence has completed.
 ~~~
-

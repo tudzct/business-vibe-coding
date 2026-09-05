@@ -1,0 +1,21 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-09-05T09:39:39Z",
+  "mode": "troubleshoot",
+  "uc_id": "UC-13",
+  "run_id": "RQ3-SOL-MEDIUM-R1-UC13",
+  "source_revision": "sha256:7f8cedb214cc4555a61ea2d70c3750e0772d44020a172e32f54f512c06df3e54",
+  "commands": [
+    { "id": "compose-build-backend-after-signedness-amendment", "exit_code": 0 },
+    { "id": "compose-up-first-retry", "exit_code": 1, "bounded_error": "Exact approved account unique index already exists." },
+    { "id": "compose-build-backend-after-idempotency-repair", "exit_code": 0 },
+    { "id": "compose-up-wait-final", "exit_code": 0 },
+    { "id": "backend-health-http", "exit_code": 0, "status_code": 200 },
+    { "id": "frontend-root-http", "exit_code": 0, "status_code": 200 },
+    { "id": "unauthenticated-goals-http", "exit_code": 0, "status_code": 401 },
+    { "id": "read-only-schema-and-count-metadata", "exit_code": 0 }
+  ],
+  "outcome": "PASS_WITH_LIMITATION",
+  "resolved_incidents": ["DEP-20260905-003", "DEP-20260905-004"],
+  "limitation": "Authenticated success and rendered goal-state observations were not performed because no researcher-supplied authenticated session was available and the active database contains no accounts or goals."
+}

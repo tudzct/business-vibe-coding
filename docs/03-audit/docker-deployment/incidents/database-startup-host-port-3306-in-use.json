@@ -1,0 +1,29 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260905-001",
+  "observed_at": "2026-09-05T08:49:55Z",
+  "layer": "host-port",
+  "fingerprint": "database-startup-host-port-3306-in-use",
+  "symptom": "The UC-13 database container could not publish host port 3306, so the fresh backend and frontend runtime could not start.",
+  "evidence": "Read-only port inspection identified a researcher-controlled host mysqld process listening on TCP port 3306; no credentials, database payloads, or raw logs were retained.",
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "An external host MySQL process already owns port 3306."
+  },
+  "actions": [
+    "Queried the incident index before collecting bounded evidence.",
+    "Inspected Compose state and resolved the host listener owner without stopping or modifying the external process.",
+    "Stopped at the mandatory UC-13 RQ3 repair-authorization gate without changing Compose configuration.",
+    "After researcher authorization, used a temporary non-repository Compose override to publish MySQL on host port 3307 while preserving internal service port 3306."
+  ],
+  "files_changed": [],
+  "commands_rerun": [
+    "compose-up-database-backend",
+    "compose-ps-all",
+    "host-port-3306-listener-inspection"
+  ],
+  "outcome": "resolved",
+  "resolution": "A temporary non-repository Compose override mapped 127.0.0.1:3307 to the database service's internal port 3306; the database reached healthy without disturbing the external host mysqld process.",
+  "reusable_resolution": "With researcher authorization, use a non-conflicting host-port mapping or remove the unnecessary database host publication while preserving internal Compose service port 3306.",
+  "prevention": "Check host port 3306 ownership before starting Compose and avoid terminating unrelated host database services."
+}

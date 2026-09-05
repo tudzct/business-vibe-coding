@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "source-retrieval-record",
+  "status": "Frozen",
+  "retrieval_id": "SRC-UC13-20260905T082409Z",
+  "retrieved_at": "2026-09-05T08:24:09.000Z",
+  "authorization": {
+    "actor": "researcher",
+    "decision": "confirmed",
+    "scope": "Refresh the frozen UC-13 projection and its related API-GOAL-LIST contract from the connected Google Sheet."
+  },
+  "sources": [
+    {
+      "type": "google-sheets",
+      "spreadsheet_id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+      "sheet": "Use cases",
+      "range": "A276:B294",
+      "retrieval_method": "connected-google-drive-get-spreadsheet-cells"
+    },
+    {
+      "type": "google-sheets",
+      "spreadsheet_id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+      "sheet": "API contract",
+      "range": "A258:B272",
+      "retrieval_method": "connected-google-drive-get-spreadsheet-cells"
+    }
+  ],
+  "projections": [
+    {
+      "path": "docs/01-inception/use-cases/uc-13-view-financial-goals.md",
+      "previous_sha256": "sha256:6bc3a48e8b2c58f030d6742f4d238ea4366b040bf1131c91484c76f6051a833d",
+      "refreshed_sha256": "sha256:3becb7b921eaa09e29efa66a64b4a1ed55b16de7cdc02cd5d50646742e31af21",
+      "status": "Frozen"
+    },
+    {
+      "path": "docs/01-inception/api-contracts/API-GOAL-LIST.md",
+      "previous_sha256": "sha256:255c515da56223bf60587af286d762ff0839ed9cdf101f7408b3b4dd06373d00",
+      "refreshed_sha256": "sha256:46d419fd1538959fb1cfe9d063203ee2cf1623c8253055667f6c57384afc396e",
+      "status": "Frozen"
+    }
+  ],
+  "verification": {
+    "spreadsheet_id_matches_project_context": true,
+    "sheet_and_ranges_match_projection_provenance": true,
+    "ordered_business_rule_ids": [
+      "BR-GOAL-VIEW-01",
+      "BR-GOAL-VIEW-02",
+      "BR-GOAL-VIEW-03",
+      "BR-GOAL-VIEW-04",
+      "BR-GOAL-VIEW-05",
+      "BR-GOAL-VIEW-06",
+      "BR-GOAL-VIEW-07"
+    ],
+    "rule_count": 7,
+    "unresolved_items": []
+  }
+}

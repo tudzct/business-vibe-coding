@@ -1,8 +1,8 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-09-04T13:30:41Z",
+  "observed_at": "2026-09-05T09:39:39Z",
   "repository_revision": "uncommitted-worktree",
-  "source_revision": "sha256:6fca554a282c38c8f3a3d6492f2dfe59a33df3fd22d60c41748fda92e3717736",
+  "source_revision": "sha256:7f8cedb214cc4555a61ea2d70c3750e0772d44020a172e32f54f512c06df3e54",
   "docker": {
     "cli": "29.6.1",
     "compose": "v5.3.0",
@@ -15,11 +15,11 @@
     "compose_valid": true
   },
   "services": {
-    "database": "runtime observation passed its healthcheck; stopped after evidence capture with its volume preserved",
-    "backend": "fresh repaired image built; JWT guard initialization passed, then database initialization was blocked by the known absent Accounts table; stopped after evidence capture",
-    "frontend": "fresh image built; runtime blocked by backend health dependency; stopped after evidence capture"
+    "database": "healthy on host port 3307 through the temporary non-repository override; all approved migrations are recorded and the persistent volume is preserved",
+    "backend": "healthy on host port 3001; /api/health returned HTTP 200 and unauthenticated /api/v1/goals returned normalized HTTP 401",
+    "frontend": "healthy and reachable on configured host port 8081 with HTTP 200"
   },
-  "status": "BLOCKED",
-  "blocking_incident": "DEP-20260831-001",
-  "next_action": "Activate a researcher-approved domain schema/runtime baseline containing the required Account, Transaction, and Bill tables, then repeat Compose health and bounded UC-12 observations. No container remains in a restart loop."
+  "status": "PASS_WITH_LIMITATION",
+  "blocking_incident": null,
+  "next_action": "Use a researcher-supplied authenticated session and representative existing goal/account data only if populated and rendered UC-13 runtime observation is required; do not invent credentials or seed data."
 }
