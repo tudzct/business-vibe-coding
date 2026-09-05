@@ -49,7 +49,7 @@ PRE-3: Account details have been loaded.
 ### Post-Condition(s)
 
 POST-1: On success, the account fields are overwritten with the submitted values.
-POST-2: account_number_last_4 is implicitly derived by the backend from the submitted account_number_full.
+POST-2: The final four characters of the account identifier are derived automatically by the system.
 POST-3: On success, the system displays a success toast notification ("Update successful"), waits 1500 ms, closes the edit form, and reloads the account details to reflect the updated data.
 POST-4: On failure, the stored account remains unchanged by the failed request.
 
@@ -59,12 +59,12 @@ POST-4: On failure, the stored account remains unchanged by the failed request.
 2. AccountEditForm is populated from loaded AccountDetail data.
 3. The user changes bank_name, account_type, optional branch_name, account_number_full, or balance.
 4. The user selects Save Changes.
-5. The frontend validates required fields (bank_name, account_number_full), allowed account_type, valid account_number_full format (8-34 digits), and numeric non-negative balance.
-6. The frontend sends PUT /api/v1/accounts/:id with all update fields (excluding account_number_last_4).
+5. The frontend validates all required fields, including format structure and domain constraints.
+6. The frontend submits the modification payload to the accounts resource.
 7. The controller validates that id parses to an integer.
 8. AccountService verifies that the account exists and belongs to userId.
 9. ValidationPipe and AccountService validate the submitted fields.
-10. AccountService derives account_number_last_4, overwrites the account fields, and saves the row.
+10. The system processes the modification, deriving any necessary internal fields, and persists the changes to the ledger.
 11. The frontend displays a success toast, waits 1500ms, and invokes its success callback; AccountDetailPage reloads account data and exits edit mode.
 
 ### Alternative Flow
@@ -323,7 +323,7 @@ PRE-2: The Accounts page has been loaded and displays at least one account card.
 ### Post-Condition(s)
 
 POST-1: On success, the selected account's fields are overwritten with the submitted values.
-POST-2: account_number_last_4 is implicitly derived by the backend from the submitted account_number_full.
+POST-2: The final four characters of the account identifier are derived automatically by the system.
 POST-3: On success, the system displays a success toast notification (""Update successful""), waits 1500 ms, closes the edit form, and reloads the account list to reflect the updated data.
 POST-4: On failure or cancellation, the stored account remains unchanged.
 
@@ -335,12 +335,12 @@ POST-4: On failure or cancellation, the stored account remains unchanged.
 4. AccountEditForm is loaded and populated from the loaded account card data.
 5. The user changes bank_name, account_type, optional branch_name, account_number_full, or balance.
 6. The user selects Save Changes.
-7. The frontend validates required fields (bank_name, account_number_full), allowed account_type, valid account_number_full format (8-34 digits), and numeric non-negative balance.
-8. The frontend sends PUT /api/v1/accounts/:id with all update fields (excluding account_number_last_4).
+7. The frontend validates all required fields, including format structure and domain constraints.
+8. The frontend submits the modification payload to the accounts resource.
 9. The controller validates that id parses to an integer.
 10. AccountService verifies that the account exists and belongs to userId.
 11. ValidationPipe and AccountService validate the submitted fields.
-12. AccountService derives account_number_last_4, overwrites the account fields, and saves the row.
+12. The system processes the modification, deriving any necessary internal fields, and persists the changes to the ledger.
 13. The frontend displays a success toast, waits 1500ms, and invokes its success callback; the Accounts page reloads account data and exits edit mode.
 
 ### Alternative Flow

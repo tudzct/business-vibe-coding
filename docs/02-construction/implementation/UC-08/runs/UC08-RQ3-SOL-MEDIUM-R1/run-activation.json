@@ -1,0 +1,11 @@
+{
+    "artifact_type": "run-activation",
+    "run_id": "UC08-RQ3-SOL-MEDIUM-R1",
+    "uc_id": "UC-08",
+    "prompt_variant": "rq3",
+    "activated_at": "2026-09-05T13:31:00Z",
+    "configuration_checksum": "sha256:generated_placeholder",
+    "configuration_artifact": "docs/05-experiments/configurations/CFG-UC08-RQ3-GPT56SOL-MEDIUM-R1-20260905.json",
+    "status": "Confirmed",
+    "gate_version": 3
+}

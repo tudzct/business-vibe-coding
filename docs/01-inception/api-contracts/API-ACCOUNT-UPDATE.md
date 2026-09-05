@@ -46,7 +46,6 @@ Account owner
 ### headers.Authorization
 
 Type: string; Format: Bearer <JWT>; Required: Yes; Nullable: No
-Validation: Must contain a valid, unexpired JWT access token.
 Trigger: Every protected request.
 Description: Authenticates the current user.
 Example: Bearer eyJhbGciOiJIUzI1NiIs...
@@ -58,7 +57,6 @@ Note: Added by the frontend Axios interceptor.
 Type: string; Format: MIME type; Required: Yes; Nullable: No
 Default: application/json
 Allowed values: application/json
-Validation: Request body must be JSON.
 Trigger: Every request containing a JSON body.
 Description: Declares the request body format.
 Example: application/json
@@ -68,7 +66,6 @@ Example: application/json
 ### path.id
 
 Type: integer; Required: Yes; Nullable: No
-Validation: Must parse as an integer account identifier.
 Trigger: Account update request.
 Description: Account identifier.
 Example: 3
@@ -78,7 +75,6 @@ Example: 3
 ### bank_name
 
 Type: string; Required: Yes; Nullable: No
-Validation: Must be a non-empty string.
 Trigger: Account update request.
 Description: Updated bank name.
 Example: Vietcombank
@@ -88,7 +84,6 @@ Example: Vietcombank
 
 Type: string; Required: Yes; Nullable: No
 Allowed values: Checking; Credit Card; Savings; Investment; Loan
-Validation: Must be an allowed account type.
 Trigger: Account update request.
 Description: Updated account type.
 Example: Checking
@@ -97,7 +92,6 @@ Example: Checking
 ### branch_name
 
 Type: string; Required: No; Nullable: Yes
-Validation: If supplied, must be a string.
 Trigger: Account update request.
 Description: Updated branch name.
 Example: Hanoi Branch
@@ -106,7 +100,6 @@ Example: Hanoi Branch
 ### account_number_full
 
 Type: string; Required: Yes; Nullable: No
-Validation: Must be a non-empty string.
 Trigger: Account update request.
 Description: Updated full account number.
 Example: 9704221234567890123
@@ -115,7 +108,6 @@ Example: 9704221234567890123
 ### balance
 
 Type: number; Format: decimal; Required: Yes; Nullable: No
-Validation: Must be greater than or equal to 0.
 Trigger: Account update request.
 Description: Updated balance.
 Example: 4500000
@@ -201,7 +193,7 @@ Example: 4500000
 Type: string | string[]; Required: Yes; Nullable: No
 Trigger: The path ID or request body is invalid.
 Description: Error description returned by the global HTTP exception filter.
-Example: Balance must not be less than 0
+Example: Validation failed for one or more fields.
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 401
