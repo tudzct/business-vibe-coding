@@ -1,7 +1,7 @@
 ---
 artifact_type: business-coding-prompt
 prompt_variant: rq3-ad
-status: Draft
+status: Approved
 uc_id: UC-08
 uc_name: Edit a Bank Account
 source_use_case: docs/01-inception/use-cases/uc-08-edit-bank-account.md

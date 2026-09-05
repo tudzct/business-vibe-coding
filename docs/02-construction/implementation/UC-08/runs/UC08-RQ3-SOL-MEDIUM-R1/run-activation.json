@@ -4,7 +4,7 @@
     "uc_id": "UC-08",
     "prompt_variant": "rq3",
     "activated_at": "2026-09-05T13:31:00Z",
-    "configuration_checksum": "sha256:generated_placeholder",
+    "configuration_checksum": "sha256:a508fac5b106050dd75729ffda4d083f62954ee548f6d9fc494dcc71c1acf99e",
     "configuration_artifact": "docs/05-experiments/configurations/CFG-UC08-RQ3-GPT56SOL-MEDIUM-R1-20260905.json",
     "status": "Confirmed",
     "gate_version": 3
