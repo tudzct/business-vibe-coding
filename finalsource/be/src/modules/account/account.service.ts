@@ -132,7 +132,10 @@ export class AccountService {
                 : absoluteAmount,
             description: `${transaction.itemDescription}${isHighValueExpense ? ' [HIGH VALUE]' : ''}`,
             status: transaction.status,
-            receipt_id: transaction.receiptId ?? null,
+            receipt_id:
+              transaction.receiptId === null
+                ? null
+                : String(transaction.receiptId),
             type: transaction.type,
           };
         }),

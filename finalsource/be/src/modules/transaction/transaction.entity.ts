@@ -60,10 +60,10 @@ export class Transaction {
   })
   status!: TransactionStatus;
 
-  @Column({ name: 'receipt_id', type: 'varchar', length: 255, nullable: true })
-  receiptId!: string | null;
+  @Column({ name: 'receipt_id', type: 'int', unsigned: true, nullable: true })
+  receiptId!: number | null;
 
-  @Column({ name: 'category_id', type: 'int', nullable: true })
+  @Column({ name: 'category_id', type: 'int', unsigned: true, nullable: true })
   categoryId!: number | null;
 
   @ManyToOne(() => Category, (category) => category.transactions, {

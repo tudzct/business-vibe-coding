@@ -1,25 +1,22 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-09-04T10:47:21.9173106Z",
-  "repository_revision": "6f29e27a771b660ef74a05a2f0557f990ef2240e",
-  "source_revision": "sha256:7f1de770f933825ae26ce954170be2602f54826e75aaaa90edd48510348195b4",
+  "observed_at": "2026-09-05T09:27:19.9777330Z",
+  "repository_revision": "566189eff1226f76ffbad82f4c496eb0bbd549d0",
+  "source_revision": "sha256:ab860acde6edda0ac92e1a3f9c5aa87069ecfb43a476b8c29060da46b349a6e7",
   "docker": {
-    "cli": "Docker 29.2.1",
-    "compose": "Docker Compose v5.0.2",
-    "daemon": "available (server 29.2.1)"
+    "cli": "unavailable on Windows and in the available WSL distro",
+    "compose": "unavailable",
+    "daemon": "not observable without a Docker CLI"
   },
   "configuration": {
     "env_present": true,
     "env_ignored": true,
     "env_tracked": false,
-    "compose_valid": true
+    "compose_valid": false,
+    "compose_validation_note": "Compose file was inspected, but docker compose config could not run because Docker CLI is unavailable."
   },
-  "services": {
-    "database": "healthy container",
-    "backend": "healthy UC-16 final-source container; health HTTP 200; savings HTTP 401 unauthenticated and HTTP 200 authenticated",
-    "frontend": "healthy UC-16 final-source container; root returned HTTP 200"
-  },
-  "status": "READY",
-  "blocking_incident": null,
-  "next_action": "UC-16 run is terminal; optionally inspect the authenticated chart hover visually."
+  "services": {},
+  "status": "BLOCKED",
+  "blocking_incident": "DEP-20260905-001",
+  "next_action": "Make Docker Compose v2 available, then run the approved stack on the researcher-stated fresh volume and inspect backend migration logs, service health, and /api/health."
 }

@@ -12,7 +12,7 @@ export class Bill {
   @PrimaryGeneratedColumn({ name: 'bill_id' })
   billId!: number;
 
-  @Column({ name: 'user_id', type: 'int' })
+  @Column({ name: 'user_id', type: 'int', unsigned: true })
   userId!: number;
 
   @ManyToOne(() => User, (user) => user.bills)

@@ -28,7 +28,7 @@ export class Account {
   @PrimaryGeneratedColumn({ name: 'account_id' })
   accountId!: number;
 
-  @Column({ name: 'user_id', type: 'int' })
+  @Column({ name: 'user_id', type: 'int', unsigned: true })
   userId!: number;
 
   @ManyToOne(() => User, (user) => user.accounts)

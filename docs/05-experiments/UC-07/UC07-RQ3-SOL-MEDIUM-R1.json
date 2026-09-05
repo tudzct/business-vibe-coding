@@ -1,7 +1,7 @@
 {
   "run_id": "UC07-RQ3-SOL-MEDIUM-R1",
-  "run_status": "blocked",
-  "hold_gate": null,
+  "run_status": "blocked_runtime_verification",
+  "hold_gate": "docker_runtime_required",
   "experiment_configuration": {
     "configuration_id": "CFG-UC07-RQ3-GPT56SOL-MEDIUM-R1-20260905",
     "comparison_group_id": "CG-RQ3-SOL-MEDIUM-16UC-20260829",
@@ -40,13 +40,13 @@
   },
   "timing_seconds": {
     "initial": 156.201,
-    "repairs": 145.147,
-    "total": 301.348
+    "repairs": 493.78,
+    "total": 649.981
   },
   "tokens": {
     "initial_total": 2054078,
-    "repair_total": 3995820,
-    "total": 6049898,
+    "repair_total": 9902568,
+    "total": 11956646,
     "telemetry_source": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\05\\rollout-2026-09-05T14-05-11-01a07062-b184-7253-981a-11e43f97fbb0.jsonl",
     "details": {
       "initial": {
@@ -60,11 +60,12 @@
         "duration_seconds": 510.599
       },
       "repairs": {
-        "count": 4,
+        "count": 5,
         "shared_session_turn_id": 3,
-        "total_tokens": 3995820,
-        "cost_usd": 2.8857,
-        "per_repair_attribution": "unavailable"
+        "total_tokens": 9902568,
+        "cost_usd": 7.4448,
+        "per_repair_attribution": "unavailable",
+        "coverage_note": "Repairs 1-4 share session turn 3 and cannot be split defensibly. Repair 5 is attributable to diagnosis/proposal turn 5 and approved implementation turn 6 in the continued session."
       }
     }
   },
@@ -83,8 +84,8 @@
     "host_frontend_lint": "PASS: ESLint completed with zero warnings.",
     "host_frontend_build": "PASS: TypeScript and Vite production build completed; AccountDetailPage was emitted as a lazy chunk.",
     "figma_dataset": "PASS: frozen dataset 2026-08-29-005 node 4795:4 resolved complete with valid checksums.",
-    "docker_review": "BLOCKED: docker executable is unavailable in the task environment.",
-    "docker_rebuild_runtime": "BLOCKED: a current-source Compose rebuild and runtime observation could not be performed.",
+    "docker_review": "FAIL from researcher-supplied fresh-volume logs: backend database initialization stops before healthcheck.",
+    "docker_rebuild_runtime": "BLOCKED after implementation: Docker CLI is unavailable on Windows and in the available WSL distro, so Compose startup, migration logs, container health, and /api/health could not be observed.",
     "tests_created_or_run": false
   },
   "technical_findings": [
@@ -125,6 +126,16 @@
       "affected_br_ids": [],
       "evidence": "finalsource/fe/src/pages/Account/Account.tsx retains a disabled Details button, so the UC trigger is not reachable from an account card even though /accounts/:id is registered.",
       "repair_authorized": true
+    },
+    {
+      "status": "implementation_complete_runtime_blocked",
+      "trigger": "runtime",
+      "fingerprint": "backend-startup-fresh-database-missing-core-tables-and-foreign-key-signedness",
+      "affected_br_ids": [],
+      "evidence": "Fresh-volume startup fails because the alter-only transaction migration runs without a transactions table and Goals.category_id is unsigned while categories.category_id is signed in current entity metadata.",
+      "repair_authorized": true,
+      "schema_approval": "approved at 2026-09-05T09:21:31.3449676Z",
+      "schema_proposal": "docs/02-construction/implementation/UC-07/schema.json"
     }
   ],
   "ui_accuracy": {
@@ -448,6 +459,81 @@
         "Targeted frontend ESLint and the TypeScript/Vite production build pass."
       ],
       "tests_created_or_run": false
+    },
+    {
+      "repair_id": "UC07-RQ3-SOL-MEDIUM-R1-REPAIR-005",
+      "repair_index": 5,
+      "sub_prompt_path": "docs/02-construction/implementation/UC-07/runs/UC07-RQ3-SOL-MEDIUM-R1/repairs/repair-005.md",
+      "category": "technical",
+      "trigger": "runtime",
+      "fingerprint": "backend-startup-fresh-database-missing-core-tables-and-foreign-key-signedness",
+      "affected_br_ids": [],
+      "status": "implementation_complete_runtime_blocked",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "effective_model_id": "gpt-5.6-sol"
+      },
+      "timing_wall_clock": {
+        "started_at": "2026-09-05T09:01:54.7410698Z",
+        "started_epoch_ms": 1788598914741,
+        "schema_approved_at": "2026-09-05T09:21:31.3449676Z",
+        "schema_approved_epoch_ms": 1788600091344,
+        "ended_at": "2026-09-05T09:27:19.9777330Z",
+        "ended_epoch_ms": 1788600439977,
+        "duration_seconds": 348.633,
+        "duration_basis": "Active implementation and verification time after schema approval; approval-wait time excluded."
+      },
+      "tokens": {
+        "total": 5148470,
+        "input": 126528,
+        "cache_read": 4968192,
+        "output": 31995,
+        "cost_usd": 4.0766,
+        "turns": [
+          {
+            "turn_id": 5,
+            "phase": "diagnosis_and_schema_proposal",
+            "total": 2715762,
+            "input": 48079,
+            "cache_read": 2656640,
+            "output": 11043,
+            "cost_usd": 1.9,
+            "runner_duration_seconds": 271.849
+          },
+          {
+            "turn_id": 6,
+            "phase": "approved_implementation_and_verification",
+            "total": 2432708,
+            "input": 78449,
+            "cache_read": 2311552,
+            "output": 20952,
+            "cost_usd": 2.1766,
+            "runner_duration_seconds": 624.567
+          }
+        ],
+        "runner_duration_seconds": 896.416,
+        "telemetry_source": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\05\\rollout-2026-09-05T14-45-12-01a07062-b184-7253-981a-11e43f97fbb0_01a07087-559a-79e0-9581-6799f05d47b2.jsonl"
+      },
+      "source_revision_before": "sha256:00c6561a49a798dbc57f2e973dc5e0cb095d0b2c07c455b03cbcbf87f1ad5b4f",
+      "source_revision_after": "sha256:ab860acde6edda0ac92e1a3f9c5aa87069ecfb43a476b8c29060da46b349a6e7",
+      "changed_files": [
+        "finalsource/be/src/database/migrations/1700000000000-create-core-tables-if-missing.ts",
+        "finalsource/be/src/modules/account/account.entity.ts",
+        "finalsource/be/src/modules/account/account.service.ts",
+        "finalsource/be/src/modules/bill/bill.entity.ts",
+        "finalsource/be/src/modules/category/category.entity.ts",
+        "finalsource/be/src/modules/transaction/transaction.entity.ts",
+        "finalsource/be/src/modules/transaction/transaction.service.ts"
+      ],
+      "evidence_before": "Fresh database initialization fails on a missing transactions table and incompatible Goal/Category foreign-key column types.",
+      "evidence_after": [
+        "Approved schema proposal adds an earlier idempotent core-table migration in dependency order while preserving synchronize=false and all later migrations.",
+        "Entity foreign-key signedness matches the referenced primary keys, and receipt persistence is INT UNSIGNED nullable with explicit string serialization at DTO boundaries.",
+        "Targeted ESLint, repository backend ESLint, and Nest production build pass; compiled output contains the new migration.",
+        "Docker runtime verification is blocked because Docker CLI is unavailable on Windows and in WSL; no native runtime fallback or volume reset was used."
+      ],
+      "tests_created_or_run": false
     }
   ],
   "repair_authorization": {
@@ -457,5 +543,5 @@
     "authorization_basis": "Researcher explicitly invoked the bug-fixing-sub-prompt skill after the UC-07 RQ3 hold gate."
   },
   "manual_estimates_minutes": [],
-  "all_sub_prompt_count": 4
+  "all_sub_prompt_count": 5
 }
