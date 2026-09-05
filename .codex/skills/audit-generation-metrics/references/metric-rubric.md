@@ -15,5 +15,5 @@ Prompt prose alone is not evidence. Cite source/configuration/build/bounded-runt
 - UI accuracy uses the frozen design and reports structural coverage plus deterministic similarity when available.
 - Flow accuracy is satisfied/evaluable UC checkpoints across trigger, request, domain decision, persistence, response, UI result and exceptions.
 - Complexity records actors, main steps, alternate/exception flows, entities, integrations, Business Rules and UI states.
-- Time comes from automatic timezone-qualified ISO/epoch pairs; tokens come only from telemetry.
+- Time comes from automatic timezone-qualified ISO/epoch pairs; tokens come only from explicit closed-turn telemetry. Keep prompt generation, first-pass code generation and repairs disjoint, and retain their session/turn provenance.
 - Record generation, audit and each repair model independently. Start model variants from the same approved prompt and source baseline.

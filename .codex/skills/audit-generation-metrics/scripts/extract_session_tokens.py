@@ -7,6 +7,7 @@ Integrates directly with the audit-generation-metrics workflow.
 
 import argparse
 import glob
+import hashlib
 import json
 import os
 import re
@@ -26,6 +27,33 @@ MODEL_RATES = {
     "claude-3-5-sonnet": {"input": 3.0, "output": 15.0, "cache": 0.3},
     "default": {"input": 5.0, "output": 15.0, "cache": 2.5},
 }
+
+TOKEN_FIELDS = (
+    "input_tokens",
+    "cached_input_tokens",
+    "output_tokens",
+    "reasoning_output_tokens",
+    "total_tokens",
+)
+
+
+def normalize_usage(value):
+    value = value if isinstance(value, dict) else {}
+    usage = {}
+    for field in TOKEN_FIELDS:
+        candidate = value.get(field, 0)
+        usage[field] = candidate if isinstance(candidate, (int, float)) and candidate >= 0 else 0
+    if not usage["total_tokens"]:
+        usage["total_tokens"] = usage["input_tokens"] + usage["output_tokens"]
+    return usage
+
+
+def usage_increment(previous, current, fallback):
+    if previous is None:
+        return current
+    if all(current[field] >= previous[field] for field in TOKEN_FIELDS):
+        return {field: current[field] - previous[field] for field in TOKEN_FIELDS}
+    return fallback
 
 
 def calculate_cost(model_name, total_input, output, cache):
@@ -72,10 +100,13 @@ def parse_session(file_path):
         "end_time": None,
         "model_name": "Unknown",
         "user_prompt": "",
+        "closed": False,
     }
     has_accumulated = False
     turn_count = 1
     session_total = None
+    previous_session_total = None
+    previous_session_signature = None
     unique_models = set()
     latest_model = "Unknown"
 
@@ -110,6 +141,7 @@ def parse_session(file_path):
                         except Exception:
                             duration = 0.0
                     current_turn["duration"] = round(duration, 3)
+                    current_turn["closed"] = True
                     user_turns.append(dict(current_turn))
                     turn_count += 1
                     current_turn = {
@@ -125,6 +157,7 @@ def parse_session(file_path):
                         "end_time": None,
                         "model_name": latest_model,
                         "user_prompt": "",
+                        "closed": False,
                     }
                     has_accumulated = False
 
@@ -134,14 +167,31 @@ def parse_session(file_path):
                 if not current_turn["start_time"] and parsed.get("timestamp"):
                     current_turn["start_time"] = parsed["timestamp"]
 
+            elif msg_type == "event_msg" and payload.get("type") == "task_complete":
+                current_turn["closed"] = True
+
             elif msg_type == "event_msg" and payload.get("type") == "token_count":
                 info = payload.get("info", {})
-                last = info.get("last_token_usage", {})
-                input_tokens = last.get("input_tokens", 0)
-                cached_tokens = last.get("cached_input_tokens", 0)
-                output_tokens = last.get("output_tokens", 0)
-                reasoning_tokens = last.get("reasoning_output_tokens", 0)
-                total_tokens = last.get("total_tokens", 0)
+                last = normalize_usage(info.get("last_token_usage"))
+                raw_session_total = info.get("total_token_usage")
+                if isinstance(raw_session_total, dict):
+                    normalized_total = normalize_usage(raw_session_total)
+                    signature = tuple(normalized_total[field] for field in TOKEN_FIELDS)
+                    if signature == previous_session_signature:
+                        increment = {field: 0 for field in TOKEN_FIELDS}
+                    else:
+                        increment = usage_increment(previous_session_total, normalized_total, last)
+                    previous_session_total = normalized_total
+                    previous_session_signature = signature
+                    session_total = normalized_total
+                else:
+                    increment = last
+
+                input_tokens = increment["input_tokens"]
+                cached_tokens = increment["cached_input_tokens"]
+                output_tokens = increment["output_tokens"]
+                reasoning_tokens = increment["reasoning_output_tokens"]
+                total_tokens = increment["total_tokens"]
 
                 cost = calculate_cost(latest_model, input_tokens, output_tokens, cached_tokens)
                 fresh_input = max(0, input_tokens - cached_tokens)
@@ -157,8 +207,7 @@ def parse_session(file_path):
                 if parsed.get("timestamp"):
                     current_turn["end_time"] = parsed["timestamp"]
 
-                has_accumulated = True
-                session_total = info.get("total_token_usage")
+                has_accumulated = has_accumulated or total_tokens > 0
 
     if has_accumulated:
         duration = 0.0
@@ -170,6 +219,8 @@ def parse_session(file_path):
             except Exception:
                 duration = 0.0
         current_turn["duration"] = round(duration, 3)
+        # A task_complete event closes the final turn even before another user
+        # prompt is written. During an active tool call this remains false.
         user_turns.append(dict(current_turn))
 
     return {
@@ -180,24 +231,57 @@ def parse_session(file_path):
     }
 
 
-def classify_experiment_turns(turns, explicit_first_gen=None, explicit_repairs=None):
-    if explicit_first_gen is not None:
-        first_gen_turn = next((t for t in turns if t["id"] == explicit_first_gen), None)
-    else:
-        first_gen_turn = None
+def select_turns(turns, ids, stage_name):
+    if ids is None:
+        return []
+    by_id = {turn["id"]: turn for turn in turns}
+    missing = [turn_id for turn_id in ids if turn_id not in by_id]
+    if missing:
+        raise ValueError(f"{stage_name} turn(s) not found or have no token event: {missing}")
+    selected = [by_id[turn_id] for turn_id in ids]
+    open_ids = [turn["id"] for turn in selected if not turn.get("closed")]
+    if open_ids:
+        raise ValueError(
+            f"{stage_name} turn(s) are still active/open: {open_ids}; "
+            "extract them only after the researcher starts the next turn"
+        )
+    return selected
 
-    if explicit_repairs is not None:
-        repair_turns = [t for t in turns if t["id"] in explicit_repairs]
-    else:
-        repair_turns = []
 
-    prompt_gen_turns = []
+def classify_experiment_turns(
+    turns,
+    explicit_prompt=None,
+    explicit_code=None,
+    explicit_repairs=None,
+):
+    prompt_gen_turns = select_turns(turns, explicit_prompt, "prompt generation")
+    code_gen_turns = select_turns(turns, explicit_code, "code generation")
+    repair_turns = select_turns(turns, explicit_repairs, "repair")
 
-    if first_gen_turn is None or not repair_turns:
+    assigned = {
+        "prompt generation": {turn["id"] for turn in prompt_gen_turns},
+        "code generation": {turn["id"] for turn in code_gen_turns},
+        "repair": {turn["id"] for turn in repair_turns},
+    }
+    labels = list(assigned)
+    for index, left in enumerate(labels):
+        for right in labels[index + 1:]:
+            overlap = sorted(assigned[left] & assigned[right])
+            if overlap:
+                raise ValueError(f"turn(s) {overlap} overlap {left} and {right} stages")
+
+    if explicit_code is not None:
+        return {"prompt_gen": prompt_gen_turns, "code_gen": code_gen_turns, "repairs": repair_turns}
+
+    first_gen_turn = None
+
+    if not prompt_gen_turns or not repair_turns:
         for t in turns:
+            if not t.get("closed"):
+                continue
             prompt_lower = t["user_prompt"].lower()
 
-            if "gen-coding-prompt" in prompt_lower or "prompt a-f" in prompt_lower or "prompt a-d" in prompt_lower:
+            if not prompt_gen_turns and ("gen-coding-prompt" in prompt_lower or "prompt a-f" in prompt_lower or "prompt a-d" in prompt_lower):
                 prompt_gen_turns.append(t)
             elif first_gen_turn is None and ("xác nhận cấu hình" in prompt_lower or "gen-source-code" in prompt_lower):
                 first_gen_turn = t
@@ -214,8 +298,25 @@ def classify_experiment_turns(turns, explicit_first_gen=None, explicit_repairs=N
 
     return {
         "prompt_gen": prompt_gen_turns,
-        "first_gen": first_gen_turn,
+        "code_gen": [first_gen_turn] if first_gen_turn else [],
         "repairs": repair_turns,
+    }
+
+
+def aggregate_turns(turns):
+    if not turns:
+        return None
+    return {
+        "turn_ids": [turn["id"] for turn in turns],
+        "input": sum(turn["input"] for turn in turns),
+        "cache_read": sum(turn["cache_read"] for turn in turns),
+        "total_input": sum(turn["total_input"] for turn in turns),
+        "output": sum(turn["output"] for turn in turns),
+        "reasoning": sum(turn["reasoning"] for turn in turns),
+        "total_tokens": sum(turn["total_tokens"] for turn in turns),
+        "cost_usd": round(sum(turn["cost"] for turn in turns), 4),
+        "duration_seconds": round(sum(turn["duration"] for turn in turns), 3),
+        "closed": all(turn.get("closed") for turn in turns),
     }
 
 
@@ -226,41 +327,38 @@ def update_run_json(run_json_path, session_data, classified):
 
     data = json.loads(path.read_text(encoding="utf-8"))
 
-    first_gen = classified["first_gen"]
-    repairs = classified["repairs"]
+    prompt = aggregate_turns(classified["prompt_gen"])
+    code = aggregate_turns(classified["code_gen"])
+    repairs = aggregate_turns(classified["repairs"])
 
-    initial_tokens = first_gen["total_tokens"] if first_gen else None
-    repair_tokens = sum(r["total_tokens"] for r in repairs) if repairs else 0
-    total_tokens = (initial_tokens or 0) + repair_tokens
+    prompt_tokens = prompt["total_tokens"] if prompt else None
+    code_tokens = code["total_tokens"] if code else None
+    repair_tokens = repairs["total_tokens"] if repairs else 0
+    implementation_tokens = code_tokens + repair_tokens if code_tokens is not None else None
+    overall_tokens = prompt_tokens + implementation_tokens if prompt_tokens is not None and implementation_tokens is not None else None
 
     data["tokens"] = {
-        "initial_total": initial_tokens,
+        "prompt_generation_total": prompt_tokens,
+        "code_generation_total": code_tokens,
         "repair_total": repair_tokens,
-        "total": total_tokens,
+        "implementation_total": implementation_tokens,
+        "overall_total": overall_tokens,
+        "initial_total": code_tokens,
+        "total": implementation_tokens,
         "telemetry_source": session_data["file_path"],
         "details": {
-            "initial": {
-                "turn_id": first_gen["id"] if first_gen else None,
-                "input": first_gen["input"] if first_gen else None,
-                "cache_read": first_gen["cache_read"] if first_gen else None,
-                "total_input": first_gen["total_input"] if first_gen else None,
-                "output": first_gen["output"] if first_gen else None,
-                "reasoning": first_gen["reasoning"] if first_gen else None,
-                "cost_usd": round(first_gen["cost"], 4) if first_gen else None,
-                "duration_seconds": first_gen["duration"] if first_gen else None,
-            } if first_gen else None,
-            "repairs": {
-                "count": len(repairs),
-                "total_tokens": repair_tokens,
-                "cost_usd": round(sum(r["cost"] for r in repairs), 4),
-            },
+            "prompt_generation": prompt,
+            "code_generation": code,
+            "initial": code,
+            "repairs": repairs or {"turn_ids": [], "total_tokens": 0, "cost_usd": 0.0, "closed": True},
         },
     }
 
     if "repairs" in data and isinstance(data["repairs"], list):
         for idx, rep_data in enumerate(data["repairs"]):
-            if idx < len(repairs):
-                rep_turn = repairs[idx]
+            repair_turns = classified["repairs"]
+            if len(repair_turns) == len(data["repairs"]) and idx < len(repair_turns):
+                rep_turn = repair_turns[idx]
                 rep_data["tokens"] = {
                     "total": rep_turn["total_tokens"],
                     "input": rep_turn["input"],
@@ -273,12 +371,43 @@ def update_run_json(run_json_path, session_data, classified):
     return data
 
 
+def write_prompt_receipt(receipt_path, prompt_path, session_data, classified):
+    prompt = aggregate_turns(classified["prompt_gen"])
+    if prompt is None:
+        raise ValueError("--prompt-receipt requires at least one --prompt-turns ID")
+    source = Path(prompt_path)
+    if not source.is_file():
+        raise FileNotFoundError(f"Prompt artifact not found: {prompt_path}")
+    receipt = {
+        "stage": "prompt_generation",
+        "prompt_artifact": str(source),
+        "prompt_sha256": "sha256:" + hashlib.sha256(source.read_bytes()).hexdigest(),
+        "telemetry_source": session_data["file_path"],
+        "turn_ids": prompt["turn_ids"],
+        "tokens": prompt,
+        "status": "captured",
+    }
+    target = Path(receipt_path)
+    if target.exists():
+        existing = json.loads(target.read_text(encoding="utf-8"))
+        if existing != receipt:
+            raise ValueError(f"Refusing to overwrite different prompt telemetry receipt: {target}")
+        return receipt
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(receipt, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    return receipt
+
+
 def main():
     parser = argparse.ArgumentParser(description="Extract token usage from Codex session logs")
     parser.add_argument("--session-path", "-s", type=str, help="Path to .jsonl session log")
     parser.add_argument("--run-json", "-r", type=str, help="Path to canonical experiment run JSON")
-    parser.add_argument("--first-gen-turn", type=int, help="Explicit turn ID for First Gen")
+    parser.add_argument("--prompt-turns", type=str, help="Comma-separated closed turn IDs for prompt generation")
+    parser.add_argument("--code-turns", type=str, help="Comma-separated closed turn IDs for first-pass code generation")
+    parser.add_argument("--first-gen-turn", type=int, help="Deprecated alias for one --code-turns ID")
     parser.add_argument("--repair-turns", type=str, help="Comma-separated turn IDs for sub-prompt repairs")
+    parser.add_argument("--prompt-receipt", type=str, help="Write immutable prompt-generation telemetry receipt")
+    parser.add_argument("--prompt-path", type=str, help="Prompt artifact used with --prompt-receipt")
     parser.add_argument("--update", "-u", action="store_true", help="Update the canonical run JSON with tokens")
     parser.add_argument("--json", action="store_true", help="Output results as JSON")
 
@@ -293,26 +422,36 @@ def main():
 
     session_data = parse_session(session_file)
 
-    explicit_repairs = [int(x.strip()) for x in args.repair_turns.split(",")] if args.repair_turns else None
-    classified = classify_experiment_turns(session_data["turns"], args.first_gen_turn, explicit_repairs)
+    parse_ids = lambda value: [int(x.strip()) for x in value.split(",")] if value else None
+    explicit_prompt = parse_ids(args.prompt_turns)
+    explicit_code = parse_ids(args.code_turns)
+    if explicit_code is None and args.first_gen_turn is not None:
+        explicit_code = [args.first_gen_turn]
+    explicit_repairs = parse_ids(args.repair_turns)
+    classified = classify_experiment_turns(session_data["turns"], explicit_prompt, explicit_code, explicit_repairs)
 
-    first_gen = classified["first_gen"]
-    repairs = classified["repairs"]
+    prompt = aggregate_turns(classified["prompt_gen"])
+    code = aggregate_turns(classified["code_gen"])
+    repairs = aggregate_turns(classified["repairs"])
 
-    initial_tokens = first_gen["total_tokens"] if first_gen else 0
-    repair_tokens = sum(r["total_tokens"] for r in repairs)
-    total_tokens = initial_tokens + repair_tokens
+    prompt_tokens = prompt["total_tokens"] if prompt else None
+    code_tokens = code["total_tokens"] if code else None
+    repair_tokens = repairs["total_tokens"] if repairs else 0
+    implementation_tokens = code_tokens + repair_tokens if code_tokens is not None else None
+    overall_tokens = prompt_tokens + implementation_tokens if prompt_tokens is not None and implementation_tokens is not None else None
 
     summary = {
         "session_file": str(session_file),
         "models": session_data["models"],
         "tokens": {
-            "first_gen_tokens": initial_tokens,
-            "sub_prompts_tokens": repair_tokens,
-            "total_uc_tokens": total_tokens,
-            "first_gen_cost_usd": round(first_gen["cost"], 4) if first_gen else 0.0,
-            "repair_cost_usd": round(sum(r["cost"] for r in repairs), 4),
-            "total_cost_usd": round((first_gen["cost"] if first_gen else 0.0) + sum(r["cost"] for r in repairs), 4),
+            "prompt_generation_tokens": prompt_tokens,
+            "code_generation_tokens": code_tokens,
+            "repair_tokens": repair_tokens,
+            "implementation_tokens": implementation_tokens,
+            "overall_tokens": overall_tokens,
+            "prompt_generation_cost_usd": prompt["cost_usd"] if prompt else None,
+            "code_generation_cost_usd": code["cost_usd"] if code else None,
+            "repair_cost_usd": repairs["cost_usd"] if repairs else 0.0,
         },
         "turns_summary": [
             {
@@ -324,6 +463,7 @@ def main():
                 "cost_usd": round(t["cost"], 4),
                 "duration_s": t["duration"],
                 "prompt": t["user_prompt"][:60],
+                "closed": t.get("closed", False),
             }
             for t in session_data["turns"]
         ],
@@ -333,6 +473,12 @@ def main():
         update_run_json(args.run_json, session_data, classified)
         summary["updated_run_json"] = args.run_json
 
+    if args.prompt_receipt:
+        if not args.prompt_path:
+            parser.error("--prompt-receipt requires --prompt-path")
+        write_prompt_receipt(args.prompt_receipt, args.prompt_path, session_data, classified)
+        summary["prompt_receipt"] = args.prompt_receipt
+
     if args.json:
         print(json.dumps(summary, indent=2, ensure_ascii=False))
     else:
@@ -340,15 +486,21 @@ def main():
         print(f"Session: {Path(session_file).name}")
         print(f"Models:  {', '.join(session_data['models'])}")
         print("-" * 65)
-        print(f"First Gen Turn ID:            {first_gen['id'] if first_gen else 'N/A'}")
-        print(f"First Gen Tokens (Col L):     {initial_tokens:,}".replace(",", "."))
-        print(f"Sub-prompts Tokens (Col M):   {repair_tokens:,}".replace(",", "."))
-        print(f"Total UC Tokens (Col N):      {total_tokens:,}".replace(",", "."))
-        print(f"Estimated Cost:               ${summary['tokens']['total_cost_usd']:.4f}")
+        print(f"Prompt generation turns:      {prompt['turn_ids'] if prompt else 'N/A'}")
+        print(f"Prompt generation tokens:     {prompt_tokens if prompt_tokens is not None else 'N/A'}")
+        print(f"Code generation turns:        {code['turn_ids'] if code else 'N/A'}")
+        print(f"Code generation tokens:       {code_tokens if code_tokens is not None else 'N/A'}")
+        print(f"Repair turns:                 {repairs['turn_ids'] if repairs else []}")
+        print(f"Repair tokens:                {repair_tokens:,}".replace(",", "."))
+        print(f"Implementation tokens:        {implementation_tokens if implementation_tokens is not None else 'N/A'}")
+        print(f"Overall tokens:               {overall_tokens if overall_tokens is not None else 'N/A'}")
         print("-" * 65)
         if args.update and args.run_json:
             print(f"Updated canonical run: {args.run_json}")
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except (OSError, json.JSONDecodeError, ValueError) as exc:
+        raise SystemExit(f"telemetry error: {exc}")
