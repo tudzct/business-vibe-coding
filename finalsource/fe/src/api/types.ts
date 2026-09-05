@@ -30,6 +30,25 @@ export interface Account {
   balance: number
 }
 
+export interface AccountDetailTransaction {
+  date: string
+  amount: number
+  description: string
+  status: 'Complete' | 'Pending' | 'Failed'
+  receipt_id: string | null
+  type: 'Revenue' | 'Expense'
+}
+
+export interface AccountDetail {
+  id: number
+  bank_name: string
+  account_type: AccountType
+  branch_name: string | null
+  account_number_full: string
+  balance: number
+  recent_transactions: AccountDetailTransaction[]
+}
+
 export type AccountType = 'Checking' | 'Credit Card' | 'Savings' | 'Investment' | 'Loan'
 
 export interface AccountListItem {

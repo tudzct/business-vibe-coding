@@ -1,0 +1,301 @@
+{
+  "run_id": "UC07-RQ3-SOL-MEDIUM-R1",
+  "run_status": "repair_authorization_required",
+  "hold_gate": "RQ3 initial assessment recorded; no repair sub-prompt may run without explicit researcher authorization.",
+  "experiment_configuration": {
+    "configuration_id": "CFG-UC07-RQ3-GPT56SOL-MEDIUM-R1-20260905",
+    "comparison_group_id": "CG-RQ3-SOL-MEDIUM-16UC-20260829",
+    "researcher_id": "khanh",
+    "artifact": "docs/05-experiments/configurations/CFG-UC07-RQ3-GPT56SOL-MEDIUM-R1-20260905.json",
+    "checksum": "sha256:037b114b41b65661b4962ba00e60ca5545d27aba714d598b618423b38e6f2790",
+    "run_activation": "docs/02-construction/implementation/UC-07/runs/UC07-RQ3-SOL-MEDIUM-R1/run-activation.json"
+  },
+  "uc_id": "UC-07",
+  "uc_name": "View Bank Account Details",
+  "replicate_index": 1,
+  "run_order": 1,
+  "prompt_variant": "rq3",
+  "audit_protocol": "matched",
+  "generation_model": {
+    "requested_label": "Sol Medium",
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null,
+    "effective_snapshot_unavailable_reason": "The runtime did not expose a provider snapshot identifier.",
+    "codex_client_version": null,
+    "codex_client_version_unavailable_reason": "The desktop runtime did not expose a client version to the task."
+  },
+  "audit_model": {
+    "assignment": "same-as-generation",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null
+  },
+  "timing_wall_clock": {
+    "initial_started_at": "2026-09-05T07:07:10.2993541Z",
+    "initial_started_epoch_ms": 1788592030299,
+    "initial_ended_at": "2026-09-05T07:09:46.5004978Z",
+    "initial_ended_epoch_ms": 1788592186500
+  },
+  "timing_seconds": {
+    "initial": 156.201,
+    "repairs": 0,
+    "total": 156.201
+  },
+  "tokens": {
+    "initial_total": 1321645,
+    "repair_total": 0,
+    "total": 1321645,
+    "telemetry_source": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\05\\rollout-2026-09-05T14-05-11-01a07062-b184-7253-981a-11e43f97fbb0.jsonl",
+    "details": {
+      "initial": {
+        "turn_id": 1,
+        "input": 120259,
+        "cache_read": 1184256,
+        "total_input": 1304515,
+        "output": 17130,
+        "reasoning": 2338,
+        "cost_usd": 1.7073,
+        "duration_seconds": 426.684
+      },
+      "repairs": {
+        "count": 0,
+        "total_tokens": 0,
+        "cost_usd": 0
+      }
+    }
+  },
+  "first_pass_source": {
+    "revision": "sha256:63c32ecd92038b05c98fd8f152c6bce746fce17efd8afa718af26635d68709a5",
+    "evidence": "docs/02-construction/implementation/UC-07/runs/UC07-RQ3-SOL-MEDIUM-R1/first-pass-generation.json"
+  },
+  "methodological_limitations": [
+    "Docker Compose runtime observation is blocked because the docker executable is unavailable; no native-host backend or database fallback was used.",
+    "No authenticated browser session was available, so rendered and authenticated endpoint behavior remain unobserved.",
+    "The RQ3 prompt excluded Prompt E and the frozen Business Rule expressions were loaded only after first-pass source generation stopped and its source fingerprint was captured."
+  ],
+  "checks": {
+    "host_backend_lint": "PASS: ESLint completed with zero warnings.",
+    "host_backend_build": "PASS: Nest production build completed.",
+    "host_frontend_lint": "PASS: ESLint completed with zero warnings.",
+    "host_frontend_build": "PASS: TypeScript and Vite production build completed; AccountDetailPage was emitted as a lazy chunk.",
+    "figma_dataset": "PASS: frozen dataset 2026-08-29-005 node 4795:4 resolved complete with valid checksums.",
+    "docker_review": "BLOCKED: docker executable is unavailable in the task environment.",
+    "docker_rebuild_runtime": "BLOCKED: a current-source Compose rebuild and runtime observation could not be performed.",
+    "tests_created_or_run": false
+  },
+  "technical_findings": [
+    {
+      "status": "repair_required",
+      "trigger": "business_rule_review",
+      "fingerprint": "account-detail-transaction-amount-sign-mapping",
+      "affected_br_ids": [
+        "BR-ACC-17"
+      ],
+      "evidence": "finalsource/be/src/modules/account/account.service.ts:86 maps persisted amounts with Number(...) for both Expense and Revenue instead of negating Expense amounts.",
+      "repair_authorized": false
+    },
+    {
+      "status": "repair_required",
+      "trigger": "business_rule_review",
+      "fingerprint": "account-detail-high-value-expense-suffix",
+      "affected_br_ids": [
+        "BR-ACC-19"
+      ],
+      "evidence": "finalsource/be/src/modules/account/account.service.ts:87 returns itemDescription unchanged and contains no account-balance threshold or exact HIGH VALUE suffix mapping.",
+      "repair_authorized": false
+    },
+    {
+      "status": "repair_required",
+      "trigger": "business_rule_review",
+      "fingerprint": "account-detail-cross-account-risk-lock",
+      "affected_br_ids": [
+        "BR-ACC-20"
+      ],
+      "evidence": "finalsource/be/src/modules/account/account.service.ts:51-96 verifies ownership but performs no Loan versus Checking/Savings aggregate comparison for Investment or Credit Card accounts.",
+      "repair_authorized": false
+    },
+    {
+      "status": "repair_required",
+      "trigger": "functional_flow_review",
+      "fingerprint": "account-list-details-control-disabled",
+      "affected_br_ids": [],
+      "evidence": "finalsource/fe/src/pages/Account/Account.tsx retains a disabled Details button, so the UC trigger is not reachable from an account card even though /accounts/:id is registered.",
+      "repair_authorized": false
+    }
+  ],
+  "ui_accuracy": {
+    "dataset_id": "2026-08-29-005",
+    "node_id": "4795:4",
+    "structural_targets": 12,
+    "structural_implemented_in_source": 12,
+    "rendered_verification": "not_evaluable",
+    "rendered_verification_reason": "Docker/browser runtime rendering was unavailable.",
+    "deterministic_similarity": null
+  },
+  "flow_accuracy": {
+    "checkpoints": 8,
+    "source_evaluable": 8,
+    "source_satisfied": 7,
+    "runtime_evaluable": 0,
+    "runtime_satisfied": 0,
+    "blocking_checkpoint": "The account-list Details control remains disabled, and authenticated runtime observation is unavailable."
+  },
+  "complexity": {
+    "actors": 1,
+    "main_flow_steps": 8,
+    "alternative_flows": 1,
+    "exception_flows": 4,
+    "uml_entities": 3,
+    "integrations": 2,
+    "business_rules": 6,
+    "ui_states": 4
+  },
+  "business_rules": {
+    "baseline": "docs/02-construction/implementation/UC-07/business-rule-baseline.json",
+    "resource": "docs/02-construction/business-rules/UC-07-business-rules.json",
+    "source_revision": null,
+    "ordered_br_ids": [
+      "BR-ACC-15",
+      "BR-ACC-16",
+      "BR-ACC-17",
+      "BR-ACC-18",
+      "BR-ACC-19",
+      "BR-ACC-20"
+    ],
+    "initial": {
+      "requirements": [
+        {
+          "br_id": "BR-ACC-15",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/account/account.controller.ts:62-94 protects GET :id, parses the identifier, and passes only the validated JWT userId to the service.",
+            "finalsource/be/src/modules/account/account.service.ts:56-66 returns HTTP 404 for a missing account and HTTP 403 before loading transactions when ownership differs.",
+            "Backend lint and production build pass."
+          ],
+          "rationale": "Existence and ownership are checked server-side and denied account data is not mapped or returned."
+        },
+        {
+          "br_id": "BR-ACC-16",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/account/account.service.ts:68-72 queries only the requested account's transactions, orders by transactionDate descending with transactionId as a deterministic tie-breaker, and takes five.",
+            "finalsource/be/src/modules/account/account.service.ts:81 maps an empty query result to recent_transactions: [].",
+            "Backend lint and production build pass."
+          ],
+          "rationale": "The repository query structurally caps results at five and returns them in descending persisted-date order."
+        },
+        {
+          "br_id": "BR-ACC-17",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/account/account.service.ts:75-91 explicitly maps the owned Account and selected Transaction fields into the response DTO.",
+            "finalsource/be/src/modules/account/account.service.ts:86 uses Number(transaction.amount) without applying a negative sign to Expense values.",
+            "The frontend applies a display-only sign at finalsource/fe/src/pages/Account/AccountDetailPage.tsx:33-36, which does not satisfy the backend DTO postcondition."
+          ],
+          "rationale": "Account and field projection are present, but Expense amounts are not signed in the authoritative backend response."
+        },
+        {
+          "br_id": "BR-ACC-18",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/account/account.service.ts:56-72 uses only Repository.findOne and Repository.find for the account-detail operation.",
+            "finalsource/be/src/modules/account/account.service.ts:51-96 contains no save, insert, update, delete, or transaction mutation.",
+            "GET /api/v1/accounts/:id is declared at finalsource/be/src/modules/account/account.controller.ts:62."
+          ],
+          "rationale": "The entire account-detail code path is read-only by inspectable controller and repository operations."
+        },
+        {
+          "br_id": "BR-ACC-19",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/account/account.service.ts:87 maps description directly from transaction.itemDescription.",
+            "The account-detail method contains no comparison of Expense absolute amount to half the current account balance and no exact ' [HIGH VALUE]' suffix."
+          ],
+          "rationale": "High-value Expense descriptions are returned unchanged."
+        },
+        {
+          "br_id": "BR-ACC-20",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/account/account.service.ts:56-66 checks only account existence and direct ownership before transaction retrieval.",
+            "The method contains no conditional Investment/Credit Card handling, Loan balance total, Checking/Savings balance total, or debt-exposure HTTP 403 path."
+          ],
+          "rationale": "The required cross-account aggregate risk gate is absent."
+        }
+      ],
+      "total": 6,
+      "met": 3,
+      "not_evaluable": 0,
+      "unmet": 3,
+      "acceptance_percent": 50.0
+    },
+    "final": {
+      "requirements": [
+        {
+          "br_id": "BR-ACC-15",
+          "status": "met",
+          "evidence": [
+            "Initial assessment is frozen; no repairs are authorized."
+          ],
+          "rationale": "Unchanged from the immutable initial assessment."
+        },
+        {
+          "br_id": "BR-ACC-16",
+          "status": "met",
+          "evidence": [
+            "Initial assessment is frozen; no repairs are authorized."
+          ],
+          "rationale": "Unchanged from the immutable initial assessment."
+        },
+        {
+          "br_id": "BR-ACC-17",
+          "status": "unmet",
+          "evidence": [
+            "Initial assessment is frozen; the signed-amount defect remains unrepaired."
+          ],
+          "rationale": "Unchanged pending researcher authorization."
+        },
+        {
+          "br_id": "BR-ACC-18",
+          "status": "met",
+          "evidence": [
+            "Initial assessment is frozen; no repairs are authorized."
+          ],
+          "rationale": "Unchanged from the immutable initial assessment."
+        },
+        {
+          "br_id": "BR-ACC-19",
+          "status": "unmet",
+          "evidence": [
+            "Initial assessment is frozen; the high-value suffix defect remains unrepaired."
+          ],
+          "rationale": "Unchanged pending researcher authorization."
+        },
+        {
+          "br_id": "BR-ACC-20",
+          "status": "unmet",
+          "evidence": [
+            "Initial assessment is frozen; the risk-exposure gate defect remains unrepaired."
+          ],
+          "rationale": "Unchanged pending researcher authorization."
+        }
+      ],
+      "total": 6,
+      "met": 3,
+      "not_evaluable": 0,
+      "unmet": 3,
+      "acceptance_percent": 50.0
+    }
+  },
+  "repairs": [],
+  "repair_authorization": {
+    "status": "required",
+    "requested_at": "2026-09-05T07:09:46.5004978Z",
+    "authorized_at": null,
+    "authorization_basis": null
+  },
+  "manual_estimates_minutes": [],
+  "all_sub_prompt_count": 0
+}

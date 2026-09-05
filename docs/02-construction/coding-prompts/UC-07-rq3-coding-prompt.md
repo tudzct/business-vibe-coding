@@ -1,7 +1,7 @@
 ---
 artifact_type: business-coding-prompt
 prompt_variant: rq3-ad
-status: Draft
+status: Approved
 uc_id: UC-07
 uc_name: View Bank Account Details
 source_use_case: docs/01-inception/use-cases/uc-07-view-bank-account-details.md

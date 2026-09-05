@@ -1,13 +1,18 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
+  HttpException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
 import { Account, AccountType } from './account.entity';
 import { CreateAccountDto } from './dto/create-account.dto';
+import { AccountDetailResponseDto } from './dto/account-detail-response.dto';
+import { Transaction } from '../transaction/transaction.entity';
 
 export interface AccountListItemDto {
   readonly id: number;
@@ -39,7 +44,61 @@ export class AccountService {
   constructor(
     @InjectRepository(Account)
     private readonly accounts: Repository<Account>,
+    @InjectRepository(Transaction)
+    private readonly transactions: Repository<Transaction>,
   ) {}
+
+  async findOneWithTransactions(
+    accountId: number,
+    userId: number,
+  ): Promise<AccountDetailResponseDto> {
+    try {
+      const account = await this.accounts.findOne({
+        where: { accountId },
+      });
+      if (!account) {
+        throw new NotFoundException('Account not found.');
+      }
+      if (account.userId !== userId) {
+        throw new ForbiddenException(
+          'You do not have permission to view this account details.',
+        );
+      }
+
+      const transactions = await this.transactions.find({
+        where: { accountId },
+        order: { transactionDate: 'DESC', transactionId: 'DESC' },
+        take: 5,
+      });
+
+      return {
+        id: account.accountId,
+        bank_name: account.bankName,
+        account_type: account.accountType,
+        branch_name: account.branchName ?? null,
+        account_number_full: account.accountNumberFull,
+        balance: Number(account.balance),
+        recent_transactions: transactions.map((transaction) => ({
+          date:
+            transaction.transactionDate instanceof Date
+              ? transaction.transactionDate.toISOString().slice(0, 10)
+              : String(transaction.transactionDate).slice(0, 10),
+          amount: Number(transaction.amount),
+          description: transaction.itemDescription,
+          status: transaction.status,
+          receipt_id: transaction.receiptId ?? null,
+          type: transaction.type,
+        })),
+      };
+    } catch (error: unknown) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'A banking system error occurred. Please try again later.',
+      );
+    }
+  }
 
   async findAllByUserId(userId: number): Promise<AccountListDataDto> {
     try {
