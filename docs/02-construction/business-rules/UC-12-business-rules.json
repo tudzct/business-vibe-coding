@@ -1,0 +1,136 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-resource",
+  "status": "Frozen",
+  "uc_id": "UC-12",
+  "source_use_case": "docs/01-inception/use-cases/uc-12-view-upcoming-bills.md",
+  "source_use_case_sha256": "sha256:bb6be1ec8dcf33a8e823294766b0f15d765ef1c7ec57191b0a941a594249585b",
+  "spreadsheet": {
+    "id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "tab": "Use cases",
+    "range": "A258:B275",
+    "retrieved_at": "2026-09-04T12:21:28Z"
+  },
+  "ocl_utility_source": "Use cases!A2:B2",
+  "rules": [
+    {
+      "br_id": "BR-BILL-UP-01",
+      "name": "Authenticated ownership scope",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context BillService::findUpcomingBillsByUserId(userId : Integer) : Sequence(BillDto)\n\npre BR_BILL_UP_01_AuthenticatedIdentity:\n  not userId.oclIsUndefined()\n\npost BR_BILL_UP_01_OwnedBillsOnly:\n  result->forAll(dto |\n    Bill.allInstances()->exists(bill |\n      bill.billId = dto.billId and\n      bill.userId = userId\n    )\n  )\n\nTechnical constraints:\n- The userId used for bill retrieval shall come from the validated authenticated request context.\n- A client-supplied user identifier shall not override the authenticated userId.\n- Bills owned by another user shall never contribute to the result.",
+      "context": "BillService::findUpcomingBillsByUserId(userId : Integer) : Sequence(BillDto)",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "A missing, invalid, or expired JWT is rejected with HTTP 401; successful retrieval uses the validated authenticated userId and excludes bills owned by another user.",
+      "traceability": [
+        "Use cases!A258:B275",
+        "UC-12 PRE-1",
+        "UC-12 Basic Flow 2-5",
+        "UC-12 EF-1",
+        "API-BILL-LIST"
+      ]
+    },
+    {
+      "br_id": "BR-BILL-UP-02",
+      "name": "Near-term eligibility window",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context BillService::findUpcomingBillsByUserId(userId : Integer) : Sequence(BillDto)\n\npost BR_BILL_UP_02_WithinWindow:\n  result->forAll(dto |\n    Bill.allInstances()->exists(bill |\n      bill.billId = dto.billId and\n      bill.userId = userId and\n      bill.dueDate >= currentDateAtMidnight() and\n      bill.dueDate <= addDays(currentDateAtMidnight(), 30)\n    )\n  )\n\nTechnical constraints:\n- Upcoming eligibility is evaluated against an inclusive 31-day calendar window: today through 30 calendar days after today.\n- currentDateAtMidnight() represents the backend system's current calendar date with hour, minute, second, and millisecond set to zero.\n- Bills due before today are overdue and shall be excluded.\n- Bills due more than 30 calendar days after today shall not appear in the Upcoming Bills result.",
+      "context": "BillService::findUpcomingBillsByUserId(userId : Integer) : Sequence(BillDto)",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "Only bills due within the inclusive today-through-30-calendar-days window appear in a successful result; the source defines no separate error response for an eligibility violation.",
+      "traceability": [
+        "Use cases!A258:B275",
+        "UC-12 Basic Flow 4-5",
+        "UC-12 AF-1",
+        "UC-12 UML Bill.dueDate"
+      ]
+    },
+    {
+      "br_id": "BR-BILL-UP-03",
+      "name": "Already-charged cycle exclusion",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context BillService::findUpcomingBillsByUserId(userId : Integer) : Sequence(BillDto)\n\npost BR_BILL_UP_03_NotAlreadyChargedForDueCycle:\n  result->forAll(dto |\n    Bill.allInstances()->exists(bill |\n      bill.billId = dto.billId and\n      (\n        bill.lastChargeDate.oclIsUndefined() or\n        bill.lastChargeDate < bill.dueDate\n      )\n    )\n  )\n\nTechnical constraint:\n- A bill whose lastChargeDate is equal to or later than its dueDate is treated as already charged for that due cycle and shall be excluded from the Upcoming Bills result.",
+      "context": "BillService::findUpcomingBillsByUserId(userId : Integer) : Sequence(BillDto)",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "Bills already charged for their due cycle are excluded from a successful result; the source defines no separate error response for an eligibility violation.",
+      "traceability": [
+        "Use cases!A258:B275",
+        "UC-12 Basic Flow 4-5",
+        "UC-12 AF-1",
+        "UC-12 UML Bill.lastChargeDate"
+      ]
+    },
+    {
+      "br_id": "BR-BILL-UP-04",
+      "name": "Deterministic urgency ordering",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context BillService::findUpcomingBillsByUserId(userId : Integer) : Sequence(BillDto)\n\npost BR_BILL_UP_04_Ordered:\n  result->size() <= 1 or\n  Sequence{1..result->size() - 1}->forAll(i |\n    let a : BillDto = result->at(i),\n        b : BillDto = result->at(i + 1)\n    in\n      a.dueDate < b.dueDate or\n      (\n        a.dueDate = b.dueDate and\n        (\n          a.amount > b.amount or\n          (a.amount = b.amount and a.billId < b.billId)\n        )\n      )\n  )\n\nTechnical constraints:\n- Bills shall be ordered by dueDate ascending.\n- Bills sharing the same dueDate shall be ordered by amount descending.\n- Bills sharing both dueDate and amount shall be ordered by billId ascending.",
+      "context": "BillService::findUpcomingBillsByUserId(userId : Integer) : Sequence(BillDto)",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "Successful results use the defined dueDate, amount, and billId ordering; the source defines no separate error response for an ordering violation.",
+      "traceability": [
+        "Use cases!A258:B275",
+        "UC-12 Basic Flow 4-7",
+        "UC-12 UML BillDto"
+      ]
+    },
+    {
+      "br_id": "BR-BILL-UP-05",
+      "name": "Response normalization",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context BillService::findUpcomingBillsByUserId(userId : Integer) : Sequence(BillDto)\n\npost BR_BILL_UP_05_NormalizedMapping:\n  result->forAll(dto |\n    Bill.allInstances()->exists(bill |\n      bill.billId = dto.billId and\n      dto.userId = bill.userId and\n      dto.itemDescription = trim(bill.itemDescription) and\n      dto.amount = round2(bill.amount) and\n      dto.dueDate = formatDate(bill.dueDate) and\n      (\n        bill.lastChargeDate.oclIsUndefined()\n        implies dto.lastChargeDate.oclIsUndefined()\n      ) and\n      (\n        not bill.lastChargeDate.oclIsUndefined()\n        implies dto.lastChargeDate = formatDate(bill.lastChargeDate)\n      ) and\n      (\n        (bill.logoUrl.oclIsUndefined() or trim(bill.logoUrl).size() = 0)\n        implies dto.logoUrl.oclIsUndefined()\n      ) and\n      (\n        (not bill.logoUrl.oclIsUndefined() and trim(bill.logoUrl).size() > 0)\n        implies dto.logoUrl = trim(bill.logoUrl)\n      )\n    )\n  )\n\nTechnical constraints:\n- itemDescription shall be trimmed before it is returned.\n- amount shall be rounded to two decimal places.\n- dueDate shall be formatted as YYYY-MM-DD.\n- lastChargeDate shall be formatted as YYYY-MM-DD when present and returned as null when absent.\n- logoUrl shall be trimmed; a missing or blank value shall be returned as null.",
+      "context": "BillService::findUpcomingBillsByUserId(userId : Integer) : Sequence(BillDto)",
+      "enforcement_layers": [
+        "backend"
+      ],
+      "failure_behavior": "Successful bill DTOs use the defined trimming, rounding, date formatting, and null normalization; response-processing failures return HTTP 500 with the API's safe message.",
+      "traceability": [
+        "Use cases!A258:B275",
+        "UC-12 Basic Flow 4-6",
+        "UC-12 EF-2",
+        "UC-12 UML Bill and BillDto",
+        "API-BILL-LIST"
+      ]
+    },
+    {
+      "br_id": "BR-BILL-UP-06",
+      "name": "Exact coverage, uniqueness, and empty result",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context BillService::findUpcomingBillsByUserId(userId : Integer) : Sequence(BillDto)\n\npost BR_BILL_UP_06_UniqueBills:\n  result->isUnique(dto | dto.billId)\n\npost BR_BILL_UP_06_AllAndOnlyEligibleBills:\n  let eligible : Set(Bill) =\n    Bill.allInstances()\n      ->select(bill |\n        bill.userId = userId and\n        bill.dueDate >= currentDateAtMidnight() and\n        bill.dueDate <= addDays(currentDateAtMidnight(), 30) and\n        (\n          bill.lastChargeDate.oclIsUndefined() or\n          bill.lastChargeDate < bill.dueDate\n        )\n      )\n      ->asSet()\n  in\n    result->size() = eligible->size() and\n    result->forAll(dto |\n      eligible->exists(bill | bill.billId = dto.billId)\n    )\n\nTechnical constraint:\n- If no eligible bill exists after all business rules are applied, the successful result shall contain an empty data array.",
+      "context": "BillService::findUpcomingBillsByUserId(userId : Integer) : Sequence(BillDto)",
+      "enforcement_layers": [
+        "backend",
+        "database",
+        "frontend"
+      ],
+      "failure_behavior": "A successful response contains every eligible bill exactly once and no ineligible bill; when none exists, the backend returns an empty data array and the frontend displays the no-upcoming-bills state.",
+      "traceability": [
+        "Use cases!A258:B275",
+        "UC-12 POST-2",
+        "UC-12 Basic Flow 4-7",
+        "UC-12 AF-1",
+        "API-BILL-LIST HTTP 200"
+      ]
+    }
+  ],
+  "ordered_br_ids": [
+    "BR-BILL-UP-01",
+    "BR-BILL-UP-02",
+    "BR-BILL-UP-03",
+    "BR-BILL-UP-04",
+    "BR-BILL-UP-05",
+    "BR-BILL-UP-06"
+  ],
+  "unresolved_items": []
+}

@@ -1,0 +1,381 @@
+{
+  "run_id": "RQ3-SOL-MEDIUM-R1-UC12",
+  "run_status": "blocked_runtime",
+  "hold_gate": "satisfied_repair_authorized",
+  "prompt_variant": "rq3",
+  "experiment_configuration": {
+    "configuration_id": "CFG-UC12-RQ3-SOL-MEDIUM-R1-20260904",
+    "comparison_group_id": "CG-RQ3-SOL-MEDIUM-16UC-20260829",
+    "researcher_id": "tu",
+    "artifact": "docs/05-experiments/configurations/CFG-UC12-RQ3-SOL-MEDIUM-R1-20260904.json",
+    "checksum": "sha256:2a48ce62d505e01f125a594b3b098c9690b17ff9dd4cd35605a2838e4baf0e15",
+    "run_activation": "docs/02-construction/implementation/UC-12/runs/RQ3-SOL-MEDIUM-R1-UC12/run-activation.json"
+  },
+  "uc_id": "UC-12",
+  "uc_name": "View Upcoming Bills",
+  "replicate_index": 1,
+  "run_order": 3,
+  "audit_protocol": "matched",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null,
+    "effective_snapshot_unavailable_reason": "The session telemetry exposes the effective model family but not an authoritative snapshot identifier.",
+    "codex_client_version": "codex-cli 0.149.1"
+  },
+  "audit_model": {
+    "assignment": "same-as-generation",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null,
+    "unavailable_reason": "The session telemetry exposes the effective model family but not an authoritative snapshot identifier."
+  },
+  "timing_wall_clock": {
+    "initial_started_at": "2026-09-04T20:10:11.478+07:00",
+    "initial_started_epoch_ms": 1788527411479,
+    "initial_ended_at": "2026-09-04T20:14:46.650+07:00",
+    "initial_ended_epoch_ms": 1788527686651
+  },
+  "timing_seconds": {
+    "initial": 275.172,
+    "repairs": 306.934,
+    "total": 582.106
+  },
+  "tokens": {
+    "initial_total": 1401235,
+    "repair_total": 5805558,
+    "total": 7206793,
+    "telemetry_source": "/Users/ldt/.codex/sessions/2026/09/04/rollout-2026-09-04T19-44-41-01a06c73-28a2-7ef3-93ea-4252b5d19298.jsonl",
+    "details": {
+      "initial": {
+        "turn_id": 4,
+        "input": 36801,
+        "cache_read": 1348864,
+        "total_input": 1385665,
+        "output": 15570,
+        "reasoning": 1927,
+        "cutoff_at": "2026-09-04T13:14:46.650Z",
+        "last_token_event_at_or_before_cutoff": "2026-09-04T13:14:38.689Z"
+      },
+      "repairs": {
+        "count": 5,
+        "shared_turn_id": 5,
+        "repair_ids": [
+          "RQ3-SOL-MEDIUM-R1-UC12-REPAIR-001",
+          "RQ3-SOL-MEDIUM-R1-UC12-REPAIR-002",
+          "RQ3-SOL-MEDIUM-R1-UC12-REPAIR-003",
+          "RQ3-SOL-MEDIUM-R1-UC12-REPAIR-004",
+          "RQ3-SOL-MEDIUM-R1-UC12-REPAIR-005"
+        ],
+        "input": 23280,
+        "cache_read": 5772928,
+        "total_input": 5796208,
+        "output": 9350,
+        "reasoning": 1078,
+        "total_tokens": 5805558,
+        "cutoff_at": "2026-09-04T13:29:57.207Z",
+        "last_token_event_at_or_before_cutoff": "2026-09-04T13:29:45.965Z",
+        "attribution_note": "All five authorized bounded repairs were performed in one Codex turn, so only aggregate repair-turn telemetry is attributable."
+      }
+    }
+  },
+  "first_pass_source": {
+    "revision": "sha256:288ed148b4caa03f33c11b7eb90b30cbbfea7ccf138cf22340a5e49bd61371ae",
+    "evidence": "docs/02-construction/implementation/UC-12/runs/RQ3-SOL-MEDIUM-R1-UC12/first-pass-generation.json"
+  },
+  "checks": {
+    "host_backend_lint": "not_evaluable: eslint executable absent because host dependencies are not installed",
+    "host_backend_build": "not_evaluable: nest executable absent because host dependencies are not installed",
+    "host_frontend_lint": "not_evaluable: eslint executable absent because host dependencies are not installed",
+    "host_frontend_build": "not_evaluable: tsc executable absent because host dependencies are not installed",
+    "docker_compose_config": "PASS: Compose configuration validated with the ignored, untracked finalsource/.env",
+    "docker_backend_build": "PASS: each bounded backend repair and the final repaired Nest production image built successfully",
+    "docker_frontend_build": "PASS: the current TypeScript/Vite production image built successfully",
+    "docker_runtime_health": "BLOCKED: database health passed and the repaired JWT guard initialized; backend then failed during an existing migration because the active persistent database lacks the Accounts table recorded by DEP-20260831-001, so frontend health remained blocked",
+    "frontend_reachability": "not_evaluable: frontend did not start after the backend health dependency failed",
+    "authentication_exception": "not_evaluable: backend did not complete database initialization, so bounded HTTP 401 observation was unavailable",
+    "authenticated_upcoming_bills": "not_evaluable: backend did not complete database initialization and no researcher-supplied authenticated session was used",
+    "empty_state_runtime": "not_evaluable: frontend did not start; inspectable source evidence is retained"
+  },
+  "business_rules": {
+    "baseline": "docs/02-construction/implementation/UC-12/business-rule-baseline.json",
+    "source_revision": "sha256:6fca554a282c38c8f3a3d6492f2dfe59a33df3fd22d60c41748fda92e3717736",
+    "ordered_br_ids": [
+      "BR-BILL-UP-01",
+      "BR-BILL-UP-02",
+      "BR-BILL-UP-03",
+      "BR-BILL-UP-04",
+      "BR-BILL-UP-05",
+      "BR-BILL-UP-06"
+    ],
+    "initial": {
+      "requirements": [
+        {
+          "br_id": "BR-BILL-UP-01",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/bill/bill.controller.ts:14-29 protects GET /api/v1/bills with JwtAuthGuard and passes only request.user.userId to BillService",
+            "finalsource/be/src/modules/bill/bill.service.ts:14-17 scopes the repository lookup by the supplied authenticated userId",
+            "finalsource/be/src/modules/auth/jwt-auth.guard.ts:14-31 accepts only a verified Bearer JWT identity and assigns its parsed subject as request.user.userId"
+          ],
+          "rationale": "The inspectable endpoint and query use the validated request identity and expose no client-controlled user identifier; the separate application-startup defect prevents runtime observation but does not remove the source-level ownership scope."
+        },
+        {
+          "br_id": "BR-BILL-UP-02",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/bill/bill.service.ts:14-17 queries all bills matching userId and supplies no dueDate predicate",
+            "No current-date boundary or upper calendar-window bound appears in BillService"
+          ],
+          "rationale": "Owned overdue bills and owned bills beyond the required near-term window can be returned."
+        },
+        {
+          "br_id": "BR-BILL-UP-03",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/bill/bill.service.ts:14-17 applies only the userId repository condition",
+            "finalsource/be/src/modules/bill/bill.service.ts:35-37 maps lastChargeDate but never compares it with dueDate"
+          ],
+          "rationale": "A bill whose last charge is equal to or later than its due date is not excluded."
+        },
+        {
+          "br_id": "BR-BILL-UP-04",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/bill/bill.service.ts:16 invokes Repository.find without an order option",
+            "finalsource/fe/src/pages/Bills/Bills.tsx:72-76 stores the server array without applying any ordering"
+          ],
+          "rationale": "The implementation does not enforce due-date, amount, or bill-ID ordering."
+        },
+        {
+          "br_id": "BR-BILL-UP-05",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/bill/bill.service.ts:29-39 maps DTO fields and normalizes absent nullable values",
+            "finalsource/be/src/modules/bill/bill.service.ts:32 returns itemDescription without trimming",
+            "finalsource/be/src/modules/bill/bill.service.ts:24 and 38 converts amount to a number without explicit two-decimal rounding, and line 33 returns a non-null logoUrl without trimming",
+            "finalsource/be/src/modules/bill/bill.service.ts:42-47 formats returned dates as YYYY-MM-DD"
+          ],
+          "rationale": "Date and null mapping are present, but the complete required trimming and monetary-rounding normalization is absent."
+        },
+        {
+          "br_id": "BR-BILL-UP-06",
+          "status": "unmet",
+          "evidence": [
+            "finalsource/be/src/modules/bill/bill.service.ts:16 returns every owned bill rather than all and only eligible bills",
+            "finalsource/fe/src/components/UpcomingBills/UpcomingBills.tsx:90-95 correctly renders an empty state only when the returned array is empty",
+            "Because the query omits the required eligibility predicates, an owned but ineligible bill prevents the required empty result"
+          ],
+          "rationale": "The primary-key mapping avoids duplicate persisted rows, but exact eligibility coverage and the corresponding empty result are not enforced."
+        }
+      ],
+      "total": 6,
+      "unmet": 5,
+      "met": 1,
+      "not_evaluable": 0,
+      "acceptance_percent": 16.67
+    },
+    "final": {
+      "requirements": [
+        {
+          "br_id": "BR-BILL-UP-01",
+          "status": "met",
+          "evidence": [
+            "finalsource/be/src/modules/bill/bill.controller.ts:14-29 protects the endpoint and passes only request.user.userId to the service",
+            "finalsource/be/src/modules/bill/bill.service.ts:21-24 scopes the query by the authenticated userId",
+            "finalsource/be/src/modules/auth/auth.module.ts:29-30 now registers and exports JwtAuthGuard, and the prior UnknownExportException no longer appears during startup"
+          ],
+          "rationale": "The JWT-derived identity remains authoritative, query ownership scope is explicit, and the guard is now valid in the Nest module graph."
+        },
+        {
+          "br_id": "BR-BILL-UP-02",
+          "status": "met",
+          "evidence": [
+            "Repair RQ3-SOL-MEDIUM-R1-UC12-REPAIR-001",
+            "finalsource/be/src/modules/bill/bill.service.ts:16-25 computes local today at midnight, adds 30 calendar days, and applies inclusive lower and upper dueDate predicates",
+            "Docker backend production build passed after the repair"
+          ],
+          "rationale": "The owned-bill query now restricts results to the inclusive today-through-30-calendar-days window."
+        },
+        {
+          "br_id": "BR-BILL-UP-03",
+          "status": "met",
+          "evidence": [
+            "Repair RQ3-SOL-MEDIUM-R1-UC12-REPAIR-002",
+            "finalsource/be/src/modules/bill/bill.service.ts:26-28 retains only a null lastChargeDate or one earlier than dueDate",
+            "Docker backend production build passed after the repair"
+          ],
+          "rationale": "Bills already charged on or after their due date are excluded by the authoritative backend query."
+        },
+        {
+          "br_id": "BR-BILL-UP-04",
+          "status": "met",
+          "evidence": [
+            "Repair RQ3-SOL-MEDIUM-R1-UC12-REPAIR-003",
+            "finalsource/be/src/modules/bill/bill.service.ts:29-31 orders dueDate ascending, amount descending, and billId ascending",
+            "finalsource/fe/src/pages/Bills/Bills.tsx:72-76 preserves the backend sequence"
+          ],
+          "rationale": "All three required ordering keys are applied in the required direction before DTO mapping."
+        },
+        {
+          "br_id": "BR-BILL-UP-05",
+          "status": "met",
+          "evidence": [
+            "Repair RQ3-SOL-MEDIUM-R1-UC12-REPAIR-004",
+            "finalsource/be/src/modules/bill/bill.service.ts:39-57 validates the numeric amount, trims description/logo, normalizes blank logo and absent lastChargeDate to null, formats both dates, and rounds amount",
+            "finalsource/be/src/modules/bill/bill.service.ts:60-69 implements two-decimal rounding and YYYY-MM-DD formatting",
+            "Docker backend production build passed after the repair"
+          ],
+          "rationale": "Every specified DTO normalization is explicit in the backend mapper."
+        },
+        {
+          "br_id": "BR-BILL-UP-06",
+          "status": "met",
+          "evidence": [
+            "Repairs RQ3-SOL-MEDIUM-R1-UC12-REPAIR-001 and RQ3-SOL-MEDIUM-R1-UC12-REPAIR-002",
+            "finalsource/be/src/modules/bill/bill.service.ts:21-32 queries all and only rows satisfying ownership, date-window, and charged-cycle predicates; Bill primary-key entities map once each",
+            "finalsource/fe/src/components/UpcomingBills/UpcomingBills.tsx:90-95"
+          ],
+          "rationale": "The query has exactly the frozen eligibility predicates, persistence identity ensures uniqueness, and an empty result is returned and rendered as the no-upcoming-bills state."
+        }
+      ],
+      "total": 6,
+      "unmet": 0,
+      "met": 6,
+      "not_evaluable": 0,
+      "acceptance_percent": 100.0
+    }
+  },
+  "ui_accuracy": {
+    "design_dataset": "2026-08-29-005",
+    "node_id": "66:5609",
+    "structural_evidence": "The source reconstructs the 280 px dark sidebar, top header, #F4F5F7 page, Upcoming Bills heading, responsive white list panel, five specified columns, compact due-date tile, logo, item description, last-charge value, bordered amount badge, and loading/empty/error states.",
+    "deterministic_similarity": null,
+    "limitation": "The frontend image built successfully, but the researcher-controlled missing-domain-table runtime baseline prevented a running authenticated browser observation."
+  },
+  "flow_accuracy": {
+    "checkpoints_total": 12,
+    "checkpoints_satisfied": 8,
+    "checkpoints_not_evaluable": 4,
+    "satisfied": [
+      "protected /bills frontend route",
+      "Bearer JWT attachment through the existing Axios interceptor",
+      "typed GET /api/v1/bills client integration",
+      "authenticated userId source-scoped repository lookup",
+      "normalized success response source path",
+      "typed loading, empty, error, success, and retry frontend states",
+      "fresh backend production image build",
+      "fresh frontend production image build"
+    ],
+    "not_evaluable": [
+      "backend health and API reachability",
+      "bounded unauthenticated HTTP 401 observation",
+      "authenticated upcoming-bill success observation",
+      "rendered populated, empty, and retry transitions"
+    ]
+  },
+  "complexity": {
+    "actors": 1,
+    "main_flow_steps": 7,
+    "alternative_flows": 2,
+    "exception_flows": 2,
+    "entities": 1,
+    "integrations": 2,
+    "business_rules": 6,
+    "ui_states": 4
+  },
+  "repairs": [
+    {
+      "repair_id": "RQ3-SOL-MEDIUM-R1-UC12-REPAIR-001",
+      "artifact": "docs/02-construction/implementation/UC-12/runs/RQ3-SOL-MEDIUM-R1-UC12/repairs/001-near-term-date-window.md",
+      "affected_br_ids": [
+        "BR-BILL-UP-02",
+        "BR-BILL-UP-06"
+      ],
+      "status": "complete",
+      "started_at": "2026-09-04T20:23:32.738+07:00",
+      "ended_at": "2026-09-04T20:24:11.884+07:00",
+      "duration_seconds": 39.146,
+      "source_revision_before": "sha256:288ed148b4caa03f33c11b7eb90b30cbbfea7ccf138cf22340a5e49bd61371ae",
+      "source_revision_after": "sha256:3209bb7446c1785b1718b438da43e87bd787d0614e01ed4eaadf3e7084158470",
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "reasoning_mode": "standard",
+      "tokens": null,
+      "token_note": "Shared aggregate repair-turn telemetry; per-repair attribution unavailable."
+    },
+    {
+      "repair_id": "RQ3-SOL-MEDIUM-R1-UC12-REPAIR-002",
+      "artifact": "docs/02-construction/implementation/UC-12/runs/RQ3-SOL-MEDIUM-R1-UC12/repairs/002-charged-cycle-exclusion.md",
+      "affected_br_ids": [
+        "BR-BILL-UP-03",
+        "BR-BILL-UP-06"
+      ],
+      "status": "complete",
+      "started_at": "2026-09-04T20:24:33.511+07:00",
+      "ended_at": "2026-09-04T20:25:08.132+07:00",
+      "duration_seconds": 34.621,
+      "source_revision_before": "sha256:3209bb7446c1785b1718b438da43e87bd787d0614e01ed4eaadf3e7084158470",
+      "source_revision_after": "sha256:f31804cba843e71896401bdc91f2d17b8a56752e5f4533903e2a1da7c98cb655",
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "reasoning_mode": "standard",
+      "tokens": null,
+      "token_note": "Shared aggregate repair-turn telemetry; per-repair attribution unavailable."
+    },
+    {
+      "repair_id": "RQ3-SOL-MEDIUM-R1-UC12-REPAIR-003",
+      "artifact": "docs/02-construction/implementation/UC-12/runs/RQ3-SOL-MEDIUM-R1-UC12/repairs/003-deterministic-ordering.md",
+      "affected_br_ids": [
+        "BR-BILL-UP-04"
+      ],
+      "status": "complete",
+      "started_at": "2026-09-04T20:25:25.778+07:00",
+      "ended_at": "2026-09-04T20:25:57.087+07:00",
+      "duration_seconds": 31.309,
+      "source_revision_before": "sha256:f31804cba843e71896401bdc91f2d17b8a56752e5f4533903e2a1da7c98cb655",
+      "source_revision_after": "sha256:37733fc5f622ce1f487cb59ebfa63bc6df5ba5647f00a0efb18b12e7f67b5c8e",
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "reasoning_mode": "standard",
+      "tokens": null,
+      "token_note": "Shared aggregate repair-turn telemetry; per-repair attribution unavailable."
+    },
+    {
+      "repair_id": "RQ3-SOL-MEDIUM-R1-UC12-REPAIR-004",
+      "artifact": "docs/02-construction/implementation/UC-12/runs/RQ3-SOL-MEDIUM-R1-UC12/repairs/004-response-normalization.md",
+      "affected_br_ids": [
+        "BR-BILL-UP-05"
+      ],
+      "status": "complete",
+      "started_at": "2026-09-04T20:26:15.027+07:00",
+      "ended_at": "2026-09-04T20:26:52.523+07:00",
+      "duration_seconds": 37.495,
+      "source_revision_before": "sha256:37733fc5f622ce1f487cb59ebfa63bc6df5ba5647f00a0efb18b12e7f67b5c8e",
+      "source_revision_after": "sha256:fa54c8ab15ca5eb8b9501b8bb12092779b26d554e3e0e4094f209be3ff930375",
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "reasoning_mode": "standard",
+      "tokens": null,
+      "token_note": "Shared aggregate repair-turn telemetry; per-repair attribution unavailable."
+    },
+    {
+      "repair_id": "RQ3-SOL-MEDIUM-R1-UC12-REPAIR-005",
+      "artifact": "docs/02-construction/implementation/UC-12/runs/RQ3-SOL-MEDIUM-R1-UC12/repairs/005-auth-guard-provider-registration.md",
+      "affected_br_ids": [],
+      "status": "complete",
+      "started_at": "2026-09-04T20:27:12.844+07:00",
+      "ended_at": "2026-09-04T20:29:57.207+07:00",
+      "duration_seconds": 164.363,
+      "source_revision_before": "sha256:fa54c8ab15ca5eb8b9501b8bb12092779b26d554e3e0e4094f209be3ff930375",
+      "source_revision_after": "sha256:6fca554a282c38c8f3a3d6492f2dfe59a33df3fd22d60c41748fda92e3717736",
+      "model_id": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "reasoning_mode": "standard",
+      "tokens": null,
+      "token_note": "Shared aggregate repair-turn telemetry; per-repair attribution unavailable."
+    }
+  ],
+  "all_sub_prompt_count": 5
+}

@@ -1,12 +1,12 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-09-04T10:47:21.9173106Z",
-  "repository_revision": "6f29e27a771b660ef74a05a2f0557f990ef2240e",
-  "source_revision": "sha256:7f1de770f933825ae26ce954170be2602f54826e75aaaa90edd48510348195b4",
+  "observed_at": "2026-09-04T13:30:41Z",
+  "repository_revision": "uncommitted-worktree",
+  "source_revision": "sha256:6fca554a282c38c8f3a3d6492f2dfe59a33df3fd22d60c41748fda92e3717736",
   "docker": {
-    "cli": "Docker 29.2.1",
-    "compose": "Docker Compose v5.0.2",
-    "daemon": "available (server 29.2.1)"
+    "cli": "29.6.1",
+    "compose": "v5.3.0",
+    "daemon": "reachable"
   },
   "configuration": {
     "env_present": true,
@@ -15,11 +15,11 @@
     "compose_valid": true
   },
   "services": {
-    "database": "healthy container",
-    "backend": "healthy UC-16 final-source container; health HTTP 200; savings HTTP 401 unauthenticated and HTTP 200 authenticated",
-    "frontend": "healthy UC-16 final-source container; root returned HTTP 200"
+    "database": "runtime observation passed its healthcheck; stopped after evidence capture with its volume preserved",
+    "backend": "fresh repaired image built; JWT guard initialization passed, then database initialization was blocked by the known absent Accounts table; stopped after evidence capture",
+    "frontend": "fresh image built; runtime blocked by backend health dependency; stopped after evidence capture"
   },
-  "status": "READY",
-  "blocking_incident": null,
-  "next_action": "UC-16 run is terminal; optionally inspect the authenticated chart hover visually."
+  "status": "BLOCKED",
+  "blocking_incident": "DEP-20260831-001",
+  "next_action": "Activate a researcher-approved domain schema/runtime baseline containing the required Account, Transaction, and Bill tables, then repeat Compose health and bounded UC-12 observations. No container remains in a restart loop."
 }

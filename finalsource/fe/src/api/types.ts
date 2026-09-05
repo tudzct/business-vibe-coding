@@ -151,6 +151,16 @@ export interface Bill {
   amount: number
 }
 
+export interface UpcomingBill {
+  billId: number
+  userId: number
+  itemDescription: string
+  logoUrl: string | null
+  dueDate: string
+  lastChargeDate: string | null
+  amount: number
+}
+
 export interface Goal {
   goal_id: number
   user_id: number

@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-12",
+  "use_case_path": "docs/01-inception/use-cases/uc-12-view-upcoming-bills.md",
+  "use_case_sha256": "sha256:bb6be1ec8dcf33a8e823294766b0f15d765ef1c7ec57191b0a941a594249585b",
+  "business_rule_resource_path": "docs/02-construction/business-rules/UC-12-business-rules.json",
+  "business_rule_resource_sha256": "sha256:86c038bdf2449c5fc4207e60899511389367f858fdd86c99aa3e678c32ab8bc2",
+  "spreadsheet_source": "Use cases!A258:B275",
+  "ordered_br_ids": [
+    "BR-BILL-UP-01",
+    "BR-BILL-UP-02",
+    "BR-BILL-UP-03",
+    "BR-BILL-UP-04",
+    "BR-BILL-UP-05",
+    "BR-BILL-UP-06"
+  ],
+  "frozen_at": "2026-09-04T13:06:44Z"
+}

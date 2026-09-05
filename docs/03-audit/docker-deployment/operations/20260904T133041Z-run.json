@@ -1,0 +1,16 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "mode": "run",
+  "observed_at": "2026-09-04T13:30:41Z",
+  "source_revision": "sha256:6fca554a282c38c8f3a3d6492f2dfe59a33df3fd22d60c41748fda92e3717736",
+  "commands": {
+    "docker_compose_backend_repair_builds": 0,
+    "docker_compose_final_up_build": 1,
+    "docker_compose_ps": 0,
+    "docker_compose_backend_logs_bounded": 0,
+    "docker_compose_stop": 0
+  },
+  "result": "BLOCKED_RUNTIME_BASELINE",
+  "bounded_error": "All repaired backend production builds and the current frontend production build passed. The JWT-guard startup defect is resolved. Runtime then reached the previously recorded DEP-20260831-001 database baseline issue: the Accounts table required by an existing migration is absent. No schema/data mutation was attempted, and the run-created containers were stopped with images and volume preserved.",
+  "secrets_recorded": false
+}
