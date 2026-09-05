@@ -14,5 +14,6 @@ Accept one readable `docs/01-inception/use-cases/uc-*.md` path and optional `--v
 5. If `full`, insert the deterministic Prompt E projection verbatim and fill Prompt F with source priority and implementation boundaries. If `rq3`, omit Prompts E and F together.
 6. If information is missing, record it; stop for the researcher when it changes business meaning, API, ownership, schema or destructive behavior.
 7. Write target prompt: `docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md` (for `full`) or `docs/02-construction/coding-prompts/<UC-ID>-rq3-coding-prompt.md` (for `rq3`). Report its status and do not paste the full prompt unless requested.
+8. Prompt generation is a telemetry stage boundary. Record the session identity and every turn ID used from the initial prompt-generation request through the Draft result, then end the assistant turn when requesting researcher approval. Do not activate the run or generate source in that turn. Once the researcher responds, the orchestration skill must extract the closed prompt-generation turns and persist `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/prompt-generation-telemetry.json`, tied to the prompt checksum, before source mutation.
 
 Do not edit frozen UCs or create/run tests.

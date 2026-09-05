@@ -27,7 +27,22 @@
     "initial_ended_epoch_ms": null
   },
   "timing_seconds": { "initial": null, "repairs": null, "total": null },
-  "tokens": { "initial_total": null, "repair_total": null, "total": null },
+  "tokens": {
+    "prompt_generation_total": null,
+    "code_generation_total": null,
+    "repair_total": null,
+    "implementation_total": null,
+    "overall_total": null,
+    "initial_total": null,
+    "total": null,
+    "telemetry_source": null,
+    "details": {
+      "prompt_generation": null,
+      "code_generation": null,
+      "initial": null,
+      "repairs": null
+    }
+  },
   "business_rules": {
     "baseline": "docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json",
     "source_revision": "sha256:<finalsource-hash>",

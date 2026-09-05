@@ -8,11 +8,15 @@
 
 ## Timing and tokens
 
+Report prompt generation, first-pass code generation, repair, implementation and end-to-end totals separately. `initial_total` is the compatibility alias for code generation; `total` is the compatibility alias for implementation only.
+
 | Stage | Seconds | Tokens |
 |---|---:|---:|
-| Initial generation | | |
+| Prompt generation | | |
+| First-pass code generation | | |
 | Repairs | | |
-| Total | | |
+| Implementation total | | |
+| Overall total | | |
 
 ## Business Rule assessment
 

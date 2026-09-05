@@ -35,3 +35,9 @@ The script verifies the configuration, matching frozen BR baseline, UC/run assig
 `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/run-activation.json`
 
 It refuses to overwrite an existing receipt. Do not begin model/version capture, timing, source mutation, Docker execution, or `$gen-source-code` within this skill; activation is the gate for those later operations.
+
+After activation, and still before source mutation, persist the preceding approved prompt-generation stage's closed-turn telemetry as:
+
+`docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/prompt-generation-telemetry.json`
+
+The receipt must identify the session log, explicit closed turn ID(s), prompt path and SHA-256, token components, stage total and any genuine unavailability reason. Never extract the current activation/source-generation turn as prompt telemetry.
