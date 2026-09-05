@@ -12,7 +12,10 @@ import { QueryFailedError, Repository } from 'typeorm';
 import { Account, AccountType } from './account.entity';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { AccountDetailResponseDto } from './dto/account-detail-response.dto';
-import { Transaction } from '../transaction/transaction.entity';
+import {
+  Transaction,
+  TransactionType,
+} from '../transaction/transaction.entity';
 
 export interface AccountListItemDto {
   readonly id: number;
@@ -37,6 +40,11 @@ export interface CreatedAccount extends AccountListItemDto {
 
 interface BalanceTotalRow {
   total: string | number | null;
+}
+
+interface RiskExposureRow {
+  totalDebt: string | number | null;
+  totalSafeAssets: string | number | null;
 }
 
 @Injectable()
@@ -65,6 +73,35 @@ export class AccountService {
         );
       }
 
+      if (
+        account.accountType === AccountType.INVESTMENT ||
+        account.accountType === AccountType.CREDIT_CARD
+      ) {
+        const exposure = await this.accounts
+          .createQueryBuilder('account')
+          .select(
+            'COALESCE(SUM(CASE WHEN account.accountType = :loanType THEN account.balance ELSE 0 END), 0)',
+            'totalDebt',
+          )
+          .addSelect(
+            'COALESCE(SUM(CASE WHEN account.accountType IN (:...safeTypes) THEN account.balance ELSE 0 END), 0)',
+            'totalSafeAssets',
+          )
+          .where('account.userId = :userId', { userId })
+          .setParameters({
+            loanType: AccountType.LOAN,
+            safeTypes: [AccountType.CHECKING, AccountType.SAVINGS],
+          })
+          .getRawOne<RiskExposureRow>();
+        const totalDebt = Number(exposure?.totalDebt ?? 0);
+        const totalSafeAssets = Number(exposure?.totalSafeAssets ?? 0);
+        if (totalDebt > totalSafeAssets) {
+          throw new ForbiddenException(
+            'You do not have permission to view this account details.',
+          );
+        }
+      }
+
       const transactions = await this.transactions.find({
         where: { accountId },
         order: { transactionDate: 'DESC', transactionId: 'DESC' },
@@ -78,17 +115,27 @@ export class AccountService {
         branch_name: account.branchName ?? null,
         account_number_full: account.accountNumberFull,
         balance: Number(account.balance),
-        recent_transactions: transactions.map((transaction) => ({
-          date:
-            transaction.transactionDate instanceof Date
-              ? transaction.transactionDate.toISOString().slice(0, 10)
-              : String(transaction.transactionDate).slice(0, 10),
-          amount: Number(transaction.amount),
-          description: transaction.itemDescription,
-          status: transaction.status,
-          receipt_id: transaction.receiptId ?? null,
-          type: transaction.type,
-        })),
+        recent_transactions: transactions.map((transaction) => {
+          const absoluteAmount = Math.abs(Number(transaction.amount));
+          const isHighValueExpense =
+            transaction.type === TransactionType.EXPENSE &&
+            absoluteAmount > Number(account.balance) / 2;
+
+          return {
+            date:
+              transaction.transactionDate instanceof Date
+                ? transaction.transactionDate.toISOString().slice(0, 10)
+                : String(transaction.transactionDate).slice(0, 10),
+            amount:
+              transaction.type === TransactionType.EXPENSE
+                ? -absoluteAmount
+                : absoluteAmount,
+            description: `${transaction.itemDescription}${isHighValueExpense ? ' [HIGH VALUE]' : ''}`,
+            status: transaction.status,
+            receipt_id: transaction.receiptId ?? null,
+            type: transaction.type,
+          };
+        }),
       };
     } catch (error: unknown) {
       if (error instanceof HttpException) {

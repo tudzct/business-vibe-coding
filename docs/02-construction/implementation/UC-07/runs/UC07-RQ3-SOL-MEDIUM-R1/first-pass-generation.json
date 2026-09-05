@@ -18,14 +18,14 @@
     "codex_client_version_unavailable_reason": "The desktop runtime did not expose a client version to the task."
   },
   "tokens": {
-    "initial_total": 1321645,
+    "initial_total": 2054078,
     "session_turn_id": 1,
-    "input": 120259,
-    "cache_read": 1184256,
-    "total_input": 1304515,
-    "output": 17130,
-    "reasoning": 2338,
-    "cost_usd": 1.7073,
+    "input": 133687,
+    "cache_read": 1900160,
+    "total_input": 2033847,
+    "output": 20231,
+    "reasoning": 2945,
+    "cost_usd": 2.2254,
     "telemetry_source": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\05\\rollout-2026-09-05T14-05-11-01a07062-b184-7253-981a-11e43f97fbb0.jsonl",
     "attribution_note": "Phase 2 generation and its first-pass audit share one researcher turn, so telemetry is retained at turn granularity without inferred subdivision."
   },
