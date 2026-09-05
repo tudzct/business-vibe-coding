@@ -1,0 +1,111 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-resource",
+  "status": "Frozen",
+  "uc_id": "UC-08",
+  "source_use_case": "docs/01-inception/use-cases/uc-08-edit-bank-account.md",
+  "source_use_case_sha256": "sha256:bc5def3659807ea37e4551779b1027a834f92394903fe6aa0274ae66164549ad",
+  "spreadsheet": {
+    "id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "tab": "Use cases",
+    "range": "A153:B199",
+    "retrieved_at": "2026-08-27T03:49:28.570Z"
+  },
+  "ocl_utility_source": "Use cases!A2:B2",
+  "rules": [
+    {
+      "br_id": "BR-ACC-19",
+      "name": "Account ownership validation for update",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AccountService::update(\n  accountId : Integer,\n  userId : Integer,\n  dto : UpdateAccountDto\n) : UpdatedAccountDto\npre BR_ACC_19_MustOwnAccount:\n  Account.allInstances()->exists(a |\n    a.account_id = accountId and\n    a.user_id = userId\n  )",
+      "context": "AccountService::update(accountId : Integer, userId : Integer, dto : UpdateAccountDto) : UpdatedAccountDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "A nonexistent account returns HTTP 404; an account owned by another application user returns HTTP 403, and the stored account remains unchanged.",
+      "traceability": ["Use cases!A153:B199", "UC-08 PRE-2, Basic Flow 7-8", "UC-08 EF-2 and EF-3", "API-ACCOUNT-UPDATE"]
+    },
+    {
+      "br_id": "BR-ACC-20",
+      "name": "Allowed account types for update",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AccountService::update(\n  accountId : Integer,\n  userId : Integer,\n  dto : UpdateAccountDto\n) : UpdatedAccountDto\npre BR_ACC_20_ValidType:\n  Set{AccountType::Checking, AccountType::Credit_Card, AccountType::Savings, AccountType::Investment, AccountType::Loan}->includes(dto.account_type)",
+      "context": "AccountService::update(accountId : Integer, userId : Integer, dto : UpdateAccountDto) : UpdatedAccountDto",
+      "enforcement_layers": ["frontend", "backend"],
+      "failure_behavior": "An unsupported account type displays a client-side field error when possible; authoritative backend validation returns HTTP 400 and does not update the account.",
+      "traceability": ["Use cases!A153:B199", "UC-08 Basic Flow 3, 5 and 9", "UC-08 EF-1", "API-ACCOUNT-UPDATE"]
+    },
+    {
+      "br_id": "BR-ACC-21",
+      "name": "Required account text fields for update",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AccountService::update(\n  accountId : Integer,\n  userId : Integer,\n  dto : UpdateAccountDto\n) : UpdatedAccountDto\npre BR_ACC_21_RequiredText:\n  not dto.bank_name.oclIsUndefined() and dto.bank_name.trim().size() > 0 and\n  not dto.account_number_full.oclIsUndefined() and dto.account_number_full.trim().size() > 0",
+      "context": "AccountService::update(accountId : Integer, userId : Integer, dto : UpdateAccountDto) : UpdatedAccountDto",
+      "enforcement_layers": ["frontend", "backend"],
+      "failure_behavior": "Missing or blank required text displays a client-side field error and prevents submission; backend validation returns HTTP 400 when such a request reaches the API.",
+      "traceability": ["Use cases!A153:B199", "UC-08 Basic Flow 3, 5 and 9", "UC-08 EF-1", "API-ACCOUNT-UPDATE"]
+    },
+    {
+      "br_id": "BR-ACC-22",
+      "name": "Account number format and length for update",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AccountService::update(\n  accountId : Integer,\n  userId : Integer,\n  dto : UpdateAccountDto\n) : UpdatedAccountDto\npre BR_ACC_22_NumericCharactersOnly:\n  not dto.account_number_full.oclIsUndefined() and \n  matches(dto.account_number_full, '^[0-9]+$')\npre BR_ACC_22_LengthConstraints:\n  dto.account_number_full.size() >= 8 and dto.account_number_full.size() <= 34",
+      "context": "AccountService::update(accountId : Integer, userId : Integer, dto : UpdateAccountDto) : UpdatedAccountDto",
+      "enforcement_layers": ["frontend", "backend"],
+      "failure_behavior": "An account number containing non-digits or fewer than 8 or more than 34 characters displays a field error and prevents frontend submission; backend validation returns HTTP 400 if it reaches the API.",
+      "traceability": ["Use cases!A153:B199", "UC-08 Basic Flow 3, 5 and 9", "UC-08 EF-1", "API-ACCOUNT-UPDATE", "Figma 4795:5 account hint"]
+    },
+    {
+      "br_id": "BR-ACC-23",
+      "name": "Numeric non-negative account balance for update",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AccountService::update(\n  accountId : Integer,\n  userId : Integer,\n  dto : UpdateAccountDto\n) : UpdatedAccountDto\npre BR_ACC_23_IsNumeric:\n  dto.balance.oclIsTypeOf(Real) or dto.balance.oclIsTypeOf(Integer)\npre BR_ACC_23_NonNegativeBalance:\n  not dto.balance.oclIsUndefined() and dto.balance >= 0",
+      "context": "AccountService::update(accountId : Integer, userId : Integer, dto : UpdateAccountDto) : UpdatedAccountDto",
+      "enforcement_layers": ["frontend", "backend"],
+      "failure_behavior": "A missing, non-numeric, or negative balance displays a client-side field error and prevents submission; backend validation returns HTTP 400 when invalid balance data reaches the API.",
+      "traceability": ["Use cases!A153:B199", "UC-08 Basic Flow 3, 5 and 9", "UC-08 EF-1", "API-ACCOUNT-UPDATE"]
+    },
+    {
+      "br_id": "BR-ACC-24",
+      "name": "Optional branch name handling during update",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AccountService::update(\n  accountId : Integer,\n  userId : Integer,\n  dto : UpdateAccountDto\n) : UpdatedAccountDto\npre BR_ACC_24_BranchNameOptional:\n  dto.branch_name.oclIsUndefined() or dto.branch_name.oclIsTypeOf(String)",
+      "context": "AccountService::update(accountId : Integer, userId : Integer, dto : UpdateAccountDto) : UpdatedAccountDto",
+      "enforcement_layers": ["frontend", "backend", "database"],
+      "failure_behavior": "The application user may omit or clear branch_name; the backend stores the omitted value as null or undefined without rejecting an otherwise valid update.",
+      "traceability": ["Use cases!A153:B199", "UC-08 AF-1", "API-ACCOUNT-UPDATE"]
+    },
+    {
+      "br_id": "BR-ACC-25",
+      "name": "Derive final four account characters for update",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context AccountService::update(\n  accountId : Integer,\n  userId : Integer,\n  dto : UpdateAccountDto\n) : UpdatedAccountDto\npost BR_ACC_25_DeriveLast4:\n  let updatedAcc = Account.allInstances()->any(a | a.account_id = accountId) in\n  updatedAcc.account_number_last_4 = dto.account_number_full.substring(\n    dto.account_number_full.size() - 3, \n    dto.account_number_full.size()\n  )\nTechnical constraint:\n- The backend MUST implicitly derive account_number_last_4 by taking the exact last 4 characters of the submitted account_number_full.",
+      "context": "AccountService::update(accountId : Integer, userId : Integer, dto : UpdateAccountDto) : UpdatedAccountDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "A successful update stores account_number_last_4 as the exact final four characters of the submitted account_number_full; the client cannot supply this derived field.",
+      "traceability": ["Use cases!A153:B199", "UC-08 POST-2 and Basic Flow 10", "API-ACCOUNT-UPDATE"]
+    },
+    {
+      "br_id": "BR-ACC-26",
+      "name": "Account update persistence mapping",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context AccountService::update(\n  accountId : Integer,\n  userId : Integer,\n  dto : UpdateAccountDto\n) : UpdatedAccountDto\npost BR_ACC_26_StorageMapping:\n  Account.allInstances()->exists(a |\n    a.account_id = accountId and\n    a.bank_name = dto.bank_name and\n    a.account_type = dto.account_type and\n    (dto.branch_name.oclIsUndefined() implies a.branch_name.oclIsUndefined()) and\n    (not dto.branch_name.oclIsUndefined() implies a.branch_name = dto.branch_name) and\n    a.account_number_full = dto.account_number_full and\n    a.balance = dto.balance\n  )",
+      "context": "AccountService::update(accountId : Integer, userId : Integer, dto : UpdateAccountDto) : UpdatedAccountDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "A successful update overwrites the specified persisted account fields; validation, authorization, or storage failure leaves the stored account unchanged, with storage failure returning HTTP 500.",
+      "traceability": ["Use cases!A153:B199", "UC-08 POST-1 and POST-4, Basic Flow 10", "UC-08 EF-4", "API-ACCOUNT-UPDATE"]
+    }
+  ],
+  "ordered_br_ids": [
+    "BR-ACC-19",
+    "BR-ACC-20",
+    "BR-ACC-21",
+    "BR-ACC-22",
+    "BR-ACC-23",
+    "BR-ACC-24",
+    "BR-ACC-25",
+    "BR-ACC-26"
+  ],
+  "unresolved_items": [
+    "UC-08 requires the changed account_number_full to remain unique among the authenticated user's accounts, but the frozen UC and API-ACCOUNT-UPDATE do not prescribe the HTTP status or exact message for a duplicate; this does not change the verbatim BR set and must be resolved before implementation if the existing application has no established conflict convention.",
+    "The spreadsheet Use Case ID value cell contains the literal text 'Use Case ID'; UC-08 is taken from the source section heading as recorded by the frozen projection."
+  ]
+}
