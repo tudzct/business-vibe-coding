@@ -149,7 +149,8 @@ export class TransactionService {
           amount: Number(saved.amount),
           paymentMethod: saved.paymentMethod ?? '',
           status: saved.status,
-          receiptId: saved.receiptId,
+          receiptId:
+            saved.receiptId === null ? null : String(saved.receiptId),
           createdAt: new Date().toISOString(),
           category_id: saved.categoryId,
         };

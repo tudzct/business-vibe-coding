@@ -49,13 +49,12 @@ const AccountCard = ({ account }: { account: AccountListItem }) => (
       <button type="button" disabled className="cursor-not-allowed text-base text-[#299d91] opacity-80">
         Remove
       </button>
-      <button
-        type="button"
-        disabled
-        className="cursor-not-allowed rounded bg-[#299d91] px-5 py-2 text-sm font-medium text-white opacity-80"
+      <Link
+        to={`/accounts/${account.id}`}
+        className="rounded bg-[#299d91] px-5 py-2 text-sm font-medium text-white hover:bg-[#23877e] focus:outline-none focus:ring-2 focus:ring-[#299d91] focus:ring-offset-2"
       >
         Details <span aria-hidden="true">›</span>
-      </button>
+      </Link>
     </div>
   </article>
 )

@@ -12,7 +12,8 @@
     "env_present": true,
     "env_ignored": true,
     "env_tracked": false,
-    "compose_valid": true
+    "compose_valid": false,
+    "compose_validation_note": "Compose file was inspected, but docker compose config could not run because Docker CLI is unavailable."
   },
   "services": {
     "database": "healthy on host port 3307 through the temporary non-repository override; all approved migrations are recorded and the persistent volume is preserved",

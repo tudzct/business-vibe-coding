@@ -1,198 +1,28 @@
 ---
-artifact_type: business-use-case-specification
+artifact_type: business-rule-resource
 status: Frozen
 uc_id: UC-07
-uc_name: "View Bank Account Details"
-source_type: google-sheets
-source_spreadsheet_id: 1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM
-source_sheet: "Use cases"
-source_range: "A131:B152"
-retrieved_at: 2026-08-27T03:49:28.570Z
+source_use_case: docs/01-inception/use-cases/uc-07-view-bank-account-details.md
+source_use_case_sha256: sha256:1a659cb3709498c42d8e7496b256ce36ae53a2463aa865c612db5ea5bb0b398a
 ---
 
-# UC-07: View Bank Account Details
+# UC-07 Business Rule Resource
 
-> Canonical source: [Financial Management Specification](https://docs.google.com/spreadsheets/d/1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM/edit?gid=0#gid=0), tab Use cases, columns A-B. This frozen repository projection is read-only; source corrections must be made in the spreadsheet and imported as a new revision.
+## Source provenance
 
-## Functional Use-Case Specification
+- Spreadsheet: `1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM`
+- Tab/range: `Use cases!A131:B152`
+- OCL utilities: `Use cases!A2:B2`
+- Retrieved at: `2026-08-27T03:49:28.570Z`
 
-### Use Case ID
+## Ordered Business Rules
 
-UC-07
+### BR-ACC-15 - Account existence and ownership
 
-### Use Case Name
-
-View Bank Account Details
-
-### Description
-
-As an authenticated account owner, I want to view one account and its five most recent transactions.
-
-### Actor(s)
-
-Authenticated User
-
-### Priority
-
-Not Specified
-
-### Trigger
-
-The user selects an account card.
-
-### Pre-Condition(s)
-
-PRE-1: The user is authenticated.
-PRE-2: The path contains an account identifier.
-
-### Post-Condition(s)
-
-POST-1: On success, the page displays account information and recent transactions.
-POST-2: Transaction data is formatted for display.
-POST-3: Unauthorized account data is not returned.
-
-### Basic Flow
-
-1. The user selects an account card and opens /accounts/:id.
-2. AccountDetailPage requests GET /api/v1/accounts/:id.
-3. The controller validates authentication and parses id as an integer.
-4. AccountService loads the account by accountId.
-5. AccountService verifies access authorization. 
-6. AccountService loads recent transactions for the account.
-7. AccountService formats the transactions for the response.
-8. The frontend displays bank name, type, branch, full account number, balance, and recent transactions.
-
-### Alternative Flow
-
-AF-1: No recent transactions
-6a. The query returns an empty array.
-8a. The account information remains visible with an empty recent-transactions section.
-
-### Exception Flow
-
-EF-1: Invalid account ID
-3a. The controller returns HTTP 400.
-
-EF-2: Account not found
-4a. The backend returns HTTP 404.
-
-EF-3: Authorization failure
-5a. The backend returns HTTP 403.
-
-EF-4: Retrieval failure
-6a. The backend returns HTTP 500 and the frontend displays its error state.
-
-### Related UI
-
-AccountDetailPage; route /accounts/:id
-
-### Related API IDs
-
-API-ACCOUNT-DETAIL
-
-### Notes
-
-Not specified
-
-## UML Model
-
-~~~plantuml
-@startuml
-
-class User <<Entity>> {
-  user_id: Integer [1]
-  full_name: String [1]
-  email: String [1]
-  username: String [1]
-  password: String [1]
-  phone_number: String [0..1]
-  profile_picture_url: String [0..1]
-  total_balance: Decimal [1]
-}
-
-class Account <<Entity>> {
-  account_id: Integer [1]
-  user_id: Integer [1]
-  bank_name: String [1]
-  account_type: AccountType [1]
-  branch_name: String [0..1]
-  account_number_full: String [1]
-  account_number_last_4: String [1]
-  balance: Decimal [1]
-}
-
-enum AccountType {
-  Checking
-  Credit_Card
-  Savings
-  Investment
-  Loan
-}
-
-class Transaction <<Entity>> {
-  transaction_id: Integer [1]
-  account_id: Integer [1]
-  category_id: Integer [0..1]
-  transaction_date: Date [1]
-  type: TransactionTypeEnum [1]
-  item_description: String [1]
-  shop_name: String [0..1]
-  amount: Decimal [1]
-  payment_method: String [0..1]
-  status: TransactionStatus [1]
-  receipt_id: String [0..1]
-}
-
-enum TransactionTypeEnum {
-  Revenue
-  Expense
-}
-
-enum TransactionStatus {
-  Complete
-  Pending
-  Failed
-}
-
-class TransactionDto <<DTO>> {
-  date: String [1]
-  amount: Decimal [1]
-  description: String [1]
-  status: TransactionStatus [1]
-  receipt_id: String [0..1]
-  type: TransactionTypeEnum [1]
-}
-
-class AccountDetailResponseDto <<DTO>> {
-  id: Integer [1]
-  bank_name: String [1]
-  account_type: AccountType [1]
-  branch_name: String [0..1]
-  account_number_full: String [1]
-  balance: Decimal [1]
-  recent_transactions: TransactionDto [0..5]
-}
-
-class AccountService <<Service>> {
-  findOneWithTransactions(accountId: Integer, userId: Integer): AccountDetailResponseDto
-}
-
-User "1" -- "0..*" Account : owns
-Account "1" -- "0..*" Transaction : has
-AccountService ..> AccountDetailResponseDto
-AccountDetailResponseDto *-- "0..5" TransactionDto : contains
-AccountDetailResponseDto ..> Account : maps from
-TransactionDto ..> Transaction : maps from
-
-@enduml
-~~~
-
-## Business Rules
-
-The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+- Representation: `ocl_precondition`
+- Expression / authoritative text:
 
 ~~~text
-BR-ACC-15: Account existence and ownership
 context AccountService::findOneWithTransactions(
   accountId : Integer,
   userId : Integer
@@ -202,8 +32,19 @@ pre BR_ACC_15_AccountMustBeOwned:
     a.account_id = accountId and 
     a.user_id = userId
   )
+~~~
 
-BR-ACC-16: Five most recent account transactions
+- Context: `AccountService::findOneWithTransactions(accountId : Integer, userId : Integer) : AccountDetailResponseDto`
+- Enforcement layer(s): `backend`, `database`
+- Failure behavior: A nonexistent account returns HTTP 404; an account not owned by the authenticated application user returns HTTP 403 and no unauthorized account data.
+- Traceability: `Use cases!A131:B152`; UC-07 PRE-1, POST-3, Basic Flow 3-5; UC-07 EF-2 and EF-3; `API-ACCOUNT-DETAIL`
+
+### BR-ACC-16 - Five most recent account transactions
+
+- Representation: `ocl_postcondition`
+- Expression / authoritative text:
+
+~~~text
 context AccountService::findOneWithTransactions(
   accountId : Integer,
   userId : Integer
@@ -217,8 +58,19 @@ post BR_ACC_16_OrderedByDateDescending:
   )
 Technical constraint:
 - The backend shall return at most five transactions ordered by transaction_date descending.
+~~~
 
-BR-ACC-17: Response rows map to persisted data with signed amounts
+- Context: `AccountService::findOneWithTransactions(accountId : Integer, userId : Integer) : AccountDetailResponseDto`
+- Enforcement layer(s): `backend`, `database`
+- Failure behavior: A successful response contains at most five transactions in descending transaction-date order; no matching transactions produces an empty array, while retrieval failure returns HTTP 500.
+- Traceability: `Use cases!A131:B152`; UC-07 Description, Basic Flow 6-8; UC-07 AF-1 and EF-4; `API-ACCOUNT-DETAIL`
+
+### BR-ACC-17 - Response rows map to persisted data with signed amounts
+
+- Representation: `ocl_postcondition`
+- Expression / authoritative text:
+
+~~~text
 context AccountService::findOneWithTransactions(
   accountId : Integer,
   userId : Integer
@@ -251,7 +103,19 @@ post BR_ACC_17_ResponseBackedByTransaction:
 Technical constraint:
 - In the account-detail mapping, Expense amounts are negated (returned as negative) and Revenue amounts remain positive.
 - Unused persisted fields in Transaction (e.g., shop_name, payment_method, category_id) are intentionally excluded from the returned TransactionDto.
+~~~
 
+- Context: `AccountService::findOneWithTransactions(accountId : Integer, userId : Integer) : AccountDetailResponseDto`
+- Enforcement layer(s): `backend`
+- Failure behavior: A successful response maps the owned persisted account and its included transaction rows to the specified DTO, using negative Expense amounts, positive Revenue amounts, and ISO dates.
+- Traceability: `Use cases!A131:B152`; UC-07 POST-1 and POST-2; UC-07 Basic Flow 4-8; `API-ACCOUNT-DETAIL`
+
+### BR-ACC-18 - Account and transaction data unchanged
+
+- Representation: `ocl_postcondition`
+- Expression / authoritative text:
+
+~~~text
 post BR_ACC_18_AccountIdentityUnchanged:
   Account.allInstances()->collect(a | a.account_id)->asSet() =
   Account.allInstances()@pre->collect(a | a.account_id)->asSet()
@@ -289,8 +153,19 @@ post BR_ACC_18_TransactionDataUnchanged:
   )
 Technical constraint:
 - Viewing account details shall not create, update, or delete any Account or Transaction records.
+~~~
 
-BR-ACC-19: High-value expense transaction flagging
+- Context: `AccountService::findOneWithTransactions(accountId : Integer, userId : Integer) : AccountDetailResponseDto`
+- Enforcement layer(s): `backend`, `database`
+- Failure behavior: Viewing account details leaves all Account and Transaction identities and persisted field values unchanged.
+- Traceability: `Use cases!A131:B152`; UC-07 GET retrieval flow; `API-ACCOUNT-DETAIL`
+
+### BR-ACC-19 - High-value expense transaction flagging
+
+- Representation: `ocl_postcondition`
+- Expression / authoritative text:
+
+~~~text
 context AccountService::findOneWithTransactions(
   accountId : Integer,
   userId : Integer
@@ -303,8 +178,19 @@ post BR_ACC_19_HighValueFlag:
   )
 Technical constraint:
 - For any transaction in the response, if its type is Expense and its absolute amount strictly exceeds 50% of the account's current balance, the exact string " [HIGH VALUE]" must be appended to its description.
+~~~
 
-BR-ACC-20: Cross-account risk exposure lock
+- Context: `AccountService::findOneWithTransactions(accountId : Integer, userId : Integer) : AccountDetailResponseDto`
+- Enforcement layer(s): `backend`
+- Failure behavior: Each returned Expense whose absolute amount strictly exceeds half the current account balance has the exact suffix ` [HIGH VALUE]` appended to its description.
+- Traceability: `Use cases!A131:B152`; UC-07 Basic Flow 7; `API-ACCOUNT-DETAIL`
+
+### BR-ACC-20 - Cross-account risk exposure lock
+
+- Representation: `ocl_precondition`
+- Expression / authoritative text:
+
+~~~text
 context AccountService::findOneWithTransactions(
   accountId : Integer,
   userId : Integer
@@ -321,5 +207,15 @@ pre BR_ACC_20_RiskExposureLimit:
 Technical constraint:
 - When a user attempts to view an Investment or Credit Card account, the system must calculate their total debt (sum of balances of all their Loan accounts) and total safe assets (sum of balances of all their Checking and Savings accounts).
 - If the total debt is strictly greater than the total safe assets, the system must deny access by throwing an HTTP 403 Forbidden exception.
-
 ~~~
+
+- Context: `AccountService::findOneWithTransactions(accountId : Integer, userId : Integer) : AccountDetailResponseDto`
+- Enforcement layer(s): `backend`, `database`
+- Failure behavior: Viewing an Investment or Credit Card account is denied with HTTP 403 when the authenticated user's total Loan balances are strictly greater than total Checking and Savings balances.
+- Traceability: `Use cases!A131:B152`; UC-07 Basic Flow 4-5; UC-07 EF-3; `API-ACCOUNT-DETAIL`
+
+## Unresolved items
+
+- The frozen source omits an explicit BR-ACC-18 heading and name. BR-ACC-18 is identified from its four supplied postcondition identifiers; the descriptive resource label does not alter the verbatim OCL postconditions or technical constraint.
+
+This artifact contains every BR in source order. It does not select, paraphrase or add rules, and it does not generate tests.

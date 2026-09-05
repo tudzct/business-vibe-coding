@@ -31,7 +31,7 @@ GET
 
 ### Description
 
-Return one owned account and its five most recent transactions.
+Return account details and recent transactions.
 
 ### Authentication
 
@@ -39,14 +39,13 @@ Bearer JWT
 
 ### Authorization
 
-Account owner
+Authorized user
 
 ## Request Header(s)
 
 ### headers.Authorization
 
 Type: string; Format: Bearer <JWT>; Required: Yes; Nullable: No
-Validation: Must contain a valid, unexpired JWT access token.
 Trigger: Every protected request.
 Description: Authenticates the current user.
 Example: Bearer eyJhbGciOiJIUzI1NiIs...
@@ -57,7 +56,6 @@ Note: Added by the frontend Axios interceptor.
 ### path.id
 
 Type: integer; Required: Yes; Nullable: No
-Validation: Must parse as an integer account identifier.
 Trigger: Account detail request.
 Description: Account identifier.
 Example: 3
@@ -71,7 +69,7 @@ None
 ### id
 
 Type: integer; Required: Yes; Nullable: No
-Trigger: The account exists and is owned by the user.
+Trigger: The requested account is valid and accessible.
 Description: Account identifier.
 Example: 3
 
@@ -79,7 +77,7 @@ Example: 3
 ### bank_name
 
 Type: string; Required: Yes; Nullable: No
-Trigger: The account exists and is owned by the user.
+Trigger: The requested account is valid and accessible.
 Description: Bank name.
 Example: Vietcombank
 
@@ -88,7 +86,7 @@ Example: Vietcombank
 
 Type: string; Required: Yes; Nullable: No
 Allowed values: Checking; Credit Card; Savings; Investment; Loan
-Trigger: The account exists and is owned by the user.
+Trigger: The requested account is valid and accessible.
 Description: Account type.
 Example: Checking
 
@@ -96,7 +94,7 @@ Example: Checking
 ### branch_name
 
 Type: string; Required: Yes; Nullable: Yes
-Trigger: The account exists and is owned by the user.
+Trigger: The requested account is valid and accessible.
 Description: Branch name.
 Example: Hanoi Branch
 
@@ -104,7 +102,7 @@ Example: Hanoi Branch
 ### account_number_full
 
 Type: string; Required: Yes; Nullable: No
-Trigger: The account exists and is owned by the user.
+Trigger: The requested account is valid and accessible.
 Description: Full account number.
 Example: 9704221234567890123
 
@@ -112,7 +110,7 @@ Example: 9704221234567890123
 ### balance
 
 Type: number; Required: Yes; Nullable: No
-Trigger: The account exists and is owned by the user.
+Trigger: The requested account is valid and accessible.
 Description: Current balance.
 Example: 4500000
 
@@ -120,15 +118,15 @@ Example: 4500000
 ### recent_transactions
 
 Type: array<object>; Required: Yes; Nullable: No
-Trigger: The account exists and is owned by the user.
-Description: Up to five most recent transactions.
+Trigger: The requested account is valid and accessible.
+Description: List of recent transactions.
 Example: []
 
 
 ### recent_transactions[].date
 
 Type: string; Required: Yes; Nullable: No
-Trigger: The account exists and is owned by the user.
+Trigger: The requested account is valid and accessible.
 Description: Transaction date.
 Example: 2025-11-01
 
@@ -136,15 +134,15 @@ Example: 2025-11-01
 ### recent_transactions[].amount
 
 Type: number; Required: Yes; Nullable: No
-Trigger: The account exists and is owned by the user.
-Description: Signed amount; expenses are returned as negative values.
-Example: -150000
+Trigger: The requested account is valid and accessible.
+Description: Transaction amount.
+Example: 150000
 
 
 ### recent_transactions[].description
 
 Type: string; Required: Yes; Nullable: No
-Trigger: The account exists and is owned by the user.
+Trigger: The requested account is valid and accessible.
 Description: Transaction description.
 Example: Movie Ticket
 
@@ -153,7 +151,7 @@ Example: Movie Ticket
 
 Type: string; Required: Yes; Nullable: No
 Allowed values: Complete; Pending; Failed
-Trigger: The account exists and is owned by the user.
+Trigger: The requested account is valid and accessible.
 Description: Transaction status.
 Example: Complete
 
@@ -161,7 +159,7 @@ Example: Complete
 ### recent_transactions[].receipt_id
 
 Type: string; Required: Yes; Nullable: Yes
-Trigger: The account exists and is owned by the user.
+Trigger: The requested account is valid and accessible.
 Description: Receipt identifier.
 Example: null
 
@@ -170,7 +168,7 @@ Example: null
 
 Type: string; Required: Yes; Nullable: No
 Allowed values: Revenue; Expense
-Trigger: The account exists and is owned by the user.
+Trigger: The requested account is valid and accessible.
 Description: Transaction type.
 Example: Expense
 
@@ -179,9 +177,9 @@ Example: Expense
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: The path parameter is not a valid integer.
+Trigger: The provided account ID format is invalid.
 Description: Error description returned by the global HTTP exception filter.
-Example: Invalid account ID.
+Example: Invalid account identifier.
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 401
@@ -189,9 +187,9 @@ Note: The error envelope also contains success=false and may contain an error fi
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: The JWT is missing, invalid, or expired.
+Trigger: The authentication token is missing or invalid.
 Description: Error description returned by the global HTTP exception filter.
-Example: Unable to authenticate the user. Please log in again.
+Example: Please log in to access account services.
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 403
@@ -199,9 +197,9 @@ Note: The error envelope also contains success=false and may contain an error fi
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: The account belongs to another user.
+Trigger: The user lacks permission to view this specific account.
 Description: Error description returned by the global HTTP exception filter.
-Example: You are not authorized to view this account information.
+Example: You do not have permission to view this account details.
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 404
@@ -209,9 +207,9 @@ Note: The error envelope also contains success=false and may contain an error fi
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: The account does not exist.
+Trigger: The requested bank account does not exist.
 Description: Error description returned by the global HTTP exception filter.
-Example: This account was not found.
+Example: Account not found.
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 500
@@ -219,7 +217,7 @@ Note: The error envelope also contains success=false and may contain an error fi
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: Account or transaction retrieval fails.
+Trigger: The system encountered an error while fetching account transactions.
 Description: Error description returned by the global HTTP exception filter.
-Example: A system error occurred while retrieving the account details. Please try again later.
+Example: A banking system error occurred. Please try again later.
 Note: The error envelope also contains success=false and may contain an error field.

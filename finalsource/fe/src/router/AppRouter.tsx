@@ -14,6 +14,7 @@ const Transactions = React.lazy(() => import('../pages/Transactions/Transactions
 const AddTransaction = React.lazy(() => import('../pages/Transactions/AddTransaction'))
 const Account = React.lazy(() => import('../pages/Account/Account'))
 const AddAccountPage = React.lazy(() => import('../pages/Account/AddAccountPage'))
+const AccountDetailPage = React.lazy(() => import('../pages/Account/AccountDetailPage'))
 const Goals = React.lazy(() => import('../pages/Goals/Goals'))
 const Expenses = React.lazy(() => import('../pages/Expenses/Expenses'))
 
@@ -86,6 +87,14 @@ const AppRouter: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <AddAccountPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/accounts/:id"
+              element={
+                <ProtectedRoute>
+                  <AccountDetailPage />
                 </ProtectedRoute>
               }
             />

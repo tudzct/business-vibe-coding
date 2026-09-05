@@ -1,0 +1,19 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "mode": "troubleshoot",
+  "observed_at": "2026-09-05T09:27:19.9777330Z",
+  "repository_revision": "566189eff1226f76ffbad82f4c496eb0bbd549d0",
+  "source_revision": "sha256:ab860acde6edda0ac92e1a3f9c5aa87069ecfb43a476b8c29060da46b349a6e7",
+  "commands": [
+    { "id": "targeted-backend-eslint", "exit_code": 0 },
+    { "id": "backend-repository-eslint", "exit_code": 0 },
+    { "id": "backend-production-build", "exit_code": 0 },
+    { "id": "windows-docker-version-compose-info", "exit_code": 1 },
+    { "id": "wsl-docker-version", "exit_code": 1 }
+  ],
+  "build_result": "PASS: targeted and repository ESLint plus the Nest production build completed; compiled output contains the new migration",
+  "runtime_result": "BLOCKED: Docker CLI is unavailable on Windows and in the available WSL distro",
+  "bounded_error": "Windows: docker is not recognized. WSL: the command docker could not be found in this WSL 2 distro.",
+  "volume_action": "No volume deletion or reset was attempted.",
+  "secrets_persisted": false
+}

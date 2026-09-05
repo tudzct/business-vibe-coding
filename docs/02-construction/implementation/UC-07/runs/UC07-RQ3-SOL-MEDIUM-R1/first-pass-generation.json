@@ -1,0 +1,61 @@
+{
+  "artifact_type": "first-pass-generation",
+  "schema_version": "1.0",
+  "status": "Frozen",
+  "run_id": "UC07-RQ3-SOL-MEDIUM-R1",
+  "uc_id": "UC-07",
+  "prompt_variant": "rq3",
+  "source_prompt": "docs/02-construction/coding-prompts/UC-07-rq3-coding-prompt.md",
+  "source_prompt_sha256": "sha256:c3f4e597748c860dbe70a4943103c5891af79e2aececb3408bf1bc4fec8b2a24",
+  "run_activation": "docs/02-construction/implementation/UC-07/runs/UC07-RQ3-SOL-MEDIUM-R1/run-activation.json",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null,
+    "effective_snapshot_unavailable_reason": "The runtime did not expose a provider snapshot identifier.",
+    "codex_client_version": null,
+    "codex_client_version_unavailable_reason": "The desktop runtime did not expose a client version to the task."
+  },
+  "tokens": {
+    "initial_total": 2054078,
+    "session_turn_id": 1,
+    "input": 133687,
+    "cache_read": 1900160,
+    "total_input": 2033847,
+    "output": 20231,
+    "reasoning": 2945,
+    "cost_usd": 2.2254,
+    "telemetry_source": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\05\\rollout-2026-09-05T14-05-11-01a07062-b184-7253-981a-11e43f97fbb0.jsonl",
+    "attribution_note": "Phase 2 generation and its first-pass audit share one researcher turn, so telemetry is retained at turn granularity without inferred subdivision."
+  },
+  "timing_wall_clock": {
+    "started_at": "2026-09-05T07:07:10.2993541Z",
+    "started_epoch_ms": 1788592030299,
+    "ended_at": "2026-09-05T07:09:46.5004978Z",
+    "ended_epoch_ms": 1788592186500,
+    "duration_seconds": 156.201
+  },
+  "source_revision": {
+    "sha256": "sha256:63c32ecd92038b05c98fd8f152c6bce746fce17efd8afa718af26635d68709a5",
+    "method": "SHA-256 over the UTF-8 list of sorted relative paths paired with per-file SHA-256 values; node_modules and dist directories excluded."
+  },
+  "source_file_count": 145,
+  "changed_files": [
+    "finalsource/be/src/modules/account/account-detail-jwt-auth.guard.ts",
+    "finalsource/be/src/modules/account/account.controller.ts",
+    "finalsource/be/src/modules/account/account.module.ts",
+    "finalsource/be/src/modules/account/account.service.ts",
+    "finalsource/be/src/modules/account/dto/account-detail-response.dto.ts",
+    "finalsource/fe/src/api/account.service.ts",
+    "finalsource/fe/src/api/types.ts",
+    "finalsource/fe/src/pages/Account/AccountDetailPage.tsx",
+    "finalsource/fe/src/router/AppRouter.tsx"
+  ],
+  "context_isolation": {
+    "status": "isolated",
+    "reason": "The frozen UC-07 Business Rule expressions were not loaded until first-pass generation ended and its source fingerprint was captured."
+  },
+  "repairs_applied": 0,
+  "tests_created_or_run": false
+}

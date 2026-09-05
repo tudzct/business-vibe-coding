@@ -1,13 +1,21 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
+  HttpException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
 import { Account, AccountType } from './account.entity';
 import { CreateAccountDto } from './dto/create-account.dto';
+import { AccountDetailResponseDto } from './dto/account-detail-response.dto';
+import {
+  Transaction,
+  TransactionType,
+} from '../transaction/transaction.entity';
 
 export interface AccountListItemDto {
   readonly id: number;
@@ -34,12 +42,113 @@ interface BalanceTotalRow {
   total: string | number | null;
 }
 
+interface RiskExposureRow {
+  totalDebt: string | number | null;
+  totalSafeAssets: string | number | null;
+}
+
 @Injectable()
 export class AccountService {
   constructor(
     @InjectRepository(Account)
     private readonly accounts: Repository<Account>,
+    @InjectRepository(Transaction)
+    private readonly transactions: Repository<Transaction>,
   ) {}
+
+  async findOneWithTransactions(
+    accountId: number,
+    userId: number,
+  ): Promise<AccountDetailResponseDto> {
+    try {
+      const account = await this.accounts.findOne({
+        where: { accountId },
+      });
+      if (!account) {
+        throw new NotFoundException('Account not found.');
+      }
+      if (account.userId !== userId) {
+        throw new ForbiddenException(
+          'You do not have permission to view this account details.',
+        );
+      }
+
+      if (
+        account.accountType === AccountType.INVESTMENT ||
+        account.accountType === AccountType.CREDIT_CARD
+      ) {
+        const exposure = await this.accounts
+          .createQueryBuilder('account')
+          .select(
+            'COALESCE(SUM(CASE WHEN account.accountType = :loanType THEN account.balance ELSE 0 END), 0)',
+            'totalDebt',
+          )
+          .addSelect(
+            'COALESCE(SUM(CASE WHEN account.accountType IN (:...safeTypes) THEN account.balance ELSE 0 END), 0)',
+            'totalSafeAssets',
+          )
+          .where('account.userId = :userId', { userId })
+          .setParameters({
+            loanType: AccountType.LOAN,
+            safeTypes: [AccountType.CHECKING, AccountType.SAVINGS],
+          })
+          .getRawOne<RiskExposureRow>();
+        const totalDebt = Number(exposure?.totalDebt ?? 0);
+        const totalSafeAssets = Number(exposure?.totalSafeAssets ?? 0);
+        if (totalDebt > totalSafeAssets) {
+          throw new ForbiddenException(
+            'You do not have permission to view this account details.',
+          );
+        }
+      }
+
+      const transactions = await this.transactions.find({
+        where: { accountId },
+        order: { transactionDate: 'DESC', transactionId: 'DESC' },
+        take: 5,
+      });
+
+      return {
+        id: account.accountId,
+        bank_name: account.bankName,
+        account_type: account.accountType,
+        branch_name: account.branchName ?? null,
+        account_number_full: account.accountNumberFull,
+        balance: Number(account.balance),
+        recent_transactions: transactions.map((transaction) => {
+          const absoluteAmount = Math.abs(Number(transaction.amount));
+          const isHighValueExpense =
+            transaction.type === TransactionType.EXPENSE &&
+            absoluteAmount > Number(account.balance) / 2;
+
+          return {
+            date:
+              transaction.transactionDate instanceof Date
+                ? transaction.transactionDate.toISOString().slice(0, 10)
+                : String(transaction.transactionDate).slice(0, 10),
+            amount:
+              transaction.type === TransactionType.EXPENSE
+                ? -absoluteAmount
+                : absoluteAmount,
+            description: `${transaction.itemDescription}${isHighValueExpense ? ' [HIGH VALUE]' : ''}`,
+            status: transaction.status,
+            receipt_id:
+              transaction.receiptId === null
+                ? null
+                : String(transaction.receiptId),
+            type: transaction.type,
+          };
+        }),
+      };
+    } catch (error: unknown) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'A banking system error occurred. Please try again later.',
+      );
+    }
+  }
 
   async findAllByUserId(userId: number): Promise<AccountListDataDto> {
     try {

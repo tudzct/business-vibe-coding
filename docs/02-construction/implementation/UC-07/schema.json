@@ -1,0 +1,168 @@
+{
+  "artifact_type": "database-schema",
+  "uc_id": "UC-07",
+  "status": "Approved",
+  "source_use_case": "docs/01-inception/use-cases/uc-07-view-bank-account-details.md",
+  "source_prompt": "docs/02-construction/coding-prompts/UC-07-rq3-coding-prompt.md",
+  "active_run": "docs/02-construction/implementation/UC-07/runs/UC07-RQ3-SOL-MEDIUM-R1/run-activation.json",
+  "created_at": "2026-09-05T09:01:54.7410698Z",
+  "contract": {
+    "evidence_and_scope": {
+      "trigger": "Docker backend startup on a fresh MySQL volume",
+      "fingerprint": "backend-startup-fresh-database-missing-core-tables-and-foreign-key-signedness",
+      "observed_errors": [
+        "Migration MakeTransactionsReceiptIdNullable20260901101931 failed because table transactions does not exist.",
+        "MySQL rejected FK_3e8568527418a0d71b12031870c because Goals.category_id and categories.category_id have incompatible signedness."
+      ],
+      "confirmed_root_cause": [
+        "TypeORM runs migrations with synchronize=false, but the migration chain has no initial migration that creates users, categories, accounts, transactions, and Bills before alter/index migrations execute.",
+        "Category.category_id is currently mapped as signed INT while Goal.category_id is mapped as INT UNSIGNED.",
+        "Other current user/category foreign-key properties also mix signed and unsigned INT metadata and would fail or drift after the first reported constraint is corrected."
+      ],
+      "required_change": "Add one earlier idempotent core-schema initialization migration and align foreign-key column signedness with the referenced primary keys. Keep existing later migrations responsible for account uniqueness, username nullability, receipt nullability, and Goals creation/nullability.",
+      "out_of_scope": [
+        "No change to Business Rule semantics, ownership, public endpoints, response envelopes, or UI behavior",
+        "No synchronize=true fallback",
+        "No Docker volume deletion, data reset, backfill, or destructive migration",
+        "No table rename; established Bills and Goals names remain unchanged",
+        "No new domain table beyond the entities already registered by the application"
+      ]
+    },
+    "initialization_migration": {
+      "name": "1700000000000-create-core-tables-if-missing.ts",
+      "ordering": "Timestamp 1700000000000 sorts before the existing 1788495106545 account-index migration and all 2026 alter/create migrations.",
+      "tables_created_when_missing": [
+        "users",
+        "categories",
+        "accounts",
+        "transactions",
+        "Bills"
+      ],
+      "table_contracts": {
+        "users": [
+          "id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
+          "full_name VARCHAR(25) NOT NULL",
+          "email VARCHAR(255) NOT NULL UNIQUE",
+          "username VARCHAR(255) NOT NULL UNIQUE before the existing nullable-username migration",
+          "password_hash CHAR(60) NOT NULL",
+          "total_balance DECIMAL(19,4) NOT NULL DEFAULT 0"
+        ],
+        "categories": [
+          "category_id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY",
+          "category_name VARCHAR(255) NOT NULL UNIQUE"
+        ],
+        "accounts": [
+          "account_id INT AUTO_INCREMENT PRIMARY KEY",
+          "user_id INT UNSIGNED NOT NULL",
+          "bank_name VARCHAR(255) NOT NULL",
+          "account_type ENUM('Checking','Credit Card','Savings','Investment','Loan') NOT NULL",
+          "branch_name VARCHAR(255) NULL",
+          "account_number_full VARCHAR(255) NOT NULL",
+          "account_number_last_4 VARCHAR(4) NOT NULL",
+          "balance DECIMAL(15,2) NOT NULL DEFAULT 0",
+          "FOREIGN KEY user_id REFERENCES users(id)"
+        ],
+        "transactions": [
+          "transaction_id INT AUTO_INCREMENT PRIMARY KEY",
+          "account_id INT NOT NULL",
+          "transaction_date DATE NOT NULL",
+          "type ENUM('Revenue','Expense') NOT NULL",
+          "item_description VARCHAR(500) NOT NULL",
+          "shop_name VARCHAR(255) NULL",
+          "amount DECIMAL(15,2) NOT NULL",
+          "payment_method VARCHAR(100) NULL",
+          "status ENUM('Complete','Pending','Failed') NOT NULL DEFAULT 'Pending'",
+          "receipt_id INT UNSIGNED NOT NULL before the existing nullable-receipt migration",
+          "category_id INT UNSIGNED NULL",
+          "FOREIGN KEY account_id REFERENCES accounts(account_id)",
+          "FOREIGN KEY category_id REFERENCES categories(category_id)"
+        ],
+        "Bills": [
+          "bill_id INT AUTO_INCREMENT PRIMARY KEY",
+          "user_id INT UNSIGNED NOT NULL",
+          "due_date DATE NOT NULL",
+          "logo_url VARCHAR(500) NULL",
+          "item_description VARCHAR(500) NOT NULL",
+          "last_charge_date DATE NULL",
+          "amount DECIMAL(15,2) NOT NULL",
+          "FOREIGN KEY user_id REFERENCES users(id)"
+        ]
+      },
+      "existing_later_migrations_preserved": [
+        "1788495106545-add-accounts-owner-account-number-unique.ts",
+        "20260831095333-make-users-username-nullable.ts",
+        "20260901101931-make-transactions-receipt-id-nullable.ts",
+        "20260903105626-create-goals-table-if-missing.ts",
+        "20260903105627-make-goals-category-nullable.ts"
+      ]
+    },
+    "entity_alignment": [
+      {
+        "entity_property": "Category.categoryId",
+        "current": "INT signed",
+        "proposed": "INT UNSIGNED",
+        "reason": "Match Goal.categoryId and Transaction.categoryId foreign keys."
+      },
+      {
+        "entity_property": "Account.userId",
+        "current": "INT signed",
+        "proposed": "INT UNSIGNED",
+        "reason": "Match User.id."
+      },
+      {
+        "entity_property": "Bill.userId",
+        "current": "INT signed",
+        "proposed": "INT UNSIGNED",
+        "reason": "Match User.id."
+      },
+      {
+        "entity_property": "Transaction.categoryId",
+        "current": "INT signed nullable",
+        "proposed": "INT UNSIGNED nullable",
+        "reason": "Match Category.categoryId."
+      },
+      {
+        "entity_property": "Transaction.receiptId",
+        "current": "VARCHAR(255) nullable TypeScript string",
+        "proposed": "INT UNSIGNED nullable TypeScript number",
+        "reason": "Match the previously approved UC-04 physical schema; public DTO mappings continue to expose nullable string receipt identifiers as required by API contracts."
+      }
+    ],
+    "relationships": [
+      "accounts.user_id -> users.id with matching INT UNSIGNED types",
+      "transactions.account_id -> accounts.account_id with matching signed INT types",
+      "transactions.category_id -> categories.category_id with matching INT UNSIGNED types",
+      "Bills.user_id -> users.id with matching INT UNSIGNED types",
+      "Goals.user_id -> users.id and Goals.category_id -> categories.category_id remain as defined by the previously approved UC-14 migration"
+    ],
+    "sensitive_data_and_exposure": {
+      "password_storage": "password_hash remains bcrypt output in CHAR(60); no password values are placed in migration or logs.",
+      "account_number": "account_number_full remains persisted as already modeled; no values are logged or seeded.",
+      "api_contract": "No request or response shape changes. Receipt identifiers are explicitly converted at DTO boundaries when non-null.",
+      "seed_data": "None"
+    },
+    "migration_plan": {
+      "forward_operations": [
+        "Create each missing core table in dependency order: users, categories, accounts, transactions, Bills.",
+        "Use explicit MySQL types and named foreign keys with matching signedness.",
+        "Allow existing later migrations to apply their already-approved changes in order.",
+        "Keep migrationsRun=true and synchronize=false."
+      ],
+      "rollback": "Drop only tables created by this migration and only after confirming all are empty; refuse rollback when any created table contains rows. Drop in reverse dependency order.",
+      "data_loss_risk": "Forward migration creates only missing tables and does not rewrite or delete rows. Rollback is guarded against non-empty tables.",
+      "deployment_considerations": "The requested verification uses a fresh empty volume. If an existing volume contains a partial or type-incompatible schema, stop for a separate inspection rather than coercing or dropping it."
+    }
+  },
+  "assumptions": [
+    "The target verification volume is empty, as stated by the researcher.",
+    "The previously approved UC-04 INT UNSIGNED nullable receipt_id schema remains authoritative for persistence, while API response contracts continue to serialize a non-null receipt identifier as a string.",
+    "The previously approved UC-14 Goals creation migration remains authoritative and will run after core categories/users tables exist.",
+    "No cascade delete behavior is introduced; existing relationship semantics are preserved."
+  ],
+  "approval": {
+    "researcher_id": "khanh",
+    "approved_at": "2026-09-05T09:21:31.3449676Z",
+    "scope": "The exact UC-07 schema proposal recorded in this artifact.",
+    "evidence": "Researcher statement: I explicitly approve the exact UC-07 schema proposal. Proceed to implement and verify repair-005."
+  }
+}

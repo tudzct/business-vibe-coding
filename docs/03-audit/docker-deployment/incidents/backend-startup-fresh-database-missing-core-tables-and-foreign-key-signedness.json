@@ -1,0 +1,37 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260905-001",
+  "observed_at": "2026-09-05T09:27:19.9777330Z",
+  "layer": "backend startup/database migration",
+  "fingerprint": "backend-startup-fresh-database-missing-core-tables-and-foreign-key-signedness",
+  "symptom": "On a fresh database volume, backend startup stops first because transactions does not exist and then because Goals.category_id is incompatible with categories.category_id.",
+  "evidence": "Researcher-supplied TypeORM/MySQL errors plus source inspection showing migrationsRun=true, synchronize=false, no earlier core-table migration, and signed/unsigned entity drift.",
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "The migration chain altered core tables before creating them, and category/user foreign-key columns did not consistently match their unsigned referenced primary keys."
+  },
+  "actions_attempted": [
+    "Recorded and received explicit researcher approval for the exact UC-07 schema proposal.",
+    "Added an earlier idempotent core-table initialization migration and aligned approved entity metadata and receipt DTO mappings.",
+    "Passed targeted backend ESLint, repository backend ESLint, and the Nest production build.",
+    "Attempted to locate Docker on Windows and through WSL without deleting or resetting any volume."
+  ],
+  "files_changed": [
+    "finalsource/be/src/database/migrations/1700000000000-create-core-tables-if-missing.ts",
+    "finalsource/be/src/modules/account/account.entity.ts",
+    "finalsource/be/src/modules/account/account.service.ts",
+    "finalsource/be/src/modules/bill/bill.entity.ts",
+    "finalsource/be/src/modules/category/category.entity.ts",
+    "finalsource/be/src/modules/transaction/transaction.entity.ts",
+    "finalsource/be/src/modules/transaction/transaction.service.ts"
+  ],
+  "commands_rerun": [
+    "targeted backend eslint",
+    "backend repository eslint",
+    "backend production build",
+    "Docker CLI discovery on Windows and WSL"
+  ],
+  "outcome": "implementation_complete_runtime_blocked",
+  "reusable_resolution": "With Docker Compose v2 available, run the approved stack on the fresh volume and confirm every migration completes, the backend becomes healthy, and /api/health returns HTTP 200.",
+  "prevention": "Every fresh-volume migration chain must create referenced core tables before alter/index migrations and must use identical signedness on both sides of each MySQL foreign key."
+}
