@@ -1,0 +1,18 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "mode": "run",
+  "observed_at": "2026-09-04T13:18:16Z",
+  "source_revision": "sha256:288ed148b4caa03f33c11b7eb90b30cbbfea7ccf138cf22340a5e49bd61371ae",
+  "commands": {
+    "docker_info": 0,
+    "docker_compose_config": 0,
+    "docker_compose_up_build": 1,
+    "docker_compose_up_port_override": 1,
+    "docker_compose_ps": 0,
+    "docker_compose_backend_logs_bounded": 0,
+    "docker_compose_stop": 0
+  },
+  "result": "BLOCKED",
+  "bounded_error": "Both production images built. The first start attempt found host port 3306 occupied; an internal-only database-port override avoided that conflict. The backend then remained unhealthy because AuthModule exports JwtAuthGuard without registering it as a provider, so the frontend health dependency did not start. The run-created containers were stopped after evidence capture; images and the database volume were preserved.",
+  "secrets_recorded": false
+}

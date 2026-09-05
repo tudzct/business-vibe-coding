@@ -1,0 +1,23 @@
+{
+  "artifact_type": "final-source-revision",
+  "status": "Frozen",
+  "uc_id": "UC-12",
+  "run_id": "RQ3-SOL-MEDIUM-R1-UC12",
+  "source_revision": "sha256:6fca554a282c38c8f3a3d6492f2dfe59a33df3fd22d60c41748fda92e3717736",
+  "hash_method": "SHA-256 over sorted relative path, NUL, per-file SHA-256 and newline entries; node_modules, dist and .env files excluded.",
+  "file_count": 107,
+  "frozen_at": "2026-09-04T13:30:41Z",
+  "terminal_condition": "Authorized bounded repairs complete; runtime observation remains blocked by the researcher-controlled missing-domain-table baseline recorded as DEP-20260831-001.",
+  "verification": {
+    "backend_production_build": "pass",
+    "frontend_production_build": "pass",
+    "database_health": "pass before backend startup",
+    "backend_health": "not_evaluable: a previously approved migration requires the absent Accounts table in the active persistent database",
+    "frontend_health": "not_evaluable: backend health dependency failed",
+    "bills_page_status": null,
+    "unauthenticated_bills_status": null,
+    "openapi_contract": "not_evaluable: backend did not complete database initialization",
+    "authenticated_upcoming_bills": "not_evaluable: backend did not complete database initialization and no researcher-supplied authenticated session was used",
+    "tests_created_or_run": false
+  }
+}

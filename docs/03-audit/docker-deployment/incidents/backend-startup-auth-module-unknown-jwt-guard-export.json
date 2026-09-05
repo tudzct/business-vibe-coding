@@ -1,0 +1,32 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260904-001",
+  "observed_at": "2026-09-04T13:18:16Z",
+  "layer": "backend-startup",
+  "fingerprint": "backend-startup-auth-module-unknown-jwt-guard-export",
+  "symptom": "The freshly built backend container repeatedly restarts and remains unhealthy during Nest application initialization.",
+  "evidence": "Bounded backend logs report UnknownExportException because AuthModule exports JwtAuthGuard although that guard is absent from the module providers list.",
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "finalsource/be/src/modules/auth/auth.module.ts exports JwtAuthGuard but does not register JwtAuthGuard in providers."
+  },
+  "actions_attempted": [
+    "Validated Compose configuration and Docker daemon reachability.",
+    "Built fresh backend and frontend production images successfully.",
+    "Avoided an unrelated occupied host port 3306 by keeping the Compose database port internal-only and using unused application host ports.",
+    "Captured bounded service status and backend startup logs."
+  ],
+  "files_changed": [
+    "finalsource/be/src/modules/auth/auth.module.ts"
+  ],
+  "commands_rerun": [
+    "docker-compose-up-build",
+    "docker-compose-up-with-nondestructive-port-override",
+    "docker-compose-ps",
+    "docker-compose-backend-logs-tail-80"
+  ],
+  "outcome": "resolved",
+  "resolution": "JwtAuthGuard was added to AuthModule.providers. Fresh startup no longer raises UnknownExportException and proceeds to the independently recorded missing-domain-table database blocker DEP-20260831-001.",
+  "reusable_resolution": "Register JwtAuthGuard in AuthModule.providers before exporting it, rebuild the backend image, and verify all service healthchecks.",
+  "prevention": "Require Nest modules to register each exported provider and include a bounded application-startup observation after production image builds."
+}

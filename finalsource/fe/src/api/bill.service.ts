@@ -1,7 +1,12 @@
 import axiosInstance from './axiosInstance'
-import { ApiResponse, Bill } from './types'
+import { ApiResponse, Bill, UpcomingBill } from './types'
 
 export const billService = {
+  getUpcomingBills: async (signal?: AbortSignal): Promise<ApiResponse<UpcomingBill[]>> => {
+    const response = await axiosInstance.get('/v1/bills', { signal })
+    return response.data
+  },
+
   // Lấy danh sách hóa đơn của user
   getBills: async (): Promise<ApiResponse<Bill[]>> => {
     const response = await axiosInstance.get('/bills')
@@ -32,4 +37,3 @@ export const billService = {
     return response.data
   },
 }
-

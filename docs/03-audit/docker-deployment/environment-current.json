@@ -1,25 +1,25 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-09-03T13:30:30.3951727Z",
-  "repository_revision": "e076268c31cde96fa3def7d58dfe334ed72c69c0",
-  "source_revision": "sha256:8028afedea2bc59c2acf1b99b9f6c9989975a5adbcf7159e639ac2373862f10d",
+  "observed_at": "2026-09-04T13:30:41Z",
+  "repository_revision": "uncommitted-worktree",
+  "source_revision": "sha256:6fca554a282c38c8f3a3d6492f2dfe59a33df3fd22d60c41748fda92e3717736",
   "docker": {
-    "cli": null,
-    "compose": null,
-    "daemon": null
+    "cli": "29.6.1",
+    "compose": "v5.3.0",
+    "daemon": "reachable"
   },
   "configuration": {
     "env_present": true,
     "env_ignored": true,
     "env_tracked": false,
-    "compose_valid": null
+    "compose_valid": true
   },
   "services": {
-    "database": "not observed from the current execution environment",
-    "backend": "current UC-06 image could not be rebuilt or observed",
-    "frontend": "current UC-06 image could not be rebuilt or observed"
+    "database": "runtime observation passed its healthcheck; stopped after evidence capture with its volume preserved",
+    "backend": "fresh repaired image built; JWT guard initialization passed, then database initialization was blocked by the known absent Accounts table; stopped after evidence capture",
+    "frontend": "fresh image built; runtime blocked by backend health dependency; stopped after evidence capture"
   },
   "status": "BLOCKED",
-  "blocking_incident": "Docker CLI and Compose v2 are not callable or present at the standard Docker Desktop binary path in the current execution environment.",
-  "next_action": "Expose Docker Desktop's docker.exe to this task environment, then obtain researcher authorization to rebuild and run Compose for bounded UC-06 observations."
+  "blocking_incident": "DEP-20260831-001",
+  "next_action": "Activate a researcher-approved domain schema/runtime baseline containing the required Account, Transaction, and Bill tables, then repeat Compose health and bounded UC-12 observations. No container remains in a restart loop."
 }

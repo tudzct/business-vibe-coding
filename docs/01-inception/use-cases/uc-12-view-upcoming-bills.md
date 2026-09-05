@@ -6,13 +6,13 @@ uc_name: "View Upcoming Bills"
 source_type: google-sheets
 source_spreadsheet_id: 1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM
 source_sheet: "Use cases"
-source_range: "A257:B275"
-retrieved_at: 2026-08-27T03:49:28.570Z
+source_range: "A258:B275"
+retrieved_at: 2026-09-04T12:21:28Z
 ---
 
 # UC-12: View Upcoming Bills
 
-> Canonical source: [Financial Management Specification](https://docs.google.com/spreadsheets/d/1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM/edit?gid=0#gid=0), tab Use cases, columns A-B. This frozen repository projection is read-only; source corrections must be made in the spreadsheet and imported as a new revision.
+> Canonical source: [Financial Management Specification](https://docs.google.com/spreadsheets/d/1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM/edit?gid=0#gid=0), tab Use cases, range A258:B275. This frozen repository projection is read-only; source corrections must be made in the spreadsheet and imported as a new revision.
 
 ## Functional Use-Case Specification
 
@@ -26,7 +26,7 @@ View Upcoming Bills
 
 ### Description
 
-As an authenticated user, I want to view bills due today or later.
+As an authenticated user, I want to view upcoming bills so that I can review bills that require attention in the near term.
 
 ### Actor(s)
 
@@ -46,34 +46,42 @@ PRE-1: The user is authenticated.
 
 ### Post-Condition(s)
 
-POST-1: The page displays bills owned by the user whose dueDate is on or after the current date at 00:00:00.
-POST-2: Bills are ordered by dueDate ascending.
-POST-3: If no bills exist, the page displays its empty state.
+POST-1: After processing, the applicable upcoming-bill information is displayed on /bills.
+POST-2: If no applicable bill data is available, the page displays its empty state.
+POST-3: The operation does not modify stored bill data.
 
 ### Basic Flow
 
-1. The user opens /bills.
-2. UpcomingBills sends GET /api/v1/bills.
-3. JwtAuthGuard supplies userId.
-4. BillService resets the current time to 00:00:00.
-5. The service queries bills where bill.userId equals userId and dueDate is greater than or equal to that date, ordered by dueDate ascending.
-6. The service maps dates to YYYY-MM-DD and nullable fields to null.
-7. The frontend displays each bill's description, due date, last charge date, logo when available, and amount.
+1. The user opens the Bills page.
+2. The frontend requests the user's upcoming-bill data.
+3. The backend authenticates the request.
+4. The backend retrieves and processes the relevant bill data according to the applicable business rules.
+5. The backend returns the resulting bill list.
+6. The frontend prepares the returned bill data for display.
+7. The frontend displays the resulting upcoming-bill view on the Bills page.
 
 ### Alternative Flow
 
-AF-1: No upcoming bills
-5a. The query returns an empty array.
+AF-1: No applicable upcoming bills
+5a. The backend returns an empty bill list.
+6a. The frontend does not prepare bill cards.
 7a. The frontend displays its no-upcoming-bills state.
 
 AF-2: Retry loading
-7b. After an error, the user may select the retry action and the component calls the list API again.
+7b. After a loading error, the user selects the retry action.
+2b. The frontend sends the upcoming-bill request again and the flow continues from Step 3.
 
 ### Exception Flow
 
-EF-1: Retrieval failure
-5a. The backend returns HTTP 500 with its bill-fetch message.
-5b. The frontend displays the error state.
+EF-1: Authentication failure
+3a. The backend cannot authenticate the request.
+3b. The backend returns HTTP 401.
+3c. The frontend applies the application's authentication-error handling.
+
+EF-2: Retrieval or processing failure
+4a. An unexpected error occurs while retrieving or processing bill data.
+4b. The backend returns HTTP 500.
+4c. The frontend displays its bill-loading error state.
 
 ### Related UI
 
@@ -85,7 +93,13 @@ API-BILL-LIST
 
 ### Notes
 
-Scope clarification: This use case covers retrieval and display of upcoming bills only. Executing a bill payment through “Pay Now” is outside scope.
+Experiment isolation:
+- BR-BILL-UP-01 through BR-BILL-UP-06 are the treatment-sensitive Business Rules for UC-12.
+- Description, pre/post-conditions, flows, UML, and non-BR API fields intentionally avoid restating the eligibility window, charged-cycle exclusion, tie-break ordering, normalization, and exact-coverage semantics.
+- Read-only behavior is redundantly constrained by the GET operation and is not a core treatment-sensitive Business Rule.
+- Authentication failure, retrieval failure, and the project-standard response envelope are API/project concerns rather than core Business Rules.
+- Figma layout/styling requirements remain UI evidence and are not part of the core Business Rule score.
+- "Pay Now" behavior remains outside the scope of UC-12.
 
 ## UML Model
 
@@ -117,6 +131,8 @@ class BillDto <<DTO>> {
 }
 
 class BillsResponseDto <<DTO>> {
+  success: Boolean [1]
+  message: String [1]
   data: BillDto [*]
 }
 
@@ -125,10 +141,11 @@ class BillController <<Controller>> {
 }
 
 class BillService <<Service>> {
-  findUpcomingBillsByUserId(userId: Integer): BillDto [*]
-  currentDateAtMidnight(): Date {query}
-  formatDate(date: Date): String {query}
+  findUpcomingBillsByUserId(userId: Integer): Sequence(BillDto)
 }
+
+class BillsPage <<UI>>
+class UpcomingBills <<UI>>
 
 BillController ..> AuthenticatedRequest
 BillController ..> BillsResponseDto
@@ -136,7 +153,9 @@ BillController ..> BillService
 BillService ..> Bill
 BillService ..> BillDto
 BillsResponseDto --> BillDto
-BillDto ..> Bill : maps from
+BillDto ..> Bill
+BillsPage --> UpcomingBills
+UpcomingBills ..> BillsResponseDto
 
 @enduml
 ~~~
@@ -146,144 +165,153 @@ BillDto ..> Bill : maps from
 The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
 
 ~~~text
-BR-BILL-01: Bill ownership scope
+BR-BILL-UP-01: Authenticated ownership scope
 
-context BillService::findUpcomingBillsByUserId(
-  userId : Integer
-) : Sequence(BillDto)
+context BillService::findUpcomingBillsByUserId(userId : Integer) : Sequence(BillDto)
 
-post BR_BILL_01_OwnedBillsOnly:
-  result->forAll(
-    dto | dto.userId = userId
+pre BR_BILL_UP_01_AuthenticatedIdentity:
+  not userId.oclIsUndefined()
+
+post BR_BILL_UP_01_OwnedBillsOnly:
+  result->forAll(dto |
+    Bill.allInstances()->exists(bill |
+      bill.billId = dto.billId and
+      bill.userId = userId
+    )
   )
 
-post BR_BILL_01_MapsToOwnedPersistedBill:
-  result->forAll(
-    dto |
-      Bill.allInstances()->exists(
-        bill |
-          bill.billId = dto.billId and
-          bill.userId = userId
-      )
+Technical constraints:
+- The userId used for bill retrieval shall come from the validated authenticated request context.
+- A client-supplied user identifier shall not override the authenticated userId.
+- Bills owned by another user shall never contribute to the result.
+
+BR-BILL-UP-02: Near-term eligibility window
+
+context BillService::findUpcomingBillsByUserId(userId : Integer) : Sequence(BillDto)
+
+post BR_BILL_UP_02_WithinWindow:
+  result->forAll(dto |
+    Bill.allInstances()->exists(bill |
+      bill.billId = dto.billId and
+      bill.userId = userId and
+      bill.dueDate >= currentDateAtMidnight() and
+      bill.dueDate <= addDays(currentDateAtMidnight(), 30)
+    )
   )
 
-BR-BILL-02: Upcoming date boundary
+Technical constraints:
+- Upcoming eligibility is evaluated against an inclusive 31-day calendar window: today through 30 calendar days after today.
+- currentDateAtMidnight() represents the backend system's current calendar date with hour, minute, second, and millisecond set to zero.
+- Bills due before today are overdue and shall be excluded.
+- Bills due more than 30 calendar days after today shall not appear in the Upcoming Bills result.
 
-context BillService::findUpcomingBillsByUserId(
-  userId : Integer
-) : Sequence(BillDto)
+BR-BILL-UP-03: Already-charged cycle exclusion
 
-post BR_BILL_02_UpcomingBillsOnly:
-  result->forAll(
-    dto |
-      Bill.allInstances()->exists(
-        bill |
-          bill.billId = dto.billId and
-          bill.dueDate >= self.currentDateAtMidnight()
+context BillService::findUpcomingBillsByUserId(userId : Integer) : Sequence(BillDto)
+
+post BR_BILL_UP_03_NotAlreadyChargedForDueCycle:
+  result->forAll(dto |
+    Bill.allInstances()->exists(bill |
+      bill.billId = dto.billId and
+      (
+        bill.lastChargeDate.oclIsUndefined() or
+        bill.lastChargeDate < bill.dueDate
       )
+    )
   )
-
-post BR_BILL_02_AllEligibleBillsReturned:
-  result->size() =
-    Bill.allInstances()
-      ->select(
-        bill |
-          bill.userId = userId and
-          bill.dueDate >= self.currentDateAtMidnight()
-      )
-      ->size()
 
 Technical constraint:
-- currentDateAtMidnight() represents the current system date with hour, minute, second, and millisecond reset to zero before the repository query.
+- A bill whose lastChargeDate is equal to or later than its dueDate is treated as already charged for that due cycle and shall be excluded from the Upcoming Bills result.
 
-BR-BILL-03: Due-date ordering
+BR-BILL-UP-04: Deterministic urgency ordering
 
-context BillService::findUpcomingBillsByUserId(
-  userId : Integer
-) : Sequence(BillDto)
+context BillService::findUpcomingBillsByUserId(userId : Integer) : Sequence(BillDto)
 
-post BR_BILL_03_DueDateAscending:
+post BR_BILL_UP_04_Ordered:
   result->size() <= 1 or
-  Sequence{1..result->size() - 1}->forAll(
-    i |
-      let currentBill : Bill =
-        Bill.allInstances()->any(
-          bill | bill.billId = result->at(i).billId
-        ),
-      nextBill : Bill =
-        Bill.allInstances()->any(
-          bill | bill.billId = result->at(i + 1).billId
+  Sequence{1..result->size() - 1}->forAll(i |
+    let a : BillDto = result->at(i),
+        b : BillDto = result->at(i + 1)
+    in
+      a.dueDate < b.dueDate or
+      (
+        a.dueDate = b.dueDate and
+        (
+          a.amount > b.amount or
+          (a.amount = b.amount and a.billId < b.billId)
         )
-      in
-        currentBill.dueDate <= nextBill.dueDate
-  )
-
-BR-BILL-04: Response mapping and normalization
-
-context BillService::findUpcomingBillsByUserId(
-  userId : Integer
-) : Sequence(BillDto)
-
-post BR_BILL_04_ResponseMapping:
-  result->forAll(
-    dto |
-      Bill.allInstances()->exists(
-        bill |
-          bill.billId = dto.billId and
-          bill.userId = dto.userId and
-          bill.itemDescription = dto.itemDescription and
-          bill.amount = dto.amount and
-          dto.dueDate = self.formatDate(bill.dueDate) and
-          (
-            bill.lastChargeDate.oclIsUndefined()
-            implies dto.lastChargeDate.oclIsUndefined()
-          ) and
-          (
-            not bill.lastChargeDate.oclIsUndefined()
-            implies
-              dto.lastChargeDate =
-                self.formatDate(bill.lastChargeDate)
-          ) and
-          (
-            (bill.logoUrl.oclIsUndefined() or bill.logoUrl.size() = 0)
-            implies dto.logoUrl.oclIsUndefined()
-          ) and
-          (
-            (not bill.logoUrl.oclIsUndefined() and bill.logoUrl.size() > 0)
-            implies dto.logoUrl = bill.logoUrl
-          )
       )
   )
 
 Technical constraints:
-- formatDate shall return YYYY-MM-DD.
-- amount shall be returned as a number.
-- A missing lastChargeDate shall be returned as null.
-- A missing or empty logoUrl shall be returned as null.
+- Bills shall be ordered by dueDate ascending.
+- Bills sharing the same dueDate shall be ordered by amount descending.
+- Bills sharing both dueDate and amount shall be ordered by billId ascending.
 
-BR-BILL-05: Empty upcoming-bill result
+BR-BILL-UP-05: Response normalization
 
-context BillService::findUpcomingBillsByUserId(
-  userId : Integer
-) : Sequence(BillDto)
+context BillService::findUpcomingBillsByUserId(userId : Integer) : Sequence(BillDto)
 
-post BR_BILL_05_EmptyWhenNoEligibleBills:
-  Bill.allInstances()
-    ->select(
-      bill |
-        bill.userId = userId and
-        bill.dueDate >= self.currentDateAtMidnight()
+post BR_BILL_UP_05_NormalizedMapping:
+  result->forAll(dto |
+    Bill.allInstances()->exists(bill |
+      bill.billId = dto.billId and
+      dto.userId = bill.userId and
+      dto.itemDescription = trim(bill.itemDescription) and
+      dto.amount = round2(bill.amount) and
+      dto.dueDate = formatDate(bill.dueDate) and
+      (
+        bill.lastChargeDate.oclIsUndefined()
+        implies dto.lastChargeDate.oclIsUndefined()
+      ) and
+      (
+        not bill.lastChargeDate.oclIsUndefined()
+        implies dto.lastChargeDate = formatDate(bill.lastChargeDate)
+      ) and
+      (
+        (bill.logoUrl.oclIsUndefined() or trim(bill.logoUrl).size() = 0)
+        implies dto.logoUrl.oclIsUndefined()
+      ) and
+      (
+        (not bill.logoUrl.oclIsUndefined() and trim(bill.logoUrl).size() > 0)
+        implies dto.logoUrl = trim(bill.logoUrl)
+      )
     )
-    ->isEmpty()
-  implies
-    result->isEmpty()
+  )
 
-BR-BILL-06: Read-only list operation
+Technical constraints:
+- itemDescription shall be trimmed before it is returned.
+- amount shall be rounded to two decimal places.
+- dueDate shall be formatted as YYYY-MM-DD.
+- lastChargeDate shall be formatted as YYYY-MM-DD when present and returned as null when absent.
+- logoUrl shall be trimmed; a missing or blank value shall be returned as null.
 
-Listing upcoming bills shall not create, update, or delete Bill records.
+BR-BILL-UP-06: Exact coverage, uniqueness, and empty result
 
-BR-BILL-07: Retrieval failure handling
+context BillService::findUpcomingBillsByUserId(userId : Integer) : Sequence(BillDto)
 
-If the repository query or bill-response mapping fails, the backend shall reject the request with HTTP 500 Internal Server Error and the message "Failed to fetch bills".
+post BR_BILL_UP_06_UniqueBills:
+  result->isUnique(dto | dto.billId)
+
+post BR_BILL_UP_06_AllAndOnlyEligibleBills:
+  let eligible : Set(Bill) =
+    Bill.allInstances()
+      ->select(bill |
+        bill.userId = userId and
+        bill.dueDate >= currentDateAtMidnight() and
+        bill.dueDate <= addDays(currentDateAtMidnight(), 30) and
+        (
+          bill.lastChargeDate.oclIsUndefined() or
+          bill.lastChargeDate < bill.dueDate
+        )
+      )
+      ->asSet()
+  in
+    result->size() = eligible->size() and
+    result->forAll(dto |
+      eligible->exists(bill | bill.billId = dto.billId)
+    )
+
+Technical constraint:
+- If no eligible bill exists after all business rules are applied, the successful result shall contain an empty data array.
 ~~~
-

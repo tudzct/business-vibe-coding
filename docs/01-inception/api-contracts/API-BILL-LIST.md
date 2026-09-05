@@ -31,7 +31,7 @@ GET
 
 ### Description
 
-Return the authenticated user's bills whose due date is today or later.
+Return bill data for the authenticated user's Upcoming Bills view.
 
 ### Authentication
 
@@ -58,66 +58,63 @@ None
 
 ## Success Response — HTTP 200
 
+### success
+
+Type: boolean; Required: Yes; Nullable: No
+Description: Indicates a successful request.
+Example: true
+
+### message
+
+Type: string; Required: Yes; Nullable: No
+Description: Success message following the project-wide API response convention.
+Example: Bills retrieved successfully
+
 ### data
 
 Type: array<object>; Required: Yes; Nullable: No
-Trigger: Bills are retrieved.
-Description: Upcoming bills ordered by due date.
+Description: Bill items returned for the Upcoming Bills view.
 Example: []
-
 
 ### data[].billId
 
 Type: integer; Required: Yes; Nullable: No
-Trigger: Bills are retrieved.
 Description: Bill identifier.
 Example: 7
-
 
 ### data[].userId
 
 Type: integer; Required: Yes; Nullable: No
-Trigger: Bills are retrieved.
 Description: Owner user identifier.
 Example: 1
-
 
 ### data[].itemDescription
 
 Type: string; Required: Yes; Nullable: No
-Trigger: Bills are retrieved.
 Description: Bill description.
 Example: Netflix
-
 
 ### data[].logoUrl
 
 Type: string; Required: Yes; Nullable: Yes
-Trigger: Bills are retrieved.
-Description: Optional logo URL.
+Description: Optional bill logo URL.
 Example: https://example.com/netflix.png
-
 
 ### data[].dueDate
 
 Type: string; Format: date; Required: Yes; Nullable: No
-Trigger: Bills are retrieved.
-Description: Due date.
+Description: Bill due date.
 Example: 2025-11-15
-
 
 ### data[].lastChargeDate
 
 Type: string; Format: date; Required: Yes; Nullable: Yes
-Trigger: Bills are retrieved.
-Description: Most recent charge date.
+Description: Most recent charge date when available.
 Example: 2025-10-15
-
 
 ### data[].amount
 
 Type: number; Required: Yes; Nullable: No
-Trigger: Bills are retrieved.
 Description: Bill amount.
 Example: 260000
 
@@ -136,7 +133,14 @@ Note: The error envelope also contains success=false and may contain an error fi
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: Bill retrieval fails.
+Trigger: Bill retrieval or response processing fails.
 Description: Error description returned by the global HTTP exception filter.
 Example: Failed to fetch bills
 Note: The error envelope also contains success=false and may contain an error field.
+
+## Notes
+
+Experiment classification:
+- The API contract intentionally contains only interface structure, authentication requirements, response fields, and error contracts.
+- UC-12 Business Rules are defined only in the Use cases sheet and are intentionally omitted from this API contract for ablation isolation.
+- The project-standard successful/error response envelope remains authoritative at the API level.
