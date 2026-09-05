@@ -289,5 +289,37 @@ post BR_ACC_18_TransactionDataUnchanged:
   )
 Technical constraint:
 - Viewing account details shall not create, update, or delete any Account or Transaction records.
-~~~
 
+BR-ACC-19: High-value expense transaction flagging
+context AccountService::findOneWithTransactions(
+  accountId : Integer,
+  userId : Integer
+) : AccountDetailResponseDto
+post BR_ACC_19_HighValueFlag:
+  let acc = Account.allInstances()->any(a | a.account_id = accountId) in
+  result.recent_transactions->forAll(tDto |
+    (tDto.type = TransactionTypeEnum::Expense and tDto.amount.abs() > (acc.balance / 2))
+    implies tDto.description.substring(tDto.description.size() - 13, tDto.description.size()) = ' [HIGH VALUE]'
+  )
+Technical constraint:
+- For any transaction in the response, if its type is Expense and its absolute amount strictly exceeds 50% of the account's current balance, the exact string " [HIGH VALUE]" must be appended to its description.
+
+BR-ACC-20: Cross-account risk exposure lock
+context AccountService::findOneWithTransactions(
+  accountId : Integer,
+  userId : Integer
+) : AccountDetailResponseDto
+pre BR_ACC_20_RiskExposureLimit:
+  let targetAccount = Account.allInstances()->any(a | a.account_id = accountId) in
+  (targetAccount.account_type = AccountType::Investment or targetAccount.account_type = AccountType::Credit_Card)
+  implies
+  (
+    Account.allInstances()->select(a | a.user_id = userId and a.account_type = AccountType::Loan)->collect(balance)->sum()
+    <=
+    Account.allInstances()->select(a | a.user_id = userId and (a.account_type = AccountType::Checking or a.account_type = AccountType::Savings))->collect(balance)->sum()
+  )
+Technical constraint:
+- When a user attempts to view an Investment or Credit Card account, the system must calculate their total debt (sum of balances of all their Loan accounts) and total safe assets (sum of balances of all their Checking and Savings accounts).
+- If the total debt is strictly greater than the total safe assets, the system must deny access by throwing an HTTP 403 Forbidden exception.
+
+~~~
