@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-resource",
+  "status": "Frozen",
+  "uc_id": "UC-07",
+  "source_use_case": "docs/01-inception/use-cases/uc-07-view-bank-account-details.md",
+  "source_use_case_sha256": "sha256:1a659cb3709498c42d8e7496b256ce36ae53a2463aa865c612db5ea5bb0b398a",
+  "spreadsheet": {
+    "id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "tab": "Use cases",
+    "range": "A131:B152",
+    "retrieved_at": "2026-08-27T03:49:28.570Z"
+  },
+  "ocl_utility_source": "Use cases!A2:B2",
+  "rules": [
+    {
+      "br_id": "BR-ACC-15",
+      "name": "Account existence and ownership",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AccountService::findOneWithTransactions(\n  accountId : Integer,\n  userId : Integer\n) : AccountDetailResponseDto\npre BR_ACC_15_AccountMustBeOwned:\n  Account.allInstances()->exists(a | \n    a.account_id = accountId and \n    a.user_id = userId\n  )",
+      "context": "AccountService::findOneWithTransactions(accountId : Integer, userId : Integer) : AccountDetailResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "A nonexistent account returns HTTP 404; an account not owned by the authenticated application user returns HTTP 403 and no unauthorized account data.",
+      "traceability": ["Use cases!A131:B152", "UC-07 PRE-1, POST-3, Basic Flow 3-5", "UC-07 EF-2 and EF-3", "API-ACCOUNT-DETAIL"]
+    },
+    {
+      "br_id": "BR-ACC-16",
+      "name": "Five most recent account transactions",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context AccountService::findOneWithTransactions(\n  accountId : Integer,\n  userId : Integer\n) : AccountDetailResponseDto\npost BR_ACC_16_MaxFiveRecentTransactions:\n  result.recent_transactions->size() <= 5\npost BR_ACC_16_OrderedByDateDescending:\n  result.recent_transactions->size() <= 1 or\n  Sequence{1..result.recent_transactions->size()-1}->forAll(i |\n    result.recent_transactions->at(i).date >= result.recent_transactions->at(i + 1).date\n  )\nTechnical constraint:\n- The backend shall return at most five transactions ordered by transaction_date descending.",
+      "context": "AccountService::findOneWithTransactions(accountId : Integer, userId : Integer) : AccountDetailResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "A successful response contains at most five transactions in descending transaction-date order; no matching transactions produces an empty array, while retrieval failure returns HTTP 500.",
+      "traceability": ["Use cases!A131:B152", "UC-07 Description, Basic Flow 6-8", "UC-07 AF-1 and EF-4", "API-ACCOUNT-DETAIL"]
+    },
+    {
+      "br_id": "BR-ACC-17",
+      "name": "Response rows map to persisted data with signed amounts",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context AccountService::findOneWithTransactions(\n  accountId : Integer,\n  userId : Integer\n) : AccountDetailResponseDto\npost BR_ACC_17_ResponseBackedByAccount:\n  Account.allInstances()->exists(a |\n    a.account_id = result.id and\n    a.user_id = userId and\n    a.bank_name = result.bank_name and\n    a.account_type = result.account_type and\n    (a.branch_name.oclIsUndefined() implies result.branch_name.oclIsUndefined()) and\n    (not a.branch_name.oclIsUndefined() implies a.branch_name = result.branch_name) and\n    a.account_number_full = result.account_number_full and\n    a.balance = result.balance\n  )\npost BR_ACC_17_ResponseBackedByTransaction:\n  result.recent_transactions->forAll(tDto |\n    Transaction.allInstances()->exists(t |\n      t.account_id = accountId and\n      t.item_description = tDto.description and\n      ((t.type = TransactionTypeEnum::Expense and tDto.amount = -(t.amount)) or\n       (t.type = TransactionTypeEnum::Revenue and tDto.amount = t.amount)) and\n      t.status = tDto.status and\n      (t.receipt_id.oclIsUndefined() implies tDto.receipt_id.oclIsUndefined()) and\n      (not t.receipt_id.oclIsUndefined() implies t.receipt_id = tDto.receipt_id) and\n      t.type = tDto.type and\n      tDto.date = toIsoDate(t.transaction_date)\n    )\n  )\nTechnical constraint:\n- In the account-detail mapping, Expense amounts are negated (returned as negative) and Revenue amounts remain positive.\n- Unused persisted fields in Transaction (e.g., shop_name, payment_method, category_id) are intentionally excluded from the returned TransactionDto.",
+      "context": "AccountService::findOneWithTransactions(accountId : Integer, userId : Integer) : AccountDetailResponseDto",
+      "enforcement_layers": ["backend"],
+      "failure_behavior": "A successful response maps the owned persisted account and its included transaction rows to the specified DTO, using negative Expense amounts, positive Revenue amounts, and ISO dates.",
+      "traceability": ["Use cases!A131:B152", "UC-07 POST-1 and POST-2", "UC-07 Basic Flow 4-8", "API-ACCOUNT-DETAIL"]
+    },
+    {
+      "br_id": "BR-ACC-18",
+      "name": "Account and transaction data unchanged",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "post BR_ACC_18_AccountIdentityUnchanged:\n  Account.allInstances()->collect(a | a.account_id)->asSet() =\n  Account.allInstances()@pre->collect(a | a.account_id)->asSet()\npost BR_ACC_18_AccountDataUnchanged:\n  Account.allInstances()->forAll(a |\n    Account.allInstances()@pre->exists(old |\n      old.account_id = a.account_id and\n      old.user_id = a.user_id and\n      old.bank_name = a.bank_name and\n      old.account_type = a.account_type and\n      old.branch_name = a.branch_name and\n      old.account_number_full = a.account_number_full and\n      old.account_number_last_4 = a.account_number_last_4 and\n      old.balance = a.balance\n    )\n  )\npost BR_ACC_18_TransactionIdentityUnchanged:\n  Transaction.allInstances()->collect(t | t.transaction_id)->asSet() =\n  Transaction.allInstances()@pre->collect(t | t.transaction_id)->asSet()\npost BR_ACC_18_TransactionDataUnchanged:\n  Transaction.allInstances()->forAll(t |\n    Transaction.allInstances()@pre->exists(old |\n      old.transaction_id = t.transaction_id and\n      old.account_id = t.account_id and\n      old.category_id = t.category_id and\n      old.transaction_date = t.transaction_date and\n      old.type = t.type and\n      old.item_description = t.item_description and\n      old.shop_name = t.shop_name and\n      old.amount = t.amount and\n      old.payment_method = t.payment_method and\n      old.status = t.status and\n      old.receipt_id = t.receipt_id\n    )\n  )\nTechnical constraint:\n- Viewing account details shall not create, update, or delete any Account or Transaction records.",
+      "context": "AccountService::findOneWithTransactions(accountId : Integer, userId : Integer) : AccountDetailResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "Viewing account details leaves all Account and Transaction identities and persisted field values unchanged.",
+      "traceability": ["Use cases!A131:B152", "UC-07 GET retrieval flow", "API-ACCOUNT-DETAIL"]
+    },
+    {
+      "br_id": "BR-ACC-19",
+      "name": "High-value expense transaction flagging",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context AccountService::findOneWithTransactions(\n  accountId : Integer,\n  userId : Integer\n) : AccountDetailResponseDto\npost BR_ACC_19_HighValueFlag:\n  let acc = Account.allInstances()->any(a | a.account_id = accountId) in\n  result.recent_transactions->forAll(tDto |\n    (tDto.type = TransactionTypeEnum::Expense and tDto.amount.abs() > (acc.balance / 2))\n    implies tDto.description.substring(tDto.description.size() - 13, tDto.description.size()) = ' [HIGH VALUE]'\n  )\nTechnical constraint:\n- For any transaction in the response, if its type is Expense and its absolute amount strictly exceeds 50% of the account's current balance, the exact string \" [HIGH VALUE]\" must be appended to its description.",
+      "context": "AccountService::findOneWithTransactions(accountId : Integer, userId : Integer) : AccountDetailResponseDto",
+      "enforcement_layers": ["backend"],
+      "failure_behavior": "Each returned Expense whose absolute amount strictly exceeds half the current account balance has the exact suffix \" [HIGH VALUE]\" appended to its description.",
+      "traceability": ["Use cases!A131:B152", "UC-07 Basic Flow 7", "API-ACCOUNT-DETAIL"]
+    },
+    {
+      "br_id": "BR-ACC-20",
+      "name": "Cross-account risk exposure lock",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AccountService::findOneWithTransactions(\n  accountId : Integer,\n  userId : Integer\n) : AccountDetailResponseDto\npre BR_ACC_20_RiskExposureLimit:\n  let targetAccount = Account.allInstances()->any(a | a.account_id = accountId) in\n  (targetAccount.account_type = AccountType::Investment or targetAccount.account_type = AccountType::Credit_Card)\n  implies\n  (\n    Account.allInstances()->select(a | a.user_id = userId and a.account_type = AccountType::Loan)->collect(balance)->sum()\n    <=\n    Account.allInstances()->select(a | a.user_id = userId and (a.account_type = AccountType::Checking or a.account_type = AccountType::Savings))->collect(balance)->sum()\n  )\nTechnical constraint:\n- When a user attempts to view an Investment or Credit Card account, the system must calculate their total debt (sum of balances of all their Loan accounts) and total safe assets (sum of balances of all their Checking and Savings accounts).\n- If the total debt is strictly greater than the total safe assets, the system must deny access by throwing an HTTP 403 Forbidden exception.",
+      "context": "AccountService::findOneWithTransactions(accountId : Integer, userId : Integer) : AccountDetailResponseDto",
+      "enforcement_layers": ["backend", "database"],
+      "failure_behavior": "Viewing an Investment or Credit Card account is denied with HTTP 403 when the authenticated user's total Loan balances are strictly greater than total Checking and Savings balances.",
+      "traceability": ["Use cases!A131:B152", "UC-07 Basic Flow 4-5", "UC-07 EF-3", "API-ACCOUNT-DETAIL"]
+    }
+  ],
+  "ordered_br_ids": [
+    "BR-ACC-15",
+    "BR-ACC-16",
+    "BR-ACC-17",
+    "BR-ACC-18",
+    "BR-ACC-19",
+    "BR-ACC-20"
+  ],
+  "unresolved_items": [
+    "The frozen source omits an explicit BR-ACC-18 heading and name; BR-ACC-18 is identified from its four supplied postcondition identifiers, and the resource name is a descriptive label only. The OCL postconditions and technical constraint are preserved verbatim."
+  ]
+}
