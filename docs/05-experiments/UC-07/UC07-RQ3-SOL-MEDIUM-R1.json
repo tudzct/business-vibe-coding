@@ -45,8 +45,8 @@
   },
   "tokens": {
     "initial_total": 2054078,
-    "repair_total": 9902568,
-    "total": 11956646,
+    "repair_total": 14863738,
+    "total": 16917816,
     "telemetry_source": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\05\\rollout-2026-09-05T14-05-11-01a07062-b184-7253-981a-11e43f97fbb0.jsonl",
     "details": {
       "initial": {
@@ -60,12 +60,12 @@
         "duration_seconds": 510.599
       },
       "repairs": {
-        "count": 5,
+        "count": 6,
         "shared_session_turn_id": 3,
-        "total_tokens": 9902568,
-        "cost_usd": 7.4448,
+        "total_tokens": 14863738,
+        "cost_usd": 11.3293,
         "per_repair_attribution": "unavailable",
-        "coverage_note": "Repairs 1-4 share session turn 3 and cannot be split defensibly. Repair 5 is attributable to diagnosis/proposal turn 5 and approved implementation turn 6 in the continued session."
+        "coverage_note": "Repairs 1-4 share session turn 3 and cannot be split defensibly. Repair 5 is attributable to diagnosis/proposal turn 5 and approved implementation turn 6. Repair 6 exclusively occupies closed session turn 11."
       }
     }
   },
@@ -570,8 +570,14 @@
         "duration_seconds": 367.192
       },
       "tokens": {
-        "total": null,
-        "unavailable_reason": "Repair-006 occupies the active open turn; extract its closed-turn telemetry only in the next researcher-triggered turn."
+        "total": 4961170,
+        "input": 187796,
+        "cache_read": 4754432,
+        "output": 18942,
+        "cost_usd": 3.8845,
+        "session_turn_id": 11,
+        "runner_duration_seconds": 600.95,
+        "telemetry_source": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\05\\rollout-2026-09-05T14-45-12-01a07062-b184-7253-981a-11e43f97fbb0_01a07087-559a-79e0-9581-6799f05d47b2.jsonl"
       },
       "source_revision_before": "sha256:0e039ebf6e7b6096b429bd95aa7c29a1392226ba94e3d7e5bfba94390b0108f3",
       "source_revision_after": "sha256:ebf316562fb81c73d1654f362c85f34e3f64c887da7ca482023b2e57cdf70c0a",

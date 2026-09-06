@@ -14,7 +14,7 @@ requested_reasoning_effort: medium
 effective_model_id: gpt-5.6-sol
 started_at: 2026-09-06T12:07:57.6456029Z
 started_epoch_ms: 1788696477645
-session_turn_id: pending_closed_turn_telemetry
+session_turn_id: 11
 source_revision_before: sha256:0e039ebf6e7b6096b429bd95aa7c29a1392226ba94e3d7e5bfba94390b0108f3
 ended_at: 2026-09-06T12:14:04.8372176Z
 ended_epoch_ms: 1788696844837
@@ -70,5 +70,10 @@ algorithm now produces the intended seven-migration sequence.
   execution environment
 - Tests created or run: no
 
-Closed-turn token telemetry remains `null` until the next researcher-triggered
-turn, as required by the repair telemetry-finalization gate.
+Closed-turn telemetry finalized from session turn 11:
+
+- Total: 4,961,170 tokens
+- Non-cached input: 187,796 tokens
+- Cache read: 4,754,432 tokens
+- Output: 18,942 tokens
+- Runner duration: 600.95 seconds
