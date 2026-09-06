@@ -2,7 +2,8 @@ import axios from 'axios'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { accountService } from '../../api/account.service'
-import type { AccountListItem } from '../../api/types'
+import type { AccountDetail, AccountListItem } from '../../api/types'
+import AccountEditForm from '../../components/AccountEditForm/AccountEditForm'
 import { useAuth } from '../../hooks/useAuth'
 
 const navigation = [
@@ -22,7 +23,13 @@ const formatBalance = (balance: number) =>
     maximumFractionDigits: 2,
   }).format(balance)
 
-const AccountCard = ({ account }: { account: AccountListItem }) => (
+interface AccountCardProps {
+  readonly account: AccountListItem
+  readonly editMode: boolean
+  readonly onEdit: (accountId: number) => void
+}
+
+const AccountCard = ({ account, editMode, onEdit }: AccountCardProps) => (
   <article className="flex min-h-[305px] flex-col rounded-lg bg-white p-6 shadow-[0_20px_25px_rgba(76,103,100,0.10)]">
     <div className="flex min-h-11 items-start justify-between gap-4 border-b border-[#d2d2d240] pb-3">
       <h2 className="text-base font-bold capitalize text-[#878787]">{account.account_type}</h2>
@@ -49,12 +56,16 @@ const AccountCard = ({ account }: { account: AccountListItem }) => (
       <button type="button" disabled className="cursor-not-allowed text-base text-[#299d91] opacity-80">
         Remove
       </button>
-      <Link
-        to={`/accounts/${account.id}`}
-        className="rounded bg-[#299d91] px-5 py-2 text-sm font-medium text-white hover:bg-[#23877e] focus:outline-none focus:ring-2 focus:ring-[#299d91] focus:ring-offset-2"
-      >
-        Details <span aria-hidden="true">›</span>
-      </Link>
+      {editMode ? (
+        <button type="button" onClick={() => onEdit(account.id)} aria-label={`Edit ${account.bank_name} account`} className="flex h-10 w-10 items-center justify-center rounded bg-[#299d91] text-lg text-white hover:bg-[#23877e] focus:outline-none focus:ring-2 focus:ring-[#299d91] focus:ring-offset-2">✎</button>
+      ) : (
+        <Link
+          to={`/accounts/${account.id}`}
+          className="rounded bg-[#299d91] px-5 py-2 text-sm font-medium text-white hover:bg-[#23877e] focus:outline-none focus:ring-2 focus:ring-[#299d91] focus:ring-offset-2"
+        >
+          Details <span aria-hidden="true">›</span>
+        </Link>
+      )}
     </div>
   </article>
 )
@@ -65,7 +76,12 @@ const Account = () => {
   const [accounts, setAccounts] = useState<AccountListItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [editMode, setEditMode] = useState(false)
+  const [selectedAccount, setSelectedAccount] = useState<AccountDetail | null>(null)
+  const [editLoadError, setEditLoadError] = useState<string | null>(null)
+  const [isLoadingEdit, setIsLoadingEdit] = useState(false)
   const activeRequest = useRef<AbortController | null>(null)
+  const editRequest = useRef<AbortController | null>(null)
 
   const loadAccounts = useCallback(async () => {
     if (activeRequest.current) return
@@ -108,8 +124,54 @@ const Account = () => {
 
   useEffect(() => {
     void loadAccounts()
-    return () => activeRequest.current?.abort()
+    return () => {
+      activeRequest.current?.abort()
+      editRequest.current?.abort()
+    }
   }, [loadAccounts])
+
+  const toggleEditMode = () => {
+    editRequest.current?.abort()
+    editRequest.current = null
+    setSelectedAccount(null)
+    setEditLoadError(null)
+    setIsLoadingEdit(false)
+    setEditMode((current) => !current)
+  }
+
+  const selectAccountForEdit = async (accountId: number) => {
+    editRequest.current?.abort()
+    const controller = new AbortController()
+    editRequest.current = controller
+    setSelectedAccount(null)
+    setEditLoadError(null)
+    setIsLoadingEdit(true)
+    try {
+      const response = await accountService.getAccountDetails(String(accountId), controller.signal)
+      if (!response.success || !response.data || response.data.id !== accountId) {
+        throw new Error('Malformed account-detail response')
+      }
+      if (editRequest.current === controller) setSelectedAccount(response.data)
+    } catch (requestError: unknown) {
+      if (axios.isCancel(requestError)) return
+      if (axios.isAxiosError(requestError) && requestError.response?.status === 401) return
+      const responseMessage = axios.isAxiosError<{ message?: string | string[] }>(requestError)
+        ? requestError.response?.data?.message
+        : undefined
+      if (editRequest.current === controller) {
+        setEditLoadError(
+          typeof responseMessage === 'string'
+            ? responseMessage
+            : 'We could not load this account for editing. Please try again.',
+        )
+      }
+    } finally {
+      if (editRequest.current === controller) {
+        editRequest.current = null
+        setIsLoadingEdit(false)
+      }
+    }
+  }
 
   const handleLogout = () => {
     logout()
@@ -165,9 +227,40 @@ const Account = () => {
         </header>
 
         <main className="px-6 py-8 lg:px-10">
-          <h1 className="mb-6 text-[22px] font-normal leading-8 text-[#878787]">Balances</h1>
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+            <h1 className="text-[22px] font-normal leading-8 text-[#878787]">{selectedAccount ? 'Edit Bank Account' : 'Balances'}</h1>
+            {!isLoading && !error && accounts.length > 0 && (
+              <button type="button" onClick={toggleEditMode} className={`rounded px-5 py-2.5 text-sm font-medium ${editMode ? 'border border-[#299d91] bg-white text-[#299d91]' : 'bg-[#299d91] text-white'}`}>
+                {editMode ? 'Done Editing' : 'Edit Accounts'}
+              </button>
+            )}
+          </div>
 
-          {isLoading && (
+          {editMode && isLoadingEdit && <div className="h-[420px] max-w-[804px] animate-pulse rounded-[7px] bg-white shadow-sm" aria-label="Loading account editor" />}
+
+          {editMode && editLoadError && (
+            <section role="alert" className="mb-6 max-w-[804px] rounded-lg bg-white p-6 shadow-sm">
+              <p className="text-sm text-red-700">{editLoadError}</p>
+              <button type="button" onClick={() => setEditLoadError(null)} className="mt-4 text-sm font-medium text-[#299d91]">Return to accounts</button>
+            </section>
+          )}
+
+          {editMode && selectedAccount && (
+            <div>
+              <p className="mb-6 text-sm text-[#8a8f98]">Update the account information below. Changes apply after validation.</p>
+              <AccountEditForm
+                account={selectedAccount}
+                onCancel={() => setSelectedAccount(null)}
+                onSuccess={async () => {
+                  setSelectedAccount(null)
+                  setEditMode(false)
+                  await loadAccounts()
+                }}
+              />
+            </div>
+          )}
+
+          {!selectedAccount && !isLoadingEdit && isLoading && (
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3" aria-live="polite" aria-label="Loading accounts">
               {[0, 1, 2].map((item) => (
                 <div key={item} className="h-[305px] animate-pulse rounded-lg bg-white p-6 shadow-sm">
@@ -180,7 +273,7 @@ const Account = () => {
             </div>
           )}
 
-          {!isLoading && error && (
+          {!selectedAccount && !isLoadingEdit && !isLoading && error && (
             <section className="rounded-lg bg-white p-8 text-center shadow-sm" role="alert">
               <p className="text-[#666]">{error}</p>
               <button
@@ -194,7 +287,7 @@ const Account = () => {
             </section>
           )}
 
-          {!isLoading && !error && accounts.length === 0 && (
+          {!selectedAccount && !isLoadingEdit && !isLoading && !error && accounts.length === 0 && (
             <section className="rounded-lg bg-white px-6 py-16 text-center shadow-[0_20px_25px_rgba(76,103,100,0.10)]">
               <h2 className="text-xl font-semibold">No bank accounts yet</h2>
               <p className="mt-2 text-sm text-[#878787]">Add an account to see your balances in one place.</p>
@@ -204,12 +297,12 @@ const Account = () => {
             </section>
           )}
 
-          {!isLoading && !error && accounts.length > 0 && (
+          {!selectedAccount && !isLoadingEdit && !editLoadError && !isLoading && !error && accounts.length > 0 && (
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {accounts.map((account) => <AccountCard key={account.id} account={account} />)}
+              {accounts.map((account) => <AccountCard key={account.id} account={account} editMode={editMode} onEdit={(accountId) => void selectAccountForEdit(accountId)} />)}
               <article className="flex min-h-[305px] flex-col items-center justify-center rounded-lg bg-white p-6 shadow-[0_20px_25px_rgba(76,103,100,0.10)]">
                 <Link to="/accounts/add" className="rounded bg-[#299d91] px-8 py-3 font-semibold text-white">Add Accounts</Link>
-                <button type="button" disabled className="mt-3 cursor-not-allowed text-sm text-[#9f9f9f]">Edit Accounts</button>
+                <button type="button" onClick={toggleEditMode} className="mt-3 text-sm text-[#299d91]">{editMode ? 'Done Editing' : 'Edit Accounts'}</button>
               </article>
             </div>
           )}

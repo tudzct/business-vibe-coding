@@ -8,6 +8,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
   Request as RequestDecorator,
   UseGuards,
 } from '@nestjs/common';
@@ -27,9 +28,15 @@ import type { Request } from 'express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import type { AuthenticatedUser } from '../auth/jwt.strategy';
 import { AccountDetailJwtAuthGuard } from './account-detail-jwt-auth.guard';
-import { AccountListDataDto, AccountService, CreatedAccount } from './account.service';
+import {
+  AccountListDataDto,
+  AccountService,
+  CreatedAccount,
+  UpdatedAccount,
+} from './account.service';
 import { AccountDetailResponseDto } from './dto/account-detail-response.dto';
 import { CreateAccountDto } from './dto/create-account.dto';
+import { UpdateAccountDto } from './dto/update-account.dto';
 
 interface AuthenticatedRequest extends Request {
   readonly user: AuthenticatedUser;
@@ -39,6 +46,12 @@ interface AccountCreateResponse {
   success: true;
   message: 'Account created successfully';
   data: { account: CreatedAccount };
+}
+
+interface AccountUpdateResponse {
+  success: true;
+  message: 'Account updated successfully';
+  data: { account: UpdatedAccount };
 }
 
 @ApiTags('accounts')
@@ -115,6 +128,39 @@ export class AccountController {
     return {
       success: true,
       message: 'Account created successfully',
+      data: { account },
+    };
+  }
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ description: 'Account updated successfully' })
+  @ApiBadRequestResponse({ description: 'Invalid account identifier or payload' })
+  @ApiUnauthorizedResponse({ description: 'Authentication is required' })
+  @ApiForbiddenResponse({ description: 'The account belongs to another user' })
+  @ApiNotFoundResponse({ description: 'Account not found' })
+  @ApiConflictResponse({ description: 'Account number conflicts with another account' })
+  @ApiInternalServerErrorResponse({ description: 'Account update failed safely' })
+  async update(
+    @RequestDecorator() request: AuthenticatedRequest,
+    @Param(
+      'id',
+      new ParseIntPipe({
+        exceptionFactory: () =>
+          new BadRequestException('Invalid account identifier.'),
+      }),
+    )
+    accountId: number,
+    @Body() dto: UpdateAccountDto,
+  ): Promise<AccountUpdateResponse> {
+    const account = await this.accountService.update(
+      accountId,
+      request.user.userId,
+      dto,
+    );
+    return {
+      success: true,
+      message: 'Account updated successfully',
       data: { account },
     };
   }

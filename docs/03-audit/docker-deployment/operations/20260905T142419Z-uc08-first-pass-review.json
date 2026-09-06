@@ -1,0 +1,21 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-09-05T14:24:19Z",
+  "mode": "review",
+  "uc_id": "UC-08",
+  "run_id": "UC08-RQ3-SOL-MEDIUM-R1",
+  "source_revision": "sha256:50222846e9fb8ebaf734b43525a97dac40ffb7329157ad3be077b007bd9d874d",
+  "commands": [
+    { "id": "windows-os-architecture-disk", "exit_code": 0, "result": "Windows 10.0.22621 x64 with 192.6 GiB free on the workspace drive; memory query was denied by the sandbox." },
+    { "id": "docker-version", "exit_code": 1, "bounded_error": "docker executable is not available on PATH" },
+    { "id": "docker-standard-location-review", "exit_code": 0, "result": "No Docker CLI was found in the standard Docker Desktop or System32 locations." },
+    { "id": "env-presence-ignore-track-review", "exit_code": 0, "result": "finalsource/.env is present, ignored, and untracked." },
+    { "id": "compose-config-quiet", "exit_code": 1, "bounded_error": "Compose validation could not start because the Docker CLI is unavailable." }
+  ],
+  "status": "BLOCKED",
+  "blocking_incident": null,
+  "limitations": [
+    "Container state, healthchecks, UI/API reachability, and authenticated UC-08 runtime behavior were not observed.",
+    "No native Node.js or MySQL runtime fallback and no destructive Docker action were used."
+  ]
+}
