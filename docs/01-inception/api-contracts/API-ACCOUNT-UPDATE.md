@@ -19,7 +19,7 @@ Update Bank Account
 
 ### Related Use Case IDs
 
-UC-08, UC-08.1
+UC-08, UC-08a
 
 ### Method
 
