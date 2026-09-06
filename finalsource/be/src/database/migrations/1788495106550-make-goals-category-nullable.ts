@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class MakeGoalsCategoryNullable20260903105627
+export class MakeGoalsCategoryNullable1788495106550
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {

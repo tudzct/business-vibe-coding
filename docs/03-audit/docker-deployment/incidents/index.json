@@ -126,6 +126,12 @@
       "fingerprint": "backend-startup-account-unique-index-already-exists",
       "path": "docs/03-audit/docker-deployment/incidents/backend-startup-account-unique-index-already-exists.json",
       "outcome": "resolved"
+    },
+    {
+      "incident_id": "DEP-20260906-001",
+      "fingerprint": "typeorm-migration-14-digit-suffix-truncation",
+      "path": "docs/03-audit/docker-deployment/incidents/typeorm-migration-14-digit-suffix-truncation.json",
+      "outcome": "blocked"
     }
   ]
 }

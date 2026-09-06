@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm';
 
-export class MakeUsersUsernameNullable20260831095333
+export class MakeUsersUsernameNullable1788495106546
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {

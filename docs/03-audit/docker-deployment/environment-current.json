@@ -1,10 +1,10 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-09-05T14:24:19Z",
-  "repository_revision": "uncommitted-worktree",
-  "source_revision": "sha256:50222846e9fb8ebaf734b43525a97dac40ffb7329157ad3be077b007bd9d874d",
+  "observed_at": "2026-09-06T12:14:04.8372176Z",
+  "repository_revision": "460e234a55c93e180f8e8621de377ea231ddecfe",
+  "source_revision": "sha256:ebf316562fb81c73d1654f362c85f34e3f64c887da7ca482023b2e57cdf70c0a",
   "docker": {
-    "cli": "unavailable in PATH and standard Docker Desktop locations",
+    "cli": "unavailable in PATH",
     "compose": "unavailable",
     "daemon": "not_evaluable"
   },
@@ -13,7 +13,7 @@
     "env_ignored": true,
     "env_tracked": false,
     "compose_valid": false,
-    "compose_validation_note": "The ignored, untracked environment file is present, but Compose validation could not run because the Docker CLI is unavailable."
+    "compose_validation_note": "Compose validation could not run because Docker CLI is unavailable."
   },
   "services": {
     "database": "not observed",
@@ -21,6 +21,6 @@
     "frontend": "not observed"
   },
   "status": "BLOCKED",
-  "blocking_incident": null,
-  "next_action": "Make Docker Desktop and its CLI available to this task, then rerun the current-source Compose build, health checks, and bounded UC-08 observations without resetting the persistent volume."
+  "blocking_incident": "DEP-20260906-001",
+  "next_action": "On a Docker Compose v2 host, rebuild from the renamed migration sources and start the researcher-provided clean volume; confirm migration order, container health, and /api/health without another volume reset."
 }

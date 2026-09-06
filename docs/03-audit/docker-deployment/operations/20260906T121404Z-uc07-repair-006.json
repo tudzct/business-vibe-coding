@@ -1,0 +1,21 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "mode": "troubleshoot",
+  "observed_at": "2026-09-06T12:14:04.8372176Z",
+  "repository_revision": "460e234a55c93e180f8e8621de377ea231ddecfe",
+  "source_revision": "sha256:ebf316562fb81c73d1654f362c85f34e3f64c887da7ca482023b2e57cdf70c0a",
+  "commands": [
+    { "id": "typeorm-migration-order-source-inspection", "exit_code": 0 },
+    { "id": "migration-operation-preservation-check", "exit_code": 0 },
+    { "id": "targeted-migration-eslint", "exit_code": 0 },
+    { "id": "typescript-clean-temp-compile", "exit_code": 0 },
+    { "id": "backend-production-build", "exit_code": 0 },
+    { "id": "backend-repository-eslint", "exit_code": 1 },
+    { "id": "windows-docker-version-compose-info", "exit_code": 1 }
+  ],
+  "build_result": "PASS: targeted migration lint, TypeScript compile, and Nest production build completed; full repository lint has one unrelated pre-existing unused import in goal.service.ts",
+  "runtime_result": "BLOCKED: Docker CLI is unavailable in this execution environment",
+  "bounded_error": "Docker is not recognized; Compose migration/startup and health evidence could not be collected.",
+  "volume_action": "No volume deletion or reset was attempted.",
+  "secrets_persisted": false
+}
