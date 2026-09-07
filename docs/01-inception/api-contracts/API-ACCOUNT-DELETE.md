@@ -31,7 +31,7 @@ DELETE
 
 ### Description
 
-Delete an owned account and all transactions related to it.
+Delete an account.
 
 ### Authentication
 
@@ -39,7 +39,7 @@ Bearer JWT
 
 ### Authorization
 
-Account owner
+Authenticated user
 
 ## Request Header(s)
 
@@ -71,7 +71,7 @@ None
 ### message
 
 Type: string; Required: Yes; Nullable: No
-Trigger: The account exists and is owned by the user.
+Trigger: The deletion request is successful.
 Description: Deletion success message.
 Example: Account deleted successfully
 
@@ -79,7 +79,7 @@ Example: Account deleted successfully
 ### deleted_account_id
 
 Type: integer; Required: Yes; Nullable: No
-Trigger: The account exists and is owned by the user.
+Trigger: The deletion request is successful.
 Description: Deleted account identifier.
 Example: 3
 
@@ -108,9 +108,9 @@ Note: The error envelope also contains success=false and may contain an error fi
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: The account does not exist or is not owned by the current user.
+Trigger: The requested account resource cannot be resolved.
 Description: Error description returned by the global HTTP exception filter.
-Example: Account not found or not owned by current user
+Example: The requested account could not be found.
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 500
@@ -118,7 +118,17 @@ Note: The error envelope also contains success=false and may contain an error fi
 ### message
 
 Type: string | string[]; Required: Yes; Nullable: No
-Trigger: Deleting the account or related transactions fails.
+Trigger: The system encounters an error processing the deletion.
 Description: Error description returned by the global HTTP exception filter.
-Example: A system error occurred. The account and related transactions could not be deleted.
+Example: A system error occurred while processing the request.
+Note: The error envelope also contains success=false and may contain an error field.
+
+## Error Response - HTTP 409
+
+### message
+
+Type: string | string[]; Required: Yes; Nullable: No
+Trigger: The requested deletion conflicts with the current system state.
+Description: Error description returned by the global HTTP exception filter.
+Example: The operation cannot be completed due to a conflict.
 Note: The error envelope also contains success=false and may contain an error field.

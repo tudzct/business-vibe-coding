@@ -26,7 +26,7 @@ Delete a Bank Account
 
 ### Description
 
-As an authenticated account owner, I want to permanently delete an account and its related transactions.
+As a user, I want to delete a specified account.
 
 ### Actor(s)
 
@@ -43,25 +43,25 @@ The user selects Delete from an account card or account detail page.
 ### Pre-Condition(s)
 
 PRE-1: The user is authenticated.
-PRE-2: The account exists and is owned by the authenticated user.
+PRE-2: The system resolves the requested account identifier.
 
 ### Post-Condition(s)
 
-POST-1: On confirmed success, all Transaction rows with the accountId and the Account row are deleted in one database transaction.
+POST-1: On confirmed success, the account is removed from the system.
 POST-2: On confirmed success, the system displays a success dialog, waits 1500ms, and then refreshes the account list or navigates to /accounts.
-POST-3: On cancellation or rollback, no deletion is committed.
+POST-3: If the operation is not completed, system state remains unchanged.
+POST-4: On confirmed success, the system synchronizes the global state to reflect the removed data.
 
 ### Basic Flow
 
 1. The user selects Delete for an account.
-2. Delete Account Modal displays the bank name, final four account digits, and a warning that all related transactions will be deleted.
+2. Delete Account Modal displays the bank name, final four account digits, and a warning about the deletion.
 3. The user selects Confirm Delete.
-4. The frontend sends DELETE /api/v1/accounts/:id.
+4. The frontend submits the deletion request to the accounts resource.
 5. The controller validates that id parses to an integer.
-6. AccountService starts a database transaction, loads the account, and verifies ownership.
-7. AccountService deletes related Transaction rows.
-8. AccountService deletes the Account row and commits the transaction.
-9. The frontend closes the modal, displays a success dialog, waits 1500ms, and then refreshes the list or navigates to /accounts.
+6. The system processes the request.
+7. The system removes the account.
+8. The frontend closes the modal, displays a success dialog, waits 1500ms, and then refreshes the list or navigates to /accounts.
 
 ### Alternative Flow
 
@@ -74,11 +74,17 @@ AF-1: Cancel deletion
 EF-1: Invalid account ID
 5a. The controller returns HTTP 400.
 
-EF-2: Missing or non-owned account
-6a. The service rolls back and returns HTTP 404 using the same message for both cases.
+EF-2: Account not found
+6a. The backend returns HTTP 404.
 
-EF-3: Database deletion failure
-7a. The service rolls back the transaction and returns HTTP 500.
+EF-3: Deletion failure
+7a. The backend returns HTTP 500.
+
+EF-4: Deletion conflict
+8a. The backend returns HTTP 409.
+
+EF-5: Ledger reconciliation conflict
+9a. The backend returns HTTP 409.
 
 ### Related UI
 
@@ -90,7 +96,7 @@ API-ACCOUNT-DELETE
 
 ### Notes
 
-Security rationale: An account that does not exist and an account not owned by the authenticated user are both reported as HTTP 404, rather than 403, to avoid disclosing the existence of another user's account.
+Security rationale: Standard REST semantics apply for resource resolution.
 
 ## UML Model
 
@@ -180,8 +186,7 @@ context AccountService::delete(accountId : Integer, userId : Integer) : DeleteAc
 pre BR_ACC_27_MustOwnAccount:
   Account.allInstances()->exists(a | a.account_id = accountId and a.user_id = userId)
 Technical constraint:
-- If the account does not exist or does not belong to the user, the backend intentionally throws a 404 NotFoundException to prevent data 
-enumeration.
+- If the account does not exist or does not belong to the user, the backend intentionally throws a 404 NotFoundException to prevent data enumeration.
 
 BR-ACC-28: Account deletion data integrity (Cascading)
 context AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto
@@ -190,5 +195,39 @@ post BR_ACC_28_AtomicDeletion:
   not Transaction.allInstances()->exists(t | t.account_id = accountId)
 Technical constraint:
 - The backend MUST execute the deletion of all related Transaction rows and the Account row within a single atomic database transaction (using QueryRunner). If any step fails, the entire transaction rolls back.
+
+BR-ACC-29: Tax and receipt document protection
+context AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto
+pre BR_ACC_29_NoReceiptsAttached:
+  not Transaction.allInstances()->exists(t | t.account_id = accountId and t.receipt_id <> null)
+Technical constraint:
+- The backend MUST throw a 409 ConflictException if any transaction within this account has an attached receipt_id.
+
+BR-ACC-30: Cross-entity net worth synchronization
+context AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto
+post BR_ACC_30_SyncUserTotalBalance:
+  let newSum = Account.allInstances()->select(a | a.user_id = userId)->collect(balance)->sum() in
+  User.allInstances()->any(u | u.user_id = userId).total_balance = newSum
+Technical constraint:
+- The backend MUST recalculate the user's total_balance based on remaining accounts and update the User entity within the same atomic database transaction.
+
+BR-ACC-31: Cross-account linked data protection
+context AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto
+pre BR_ACC_31_NoSharedReceipts:
+  let targetReceipts = Transaction.allInstances()->select(t | t.account_id = accountId and t.receipt_id <> null)->collect(receipt_id) in
+  not Transaction.allInstances()->exists(t | t.account_id <> accountId and targetReceipts->includes(t.receipt_id))
+Technical constraint:
+- The backend MUST throw a 409 ConflictException if any transaction in this account shares a receipt_id with a transaction in another account.
+
+BR-ACC-32: Account state reconciliation validation
+context AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto
+pre BR_ACC_32_StateReconciliation:
+  let target = Account.allInstances()->any(a | a.account_id = accountId) in
+  let revSum = Transaction.allInstances()->select(t | t.account_id = accountId and t.type = TransactionType::Revenue)->collect(amount)->sum() in
+  let expSum = Transaction.allInstances()->select(t | t.account_id = accountId and t.type = TransactionType::Expense)->collect(amount)->sum() in
+  target.balance = (revSum - expSum)
+Technical constraint:
+- The backend MUST throw a 409 ConflictException if the account's current balance does not mathematically match the sum of its Revenue transactions minus the sum of its Expense transactions.
 ~~~
+
 
