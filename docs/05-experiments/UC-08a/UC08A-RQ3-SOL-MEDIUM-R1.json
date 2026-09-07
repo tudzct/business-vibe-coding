@@ -1,7 +1,7 @@
 {
   "run_id": "UC08A-RQ3-SOL-MEDIUM-R1",
-  "run_status": "source_state_recovery_required",
-  "hold_gate": "source_state_recovery",
+  "run_status": "runtime_blocked",
+  "hold_gate": "docker_runtime_verification",
   "experiment_configuration": {
     "configuration_id": "CFG-UC08A-RQ3-GPT56SOL-MEDIUM-R1-20260906",
     "comparison_group_id": "CG-RQ3-SOL-MEDIUM-16UC-20260829",
@@ -41,20 +41,21 @@
   },
   "timing_seconds": {
     "initial": 57.671,
-    "repairs": 0,
-    "total": 57.671
+    "repairs": 98.331,
+    "total": 156.002
   },
   "tokens": {
     "prompt_generation_total": 1554991,
     "code_generation_total": 4623082,
-    "repair_total": 0,
-    "implementation_total": 4623082,
-    "overall_total": 6178073,
+    "repair_total": 2728505,
+    "implementation_total": 7351587,
+    "overall_total": 8906578,
     "initial_total": 4623082,
-    "total": 4623082,
+    "total": 7351587,
     "telemetry_sources": {
       "prompt_generation": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\06\\rollout-2026-09-06T20-52-54-01a076fe-5535-7ef0-9172-1688ed013263.jsonl",
-      "code_generation": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\06\\rollout-2026-09-06T21-24-52-01a0771b-985a-76e1-8525-601dc36fca56.jsonl"
+      "code_generation": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\06\\rollout-2026-09-06T21-24-52-01a0771b-985a-76e1-8525-601dc36fca56.jsonl",
+      "repairs": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\06\\rollout-2026-09-06T21-24-52-01a0771b-985a-76e1-8525-601dc36fca56.jsonl"
     },
     "details": {
       "prompt_generation": {
@@ -96,9 +97,18 @@
         "closed": true
       },
       "repairs": {
-        "turn_ids": [],
-        "total_tokens": 0,
-        "cost_usd": 0,
+        "turn_ids": [
+          6
+        ],
+        "runtime_turn_id": "01a07ac3-0696-7ed1-8a0f-0454724ce6ba",
+        "input": 230474,
+        "cache_read": 2488320,
+        "total_input": 2718794,
+        "output": 9711,
+        "reasoning": 2057,
+        "total_tokens": 2728505,
+        "cost_usd": 2.6879,
+        "duration_seconds": 461.314,
         "closed": true
       }
     }
@@ -118,8 +128,8 @@
   "current_source_state": {
     "revision": "sha256:fa722656cbc01d874950e0d3f2658af33b11e94302de4f0cf50b316ed7526717",
     "matches_first_pass": false,
-    "status": "reverted_after_capture",
-    "next_action": "Researcher direction is required before restoring historical source changes or starting any repair."
+    "status": "current_source_repair_verified",
+    "next_action": "Install or restore Docker Compose v2 availability, then rebuild and perform the required bounded runtime verification."
   },
   "context_isolation": {
     "status": "isolated",
@@ -284,13 +294,13 @@
         },
         {
           "br_id": "BR-ACC-23",
-          "status": "unmet",
+          "status": "met",
           "evidence": [
-            "Historical first-pass UpdateAccountDto checked only that balance was a finite number and had no minimum-zero validation.",
-            "Historical first-pass AccountEditForm rejected missing and non-finite values but accepted a finite negative number.",
-            "The frontend converted the accepted balance to a numeric JSON value."
+            "Current source finalsource/be/src/modules/account/dto/update-account.dto.ts:32-33 requires a finite numeric balance and applies @Min(0) at the backend trust boundary.",
+            "Current source finalsource/fe/src/components/AccountEditForm/AccountEditForm.tsx:57-61 rejects a missing, non-finite, or negative balance before submission.",
+            "Targeted backend and frontend ESLint checks and both production builds passed after repair verification."
           ],
-          "rationale": "Numeric typing was enforced, but the frozen BR additionally required balance >= 0 at frontend and backend layers."
+          "rationale": "The current source enforces balance >= 0 at both the frontend and authoritative backend layers."
         },
         {
           "br_id": "BR-ACC-24",
@@ -324,37 +334,86 @@
         }
       ],
       "total": 8,
-      "unmet": 1,
+      "unmet": 0,
       "not_evaluable": 0,
-      "met": 7,
-      "acceptance_percent": 87.5
+      "met": 8,
+      "acceptance_percent": 100.0
     }
   },
   "methodological_limitations": [
-    "The current finalsource tree no longer matches the frozen first-pass hash; BR evidence describes the historical first-pass source observed before it was reverted.",
+    "The current finalsource tree no longer matches the frozen first-pass hash; initial BR evidence continues to describe the historical first-pass source, while final BR evidence describes the verified current source.",
     "Docker CLI was unavailable, so no current-source Compose or authenticated runtime observation was recorded.",
-    "No repair was authorized or applied."
+    "Authorized Repair 001 required no source mutation because an out-of-band revert had already restored the exact BR-ACC-23 controls; the source-state transition is preserved and is not attributed to the repair."
   ],
   "technical_findings": [
     {
-      "status": "repair_required",
+      "status": "resolved_current_source",
       "trigger": "business_rule_review",
       "fingerprint": "account-update-negative-balance-accepted",
       "affected_br_ids": [
         "BR-ACC-23"
       ],
-      "evidence": "Historical first-pass UpdateAccountDto and AccountEditForm enforced finite numeric balance but no minimum zero.",
-      "repair_authorized": false
+      "evidence": "Repair 001 verified that the current UpdateAccountDto and AccountEditForm both enforce minimum-zero balance; targeted lint and production builds passed.",
+      "repair_authorized": true
     }
   ],
   "repair_authorization": {
-    "status": "required",
+    "status": "authorized",
     "requested_at": "2026-09-06T14:42:52.7696590Z",
-    "authorized_at": null,
-    "authorization_basis": null,
-    "note": "RQ3 repairs must not begin until the researcher explicitly authorizes them and the source-state mismatch is resolved."
+    "authorized_at": "2026-09-07T07:28:09.8049674Z",
+    "authorization_basis": "The researcher explicitly invoked bug-fixing-sub-prompt after the first-pass hold gate.",
+    "note": "The current source already contained the exact correction, so the authorized repair was completed without source mutation."
   },
-  "repairs": [],
+  "repairs": [
+    {
+      "repair_id": "UC08A-RQ3-SOL-MEDIUM-R1-REPAIR-001",
+      "repair_index": 1,
+      "sub_prompt_path": "docs/02-construction/implementation/UC-08a/runs/UC08A-RQ3-SOL-MEDIUM-R1/repairs/repair-001.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "account-update-negative-balance-accepted",
+      "affected_br_ids": [
+        "BR-ACC-23"
+      ],
+      "status": "CompletedNoSourceMutation",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "effective_model_id": "gpt-5.6-sol"
+      },
+      "timing_wall_clock": {
+        "started_at": "2026-09-07T07:28:09.8049674Z",
+        "started_epoch_ms": 1788766089804,
+        "ended_at": "2026-09-07T07:29:48.1362912Z",
+        "ended_epoch_ms": 1788766188136,
+        "duration_seconds": 98.331
+      },
+      "tokens": {
+        "total": 2728505,
+        "input": 230474,
+        "cache_read": 2488320,
+        "total_input": 2718794,
+        "output": 9711,
+        "reasoning": 2057,
+        "cost_usd": 2.6879,
+        "session_duration_seconds": 461.314
+      },
+      "token_note": "Extracted from closed session turn 6; session duration covers the complete Codex turn, while timing_wall_clock.duration_seconds covers the bounded repair operation.",
+      "session_turn_id": 6,
+      "runtime_turn_id": "01a07ac3-0696-7ed1-8a0f-0454724ce6ba",
+      "source_revision_before": "sha256:fa722656cbc01d874950e0d3f2658af33b11e94302de4f0cf50b316ed7526717",
+      "source_revision_after": "sha256:fa722656cbc01d874950e0d3f2658af33b11e94302de4f0cf50b316ed7526717",
+      "changed_files": [],
+      "evidence_before": "The historical first-pass source accepted a finite negative balance; the current source had already been reverted out of band to include the required minimum-zero controls.",
+      "evidence_after": [
+        "Backend UpdateAccountDto applies @Min(0).",
+        "Frontend AccountEditForm rejects balance < 0.",
+        "Targeted backend and frontend lint checks passed.",
+        "Backend and frontend production builds passed."
+      ],
+      "tests_created_or_run": false
+    }
+  ],
   "restoration": {
     "restored_at": "2026-09-07T04:54:41.1425209Z",
     "reason": "Accidental deletion reported by the researcher.",
@@ -364,5 +423,5 @@
       "previously captured first-pass source hash and assessment"
     ]
   },
-  "all_sub_prompt_count": 0
+  "all_sub_prompt_count": 1
 }
