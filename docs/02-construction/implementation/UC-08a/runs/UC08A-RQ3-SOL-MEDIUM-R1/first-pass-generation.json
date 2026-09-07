@@ -1,0 +1,69 @@
+{
+  "artifact_type": "first-pass-generation",
+  "schema_version": "1.0",
+  "status": "Frozen",
+  "run_id": "UC08A-RQ3-SOL-MEDIUM-R1",
+  "uc_id": "UC-08a",
+  "prompt_variant": "rq3",
+  "source_prompt": "docs/02-construction/coding-prompts/UC-08a-rq3-coding-prompt.md",
+  "source_prompt_sha256": "sha256:c1c2d1c25c77c36f0d5130d06eaaf0a0006b51fab5caa40059500da358201dd6",
+  "source_prompt_checksum_normalization": "canonical-lf",
+  "run_activation": "docs/02-construction/implementation/UC-08a/runs/UC08A-RQ3-SOL-MEDIUM-R1/run-activation.json",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null,
+    "effective_snapshot_unavailable_reason": "The desktop runtime did not expose a provider snapshot identifier.",
+    "codex_client_version": null,
+    "codex_client_version_unavailable_reason": "The desktop runtime did not expose a client version to the task."
+  },
+  "tokens": {
+    "initial_total": 4623082,
+    "session_turn_id": 1,
+    "runtime_turn_id": "01a0771b-c6ba-7ea2-a03c-69b825fec9ea",
+    "input": 147149,
+    "cache_read": 4452224,
+    "total_input": 4599373,
+    "output": 23709,
+    "reasoning": 8095,
+    "total_tokens": 4623082,
+    "cost_usd": 3.6731,
+    "runner_duration_seconds": 1354.545,
+    "telemetry_source": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\06\\rollout-2026-09-06T21-24-52-01a0771b-985a-76e1-8525-601dc36fca56.jsonl",
+    "attribution_note": "Phase 2 generation and first-pass audit share one closed researcher turn; telemetry is retained at turn granularity. No repair turn is included."
+  },
+  "timing_wall_clock": {
+    "started_at": "2026-09-06T14:37:17.4293365Z",
+    "started_epoch_ms": 1788705437429,
+    "ended_at": "2026-09-06T14:38:15.1002900Z",
+    "ended_epoch_ms": 1788705495100,
+    "duration_seconds": 57.671
+  },
+  "source_revision": {
+    "sha256": "sha256:55b9234252eada8ca6c7478fcd86abb0a3dda8c8af8cdab93a894bdfe095f059",
+    "method": "SHA-256 over the UTF-8 list of sorted relative paths paired with per-file SHA-256 values; node_modules and dist directories excluded."
+  },
+  "source_file_count": 154,
+  "changed_files": [
+    "finalsource/be/src/modules/account/dto/update-account.dto.ts",
+    "finalsource/fe/src/components/AccountEditForm/AccountEditForm.tsx",
+    "finalsource/fe/src/pages/Account/Account.tsx"
+  ],
+  "source_availability": {
+    "status": "historical_receipt_only",
+    "current_tree_matches_first_pass": false,
+    "current_source_revision": "sha256:fa722656cbc01d874950e0d3f2658af33b11e94302de4f0cf50b316ed7526717",
+    "reason": "The generated source changes were reverted after first-pass capture; this receipt preserves the closed-turn telemetry and historical first-pass hash without claiming the current tree matches."
+  },
+  "context_isolation": {
+    "status": "isolated",
+    "reason": "The frozen UC-08a Business Rule expressions were loaded only after first-pass generation ended and its source fingerprint was captured."
+  },
+  "repairs_applied": 0,
+  "tests_created_or_run": false,
+  "captured_at": "2026-09-07T03:33:31.9449562Z",
+  "restored_at": "2026-09-07T04:54:41.1425209Z",
+  "restoration_basis": "Recreated from the original closed Codex session telemetry and the previously captured first-pass hash after accidental artifact deletion."
+}
+
