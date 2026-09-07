@@ -5,7 +5,7 @@ import {
   TableForeignKey,
 } from 'typeorm';
 
-export class AlignCategoryIdsUnsigned20260903105625
+export class AlignCategoryIdsUnsigned1788495106548
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {

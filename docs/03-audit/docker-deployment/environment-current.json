@@ -1,26 +1,26 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-09-05T09:39:39Z",
-  "repository_revision": "uncommitted-worktree",
-  "source_revision": "sha256:7f8cedb214cc4555a61ea2d70c3750e0772d44020a172e32f54f512c06df3e54",
+  "observed_at": "2026-09-06T12:14:04.8372176Z",
+  "repository_revision": "460e234a55c93e180f8e8621de377ea231ddecfe",
+  "source_revision": "sha256:ebf316562fb81c73d1654f362c85f34e3f64c887da7ca482023b2e57cdf70c0a",
   "docker": {
-    "cli": "29.6.1",
-    "compose": "v5.3.0",
-    "daemon": "reachable"
+    "cli": "unavailable in PATH",
+    "compose": "unavailable",
+    "daemon": "not_evaluable"
   },
   "configuration": {
     "env_present": true,
     "env_ignored": true,
     "env_tracked": false,
     "compose_valid": false,
-    "compose_validation_note": "Compose file was inspected, but docker compose config could not run because Docker CLI is unavailable."
+    "compose_validation_note": "Compose validation could not run because Docker CLI is unavailable."
   },
   "services": {
-    "database": "healthy on host port 3307 through the temporary non-repository override; all approved migrations are recorded and the persistent volume is preserved",
-    "backend": "healthy on host port 3001; /api/health returned HTTP 200 and unauthenticated /api/v1/goals returned normalized HTTP 401",
-    "frontend": "healthy and reachable on configured host port 8081 with HTTP 200"
+    "database": "not observed",
+    "backend": "not observed",
+    "frontend": "not observed"
   },
-  "status": "PASS_WITH_LIMITATION",
-  "blocking_incident": null,
-  "next_action": "Use a researcher-supplied authenticated session and representative existing goal/account data only if populated and rendered UC-13 runtime observation is required; do not invent credentials or seed data."
+  "status": "BLOCKED",
+  "blocking_incident": "DEP-20260906-001",
+  "next_action": "On a Docker Compose v2 host, rebuild from the renamed migration sources and start the researcher-provided clean volume; confirm migration order, container health, and /api/health without another volume reset."
 }

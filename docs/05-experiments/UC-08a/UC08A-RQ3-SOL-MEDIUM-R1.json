@@ -1,0 +1,427 @@
+{
+  "run_id": "UC08A-RQ3-SOL-MEDIUM-R1",
+  "run_status": "runtime_blocked",
+  "hold_gate": "docker_runtime_verification",
+  "experiment_configuration": {
+    "configuration_id": "CFG-UC08A-RQ3-GPT56SOL-MEDIUM-R1-20260906",
+    "comparison_group_id": "CG-RQ3-SOL-MEDIUM-16UC-20260829",
+    "researcher_id": "Khánh",
+    "artifact": "docs/05-experiments/configurations/CFG-UC08A-RQ3-GPT56SOL-MEDIUM-R1-20260906.json",
+    "checksum": "sha256:e0e908af8fff89a8e7e32ed40a93617cc27b88cab7f1dfe6989477d0e30d5b67",
+    "checksum_normalization": "canonical-lf",
+    "run_activation": "docs/02-construction/implementation/UC-08a/runs/UC08A-RQ3-SOL-MEDIUM-R1/run-activation.json"
+  },
+  "uc_id": "UC-08a",
+  "uc_name": "Quick Edit a Bank Account",
+  "replicate_index": 1,
+  "run_order": 1,
+  "prompt_variant": "rq3",
+  "audit_protocol": "matched",
+  "generation_model": {
+    "requested_label": "Sol Medium",
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null,
+    "effective_snapshot_unavailable_reason": "The desktop runtime did not expose a provider snapshot identifier.",
+    "codex_client_version": null,
+    "codex_client_version_unavailable_reason": "The desktop runtime did not expose a client version to the task."
+  },
+  "audit_model": {
+    "assignment": "same-as-generation",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null
+  },
+  "timing_wall_clock": {
+    "initial_started_at": "2026-09-06T14:37:17.4293365Z",
+    "initial_started_epoch_ms": 1788705437429,
+    "initial_ended_at": "2026-09-06T14:38:15.1002900Z",
+    "initial_ended_epoch_ms": 1788705495100
+  },
+  "timing_seconds": {
+    "initial": 57.671,
+    "repairs": 98.331,
+    "total": 156.002
+  },
+  "tokens": {
+    "prompt_generation_total": 1554991,
+    "code_generation_total": 4623082,
+    "repair_total": 2728505,
+    "implementation_total": 7351587,
+    "overall_total": 8906578,
+    "initial_total": 4623082,
+    "total": 7351587,
+    "telemetry_sources": {
+      "prompt_generation": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\06\\rollout-2026-09-06T20-52-54-01a076fe-5535-7ef0-9172-1688ed013263.jsonl",
+      "code_generation": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\06\\rollout-2026-09-06T21-24-52-01a0771b-985a-76e1-8525-601dc36fca56.jsonl",
+      "repairs": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\06\\rollout-2026-09-06T21-24-52-01a0771b-985a-76e1-8525-601dc36fca56.jsonl"
+    },
+    "details": {
+      "prompt_generation": {
+        "receipt": "docs/02-construction/implementation/UC-08a/runs/UC08A-RQ3-SOL-MEDIUM-R1/prompt-generation-telemetry.json",
+        "turn_ids": [
+          1
+        ],
+        "input": 134818,
+        "cache_read": 1401856,
+        "total_input": 1536674,
+        "output": 18317,
+        "reasoning": 2936,
+        "total_tokens": 1554991,
+        "cost_usd": 1.9245,
+        "duration_seconds": 424.852,
+        "closed": true
+      },
+      "code_generation": {
+        "receipt": "docs/02-construction/implementation/UC-08a/runs/UC08A-RQ3-SOL-MEDIUM-R1/first-pass-generation.json",
+        "turn_ids": [
+          1
+        ],
+        "runtime_turn_id": "01a0771b-c6ba-7ea2-a03c-69b825fec9ea",
+        "input": 147149,
+        "cache_read": 4452224,
+        "total_input": 4599373,
+        "output": 23709,
+        "reasoning": 8095,
+        "total_tokens": 4623082,
+        "cost_usd": 3.6731,
+        "duration_seconds": 1354.545,
+        "closed": true
+      },
+      "initial": {
+        "turn_ids": [
+          1
+        ],
+        "total_tokens": 4623082,
+        "closed": true
+      },
+      "repairs": {
+        "turn_ids": [
+          6
+        ],
+        "runtime_turn_id": "01a07ac3-0696-7ed1-8a0f-0454724ce6ba",
+        "input": 230474,
+        "cache_read": 2488320,
+        "total_input": 2718794,
+        "output": 9711,
+        "reasoning": 2057,
+        "total_tokens": 2728505,
+        "cost_usd": 2.6879,
+        "duration_seconds": 461.314,
+        "closed": true
+      }
+    }
+  },
+  "first_pass_source": {
+    "revision": "sha256:55b9234252eada8ca6c7478fcd86abb0a3dda8c8af8cdab93a894bdfe095f059",
+    "file_count": 154,
+    "evidence": "docs/02-construction/implementation/UC-08a/runs/UC08A-RQ3-SOL-MEDIUM-R1/first-pass-generation.json",
+    "evidence_status": "restored",
+    "hash_method": "SHA-256 over the UTF-8 list of sorted relative paths paired with per-file SHA-256 values; node_modules and dist directories excluded.",
+    "changed_files": [
+      "finalsource/be/src/modules/account/dto/update-account.dto.ts",
+      "finalsource/fe/src/components/AccountEditForm/AccountEditForm.tsx",
+      "finalsource/fe/src/pages/Account/Account.tsx"
+    ]
+  },
+  "current_source_state": {
+    "revision": "sha256:fa722656cbc01d874950e0d3f2658af33b11e94302de4f0cf50b316ed7526717",
+    "matches_first_pass": false,
+    "status": "current_source_repair_verified",
+    "next_action": "Install or restore Docker Compose v2 availability, then rebuild and perform the required bounded runtime verification."
+  },
+  "context_isolation": {
+    "status": "isolated",
+    "reason": "The UC-08a Business Rule expressions were loaded only after first-pass generation ended and source revision sha256:55b9234252eada8ca6c7478fcd86abb0a3dda8c8af8cdab93a894bdfe095f059 was captured."
+  },
+  "checks": {
+    "figma_dataset": "PASS during first-pass run: dataset 2026-08-29-005 node 4795:5 resolved complete with valid integrity.",
+    "host_backend_targeted_lint": "PASS during first-pass run.",
+    "host_backend_lint": "WARN during first-pass run: repository-wide ESLint had a pre-existing unused LessThanOrEqual import in goal.service.ts.",
+    "host_backend_build": "PASS during first-pass run.",
+    "host_frontend_lint": "PASS during first-pass run.",
+    "host_frontend_build": "PASS during first-pass run.",
+    "docker_review": "BLOCKED during first-pass run: Docker CLI was unavailable.",
+    "docker_runtime_health": "not_evaluable",
+    "authenticated_update_runtime": "not_evaluable",
+    "tests_created_or_run": false
+  },
+  "business_rules": {
+    "baseline": "docs/02-construction/implementation/UC-08a/business-rule-baseline.json",
+    "resource": "docs/02-construction/business-rules/UC-08a-business-rules.json",
+    "source_revision": null,
+    "ordered_br_ids": [
+      "BR-ACC-19",
+      "BR-ACC-20",
+      "BR-ACC-21",
+      "BR-ACC-22",
+      "BR-ACC-23",
+      "BR-ACC-24",
+      "BR-ACC-25",
+      "BR-ACC-26"
+    ],
+    "initial": {
+      "requirements": [
+        {
+          "br_id": "BR-ACC-19",
+          "status": "met",
+          "evidence": [
+            "Historical first-pass source finalsource/be/src/modules/account/account.controller.ts:135-162 protected PUT :id, parsed the identifier, and passed only the JWT-derived userId to AccountService.update.",
+            "Historical first-pass source finalsource/be/src/modules/account/account.service.ts:263-277 returned HTTP 404 for a missing account and HTTP 403 for a foreign-owned account before field mutation.",
+            "Targeted account-module ESLint and the Nest production build passed during first-pass verification."
+          ],
+          "rationale": "Existence and ownership were enforced at the backend trust boundary before mutation or persistence."
+        },
+        {
+          "br_id": "BR-ACC-20",
+          "status": "met",
+          "evidence": [
+            "Historical first-pass UpdateAccountDto applied IsEnum(AccountType).",
+            "Historical first-pass AccountEditForm defined exactly the five frozen account-type literals and rejected other values.",
+            "Backend and frontend production builds passed."
+          ],
+          "rationale": "Frontend and authoritative backend validation used the same frozen account-type domain."
+        },
+        {
+          "br_id": "BR-ACC-21",
+          "status": "met",
+          "evidence": [
+            "Historical first-pass UpdateAccountDto required nonblank bank_name and account_number_full.",
+            "Historical first-pass AccountEditForm rejected blank bank name and invalid or blank account number before submission.",
+            "Targeted backend lint and full frontend lint passed."
+          ],
+          "rationale": "Required text fields were validated before submission and again at the backend trust boundary."
+        },
+        {
+          "br_id": "BR-ACC-22",
+          "status": "met",
+          "evidence": [
+            "Historical first-pass UpdateAccountDto enforced the complete 8-34 digit pattern.",
+            "Historical first-pass AccountEditForm applied the same pattern and associated its error with the input.",
+            "The frozen-design account-number instruction was rendered verbatim."
+          ],
+          "rationale": "Non-digit, too-short, and too-long values were rejected by both validation layers."
+        },
+        {
+          "br_id": "BR-ACC-23",
+          "status": "unmet",
+          "evidence": [
+            "Historical first-pass UpdateAccountDto checked only that balance was a finite number and had no minimum-zero validation.",
+            "Historical first-pass AccountEditForm rejected missing and non-finite values but accepted a finite negative number.",
+            "The frontend converted the accepted balance to a numeric JSON value."
+          ],
+          "rationale": "Numeric typing was enforced, but the frozen BR additionally required balance >= 0 at frontend and backend layers."
+        },
+        {
+          "br_id": "BR-ACC-24",
+          "status": "met",
+          "evidence": [
+            "Historical first-pass AccountEditForm mapped a cleared branch to null.",
+            "Historical first-pass UpdateAccountDto accepted omitted/null branch input and AccountService stored blank or omitted input as null.",
+            "The existing Account.branchName column remained nullable; no schema change was made."
+          ],
+          "rationale": "The optional branch could be cleared and was normalized to the established nullable persistence mapping."
+        },
+        {
+          "br_id": "BR-ACC-25",
+          "status": "met",
+          "evidence": [
+            "Historical first-pass UpdateAccountRequest omitted account_number_last_4.",
+            "Historical first-pass UpdateAccountDto exposed no client-supplied last-four field.",
+            "Historical first-pass AccountService derived the last four characters with slice(-4)."
+          ],
+          "rationale": "The client could not submit the derived field and the backend derived the exact final four characters."
+        },
+        {
+          "br_id": "BR-ACC-26",
+          "status": "met",
+          "evidence": [
+            "Historical first-pass AccountService mapped bank name, type, nullable branch, full number, derived last four, and balance onto the selected owned entity.",
+            "It performed one repository save, mapped the persisted response, translated uniqueness races to the established conflict convention, and used the required safe storage-failure message.",
+            "Validation, existence, ownership, and explicit uniqueness checks occurred before save; targeted backend lint and the Nest production build passed."
+          ],
+          "rationale": "The update mapped the specified fields exactly and used a single database save with safe failure handling."
+        }
+      ],
+      "total": 8,
+      "unmet": 1,
+      "not_evaluable": 0,
+      "met": 7,
+      "acceptance_percent": 87.5
+    },
+    "final": {
+      "requirements": [
+        {
+          "br_id": "BR-ACC-19",
+          "status": "met",
+          "evidence": [
+            "Historical first-pass source finalsource/be/src/modules/account/account.controller.ts:135-162 protected PUT :id, parsed the identifier, and passed only the JWT-derived userId to AccountService.update.",
+            "Historical first-pass source finalsource/be/src/modules/account/account.service.ts:263-277 returned HTTP 404 for a missing account and HTTP 403 for a foreign-owned account before field mutation.",
+            "Targeted account-module ESLint and the Nest production build passed during first-pass verification."
+          ],
+          "rationale": "Existence and ownership were enforced at the backend trust boundary before mutation or persistence."
+        },
+        {
+          "br_id": "BR-ACC-20",
+          "status": "met",
+          "evidence": [
+            "Historical first-pass UpdateAccountDto applied IsEnum(AccountType).",
+            "Historical first-pass AccountEditForm defined exactly the five frozen account-type literals and rejected other values.",
+            "Backend and frontend production builds passed."
+          ],
+          "rationale": "Frontend and authoritative backend validation used the same frozen account-type domain."
+        },
+        {
+          "br_id": "BR-ACC-21",
+          "status": "met",
+          "evidence": [
+            "Historical first-pass UpdateAccountDto required nonblank bank_name and account_number_full.",
+            "Historical first-pass AccountEditForm rejected blank bank name and invalid or blank account number before submission.",
+            "Targeted backend lint and full frontend lint passed."
+          ],
+          "rationale": "Required text fields were validated before submission and again at the backend trust boundary."
+        },
+        {
+          "br_id": "BR-ACC-22",
+          "status": "met",
+          "evidence": [
+            "Historical first-pass UpdateAccountDto enforced the complete 8-34 digit pattern.",
+            "Historical first-pass AccountEditForm applied the same pattern and associated its error with the input.",
+            "The frozen-design account-number instruction was rendered verbatim."
+          ],
+          "rationale": "Non-digit, too-short, and too-long values were rejected by both validation layers."
+        },
+        {
+          "br_id": "BR-ACC-23",
+          "status": "met",
+          "evidence": [
+            "Current source finalsource/be/src/modules/account/dto/update-account.dto.ts:32-33 requires a finite numeric balance and applies @Min(0) at the backend trust boundary.",
+            "Current source finalsource/fe/src/components/AccountEditForm/AccountEditForm.tsx:57-61 rejects a missing, non-finite, or negative balance before submission.",
+            "Targeted backend and frontend ESLint checks and both production builds passed after repair verification."
+          ],
+          "rationale": "The current source enforces balance >= 0 at both the frontend and authoritative backend layers."
+        },
+        {
+          "br_id": "BR-ACC-24",
+          "status": "met",
+          "evidence": [
+            "Historical first-pass AccountEditForm mapped a cleared branch to null.",
+            "Historical first-pass UpdateAccountDto accepted omitted/null branch input and AccountService stored blank or omitted input as null.",
+            "The existing Account.branchName column remained nullable; no schema change was made."
+          ],
+          "rationale": "The optional branch could be cleared and was normalized to the established nullable persistence mapping."
+        },
+        {
+          "br_id": "BR-ACC-25",
+          "status": "met",
+          "evidence": [
+            "Historical first-pass UpdateAccountRequest omitted account_number_last_4.",
+            "Historical first-pass UpdateAccountDto exposed no client-supplied last-four field.",
+            "Historical first-pass AccountService derived the last four characters with slice(-4)."
+          ],
+          "rationale": "The client could not submit the derived field and the backend derived the exact final four characters."
+        },
+        {
+          "br_id": "BR-ACC-26",
+          "status": "met",
+          "evidence": [
+            "Historical first-pass AccountService mapped bank name, type, nullable branch, full number, derived last four, and balance onto the selected owned entity.",
+            "It performed one repository save, mapped the persisted response, translated uniqueness races to the established conflict convention, and used the required safe storage-failure message.",
+            "Validation, existence, ownership, and explicit uniqueness checks occurred before save; targeted backend lint and the Nest production build passed."
+          ],
+          "rationale": "The update mapped the specified fields exactly and used a single database save with safe failure handling."
+        }
+      ],
+      "total": 8,
+      "unmet": 0,
+      "not_evaluable": 0,
+      "met": 8,
+      "acceptance_percent": 100.0
+    }
+  },
+  "methodological_limitations": [
+    "The current finalsource tree no longer matches the frozen first-pass hash; initial BR evidence continues to describe the historical first-pass source, while final BR evidence describes the verified current source.",
+    "Docker CLI was unavailable, so no current-source Compose or authenticated runtime observation was recorded.",
+    "Authorized Repair 001 required no source mutation because an out-of-band revert had already restored the exact BR-ACC-23 controls; the source-state transition is preserved and is not attributed to the repair."
+  ],
+  "technical_findings": [
+    {
+      "status": "resolved_current_source",
+      "trigger": "business_rule_review",
+      "fingerprint": "account-update-negative-balance-accepted",
+      "affected_br_ids": [
+        "BR-ACC-23"
+      ],
+      "evidence": "Repair 001 verified that the current UpdateAccountDto and AccountEditForm both enforce minimum-zero balance; targeted lint and production builds passed.",
+      "repair_authorized": true
+    }
+  ],
+  "repair_authorization": {
+    "status": "authorized",
+    "requested_at": "2026-09-06T14:42:52.7696590Z",
+    "authorized_at": "2026-09-07T07:28:09.8049674Z",
+    "authorization_basis": "The researcher explicitly invoked bug-fixing-sub-prompt after the first-pass hold gate.",
+    "note": "The current source already contained the exact correction, so the authorized repair was completed without source mutation."
+  },
+  "repairs": [
+    {
+      "repair_id": "UC08A-RQ3-SOL-MEDIUM-R1-REPAIR-001",
+      "repair_index": 1,
+      "sub_prompt_path": "docs/02-construction/implementation/UC-08a/runs/UC08A-RQ3-SOL-MEDIUM-R1/repairs/repair-001.md",
+      "category": "business_rule",
+      "trigger": "business_rule_review",
+      "fingerprint": "account-update-negative-balance-accepted",
+      "affected_br_ids": [
+        "BR-ACC-23"
+      ],
+      "status": "CompletedNoSourceMutation",
+      "model": {
+        "requested_model_id": "gpt-5.6-sol",
+        "requested_reasoning_effort": "medium",
+        "effective_model_id": "gpt-5.6-sol"
+      },
+      "timing_wall_clock": {
+        "started_at": "2026-09-07T07:28:09.8049674Z",
+        "started_epoch_ms": 1788766089804,
+        "ended_at": "2026-09-07T07:29:48.1362912Z",
+        "ended_epoch_ms": 1788766188136,
+        "duration_seconds": 98.331
+      },
+      "tokens": {
+        "total": 2728505,
+        "input": 230474,
+        "cache_read": 2488320,
+        "total_input": 2718794,
+        "output": 9711,
+        "reasoning": 2057,
+        "cost_usd": 2.6879,
+        "session_duration_seconds": 461.314
+      },
+      "token_note": "Extracted from closed session turn 6; session duration covers the complete Codex turn, while timing_wall_clock.duration_seconds covers the bounded repair operation.",
+      "session_turn_id": 6,
+      "runtime_turn_id": "01a07ac3-0696-7ed1-8a0f-0454724ce6ba",
+      "source_revision_before": "sha256:fa722656cbc01d874950e0d3f2658af33b11e94302de4f0cf50b316ed7526717",
+      "source_revision_after": "sha256:fa722656cbc01d874950e0d3f2658af33b11e94302de4f0cf50b316ed7526717",
+      "changed_files": [],
+      "evidence_before": "The historical first-pass source accepted a finite negative balance; the current source had already been reverted out of band to include the required minimum-zero controls.",
+      "evidence_after": [
+        "Backend UpdateAccountDto applies @Min(0).",
+        "Frontend AccountEditForm rejects balance < 0.",
+        "Targeted backend and frontend lint checks passed.",
+        "Backend and frontend production builds passed."
+      ],
+      "tests_created_or_run": false
+    }
+  ],
+  "restoration": {
+    "restored_at": "2026-09-07T04:54:41.1425209Z",
+    "reason": "Accidental deletion reported by the researcher.",
+    "evidence_sources": [
+      "closed prompt-generation session turn 1",
+      "closed code-generation session turn 1",
+      "previously captured first-pass source hash and assessment"
+    ]
+  },
+  "all_sub_prompt_count": 1
+}

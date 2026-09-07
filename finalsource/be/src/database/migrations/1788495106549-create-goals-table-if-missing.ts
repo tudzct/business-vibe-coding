@@ -3,7 +3,7 @@ import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 const MIGRATION_TABLE_COMMENT =
   'Created by CreateGoalsTableIfMissing20260903105626';
 
-export class CreateGoalsTableIfMissing20260903105626
+export class CreateGoalsTableIfMissing1788495106549
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {

@@ -1,11 +1,12 @@
 import axiosInstance from './axiosInstance'
 import {
   ApiResponse,
-  Account,
   AccountDetail,
   AccountListResult,
   CreateAccountData,
   CreateAccountRequest,
+  UpdateAccountData,
+  UpdateAccountRequest,
 } from './types'
 
 export const accountService = {
@@ -38,8 +39,16 @@ export const accountService = {
   },
 
   // Cập nhật tài khoản
-  updateAccount: async (accountId: number, data: Partial<Account>): Promise<ApiResponse<Account>> => {
-    const response = await axiosInstance.put(`/accounts/${accountId}`, data)
+  updateAccount: async (
+    accountId: number,
+    data: UpdateAccountRequest,
+    signal?: AbortSignal,
+  ): Promise<ApiResponse<UpdateAccountData>> => {
+    const response = await axiosInstance.put<ApiResponse<UpdateAccountData>>(
+      `/v1/accounts/${accountId}`,
+      data,
+      { signal },
+    )
     return response.data
   },
 

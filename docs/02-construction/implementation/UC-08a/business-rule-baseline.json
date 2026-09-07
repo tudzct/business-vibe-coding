@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-08a",
+  "use_case_path": "docs/01-inception/use-cases/uc-08a-quick-edit-bank-account.md",
+  "use_case_sha256": "sha256:3e34d75e07702605c4ea5c00212325e11c659932c9c8914f2e2195ec8a9bf061",
+  "business_rule_resource_path": "docs/02-construction/business-rules/UC-08a-business-rules.json",
+  "business_rule_resource_sha256": "sha256:9ed85536db99303563637e34bcb2ff2810507f3abd3d7f6edab782391fa66b55",
+  "spreadsheet_source": "Use cases!A180:B196 (inherits BR-ACC-19 through BR-ACC-26 verbatim from UC-08 at Use cases!A153:B199)",
+  "ordered_br_ids": [
+    "BR-ACC-19",
+    "BR-ACC-20",
+    "BR-ACC-21",
+    "BR-ACC-22",
+    "BR-ACC-23",
+    "BR-ACC-24",
+    "BR-ACC-25",
+    "BR-ACC-26"
+  ],
+  "frozen_at": "2026-09-06T13:55:18.7378853Z"
+}

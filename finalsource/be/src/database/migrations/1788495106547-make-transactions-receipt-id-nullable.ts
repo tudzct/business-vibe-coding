@@ -15,7 +15,7 @@ interface ExpectedColumn {
   readonly nullable: boolean;
 }
 
-export class MakeTransactionsReceiptIdNullable20260901101931
+export class MakeTransactionsReceiptIdNullable1788495106547
   implements MigrationInterface
 {
   public async up(queryRunner: QueryRunner): Promise<void> {

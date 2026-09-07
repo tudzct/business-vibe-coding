@@ -1,8 +1,9 @@
 import axios from 'axios'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, NavLink, useNavigate, useParams } from 'react-router-dom'
 import { accountService } from '../../api/account.service'
 import type { AccountDetail, AccountDetailTransaction } from '../../api/types'
+import AccountEditForm from '../../components/AccountEditForm/AccountEditForm'
 import { useAuth } from '../../hooks/useAuth'
 
 const navigation = [
@@ -48,59 +49,54 @@ const AccountDetailPage = () => {
   const [account, setAccount] = useState<AccountDetail | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
 
   const validAccountId = useMemo(
     () => (id && /^\d+$/.test(id) ? id : null),
     [id],
   )
 
-  useEffect(() => {
+  const loadAccount = useCallback(async (signal?: AbortSignal) => {
     if (!validAccountId) {
       setAccount(null)
       setIsLoading(false)
       setError('Invalid account identifier.')
       return
     }
-
-    const controller = new AbortController()
-    let active = true
     setAccount(null)
     setError(null)
     setIsLoading(true)
-
-    const fetchAccountDetails = async () => {
-      try {
-        const response = await accountService.getAccountDetails(validAccountId, controller.signal)
-        if (!active) return
-        if (!response.success || !response.data) {
-          setError(safeMessage(response.message, 'We could not load this account.'))
-          return
-        }
-        setAccount(response.data)
-      } catch (requestError: unknown) {
-        if (!active || axios.isCancel(requestError)) return
-        if (axios.isAxiosError(requestError) && requestError.response?.status === 401) return
-
-        const status = axios.isAxiosError(requestError) ? requestError.response?.status : undefined
-        const fallback =
-          status === 500
-            ? 'A banking system error occurred. Please try again later.'
-            : 'We could not load this account. Please try again.'
-        const responseMessage = axios.isAxiosError<{ message?: string | string[] }>(requestError)
-          ? requestError.response?.data?.message
-          : undefined
-        setError(safeMessage(responseMessage, fallback))
-      } finally {
-        if (active) setIsLoading(false)
+    try {
+      const response = await accountService.getAccountDetails(validAccountId, signal)
+      if (!response.success || !response.data) {
+        setError(safeMessage(response.message, 'We could not load this account.'))
+        return
       }
-    }
+      setAccount(response.data)
+    } catch (requestError: unknown) {
+      if (axios.isCancel(requestError)) return
+      if (axios.isAxiosError(requestError) && requestError.response?.status === 401) return
 
-    void fetchAccountDetails()
-    return () => {
-      active = false
-      controller.abort()
+      const status = axios.isAxiosError(requestError) ? requestError.response?.status : undefined
+      const fallback =
+        status === 500
+          ? 'A banking system error occurred. Please try again later.'
+          : 'We could not load this account. Please try again.'
+      const responseMessage = axios.isAxiosError<{ message?: string | string[] }>(requestError)
+        ? requestError.response?.data?.message
+        : undefined
+      setError(safeMessage(responseMessage, fallback))
+    } finally {
+      if (!signal?.aborted) setIsLoading(false)
     }
   }, [validAccountId])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    setIsEditing(false)
+    void loadAccount(controller.signal)
+    return () => controller.abort()
+  }, [loadAccount])
 
   const handleLogout = () => {
     logout()
@@ -141,7 +137,7 @@ const AccountDetailPage = () => {
 
       <div className="min-w-0 flex-1 lg:ml-[244px]">
         <header className="flex min-h-[72px] items-center justify-between border-b border-[#eceeef] bg-white px-6 lg:px-8">
-          <p className="text-sm"><Link to="/accounts" className="font-medium">Accounts</Link><span className="mx-3 text-[#a6abb3]">›</span><span className="text-[#8f96a1]">Account Details</span></p>
+          <p className="text-sm"><Link to="/accounts" className="font-medium">Accounts</Link><span className="mx-3 text-[#a6abb3]">›</span><span className="text-[#8f96a1]">{isEditing ? 'Edit Account' : 'Account Details'}</span></p>
           <div className="flex items-center gap-4">
             <div className="hidden h-10 w-[260px] items-center justify-between rounded-lg bg-[#f1f2f3] px-4 text-sm text-[#a1a6ae] sm:flex">Search here <span aria-hidden="true">⌕</span></div>
             <span aria-label="User profile" className="h-8 w-8 rounded-full bg-[#f0f1f2]" />
@@ -149,12 +145,12 @@ const AccountDetailPage = () => {
         </header>
 
         <main className="px-6 py-8 lg:px-[38px]">
-          <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+          <div className="mb-[26px] flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h1 className="text-[28px] font-bold leading-9">Account Details</h1>
-              <p className="mt-1 text-sm text-[#9097a2]">View account information and the five most recent transactions.</p>
+              <h1 className="text-[26px] font-bold leading-9">{isEditing ? 'Edit Bank Account' : 'Account Details'}</h1>
+              <p className="mt-1 text-sm text-[#9097a2]">{isEditing ? 'Update the account information below. Changes apply after validation.' : 'View account information and the five most recent transactions.'}</p>
             </div>
-            <button type="button" disabled={!account} className="rounded bg-[#35aaa2] px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50">Edit Account</button>
+            {!isEditing && <button type="button" onClick={() => setIsEditing(true)} disabled={!account} className="rounded bg-[#35aaa2] px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50">Edit Account</button>}
           </div>
 
           {isLoading && (
@@ -173,7 +169,16 @@ const AccountDetailPage = () => {
           )}
 
           {!isLoading && !error && account && (
-            <div className="space-y-5">
+            isEditing ? (
+              <AccountEditForm
+                account={account}
+                onCancel={() => setIsEditing(false)}
+                onSuccess={async () => {
+                  setIsEditing(false)
+                  await loadAccount()
+                }}
+              />
+            ) : <div className="space-y-5">
               <section className="rounded-lg bg-white p-7 shadow-[0_12px_30px_rgba(76,103,100,0.07)]" aria-labelledby="account-summary-heading">
                 <div className="flex flex-wrap items-center justify-between gap-5 border-b border-[#e2e5e8] pb-6">
                   <div className="flex items-center gap-4">

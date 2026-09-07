@@ -1,0 +1,41 @@
+{
+  "artifact_type": "docker-deployment-incident",
+  "incident_id": "DEP-20260906-001",
+  "observed_at": "2026-09-06T12:14:04.8372176Z",
+  "layer": "backend startup/database migration discovery",
+  "fingerprint": "typeorm-migration-14-digit-suffix-truncation",
+  "symptom": "On a clean database, MakeUsersUsernameNullable executes before the migration that creates users.",
+  "evidence": {
+    "primary_error": "Migration MakeUsersUsernameNullable20260831095333 failed because users does not exist.",
+    "framework_behavior": "TypeORM 0.3.27 parses only the last 13 characters of each migration name and sorts numerically.",
+    "incorrect_order": "The 14-digit 2026... suffixes became 260... timestamps and sorted before 1700000000000 and 1788495106545."
+  },
+  "root_cause": {
+    "status": "confirmed",
+    "summary": "Five migration classes used 14-digit calendar strings instead of 13-digit JavaScript timestamps. TypeORM does not use filenames as the ordering authority."
+  },
+  "actions_attempted": [
+    "Renamed the five affected migration files and class suffixes to unique sequential 13-digit timestamps 1788495106546 through 1788495106550.",
+    "Compared every renamed source with its HEAD predecessor and confirmed all up/down operations are unchanged.",
+    "Ran targeted migration ESLint, a clean temporary TypeScript compile, and the Nest production build.",
+    "Attempted Docker CLI discovery without deleting or resetting a volume."
+  ],
+  "files_changed": [
+    "finalsource/be/src/database/migrations/1788495106546-make-users-username-nullable.ts",
+    "finalsource/be/src/database/migrations/1788495106547-make-transactions-receipt-id-nullable.ts",
+    "finalsource/be/src/database/migrations/1788495106548-align-category-ids-unsigned.ts",
+    "finalsource/be/src/database/migrations/1788495106549-create-goals-table-if-missing.ts",
+    "finalsource/be/src/database/migrations/1788495106550-make-goals-category-nullable.ts"
+  ],
+  "commands_rerun": [
+    "TypeORM last-13-digit order inspection",
+    "targeted migration eslint",
+    "clean temporary TypeScript compile",
+    "backend production build",
+    "Docker CLI discovery"
+  ],
+  "outcome": "blocked",
+  "resolution": "Source correction is complete and deterministic ordering is verified; Docker runtime confirmation is blocked by the unavailable CLI.",
+  "reusable_resolution": "Migration class names must end in unique 13-digit JavaScript timestamps; filename order alone is not sufficient.",
+  "prevention": "Reject migration class suffixes that are not exactly 13 digits and inspect the TypeORM-derived numeric order before Docker startup."
+}

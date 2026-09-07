@@ -11,6 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
 import { Account, AccountType } from './account.entity';
 import { CreateAccountDto } from './dto/create-account.dto';
+import { UpdateAccountDto } from './dto/update-account.dto';
 import { AccountDetailResponseDto } from './dto/account-detail-response.dto';
 import {
   Transaction,
@@ -36,6 +37,17 @@ export type AccountListData = AccountListDataDto;
 
 export interface CreatedAccount extends AccountListItemDto {
   readonly user_id: number;
+}
+
+export interface UpdatedAccount {
+  readonly account_id: number;
+  readonly user_id: number;
+  readonly bank_name: string;
+  readonly account_type: AccountType;
+  readonly branch_name: string | null;
+  readonly account_number_full: string;
+  readonly account_number_last_4: string;
+  readonly balance: number;
 }
 
 interface BalanceTotalRow {
@@ -241,6 +253,68 @@ export class AccountService {
     }
   }
 
+  async update(
+    accountId: number,
+    userId: number,
+    dto: UpdateAccountDto,
+  ): Promise<UpdatedAccount> {
+    let account: Account | null;
+    try {
+      account = await this.accounts.findOne({ where: { accountId } });
+    } catch {
+      throw new InternalServerErrorException(
+        'An error occurred while saving the data. Please try again later.',
+      );
+    }
+
+    if (!account) {
+      throw new NotFoundException('This account could not be found.');
+    }
+    if (account.userId !== userId) {
+      throw new ForbiddenException(
+        'You do not have permission to edit this account information.',
+      );
+    }
+
+    if (account.accountNumberFull !== dto.account_number_full) {
+      await this.ensureAccountNumberAvailable(
+        userId,
+        dto.account_number_full,
+        accountId,
+      );
+    }
+
+    account.bankName = dto.bank_name;
+    account.accountType = dto.account_type;
+    account.branchName = dto.branch_name?.trim() || null;
+    account.accountNumberFull = dto.account_number_full;
+    account.accountNumberLast4 = dto.account_number_full.slice(-4);
+    account.balance = dto.balance;
+
+    try {
+      const saved = await this.accounts.save(account);
+      return {
+        account_id: saved.accountId,
+        user_id: saved.userId,
+        bank_name: saved.bankName,
+        account_type: saved.accountType,
+        branch_name: saved.branchName ?? null,
+        account_number_full: saved.accountNumberFull,
+        account_number_last_4: saved.accountNumberLast4,
+        balance: Number(saved.balance),
+      };
+    } catch (error: unknown) {
+      if (this.isDuplicateEntry(error)) {
+        throw new ConflictException(
+          'The submitted resource conflicts with an existing record in the system.',
+        );
+      }
+      throw new InternalServerErrorException(
+        'An error occurred while saving the data. Please try again later.',
+      );
+    }
+  }
+
   private isDuplicateEntry(error: unknown): boolean {
     if (!(error instanceof QueryFailedError)) return false;
     const driverError: unknown = error.driverError;
@@ -255,6 +329,7 @@ export class AccountService {
   private async ensureAccountNumberAvailable(
     userId: number,
     accountNumberFull: string,
+    excludedAccountId?: number,
   ): Promise<void> {
     let existingAccount: Account | null;
     try {
@@ -268,7 +343,7 @@ export class AccountService {
       );
     }
 
-    if (existingAccount) {
+    if (existingAccount && existingAccount.accountId !== excludedAccountId) {
       throw new ConflictException(
         'The submitted resource conflicts with an existing record in the system.',
       );
