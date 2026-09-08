@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-09",
+  "use_case_path": "docs/01-inception/use-cases/uc-09-delete-bank-account.md",
+  "use_case_sha256": "sha256:7cb25abbce1f2dd5f5e49b289fd461eeb8430a63c4de9132aa9f5f96030f7451",
+  "business_rule_resource_path": "docs/02-construction/business-rules/UC-09-business-rules.json",
+  "business_rule_resource_sha256": "sha256:be23d392be012e4dad9cd048c465a13005cc673d3dd2ef621f0e668d171bd9bb",
+  "spreadsheet_source": "Use cases!A200:B218",
+  "ordered_br_ids": [
+    "BR-ACC-27",
+    "BR-ACC-28",
+    "BR-ACC-29",
+    "BR-ACC-30",
+    "BR-ACC-31"
+  ],
+  "frozen_at": "2026-09-08T07:58:45.6968651Z"
+}

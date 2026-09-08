@@ -4,7 +4,10 @@ import { Link, NavLink, useNavigate, useParams } from 'react-router-dom'
 import { accountService } from '../../api/account.service'
 import type { AccountDetail, AccountDetailTransaction } from '../../api/types'
 import AccountEditForm from '../../components/AccountEditForm/AccountEditForm'
+import AccountDeletionSuccessDialog from '../../components/AccountDeletion/AccountDeletionSuccessDialog'
+import DeleteAccountModal from '../../components/AccountDeletion/DeleteAccountModal'
 import { useAuth } from '../../hooks/useAuth'
+import { useAccountDeletion } from '../../hooks/useAccountDeletion'
 
 const navigation = [
   { path: '/dashboard', label: 'Overview' },
@@ -91,6 +94,12 @@ const AccountDetailPage = () => {
     }
   }, [validAccountId])
 
+  const returnToAccounts = useCallback(() => navigate('/accounts'), [navigate])
+  const deletion = useAccountDeletion({
+    onCompleted: returnToAccounts,
+    onUnavailableDismiss: returnToAccounts,
+  })
+
   useEffect(() => {
     const controller = new AbortController()
     setIsEditing(false)
@@ -150,7 +159,26 @@ const AccountDetailPage = () => {
               <h1 className="text-[26px] font-bold leading-9">{isEditing ? 'Edit Bank Account' : 'Account Details'}</h1>
               <p className="mt-1 text-sm text-[#9097a2]">{isEditing ? 'Update the account information below. Changes apply after validation.' : 'View account information and the five most recent transactions.'}</p>
             </div>
-            {!isEditing && <button type="button" onClick={() => setIsEditing(true)} disabled={!account} className="rounded bg-[#35aaa2] px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50">Edit Account</button>}
+            {!isEditing && (
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={(event) => {
+                    if (!account) return
+                    deletion.open({
+                      id: account.id,
+                      bankName: account.bank_name,
+                      lastFour: account.account_number_full.slice(-4),
+                    }, event.currentTarget)
+                  }}
+                  disabled={!account || deletion.isDeleting}
+                  className="rounded border border-[#d92e2e] bg-white px-5 py-3 text-sm font-medium text-[#c93232] focus:outline-none focus:ring-2 focus:ring-[#d92e2e] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Delete Account
+                </button>
+                <button type="button" onClick={() => setIsEditing(true)} disabled={!account || deletion.isDeleting} className="rounded bg-[#35aaa2] px-5 py-3 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50">Edit Account</button>
+              </div>
+            )}
           </div>
 
           {isLoading && (
@@ -215,6 +243,19 @@ const AccountDetailPage = () => {
           )}
         </main>
       </div>
+      {deletion.phase === 'confirm' && deletion.target && (
+        <DeleteAccountModal
+          target={deletion.target}
+          isDeleting={deletion.isDeleting}
+          targetUnavailable={deletion.targetUnavailable}
+          error={deletion.error}
+          onCancel={deletion.dismiss}
+          onConfirm={() => void deletion.confirm()}
+        />
+      )}
+      {deletion.phase === 'success' && (
+        <AccountDeletionSuccessDialog onComplete={deletion.finishSuccess} />
+      )}
     </div>
   )
 }

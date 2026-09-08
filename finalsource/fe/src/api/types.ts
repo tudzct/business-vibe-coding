@@ -110,6 +110,10 @@ export interface UpdateAccountData {
   account: UpdatedAccount
 }
 
+export interface DeleteAccountData {
+  deleted_account_id: number
+}
+
 export interface Category {
   category_id: number
   category_name: string

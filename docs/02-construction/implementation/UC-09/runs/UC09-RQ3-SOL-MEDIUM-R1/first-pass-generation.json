@@ -1,0 +1,87 @@
+{
+  "artifact_type": "first-pass-generation",
+  "schema_version": "1.0",
+  "status": "Frozen",
+  "run_id": "UC09-RQ3-SOL-MEDIUM-R1",
+  "uc_id": "UC-09",
+  "prompt_variant": "rq3",
+  "source_prompt": "docs/02-construction/coding-prompts/UC-09-rq3-coding-prompt.md",
+  "source_prompt_sha256": "sha256:e6931a17f2c6c1accfe473fd379b7ac115f837455e5e6b110f921368f1d73cc6",
+  "run_activation": "docs/02-construction/implementation/UC-09/runs/UC09-RQ3-SOL-MEDIUM-R1/run-activation.json",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null,
+    "effective_snapshot_unavailable_reason": "The desktop runtime exposed the model family but no provider snapshot identifier.",
+    "codex_client_version": "0.153.4"
+  },
+  "requested_timing": {
+    "duration_seconds": 332.171,
+    "worked_for_seconds": 1239.075
+  },
+  "tokens": {
+    "initial_total": 5858915,
+    "session_turn_id": 1,
+    "runtime_turn_id": "01a0801e-2b6c-7b33-8655-d42497a3af8e",
+    "input": 172952,
+    "cache_read": 5659264,
+    "total_input": 5832216,
+    "output": 26699,
+    "reasoning": 6663,
+    "total_tokens": 5858915,
+    "cost_usd": 4.4954,
+    "runner_duration_seconds": 1239.075,
+    "telemetry_source": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\08\\rollout-2026-09-08T15-23-55-01a0801d-da26-7882-9c9a-fa02bd510ade.jsonl",
+    "attribution_note": "Phase 2 source generation, permitted build/lint checks and immutable first-pass audit share one closed researcher turn. No repair turn is included."
+  },
+  "timing_wall_clock": {
+    "started_at": "2026-09-08T08:28:16.302Z",
+    "started_epoch_ms": 1788856096302,
+    "ended_at": "2026-09-08T08:34:21.911Z",
+    "ended_epoch_ms": 1788856461911,
+    "duration_seconds": 365.609,
+    "duration_basis": "Elapsed wall clock from the first model response that emitted application source through completion of the final first-pass source patch."
+  },
+  "supplemental_timing": {
+    "source_code_emission_duration_seconds": 332.171,
+    "source_code_emission_intervals_seconds": [
+      88.38,
+      185.716,
+      58.075
+    ],
+    "measurement_note": "Sum of the three model-inference intervals that emitted the backend, shared frontend, and page-integration source patches; tool execution and idle time are excluded."
+  },
+  "source_revision": {
+    "sha256": "sha256:b05f75d923237043958e5da60b6482355cc47ad6bf4bd6e16a224d264ce6960f",
+    "method": "SHA-256 over sorted relative path, NUL, per-file SHA-256 and newline entries for finalsource/be/src and finalsource/fe/src."
+  },
+  "source_file_count": 126,
+  "changed_files": [
+    "finalsource/be/src/modules/account/account-delete-jwt-auth.guard.ts",
+    "finalsource/be/src/modules/account/account.controller.ts",
+    "finalsource/be/src/modules/account/account.module.ts",
+    "finalsource/be/src/modules/account/account.service.ts",
+    "finalsource/fe/src/api/account.service.ts",
+    "finalsource/fe/src/api/types.ts",
+    "finalsource/fe/src/components/AccountDeletion/AccountDeletionSuccessDialog.tsx",
+    "finalsource/fe/src/components/AccountDeletion/DeleteAccountModal.tsx",
+    "finalsource/fe/src/hooks/useAccountDeletion.ts",
+    "finalsource/fe/src/pages/Account/Account.tsx",
+    "finalsource/fe/src/pages/Account/AccountDetailPage.tsx"
+  ],
+  "context_isolation": {
+    "status": "isolated",
+    "reason": "The frozen UC-09 Business Rule expressions were loaded only after first-pass generation ended and the source fingerprint was captured."
+  },
+  "initial_assessment": {
+    "total": 5,
+    "met": 1,
+    "unmet": 4,
+    "not_evaluable": 0,
+    "canonical_run": "docs/05-experiments/UC-09/UC09-RQ3-SOL-MEDIUM-R1.json"
+  },
+  "repairs_applied": 0,
+  "tests_created_or_run": false,
+  "captured_at": "2026-09-08T09:33:03.4629476Z"
+}

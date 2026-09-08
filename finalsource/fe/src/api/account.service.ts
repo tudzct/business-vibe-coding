@@ -5,6 +5,7 @@ import {
   AccountListResult,
   CreateAccountData,
   CreateAccountRequest,
+  DeleteAccountData,
   UpdateAccountData,
   UpdateAccountRequest,
 } from './types'
@@ -53,8 +54,14 @@ export const accountService = {
   },
 
   // Xóa tài khoản
-  deleteAccount: async (accountId: number): Promise<ApiResponse<void>> => {
-    const response = await axiosInstance.delete(`/accounts/${accountId}`)
+  deleteAccount: async (
+    accountId: number,
+    signal?: AbortSignal,
+  ): Promise<ApiResponse<DeleteAccountData>> => {
+    const response = await axiosInstance.delete<ApiResponse<DeleteAccountData>>(
+      `/v1/accounts/${accountId}`,
+      { signal },
+    )
     return response.data
   },
 }

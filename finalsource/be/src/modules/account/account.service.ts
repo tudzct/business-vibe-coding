@@ -8,15 +8,17 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryFailedError, Repository } from 'typeorm';
+import { DataSource, QueryFailedError, Repository } from 'typeorm';
 import { Account, AccountType } from './account.entity';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { AccountDetailResponseDto } from './dto/account-detail-response.dto';
 import {
   Transaction,
+  TransactionStatus,
   TransactionType,
 } from '../transaction/transaction.entity';
+import { User } from '../user/user.entity';
 
 export interface AccountListItemDto {
   readonly id: number;
@@ -50,6 +52,10 @@ export interface UpdatedAccount {
   readonly balance: number;
 }
 
+export interface DeletedAccount {
+  readonly deleted_account_id: number;
+}
+
 interface BalanceTotalRow {
   total: string | number | null;
 }
@@ -59,6 +65,10 @@ interface RiskExposureRow {
   totalSafeAssets: string | number | null;
 }
 
+interface LiquidityCoverageRow {
+  coverageSatisfied: string | number | null;
+}
+
 @Injectable()
 export class AccountService {
   constructor(
@@ -66,6 +76,7 @@ export class AccountService {
     private readonly accounts: Repository<Account>,
     @InjectRepository(Transaction)
     private readonly transactions: Repository<Transaction>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async findOneWithTransactions(
@@ -312,6 +323,153 @@ export class AccountService {
       throw new InternalServerErrorException(
         'An error occurred while saving the data. Please try again later.',
       );
+    }
+  }
+
+  async delete(accountId: number, userId: number): Promise<DeletedAccount> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction('SERIALIZABLE');
+      const accounts = queryRunner.manager.getRepository(Account);
+      const transactions = queryRunner.manager.getRepository(Transaction);
+      const users = queryRunner.manager.getRepository(User);
+      const user = await users.findOne({
+        where: { userId },
+        select: { userId: true },
+        lock: { mode: 'pessimistic_write' },
+      });
+      if (!user) {
+        throw new NotFoundException(
+          'The requested account could not be found.',
+        );
+      }
+
+      const account = await accounts.findOne({
+        where: { accountId, userId },
+        select: { accountId: true },
+        lock: { mode: 'pessimistic_write' },
+      });
+
+      if (!account) {
+        throw new NotFoundException(
+          'The requested account could not be found.',
+        );
+      }
+
+      const pendingTransaction = await transactions.findOne({
+        where: {
+          accountId: account.accountId,
+          status: TransactionStatus.PENDING,
+        },
+        select: { transactionId: true },
+        lock: { mode: 'pessimistic_write' },
+      });
+      if (pendingTransaction) {
+        throw new ConflictException(
+          'The operation cannot be completed due to a conflict.',
+        );
+      }
+
+      const liquidityCoverage = await accounts
+        .createQueryBuilder('remainingAccount')
+        .select(
+          `CASE
+            WHEN COALESCE(SUM(CASE
+              WHEN remainingAccount.accountType IN (:...liquidTypes)
+              THEN remainingAccount.balance
+              ELSE 0
+            END), 0) >=
+            (COALESCE(SUM(CASE
+              WHEN remainingAccount.accountType = :loanType
+              THEN remainingAccount.balance
+              ELSE 0
+            END), 0) * 1.20) +
+            COALESCE((
+              SELECT SUM(pendingExpense.amount)
+              FROM transactions pendingExpense
+              INNER JOIN accounts expenseAccount
+                ON expenseAccount.account_id = pendingExpense.account_id
+              WHERE expenseAccount.user_id = :coverageUserId
+                AND expenseAccount.account_id <> :coverageAccountId
+                AND pendingExpense.type = :expenseType
+                AND pendingExpense.status = :pendingStatus
+            ), 0)
+            THEN 1
+            ELSE 0
+          END`,
+          'coverageSatisfied',
+        )
+        .where('remainingAccount.userId = :coverageUserId')
+        .andWhere('remainingAccount.accountId <> :coverageAccountId')
+        .setParameters({
+          liquidTypes: [AccountType.CHECKING, AccountType.SAVINGS],
+          loanType: AccountType.LOAN,
+          coverageUserId: userId,
+          coverageAccountId: account.accountId,
+          expenseType: TransactionType.EXPENSE,
+          pendingStatus: TransactionStatus.PENDING,
+        })
+        .getRawOne<LiquidityCoverageRow>();
+      if (String(liquidityCoverage?.coverageSatisfied) !== '1') {
+        throw new ConflictException(
+          'The operation cannot be completed due to a conflict.',
+        );
+      }
+
+      await transactions.delete({ accountId: account.accountId });
+      const deletion = await accounts.delete({
+        accountId: account.accountId,
+        userId,
+      });
+      if (deletion.affected !== 1) {
+        throw new ConflictException(
+          'The operation cannot be completed due to a conflict.',
+        );
+      }
+
+      const balanceSync = await users
+        .createQueryBuilder()
+        .update(User)
+        .set({
+          totalBalance: () =>
+            '(SELECT COALESCE(SUM(remaining.balance), 0) FROM accounts remaining WHERE remaining.user_id = :balanceUserId)',
+        })
+        .where('id = :userId', { userId })
+        .setParameter('balanceUserId', userId)
+        .execute();
+      if (balanceSync.affected !== 1) {
+        throw new InternalServerErrorException(
+          'A system error occurred while processing the request.',
+        );
+      }
+
+      await queryRunner.commitTransaction();
+      return { deleted_account_id: account.accountId };
+    } catch (error: unknown) {
+      if (queryRunner.isTransactionActive) {
+        try {
+          await queryRunner.rollbackTransaction();
+        } catch {
+          throw new InternalServerErrorException(
+            'A system error occurred while processing the request.',
+          );
+        }
+      }
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        'A system error occurred while processing the request.',
+      );
+    } finally {
+      if (!queryRunner.isReleased) {
+        try {
+          await queryRunner.release();
+        } catch {
+          // The request outcome is already determined; do not expose driver errors.
+        }
+      }
     }
   }
 
