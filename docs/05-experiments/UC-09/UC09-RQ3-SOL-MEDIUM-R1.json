@@ -1,7 +1,7 @@
 {
   "run_id": "UC09-RQ3-SOL-MEDIUM-R1",
-  "run_status": "awaiting_first_pass_telemetry",
-  "hold_gate": "first_pass_assessed_repair_authorization_required",
+  "run_status": "first_pass_telemetry_captured",
+  "hold_gate": "satisfied_repair_not_authorized",
   "experiment_configuration": {
     "configuration_id": "CFG-UC09-RQ3-GPT56SOL-MEDIUM-R1-20260908",
     "comparison_group_id": "CG-RQ3-SOL-MEDIUM-16UC-20260829",
@@ -19,46 +19,75 @@
   "generation_model": {
     "requested_model_id": "gpt-5.6-sol",
     "requested_reasoning_effort": "medium",
-    "effective_model_id": null,
+    "effective_model_id": "gpt-5.6-sol",
     "effective_snapshot": null,
-    "effective_model_unavailable_reason": "The active desktop turn has not yet closed, so effective model metadata is not finalized.",
-    "codex_client_version": null,
-    "codex_client_version_unavailable_reason": "The active desktop turn did not expose a client version."
+    "effective_model_unavailable_reason": null,
+    "codex_client_version": "0.153.4"
   },
   "audit_model": {
     "assignment": "same-as-generation",
-    "effective_model_id": null,
+    "effective_model_id": "gpt-5.6-sol",
     "effective_snapshot": null,
-    "unavailable_reason": "The first-pass generation and audit share the active turn; closed-turn metadata is pending."
+    "unavailable_reason": "The session exposes the effective model family but not an authoritative snapshot identifier."
+  },
+  "first_pass_timing_summary": {
+    "duration_seconds": 332.171,
+    "worked_for_seconds": 1239.075
   },
   "timing_wall_clock": {
-    "initial_started_at": "2026-09-08T08:29:46.453Z",
-    "initial_started_epoch_ms": 1788856186453,
-    "initial_ended_at": "2026-09-08T08:34:44.2535409Z",
-    "initial_ended_epoch_ms": 1788856484253
+    "initial_started_at": "2026-09-08T08:28:16.302Z",
+    "initial_started_epoch_ms": 1788856096302,
+    "initial_ended_at": "2026-09-08T08:34:21.911Z",
+    "initial_ended_epoch_ms": 1788856461911
   },
   "timing_seconds": {
-    "initial": 297.8,
+    "initial": 365.609,
+    "source_code_emission": 332.171,
     "repairs": 0,
-    "total": 297.8
+    "total": 365.609
   },
   "tokens": {
     "prompt_generation_total": 1478267,
-    "code_generation_total": null,
+    "code_generation_total": 5858915,
     "repair_total": 0,
-    "implementation_total": null,
-    "overall_total": null,
-    "initial_total": null,
-    "total": null,
-    "telemetry_source": null,
-    "code_generation_unavailable_reason": "The first-pass code-generation turn is still active and must be extracted at the start of the next researcher-triggered turn.",
+    "implementation_total": 5858915,
+    "overall_total": 7337182,
+    "initial_total": 5858915,
+    "total": 5858915,
+    "telemetry_source": "C:\\Users\\hongk\\.codex\\sessions\\2026\\09\\08\\rollout-2026-09-08T15-23-55-01a0801d-da26-7882-9c9a-fa02bd510ade.jsonl",
     "details": {
       "prompt_generation": {
         "receipt": "docs/02-construction/implementation/UC-09/runs/UC09-RQ3-SOL-MEDIUM-R1/prompt-generation-telemetry.json",
         "total_tokens": 1478267
       },
-      "code_generation": null,
-      "initial": null,
+      "code_generation": {
+        "turn_ids": [
+          1
+        ],
+        "input": 172952,
+        "cache_read": 5659264,
+        "total_input": 5832216,
+        "output": 26699,
+        "reasoning": 6663,
+        "total_tokens": 5858915,
+        "cost_usd": 4.4954,
+        "duration_seconds": 1239.075,
+        "closed": true
+      },
+      "initial": {
+        "turn_ids": [
+          1
+        ],
+        "input": 172952,
+        "cache_read": 5659264,
+        "total_input": 5832216,
+        "output": 26699,
+        "reasoning": 6663,
+        "total_tokens": 5858915,
+        "cost_usd": 4.4954,
+        "duration_seconds": 1239.075,
+        "closed": true
+      },
       "repairs": {
         "turn_ids": [],
         "total_tokens": 0,
@@ -71,7 +100,7 @@
     "source_file_count": 126,
     "hash_method": "SHA-256 over sorted relative path, NUL, per-file SHA-256 and newline entries for finalsource/be/src and finalsource/fe/src.",
     "receipt": "docs/02-construction/implementation/UC-09/runs/UC09-RQ3-SOL-MEDIUM-R1/first-pass-generation.json",
-    "receipt_status": "awaiting_closed_turn_telemetry",
+    "receipt_status": "captured",
     "context_isolation": "Frozen Business Rule expressions were first loaded only after this source revision and timer endpoint were captured."
   },
   "changed_files": [
