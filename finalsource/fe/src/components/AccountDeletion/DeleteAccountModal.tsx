@@ -30,6 +30,10 @@ const DeleteAccountModal = ({
   }, [])
 
   useEffect(() => {
+    if (error) cancelButtonRef.current?.focus()
+  }, [error])
+
+  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && !isDeleting) onCancel()
     }

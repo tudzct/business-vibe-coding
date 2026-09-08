@@ -117,7 +117,6 @@ export const useAccountDeletion = ({ onCompleted, onUnavailableDismiss }: Accoun
               : 'We could not delete this account. Please try again.'
       setError(safeMessage(responseMessage, fallback))
       if (status === 404) setTargetUnavailable(true)
-      window.setTimeout(() => originRef.current?.focus(), 0)
     } finally {
       if (sequence === requestSequence.current) {
         requestRef.current = null
