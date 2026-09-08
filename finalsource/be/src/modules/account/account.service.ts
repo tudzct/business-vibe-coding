@@ -50,6 +50,10 @@ export interface UpdatedAccount {
   readonly balance: number;
 }
 
+export interface DeletedAccount {
+  readonly deleted_account_id: number;
+}
+
 interface BalanceTotalRow {
   total: string | number | null;
 }
@@ -315,6 +319,50 @@ export class AccountService {
     }
   }
 
+  async delete(accountId: number, userId: number): Promise<DeletedAccount> {
+    try {
+      return await this.accounts.manager.transaction(async (manager) => {
+        const accounts = manager.getRepository(Account);
+        const transactions = manager.getRepository(Transaction);
+        const account = await accounts.findOne({
+          where: { accountId, userId },
+          select: { accountId: true },
+        });
+
+        if (!account) {
+          throw new NotFoundException(
+            'The requested account could not be found.',
+          );
+        }
+
+        await transactions.delete({ accountId: account.accountId });
+        const deletion = await accounts.delete({
+          accountId: account.accountId,
+          userId,
+        });
+        if (deletion.affected !== 1) {
+          throw new ConflictException(
+            'The operation cannot be completed due to a conflict.',
+          );
+        }
+
+        return { deleted_account_id: account.accountId };
+      });
+    } catch (error: unknown) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      if (this.isDeletionConflict(error)) {
+        throw new ConflictException(
+          'The operation cannot be completed due to a conflict.',
+        );
+      }
+      throw new InternalServerErrorException(
+        'A system error occurred while processing the request.',
+      );
+    }
+  }
+
   private isDuplicateEntry(error: unknown): boolean {
     if (!(error instanceof QueryFailedError)) return false;
     const driverError: unknown = error.driverError;
@@ -324,6 +372,19 @@ export class AccountService {
       'code' in driverError &&
       driverError.code === 'ER_DUP_ENTRY'
     );
+  }
+
+  private isDeletionConflict(error: unknown): boolean {
+    if (!(error instanceof QueryFailedError)) return false;
+    const driverError: unknown = error.driverError;
+    if (typeof driverError !== 'object' || driverError === null || !('code' in driverError)) {
+      return false;
+    }
+    return [
+      'ER_ROW_IS_REFERENCED_2',
+      'ER_LOCK_DEADLOCK',
+      'ER_LOCK_WAIT_TIMEOUT',
+    ].includes(String(driverError.code));
   }
 
   private async ensureAccountNumberAvailable(

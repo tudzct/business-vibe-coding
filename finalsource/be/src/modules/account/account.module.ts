@@ -6,10 +6,15 @@ import { AccountDetailJwtAuthGuard } from './account-detail-jwt-auth.guard';
 import { Account } from './account.entity';
 import { AccountService } from './account.service';
 import { Transaction } from '../transaction/transaction.entity';
+import { AccountDeleteJwtAuthGuard } from './account-delete-jwt-auth.guard';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Account, Transaction]), AuthModule],
   controllers: [AccountController],
-  providers: [AccountService, AccountDetailJwtAuthGuard],
+  providers: [
+    AccountService,
+    AccountDetailJwtAuthGuard,
+    AccountDeleteJwtAuthGuard,
+  ],
 })
 export class AccountModule {}

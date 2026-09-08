@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -28,6 +29,7 @@ import type { Request } from 'express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import type { AuthenticatedUser } from '../auth/jwt.strategy';
 import { AccountDetailJwtAuthGuard } from './account-detail-jwt-auth.guard';
+import { AccountDeleteJwtAuthGuard } from './account-delete-jwt-auth.guard';
 import {
   AccountListDataDto,
   AccountService,
@@ -52,6 +54,12 @@ interface AccountUpdateResponse {
   success: true;
   message: 'Account updated successfully';
   data: { account: UpdatedAccount };
+}
+
+interface AccountDeleteResponse {
+  success: true;
+  message: 'Account deleted successfully';
+  data: { deleted_account_id: number };
 }
 
 @ApiTags('accounts')
@@ -162,6 +170,36 @@ export class AccountController {
       success: true,
       message: 'Account updated successfully',
       data: { account },
+    };
+  }
+
+  @Delete(':id')
+  @UseGuards(AccountDeleteJwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ description: 'Account deleted successfully' })
+  @ApiBadRequestResponse({ description: 'Invalid account ID' })
+  @ApiUnauthorizedResponse({ description: 'Unable to authenticate the user' })
+  @ApiNotFoundResponse({ description: 'Requested account is unavailable' })
+  @ApiConflictResponse({ description: 'Account deletion conflicts with system state' })
+  @ApiInternalServerErrorResponse({ description: 'Account deletion failed safely' })
+  async delete(
+    @RequestDecorator() request: AuthenticatedRequest,
+    @Param(
+      'id',
+      new ParseIntPipe({
+        exceptionFactory: () => new BadRequestException('Invalid account ID.'),
+      }),
+    )
+    accountId: number,
+  ): Promise<AccountDeleteResponse> {
+    const data = await this.accountService.delete(
+      accountId,
+      request.user.userId,
+    );
+    return {
+      success: true,
+      message: 'Account deleted successfully',
+      data,
     };
   }
 }

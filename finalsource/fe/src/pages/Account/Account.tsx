@@ -4,7 +4,10 @@ import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { accountService } from '../../api/account.service'
 import type { AccountDetail, AccountListItem } from '../../api/types'
 import AccountEditForm from '../../components/AccountEditForm/AccountEditForm'
+import AccountDeletionSuccessDialog from '../../components/AccountDeletion/AccountDeletionSuccessDialog'
+import DeleteAccountModal from '../../components/AccountDeletion/DeleteAccountModal'
 import { useAuth } from '../../hooks/useAuth'
+import { useAccountDeletion } from '../../hooks/useAccountDeletion'
 
 const navigation = [
   { path: '/dashboard', label: 'Overview', icon: '▦' },
@@ -27,9 +30,10 @@ interface AccountCardProps {
   readonly account: AccountListItem
   readonly editMode: boolean
   readonly onEdit: (accountId: number) => void
+  readonly onDelete: (account: AccountListItem, origin: HTMLButtonElement) => void
 }
 
-const AccountCard = ({ account, editMode, onEdit }: AccountCardProps) => (
+const AccountCard = ({ account, editMode, onEdit, onDelete }: AccountCardProps) => (
   <article className="flex min-h-[305px] flex-col rounded-lg bg-white p-6 shadow-[0_20px_25px_rgba(76,103,100,0.10)]">
     <div className="flex min-h-11 items-start justify-between gap-4 border-b border-[#d2d2d240] pb-3">
       <h2 className="text-base font-bold capitalize text-[#878787]">{account.account_type}</h2>
@@ -53,7 +57,12 @@ const AccountCard = ({ account, editMode, onEdit }: AccountCardProps) => (
     </div>
 
     <div className="mt-6 flex items-center justify-between">
-      <button type="button" disabled className="cursor-not-allowed text-base text-[#299d91] opacity-80">
+      <button
+        type="button"
+        onClick={(event) => onDelete(account, event.currentTarget)}
+        aria-label={`Delete ${account.bank_name} account ending ${account.account_number_last_4}`}
+        className="rounded text-base text-[#c93232] focus:outline-none focus:ring-2 focus:ring-[#d92e2e] focus:ring-offset-2"
+      >
         Remove
       </button>
       {editMode ? (
@@ -121,6 +130,11 @@ const Account = () => {
       }
     }
   }, [])
+
+  const deletion = useAccountDeletion({
+    onCompleted: loadAccounts,
+    onUnavailableDismiss: loadAccounts,
+  })
 
   useEffect(() => {
     void loadAccounts()
@@ -299,7 +313,19 @@ const Account = () => {
 
           {!selectedAccount && !isLoadingEdit && !editLoadError && !isLoading && !error && accounts.length > 0 && (
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {accounts.map((account) => <AccountCard key={account.id} account={account} editMode={editMode} onEdit={(accountId) => void selectAccountForEdit(accountId)} />)}
+              {accounts.map((account) => (
+                <AccountCard
+                  key={account.id}
+                  account={account}
+                  editMode={editMode}
+                  onEdit={(accountId) => void selectAccountForEdit(accountId)}
+                  onDelete={(selected, origin) => deletion.open({
+                    id: selected.id,
+                    bankName: selected.bank_name,
+                    lastFour: selected.account_number_last_4,
+                  }, origin)}
+                />
+              ))}
               <article className="flex min-h-[305px] flex-col items-center justify-center rounded-lg bg-white p-6 shadow-[0_20px_25px_rgba(76,103,100,0.10)]">
                 <Link to="/accounts/add" className="rounded bg-[#299d91] px-8 py-3 font-semibold text-white">Add Accounts</Link>
                 <button type="button" onClick={toggleEditMode} className="mt-3 text-sm text-[#299d91]">{editMode ? 'Done Editing' : 'Edit Accounts'}</button>
@@ -308,6 +334,19 @@ const Account = () => {
           )}
         </main>
       </div>
+      {deletion.phase === 'confirm' && deletion.target && (
+        <DeleteAccountModal
+          target={deletion.target}
+          isDeleting={deletion.isDeleting}
+          targetUnavailable={deletion.targetUnavailable}
+          error={deletion.error}
+          onCancel={deletion.dismiss}
+          onConfirm={() => void deletion.confirm()}
+        />
+      )}
+      {deletion.phase === 'success' && (
+        <AccountDeletionSuccessDialog onComplete={deletion.finishSuccess} />
+      )}
     </div>
   )
 }
