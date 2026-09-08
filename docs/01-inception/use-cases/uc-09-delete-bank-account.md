@@ -47,10 +47,8 @@ PRE-2: The system resolves the requested account identifier.
 
 ### Post-Condition(s)
 
-POST-1: On confirmed success, the account is removed from the system.
+POST-1: On confirmed success, the account is no longer available to the user.
 POST-2: On confirmed success, the system displays a success dialog, waits 1500ms, and then refreshes the account list or navigates to /accounts.
-POST-3: If the operation is not completed, system state remains unchanged.
-POST-4: On confirmed success, the system synchronizes the global state to reflect the removed data.
 
 ### Basic Flow
 
@@ -67,24 +65,21 @@ POST-4: On confirmed success, the system synchronizes the global state to reflec
 
 AF-1: Cancel deletion
 3a. The user selects Cancel or closes the modal.
-3b. No API request is sent and no data changes.
+3b. No API request is sent.
 
 ### Exception Flow
 
 EF-1: Invalid account ID
 5a. The controller returns HTTP 400.
 
-EF-2: Account not found
+EF-2: Account unavailable
 6a. The backend returns HTTP 404.
 
-EF-3: Deletion failure
-7a. The backend returns HTTP 500.
+EF-3: Request conflict
+6b. The backend returns HTTP 409.
 
-EF-4: Deletion conflict
-8a. The backend returns HTTP 409.
-
-EF-5: Ledger reconciliation conflict
-9a. The backend returns HTTP 409.
+EF-4: Processing failure
+6c. The backend returns HTTP 500.
 
 ### Related UI
 
@@ -96,7 +91,7 @@ API-ACCOUNT-DELETE
 
 ### Notes
 
-Security rationale: Standard REST semantics apply for resource resolution.
+Standard REST semantics apply to request processing and resource resolution.
 
 ## UML Model
 
@@ -178,7 +173,7 @@ AccountService ..> Transaction : deletes cascade
 
 ## Business Rules
 
-The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
+The following rules are candidate requirements for researcher review. OCL and natural-language constraints become authoritative only after promotion through the canonical source workflow.
 
 ~~~text
 BR-ACC-27: Account deletion ownership validation
@@ -196,38 +191,78 @@ post BR_ACC_28_AtomicDeletion:
 Technical constraint:
 - The backend MUST execute the deletion of all related Transaction rows and the Account row within a single atomic database transaction (using QueryRunner). If any step fails, the entire transaction rolls back.
 
-BR-ACC-29: Tax and receipt document protection
+BR-ACC-29: Unsettled transaction protection
 context AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto
-pre BR_ACC_29_NoReceiptsAttached:
-  not Transaction.allInstances()->exists(t | t.account_id = accountId and t.receipt_id <> null)
+pre BR_ACC_29_NoPendingTransactions:
+  not Transaction.allInstances()->exists(t |
+    t.account_id = accountId and
+    t.status = TransactionStatus::Pending
+  )
 Technical constraint:
-- The backend MUST throw a 409 ConflictException if any transaction within this account has an attached receipt_id.
+- The backend MUST throw a 409 ConflictException if the account contains any Pending transaction.
+- The validation MUST use the same locked database snapshot as the deletion operation so that a concurrent request cannot introduce a new Pending transaction after validation.
+- Rejected deletion MUST leave the Account, its Transactions, and User.total_balance unchanged.
 
 BR-ACC-30: Cross-entity net worth synchronization
 context AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto
 post BR_ACC_30_SyncUserTotalBalance:
-  let newSum = Account.allInstances()->select(a | a.user_id = userId)->collect(balance)->sum() in
-  User.allInstances()->any(u | u.user_id = userId).total_balance = newSum
+  let newSum : Decimal =
+    Account.allInstances()
+      ->select(a | a.user_id = userId)
+      ->collect(a | a.balance)
+      ->sum()
+  in
+    User.allInstances()->exists(u |
+      u.user_id = userId and
+      u.total_balance = newSum
+    )
 Technical constraint:
-- The backend MUST recalculate the user's total_balance based on remaining accounts and update the User entity within the same atomic database transaction.
+- The backend MUST recalculate the user's total_balance from all remaining accounts and update the User entity within the same atomic database transaction used for deletion.
+- The calculation MUST use database decimal arithmetic and a consistent locked snapshot; it MUST NOT derive the result from client input or an unchecked cached total.
 
-BR-ACC-31: Cross-account linked data protection
+BR-ACC-31: Portfolio liquidity coverage after deletion
 context AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto
-pre BR_ACC_31_NoSharedReceipts:
-  let targetReceipts = Transaction.allInstances()->select(t | t.account_id = accountId and t.receipt_id <> null)->collect(receipt_id) in
-  not Transaction.allInstances()->exists(t | t.account_id <> accountId and targetReceipts->includes(t.receipt_id))
-Technical constraint:
-- The backend MUST throw a 409 ConflictException if any transaction in this account shares a receipt_id with a transaction in another account.
-
-BR-ACC-32: Account state reconciliation validation
-context AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto
-pre BR_ACC_32_StateReconciliation:
-  let target = Account.allInstances()->any(a | a.account_id = accountId) in
-  let revSum = Transaction.allInstances()->select(t | t.account_id = accountId and t.type = TransactionType::Revenue)->collect(amount)->sum() in
-  let expSum = Transaction.allInstances()->select(t | t.account_id = accountId and t.type = TransactionType::Expense)->collect(amount)->sum() in
-  target.balance = (revSum - expSum)
-Technical constraint:
-- The backend MUST throw a 409 ConflictException if the account's current balance does not mathematically match the sum of its Revenue transactions minus the sum of its Expense transactions.
+pre BR_ACC_31_RemainingLiquidityCoverage:
+  let remainingLiquidAssets : Decimal =
+    Account.allInstances()
+      ->select(a |
+        a.user_id = userId and
+        a.account_id <> accountId and
+        (a.account_type = AccountType::Checking or
+         a.account_type = AccountType::Savings)
+      )
+      ->collect(a | a.balance)
+      ->sum()
+  in
+  let remainingLoanDebt : Decimal =
+    Account.allInstances()
+      ->select(a |
+        a.user_id = userId and
+        a.account_id <> accountId and
+        a.account_type = AccountType::Loan
+      )
+      ->collect(a | a.balance)
+      ->sum()
+  in
+  let remainingPendingExpenses : Decimal =
+    Transaction.allInstances()
+      ->select(t |
+        t.type = TransactionType::Expense and
+        t.status = TransactionStatus::Pending and
+        Account.allInstances()->exists(a |
+          a.account_id = t.account_id and
+          a.user_id = userId and
+          a.account_id <> accountId
+        )
+      )
+      ->collect(t | t.amount)
+      ->sum()
+  in
+    remainingLiquidAssets >=
+      (remainingLoanDebt * 1.20) + remainingPendingExpenses
+Technical constraints:
+- The backend MUST evaluate the coverage formula from a consistent locked database snapshot.
+- Deletion MUST return HTTP 409 when the user's remaining Checking and Savings balances do not cover 120% of remaining Loan balances plus all remaining Pending expenses.
+- A coverage rejection MUST persist no Account, Transaction, or User changes.
 ~~~
-
 
