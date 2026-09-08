@@ -1,0 +1,114 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "business-rule-resource",
+  "status": "Frozen",
+  "uc_id": "UC-09",
+  "source_use_case": "docs/01-inception/use-cases/uc-09-delete-bank-account.md",
+  "source_use_case_sha256": "sha256:7cb25abbce1f2dd5f5e49b289fd461eeb8430a63c4de9132aa9f5f96030f7451",
+  "spreadsheet": {
+    "id": "1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM",
+    "tab": "Use cases",
+    "range": "A200:B218",
+    "retrieved_at": "2026-08-27T03:49:28.570Z"
+  },
+  "ocl_utility_source": "Use cases!A2:B2",
+  "rules": [
+    {
+      "br_id": "BR-ACC-27",
+      "name": "Account deletion ownership validation",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto\npre BR_ACC_27_MustOwnAccount:\n  Account.allInstances()->exists(a | a.account_id = accountId and a.user_id = userId)\nTechnical constraint:\n- If the account does not exist or does not belong to the user, the backend intentionally throws a 404 NotFoundException to prevent data enumeration.",
+      "context": "AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "If the account does not exist or does not belong to the authenticated application user, the backend throws HTTP 404 NotFoundException to prevent data enumeration.",
+      "traceability": [
+        "Use cases!A200:B218",
+        "UC-09 PRE-2 and EF-2",
+        "API-ACCOUNT-DELETE"
+      ]
+    },
+    {
+      "br_id": "BR-ACC-28",
+      "name": "Account deletion data integrity (Cascading)",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto\npost BR_ACC_28_AtomicDeletion:\n  not Account.allInstances()->exists(a | a.account_id = accountId) and\n  not Transaction.allInstances()->exists(t | t.account_id = accountId)\nTechnical constraint:\n- The backend MUST execute the deletion of all related Transaction rows and the Account row within a single atomic database transaction (using QueryRunner). If any step fails, the entire transaction rolls back.",
+      "context": "AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "Successful deletion removes the Account and all related Transaction rows; if any deletion step fails, the transaction rolls back and the API returns the source-defined HTTP 500 processing failure.",
+      "traceability": [
+        "Use cases!A200:B218",
+        "UC-09 POST-1 and Basic Flow 6-7",
+        "UC-09 UML AccountService deletes Account and Transaction cascade",
+        "UC-09 EF-4",
+        "API-ACCOUNT-DELETE"
+      ]
+    },
+    {
+      "br_id": "BR-ACC-29",
+      "name": "Unsettled transaction protection",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto\npre BR_ACC_29_NoPendingTransactions:\n  not Transaction.allInstances()->exists(t |\n    t.account_id = accountId and\n    t.status = TransactionStatus::Pending\n  )\nTechnical constraint:\n- The backend MUST throw a 409 ConflictException if the account contains any Pending transaction.\n- The validation MUST use the same locked database snapshot as the deletion operation so that a concurrent request cannot introduce a new Pending transaction after validation.\n- Rejected deletion MUST leave the Account, its Transactions, and User.total_balance unchanged.",
+      "context": "AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "An account containing any Pending transaction produces HTTP 409 ConflictException and leaves the Account, its Transactions, and User.total_balance unchanged.",
+      "traceability": [
+        "Use cases!A200:B218",
+        "UC-09 EF-3",
+        "API-ACCOUNT-DELETE HTTP 409"
+      ]
+    },
+    {
+      "br_id": "BR-ACC-30",
+      "name": "Cross-entity net worth synchronization",
+      "representation": "ocl_postcondition",
+      "expression_or_text": "context AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto\npost BR_ACC_30_SyncUserTotalBalance:\n  let newSum : Decimal =\n    Account.allInstances()\n      ->select(a | a.user_id = userId)\n      ->collect(a | a.balance)\n      ->sum()\n  in\n    User.allInstances()->exists(u |\n      u.user_id = userId and\n      u.total_balance = newSum\n    )\nTechnical constraint:\n- The backend MUST recalculate the user's total_balance from all remaining accounts and update the User entity within the same atomic database transaction used for deletion.\n- The calculation MUST use database decimal arithmetic and a consistent locked snapshot; it MUST NOT derive the result from client input or an unchecked cached total.",
+      "context": "AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "A successful deletion stores User.total_balance as the database-decimal sum of all remaining owned-account balances in the same atomic transaction; failure rolls back the deletion and synchronization together.",
+      "traceability": [
+        "Use cases!A200:B218",
+        "UC-09 UML User owns Account",
+        "UC-09 EF-4",
+        "API-ACCOUNT-DELETE"
+      ]
+    },
+    {
+      "br_id": "BR-ACC-31",
+      "name": "Portfolio liquidity coverage after deletion",
+      "representation": "ocl_precondition",
+      "expression_or_text": "context AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto\npre BR_ACC_31_RemainingLiquidityCoverage:\n  let remainingLiquidAssets : Decimal =\n    Account.allInstances()\n      ->select(a |\n        a.user_id = userId and\n        a.account_id <> accountId and\n        (a.account_type = AccountType::Checking or\n         a.account_type = AccountType::Savings)\n      )\n      ->collect(a | a.balance)\n      ->sum()\n  in\n  let remainingLoanDebt : Decimal =\n    Account.allInstances()\n      ->select(a |\n        a.user_id = userId and\n        a.account_id <> accountId and\n        a.account_type = AccountType::Loan\n      )\n      ->collect(a | a.balance)\n      ->sum()\n  in\n  let remainingPendingExpenses : Decimal =\n    Transaction.allInstances()\n      ->select(t |\n        t.type = TransactionType::Expense and\n        t.status = TransactionStatus::Pending and\n        Account.allInstances()->exists(a |\n          a.account_id = t.account_id and\n          a.user_id = userId and\n          a.account_id <> accountId\n        )\n      )\n      ->collect(t | t.amount)\n      ->sum()\n  in\n    remainingLiquidAssets >=\n      (remainingLoanDebt * 1.20) + remainingPendingExpenses\nTechnical constraints:\n- The backend MUST evaluate the coverage formula from a consistent locked database snapshot.\n- Deletion MUST return HTTP 409 when the user's remaining Checking and Savings balances do not cover 120% of remaining Loan balances plus all remaining Pending expenses.\n- A coverage rejection MUST persist no Account, Transaction, or User changes.",
+      "context": "AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto",
+      "enforcement_layers": [
+        "backend",
+        "database"
+      ],
+      "failure_behavior": "If remaining Checking and Savings balances do not cover 120% of remaining Loan balances plus all remaining Pending expenses, deletion returns HTTP 409 and persists no Account, Transaction, or User changes.",
+      "traceability": [
+        "Use cases!A200:B218",
+        "UC-09 EF-3",
+        "UC-09 UML AccountType and Transaction",
+        "API-ACCOUNT-DELETE HTTP 409"
+      ]
+    }
+  ],
+  "ordered_br_ids": [
+    "BR-ACC-27",
+    "BR-ACC-28",
+    "BR-ACC-29",
+    "BR-ACC-30",
+    "BR-ACC-31"
+  ],
+  "unresolved_items": []
+}
