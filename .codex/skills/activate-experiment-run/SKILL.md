@@ -13,9 +13,9 @@ Read `docs/00-context/workflow/gates/EXPERIMENT-CONFIGURATION-GATE.md`, `docs/00
 
 ## Prepare a configuration
 
-Create a Draft configuration at `docs/05-experiments/configurations/<CONFIG-ID>.json` from `templates/research/experiment-configuration.template.json` only after collecting the researcher-supplied comparison group, researcher identifier, audit protocol, run IDs, model tuples, replicate indexes, and run orders. Use every ordered BR ID from the frozen UC and record the prescribed baseline path; do not select rules. The baseline itself is frozen during Phase 1 and checked again at activation.
+Create a Draft configuration at `docs/05-experiments/configurations/<CONFIG-ID>.json` from `templates/research/experiment-configuration.template.json` only after collecting the researcher-supplied comparison group, researcher identifier, audit protocol, run IDs, model tuples, replicate indexes, and run orders. Every new configuration must retain the template's fixed `timing_method: system_timestamp_delta`; do not omit, rename or substitute that method. Use every ordered BR ID from the frozen UC and record the prescribed baseline path; do not select rules. The baseline itself is frozen during Phase 1 and checked again at activation.
 
-Never infer a model tuple, replicate, run order, audit assignment, or a `Confirmed` status. Stop for the researcher to confirm the complete configuration.
+Never infer a model tuple, replicate, run order, audit assignment, alternative timing method, or a `Confirmed` status. Stop for the researcher to confirm the complete configuration.
 
 ## Activate one run
 

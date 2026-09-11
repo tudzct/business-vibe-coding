@@ -1,12 +1,10 @@
-# UI rubric provenance
-
-The following paragraph is copied verbatim from the supplied Security reference's `.codex/skills/audit-generation-metrics/references/metric-rubric.md`, section **UI accuracy**. No Security Rule or flow-scoring logic is imported.
+# Business UI accuracy rubric
 
 Use the frozen dataset as the complete visual contract and any autonomous reconstruction record only as traceability. Require 100% structural coverage for every visible node/group, then score weighted inspected checkpoints: visible elements 20%, hierarchy/layout 25%, spacing/dimensions 15%, typography/colors/assets 15%, interaction states 15%, responsive behavior 10%. Runtime screenshots must use the natural reference viewport and UC-required states and, when the environment is deterministic, report perceptual similarity with mandatory target `>= 0.90` separately from the weighted score. A miss is a repair-required defect, not a researcher mapping question. Do not award a final UI score from source inspection alone or hide font/browser/antialiasing limitations. Use N/A only without a referenced design.
 
-## Business implementation of the rubric
+## Deterministic implementation
 
-The reference defines weights and evidence requirements, but supplies no checkpoint calculator or screenshot comparison algorithm. This skill adds a deterministic checkpoint calculator. Freeze checkpoint granularity before comparison; use equally weighted binary checkpoints within each category:
+The rubric defines weights and evidence requirements. This skill supplies a deterministic checkpoint calculator. Freeze checkpoint granularity before comparison; use equally weighted binary checkpoints within each category:
 
 | Category key | Weight |
 |---|---:|

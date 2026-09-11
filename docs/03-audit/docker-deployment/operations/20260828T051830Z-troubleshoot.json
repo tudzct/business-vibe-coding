@@ -17,5 +17,5 @@
   ],
   "outcome": "PASS",
   "error_excerpt": null,
-  "finding": "The reported 404 belongs to the separate Security vibe coding service on port 8000. The generated business-vibe-coding frontend is healthy on port 8080 and serves /register with HTTP 200; no source repair is applicable."
+  "finding": "The reported 404 belongs to an unrelated service on port 8000. The generated business-vibe-coding frontend is healthy on port 8080 and serves /register with HTTP 200; no source repair is applicable."
 }

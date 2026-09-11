@@ -1,5 +1,5 @@
 {
-  "schema_version": "2.0",
+  "schema_version": "2.1",
   "artifact_type": "experiment-configuration",
   "status": "Draft | Confirmed",
   "configuration_id": "<CONFIG-ID>",
@@ -7,6 +7,7 @@
   "researcher_id": "<stable identifier>",
   "decided_at": "<ISO-8601>",
   "sheet_revision": "Use cases!A:B@sha256:<projection-checksum-set>",
+  "timing_method": "system_timestamp_delta",
   "audit_design": {
     "protocol": "fixed | matched | cross",
     "fixed_auditor": null

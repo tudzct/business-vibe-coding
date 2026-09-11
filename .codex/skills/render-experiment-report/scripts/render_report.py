@@ -35,7 +35,8 @@ def main():
     for row in rows:
         evidence = "; ".join(row.get("evidence", [])).replace("|", "\\|")
         lines.append(f"| {row.get('br_id', '')} | {row.get('status', '')} | {evidence} |")
-    lines.extend(["", f"Met: {final.get('met', 0)}/{final.get('total', 0)} ({final.get('acceptance_percent', 'N/A')}%)", ""])
+    lines.extend(["", (f"BR counts: {final.get('met', 0)} met, {final.get('unmet', 0)} unmet, "
+                        f"{final.get('not_evaluable', 0)} not evaluable, {final.get('total', 0)} total"), ""])
     ui = data.get("ui_accuracy")
     if ui:
         current = next((item for item in ui.get("assessments", [])
@@ -45,6 +46,11 @@ def main():
         lines.extend(["## Figma UI accuracy", "",
                       f"Assessment: `{current['assessment_id']}` ({current['stage']})",
                       f"Status: {current['status']}",
+                      ("UI checkpoints: " +
+                       (f"{current['checkpoint_totals']['met']} met, {current['checkpoint_totals']['unmet']} unmet, "
+                        f"{current['checkpoint_totals']['not_evaluable']} not evaluable, "
+                        f"{current['checkpoint_totals']['total']} total"
+                        if current.get('checkpoint_totals') else "N/A")),
                       f"Weighted accuracy (%): {current['weighted_percent'] if current['weighted_percent'] is not None else 'N/A'}",
                       f"Structural coverage (%): {current['structural_coverage_percent'] if current['structural_coverage_percent'] is not None else 'N/A'}",
                       "Perceptual similarity (separate): " + json.dumps(current['input'].get('perceptual_similarity'), ensure_ascii=False),

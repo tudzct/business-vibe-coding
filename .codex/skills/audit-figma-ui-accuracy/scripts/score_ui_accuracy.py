@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate screenshot-backed judgments, compute the Security UI rubric, persist."""
+"""Validate screenshot-backed judgments, compute the Business UI rubric, persist."""
 
 import argparse
 import json
@@ -94,6 +94,10 @@ def calculate(data):
         require([r["id"] for r in categories[key]] == inventory["category_checkpoint_ids"][key],
                 f"checkpoint inventory changed: {key}")
     result["categories"] = counts
+    result["checkpoint_totals"] = {
+        field: sum(category[field] for category in counts.values())
+        for field in ("total", "met", "unmet", "not_evaluable")
+    }
     result["structure"] = structural
     if not structural["not_evaluable"]:
         result["structural_coverage_percent"] = round(100 * structural["met"] / structural["total"], 6)
@@ -129,6 +133,9 @@ def markdown(result):
              f"Source revision: {result['input']['source_revision']}", "",
              "Full checkpoint observations, limitations and screenshot hashes are retained in the adjacent JSON.", ""]
     if "categories" in result:
+        totals = result["checkpoint_totals"]
+        lines += [f"UI checkpoints: {totals['met']} met, {totals['unmet']} unmet, "
+                  f"{totals['not_evaluable']} not evaluable, {totals['total']} total", ""]
         lines += ["| Category | Weight | Met | Total | Not evaluable |", "|---|---:|---:|---:|---:|"]
         for key, c in result["categories"].items():
             lines.append(f"| {key} | {WEIGHTS[key]} | {c['met']} | {c['total']} | {c['not_evaluable']} |")
@@ -151,9 +158,9 @@ def main():
             run = read_json(path)
             require(all(run[k] == result["input"][k] for k in ("uc_id", "run_id")), "run identity changed before save")
             if run.get("ui_accuracy") is None:
-                run["ui_accuracy"] = {"schema_version": 1, "rubric_id": "security-ui-weighted-v1", "assessments": []}
+                run["ui_accuracy"] = {"schema_version": 1, "rubric_id": "business-ui-weighted-v1", "assessments": []}
             block = run["ui_accuracy"]
-            require(block.get("schema_version") == 1 and block.get("rubric_id") == "security-ui-weighted-v1", "unknown UI schema")
+            require(block.get("schema_version") == 1 and block.get("rubric_id") == "business-ui-weighted-v1", "unknown UI schema")
             history = block["assessments"]
             previous = next((r for r in history if r["assessment_id"] == result["assessment_id"]), None)
             if previous:

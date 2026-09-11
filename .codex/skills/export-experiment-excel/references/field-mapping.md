@@ -18,16 +18,15 @@
 | Observable tool calls | `metrics.phases.<phase>.values.tool_call_count` |
 | Model/API calls | `metrics.phases.<phase>.values.model_call_count` (null if unavailable) |
 | Workflow fields above | Replace `metrics.phases.<phase>.values` with `metrics.workflow` |
-| BR initial/final percentage | `business_rules.initial.acceptance_percent` / `business_rules.final.acceptance_percent` |
 | UI weighted percentage | `ui_accuracy_percent` plus corresponding `ui_accuracy_status` |
 
 Only `closed` phase values are exportable as finalized; `skipped` is N/A with its reason, not fabricated zero. Workflow requires `metrics.status == finalized`. Legacy metrics lacking this schema cannot be relabelled as phase-split metrics. Unavailable counters remain N/A. Cached input is part of input, reasoning is part of output. "Tool cost" must explicitly mean call count to map it to tool_call_count; it is not money or model calls. Do not sum three phases or implement a flow score here.
 
-Seconds are captured work, not UI "Worked for" or full elapsed chat time. Convert seconds to minutes only for an explicitly minute-labelled field. UI/BR percentages are 0–100 in JSON: divide by 100 for a cell using Excel's `%` number format, retain 0–100 for a numeric "percent points" cell. Ambiguous units produce N/A. Preserve existing formula cells even if they produce a pre-existing error.
+Seconds are captured work, not UI "Worked for" or full elapsed chat time. Convert seconds to minutes only for an explicitly minute-labelled field. UI percentages are 0–100 in JSON: divide by 100 for a cell using Excel's `%` number format, retain 0–100 for a numeric "percent points" cell. Ambiguous units produce N/A. Business Rule results are counts (`total`, `met`, `unmet`, `not_evaluable`), not a percentage. Preserve existing formula cells even if they produce a pre-existing error.
 
 ## Mapping manifest
 
-All paths resolve from `repo_root`; all writes stay in Business, never Security. The agent generates the manifest from actual workbook inspection. It is not supplied manually by the researcher.
+All paths resolve from `repo_root`; all writes stay in the Business repository and outside external reference projects. The agent generates the manifest from actual workbook inspection. It is not supplied manually by the researcher.
 
 ```json
 {

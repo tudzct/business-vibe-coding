@@ -20,11 +20,11 @@ The researcher invokes this skill in a later turn after the work response ends. 
 
 ## Evidence rules
 
-- Adapt the Security reference cumulative `total_token_usage` delta logic, duplicate suppression and reset fallback to `last_token_usage`. Input/output/total must be available and consistent. Missing cached/reasoning counters are `null` with reasons.
+- Use cumulative `total_token_usage` deltas, duplicate suppression and reset fallback to `last_token_usage`. Input/output/total must be available and consistent. Missing cached/reasoning counters are `null` with reasons.
 - Report only input, cached input, output, reasoning output and total. Cached is a subset of input; reasoning is a subset of output. Do not export fresh-input, cache-write, monetary costs or a core-three-phase sum.
 - One turn is indivisible. Phase boundaries determine membership; the AI supplies reasons and explicit exclusions, while the script validates coverage and frozen evidence. This constrains classification but does not prove semantic intent automatically.
 - `workflow_turn_count` counts selected researcher-initiated turns; `tool_call_count` counts observable tool invocation records (deduplicate call IDs). Nested calls inside a shell/orchestrator are not automatically separately observable. Telemetry update counts remain diagnostics, never model/API call counts. Model-call count is `null` unless a separately validated exact request schema is implemented.
 - Capture time live with the shared helper. Sum non-overlapping captured work intervals for the same selected turns. Do not substitute UI Worked-for, tool duration or whole-chat elapsed time. Missing endpoints yield `null` plus reason; never reconstruct them after completion.
 - The full-file session hash changes as the task continues; completed-turn prefix hashes preserve stable evidence across later measurements. Never rewrite a closed phase's selected turns or results.
-- Audit owns BR evidence/results. Measure owns `metrics`. Preserve unrelated JSON keys, historical run evidence and the read-only Security reference project.
+- Audit owns BR evidence/results. Measure owns `metrics`. Preserve unrelated JSON keys, historical run evidence and external reference projects.
 - The canonical metrics commit is authoritative even if the subsequent Excel export fails. Do not rerun or alter an already committed Measure boundary merely to retry Excel; retry only `export-experiment-excel` from the committed JSON.

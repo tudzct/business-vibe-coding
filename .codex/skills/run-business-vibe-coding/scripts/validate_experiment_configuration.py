@@ -9,6 +9,8 @@ EFFORTS = {"none", "low", "medium", "high", "xhigh", "max"}
 MODES = {"standard", "pro"}
 PROTOCOLS = {"fixed", "matched", "cross"}
 PROMPT_VARIANTS = {"full", "rq3"}
+SCHEMA_VERSIONS = {"2.0", "2.1"}
+TIMING_METHOD = "system_timestamp_delta"
 
 
 def text(value, field):
@@ -36,10 +38,18 @@ def validate_model(model, field):
 
 def validate(path):
     data = json.loads(path.read_text(encoding="utf-8"))
+    schema_version = data.get("schema_version")
+    if schema_version not in SCHEMA_VERSIONS:
+        raise ValueError(f"schema_version must be one of {sorted(SCHEMA_VERSIONS)}")
     if data.get("artifact_type") != "experiment-configuration" or data.get("status") != "Confirmed":
         raise ValueError("configuration must be Confirmed")
     for field in ("configuration_id", "comparison_group_id", "researcher_id", "decided_at", "sheet_revision"):
         text(data.get(field), field)
+    timing_method = data.get("timing_method")
+    if schema_version == "2.1" and timing_method != TIMING_METHOD:
+        raise ValueError(f"schema 2.1 timing_method must be {TIMING_METHOD}")
+    if timing_method is not None and timing_method != TIMING_METHOD:
+        raise ValueError(f"unsupported timing_method: {timing_method}")
     audit = data.get("audit_design")
     if not isinstance(audit, dict) or audit.get("protocol") not in PROTOCOLS:
         raise ValueError("audit_design.protocol is invalid")

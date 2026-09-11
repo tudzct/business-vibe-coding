@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Post-turn UC telemetry, adapted from the supplied Security cumulative-delta method."""
+"""Extract and persist post-turn UC telemetry from cumulative usage counters."""
 
 import argparse
 import json

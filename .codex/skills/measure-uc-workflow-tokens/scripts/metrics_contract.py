@@ -33,8 +33,9 @@ def read_json(path):
 def writable(path):
     path = Path(path).resolve()
     require(path.is_relative_to(ROOT), "output must stay inside Business repository")
-    require(not path.is_relative_to(ROOT / "security-vibe-coding-master"),
-            "Security reference project is read-only")
+    relative = path.relative_to(ROOT)
+    require(not relative.parts or not relative.parts[0].lower().endswith("-master"),
+            "external reference projects are read-only")
     return path
 
 

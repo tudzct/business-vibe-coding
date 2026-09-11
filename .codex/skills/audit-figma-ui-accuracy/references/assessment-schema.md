@@ -25,11 +25,13 @@ Canonical run additions:
 
 ```text
 ui_accuracy.schema_version = 1
-ui_accuracy.rubric_id = security-ui-weighted-v1
+ui_accuracy.rubric_id = business-ui-weighted-v1
 ui_accuracy.assessments[] = immutable computed snapshots, including full input/evidence
 ui_accuracy.current_assessment_id = last accepted assessment
 ui_accuracy_percent = current weighted percentage, or null
 ui_accuracy_status = scored | repair_required | similarity_pending | not_evaluable | not_applicable
 ```
+
+For a complete design, every computed assessment also contains `checkpoint_totals` with `total`, `met`, `unmet`, and `not_evaluable`, aggregated across the six weighted rubric categories. Structural inventory counts remain separate under `structure`; raw checkpoint counts do not replace the weighted percentage.
 
 One initial assessment is allowed. Final assessments append history; an identical assessment ID/content is idempotent, but reuse with changed content fails. Initial cannot be appended after final. The canonical JSON is the source of truth; a same-ID retry regenerates a missing derived report after an interrupted write. Reports are `runs/<RUN-ID>/ui-accuracy/<assessment_id>.{json,md}`. Writes use the shared run lock and preserve BR/Measure fields. Existing records without this block remain valid and unscored.

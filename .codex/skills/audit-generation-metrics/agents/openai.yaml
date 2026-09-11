@@ -1,4 +1,4 @@
 interface:
   display_name: "Audit Generation Metrics"
-  short_description: "Measure code-generation research metrics"
-  default_prompt: "Use $audit-generation-metrics to audit this use-case generation run and update its metrics."
+  short_description: "Audit Business Rules and Figma UI accuracy"
+  default_prompt: "Use $audit-generation-metrics to audit this use-case generation run, automatically score its Figma UI when applicable, and print the combined BR/UI summary."

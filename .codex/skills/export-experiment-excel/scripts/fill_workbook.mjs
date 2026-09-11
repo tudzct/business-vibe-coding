@@ -21,14 +21,16 @@ const root = await fs.realpath(options['repo-root']);
 const within = (parent, child) => { const rel = path.relative(parent, child); return !rel.startsWith('..') && !path.isAbsolute(rel); };
 async function safeOutput(file) {
   const absolute = path.resolve(root, file);
-  requireValue(within(root, absolute) && !within(path.join(root, 'security-vibe-coding-master'), absolute), 'Output outside Business scope');
+  const relativeParts = path.relative(root, absolute).split(path.sep);
+  requireValue(within(root, absolute) && !relativeParts[0]?.toLowerCase().endsWith('-master'), 'Output outside Business scope');
   // Resolve existing ancestors before mkdir to reject junction/symlink escapes.
   let ancestor = path.dirname(absolute);
   while (true) {
     try { ancestor = await fs.realpath(ancestor); break; }
     catch (e) { if (e.code !== 'ENOENT') throw e; ancestor = path.dirname(ancestor); }
   }
-  requireValue(within(root, ancestor) && !within(path.join(root, 'security-vibe-coding-master'), ancestor), 'Output parent escapes Business scope');
+  const ancestorParts = path.relative(root, ancestor).split(path.sep);
+  requireValue(within(root, ancestor) && !ancestorParts[0]?.toLowerCase().endsWith('-master'), 'Output parent escapes Business scope');
   await fs.mkdir(path.dirname(absolute), {recursive: true});
   return absolute;
 }

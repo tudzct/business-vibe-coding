@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflo
 from metrics_contract import atomic_write, validate_metrics, context, run_lock
 
 STATUSES = {"met", "unmet", "not_evaluable"}
+UI_STATUSES = {"scored", "repair_required", "similarity_pending", "not_evaluable", "not_applicable"}
 
 
 def validate_snapshot(snapshot, ordered, field):
@@ -37,7 +38,50 @@ def validate_snapshot(snapshot, ordered, field):
     snapshot["total"] = len(rows)
     for status, count in counts.items():
         snapshot[status] = count
-    snapshot["acceptance_percent"] = None if not rows else round(counts["met"] / len(rows) * 100, 2)
+    snapshot.pop("acceptance_percent", None)
+
+
+def validate_ui(data):
+    block = data.get("ui_accuracy")
+    if not isinstance(block, dict) or block.get("schema_version") != 1 or block.get("rubric_id") != "business-ui-weighted-v1":
+        raise ValueError("schema-v1 Audit requires a persisted Figma UI assessment, including N/A status")
+    assessments = block.get("assessments")
+    current_id = block.get("current_assessment_id")
+    if not isinstance(assessments, list) or not assessments or not isinstance(current_id, str):
+        raise ValueError("ui_accuracy current assessment is missing")
+    matches = [item for item in assessments if isinstance(item, dict) and item.get("assessment_id") == current_id]
+    if len(matches) != 1:
+        raise ValueError("ui_accuracy current assessment must resolve exactly once")
+    current = matches[0]
+    status = current.get("status")
+    if status not in UI_STATUSES or data.get("ui_accuracy_status") != status:
+        raise ValueError("ui_accuracy status mismatch")
+    weighted = current.get("weighted_percent")
+    if weighted is not None and (not isinstance(weighted, (int, float)) or not 0 <= weighted <= 100):
+        raise ValueError("ui_accuracy weighted percentage is invalid")
+    if data.get("ui_accuracy_percent") != weighted:
+        raise ValueError("ui_accuracy percentage mismatch")
+    totals = current.get("checkpoint_totals")
+    if current.get("input", {}).get("design_status") == "complete":
+        if not isinstance(totals, dict) or any(type(totals.get(k)) is not int or totals[k] < 0
+                                               for k in ("total", "met", "unmet", "not_evaluable")):
+            raise ValueError("ui_accuracy checkpoint totals are missing or invalid")
+        if totals["total"] != totals["met"] + totals["unmet"] + totals["not_evaluable"]:
+            raise ValueError("ui_accuracy checkpoint totals do not reconcile")
+    elif totals is not None:
+        raise ValueError("unavailable/no-design UI assessment must not fabricate checkpoint totals")
+    structure = current.get("structure")
+    similarity = current.get("input", {}).get("perceptual_similarity")
+    return {
+        "assessment_id": current_id,
+        "status": status,
+        "checkpoint_totals": totals,
+        "weighted_percent": weighted,
+        "structural_coverage_percent": current.get("structural_coverage_percent"),
+        "structural_counts": structure,
+        "perceptual_similarity": similarity,
+        "reason": current.get("reason"),
+    }
 
 
 def calculate(path_string):
@@ -56,6 +100,7 @@ def calculate(path_string):
         raise ValueError("ordered_br_ids must be a non-empty unique array")
     validate_snapshot(business.get("initial"), ordered, "business_rules.initial")
     validate_snapshot(business.get("final"), ordered, "business_rules.final")
+    ui_summary = validate_ui(data) if data.get("metrics_schema_version") == 1 else None
     revision = business.get("source_revision")
     if data.get("run_status") == "complete" and (not isinstance(revision, str) or re.fullmatch(r"sha256:[0-9a-f]{64}", revision.lower()) is None):
         raise ValueError("complete runs need a full final-source SHA-256")
@@ -68,7 +113,8 @@ def calculate(path_string):
             raise ValueError(f"repairs[{index}].affected_br_ids is invalid")
     data["all_sub_prompt_count"] = len(repairs)
     atomic_write(path, data)
-    print(json.dumps({"run_id": data.get("run_id"), "business_rules": business["final"], "repairs": len(repairs)}, indent=2))
+    print(json.dumps({"run_id": data.get("run_id"), "business_rules": business["final"],
+                      "ui_accuracy": ui_summary, "repairs": len(repairs)}, ensure_ascii=False, indent=2))
 
 
 def main(path_string):

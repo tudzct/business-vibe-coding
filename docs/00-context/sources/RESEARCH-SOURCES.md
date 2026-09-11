@@ -9,7 +9,6 @@ When sources conflict, record the exact discrepancy and ask the researcher. Do n
 
 ## Local materials and boundaries
 
-- `resource/Draft paper_VibeCoding-security.docx`: comparative material for a separate security-focused project. Do not use it to define this research product's Prompt E, requirements, evaluation baseline or metrics.
 - `resource/BUSINESS_PROMPT_TEMPLATE.docx`: non-canonical business-focused prompt-template reference. It cannot override the canonical Google Doc, repository templates or the frozen Business Rule resource; Prompt E remains Business Rules Compliance for Full runs.
 - `resource/TrucDTT_21020414-4889_baoveee.pdf`: two-phase pipeline from use case/design/API/templates to coding prompt, then code generation and self-correction.
 - `resource/TechnicalReport.pdf`: supporting reference for use cases and Prompts A-D; it cannot override the canonical Sheet-derived UC/BR projection.
