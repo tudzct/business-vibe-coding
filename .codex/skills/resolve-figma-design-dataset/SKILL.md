@@ -7,6 +7,8 @@ description: Create, refresh, validate, or resolve the repository's frozen, chec
 
 Use only the dataset version explicitly referenced by the active configuration/prompt under `resource/figma-design-dataset/<version>/manifest.json`. If none is referenced, stop for dataset activation; never auto-select the latest directory. Unreferenced versions are cold evidence. The immutable UC is only research input.
 
+For an identified UC/run, follow the [shared phase/timestamp protocol](../measure-uc-workflow-tokens/references/phase-ledger-schema.md). If the caller already has an active captured segment, reuse that segment rather than nesting timers. Required resolver work, missing-dataset blockers and researcher clarification belong to the currently open core bucket, or auxiliary `dataset_resolution` before any bucket starts/after closure. End the segment before waiting; capture a new segment when work resumes. Common dataset setup outside a UC is recorded separately. Do not run Measure during resolution.
+
 ## Create or refresh
 
 1. Read `docs/00-context/FIGMA-LINK-REVIEW.md` before any Figma call. Treat its `Replacement URL` column as the sole capture authority.

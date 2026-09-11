@@ -88,6 +88,7 @@ A run is complete only when:
 
 - the approved prompt has the configured structure: Prompts A-F with the exact frozen BR set for Full, or Prompts A-D with no Prompt E or F content for RQ3;
 - initial generation telemetry is preserved before repair;
+- Full and RQ3 source generation both end at a hold gate; a later researcher Measure turn closes source telemetry before separate first-pass audit and explicit repair authorization;
 - every BR has one `met`, `unmet` or `not_evaluable` assessment with evidence;
 - every evidenced defect has a bounded repair record or an explicit researcher decision;
 - permitted validators, lint/typecheck/build checks pass;
@@ -96,3 +97,5 @@ A run is complete only when:
 - the final `finalsource/` hash is frozen.
 
 No test or test-case generation is part of this method.
+
+Telemetry uses three measurement buckets (Coding Prompt, Source Generation, Repair) within the existing two research phases. Measure owns post-turn token/time and call counts plus full workflow totals; Audit owns BR evidence. Related UC confirmations count in the open bucket, or only workflow if they precede bucket start. Captured work intervals exclude researcher waiting and measurement/report-only turns. Work completion is distinct from final post-run telemetry; see `docs/05-experiments/METRICS-SCHEMA.md`.

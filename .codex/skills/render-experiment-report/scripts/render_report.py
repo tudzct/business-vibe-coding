@@ -4,7 +4,11 @@
 import argparse
 import hashlib
 import json
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow-tokens" / "scripts"))
+from metrics_contract import metrics_markdown, atomic_write
 
 
 def main():
@@ -32,9 +36,15 @@ def main():
         evidence = "; ".join(row.get("evidence", [])).replace("|", "\\|")
         lines.append(f"| {row.get('br_id', '')} | {row.get('status', '')} | {evidence} |")
     lines.extend(["", f"Met: {final.get('met', 0)}/{final.get('total', 0)} ({final.get('acceptance_percent', 'N/A')}%)", ""])
+    if data.get("metrics") is not None:
+        lines.append(metrics_markdown(data["metrics"]))
+    elif data.get("metrics_schema_version") == 1:
+        lines.extend(["Metrics pending: invoke Measure in a later turn after work completion.", ""])
+    else:
+        lines.extend(["Legacy run: historical metrics retain their original scope; no phase split was reconstructed.", ""])
     output = "\n".join(lines)
     if args.output:
-        args.output.write_text(output, encoding="utf-8")
+        atomic_write(args.output, output, raw=True)
     else:
         print(output, end="")
 

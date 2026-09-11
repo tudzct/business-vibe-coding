@@ -2,6 +2,8 @@
 
 The method has exactly two phases. Frozen inputs, approved prompts and first-pass evidence are immutable; later artifacts reference them by path and checksum.
 
+The telemetry buckets `prompt_generation`, `source_generation`, `repair` do not add a research-method phase. Use one task per UC/run and the shared `.codex/skills/measure-uc-workflow-tokens/references/phase-ledger-schema.md` protocol. Capture live timestamp segments during work, then let the researcher invoke Measure in a later turn to close each bucket. UC-specific confirmations, blockers and resolution inside an open bucket belong to that bucket; work before its start belongs only to workflow. Common setup outside the UC is recorded separately. Exclude all measurement/report-only turns. Never finalize tokens in the measured work response.
+
 ## Phase 1
 
 1. Select one frozen `docs/01-inception/use-cases/uc-*.md` projection and the `full` or `rq3` prompt variant recorded by the Confirmed experiment configuration.
@@ -15,12 +17,12 @@ The method has exactly two phases. Frozen inputs, approved prompts and first-pas
 
 ## Phase 2
 
-1. Validate the `Approved` prompt against one Confirmed experiment configuration, then activate exactly one run before modifying `finalsource/`.
+1. Require closed prompt telemetry and validate the `Approved` prompt against one Confirmed experiment configuration, then activate exactly one run before modifying `finalsource/`.
 2. Generate only the source required by the approved prompt. For RQ3, validate baseline identity without loading BR expressions into generation context; load them only after first-pass generation stops.
-3. Stop the initial timer and preserve the first-pass source hash, model/time/token metadata and source evidence before any repair.
-4. Run permitted lint, typecheck and production-build commands and authorized Docker observations. Record exactly one first-pass result for every frozen BR as `met`, `unmet` or `not_evaluable` from inspectable evidence.
-5. For RQ3, stop after the first-pass assessment. Run no repair sub-prompt unless the researcher explicitly enables the repair condition.
+3. Stop the initial work timer, preserve first-pass source/hash/model/raw-time evidence and end the turn for both Full and RQ3. Leave tokens pending. Hold before repairs and separate audit until the researcher invokes Measure in a later turn to close source telemetry.
+4. In a subsequent audit turn, run permitted lint/typecheck/build and authorized Docker observations against first-pass evidence. Record exactly one evidenced first-pass result for every frozen BR. This separate audit belongs to workflow, outside the closed source bucket.
+5. For both Full and RQ3, stop after first-pass assessment. Run no repair sub-prompt unless the researcher explicitly authorizes repair after source measurement. Preserve RQ3 Sub-prompt-off as a recorded decision.
 6. When repair is authorized, create one bounded sub-prompt per evidenced defect and save it precisely under `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/repairs/`. Apply the smallest correction, retain the repair record and reassess affected BRs without overwriting first-pass results.
-7. Freeze the final `finalsource/` hash and complete the canonical run JSON only when the run reaches a terminal state.
+7. End repair work before its researcher Measure closure. Perform requested final audit/runtime/finalization, then freeze the final hash and terminal run evidence. A later `finalize-workflow` measurement updates canonical `metrics` and derived result files. Work completion and post-run metrics finalization are separate states.
 
 Schema changes require an approved `docs/02-construction/implementation/<UC-ID>/schema.json` before entity or migration edits. No workflow step creates or runs tests or test cases, and Docker Compose is the only supported runtime path.

@@ -7,6 +7,8 @@ description: Prepare a Draft experiment configuration or validate a Confirmed co
 
 Use this skill when the researcher wants to prepare or activate one configured use-case run.
 
+When this work belongs to an identified UC/run, use the [shared phase/timestamp protocol](../measure-uc-workflow-tokens/references/phase-ledger-schema.md): required configuration/approval inside an open core bucket belongs to that bucket, otherwise it is auxiliary `configuration_and_approval` counted only in workflow. Start a live segment before the operation and end before researcher waiting/response. A Draft canonical identity may be initialized for telemetry before activation, without granting source permission. Setup shared across UCs outside their workflow is recorded separately. Do not run Measure here.
+
 Read `docs/00-context/workflow/gates/EXPERIMENT-CONFIGURATION-GATE.md`, `docs/00-context/workflow/gates/MODEL-SELECTION-GATE.md`, and the selected frozen UC. For activation, also read the referenced Business Rule baseline.
 
 ## Prepare a configuration
@@ -34,4 +36,4 @@ The script verifies the configuration, matching frozen BR baseline, UC/run assig
 
 `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/run-activation.json`
 
-It refuses to overwrite an existing receipt. Do not begin model/version capture, timing, source mutation, Docker execution, or `$gen-source-code` within this skill; activation is the gate for those later operations.
+It refuses to overwrite an existing receipt. Do not begin source-generation model/version capture, source timing, source mutation, Docker execution, or `$gen-source-code` within this skill; activation is the gate for those later operations. Captured configuration/approval work time is separate from source timing.

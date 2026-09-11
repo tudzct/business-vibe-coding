@@ -6,6 +6,9 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow-tokens" / "scripts"))
+from metrics_contract import atomic_write, validate_metrics, context, run_lock
+
 STATUSES = {"met", "unmet", "not_evaluable"}
 
 
@@ -37,9 +40,14 @@ def validate_snapshot(snapshot, ordered, field):
     snapshot["acceptance_percent"] = None if not rows else round(counts["met"] / len(rows) * 100, 2)
 
 
-def main(path_string):
+def calculate(path_string):
     path = Path(path_string)
     data = json.loads(path.read_text(encoding="utf-8"))
+    # Audit validates Measure's committed values, but never recalculates or overwrites them.
+    if data.get("metrics") is not None:
+        validate_metrics(data["metrics"])
+        if any(data["metrics"].get(k) != data.get(k) for k in ("uc_id", "run_id")):
+            raise ValueError("metrics UC/run identity mismatch")
     business = data.get("business_rules")
     if not isinstance(business, dict):
         raise ValueError("business_rules must be an object")
@@ -59,8 +67,14 @@ def main(path_string):
         if not isinstance(ids, list) or any(value not in ordered for value in ids):
             raise ValueError(f"repairs[{index}].affected_br_ids is invalid")
     data["all_sub_prompt_count"] = len(repairs)
-    path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    atomic_write(path, data)
     print(json.dumps({"run_id": data.get("run_id"), "business_rules": business["final"], "repairs": len(repairs)}, indent=2))
+
+
+def main(path_string):
+    _, _, folder = context(path_string)
+    with run_lock(folder):
+        calculate(path_string)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,22 @@
+# Live timestamp and phase protocol
+
+Use the shared capture helper at the beginning and end of every work segment, in its actual active turn. Read/listing and identifying the run precede capture; capture as early as possible before phase work, including preflight/resolution. Capture end after work and before asking the researcher or ending the response. These are instrumented work seconds, not an assertion of exact UI Worked-for time or full-turn latency.
+
+```text
+python .codex/skills/measure-uc-workflow-tokens/scripts/capture_timestamp.py --run-json <canonical.json> --session <rollout.jsonl> --turn-id <current-id> --phase prompt_generation --event start --segment-id prompt-001 --source-revision sha256:<actual-64-hex>
+python .codex/skills/measure-uc-workflow-tokens/scripts/capture_timestamp.py --run-json <canonical.json> --session <rollout.jsonl> --turn-id <current-id> --phase prompt_generation --event end --segment-id prompt-001 --source-revision sha256:<actual-64-hex>
+```
+
+The helper automatically obtains `at` and `epoch_ms` from one local system instant, following the Security capture method. Identity fields: UC/run/session/turn/phase/segment/event/source revision. Start/end source revisions may differ; the other identities must match. No user-supplied time flags exist. Never type, reuse or backfill endpoints. Duration is `(end.epoch_ms - start.epoch_ms)/1000`; ISO and epoch must agree within one second. Intervals cannot overlap. A segment must end within its own turn; end before waiting on researcher input, including in-turn async approval, and open a new segment after resumption. Time spent running tools inside a segment is included as elapsed time, never converted into tokens.
+
+The first `start` for a core phase opens it and binds `first_turn_id`. Subsequent necessary turns use that same phase until the researcher invokes Measure in a separate turn. Measure closes it at the measurement turn ID; no later turn can return to it. A reopened business request requires a new measurement run/explicit amendment protocol, not silent reassignment. Do not mix phase closing with actual work in the same turn.
+
+If a terminal/aborted earlier turn lost its end capture, use the helper with `--event abandon --segment-id <unfinished-id> --reason <evidence-backed-reason>` in a later turn. Supply the current turn ID and original phase. This only records the missing endpoint and allows subsequent work; it never fabricates an end time. The selected original turn must retain `timing_unavailable_reason` and its phase/workflow duration remains null. Do not abandon a running turn to avoid measuring it.
+
+Before a core phase opens, capture UC-specific setup/approval with the applicable auxiliary phase. When a core phase is open, capture its related clarification, resolver, approval or blocker under that core phase. Do not capture unrelated work into this ledger. Work before the UC begins is outside its workflow; standardize common setup separately across UCs.
+
+`phase-ledger.json` is machine authority, `phase-ledger.md` its generated view. Both live beside `workflow-metrics.json` in `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/`. The journal records phases, timestamp segments and measurement boundaries. Canonical `metrics.phase_ledger` is the last committed measurement snapshot. Each writer locks the run and atomically replaces individual files; canonical metrics are committed first, and mirrors can be regenerated from that snapshot after interruption. Never manually overwrite closed observations to make numbers match.
+
+Prompt and source phase must close before repair. Full and RQ3 both require source measurement, first-pass BR evidence and researcher repair authorization after the hold. Persist the real researcher decision as `repair_authorization: {"approved": true, "turn_id": "<actual user approval turn>"}` in canonical run JSON. The helper checks ordering and existence; the AI must verify that message explicitly permits repair. Approval can be the same turn that begins repair, but never the source-generation or Measure turn. Measurement alone does not approve any work.
+
+Prompt/source/repair are measurement buckets; the research method continues to have exactly two phases. Audit runs outside a closed source/repair bucket when separate audit metrics are intended. Keep first-pass source evidence immutable, even when the BR assessment itself runs in a later audit turn.

@@ -25,6 +25,12 @@ Before Phase 1, resolve every BR associated with the UC from the frozen UC. Do n
 
 Before Phase 2 source mutation, activate exactly one run through `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/run-activation.json`. Requested model, replicate and run order come from the Confirmed experiment configuration.
 
+## Measurement and hold boundaries
+
+For an identified UC/run, follow `.codex/skills/measure-uc-workflow-tokens/references/phase-ledger-schema.md`. Prompt/source/repair are telemetry buckets inside the two-phase method. Capture live work timestamps, then finalize telemetry only when the researcher invokes Measure in a later turn. Related clarification, approval, dataset resolution and blocked attempts inside an open bucket count toward it and that UC workflow. UC-specific work before bucket start counts only toward workflow; common setup before the UC is recorded separately. Exclude every Measure/report-only turn. Measure owns canonical `metrics`; Audit owns BR evidence and preserves metrics.
+
+Full A-F and RQ3 A-D both end first-pass source generation at a hold gate. Preserve source/hash/evidence, end the response, and wait for researcher Measure closure before a separate first-pass audit. Require explicit researcher authorization after source measurement before any repair. Never auto-repair in the first-generation or measurement turn.
+
 ## Business-rule contract
 
 Preserve each Rule ID and its supplied OCL invariant, precondition or postcondition verbatim. Preserve natural-language and technical constraints for content that is not represented in OCL. Map every rule to its enforceable layer and failure behavior without weakening, duplicating or inventing requirements.

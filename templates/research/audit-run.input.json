@@ -20,14 +20,10 @@
     "effective_snapshot": null,
     "codex_client_version": null
   },
-  "timing_wall_clock": {
-    "initial_started_at": "",
-    "initial_started_epoch_ms": null,
-    "initial_ended_at": "",
-    "initial_ended_epoch_ms": null
-  },
-  "timing_seconds": { "initial": null, "repairs": null, "total": null },
-  "tokens": { "initial_total": null, "repair_total": null, "total": null },
+  "run_status": "draft",
+  "metrics_schema_version": 1,
+  "metrics": null,
+  "repair_authorization": { "approved": false, "turn_id": null },
   "business_rules": {
     "baseline": "docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json",
     "source_revision": "sha256:<finalsource-hash>",

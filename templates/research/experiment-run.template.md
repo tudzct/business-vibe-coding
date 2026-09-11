@@ -8,11 +8,14 @@
 
 ## Timing and tokens
 
-| Stage | Seconds | Tokens |
-|---|---:|---:|
-| Initial generation | | |
-| Repairs | | |
-| Total | | |
+| Scope | Input | Cached input | Output | Reasoning output | Total tokens | Seconds | Turns | Tool calls |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Coding Prompt | | | | | | | | |
+| Source Generation | | | | | | | | |
+| Repair | | | | | | | | |
+| Workflow | | | | | | | | |
+
+Measure supplies canonical `metrics`. Cached input is part of input; reasoning is part of output. Seconds sum captured work intervals; workflow includes related auxiliary work. Measurement/report-only turns and researcher waiting between work intervals are excluded. Missing values are N/A with reasons. No core-three-phase subtotal or monetary tool cost is produced. Model-call count is unavailable unless exact request evidence exists. Phase closure and final workflow measurement happen only after the work response completes.
 
 ## Business Rule assessment
 
