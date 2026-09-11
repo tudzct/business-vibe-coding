@@ -99,3 +99,5 @@ A run is complete only when:
 No test or test-case generation is part of this method.
 
 Telemetry uses three measurement buckets (Coding Prompt, Source Generation, Repair) within the existing two research phases. Measure owns post-turn token/time and call counts plus full workflow totals; Audit owns BR evidence. Related UC confirmations count in the open bucket, or only workflow if they precede bucket start. Captured work intervals exclude researcher waiting and measurement/report-only turns. Work completion is distinct from final post-run telemetry; see `docs/05-experiments/METRICS-SCHEMA.md`.
+
+An optional `Excel target: <path-or-link>` on a Measure invocation triggers a post-commit, telemetry-only Excel export for that measured scope. The target is never persistent. Manual BR/Figma/flow columns stay unchanged, and Excel/report work remains outside measured telemetry.

@@ -14,4 +14,6 @@ Use one task for one UC/run and the [shared measurement protocol](../measure-uc-
 3. For BOTH Full A-F and RQ3 A-D, preserve first-pass source/hash/evidence, end the response and hold before repair. The researcher measures/closes source telemetry in the next measurement turn. A later first-pass audit assesses every frozen BR, then explicit researcher authorization is required to start repair. Never bypass the hold because the parent workflow requests a full run.
 4. After repair ends, wait for researcher Measure closure. Perform separately requested final audit/Docker runtime/finalization as workflow work, freeze final source hash and terminal run evidence. The researcher then invokes `finalize-workflow` in a later turn to save final telemetry and derived reports. Measure/report-only turns are always excluded.
 
+If a Measure request includes `Excel target: <path-or-link>`, Measure automatically invokes `export-experiment-excel` after committing metrics and exports only the just-measured telemetry scope. The link applies to that Measure turn only; BR/Figma/flow cells remain researcher-maintained.
+
 Do not add enterprise lifecycle phases, independent scan workflows, or tests/test cases. Never infer a missing business decision.

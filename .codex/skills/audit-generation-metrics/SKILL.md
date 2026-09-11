@@ -18,3 +18,5 @@ When called inside a repair work segment, reuse the caller's timer; never nest/o
 7. Persist the canonical JSON under `docs/05-experiments/` without overwriting Measure fields. Work may reach terminal `run_status` before final post-run telemetry exists; distinguish completed source/evidence from `metrics.status=finalized`. The researcher then invokes Measure to finalize workflow totals and refresh derived reports; do not add a new Audit turn merely to save token/time.
 
 Do not create/run tests or claim unsupported business correctness.
+
+For researcher-requested Figma UI percentages, use `audit-figma-ui-accuracy` and preserve its `ui_accuracy`, `ui_accuracy_status` and `ui_accuracy_percent` fields when saving BR results. UI is supplementary and does not alter the BR baseline. Excel filling belongs to `export-experiment-excel`, which reads existing results without measuring or auditing again. Do not automatically add flow scoring.

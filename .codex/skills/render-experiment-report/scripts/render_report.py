@@ -36,6 +36,19 @@ def main():
         evidence = "; ".join(row.get("evidence", [])).replace("|", "\\|")
         lines.append(f"| {row.get('br_id', '')} | {row.get('status', '')} | {evidence} |")
     lines.extend(["", f"Met: {final.get('met', 0)}/{final.get('total', 0)} ({final.get('acceptance_percent', 'N/A')}%)", ""])
+    ui = data.get("ui_accuracy")
+    if ui:
+        current = next((item for item in ui.get("assessments", [])
+                        if item.get("assessment_id") == ui.get("current_assessment_id")), None)
+        if current is None:
+            raise ValueError("UI current assessment is missing")
+        lines.extend(["## Figma UI accuracy", "",
+                      f"Assessment: `{current['assessment_id']}` ({current['stage']})",
+                      f"Status: {current['status']}",
+                      f"Weighted accuracy (%): {current['weighted_percent'] if current['weighted_percent'] is not None else 'N/A'}",
+                      f"Structural coverage (%): {current['structural_coverage_percent'] if current['structural_coverage_percent'] is not None else 'N/A'}",
+                      "Perceptual similarity (separate): " + json.dumps(current['input'].get('perceptual_similarity'), ensure_ascii=False),
+                      "Evidence and limitations: canonical ui_accuracy.assessments and run ui-accuracy reports.", ""])
     if data.get("metrics") is not None:
         lines.append(metrics_markdown(data["metrics"]))
     elif data.get("metrics_schema_version") == 1:

@@ -92,3 +92,10 @@ Next action: <one concrete action>
 ```
 
 `READY` means the environment can execute the two-phase method; it does not mean generated source satisfies Business Rules.
+
+## Supplementary researcher skills
+
+- `$audit-figma-ui-accuracy`: compare runtime UI with the pinned frozen Figma dataset, retain checkpoint evidence and save the Security-weighted UI percentage. It does not score flow or authorize repairs.
+- `$export-experiment-excel`: inspect a supplied Excel workbook, map its result cells to canonical UC/run JSON and save a filled copy. Unavailable/ambiguous results become `N/A` with a reason receipt; original workbook and canonical results remain unchanged. Supply the workbook path when invoking it. For automatic telemetry export, append `Excel target: <path-or-link>` directly to the `$measure-uc-workflow-tokens` prompt; no default workbook is retained between Measure turns.
+
+These skills do not replace Measure or Business Rule Audit. Excel export is reporting-only; UI assessment follows the existing phase/timestamp boundaries when performed as UC work.

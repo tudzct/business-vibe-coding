@@ -4,6 +4,8 @@ The method has exactly two phases. Frozen inputs, approved prompts and first-pas
 
 The telemetry buckets `prompt_generation`, `source_generation`, `repair` do not add a research-method phase. Use one task per UC/run and the shared `.codex/skills/measure-uc-workflow-tokens/references/phase-ledger-schema.md` protocol. Capture live timestamp segments during work, then let the researcher invoke Measure in a later turn to close each bucket. UC-specific confirmations, blockers and resolution inside an open bucket belong to that bucket; work before its start belongs only to workflow. Common setup outside the UC is recorded separately. Exclude all measurement/report-only turns. Never finalize tokens in the measured work response.
 
+The researcher may append `Excel target: <path-or-link>` to any Measure invocation. After Measure commits the requested phase/workflow telemetry, it invokes `export-experiment-excel` in telemetry-only mode and saves a new filled workbook copy. The target is scoped to that invocation and is never reused implicitly. Automatic Measure export never writes BR/Figma/flow or other researcher-maintained columns. Excel/report work remains excluded from telemetry; an Excel failure after commit does not invalidate or repeat the Measure boundary.
+
 ## Phase 1
 
 1. Select one frozen `docs/01-inception/use-cases/uc-*.md` projection and the `full` or `rq3` prompt variant recorded by the Confirmed experiment configuration.

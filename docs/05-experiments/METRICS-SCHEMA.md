@@ -1,5 +1,13 @@
 # Experiment metrics schema
 
+## Supplementary UI and Excel output
+
+`audit-figma-ui-accuracy` implements the supplied Security UI rubric (weights 20/25/15/15/15/10), with screenshot-backed judgments, separate structural coverage and perceptual similarity. It owns optional `ui_accuracy` (schema_version 1, immutable assessment history/current ID), `ui_accuracy_percent` (0-100 or null), and `ui_accuracy_status`. Initial evidence is preserved; final assessments append history. See `.codex/skills/audit-figma-ui-accuracy/references/assessment-schema.md`. An absent/null block is unscored, not 0%. UI does not change the Business Rule baseline or add a mandatory flow-scoring intervention.
+
+`export-experiment-excel` reads canonical results and fills the researcher's existing workbook by inspected field/row identity. It writes a new Excel copy and cell-level provenance/error receipt, not new canonical metrics. Missing, ambiguous or unfinalized values become literal `N/A` in known writable result cells; formulas and unresolved destinations remain unchanged. Measure retains token/time ownership. Reporting-only export turns are excluded from workflow telemetry. When a Measure prompt contains `Excel target: <path-or-link>`, the target applies to that invocation only and Measure automatically hands off the just-committed scope using `measure_telemetry_only`; BR/Figma/flow/manual cells are not touched.
+
+## Canonical record
+
 The canonical run JSON records:
 
 - configuration, UC, prompt_variant (`full` or `rq3`), model, replicate, order, wall-clock time and token use;

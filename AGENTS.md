@@ -29,6 +29,8 @@ Before Phase 2 source mutation, activate exactly one run through `docs/02-constr
 
 For an identified UC/run, follow `.codex/skills/measure-uc-workflow-tokens/references/phase-ledger-schema.md`. Prompt/source/repair are telemetry buckets inside the two-phase method. Capture live work timestamps, then finalize telemetry only when the researcher invokes Measure in a later turn. Related clarification, approval, dataset resolution and blocked attempts inside an open bucket count toward it and that UC workflow. UC-specific work before bucket start counts only toward workflow; common setup before the UC is recorded separately. Exclude every Measure/report-only turn. Measure owns canonical `metrics`; Audit owns BR evidence and preserves metrics.
 
+When the current Measure prompt contains `Excel target: <path-or-link>`, preflight that exact target, commit Measure first, then invoke `export-experiment-excel` in `measure_telemetry_only` mode for only the just-closed phase or finalized workflow. Never retain/reuse an Excel target across turns or write BR/Figma/flow/manual cells. Save a new workbook copy. An export failure does not roll back or repeat the committed Measure operation.
+
 Full A-F and RQ3 A-D both end first-pass source generation at a hold gate. Preserve source/hash/evidence, end the response, and wait for researcher Measure closure before a separate first-pass audit. Require explicit researcher authorization after source measurement before any repair. Never auto-repair in the first-generation or measurement turn.
 
 ## Business-rule contract

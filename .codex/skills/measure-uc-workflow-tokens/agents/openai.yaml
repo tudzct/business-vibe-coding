@@ -1,6 +1,6 @@
 interface:
   display_name: "Measure UC Workflow Tokens"
   short_description: "Close phases and save observed UC tokens and time"
-  default_prompt: "Use $measure-uc-workflow-tokens to close the current completed phase and save its metrics for this UC/run."
+  default_prompt: "Use $measure-uc-workflow-tokens to close the completed phase for this UC/run, then update the Excel target supplied in this message with the committed telemetry."
 policy:
   allow_implicit_invocation: false
