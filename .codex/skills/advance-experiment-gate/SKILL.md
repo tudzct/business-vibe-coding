@@ -21,4 +21,4 @@ A gate-close turn performs only its gate operation. It may combine the researche
 
 After the internal action succeeds, persist the confirmation and actual turn ID with `scripts/record_gate.py`. Never close a gate before its action succeeds, infer confirmation, approve on behalf of the researcher, backfill a gate, or change immutable evidence. Telemetry-only work remains excluded; audit contributes no generation execution seconds.
 
-Figma UI accuracy is researcher-managed. Do not invoke or calculate automated Figma scoring from any gate. The frozen Figma dataset remains an implementation input pinned by configuration.
+The independent `audit-figma-ui-accuracy` skill is strictly optional and manually invoked by the researcher outside gates. Do not invoke it or require its data/validation outcome from any gate; missing/null UI fields never block a gate. The frozen Figma dataset remains an implementation input pinned by configuration.

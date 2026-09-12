@@ -12,7 +12,7 @@ Use one task for one UC/run and the [shared measurement protocol](../measure-uc-
 1. **Configuration Gate:** validate root `.env`, derive run identities/order, freeze every BR and flow baseline, pin the active Figma dataset and show one summary. Persist only after researcher confirmation.
 2. **Phase 1:** generate the Full A-F or RQ3 A-D Draft, then show Prompt Gate. On confirmation, approve it and internally close prompt telemetry; do not start source in that gate turn.
 3. Activate one run and generate first-pass source. Preserve hash/evidence and show Source Gate. On confirmation, internally close source telemetry only.
-4. Show First-pass Audit Gate. On confirmation, run permitted non-test checks, BR audit and flow audit. Figma/UI accuracy is researcher-managed and is never calculated by this workflow.
+4. Show First-pass Audit Gate. On confirmation, run permitted non-test checks, BR audit and flow audit. The researcher may separately request the optional `audit-figma-ui-accuracy` skill or inspect UI manually; this workflow never invokes it or requires its result.
 5. Show Repair Decision Gate. Record explicit authorize or skip. For authorized repairs, execute bounded repairs, then use Repair Gate confirmation to close telemetry.
 6. Show Final Audit Gate. On confirmation, run final BR/flow/runtime audit and freeze the final hash. Then show Final Metrics Gate; its confirmation internally finalizes workflow telemetry and refreshes reports.
 

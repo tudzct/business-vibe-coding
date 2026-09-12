@@ -1,0 +1,6 @@
+interface:
+  display_name: "Audit Figma UI Accuracy"
+  short_description: "Optional Figma UI scoring on researcher request"
+  default_prompt: "Use $audit-figma-ui-accuracy as an optional standalone comparison for this UC/run; save and report its UI evidence without changing experiment gates."
+policy:
+  allow_implicit_invocation: false

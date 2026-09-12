@@ -101,6 +101,6 @@ A run is complete only when:
 
 No test or test-case generation is part of this method.
 
-Telemetry uses three measurement buckets inside the two phases. Researchers confirm plain-language gates; each gate invokes telemetry internally in a later turn. Audit Gates automatically assess BRs and flows. Figma/UI accuracy is researcher-managed and never calculated by the workflow. Timing remains `generation_execution_only_v1`; gate-close/report turns are excluded.
+Telemetry uses three measurement buckets inside the two phases. Researchers confirm plain-language gates; each gate invokes telemetry internally in a later turn. Audit Gates automatically assess BRs and flows. The independent `audit-figma-ui-accuracy` skill is available for optional, manually requested UI comparisons; the researcher may instead inspect UI by eye or omit scoring. The workflow never invokes it automatically. Its use and local validation outcome are not completion criteria; all UI fields, including `ui_accuracy` and `ui_accuracy_percent`, may be absent or null without blocking validation, gates, reports or export. Timing remains `generation_execution_only_v1`; gate-close/report turns are excluded.
 
 The internal telemetry engine only calculates and persists canonical telemetry after gate confirmation. Excel export remains a separate reporting skill used after Final Metrics Gate and leaves manual BR/Figma/flow columns unchanged.

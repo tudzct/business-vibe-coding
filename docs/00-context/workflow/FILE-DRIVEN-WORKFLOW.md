@@ -6,6 +6,8 @@ The telemetry buckets `prompt_generation`, `source_generation`, `repair` do not 
 
 Internal telemetry never reads or writes Excel. After Final Metrics Gate, the researcher may separately invoke `export-experiment-excel`; BR/Figma/flow/manual columns remain unchanged.
 
+The repository also provides `audit-figma-ui-accuracy` as a standalone optional tool. The researcher may call it manually in a separate turn, inspect UI by eye, or skip UI scoring entirely. No phase or confirmation gate calls it automatically. An absent/null `ui_accuracy` or UI score, or an unsuccessful optional UI comparison, must never block BR/flow validation, telemetry closure, report generation, Excel export or completion. Scorer evidence checks apply only inside the optional request and do not create a new gate.
+
 ## Phase 1
 
 1. Load researcher defaults from root `.env`. If missing, create it from `.env.example`, list all blank researcher fields once and stop. After completion, show one Configuration Gate summary and persist a new schema-2.2 Confirmed configuration only after confirmation. Pin the active Figma version and manifest checksum.
@@ -23,7 +25,7 @@ Internal telemetry never reads or writes Excel. After Final Metrics Gate, the re
 1. Require closed prompt telemetry and validate the `Approved` prompt against one Confirmed experiment configuration, then activate exactly one run before modifying `finalsource/`.
 2. Generate only the source required by the approved prompt. For RQ3, validate baseline identity without loading BR expressions into generation context; load them only after first-pass generation stops.
 3. Preserve first-pass source/hash/model/raw-time evidence and show Source Gate. On confirmation, close source telemetry internally and stop.
-4. Show First-pass Audit Gate. On confirmation, run permitted checks and Docker observations, assess every frozen BR and invoke `audit-flow-accuracy`. Figma/UI accuracy remains researcher-managed.
+4. Show First-pass Audit Gate. On confirmation, run permitted checks and Docker observations, assess every frozen BR and invoke `audit-flow-accuracy`. Optional UI inspection or a separate researcher invocation of `audit-figma-ui-accuracy` is outside this gate and never a prerequisite.
 5. Show Repair Decision Gate. Run no repair unless the researcher explicitly authorizes it; preserve an explicit skip decision.
 6. When repair is authorized, create one bounded sub-prompt per evidenced defect and save it precisely under `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/repairs/`. Apply the smallest correction, retain the repair record and reassess affected BRs without overwriting first-pass results.
 7. End repair work at Repair Gate; confirmation closes repair telemetry. Final Audit Gate confirmation runs final BR/flow/runtime audit and freezes the hash. Final Metrics Gate confirmation internally finalizes canonical metrics and reports.

@@ -1,10 +1,14 @@
 # Experiment metrics schema
 
-## Supplementary flow, researcher-managed UI and Excel output
+## Supplementary flow, optional UI and Excel output
 
 `audit-generation-metrics` automatically invokes `audit-flow-accuracy` from confirmed First-pass and Final Audit Gates. The denominator is frozen before source generation from every explicit Basic/Main, Alternative and Exception Flow. Each flow has equal weight. A completion-critical failed step or unmet terminal outcome makes the whole flow incorrect. `flow_error_percent = incorrect / total * 100`; `flow_accuracy_percent = (total - incorrect) / total * 100`. Unknown evidence keeps both exact percentages null and reports coverage plus accuracy bounds.
 
-Figma/UI accuracy is researcher-managed. The workflow does not calculate weighted UI accuracy, structural coverage or perceptual similarity, and audit preserves manual UI fields unchanged. The frozen Figma dataset remains implementation input only.
+The repository includes `audit-figma-ui-accuracy`, an independent, strictly optional skill invoked manually only on an explicit researcher request. Researchers may inspect the interface by eye or skip scoring. The skill can persist screenshot-backed checkpoint judgments, weighted UI accuracy, structural coverage and separately evidenced perceptual similarity. No generation, Audit Gate, telemetry gate or Excel export invokes it automatically.
+
+Every UI field is optional: `ui_accuracy`, `ui_accuracy_percent`, `ui_accuracy_status`, and manual UI provenance may be omitted or null. Their absence never causes schema validation failure, blocks a gate, prevents a report/export or changes run completion. No placeholder assessment or successful UI score is required. Local UI evidence validation and statuses such as `not_evaluable`, `similarity_pending` or `repair_required` concern only the optional comparison; they are not experiment gate conditions. Audit and export remain independent of these fields.
+
+When explicitly requested, the skill adds `ui_accuracy.schema_version: 1`, `rubric_id: business-ui-weighted-v1`, immutable `assessments[]` and `current_assessment_id`, with optional top-level current score/status. The input requirements in `.codex/skills/audit-figma-ui-accuracy/references/assessment-schema.md` apply only to that standalone scoring request. Reports render available manual or skill-produced UI data without recomputing it; absent data may be omitted and incomplete optional UI data is shown as unavailable without blocking the rest of the report. The frozen Figma dataset remains required implementation input where specified, independently of optional UI scoring.
 
 `export-experiment-excel` is invoked separately once after final workflow measurement. It reads finalized canonical phase/workflow telemetry and fills the researcher's existing workbook by inspected field/row identity. It writes a new Excel copy and cell-level provenance/error receipt, never canonical metrics. Missing or ambiguous telemetry becomes literal `N/A` in known writable telemetry cells; formulas, unresolved destinations and BR/Figma/flow/manual cells remain unchanged. Measure retains token/time ownership and never invokes this skill. The reporting-only export turn is excluded from workflow telemetry.
 

@@ -12,4 +12,4 @@ $gen-coding-prompt <use-case.md>
 $gen-source-code <business-coding-prompt.md>
 ```
 
-Telemetry and audit engines run internally after gate confirmation; the researcher does not invoke them by skill name. Figma/UI scoring is manual and outside automatic audit. No step creates or runs tests.
+Telemetry and audit engines run internally after gate confirmation; the researcher does not invoke them by skill name. Figma/UI scoring is optional: the researcher may inspect visually or manually request the independent `audit-figma-ui-accuracy` skill. Its absence or local validation result never blocks any gate. No step creates or runs tests.
