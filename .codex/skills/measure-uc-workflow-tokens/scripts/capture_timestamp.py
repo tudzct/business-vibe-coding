@@ -6,7 +6,7 @@ import re
 import sys
 from datetime import datetime
 
-from metrics_contract import (CORE, AUX, context, journal, require, run_lock, save_journal)
+from metrics_contract import (CORE, AUX, TIMING_PROTOCOL, context, journal, require, run_lock, save_journal)
 from measure_uc_tokens import analyze_session, classified_phase, find_turn
 
 
@@ -19,6 +19,7 @@ def main():
     parser.add_argument("--event", choices=("start", "end", "abandon"), required=True)
     parser.add_argument("--segment-id", required=True)
     parser.add_argument("--source-revision", required=True)
+    parser.add_argument("--repair-id", help="Required for every repair execution endpoint")
     parser.add_argument("--reason", help="Required for abandoning a missing endpoint after interruption")
     args = parser.parse_args()
     _, run, folder = context(args.run_json)
@@ -28,6 +29,9 @@ def main():
     require(not turn["completed"] and turn == session["turns"][-1], "capture only in the current active turn")
     with run_lock(folder):
         state = journal(run, folder)
+        require(state.get("timing_protocol") == TIMING_PROTOCOL,
+                "legacy timing ledger is read-only; use a new run for execution timing")
+        require(args.phase != "repair" or bool(args.repair_id), "repair timing requires --repair-id")
         require(state["workflow_status"] == "open", "workflow is finalized")
         require(state["session_id"] in (None, session["session_id"]), "session identity mismatch")
         state["session_id"] = session["session_id"]
@@ -41,6 +45,7 @@ def main():
             require(original["completed"] and original["turn_id"] != args.turn_id,
                     "abandon is only for an earlier terminal turn with a missing endpoint")
             require(matches[0]["start"]["phase"] == args.phase, "abandon phase mismatch")
+            require(matches[0]["start"].get("repair_id") == args.repair_id, "abandon repair ID mismatch")
             matches[0]["timing_unavailable_reason"] = args.reason
             matches[0]["abandoned_in_turn_id"] = args.turn_id
             save_journal(folder, state)
@@ -50,8 +55,9 @@ def main():
         if args.phase in CORE and not phase_entry:
             require(args.event == "start", "phase must start before ending")
             require(not any(p["status"] == "open" for p in state["phases"].values()), "close previous phase first")
-            require(not any(s["start"]["turn_id"] == args.turn_id and s["start"]["phase"] != args.phase
-                            for s in state["segments"]), "do not mix auxiliary and core phases in one turn")
+            require(not any(s["start"]["turn_id"] == args.turn_id and s["start"]["phase"] in CORE
+                            and s["start"]["phase"] != args.phase for s in state["segments"]),
+                    "do not execute different core phases in one turn")
             prior = CORE[:CORE.index(args.phase)]
             require(all(state["phases"].get(p, {}).get("status") == "closed" for p in prior),
                     "preceding phase must be measured and closed first")
@@ -78,15 +84,18 @@ def main():
                         "approval must be a researcher work turn, never a measurement turn")
             state["phases"][args.phase] = {"status": "open", "first_turn_id": args.turn_id}
         expected = classified_phase(state, turn, session)
-        require(args.phase == expected if expected else args.phase in AUX,
+        require(args.phase in AUX or args.phase == expected,
                 "timestamp phase conflicts with open/closed phase boundaries")
         segments = state["segments"]
         matches = [s for s in segments if s["start"]["segment_id"] == args.segment_id]
         now = datetime.now().astimezone()
         value = {"at": now.isoformat(timespec="milliseconds"), "epoch_ms": round(now.timestamp() * 1000),
+                 "timing_protocol": TIMING_PROTOCOL,
                  "uc_id": run["uc_id"], "run_id": run["run_id"], "session_id": session["session_id"],
                  "turn_id": args.turn_id, "phase": args.phase, "event": args.event,
                  "segment_id": args.segment_id, "source_revision": args.source_revision}
+        if args.phase == "repair":
+            value["repair_id"] = args.repair_id
         if args.event == "start":
             require(not matches, "segment ID already exists; timestamps are immutable")
             require(all("end" in s or s.get("timing_unavailable_reason") for s in segments),
@@ -96,6 +105,7 @@ def main():
             require(len(matches) == 1 and "end" not in matches[0], "missing/already ended segment")
             require(all(matches[0]["start"][k] == value[k] for k in ("turn_id", "phase", "session_id")),
                     "end must match start identity in the same turn")
+            require(matches[0]["start"].get("repair_id") == value.get("repair_id"), "repair ID differs from start")
             matches[0]["end"] = value
         save_journal(folder, state)
         import json

@@ -7,7 +7,8 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from metrics_contract import (CORE, AUX, USAGE, METHOD, aggregate, phase_aggregate, token_breakdown, atomic_write, context,
+from metrics_contract import (CORE, AUX, USAGE, METHOD, TIMING_PROTOCOL, aggregate, execution_phase_aggregate,
+                              execution_workflow_aggregate, repair_timing, token_breakdown, atomic_write, context,
                               digest, duration, epoch, journal, metrics_markdown, read_json,
                               require, run_lock, save_journal, usage, validate_metrics)
 
@@ -149,6 +150,8 @@ def measure(args):
             "measurement ID must identify the current active turn")
     with run_lock(folder):
         state = journal(run, folder)
+        require(state.get("timing_protocol") == TIMING_PROTOCOL,
+                "legacy timing ledger is read-only; use a new run for execution timing")
         require(state["session_id"] in (None, session["session_id"]), "one session per UC/run required")
         state["session_id"] = session["session_id"]
         ids = [s["turn_id"] for s in selection["turns"]]
@@ -178,8 +181,8 @@ def measure(args):
         require(run["uc_id"].casefold() in selected[0]["message"].casefold(), "first workflow message must identify UC")
         old_metrics = run.get("metrics")
         if old_metrics:
-            require(old_metrics.get("schema_version") == 2,
-                    "legacy measured runs are read-only; use a new run for semantic token attribution")
+            require(old_metrics.get("schema_version") == 3,
+                    "legacy measured runs are read-only; use a new run for execution timing")
             require(old_metrics["session"]["session_id"] == session["session_id"], "metrics session mismatch")
             old_ids = [r["turn_id"] for r in old_metrics["turns"]]
             require(ids[:len(old_ids)] == old_ids, "cannot remove/reorder previously measured workflow turns")
@@ -196,18 +199,26 @@ def measure(args):
             require(phase in AUX or phase == expected_phase,
                     f"{turn['turn_id']} core token label is outside its generation window")
             segments = [s for s in state["segments"] if s["start"]["turn_id"] == turn["turn_id"]]
-            timing_phases = {s["start"]["phase"] for s in segments}
-            require(len(timing_phases) <= 1, "one timing bucket per turn required")
-            timing_phase = next(iter(timing_phases), expected_phase or phase)
-            require(timing_phase == expected_phase if expected_phase else timing_phase in AUX,
+            counted = [s for s in segments if s["start"]["phase"] in CORE]
+            timing_phases = {s["start"]["phase"] for s in counted}
+            require(len(timing_phases) <= 1, "one core execution phase per turn required")
+            timing_phase = next(iter(timing_phases), phase)
+            require(timing_phase in AUX or timing_phase == expected_phase,
                     "captured timing bucket conflicts with ledger boundaries")
             missing = selector.get("timing_unavailable_reason")
-            if not segments or any("end" not in s for s in segments):
+            excluded_time = not counted and phase in AUX
+            if excluded_time:
+                seconds = 0
+            elif not counted or any("end" not in s for s in counted):
                 require(bool(missing), "missing captured endpoint: record timing_unavailable_reason, never backfill")
                 seconds = None
             else:
-                seconds = round(sum(duration(s) for s in segments), 3)
-                for segment in segments:
+                seconds = round(sum(duration(s) for s in counted), 3)
+            for segment in segments:
+                require(segment["start"].get("timing_protocol") == TIMING_PROTOCOL,
+                        "legacy capture cannot be converted into execution time")
+                if "end" in segment:
+                    duration(segment)
                     a, b = segment["start"]["epoch_ms"], segment["end"]["epoch_ms"]
                     require(epoch(turn["started_at"]) - 1000 <= a <= b <= epoch(turn["ended_at"]) + 1000,
                             "captured interval must lie within its completed turn")
@@ -216,6 +227,7 @@ def measure(args):
                                       "timing_phase": timing_phase,
                                       "reason": selector["reason"], "duration_seconds": seconds,
                                       "timing_unavailable_reason": missing if seconds is None else None,
+                                      "timing_exclusion_reason": "Auxiliary work excluded from generation time" if excluded_time else None,
                                       "timing_segments": segments}
             if selector.get("repair_id"):
                 require(any(r.get("repair_id") == selector["repair_id"] for r in run.get("repairs", [])),
@@ -256,9 +268,13 @@ def measure(args):
                 state["workflow_status"] = "finalized"
         phases = {p: {"status": state["phases"].get(p, {}).get("status", "not_started"), "values": None}
                   for p in CORE}
+        repair_ids = [r.get("repair_id") for r in run.get("repairs", [])]
+        require(all(isinstance(i, str) and i.strip() for i in repair_ids) and len(set(repair_ids)) == len(repair_ids),
+                "each canonical repair needs a unique repair_id")
+        repairs = repair_timing(rows, repair_ids)
         for p in CORE:
             if phases[p]["status"] == "closed":
-                phases[p]["values"] = phase_aggregate(rows, p)
+                phases[p]["values"] = execution_phase_aggregate(rows, p, repairs)
             elif phases[p]["status"] == "skipped":
                 phases[p]["reason"] = state["phases"][p]["reason"]
                 phases[p]["values"] = aggregate([])
@@ -266,21 +282,22 @@ def measure(args):
         if not existing:
             state["observations"].append({"measurement_turn_id": args.measurement_turn_id,
                 "action": action, "last_turn_id": rows[-1]["turn_id"], "evidence_sha256": evidence_sha})
-        metrics = {"schema_version": 2, "provenance_class": "observed_post_run", "timing_method": METHOD,
+        metrics = {"schema_version": 3, "provenance_class": "observed_post_run", "timing_method": METHOD,
+                   "timing_protocol": TIMING_PROTOCOL, "repair_timing": repairs,
                    "token_attribution_method": "semantic_primary_phase_per_turn",
                    "uc_id": run["uc_id"], "run_id": run["run_id"], "status": state["workflow_status"],
                    "measured_at": datetime.now(timezone.utc).isoformat(),
                    "session": {k: session[k] for k in ("session_id", "file_name", "sha256")},
                    "selection_evidence_sha256": evidence_sha,
                    "extractor_sha256": digest(Path(__file__).read_bytes()),
-                   "phases": phases, "workflow": aggregate(rows), "turns": rows,
+                   "phases": phases, "workflow": execution_workflow_aggregate(rows, phases), "turns": rows,
                    "token_phase_breakdown": token_breakdown(rows),
                    "excluded_turns": exclusions + [{"turn_id": args.measurement_turn_id, "reason": "measurement/report turn"}],
                    "phase_ledger": state}
         validate_metrics(metrics)
         # Canonical run is committed first. Ledger/mirrors can be recovered from this snapshot.
         run = read_json(path)
-        run["metrics_schema_version"] = 2
+        run["metrics_schema_version"] = 3
         run["metrics"] = metrics
         atomic_write(path, run)
         atomic_write(folder / "workflow-metrics.json", metrics)

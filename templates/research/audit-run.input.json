@@ -21,7 +21,7 @@
     "codex_client_version": null
   },
   "run_status": "draft",
-  "metrics_schema_version": 2,
+  "metrics_schema_version": 3,
   "metrics": null,
   "repair_authorization": { "approved": false, "turn_id": null },
   "business_rules": {

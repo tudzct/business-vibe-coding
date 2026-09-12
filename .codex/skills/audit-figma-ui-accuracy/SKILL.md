@@ -19,7 +19,7 @@ Use this for a researcher-requested UI/Figma comparison. Read project context, c
 ## Boundaries
 
 - A visual miss is a repair-required observation, not a request to approve a different mapping. Report defects; do not repair source or bypass the Full/RQ3 hold gate. Repair still requires separate researcher authorization.
-- For UC work, follow the shared [phase/timestamp protocol](../measure-uc-workflow-tokens/references/phase-ledger-schema.md): reuse an open captured work segment; otherwise capture under the currently open timing phase or auxiliary `audit` after phase closure. Token attribution follows actual primary work under selection-schema.md: UI-audit-only turns use `audit` and contribute tokens only to workflow, regardless of timing bucket. Mixed turns retain one primary label. Do not reopen a closed phase. Do not run Measure in this turn.
+- Follow the shared [execution timing protocol](../measure-uc-workflow-tokens/references/phase-ledger-schema.md). UI audit is outside generation/workflow execution time: never extend or reuse a core timer for scoring. UI-audit-only turns use workflow-only token label `audit`; mixed turns retain one actual primary label under selection-schema.md. Do not reopen a closed phase or run Measure here.
 - Return `not_applicable` only for a verified `no-design` mapping. Incomplete/blocked evidence is `not_evaluable`, with null score and a reason, not a fabricated 0% or 100%.
 - Do not implement/evaluate flow accuracy. Do not alter external reference projects, frozen designs, frozen UCs or application code.
 - When invoked by `audit-generation-metrics`, return control to that parent Audit after persistence so it can validate and print one combined BR/UI summary. Do not invoke Measure or Excel export.

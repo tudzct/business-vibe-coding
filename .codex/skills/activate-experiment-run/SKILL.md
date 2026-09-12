@@ -7,7 +7,7 @@ description: Prepare a Draft experiment configuration or validate a Confirmed co
 
 Use this skill when the researcher wants to prepare or activate one configured use-case run.
 
-When this work belongs to an identified UC/run, use the [shared phase/timestamp protocol](../measure-uc-workflow-tokens/references/phase-ledger-schema.md). Capture configuration/approval time in the open timing bucket, or auxiliary `configuration_and_approval` if none is open. For tokens, a turn devoted to configuration/confirmation/activation uses `configuration_and_approval` and contributes only to workflow, even while a generation bucket is open; see the shared selection-schema.md. Start a live segment before the operation and end before researcher waiting/response. A Draft canonical identity may be initialized for telemetry before activation, without granting source permission. Setup shared across UCs outside their workflow is recorded separately. Do not run Measure here.
+Read the [shared execution timing protocol](../measure-uc-workflow-tokens/references/phase-ledger-schema.md). UC-specific configuration/confirmation/activation contributes tokens only to workflow under `configuration_and_approval`, even inside an open generation phase. It does not start a generation timer and contributes no phase/workflow execution seconds. A Draft canonical identity may be initialized without granting source permission. Common setup outside the UC is recorded separately. Do not run Measure here.
 
 Read `docs/00-context/workflow/gates/EXPERIMENT-CONFIGURATION-GATE.md`, `docs/00-context/workflow/gates/MODEL-SELECTION-GATE.md`, and the selected frozen UC. For activation, also read the referenced Business Rule baseline.
 
@@ -36,4 +36,4 @@ The script verifies the configuration, matching frozen BR baseline, UC/run assig
 
 `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/run-activation.json`
 
-It refuses to overwrite an existing receipt. Do not begin source-generation model/version capture, source timing, source mutation, Docker execution, or `$gen-source-code` within this skill; activation is the gate for those later operations. Captured configuration/approval work time is separate from source timing.
+It refuses to overwrite an existing receipt. Do not begin source-generation model/version capture, source timing, source mutation, Docker execution, or `$gen-source-code` within this skill; activation is the gate for those later operations. Configuration/approval is excluded from measured generation and workflow execution time.

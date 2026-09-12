@@ -45,7 +45,7 @@ def lookup(record, field):
 def resolve_value(record, field, kind, conversion):
     if field.startswith("metrics."):
         metrics = record.get("metrics")
-        require(isinstance(metrics, dict) and metrics.get("schema_version") in (1, 2), "no phase-aware finalized metrics")
+        require(isinstance(metrics, dict) and metrics.get("schema_version") in (1, 2, 3), "no phase-aware finalized metrics")
         validate_metrics(metrics)
         require(metrics.get("uc_id") == record.get("uc_id") and metrics.get("run_id") == record.get("run_id"),
                 "metrics/run identity mismatch")
