@@ -20,4 +20,4 @@ The repair caller must end its execution timer after correction and permitted ev
 
 Do not create/run tests or claim unsupported business correctness.
 
-Figma UI assessment is an automatic child operation of every Audit invocation, not a second researcher command. It remains supplementary and does not alter the BR baseline. Excel filling belongs to Measure/`export-experiment-excel`; Audit leaves BR/UI Excel cells for manual researcher entry. Do not automatically add flow scoring.
+Figma UI assessment is an automatic child operation of every Audit invocation, not a second researcher command. It remains supplementary and does not alter the BR baseline. Excel filling is a separate final `export-experiment-excel` command; neither Audit nor Measure invokes it. Audit leaves BR/UI Excel cells for manual researcher entry. Do not automatically add flow scoring.

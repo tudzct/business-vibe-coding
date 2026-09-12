@@ -12,20 +12,19 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflo
 from metrics_contract import ROOT, atomic_write, digest, read_json, require, validate_metrics, writable
 
 IDENTITY = {"uc_id", "run_id", "prompt_variant", "replicate_index", "run_order", "generation_model.requested_model_id"}
-SCOPES = {"prompt_generation", "source_generation", "repair", "workflow"}
 VALUE_TAIL = (r"(?:tokens\.(?:input_tokens|cached_input_tokens|output_tokens|reasoning_output_tokens|total_tokens)"
               r"|duration_seconds|workflow_turn_count|tool_call_count|model_call_count)")
 
 
-def validate_profile_field(profile, scope, field):
-    if profile != "measure_telemetry_only" or field is None:
+def validate_export_field(field):
+    if field is None:
         return
-    if scope == "workflow":
-        expected = rf"metrics\.workflow\.{VALUE_TAIL}"
-    else:
-        expected = rf"metrics\.phases\.{re.escape(scope)}\.values\.{VALUE_TAIL}"
+    if field in IDENTITY:
+        return
+    expected = (rf"metrics\.(?:workflow|phases\."
+                rf"(?:prompt_generation|source_generation|repair)\.values)\.{VALUE_TAIL}")
     require(re.fullmatch(expected, field) is not None,
-            f"field is outside Measure telemetry scope {scope}: {field}")
+            f"field is outside finalized telemetry export scope: {field}")
 
 
 def lookup(record, field):
@@ -81,18 +80,14 @@ def resolve_value(record, field, kind, conversion):
 
 def prepare(mapping):
     require(mapping.get("schema_version") == 1, "unknown mapping schema")
-    profile = mapping.get("profile", "all_available")
-    require(profile in ("all_available", "measure_telemetry_only"), "unknown export profile")
-    scope = mapping.get("measurement_scope")
-    if profile == "measure_telemetry_only":
-        require(scope in SCOPES, "Measure export requires one exact measurement_scope")
-        require(len(mapping.get("sources", [])) == 1, "Measure export requires exactly one canonical run source")
-    else:
-        require(scope is None, "measurement_scope is only valid for Measure telemetry export")
+    require(mapping.get("export_mode") == "finalized_workflow_telemetry",
+            "standalone Excel export requires export_mode finalized_workflow_telemetry")
     require(Path(mapping["repo_root"]).resolve() == ROOT, "repo_root must be the Business repository")
     workbook = (ROOT / mapping["workbook"]).resolve()
     require(workbook.is_file() and workbook.suffix.lower() == ".xlsx", "existing .xlsx workbook required")
     require(digest(workbook.read_bytes()) == mapping["workbook_sha256"], "workbook changed since inspection")
+    require(isinstance(mapping.get("sources"), list) and mapping["sources"],
+            "at least one explicit canonical run source is required")
     sources, errors, seen_sources = [], [], set()
     for source in mapping["sources"]:
         path = writable(ROOT / source)
@@ -105,9 +100,17 @@ def prepare(mapping):
             record = json.loads(raw.decode("utf-8-sig"))
             require(isinstance(record, dict) and record.get("uc_id") == path.parent.name and record.get("run_id") == path.stem,
                     "canonical path/identity mismatch")
+            metrics = record.get("metrics")
+            require(isinstance(metrics, dict), "canonical run has no measured metrics")
+            validate_metrics(metrics)
+            require(metrics.get("status") == "finalized", "workflow metrics are not finalized; run final Measure first")
+            require(metrics.get("uc_id") == record.get("uc_id") and metrics.get("run_id") == record.get("run_id"),
+                    "metrics/run identity mismatch")
             sources.append((str(path), digest(raw), record))
         except (OSError, ValueError) as error:
             errors.append({"path": str(path), "reason": str(error)})
+    require(not errors, "selected canonical source is invalid or unfinished: " +
+            "; ".join(item["reason"] for item in errors))
     updates, seen = [], set()
     require(isinstance(mapping.get("cells"), list) and mapping["cells"], "no writable result cells identified; report unresolved destinations without exporting")
     for cell in mapping["cells"]:
@@ -118,12 +121,11 @@ def prepare(mapping):
         seen.add(key)
         require("expected_value" in cell and cell.get("basis") and cell.get("review_range"), "observed cell/header context required")
         require(type(cell.get("overwrite_existing", False)) is bool, "invalid overwrite flag")
-        validate_profile_field(profile, scope, cell.get("field"))
+        validate_export_field(cell.get("field"))
         update = dict(cell, value="N/A", reason=None, source=None, source_sha256=None)
         try:
             identity = cell.get("identity", {})
             require(identity and set(identity) <= IDENTITY and "uc_id" in identity, "unresolved/invalid run identity")
-            require(not errors, "candidate result unreadable; cannot establish unique identity (see source_errors)")
             matches = []
             for source, checksum, record in sources:
                 try:
@@ -140,7 +142,7 @@ def prepare(mapping):
         except (ValueError, KeyError, TypeError, IndexError) as error:
             update["reason"] = str(error)
         updates.append(update)
-    return {"schema_version": 1, "profile": profile, "measurement_scope": scope,
+    return {"schema_version": 1, "export_mode": "finalized_workflow_telemetry",
             "repo_root": str(ROOT), "workbook": str(workbook),
             "workbook_sha256": mapping["workbook_sha256"], "updates": updates,
             "issues": mapping.get("issues", []), "source_errors": errors,

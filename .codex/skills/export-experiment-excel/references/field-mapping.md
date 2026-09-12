@@ -1,8 +1,8 @@
-# Automatic mapping and cell update contract
+# Final workflow telemetry mapping and cell update contract
 
 ## Canonical field meanings
 
-`metrics.phases.<phase>.values` contains a closed measurement bucket. Phase keys are `prompt_generation` (Coding Prompt), `source_generation` (First Source), and `repair` (Repair/RPA). A bare label such as "Token" without a phase/type is ambiguous: use a enclosing group heading only if it uniquely resolves the meaning, otherwise N/A.
+Run this standalone export only after `metrics.status == finalized`. `metrics.phases.<phase>.values` contains a closed measurement bucket. Phase keys are `prompt_generation` (Coding Prompt), `source_generation` (First Source), and `repair` (Repair/RPA). A bare label such as "Token" without a phase/type is ambiguous: use a enclosing group heading only if it uniquely resolves the meaning, otherwise N/A.
 
 | Template meaning | Canonical JSON path |
 |---|---|
@@ -18,11 +18,10 @@
 | Observable tool calls | `metrics.phases.<phase>.values.tool_call_count` |
 | Model/API calls | `metrics.phases.<phase>.values.model_call_count` (null if unavailable) |
 | Workflow fields above | Replace `metrics.phases.<phase>.values` with `metrics.workflow` |
-| UI weighted percentage | `ui_accuracy_percent` plus corresponding `ui_accuracy_status` |
 
-Only `closed` phase values are exportable as finalized; `skipped` is N/A with its reason, not fabricated zero. Workflow requires `metrics.status == finalized`. Legacy metrics lacking this schema cannot be relabelled as phase-split metrics. Unavailable counters remain N/A. Cached input is part of input, reasoning is part of output. "Tool cost" must explicitly mean call count to map it to tool_call_count; it is not money or model calls. Do not sum three phases or implement a flow score here.
+Only `closed` phase values are exportable as finalized; `skipped` is N/A with its reason, not fabricated zero. Workflow requires `metrics.status == finalized`. Legacy metrics lacking this schema cannot be relabelled as phase-split metrics. Unavailable counters remain N/A. Cached input is part of input, reasoning is part of output. "Tool cost" must explicitly mean call count to map it to tool_call_count; it is not money or model calls. Do not sum three phases, export UI/BR/flow judgments, or implement a flow score here.
 
-Seconds are captured work, not UI "Worked for" or full elapsed chat time. Convert seconds to minutes only for an explicitly minute-labelled field. UI percentages are 0–100 in JSON: divide by 100 for a cell using Excel's `%` number format, retain 0–100 for a numeric "percent points" cell. Ambiguous units produce N/A. Business Rule results are counts (`total`, `met`, `unmet`, `not_evaluable`), not a percentage. Preserve existing formula cells even if they produce a pre-existing error.
+Seconds are captured work, not UI "Worked for" or full elapsed chat time. Convert seconds to minutes only for an explicitly minute-labelled field. Ambiguous units produce N/A. Preserve existing formula cells even if they produce a pre-existing error.
 
 ## Mapping manifest
 
@@ -31,8 +30,7 @@ All paths resolve from `repo_root`; all writes stay in the Business repository a
 ```json
 {
   "schema_version": 1,
-  "profile": "measure_telemetry_only",
-  "measurement_scope": "source_generation",
+  "export_mode": "finalized_workflow_telemetry",
   "repo_root": "<absolute Business repository path>",
   "workbook": "<workbook path>",
   "workbook_sha256": "sha256:<hash>",
@@ -63,7 +61,7 @@ Identity values use exact canonical strings/numbers and may include `prompt_vari
 
 `issues` retains unresolved destinations that must remain untouched (sheet, cell/range if known, reason). Known writable cells with unavailable values still appear in `cells` and receive N/A. The prepared updates retain source hashes, field paths, conversion, before/after values and reasons. Export never changes the input result JSON.
 
-`profile` defaults to `all_available` for a standalone researcher-requested export. Measure must set `profile` to `measure_telemetry_only` and must provide exactly one `measurement_scope`: `prompt_generation`, `source_generation`, `repair`, or `workflow`. In that profile, every non-null `field` must belong to committed telemetry for exactly that scope. Manual BR/UI/flow cells are omitted completely, not represented as N/A or unresolved cells. The output update receipt retains the profile and scope.
+`export_mode` must be `finalized_workflow_telemetry`. Every source must contain validated, finalized metrics. Every non-null result field must be an identity field or committed telemetry under Prompt, Source, Repair or Workflow. Map all recognized telemetry scopes in this one export operation. Manual BR/UI/flow cells are omitted completely, not represented as N/A or unresolved cells. The output receipt retains the export mode.
 
 Usage, with bundled executables:
 

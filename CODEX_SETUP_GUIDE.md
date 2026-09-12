@@ -96,6 +96,6 @@ Next action: <one concrete action>
 ## Supplementary researcher skills
 
 - `$audit-figma-ui-accuracy`: compare runtime UI with the pinned frozen Figma dataset, retain checkpoint evidence and save the Business weighted UI percentage. It does not score flow or authorize repairs.
-- `$export-experiment-excel`: inspect a supplied Excel workbook, map its result cells to canonical UC/run JSON and save a filled copy. Unavailable/ambiguous results become `N/A` with a reason receipt; original workbook and canonical results remain unchanged. Supply the workbook path when invoking it. For automatic telemetry export, append `Excel target: <path-or-link>` directly to the `$measure-uc-workflow-tokens` prompt; no default workbook is retained between Measure turns.
+- `$export-experiment-excel`: after final workflow Measure, invoke this separately once with the supplied Excel path/link and finalized UC/run. It maps finalized Prompt/Source/Repair/Workflow telemetry and saves a new filled copy. Unavailable/ambiguous telemetry becomes `N/A` with a reason receipt; manual BR/Figma/flow cells, the original workbook and canonical results remain unchanged. Measure itself never reads or writes Excel.
 
 These skills do not replace Measure or Business Rule Audit. Excel export is reporting-only; UI assessment follows the existing phase/timestamp boundaries when performed as UC work.
