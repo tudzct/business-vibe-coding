@@ -57,7 +57,7 @@ def main():
                       "Evidence and limitations: canonical ui_accuracy.assessments and run ui-accuracy reports.", ""])
     if data.get("metrics") is not None:
         lines.append(metrics_markdown(data["metrics"]))
-    elif data.get("metrics_schema_version") == 1:
+    elif data.get("metrics_schema_version") in (1, 2):
         lines.extend(["Metrics pending: invoke Measure in a later turn after work completion.", ""])
     else:
         lines.extend(["Legacy run: historical metrics retain their original scope; no phase split was reconstructed.", ""])

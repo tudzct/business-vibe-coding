@@ -100,7 +100,7 @@ def calculate(path_string):
         raise ValueError("ordered_br_ids must be a non-empty unique array")
     validate_snapshot(business.get("initial"), ordered, "business_rules.initial")
     validate_snapshot(business.get("final"), ordered, "business_rules.final")
-    ui_summary = validate_ui(data) if data.get("metrics_schema_version") == 1 else None
+    ui_summary = validate_ui(data) if data.get("metrics_schema_version") in (1, 2) else None
     revision = business.get("source_revision")
     if data.get("run_status") == "complete" and (not isinstance(revision, str) or re.fullmatch(r"sha256:[0-9a-f]{64}", revision.lower()) is None):
         raise ValueError("complete runs need a full final-source SHA-256")

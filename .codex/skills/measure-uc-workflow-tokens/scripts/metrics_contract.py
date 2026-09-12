@@ -171,8 +171,30 @@ def aggregate(rows):
             "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"}
 
 
+def phase_aggregate(rows, phase):
+    """Token/count membership is semantic; time retains its captured bucket."""
+    result = aggregate([r for r in rows if r["phase"] == phase])
+    timed = aggregate([r for r in rows if r.get("timing_phase", r["phase"]) == phase])
+    for key in ("duration_seconds", "timing_unavailable_reason"):
+        result[key] = timed[key]
+    return result
+
+
+def token_breakdown(rows):
+    result = {}
+    for phase in sorted({r["phase"] for r in rows}):
+        values = aggregate([r for r in rows if r["phase"] == phase])
+        result[phase] = {k: values[k] for k in (
+            "tokens", "token_unavailable_reasons", "workflow_turn_count", "tool_call_count")}
+    return result
+
+
 def validate_metrics(metrics):
-    require(metrics.get("schema_version") == 1, "unsupported metrics schema")
+    require(metrics.get("schema_version") in (1, 2), "unsupported metrics schema")
+    semantic = metrics["schema_version"] == 2
+    if semantic:
+        require(metrics.get("token_attribution_method") == "semantic_primary_phase_per_turn",
+                "unsupported token attribution method")
     require(metrics.get("timing_method") == METHOD, "unsupported timing method")
     rows = metrics.get("turns", [])
     require(len({(r["session_id"], r["turn_id"]) for r in rows}) == len(rows), "duplicate turn")
@@ -180,6 +202,8 @@ def validate_metrics(metrics):
         usage(row["tokens"])
         require(row["phase"] in CORE + AUX and row["completed"], "invalid selected turn")
         require(bool(row.get("reason")), "turn classification needs a reason")
+        if semantic:
+            require(row.get("timing_phase") in CORE + AUX, "timing bucket required independently of token phase")
         require(type(row.get("tool_call_count")) is int and row["tool_call_count"] >= 0, "invalid tool-call count")
         require(row["duration_seconds"] is None or row["duration_seconds"] >= 0, "negative time")
         if row["duration_seconds"] is None:
@@ -192,16 +216,20 @@ def validate_metrics(metrics):
             for segment in segments:
                 require(all(segment["start"].get(k) == metrics[k] for k in ("uc_id", "run_id")),
                         "segment UC/run mismatch")
-                require(all(segment["start"].get(k) == row[k] for k in ("turn_id", "session_id", "phase")),
+                require(all(segment["start"].get(k) == row[k] for k in ("turn_id", "session_id")),
                         "segment turn identity mismatch")
+                require(segment["start"]["phase"] == row.get("timing_phase", row["phase"]),
+                        "segment timing bucket mismatch")
     require(metrics["workflow"] == aggregate(rows), "workflow metrics differ from selected turns")
+    if semantic:
+        require(metrics.get("token_phase_breakdown") == token_breakdown(rows), "token phase breakdown mismatch")
     require(not {r["turn_id"] for r in rows}.intersection(e["turn_id"] for e in metrics.get("excluded_turns", [])),
             "a selected turn cannot also be excluded")
     require(set(metrics["phases"]) == set(CORE), "exactly three metric phases required")
     for phase in CORE:
         item = metrics["phases"][phase]
         if item["status"] in ("closed", "skipped"):
-            expected = aggregate([r for r in rows if r["phase"] == phase])
+            expected = phase_aggregate(rows, phase) if semantic else aggregate([r for r in rows if r["phase"] == phase])
             require(item["values"] == expected, f"{phase} metrics mismatch")
             if item["status"] == "skipped":
                 require(phase == "repair" and bool(item.get("reason")) and not any(r["phase"] == phase for r in rows),
@@ -227,6 +255,20 @@ def metrics_markdown(metrics):
     lines += ["", "Cached input is included in input; reasoning output is included in output.",
               "Seconds sum captured work intervals. Waiting between turns and measurement/report turns are excluded.",
               "Model call count: unavailable (token usage updates are not model call evidence).", ""]
+    if metrics["schema_version"] == 2:
+        lines += ["Tokens and turn/tool counts follow each turn's semantic phase label. "
+                  "Seconds follow timing_phase and the captured ledger; these scopes can differ.", "",
+                  "### Token attribution by label", "",
+                  "| Label | Input | Cached input | Output | Reasoning output | Total | Turns | Tool calls |",
+                  "|---|---:|---:|---:|---:|---:|---:|---:|"]
+        for phase, values in metrics["token_phase_breakdown"].items():
+            cells = [values["tokens"][k] for k in USAGE] + [values["workflow_turn_count"], values["tool_call_count"]]
+            lines.append("| " + phase + " | " + " | ".join("N/A" if v is None else str(v) for v in cells) + " |")
+        lines += ["", "| Turn | Token label | Timing bucket | Reason |", "|---|---|---|---|"]
+        for row in metrics["turns"]:
+            reason = row["reason"].replace("|", "\\|").replace("\n", " ")
+            lines.append(f"| {row['turn_id']} | {row['phase']} | {row['timing_phase']} | {reason} |")
+        lines.append("")
     if metrics["phases"]["repair"]["status"] == "skipped":
         lines += ["Repair skipped: " + metrics["phases"]["repair"]["reason"], ""]
     for row in metrics["turns"]:

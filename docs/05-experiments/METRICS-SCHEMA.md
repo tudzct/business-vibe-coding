@@ -28,13 +28,13 @@ Required consistency:
 
 No test metrics or generated test cases are part of this schema.
 
-## Post-turn measurements (metrics schema version 1)
+## Post-turn measurements (metrics schema version 2)
 
-New run templates set `metrics_schema_version: 1` and `metrics: null` until the first researcher-requested Measure turn. Existing historical `tokens`/`timing_seconds` fields retain their original meaning and are not rewritten or silently migrated. Consumers prefer `metrics` when present; do not add legacy totals to it.
+New run templates set `metrics_schema_version: 2` and `metrics: null` until the first researcher-requested Measure turn. Schema 2 separates semantic token labels from live timing buckets. Schema 1 measured runs remain readable under their original attribution rules, but Measure does not rewrite them; use a new run for the new method. Existing historical `tokens`/`timing_seconds` fields retain their original meaning and are not silently migrated. Consumers prefer `metrics` when present; do not add legacy totals to it.
 
 Measure is the only telemetry writer. It updates canonical `metrics` and mirrors it under `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/workflow-metrics.json`. The adjacent `workflow-metrics.md` is refreshed on every measurement. `phase-ledger.json` stores live work segments and phase state; `phase-ledger.md` is the readable control record. Audit validates the metrics block and preserves it while updating BR evidence. Renderer reads canonical fields without recomputation.
 
-`metrics` contains UC/run identity, `schema_version: 1`, `provenance_class: observed_post_run`, `timing_method: system_timestamp_delta`, `status: open|finalized`, session/hash provenance, selected `turns`, explicit `excluded_turns`, `phase_ledger`, `phases` and `workflow`.
+`metrics` contains UC/run identity, `schema_version: 2`, `token_attribution_method: semantic_primary_phase_per_turn`, `provenance_class: observed_post_run`, `timing_method: system_timestamp_delta`, `status: open|finalized`, session/hash provenance, selected `turns`, explicit `excluded_turns`, `phase_ledger`, `phases`, `token_phase_breakdown` and `workflow`.
 
 The only core measurement phase keys are `prompt_generation`, `source_generation`, `repair`. Each has `status: not_started|open|closed|skipped` and `values`. Values are null until closed. An explicitly skipped repair has a reason and zero observed work. These measurement buckets do not alter the method's two research phases.
 
@@ -47,14 +47,16 @@ Each closed phase's `values`, and `metrics.workflow`, has:
 | `tokens.output_tokens` | Original output counter, including reasoning |
 | `tokens.reasoning_output_tokens` | Reasoning subset of output |
 | `tokens.total_tokens` | Input + output; never add cached/reasoning again |
-| `duration_seconds` | Sum of captured, non-overlapping work segments |
-| `workflow_turn_count` | Number of selected researcher-initiated turns |
-| `tool_call_count` | Observable tool invocation records, deduplicated by call ID |
+| `duration_seconds` | Sum of captured, non-overlapping work segments by `timing_phase`; independent of token label |
+| `workflow_turn_count` | Number of selected researcher-initiated turns with the matching token label (all selected turns for workflow) |
+| `tool_call_count` | Observable tool invocation records for those token-labelled turns, deduplicated by call ID |
 | `model_call_count` | Null until an exact model-request event schema is supported |
 
 Missing cached/reasoning counters have null and `token_unavailable_reasons`. Missing captured time makes the containing aggregate duration null, with `timing_unavailable_reason`; known durations are not passed off as a complete sum. No fresh-input/cache-write fields, money costs, usage-update counts or three-phase subtotal appear in the main report. Parser diagnostics may count usage updates internally, never relabel them as model calls.
 
-Required UC-specific approvals, clarification, Figma/dataset resolution and blocked turns count toward that UC. Inside an open core phase they count toward that phase and workflow. Before a core phase starts they belong only to an auxiliary workflow phase. Setup shared across UCs before UC start is recorded separately. Exclude unrelated/other-UC work with a reason. Exclude every intermediate and final Measure/report-only turn.
+Required UC-specific approvals, clarification, Figma/dataset resolution and blocked turns count toward that UC workflow. For tokens, AI labels each completed turn by actual primary work and supplies a reason. Only `prompt_generation`, `source_generation` and `repair` labels contribute tokens to the corresponding core phase. Config/approval-only, dataset-only, audit-only, runtime-only, finalization-only and setup-only turns remain auxiliary even inside an open generation bucket. Failed generation/repair attempts remain chargeable under their actual work. Mixed turns retain one primary label and whole telemetry, never an estimated split. See the shared selection-schema.md. Review every earlier session turn; explicitly exclude common setup, unrelated/other-UC work and every Measure/report-only turn with reasons so earlier UC-specific configuration is not silently omitted.
+
+`turns[].phase` is the semantic token label; `turns[].timing_phase` is the captured timing bucket. The latter follows the unchanged timestamp protocol and can differ from the token label. `metrics.phases.<phase>.values.tokens` and counts sum matching token labels; `duration_seconds` sums matching timing buckets. `metrics.token_phase_breakdown.<label>` records all labels, including auxiliary, with five token fields, unavailable reasons and turn/tool counts. Workflow sums each selected turn once. The rendered view shows per-label totals and each turn's token label, timing bucket and rationale. Automatic Excel reads the same canonical phase/workflow fields and does not reclassify or recompute them.
 
 Timestamp endpoints are captured live by the shared helper with ISO/epoch, UC/run/session/turn/phase/segment/event/source revision. Compute `(end_epoch_ms - start_epoch_ms)/1000`, validate timezone/ISO consistency, reject negative/overlapping or mismatched intervals. End before researcher waits and resume with a new segment. Captured work duration is not an exact UI Worked-for claim. Workflow time covers all selected work segments; it is not the gap between first and last chat timestamps.
 
