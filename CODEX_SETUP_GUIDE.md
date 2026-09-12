@@ -38,6 +38,8 @@ Expected repository invariants:
 
 ## Local configuration
 
+Experiment defaults live in ignored root `.env`. If absent, create it from root `.env.example`; the researcher fills the listed experiment fields once. Validate with `.codex/skills/activate-experiment-run/scripts/load_experiment_env.py --ensure`. Do not copy runtime secrets into the root experiment file. New configurations freeze these values and the active Figma version/checksum.
+
 `finalsource/.env` is ignored and must not be committed. If it is absent, create it only when the researcher asks to initialize runtime:
 
 ```bash
@@ -93,9 +95,8 @@ Next action: <one concrete action>
 
 `READY` means the environment can execute the two-phase method; it does not mean generated source satisfies Business Rules.
 
-## Supplementary researcher skills
+## Supplementary researcher output
 
-- `$audit-figma-ui-accuracy`: compare runtime UI with the pinned frozen Figma dataset, retain checkpoint evidence and save the Business weighted UI percentage. It does not score flow or authorize repairs.
-- `$export-experiment-excel`: after final workflow Measure, invoke this separately once with the supplied Excel path/link and finalized UC/run. It maps finalized Prompt/Source/Repair/Workflow telemetry and saves a new filled copy. Unavailable/ambiguous telemetry becomes `N/A` with a reason receipt; manual BR/Figma/flow cells, the original workbook and canonical results remain unchanged. Measure itself never reads or writes Excel.
+- `$export-experiment-excel`: after Final Metrics Gate, invoke this separately once with the supplied Excel path/link and finalized UC/run. It maps finalized Prompt/Source/Repair/Workflow telemetry and saves a new filled copy; manual BR/Figma/flow cells remain unchanged.
 
-These skills do not replace Measure or Business Rule Audit. Excel export is reporting-only; UI assessment follows the existing phase/timestamp boundaries when performed as UC work.
+Figma/UI accuracy is measured and recorded manually by the researcher. Gate-driven BR/flow audit never calculates it. Excel export remains reporting-only.

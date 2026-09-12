@@ -5,7 +5,7 @@ description: Review whether a research environment can install and run Docker, i
 
 # Guide Docker Deployment
 
-Read the [shared execution timing protocol](../measure-uc-workflow-tokens/references/phase-ledger-schema.md). Standalone deployment/setup/runtime/clarification contributes no generation or workflow execution seconds. Only permitted evidence collection inside an executing authorized repair stays inside that repair interval, which ends before audit appending. Tokens follow actual primary work under selection-schema.md: setup-only or runtime-only turns are workflow-only; mixed turns keep one label. Common setup before the UC is separate. End any core segment before researcher waiting/resolution; final token calculation belongs to a later Measure turn.
+Read the shared timing protocol. Standalone deployment/setup/runtime contributes no generation execution seconds. End core segments before waiting; final token calculation belongs to a later confirmed telemetry gate, not a researcher-invoked skill.
 
 Always read `AGENTS.md`, the artifact/context policy, `finalsource/compose.yaml`, affected Dockerfiles/env examples and only the selected mode section of `references/project-runbook.md`. Read `CODEX_SETUP_GUIDE.md` only for fresh setup/install/initialize. Read `PROJECT_CONTEXT.md` only when a research invariant cannot be resolved from `AGENTS.md`. Read `environment-current.json` when present; otherwise treat current state as unknown and create it from its template when persisting the first result. For troubleshooting, query `incidents/index.json` when present and read only a matching incident. Historical Markdown logs are legacy evidence and must not be loaded by default.
 

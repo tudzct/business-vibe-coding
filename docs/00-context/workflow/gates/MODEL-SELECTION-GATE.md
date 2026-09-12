@@ -23,4 +23,4 @@ The configuration entry must match the receipt UC/run identity. Use the confirme
 
 - Requested label, model ID, reasoning effort and reasoning mode must not be `null`, `unknown`, `not-requested` or inferred from the client version.
 - Effective model ID/snapshot/effort and token telemetry may be `null` only when unavailable; record the reason.
-- Historical `model-selection.md` files remain read-only evidence. New runs use gate version 3 and `run-activation.json`.
+- Historical `model-selection.md` files remain read-only evidence. New schema-2.2 runs use gate version 4 and `run-activation.json`; legacy configurations retain their original receipts.

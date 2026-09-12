@@ -1,4 +1,4 @@
 interface:
   display_name: "Export Experiment Excel"
   short_description: "Fill Excel results with traceable values or N/A"
-  default_prompt: "Use $export-experiment-excel once after final Measure to copy finalized Prompt, Source, Repair and Workflow telemetry into the supplied workbook and report N/A cells with reasons."
+  default_prompt: "Use $export-experiment-excel once after Final Metrics Gate to copy finalized Prompt, Source, Repair and Workflow telemetry into the supplied workbook and report N/A cells with reasons."

@@ -21,6 +21,19 @@ DATASET_ROOT = ROOT / "resource/figma-design-dataset"
 
 
 def select_dataset(version: Optional[str]) -> Path:
+    if not version:
+        activation_path = DATASET_ROOT / "active-dataset.json"
+        if not activation_path.is_file():
+            raise FileNotFoundError("No active Figma dataset; researcher confirmation is required")
+        activation = json.loads(activation_path.read_text(encoding="utf-8"))
+        if activation.get("status") != "Confirmed":
+            raise FileNotFoundError("Figma dataset activation is not Confirmed")
+        version = activation.get("dataset_version")
+        manifest = ROOT / activation.get("manifest_path", "")
+        if not isinstance(version, str) or not version or not manifest.is_file():
+            raise FileNotFoundError("Figma dataset activation is incomplete")
+        if activation.get("manifest_sha256") != "sha256:" + digest(manifest):
+            raise FileNotFoundError("Figma dataset activation checksum mismatch")
     if version:
         candidate = DATASET_ROOT / version
         if not (candidate / "manifest.json").is_file():

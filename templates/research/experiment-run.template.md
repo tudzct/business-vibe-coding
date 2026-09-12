@@ -15,13 +15,26 @@
 | Repair | | | | | | | | |
 | Workflow | | | | | | | | |
 
-Measure supplies canonical `metrics`. Cached input is part of input; reasoning is part of output. Seconds sum captured work intervals; workflow includes related auxiliary work. Measurement/report-only turns and researcher waiting between work intervals are excluded. Missing values are N/A with reasons. No core-three-phase subtotal or monetary tool cost is produced. Model-call count is unavailable unless exact request evidence exists. Phase closure and final workflow measurement happen only after the work response completes.
+Confirmed gates supply canonical `metrics` through the internal telemetry engine. Cached input is part of input; reasoning is part of output. Gate-close/report turns and researcher waiting are excluded. Phase closure happens only after the work response completes.
 
 ## Business Rule assessment
 
 | BR ID | Initial | Final | Evidence |
 |---|---|---|---|
 | `<BR-ID>` | `met/unmet/not_evaluable` | `met/unmet/not_evaluable` | `<locations>` |
+
+## Flow accuracy
+
+- Status: `scored | repair_required | not_evaluable`
+- Correct/incorrect/not evaluable: `<counts>`
+- Flow error/accuracy: `<percent or N/A>`
+- Evaluated coverage and bounds: `<values>`
+
+## Researcher-managed Figma/UI accuracy
+
+- Status: `researcher_managed | measured`
+- Accuracy: `<manual percent or N/A>`
+- Evidence: `<researcher-supplied reference>`
 
 ## Repairs
 

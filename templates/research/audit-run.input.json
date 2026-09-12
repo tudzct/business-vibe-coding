@@ -21,6 +21,10 @@
     "codex_client_version": null
   },
   "run_status": "draft",
+  "gates": {
+    "current": "configuration",
+    "history": []
+  },
   "metrics_schema_version": 3,
   "metrics": null,
   "repair_authorization": { "approved": false, "turn_id": null },
@@ -50,9 +54,15 @@
   "repairs": [],
   "manual_estimates_minutes": [],
   "ui_accuracy_percent": null,
-  "ui_accuracy_status": "not_evaluated",
-  "ui_accuracy": null,
+  "ui_accuracy_status": "researcher_managed",
+  "ui_accuracy_source": "manual",
+  "ui_accuracy_evidence": null,
+  "ui_accuracy_recorded_by": null,
+  "ui_accuracy_recorded_at": null,
   "flow_accuracy_percent": null,
+  "flow_error_percent": null,
+  "flow_accuracy_status": "not_evaluated",
+  "flow_accuracy": null,
   "complexity": {
     "actors": 0,
     "main_flow_steps": 0,

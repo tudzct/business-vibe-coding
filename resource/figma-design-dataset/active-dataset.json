@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "artifact_type": "figma-dataset-activation",
+  "status": "Confirmed",
+  "dataset_version": "2026-08-29-005",
+  "manifest_path": "resource/figma-design-dataset/2026-08-29-005/manifest.json",
+  "manifest_sha256": "sha256:41d825cfd36250aa54c87f29ab10e2fbd48df15f9531e9ec7cfab81b4184a0d1",
+  "activated_at": "2026-09-12T17:22:06.4838565+07:00",
+  "activation_scope": "default for new configurations; existing Confirmed configurations remain immutable"
+}

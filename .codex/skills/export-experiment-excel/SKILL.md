@@ -5,7 +5,7 @@ description: After final workflow measurement, export finalized Prompt/Source/Re
 
 # Export Experiment Excel
 
-Invoke this skill separately once after the final workflow Measure operation has committed `metrics.status: finalized`. Require the researcher to identify the exact workbook path/link and UC/run source(s). Never invoke this skill from Measure, Audit or a generation turn, and never run Measure from this skill.
+Invoke this skill separately once after Final Metrics Gate has committed `metrics.status: finalized`. Require the researcher to identify the exact workbook path/link and UC/run source(s). Never invoke this skill from a telemetry gate, Audit Gate or generation turn, and never run telemetry closure from this skill.
 
 Read the installed spreadsheets skill and its existing-workbook workflow before handling a workbook. Use its bundled Artifact Tool runtime, preview, preservation and verification requirements. This skill fills `.xlsx` result templates; it does not operate a live Excel session or upload to Google Sheets. If the researcher has not supplied/identified a workbook, ask for it; do not invent its layout. For legacy `.xls` or macro-enabled workbooks, explain format/preservation limits before conversion.
 
@@ -27,4 +27,4 @@ Read the installed spreadsheets skill and its existing-workbook workflow before 
 - Preserve layout, formats, formulas, validations, charts and unrelated/manual values. A nonblank result cell may be replaced only when the user requested refreshing it; mark `overwrite_existing: true` for that cell. Never overwrite a formula. Do not add sheets/rows/columns just for diagnostics.
 - Do not invent totals, percentages or new measurements. Only perform explicit unit/percent representation conversions. Input/cached/output/reasoning/total stay separate; no duplicate counting.
 
-This is a reporting-only turn, excluded from measured phases and workflow. It does not open/close a phase, run Measure/Audit, start timers, authorize repair, update canonical evidence or mark a run complete. Measure remains the token/time writer; this skill only copies finalized values. Its failure never rolls back/repeats Measure. Do not retain the workbook target for another invocation.
+This is a reporting-only turn, excluded from measured phases and workflow. It does not open/close a phase or gate, start timers, authorize repair, update canonical evidence or mark a run complete. The internal telemetry engine remains the token/time writer; this skill only copies finalized values. Its failure never rolls back or repeats gate closure. Do not retain the workbook target for another invocation.

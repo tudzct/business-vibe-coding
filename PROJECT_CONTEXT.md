@@ -55,6 +55,8 @@ Phase 1 uses all BRs supplied for the active UC. There is no rule-selection mode
 
 This receipt prevents evaluation criteria from changing after source generation; it is not an approval or selection of rules.
 
+Before generation the workflow also freezes a supplementary flow baseline from every explicit Basic/Main, Alternative and Exception Flow. A flow is incorrect only when a completion-critical step fails or its specified terminal outcome is not achieved. Flow scoring never changes the BR denominator or BR result.
+
 ## System baseline
 
 - Frontend: React 18, TypeScript, Vite, Tailwind, React Router, Axios, Context/Zustand, Recharts.
@@ -88,8 +90,9 @@ A run is complete only when:
 
 - the approved prompt has the configured structure: Prompts A-F with the exact frozen BR set for Full, or Prompts A-D with no Prompt E or F content for RQ3;
 - initial generation telemetry is preserved before repair;
-- Full and RQ3 source generation both end at a hold gate; a later researcher Measure turn closes source telemetry before separate first-pass audit and explicit repair authorization;
+- Full and RQ3 source generation both end at a confirmation gate; internal telemetry closes only after researcher confirmation, before separate first-pass audit and explicit repair authorization;
 - every BR has one `met`, `unmet` or `not_evaluable` assessment with evidence;
+- every frozen flow has one `correct`, `incorrect` or `not_evaluable` assessment with evidence;
 - every evidenced defect has a bounded repair record or an explicit researcher decision;
 - permitted validators, lint/typecheck/build checks pass;
 - Docker images are rebuilt from current source and required services are healthy/reachable;
@@ -98,6 +101,6 @@ A run is complete only when:
 
 No test or test-case generation is part of this method.
 
-Telemetry uses three measurement buckets (Coding Prompt, Source Generation, Repair) within the existing two research phases. Measure owns post-turn token/time and call counts plus full workflow totals; Audit owns BR evidence. Each turn's token label follows its actual primary work, independent of the open timing bucket. Config/approval-only and other auxiliary turns contribute tokens only to workflow; mixed turns have one evidenced primary label. Timing uses `generation_execution_only_v1`: capture only actual Prompt, first-pass Source and each Repair execution at the shared boundaries. Workflow seconds sum those executions, excluding prerequisite/gate/setup/dataset work, separate audit/runtime/finalization, researcher waiting and Measure/report turns; workflow tokens retain eligible auxiliary work. Work completion is distinct from final post-run telemetry; see `docs/05-experiments/METRICS-SCHEMA.md`.
+Telemetry uses three measurement buckets inside the two phases. Researchers confirm plain-language gates; each gate invokes telemetry internally in a later turn. Audit Gates automatically assess BRs and flows. Figma/UI accuracy is researcher-managed and never calculated by the workflow. Timing remains `generation_execution_only_v1`; gate-close/report turns are excluded.
 
-Measure only calculates, prints and persists canonical telemetry. Excel export is a separate, explicitly invoked reporting skill used once after final workflow measurement; it reads finalized phase/workflow telemetry, saves a new workbook copy and leaves manual BR/Figma/flow columns unchanged.
+The internal telemetry engine only calculates and persists canonical telemetry after gate confirmation. Excel export remains a separate reporting skill used after Final Metrics Gate and leaves manual BR/Figma/flow columns unchanged.

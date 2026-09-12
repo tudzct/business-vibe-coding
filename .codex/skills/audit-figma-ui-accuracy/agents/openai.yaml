@@ -1,4 +1,0 @@
-interface:
-  display_name: "Audit Figma UI Accuracy"
-  short_description: "Score screenshot-backed UI against frozen Figma"
-  default_prompt: "Use $audit-figma-ui-accuracy to score this UC/run against its frozen Figma design and save the evidence and result."

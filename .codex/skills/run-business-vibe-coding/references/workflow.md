@@ -2,8 +2,8 @@
 
 | Phase | Required input | Output | Researcher action |
 |---|---|---|---|
-| 1. Prompt generation | frozen UC/UML/BR + confirmed configuration + sources | BR resource/baseline + approved Prompt A-F | resolve material ambiguity and approve prompt |
-| 2. Source generation | approved prompt + active run + baseline source | generated source + initial/final BR audit + repairs + final hash | authorize runtime and resolve material decisions |
+| 1. Prompt generation | frozen UC/UML/BR/flows + confirmed `.env`-derived configuration + pinned Figma dataset | BR/flow baselines + approved Prompt A-F or A-D | confirm Configuration and Prompt Gates |
+| 2. Source generation | approved prompt + active run + baseline source | generated source + initial/final BR/flow audit + optional repairs + final hash | confirm Source/Audit/Repair/Final Metrics Gates |
 
 Commands:
 
@@ -12,4 +12,4 @@ $gen-coding-prompt <use-case.md>
 $gen-source-code <business-coding-prompt.md>
 ```
 
-Audit and stack skills run inside Phase 2. No step creates or runs tests.
+Telemetry and audit engines run internally after gate confirmation; the researcher does not invoke them by skill name. Figma/UI scoring is manual and outside automatic audit. No step creates or runs tests.

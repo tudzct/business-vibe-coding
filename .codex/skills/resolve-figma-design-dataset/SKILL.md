@@ -5,7 +5,7 @@ description: Create, refresh, validate, or resolve the repository's frozen, chec
 
 # Resolve Figma Design Dataset
 
-Use only the dataset version explicitly referenced by the active configuration/prompt under `resource/figma-design-dataset/<version>/manifest.json`. If none is referenced, stop for dataset activation; never auto-select the latest directory. Unreferenced versions are cold evidence. The immutable UC is only research input.
+Use the dataset version pinned by the active configuration/prompt. Before a configuration exists, resolve the researcher-confirmed pointer in `resource/figma-design-dataset/active-dataset.json`; never scan directories and auto-select “latest”. Copy the activated version and manifest checksum into every new configuration so later pointer changes cannot alter an existing run. Unreferenced versions are cold evidence.
 
 Read the [shared execution timing protocol](../measure-uc-workflow-tokens/references/phase-ledger-schema.md). Resolve required Figma inputs before generation START. For a new blocker during generation, end the active core segment before resolution; do not reuse it to time resolver work. Resume a fresh execution segment only when generation is ready. Dataset-resolution-only turns, including missing-dataset blockers, use workflow-only token label `dataset_resolution`; they contribute no generation/workflow execution seconds. Mixed turns keep one primary token label under selection-schema.md. Common dataset setup outside the UC is recorded separately. Do not run Measure here.
 
@@ -20,7 +20,7 @@ Read the [shared execution timing protocol](../measure-uc-workflow-tokens/refere
 
 ## Resolve
 
-1. Run `python3 .codex/skills/resolve-figma-design-dataset/scripts/resolve.py <UC-ID-or-path>` from the repository root. Pass `--dataset-version <version>` when an experiment has frozen a specific version.
+1. Run `python3 .codex/skills/resolve-figma-design-dataset/scripts/resolve.py <UC-ID-or-path>` from the repository root. Omit the version only during pre-configuration setup to use the confirmed active pointer; pass `--dataset-version <version>` for every configured experiment.
 2. If status is `complete`, use only the returned local snapshot directory, require valid checksums, and verify `resource/figma-design-dataset/CAPTURE-SPEC.md` before implementation or audit.
 3. If status is `no-design`, record that no design is applicable; do not invent a mapping.
 4. If status is `partial-content` or `pending-rate-limit`, stop design-dependent generation and report the exact missing capture state. Refresh through the installed Figma plugin using the approved review mapping; do not fall back to a UC link.

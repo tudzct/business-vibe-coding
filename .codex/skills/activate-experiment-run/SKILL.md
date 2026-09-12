@@ -13,7 +13,11 @@ Read `docs/00-context/workflow/gates/EXPERIMENT-CONFIGURATION-GATE.md`, `docs/00
 
 ## Prepare a configuration
 
-Create a Draft configuration at `docs/05-experiments/configurations/<CONFIG-ID>.json` from `templates/research/experiment-configuration.template.json` only after collecting the researcher-supplied comparison group, researcher identifier, audit protocol, run IDs, model tuples, replicate indexes, and run orders. Every new configuration must retain the template's fixed `timing_method: system_timestamp_delta`; do not omit, rename or substitute that method. Use every ordered BR ID from the frozen UC and record the prescribed baseline path; do not select rules. The baseline itself is frozen during Phase 1 and checked again at activation.
+Load researcher defaults from the ignored root `.env` using `scripts/load_experiment_env.py --ensure`. If `.env` is created or any researcher field is empty, list all missing keys once and stop. Never read experiment settings from `finalsource/.env`, which is reserved for runtime secrets.
+
+Treat `.env` as convenience input only. Build a Draft configuration from it, derive UC/BR/flow paths, unique run IDs and run order, pin the activated Figma dataset version/checksum, show one complete summary, and ask the researcher to confirm the Configuration Gate. On confirmation, persist a new immutable Confirmed configuration; later `.env` changes require a new configuration ID.
+
+Create a Draft configuration at `docs/05-experiments/configurations/<CONFIG-ID>.json` from `templates/research/experiment-configuration.template.json`. Every new configuration uses schema 2.2, retains `timing_method: system_timestamp_delta`, and pins the active Figma manifest. Use every ordered BR ID and record both BR and flow baseline paths; do not select rules or flows. Baselines are frozen before source generation and checked again at activation.
 
 Never infer a model tuple, replicate, run order, audit assignment, alternative timing method, or a `Confirmed` status. Stop for the researcher to confirm the complete configuration.
 

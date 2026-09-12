@@ -1,0 +1,4 @@
+interface:
+  display_name: "Advance Experiment Gate"
+  short_description: "Confirm and close the next experiment gate"
+  default_prompt: "Confirm the pending experiment gate and perform only its internal close action."

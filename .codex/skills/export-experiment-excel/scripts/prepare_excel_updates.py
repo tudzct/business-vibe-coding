@@ -103,7 +103,7 @@ def prepare(mapping):
             metrics = record.get("metrics")
             require(isinstance(metrics, dict), "canonical run has no measured metrics")
             validate_metrics(metrics)
-            require(metrics.get("status") == "finalized", "workflow metrics are not finalized; run final Measure first")
+            require(metrics.get("status") == "finalized", "workflow metrics are not finalized; close Final Metrics Gate first")
             require(metrics.get("uc_id") == record.get("uc_id") and metrics.get("run_id") == record.get("run_id"),
                     "metrics/run identity mismatch")
             sources.append((str(path), digest(raw), record))

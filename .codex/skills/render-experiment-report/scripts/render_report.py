@@ -37,8 +37,29 @@ def main():
         lines.append(f"| {row.get('br_id', '')} | {row.get('status', '')} | {evidence} |")
     lines.extend(["", (f"BR counts: {final.get('met', 0)} met, {final.get('unmet', 0)} unmet, "
                         f"{final.get('not_evaluable', 0)} not evaluable, {final.get('total', 0)} total"), ""])
+    flow = data.get("flow_accuracy")
+    if flow:
+        current = next((item for item in flow.get("assessments", [])
+                        if item.get("assessment_id") == flow.get("current_assessment_id")), None)
+        if current is None:
+            raise ValueError("Flow current assessment is missing")
+        counts = current.get("counts", {})
+        lines.extend(["## Flow accuracy", "", f"Assessment: `{current['assessment_id']}` ({current['stage']})",
+                      f"Status: {current['status']}",
+                      f"Flows: {counts.get('correct', 0)} correct, {counts.get('incorrect', 0)} incorrect, "
+                      f"{counts.get('not_evaluable', 0)} not evaluable, {counts.get('total', 0)} total",
+                      f"Flow error (%): {current.get('flow_error_percent') if current.get('flow_error_percent') is not None else 'N/A'}",
+                      f"Flow accuracy (%): {current.get('flow_accuracy_percent') if current.get('flow_accuracy_percent') is not None else 'N/A'}",
+                      f"Evaluated coverage (%): {current.get('evaluated_coverage_percent')}",
+                      f"Accuracy bounds (%): {current.get('accuracy_lower_bound_percent')}–{current.get('accuracy_upper_bound_percent')}", ""])
     ui = data.get("ui_accuracy")
-    if ui:
+    if data.get("ui_accuracy_status") in ("researcher_managed", "measured"):
+        lines.extend(["## Researcher-managed Figma/UI accuracy", "",
+                      f"Status: {data.get('ui_accuracy_status')}",
+                      f"Accuracy (%): {data.get('ui_accuracy_percent') if data.get('ui_accuracy_percent') is not None else 'N/A'}",
+                      f"Evidence: {data.get('ui_accuracy_evidence') or 'N/A'}",
+                      f"Recorded by: {data.get('ui_accuracy_recorded_by') or 'N/A'}", ""])
+    elif ui:
         current = next((item for item in ui.get("assessments", [])
                         if item.get("assessment_id") == ui.get("current_assessment_id")), None)
         if current is None:
@@ -58,7 +79,7 @@ def main():
     if data.get("metrics") is not None:
         lines.append(metrics_markdown(data["metrics"]))
     elif data.get("metrics_schema_version") in (1, 2, 3):
-        lines.extend(["Metrics pending: invoke Measure in a later turn after work completion.", ""])
+        lines.extend(["Metrics pending: confirm the next telemetry gate after work completion.", ""])
     else:
         lines.extend(["Legacy run: historical metrics retain their original scope; no phase split was reconstructed.", ""])
     output = "\n".join(lines)

@@ -1,6 +1,6 @@
 {
   "artifact_type": "run-activation",
-  "gate_version": 3,
+  "gate_version": 4,
   "uc_id": "<UC-ID>",
   "run_id": "<RUN-ID>",
   "configuration_artifact": "docs/05-experiments/configurations/<CONFIG-ID>.json",

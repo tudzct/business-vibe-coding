@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Validate a confirmed Business Rule experiment configuration."""
 
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -9,7 +10,7 @@ EFFORTS = {"none", "low", "medium", "high", "xhigh", "max"}
 MODES = {"standard", "pro"}
 PROTOCOLS = {"fixed", "matched", "cross"}
 PROMPT_VARIANTS = {"full", "rq3"}
-SCHEMA_VERSIONS = {"2.0", "2.1"}
+SCHEMA_VERSIONS = {"2.0", "2.1", "2.2"}
 TIMING_METHOD = "system_timestamp_delta"
 
 
@@ -46,10 +47,28 @@ def validate(path):
     for field in ("configuration_id", "comparison_group_id", "researcher_id", "decided_at", "sheet_revision"):
         text(data.get(field), field)
     timing_method = data.get("timing_method")
-    if schema_version == "2.1" and timing_method != TIMING_METHOD:
-        raise ValueError(f"schema 2.1 timing_method must be {TIMING_METHOD}")
+    if schema_version in {"2.1", "2.2"} and timing_method != TIMING_METHOD:
+        raise ValueError(f"schema {schema_version} timing_method must be {TIMING_METHOD}")
     if timing_method is not None and timing_method != TIMING_METHOD:
         raise ValueError(f"unsupported timing_method: {timing_method}")
+    if schema_version == "2.2":
+        figma = data.get("figma_dataset")
+        if not isinstance(figma, dict):
+            raise ValueError("schema 2.2 requires figma_dataset")
+        version = text(figma.get("dataset_version"), "figma_dataset.dataset_version")
+        manifest_value = text(figma.get("manifest_path"), "figma_dataset.manifest_path")
+        expected_path = f"resource/figma-design-dataset/{version}/manifest.json"
+        if manifest_value.replace("\\", "/") != expected_path:
+            raise ValueError("figma_dataset manifest path/version mismatch")
+        manifest_path = path.resolve().parents[3] / manifest_value
+        if not manifest_path.is_file():
+            raise ValueError("figma_dataset manifest does not exist")
+        expected_hash = "sha256:" + hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+        if figma.get("manifest_sha256") != expected_hash:
+            raise ValueError("figma_dataset manifest checksum mismatch")
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if manifest.get("dataset_version") != version or manifest.get("overall_status") != "complete":
+            raise ValueError("figma_dataset must reference a complete matching version")
     audit = data.get("audit_design")
     if not isinstance(audit, dict) or audit.get("protocol") not in PROTOCOLS:
         raise ValueError("audit_design.protocol is invalid")
@@ -69,6 +88,8 @@ def validate(path):
         if not isinstance(ids, list) or not ids or len(ids) != len(set(ids)) or any(not isinstance(v, str) or not v.strip() for v in ids):
             raise ValueError(f"use_cases[{index}].ordered_br_ids must be a non-empty unique string array")
         text(uc.get("business_rule_baseline"), f"use_cases[{index}].business_rule_baseline")
+        if schema_version == "2.2":
+            text(uc.get("flow_baseline"), f"use_cases[{index}].flow_baseline")
 
     runs = data.get("runs")
     if not isinstance(runs, list) or not runs:

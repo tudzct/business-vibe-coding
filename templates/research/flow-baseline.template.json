@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "artifact_type": "flow-baseline",
+  "status": "Frozen",
+  "uc_id": "<UC-ID>",
+  "use_case_path": "docs/01-inception/use-cases/<uc-file>.md",
+  "use_case_sha256": "sha256:<64 hex>",
+  "frozen_at": "<ISO-8601>",
+  "ordered_flow_ids": ["BF-1", "AF-1", "EF-1"],
+  "counts": {"main": 1, "alternative": 1, "exception": 1, "total": 3},
+  "flows": [{
+    "flow_id": "BF-1",
+    "type": "main",
+    "title": "Basic Flow",
+    "source_anchor": "Functional Use-Case Specification / Basic Flow",
+    "branch_from_step": null,
+    "terminal_outcome": "<observable completion outcome>",
+    "steps": [{
+      "step_id": "BF-1.1",
+      "text": "<frozen step>",
+      "completion_critical": true,
+      "criticality_reason": "<why failure blocks completion>"
+    }]
+  }]
+}

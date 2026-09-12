@@ -17,6 +17,8 @@ Thumbs.db
 **/dist/
 **/coverage/
 *.tsbuildinfo
+**/__pycache__/
+*.py[cod]
 
 # Logs and runtime files
 *.log

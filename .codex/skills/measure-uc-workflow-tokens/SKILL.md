@@ -1,22 +1,22 @@
 ---
 name: measure-uc-workflow-tokens
-description: Close a researcher-selected measurement phase or finalize one UC workflow after completed Codex turns, then print and persist observed token/time/count metrics. Never read or write Excel. Use on explicit researcher measurement requests.
+description: Internal telemetry engine used by confirmed experiment gates to close completed phases or finalize one UC workflow. Do not require researchers to invoke it directly; never read or write Excel.
 ---
 
 # Measure UC Workflow Tokens
 
 Read [selection-schema.md](references/selection-schema.md) before measurement and [phase-ledger-schema.md](references/phase-ledger-schema.md) before recording work. These are measurement phases inside the research method's existing two phases; repair is not a new research phase.
 
-The researcher invokes this skill in a later turn after the work response ends. Never finalize token totals during the work turn. Closing metrics does not approve a prompt, authorize repair, or claim that a blocked phase succeeded.
+`advance-experiment-gate` invokes this engine after the work response ends and the researcher confirms the displayed gate. Never ask the researcher to name this skill or finalize token totals during the work turn. Closing metrics does not authorize repair or claim that a blocked phase succeeded.
 
 1. Resolve the exact UC/run and canonical JSON, explicit rollout and current measurement turn ID. Never choose the latest file or largest token turn as evidence. A Draft run identity can exist before prompt generation; it is not source activation.
 2. Run `scripts/measure_uc_tokens.py list --session <rollout.jsonl>` read-only. Inspect user messages locally only as needed; retain hashes/IDs, not full messages or absolute profile paths, in public evidence.
 3. Prepare a cumulative selection from the first UC-specific workflow turn through the last completed work turn. Inspect earlier session turns too: select UC-specific configuration/setup or explicitly exclude unrelated/common setup with reasons. Include necessary clarification, dataset resolution, approval and blocked attempts. Assign exactly one semantic primary phase per turn, based on actual work and evidence, with a reason; use the classification rules in selection-schema.md. An open generation bucket does not force a token label. Other UCs/unrelated work and common setup outside this UC are excluded with reasons. Do not choose turns based on success or failure.
-4. Exclude every measurement/report-only turn, including intermediate phase measurements and this current turn. A measurement turn performs measurement only; do not generate/repair/audit in it. To resume real work, end this turn first.
+4. Exclude every gate-close measurement/report-only turn, including this current turn. A telemetry close performs only the confirmed gate action; do not generate, repair or audit in it.
 5. On a phase-close request run `scripts/measure_uc_tokens.py close-phase --run-json <canonical.json> --selection <selection.json> --measurement-turn-id <current-id> --phase <prompt_generation|source_generation|repair>`.
 6. After terminal audit/runtime/finalization, run the same command with `finalize-workflow` and no `--phase`. An unperformed repair requires a recorded researcher skip reason; missing telemetry must never become zero. Run final workflow measurement only after the final work turn ends.
 7. Print all five token fields, captured seconds, turn/tool counts for the three phases and workflow. The script updates only canonical `metrics`, writes `workflow-metrics.json`, refreshes `phase-ledger.{json,md}` and `workflow-metrics.md`. No Audit call is required to save measurements. If a final experiment Markdown report already exists, refresh its derived view with the renderer after final measurement in this excluded reporting turn.
-8. End after printing and persisting the requested telemetry. Never inspect, preflight or update an Excel workbook, even when the Measure prompt also contains a workbook path/link. Tell the researcher to invoke `export-experiment-excel` separately after `metrics.status` is `finalized`; do not retain the target or hand off automatically.
+8. End after printing and persisting telemetry, then report the next pending gate. Never inspect, preflight or update an Excel workbook.
 
 ## Evidence rules
 

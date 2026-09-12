@@ -1,6 +1,4 @@
 interface:
-  display_name: "Measure UC Workflow Tokens"
-  short_description: "Close phases and save observed UC tokens and time"
-  default_prompt: "Use $measure-uc-workflow-tokens to close the completed phase for this UC/run, print the result and persist canonical telemetry only; do not read or write Excel."
-policy:
-  allow_implicit_invocation: false
+  display_name: "Internal Experiment Telemetry"
+  short_description: "Close telemetry from a confirmed experiment gate"
+  default_prompt: "Use this internally after a researcher confirms the pending gate; persist telemetry only and do not start later work."
