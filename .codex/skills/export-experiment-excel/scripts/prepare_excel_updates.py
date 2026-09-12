@@ -12,53 +12,43 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflo
 from metrics_contract import ROOT, atomic_write, digest, read_json, require, validate_metrics, writable
 
 IDENTITY = {"uc_id", "run_id", "prompt_variant", "replicate_index", "run_order", "generation_model.requested_model_id"}
-VALUE_TAIL = (r"(?:tokens\.(?:input_tokens|cached_input_tokens|output_tokens|reasoning_output_tokens|total_tokens)"
-              r"|duration_seconds|workflow_turn_count|tool_call_count|model_call_count)")
 
 
-def validate_export_field(field):
-    if field is None:
-        return
-    if field in IDENTITY:
-        return
-    expected = (rf"metrics\.(?:workflow|phases\."
-                rf"(?:prompt_generation|source_generation|repair)\.values)\.{VALUE_TAIL}")
-    require(re.fullmatch(expected, field) is not None,
-            f"field is outside finalized telemetry export scope: {field}")
+def path_parts(field):
+    """Decode data-only paths without restricting metric families or evaluating code."""
+    require(isinstance(field, str) and field, "missing or ambiguous field")
+    if field.startswith("/"):
+        parts = field[1:].split("/")
+        require(all(re.search(r"~(?![01])", part) is None for part in parts), "invalid JSON pointer escape")
+        return [part.replace("~1", "/").replace("~0", "~") for part in parts]
+    parts = field.split(".")
+    require(all(re.fullmatch(r"[A-Za-z0-9_]+", part) for part in parts), "invalid JSON path")
+    return parts
 
 
 def lookup(record, field):
-    require(isinstance(field, str) and field, "missing or ambiguous field")
-    for part in field.split("."):
-        require(part not in ("__proto__", "constructor", "prototype") and re.fullmatch(r"[A-Za-z0-9_]+", part),
-                "invalid JSON path")
+    for part in path_parts(field):
         if isinstance(record, dict) and part in record:
             record = record[part]
-        elif isinstance(record, list) and part.isdigit() and int(part) < len(record):
+        elif isinstance(record, list) and re.fullmatch(r"0|[1-9][0-9]*", part) and int(part) < len(record):
             record = record[int(part)]
         else:
             raise ValueError(f"missing field: {field}")
     return record
 
 
-def resolve_value(record, field, kind, conversion):
-    if field.startswith("metrics."):
+def resolve_value(record, field, kind, conversion, source_unit=None):
+    parts = path_parts(field)
+    if parts[0] == "metrics":
         metrics = record.get("metrics")
         require(isinstance(metrics, dict) and metrics.get("schema_version") in (1, 2, 3), "no phase-aware finalized metrics")
         validate_metrics(metrics)
         require(metrics.get("uc_id") == record.get("uc_id") and metrics.get("run_id") == record.get("run_id"),
                 "metrics/run identity mismatch")
-        if field.startswith("metrics.phases."):
-            parts = field.split(".")
-            require(len(parts) >= 5 and parts[3] == "values", "map phase values, not phase internals")
+        require(metrics.get("status") == "finalized", "workflow metrics are not finalized")
+        if len(parts) >= 4 and parts[1] == "phases" and parts[3] == "values":
             phase = metrics["phases"][parts[2]]
             require(phase.get("status") == "closed", phase.get("reason") or "phase is not closed")
-        else:
-            require(field.startswith("metrics.workflow."), "map workflow values, not telemetry internals")
-            require(metrics.get("status") == "finalized", "workflow metrics are not finalized")
-    if field == "ui_accuracy_percent" and "ui_accuracy" in record:
-        require(record.get("ui_accuracy_status") in ("scored", "repair_required", "similarity_pending"),
-                "UI score is unavailable")
     value = lookup(record, field)
     require(value is not None, f"null/unavailable source value: {field}")
     require(not isinstance(value, str) or value.strip(), f"empty source value: {field}")
@@ -68,10 +58,12 @@ def resolve_value(record, field, kind, conversion):
     if type(value) in (int, float):
         require(math.isfinite(value), "non-finite numeric value")
     if conversion == "seconds_to_minutes":
-        require(field.endswith(".duration_seconds") and kind == "number", "seconds conversion requires duration field")
+        require((parts[-1].endswith("_seconds") or source_unit == "seconds") and kind == "number"
+                and type(value) in (int, float) and value >= 0, "seconds conversion requires nonnegative seconds")
         value /= 60
     elif conversion == "percent_to_fraction":
-        require(field.endswith("_percent") and kind == "number" and 0 <= value <= 100, "percent conversion requires 0..100 percent field")
+        require((parts[-1].endswith("_percent") or source_unit == "percent_points") and kind == "number"
+                and type(value) in (int, float) and 0 <= value <= 100, "percent conversion requires 0..100 percent field")
         value /= 100
     else:
         require(conversion == "identity", "unknown conversion")
@@ -80,14 +72,19 @@ def resolve_value(record, field, kind, conversion):
 
 def prepare(mapping):
     require(mapping.get("schema_version") == 1, "unknown mapping schema")
-    require(mapping.get("export_mode") == "finalized_workflow_telemetry",
-            "standalone Excel export requires export_mode finalized_workflow_telemetry")
+    export_mode = mapping.get("export_mode")
+    require(export_mode in ("dynamic_semantic", "finalized_workflow_telemetry"), "unknown export mode")
+    requested_uc = mapping.get("requested_uc_id")
+    target_sheet = mapping.get("target_sheet")
+    if export_mode == "dynamic_semantic":
+        require(isinstance(requested_uc, str) and re.fullmatch(r"UC-[0-9]+(?:\.[0-9]+)?", requested_uc), "canonical requested_uc_id required")
+        require(isinstance(target_sheet, str) and target_sheet.strip(), "exact target_sheet required")
+        require(isinstance(mapping.get("header_coverage"), list) and mapping["header_coverage"], "header coverage required")
     require(Path(mapping["repo_root"]).resolve() == ROOT, "repo_root must be the Business repository")
     workbook = (ROOT / mapping["workbook"]).resolve()
     require(workbook.is_file() and workbook.suffix.lower() == ".xlsx", "existing .xlsx workbook required")
     require(digest(workbook.read_bytes()) == mapping["workbook_sha256"], "workbook changed since inspection")
-    require(isinstance(mapping.get("sources"), list) and mapping["sources"],
-            "at least one explicit canonical run source is required")
+    require(isinstance(mapping.get("sources"), list), "canonical source candidate list required")
     sources, errors, seen_sources = [], [], set()
     for source in mapping["sources"]:
         path = writable(ROOT / source)
@@ -95,6 +92,7 @@ def prepare(mapping):
         seen_sources.add(path)
         require(path.is_relative_to(ROOT / "docs/05-experiments") and path.parent.parent == ROOT / "docs/05-experiments"
                 and path.parent.name != "configurations" and path.suffix == ".json", "source must be canonical UC/run JSON")
+        require(requested_uc is None or path.parent.name == requested_uc, "source outside requested UC")
         try:
             raw = path.read_bytes()
             record = json.loads(raw.decode("utf-8-sig"))
@@ -104,28 +102,35 @@ def prepare(mapping):
             require(isinstance(metrics, dict), "canonical run has no measured metrics")
             validate_metrics(metrics)
             require(metrics.get("status") == "finalized", "workflow metrics are not finalized; close Final Metrics Gate first")
+            require(all(item.get("status") in ("closed", "skipped") for item in metrics["phases"].values()),
+                    "finalized workflow contains an unclosed phase")
             require(metrics.get("uc_id") == record.get("uc_id") and metrics.get("run_id") == record.get("run_id"),
                     "metrics/run identity mismatch")
             sources.append((str(path), digest(raw), record))
-        except (OSError, ValueError) as error:
-            errors.append({"path": str(path), "reason": str(error)})
-    require(not errors, "selected canonical source is invalid or unfinished: " +
-            "; ".join(item["reason"] for item in errors))
+        except (OSError, ValueError, TypeError, KeyError, IndexError, AttributeError, ArithmeticError) as error:
+            errors.append({"path": str(path), "uc_id": path.parent.name, "run_id": path.stem, "reason": str(error)})
     updates, seen = [], set()
     require(isinstance(mapping.get("cells"), list) and mapping["cells"], "no writable result cells identified; report unresolved destinations without exporting")
     for cell in mapping["cells"]:
         require(isinstance(cell.get("sheet"), str) and cell["sheet"], "sheet required")
+        require(target_sheet is None or cell["sheet"] == target_sheet, "cell outside requested tab")
         require(re.fullmatch(r"[A-Z]{1,3}[1-9][0-9]{0,6}", cell.get("cell", "")), "single A1 cell required")
         key = (cell["sheet"], cell["cell"])
         require(key not in seen, f"duplicate target {key}")
         seen.add(key)
         require("expected_value" in cell and cell.get("basis") and cell.get("review_range"), "observed cell/header context required")
         require(type(cell.get("overwrite_existing", False)) is bool, "invalid overwrite flag")
-        validate_export_field(cell.get("field"))
+        if requested_uc is not None:
+            require(isinstance(cell.get("identity"), dict) and cell["identity"].get("uc_id") == requested_uc,
+                    "cell outside requested UC")
         update = dict(cell, value="N/A", reason=None, source=None, source_sha256=None)
         try:
             identity = cell.get("identity", {})
             require(identity and set(identity) <= IDENTITY and "uc_id" in identity, "unresolved/invalid run identity")
+            invalid_candidates = [item for item in errors if item["uc_id"] == identity["uc_id"]
+                                  and ("run_id" not in identity or item["run_id"] == identity["run_id"])]
+            require(not invalid_candidates, "candidate source unavailable: " +
+                    "; ".join(item["reason"] for item in invalid_candidates))
             matches = []
             for source, checksum, record in sources:
                 try:
@@ -138,11 +143,15 @@ def prepare(mapping):
             source, checksum, record = matches[0]
             update.update(source=source, source_sha256=checksum)
             require(cell.get("field") is not None, cell.get("unresolved_reason") or "metric/units ambiguous")
-            update["value"] = resolve_value(record, cell["field"], cell.get("type"), cell.get("conversion", "identity"))
-        except (ValueError, KeyError, TypeError, IndexError) as error:
+            if cell.get("source_unit") is not None:
+                require(cell.get("semantic_reason"), "explicit source unit requires semantic evidence")
+            update["value"] = resolve_value(record, cell["field"], cell.get("type"), cell.get("conversion", "identity"), cell.get("source_unit"))
+        except (ValueError, KeyError, TypeError, IndexError, AttributeError, ArithmeticError) as error:
             update["reason"] = str(error)
         updates.append(update)
-    return {"schema_version": 1, "export_mode": "finalized_workflow_telemetry",
+    return {"schema_version": 1, "export_mode": export_mode,
+            "requested_uc_id": requested_uc, "target_sheet": target_sheet,
+            "target_reference": mapping.get("target_reference"), "header_coverage": mapping.get("header_coverage", []),
             "repo_root": str(ROOT), "workbook": str(workbook),
             "workbook_sha256": mapping["workbook_sha256"], "updates": updates,
             "issues": mapping.get("issues", []), "source_errors": errors,

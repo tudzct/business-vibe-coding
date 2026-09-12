@@ -29,7 +29,7 @@ Before Phase 2 source mutation, activate exactly one run through `docs/02-constr
 
 For an identified UC/run, follow the phase-ledger and selection schemas. Prompt/source/repair remain telemetry buckets. After a work turn, present the pending gate; only after researcher confirmation may `advance-experiment-gate` invoke the telemetry engine internally. The researcher never needs to invoke Measure/Audit skills. A gate-close turn performs no later generation work. AI assigns one semantic token label per completed turn; workflow time still sums only Prompt + Source + Repair execution intervals.
 
-Internal telemetry gates never invoke Excel export. After Final Metrics Gate, the researcher may invoke `export-experiment-excel` once; it never writes BR/Figma/flow/manual cells or modifies canonical evidence.
+Internal telemetry gates never invoke Excel export. After Final Metrics Gate, the researcher may invoke `$export-experiment-excel <UC-ID> <LINK_OR_FILEPATH> <TAB_NAME>`. The standalone skill dynamically maps every result heading to stored canonical JSON, including BR/flow/repair and optional UI data; unavailable or ambiguous values become N/A. It preserves formulas, protected/manual content and canonical evidence, and saves a new workbook copy without clarification questions.
 
 Full and RQ3 first-pass generation end at Source Gate. Preserve source/hash/evidence and wait for confirmation; close telemetry internally without auditing or generating. First-pass Audit Gate separately assesses BRs and flows. Repair Decision Gate authorization remains mandatory before repair.
 

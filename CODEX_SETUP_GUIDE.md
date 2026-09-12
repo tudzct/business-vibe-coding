@@ -99,6 +99,6 @@ Next action: <one concrete action>
 
 - `$audit-figma-ui-accuracy`: optional standalone comparison of implemented UI against frozen Figma evidence, called manually only when the researcher requests it. Manual visual inspection or skipping this skill is valid. Neither a UI score nor a passing UI validation is required for experiment readiness/completion, BR/flow audit or export.
 
-- `$export-experiment-excel`: after Final Metrics Gate, invoke this separately once with the supplied Excel path/link and finalized UC/run. It maps finalized Prompt/Source/Repair/Workflow telemetry and saves a new filled copy; manual BR/Figma/flow cells remain unchanged.
+- `$export-experiment-excel <UC-ID> <LINK_OR_FILEPATH> <TAB_NAME>`: after Final Metrics Gate, invoke separately with exactly three positional arguments (quote paths/tab names containing spaces). It dynamically maps every result heading against canonical JSON, including recorded BR/flow/repair and optional UI data, and saves a new filled copy plus provenance. Unavailable values become N/A; formulas and protected/manual content remain unchanged. No additional prose or clarification is required.
 
 Figma/UI accuracy may be inspected manually or measured through the optional `audit-figma-ui-accuracy` skill. Gate-driven BR/flow audit never invokes that skill. All UI fields may be missing/null without blocking validation or reports. Excel export remains reporting-only.

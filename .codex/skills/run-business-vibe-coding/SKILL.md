@@ -16,6 +16,6 @@ Use one task for one UC/run and the [shared measurement protocol](../measure-uc-
 5. Show Repair Decision Gate. Record explicit authorize or skip. For authorized repairs, execute bounded repairs, then use Repair Gate confirmation to close telemetry.
 6. Show Final Audit Gate. On confirmation, run final BR/flow/runtime audit and freeze the final hash. Then show Final Metrics Gate; its confirmation internally finalizes workflow telemetry and refreshes reports.
 
-Internal gate telemetry never invokes Excel export. After Final Metrics Gate persists `metrics.status: finalized`, the researcher may separately invoke `export-experiment-excel`; BR/Figma/flow cells remain researcher-maintained.
+Internal gate telemetry never invokes Excel export. After Final Metrics Gate persists `metrics.status: finalized`, the researcher may separately invoke `$export-experiment-excel <UC-ID> <LINK_OR_FILEPATH> <TAB_NAME>`. Export dynamically maps stored canonical values to inspected headings, including BR/flow/repair and optional UI fields, without running assessments or altering canonical evidence. Missing data becomes N/A; formulas and protected/manual content remain unchanged.
 
 Do not add enterprise lifecycle phases, independent scan workflows, or tests/test cases. Never infer a missing business decision.
