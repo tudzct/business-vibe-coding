@@ -12,7 +12,7 @@
 - A: backend/API and domain logic without Prompt E references.
 - B: frontend UI from the applicable frozen design.
 - C: frontend state and API integration without Prompt E references.
-- D: validation, loading and error behavior from basic flows.
+- D: validation, loading and error behavior from all applicable Basic/Main, Alternative and Exception Flows and functional/UI/API specifications.
 - E: omitted.
 - F: omitted.
 

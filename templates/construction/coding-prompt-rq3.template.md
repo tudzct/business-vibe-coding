@@ -1,6 +1,6 @@
 ---
 artifact_type: business-coding-prompt
-prompt_variant: rq3-ad
+prompt_variant: rq3
 status: Draft | Approved
 uc_id: <UC-ID>
 uc_name: <Use case name>
@@ -9,6 +9,8 @@ generated_at: <ISO-8601 timestamp>
 ---
 
 # <UC-ID> Business Coding Prompt (RQ3) - <Use case name>
+
+Both backend and frontend together must cover every specified Basic/Main, Alternative and Exception Flow and its terminal outcome; distribute these behaviors across Prompts A-D without changing the frozen functional scope.
 
 ## Prompt A: Backend API
 
@@ -139,7 +141,7 @@ If the API returns `[STATUS / ERROR CONDITION]`:
 
 ### Client-Side Validation
 
-Before calling the API, enforce client-applicable validation explicitly stated in the use-case functional specification, basic or exception flows, UI specification, and API contract for `[USE CASE / API ID]`. Do not infer additional validation.
+Before calling the API, enforce client-applicable validation explicitly stated in the use-case functional specification, Basic/Main, Alternative and Exception Flows, UI specification, and API contract for `[USE CASE / API ID]`. Do not infer additional validation.
 
 Display validation messages at `[VALIDATION MESSAGE LOCATION]`.
 

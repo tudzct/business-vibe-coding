@@ -17,7 +17,9 @@ Load researcher defaults from the ignored root `.env` using `scripts/load_experi
 
 Treat `.env` as convenience input only. Build a Draft configuration from it, derive UC/BR/flow paths, unique run IDs and run order, pin the activated Figma dataset version/checksum, show one complete summary, and ask the researcher to confirm the Configuration Gate. On confirmation, persist a new immutable Confirmed configuration; later `.env` changes require a new configuration ID.
 
-Create a Draft configuration at `docs/05-experiments/configurations/<CONFIG-ID>.json` from `templates/research/experiment-configuration.template.json`. Every new configuration uses schema 2.2, retains `timing_method: system_timestamp_delta`, and pins the active Figma manifest. Use every ordered BR ID and record both BR and flow baseline paths; do not select rules or flows. Baselines are frozen before source generation and checked again at activation.
+Create a Draft configuration at `docs/05-experiments/configurations/<CONFIG-ID>.json` from `templates/research/experiment-configuration.template.json`. Every new configuration uses schema 2.3, retains `timing_method: system_timestamp_delta`, and pins the active Figma manifest. Use every ordered BR ID and record both BR and flow baseline paths; do not select rules or flows. Baselines are frozen before source generation and checked again at activation.
+
+Freeze `flow_audit_rubric: completion-critical-flow-runtime-v2` in the schema-2.3 configuration before generation and include it in the Configuration Gate summary. Keep `audit_design.protocol` for auditor assignment. All Full/RQ3/model conditions in the comparison group share this rubric. Existing configurations and receipts retain their original method/version. New activation receipts use gate version 5, pin the configuration checksum and approved prompt path/checksum, and record the canonical variant. Historical gate-3/4 receipts remain readable without backfilling fields.
 
 Never infer a model tuple, replicate, run order, audit assignment, alternative timing method, or a `Confirmed` status. Stop for the researcher to confirm the complete configuration.
 
@@ -36,7 +38,7 @@ python3 .codex/skills/activate-experiment-run/scripts/create_run_activation.py \
   docs/05-experiments/configurations/<CONFIG-ID>.json UC-01 <RUN-ID>
 ```
 
-The script verifies the configuration, matching frozen BR baseline, UC/run assignment, calculates the configuration's SHA-256, and writes only:
+The script resolves the canonical approved Full/RQ3 prompt (or explicit `--prompt <path>`), validates its identity/structure, configuration and frozen baseline, and pins the configuration and approved prompt SHA-256 values. Use `--dry-run` first for read-only preflight. It writes only:
 
 `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/run-activation.json`
 

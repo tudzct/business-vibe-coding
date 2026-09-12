@@ -21,6 +21,8 @@ Both setups follow the two-phase method:
 - **Phase 1 - Generate Business Coding Prompt:** produce and approve the designated prompt artifact (`*-business-coding-prompt.md` for Full, `*-rq3-coding-prompt.md` for RQ3).
 - **Phase 2 - Generate Source Code:** implement the approved prompt starting from clean baseline, record first-pass evidence, assess every frozen BR, perform bounded repairs, and run Docker runtime observations.
 
+The [shared Full/RQ3 contract](docs/00-context/workflow/FULL-RQ3-CONTRACT.md) defines identical functional-flow coverage, gates, evaluation and provenance controls. Cumulative UCs extend the recorded predecessor within the configured pipeline; new experimental conditions use their documented baseline. RQ3 differs in permitted generation input (A-D without E/F), not in required Alternative/Exception Flows or permission to omit final audit after skipping repair.
+
 ## Authoritative sources
 
 ### Functional and business specification
@@ -56,6 +58,8 @@ Phase 1 uses all BRs supplied for the active UC. There is no rule-selection mode
 This receipt prevents evaluation criteria from changing after source generation; it is not an approval or selection of rules.
 
 Before generation the workflow also freezes a supplementary flow baseline from every explicit Basic/Main, Alternative and Exception Flow. A flow is incorrect only when a completion-critical step fails or its specified terminal outcome is not achieved. Flow scoring never changes the BR denominator or BR result.
+
+New schema-2.3 configurations freeze `flow_audit_rubric: completion-critical-flow-runtime-v2` before generation. This rubric requires connected integrated-runtime observation for flow `correct`, with evidence linked to UC/run/stage/baseline/source revision. Source findings remain separate; unavailable critical/outcome or connected-runtime proof means `not_evaluable` unless a blocking failure is evidenced. Initial and final use the same rubric, and final observes all flows afresh even after skipped repair. Legacy configurations and v1 results remain immutable and are not mixed into comparisons using v2. Weights, formulas, BR criteria, gates and generation-only timing remain unchanged.
 
 ## System baseline
 

@@ -8,6 +8,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow-tokens" / "scripts"))
 from metrics_contract import atomic_write, validate_metrics, context, run_lock
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-flow-accuracy" / "scripts"))
+from score_flow_accuracy import calculate as calculate_flow, validate_run_result, validate_evidence
+from runtime_contract import method, configured_rubric
 
 STATUSES = {"met", "unmet", "not_evaluable"}
 FLOW_STATUSES = {"scored", "repair_required", "not_evaluable"}
@@ -41,10 +44,13 @@ def validate_snapshot(snapshot, ordered, field):
     snapshot.pop("acceptance_percent", None)
 
 
-def validate_flow(data):
+def validate_flow(data, folder):
     block = data.get("flow_accuracy")
-    if not isinstance(block, dict) or block.get("schema_version") != 1 or block.get("rubric_id") != "completion-critical-flow-v1":
+    if not isinstance(block, dict):
         raise ValueError("Audit requires a persisted flow assessment")
+    version, rubric = method(block)
+    if configured_rubric(data, folder, validate_evidence) != rubric:
+        raise ValueError("flow rubric differs from frozen configuration")
     assessments = block.get("assessments")
     current_id = block.get("current_assessment_id")
     if not isinstance(assessments, list) or not assessments or not isinstance(current_id, str):
@@ -53,6 +59,24 @@ def validate_flow(data):
     if len(matches) != 1:
         raise ValueError("flow_accuracy current assessment must resolve exactly once")
     current = matches[0]
+    if version == 2 and current_id != assessments[-1].get("assessment_id"):
+        raise ValueError("current flow assessment must be the latest immutable entry")
+    ids = [item.get("assessment_id") for item in assessments]
+    if len(ids) != len(set(ids)) or assessments[0].get("stage") != "initial":
+        raise ValueError("invalid immutable flow history")
+    for index, assessment in enumerate(assessments):
+        if method(assessment.get("input", {})) != (version, rubric):
+            raise ValueError("mixed flow rubrics in one run")
+        if version == 2:
+            recalculated = calculate_flow(assessment["input"])
+            if recalculated != assessment:
+                raise ValueError("persisted flow assessment differs from validated evidence/scoring")
+            prior_run = {**data, "flow_accuracy": {**block, "assessments": assessments[:index]}}
+            validate_run_result(prior_run, folder, recalculated)
+    if version == 2 and data.get("run_status") == "complete" and current.get("stage") != "final":
+        raise ValueError("complete runtime-v2 run requires a fresh final flow audit")
+    if version == 2 and current.get("stage") == "final" and current["input"]["source_revision"] != data.get("business_rules", {}).get("source_revision"):
+        raise ValueError("final BR/flow source revision mismatch")
     status = current.get("status")
     if status not in FLOW_STATUSES or data.get("flow_accuracy_status") != status:
         raise ValueError("flow_accuracy status mismatch")
@@ -61,7 +85,7 @@ def validate_flow(data):
         raise ValueError("flow_accuracy counts do not reconcile")
     if data.get("flow_accuracy_percent") != current.get("flow_accuracy_percent") or data.get("flow_error_percent") != current.get("flow_error_percent"):
         raise ValueError("flow percentage mismatch")
-    return {key: current.get(key) for key in ("assessment_id", "status", "counts", "flow_accuracy_percent", "flow_error_percent", "evaluated_coverage_percent", "accuracy_lower_bound_percent", "accuracy_upper_bound_percent")}
+    return {"schema_version": version, "rubric_id": rubric, **{key: current.get(key) for key in ("assessment_id", "status", "counts", "flow_accuracy_percent", "flow_error_percent", "evaluated_coverage_percent", "accuracy_lower_bound_percent", "accuracy_upper_bound_percent")}}
 
 
 def calculate(path_string):
@@ -80,7 +104,8 @@ def calculate(path_string):
         raise ValueError("ordered_br_ids must be a non-empty unique array")
     validate_snapshot(business.get("initial"), ordered, "business_rules.initial")
     validate_snapshot(business.get("final"), ordered, "business_rules.final")
-    flow_summary = validate_flow(data)
+    _, _, folder = context(path)
+    flow_summary = validate_flow(data, folder)
     revision = business.get("source_revision")
     if data.get("run_status") == "complete" and (not isinstance(revision, str) or re.fullmatch(r"sha256:[0-9a-f]{64}", revision.lower()) is None):
         raise ValueError("complete runs need a full final-source SHA-256")

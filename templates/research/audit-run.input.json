@@ -1,5 +1,7 @@
 {
   "run_id": "<run-id>",
+  "prompt_variant": "full | rq3",
+  "coding_prompt": {"path": "<approved prompt repo path>", "sha256": "sha256:<approved bytes checksum>"},
   "experiment_configuration": {
     "configuration_id": "<CONFIG-ID>",
     "comparison_group_id": "<COMPARISON-GROUP-ID>",

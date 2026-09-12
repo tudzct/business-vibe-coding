@@ -11,6 +11,9 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "gen-coding-prompt/scripts"))
+from validate_prompt_contract import validate_prompt
+
 
 def fail(message: str) -> None:
     raise SystemExit(f"run activation error: {message}")
@@ -57,6 +60,8 @@ def main() -> None:
     parser.add_argument("configuration", help="Confirmed configuration JSON under docs/05-experiments/configurations")
     parser.add_argument("uc_id", help="Use-case ID, e.g. UC-01")
     parser.add_argument("run_id", help="Configured run ID")
+    parser.add_argument("--prompt", type=Path, help="Approved prompt; defaults to the UC/variant canonical path")
+    parser.add_argument("--dry-run", action="store_true", help="Validate without writing activation")
     args = parser.parse_args()
 
     root = repository_root()
@@ -89,7 +94,7 @@ def main() -> None:
     if baseline_data.get("ordered_br_ids") != uc_entries[0].get("ordered_br_ids"):
         fail("configuration BR IDs do not exactly match the frozen baseline")
 
-    if config.get("schema_version") == "2.2":
+    if config.get("schema_version") in {"2.2", "2.3"}:
         flow_baseline_rel = uc_entries[0].get("flow_baseline")
         if not isinstance(flow_baseline_rel, str) or not flow_baseline_rel:
             fail("configuration UC entry has no flow_baseline")
@@ -101,13 +106,16 @@ def main() -> None:
         if flow_data.get("status") != "Frozen" or flow_data.get("uc_id") != args.uc_id:
             fail("Flow baseline is not frozen for the requested UC")
 
+    variant = run_entries[0].get("prompt_variant", "full")
+    suffix = "rq3-coding-prompt" if variant == "rq3" else "business-coding-prompt"
+    prompt = args.prompt or root / f"docs/02-construction/coding-prompts/{args.uc_id}-{suffix}.md"
+    prompt_result = validate_prompt(configuration, args.uc_id, args.run_id, prompt)
     output = root / "docs/02-construction/implementation" / args.uc_id / "runs" / args.run_id / "run-activation.json"
     if output.exists():
         fail(f"refusing to overwrite existing receipt: {relative_to_root(output, root)}")
-    output.parent.mkdir(parents=True, exist_ok=True)
     receipt = {
         "artifact_type": "run-activation",
-        "gate_version": 4 if config.get("schema_version") == "2.2" else 3,
+        "gate_version": 5,
         "uc_id": args.uc_id,
         "run_id": args.run_id,
         "prompt_variant": run_entries[0].get("prompt_variant", "full"),
@@ -115,10 +123,18 @@ def main() -> None:
         "configuration_checksum": "sha256:" + hashlib.sha256(configuration.read_bytes()).hexdigest(),
         "activated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "status": "Confirmed",
+        "approved_prompt": prompt_result["prompt"],
     }
+    if args.dry_run:
+        print(json.dumps({"status": "valid", "prompt_variant": variant, "approved_prompt": receipt["approved_prompt"]}, indent=2))
+        return
+    output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(receipt, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"status": "activated", "path": relative_to_root(output, root), "configuration_checksum": receipt["configuration_checksum"]}, indent=2))
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except (OSError, ValueError, TypeError, KeyError) as exc:
+        fail(str(exc))

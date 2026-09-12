@@ -10,8 +10,18 @@ EFFORTS = {"none", "low", "medium", "high", "xhigh", "max"}
 MODES = {"standard", "pro"}
 PROTOCOLS = {"fixed", "matched", "cross"}
 PROMPT_VARIANTS = {"full", "rq3"}
-SCHEMA_VERSIONS = {"2.0", "2.1", "2.2"}
+SCHEMA_VERSIONS = {"2.0", "2.1", "2.2", "2.3"}
 TIMING_METHOD = "system_timestamp_delta"
+LEGACY_FLOW_RUBRIC = "completion-critical-flow-v1"
+RUNTIME_FLOW_RUBRIC = "completion-critical-flow-runtime-v2"
+
+
+def flow_rubric(data):
+    expected = RUNTIME_FLOW_RUBRIC if data.get("schema_version") == "2.3" else LEGACY_FLOW_RUBRIC
+    actual = data.get("flow_audit_rubric", LEGACY_FLOW_RUBRIC)
+    if actual != expected:
+        raise ValueError("flow_audit_rubric does not match configuration schema")
+    return actual
 
 
 def text(value, field):
@@ -42,19 +52,20 @@ def validate(path):
     schema_version = data.get("schema_version")
     if schema_version not in SCHEMA_VERSIONS:
         raise ValueError(f"schema_version must be one of {sorted(SCHEMA_VERSIONS)}")
+    rubric = flow_rubric(data)
     if data.get("artifact_type") != "experiment-configuration" or data.get("status") != "Confirmed":
         raise ValueError("configuration must be Confirmed")
     for field in ("configuration_id", "comparison_group_id", "researcher_id", "decided_at", "sheet_revision"):
         text(data.get(field), field)
     timing_method = data.get("timing_method")
-    if schema_version in {"2.1", "2.2"} and timing_method != TIMING_METHOD:
+    if schema_version in {"2.1", "2.2", "2.3"} and timing_method != TIMING_METHOD:
         raise ValueError(f"schema {schema_version} timing_method must be {TIMING_METHOD}")
     if timing_method is not None and timing_method != TIMING_METHOD:
         raise ValueError(f"unsupported timing_method: {timing_method}")
-    if schema_version == "2.2":
+    if schema_version in {"2.2", "2.3"}:
         figma = data.get("figma_dataset")
         if not isinstance(figma, dict):
-            raise ValueError("schema 2.2 requires figma_dataset")
+            raise ValueError(f"schema {schema_version} requires figma_dataset")
         version = text(figma.get("dataset_version"), "figma_dataset.dataset_version")
         manifest_value = text(figma.get("manifest_path"), "figma_dataset.manifest_path")
         expected_path = f"resource/figma-design-dataset/{version}/manifest.json"
@@ -88,7 +99,7 @@ def validate(path):
         if not isinstance(ids, list) or not ids or len(ids) != len(set(ids)) or any(not isinstance(v, str) or not v.strip() for v in ids):
             raise ValueError(f"use_cases[{index}].ordered_br_ids must be a non-empty unique string array")
         text(uc.get("business_rule_baseline"), f"use_cases[{index}].business_rule_baseline")
-        if schema_version == "2.2":
+        if schema_version in {"2.2", "2.3"}:
             text(uc.get("flow_baseline"), f"use_cases[{index}].flow_baseline")
 
     runs = data.get("runs")
@@ -116,6 +127,16 @@ def validate(path):
             raise ValueError(f"duplicate UC/variant/model/replicate assignment: {key}")
         assignments.add(key)
         text(run.get("auditor_assignment"), prefix + ".auditor_assignment")
+        if "flow_audit_rubric" in run and run["flow_audit_rubric"] != rubric:
+            raise ValueError("run-level rubric cannot override comparison-group rubric")
+    # One evidence standard across Full/RQ3/models, including other configurations in the group.
+    for peer_path in path.parent.glob("*.json"):
+        if peer_path.resolve() == path.resolve():
+            continue
+        peer = json.loads(peer_path.read_text(encoding="utf-8-sig"))
+        if (peer.get("artifact_type") == "experiment-configuration" and peer.get("status") == "Confirmed"
+                and peer.get("comparison_group_id") == data["comparison_group_id"] and flow_rubric(peer) != rubric):
+            raise ValueError("comparison group mixes flow audit rubrics; use a new comparison_group_id")
     return data
 
 
@@ -124,6 +145,6 @@ if __name__ == "__main__":
         raise SystemExit("usage: validate_experiment_configuration.py <configuration.json>")
     try:
         result = validate(Path(sys.argv[1]))
-        print(json.dumps({"status": "valid", "configuration_id": result["configuration_id"], "use_cases": len(result["use_cases"]), "runs": len(result["runs"])}, indent=2))
+        print(json.dumps({"status": "valid", "configuration_id": result["configuration_id"], "flow_audit_rubric": flow_rubric(result), "use_cases": len(result["use_cases"]), "runs": len(result["runs"])}, indent=2))
     except (OSError, json.JSONDecodeError, ValueError) as exc:
         raise SystemExit(f"experiment configuration error: {exc}")

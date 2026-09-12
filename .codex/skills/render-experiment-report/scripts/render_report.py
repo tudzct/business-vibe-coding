@@ -86,6 +86,7 @@ def main():
             raise ValueError("Flow current assessment is missing")
         counts = current.get("counts", {})
         lines.extend(["## Flow accuracy", "", f"Assessment: `{current['assessment_id']}` ({current['stage']})",
+                      f"Rubric: `{flow.get('rubric_id', 'completion-critical-flow-v1')}`; compare only runs with the same rubric.",
                       f"Status: {current['status']}",
                       f"Flows: {counts.get('correct', 0)} correct, {counts.get('incorrect', 0)} incorrect, "
                       f"{counts.get('not_evaluable', 0)} not evaluable, {counts.get('total', 0)} total",

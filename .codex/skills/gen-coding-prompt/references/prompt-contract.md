@@ -12,7 +12,7 @@
 - A: backend endpoint, DTO, domain logic and API response envelope derived directly from functional specification and UML (no Prompt E references).
 - B: source-backed UI and visual states.
 - C: typed client integration, state and success flow (no Prompt E references).
-- D: validation, loading, exceptions and recovery derived from basic flows.
+- D: validation, loading, exceptions and recovery derived from all applicable Basic/Main, Alternative and Exception Flows and functional/UI/API specifications.
 - E: omitted.
 - F: omitted.
 

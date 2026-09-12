@@ -10,7 +10,7 @@ A comparison group uses one Confirmed configuration before any run mutates sourc
 - the activated Figma dataset version and manifest checksum;
 - per-UC frozen BR and flow baseline paths.
 
-New schema 2.2 configurations fix `timing_method` to `system_timestamp_delta` and pin the active Figma dataset. The validator rejects missing/mismatched values. Confirmed schema 2.0/2.1 configurations remain immutable; never edit them in place.
+New schema 2.3 configurations fix `timing_method` to `system_timestamp_delta`, pin the active Figma dataset, and freeze `flow_audit_rubric: completion-critical-flow-runtime-v2` before generation. The validator rejects missing/mismatched values and mixed flow rubrics within one comparison group, including Full/RQ3 and model conditions. `audit_design.protocol` still assigns auditors; it never stores the rubric. Confirmed schema 2.0/2.1/2.2 configurations retain legacy `completion-critical-flow-v1` and remain immutable; never edit them in place or compare their scores as if measured with v2.
 
 Show one Configuration Gate summary derived from `.env`. Only researcher confirmation changes the Draft to Confirmed. Generate IDs/order deterministically; do not ask repeatedly for values already supplied in `.env`.
 
