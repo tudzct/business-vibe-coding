@@ -7,7 +7,9 @@ description: "Run the research product's two phases: generate a Business Coding 
 
 Read the project context and two-phase workflow.
 
-Use one task for one UC/run and the [shared measurement protocol](../measure-uc-workflow-tokens/references/phase-ledger-schema.md). Load one-time experiment defaults from root `.env`, create a schema-2.2 configuration that pins the active Figma dataset, and present plain-language gates. `advance-experiment-gate` invokes telemetry and audit engines internally after confirmation. Never ask the researcher to invoke Measure/Audit skills or advance beyond a gate in the same turn.
+Read the [shared Full/RQ3 contract](../../../docs/00-context/workflow/FULL-RQ3-CONTRACT.md). Resolve variant from configuration, cover every functional flow in A-D for both variants, and preserve identical evaluation/gate requirements. RQ3 omits E/F from generation input only. No variant-specific shortcut skips final audit or final metrics.
+
+Use one task for one UC/run and the [shared measurement protocol](../measure-uc-workflow-tokens/references/phase-ledger-schema.md). Load one-time experiment defaults from root `.env`, create a schema-2.3 configuration that pins the active Figma dataset, and present plain-language gates. `advance-experiment-gate` invokes telemetry and audit engines internally after confirmation. Never ask the researcher to invoke Measure/Audit skills or advance beyond a gate in the same turn.
 
 1. **Configuration Gate:** validate root `.env`, derive run identities/order, freeze every BR and flow baseline, pin the active Figma dataset and show one summary. Persist only after researcher confirmation.
 2. **Phase 1:** generate the Full A-F or RQ3 A-D Draft, then show Prompt Gate. On confirmation, approve it and internally close prompt telemetry; do not start source in that gate turn.

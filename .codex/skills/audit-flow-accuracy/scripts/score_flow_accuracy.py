@@ -9,6 +9,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow-tokens/scripts"))
 from metrics_contract import ROOT, atomic_write, context, digest, epoch, read_json, require, run_lock, writable
+from runtime_contract import method, configured_rubric, validate_runtime, complete_chain
 
 OBSERVATION_STATUSES = {"met", "unmet", "not_evaluable"}
 FLOW_TYPES = ("main", "alternative", "exception")
@@ -63,6 +64,7 @@ def validate_baseline(data):
 
 
 def calculate(data):
+    version, rubric = method(data)
     for key in ("uc_id", "run_id", "assessment_id", "source_revision"):
         require(nonempty(data.get(key)), f"missing {key}")
     require(re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", data["assessment_id"]), "unsafe assessment ID")
@@ -77,11 +79,14 @@ def calculate(data):
     supplied = data.get("flows")
     require(isinstance(supplied, list), "flow observations required")
     require([row.get("flow_id") for row in supplied] == baseline["ordered_flow_ids"], "assessment flow inventory mismatch")
+    attempts, validate_target = validate_runtime(data, definitions, validate_evidence) if version == 2 else ({}, None)
 
     results = []
     for definition, assessed in zip(definitions, supplied):
         outcome = assessed.get("terminal_outcome")
         validate_observation(outcome, f"{definition['flow_id']} outcome")
+        if validate_target:
+            validate_target(outcome, "terminal_outcome", definition["flow_id"], True)
         steps = assessed.get("steps")
         require(isinstance(steps, list), "step observations required")
         require([row.get("step_id") for row in steps] == [row["step_id"] for row in definition["steps"]],
@@ -93,13 +98,16 @@ def calculate(data):
         for step_definition, step in zip(definition["steps"], steps):
             validate_observation(step, step_definition["step_id"])
             critical = step_definition["completion_critical"]
+            if validate_target:
+                validate_target(step, step_definition["step_id"], definition["flow_id"], critical)
             blocking_failure = blocking_failure or (critical and step["status"] == "unmet")
             critical_unknown = critical_unknown or (critical and step["status"] == "not_evaluable")
             deviations += int(not critical and step["status"] == "unmet")
             computed_steps.append({**step, "completion_critical": critical})
+        chain_complete = complete_chain(assessed, definition, attempts) if version == 2 else True
         if blocking_failure or outcome["status"] == "unmet":
             status = "incorrect"
-        elif critical_unknown or outcome["status"] == "not_evaluable":
+        elif critical_unknown or outcome["status"] == "not_evaluable" or not chain_complete:
             status = "not_evaluable"
         else:
             status = "correct"
@@ -112,6 +120,7 @@ def calculate(data):
     unknown = total - correct - incorrect
     exact = unknown == 0
     return {
+        **({"schema_version": version, "rubric_id": rubric} if version == 2 else {}),
         "assessment_id": data["assessment_id"],
         "stage": data["stage"],
         "input_sha256": digest(json.dumps(data, sort_keys=True, separators=(",", ":")).encode()),
@@ -132,6 +141,8 @@ def markdown(result):
     accuracy = result["flow_accuracy_percent"]
     error = result["flow_error_percent"]
     lines = [f"# Flow accuracy: {result['assessment_id']}", "", f"Status: {result['status']}",
+             f"Rubric: {method(result['input'])[1]}",
+             f"Source revision: {result['input']['source_revision']}",
              f"Flow accuracy: {str(accuracy) + '%' if accuracy is not None else 'N/A'}",
              f"Flow error: {str(error) + '%' if error is not None else 'N/A'}",
              f"Evaluated coverage: {result['evaluated_coverage_percent']}%",
@@ -141,8 +152,59 @@ def markdown(result):
              "| Flow | Type | Status | Noncritical deviations |", "|---|---|---|---:|"]
     for flow in result["flows"]:
         lines.append(f"| {flow['flow_id']} | {flow['type']} | {flow['status']} | {flow['noncritical_deviations']} |")
-    lines.extend(["", *result["input"]["limitations"], ""])
+    lines.append("")
+    for limitation in result["input"]["limitations"]:
+        lines.append(json.dumps(limitation, ensure_ascii=False) if isinstance(limitation, dict) else limitation)
+    if method(result["input"])[0] == 2:
+        lines.extend(["", "## Observation trace", ""])
+        for observation in result["input"]["observations"]:
+            lines.append(f"- {observation['observation_id']} / {observation['flow_id']}: "
+                         f"{observation['started_at']} to {observation['ended_at']}; {observation['state']}; "
+                         f"entry {observation['entry_point']}; end {observation['end_state']}")
+            for action in observation["actions"]:
+                lines.append(f"  {action['sequence']}. {action['action']} -> {action['actual_result']} "
+                             f"({', '.join(action['target_ids'])})")
+        lines.extend(["", "Evidence paths, SHA-256 values, target decisions and source findings: companion JSON input."])
+    lines.append("")
     return "\n".join(lines)
+
+
+def validate_run_result(run, folder, result):
+    """Same validation for dry-run, commit and aggregation; no mutations."""
+    require(all(run.get(key) == result["input"].get(key) for key in ("uc_id", "run_id")), "run identity mismatch")
+    version, rubric = method(result["input"])
+    require(configured_rubric(run, folder, validate_evidence, result["input"]["baseline"]) == rubric,
+            "assessment differs from frozen configuration rubric")
+    destination = folder / "flow-accuracy" / result["assessment_id"]
+    json_path = destination.with_name(destination.name + ".json")
+    md_path = destination.with_name(destination.name + ".md")
+    if json_path.exists():
+        require(read_json(json_path) == result, "assessment artifact is immutable")
+    if md_path.exists() and version == 2:
+        require(md_path.read_text(encoding="utf-8") == markdown(result), "assessment report is immutable")
+    block = run.get("flow_accuracy")
+    history = []
+    if block is not None:
+        require(method(block) == (version, rubric), "initial/final flow rubric changed")
+        history = block.get("assessments")
+        require(isinstance(history, list), "invalid flow history")
+    previous = next((r for r in history if r.get("assessment_id") == result["assessment_id"]), None)
+    if previous is not None:
+        require(previous == result, "assessment ID is immutable")
+        return
+    require(result["stage"] != "initial" or not history, "initial assessment must be first")
+    require(result["stage"] != "final" or (history and history[0].get("stage") == "initial"),
+            "final assessment requires an immutable initial assessment")
+    if history:
+        require(history[0]["input"]["baseline"] == result["input"]["baseline"], "flow baseline changed")
+        require(all(method(r["input"]) == (version, rubric) for r in history), "mixed method history")
+        if version == 2:
+            previous_end = max(epoch(r["input"]["captured_at"]) for r in history)
+            old_ids = {o["observation_id"] for r in history for o in r["input"]["observations"]}
+            require(epoch(result["input"]["captured_at"]) > previous_end, "final audit must be captured again")
+            for observation in result["input"]["observations"]:
+                require(observation["observation_id"] not in old_ids and epoch(observation["started_at"]) > previous_end,
+                        "final audit requires fresh observations, including after skipped repair")
 
 
 def main():
@@ -153,15 +215,19 @@ def main():
     args = parser.parse_args()
     path, run, folder = context(args.run_json)
     result = calculate(read_json(args.assessment))
-    require(all(run.get(key) == result["input"].get(key) for key in ("uc_id", "run_id")), "run identity mismatch")
+    validate_run_result(run, folder, result)
     if not args.dry_run:
         with run_lock(folder):
             run = read_json(path)
-            require(all(run.get(key) == result["input"].get(key) for key in ("uc_id", "run_id")), "run identity changed")
+            validate_run_result(run, folder, result)
+            version, rubric = method(result["input"])
+            destination = folder / "flow-accuracy" / result["assessment_id"]
+            json_path = destination.with_name(destination.name + ".json")
+            md_path = destination.with_name(destination.name + ".md")
             if run.get("flow_accuracy") is None:
-                run["flow_accuracy"] = {"schema_version": 1, "rubric_id": "completion-critical-flow-v1", "assessments": []}
+                run["flow_accuracy"] = {"schema_version": version, "rubric_id": rubric, "assessments": []}
             block = run["flow_accuracy"]
-            require(block.get("schema_version") == 1 and block.get("rubric_id") == "completion-critical-flow-v1", "unknown flow schema")
+            require(method(block) == (version, rubric), "unknown flow schema")
             history = block.get("assessments")
             require(isinstance(history, list), "invalid flow history")
             previous = next((row for row in history if row.get("assessment_id") == result["assessment_id"]), None)
@@ -179,11 +245,17 @@ def main():
                 run["flow_error_percent"] = result["flow_error_percent"]
                 run["flow_accuracy_status"] = result["status"]
                 atomic_write(path, run)
-            destination = folder / "flow-accuracy" / result["assessment_id"]
-            atomic_write(destination.with_name(destination.name + ".json"), result)
-            atomic_write(destination.with_name(destination.name + ".md"), markdown(result), raw=True)
-    print(json.dumps({key: value for key, value in result.items() if key != "input"}, ensure_ascii=False, indent=2))
+            if not json_path.exists():
+                atomic_write(json_path, result)
+            if not md_path.exists():
+                atomic_write(md_path, markdown(result), raw=True)
+    version, rubric = method(result["input"])
+    print(json.dumps({"schema_version": version, "rubric_id": rubric,
+                      **{key: value for key, value in result.items() if key != "input"}}, ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except (OSError, ValueError, TypeError, KeyError) as exc:
+        raise SystemExit(f"flow assessment error: {exc}")

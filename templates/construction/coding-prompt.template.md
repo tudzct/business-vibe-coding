@@ -1,5 +1,6 @@
 ---
 artifact_type: business-coding-prompt
+prompt_variant: full
 status: Draft | Approved
 uc_id: <UC-ID>
 uc_name: <Use case name>
@@ -10,6 +11,8 @@ generated_at: <ISO-8601 timestamp>
 ---
 
 # <UC-ID> Business Coding Prompt - <Use case name>
+
+Both backend and frontend together must cover every specified Basic/Main, Alternative and Exception Flow and its terminal outcome; distribute these behaviors across Prompts A-D without changing the frozen functional scope.
 
 ## Prompt A: Backend API
 
