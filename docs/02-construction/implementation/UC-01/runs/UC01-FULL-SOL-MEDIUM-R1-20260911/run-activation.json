@@ -1,0 +1,11 @@
+{
+  "artifact_type": "run-activation",
+  "gate_version": 3,
+  "uc_id": "UC-01",
+  "run_id": "UC01-FULL-SOL-MEDIUM-R1-20260911",
+  "prompt_variant": "full",
+  "configuration_artifact": "docs/05-experiments/configurations/CFG-UC01-FULL-SOL-MEDIUM-R1-20260911.json",
+  "configuration_checksum": "sha256:454c0a15411e234659d2f4c4cf102b2a22d5b034bb28aa8040e24c2b70e194f1",
+  "activated_at": "2026-09-11T17:21:47.541857Z",
+  "status": "Confirmed"
+}

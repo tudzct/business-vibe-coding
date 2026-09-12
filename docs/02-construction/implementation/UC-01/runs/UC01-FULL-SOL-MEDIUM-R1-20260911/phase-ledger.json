@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "uc_id": "UC-01",
+  "run_id": "UC01-FULL-SOL-MEDIUM-R1-20260911",
+  "session_id": "01a0913a-37ea-7642-b499-b3b986615b64",
+  "phases": {
+    "prompt_generation": {
+      "status": "closed",
+      "first_turn_id": "01a0913d-d0e7-7041-b891-ac2bab202593",
+      "measurement_turn_id": "01a09149-905c-76a1-bb24-83e94ee25705"
+    }
+  },
+  "segments": [
+    {
+      "start": {
+        "at": "2026-09-11T23:14:39.862+07:00",
+        "epoch_ms": 1789143279863,
+        "uc_id": "UC-01",
+        "run_id": "UC01-FULL-SOL-MEDIUM-R1-20260911",
+        "session_id": "01a0913a-37ea-7642-b499-b3b986615b64",
+        "turn_id": "01a0913d-d0e7-7041-b891-ac2bab202593",
+        "phase": "prompt_generation",
+        "event": "start",
+        "segment_id": "prompt-001",
+        "source_revision": "sha256:945ed5b61774b7cc571ec1e61f135de13924e466cab6c7a8291e0980e58ad431"
+      },
+      "end": {
+        "at": "2026-09-11T23:15:56.815+07:00",
+        "epoch_ms": 1789143356815,
+        "uc_id": "UC-01",
+        "run_id": "UC01-FULL-SOL-MEDIUM-R1-20260911",
+        "session_id": "01a0913a-37ea-7642-b499-b3b986615b64",
+        "turn_id": "01a0913d-d0e7-7041-b891-ac2bab202593",
+        "phase": "prompt_generation",
+        "event": "end",
+        "segment_id": "prompt-001",
+        "source_revision": "sha256:945ed5b61774b7cc571ec1e61f135de13924e466cab6c7a8291e0980e58ad431"
+      }
+    },
+    {
+      "start": {
+        "at": "2026-09-11T23:16:41.810+07:00",
+        "epoch_ms": 1789143401810,
+        "uc_id": "UC-01",
+        "run_id": "UC01-FULL-SOL-MEDIUM-R1-20260911",
+        "session_id": "01a0913a-37ea-7642-b499-b3b986615b64",
+        "turn_id": "01a09141-5798-7290-9eb1-7cf20cf6ab90",
+        "phase": "prompt_generation",
+        "event": "start",
+        "segment_id": "prompt-002",
+        "source_revision": "sha256:945ed5b61774b7cc571ec1e61f135de13924e466cab6c7a8291e0980e58ad431"
+      },
+      "end": {
+        "at": "2026-09-11T23:22:23.393+07:00",
+        "epoch_ms": 1789143743394,
+        "uc_id": "UC-01",
+        "run_id": "UC01-FULL-SOL-MEDIUM-R1-20260911",
+        "session_id": "01a0913a-37ea-7642-b499-b3b986615b64",
+        "turn_id": "01a09141-5798-7290-9eb1-7cf20cf6ab90",
+        "phase": "prompt_generation",
+        "event": "end",
+        "segment_id": "prompt-002",
+        "source_revision": "sha256:078f388bf7eeb6c4a225fbe90a98d6e3fb26a6057a3c6c53b53f4a842248e3ea"
+      }
+    },
+    {
+      "start": {
+        "at": "2026-09-12T00:21:30.972+07:00",
+        "epoch_ms": 1789147290972,
+        "uc_id": "UC-01",
+        "run_id": "UC01-FULL-SOL-MEDIUM-R1-20260911",
+        "session_id": "01a0913a-37ea-7642-b499-b3b986615b64",
+        "turn_id": "01a0917c-23e4-70d3-8319-9f1f57ea41c3",
+        "phase": "configuration_and_approval",
+        "event": "start",
+        "segment_id": "activation-001",
+        "source_revision": "sha256:945ed5b61774b7cc571ec1e61f135de13924e466cab6c7a8291e0980e58ad431"
+      },
+      "end": {
+        "at": "2026-09-12T00:22:51.319+07:00",
+        "epoch_ms": 1789147371320,
+        "uc_id": "UC-01",
+        "run_id": "UC01-FULL-SOL-MEDIUM-R1-20260911",
+        "session_id": "01a0913a-37ea-7642-b499-b3b986615b64",
+        "turn_id": "01a0917c-23e4-70d3-8319-9f1f57ea41c3",
+        "phase": "configuration_and_approval",
+        "event": "end",
+        "segment_id": "activation-001",
+        "source_revision": "sha256:945ed5b61774b7cc571ec1e61f135de13924e466cab6c7a8291e0980e58ad431"
+      }
+    },
+    {
+      "start": {
+        "at": "2026-09-12T00:34:37.601+07:00",
+        "epoch_ms": 1789148077601,
+        "uc_id": "UC-01",
+        "run_id": "UC01-FULL-SOL-MEDIUM-R1-20260911",
+        "session_id": "01a0913a-37ea-7642-b499-b3b986615b64",
+        "turn_id": "01a09187-d081-7342-a7fa-e279884934c5",
+        "phase": "configuration_and_approval",
+        "event": "start",
+        "segment_id": "prompt-approval-001",
+        "source_revision": "sha256:078f388bf7eeb6c4a225fbe90a98d6e3fb26a6057a3c6c53b53f4a842248e3ea"
+      },
+      "end": {
+        "at": "2026-09-12T00:34:47.656+07:00",
+        "epoch_ms": 1789148087657,
+        "uc_id": "UC-01",
+        "run_id": "UC01-FULL-SOL-MEDIUM-R1-20260911",
+        "session_id": "01a0913a-37ea-7642-b499-b3b986615b64",
+        "turn_id": "01a09187-d081-7342-a7fa-e279884934c5",
+        "phase": "configuration_and_approval",
+        "event": "end",
+        "segment_id": "prompt-approval-001",
+        "source_revision": "sha256:078f388bf7eeb6c4a225fbe90a98d6e3fb26a6057a3c6c53b53f4a842248e3ea"
+      }
+    }
+  ],
+  "observations": [
+    {
+      "measurement_turn_id": "01a09149-905c-76a1-bb24-83e94ee25705",
+      "action": "close-phase:prompt_generation",
+      "last_turn_id": "01a09141-5798-7290-9eb1-7cf20cf6ab90",
+      "evidence_sha256": "sha256:6b72397949d0e25b5f38962a181af42ba959999d4e058126eec59977192a6bfa"
+    }
+  ],
+  "workflow_status": "open"
+}
