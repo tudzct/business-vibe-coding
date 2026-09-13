@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "gen-coding-prompt/
 from validate_prompt_contract import validate_prompt, normalize_variant, validate_configuration
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-generation-metrics/scripts"))
 from calculate_metrics import terminal_assessment_stage, validate_flow, validate_snapshot
-from flow_summary import accepted_summary, summarize
+from flow_summary import summarize
 
 NEXT = {
     "prompt": {"confirmed": "source"},
@@ -88,9 +88,6 @@ def audit_evidence(run, folder, stage):
         evidence["flow_progress_sha256"] = snapshot_hash(block["current_summary"])
         evidence["flow_followup_ids"] = summary["followup_ids"]
         evidence["flow_result_basis"] = summary["result_basis"]
-        if summary.get("selection_policy"):
-            evidence["flow_selection_policy"] = summary["selection_policy"]
-            evidence["flow_assessment_ids"] = [a["assessment_id"] for a in block["assessments"]]
     return evidence
 
 
@@ -151,17 +148,7 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None):
             retained = [r for r in block.get("followups", []) if r["followup_id"] in followup_ids]
             require(parent is not None and [r["followup_id"] for r in retained] == followup_ids,
                     "gate-pinned flow follow-ups missing or reordered")
-            if pinned.get("flow_selection_policy"):
-                assessment_ids = pinned.get("flow_assessment_ids", [])
-                assessments = [a for a in block["assessments"] if a["assessment_id"] in assessment_ids]
-                require([a["assessment_id"] for a in assessments] == assessment_ids, "gate-pinned flow assessments changed")
-                frozen = {"flow_accuracy": {"assessments": assessments, "followups": retained,
-                                           "current_assessment_id": parent["assessment_id"]}}
-                projection = accepted_summary(frozen)
-                require(projection["selection_policy"] == pinned["flow_selection_policy"], "gate flow policy changed")
-            else:
-                projection = summarize(parent, retained)
-            require(snapshot_hash(projection) == pinned["flow_progress_sha256"],
+            require(snapshot_hash(summarize(parent, retained)) == pinned["flow_progress_sha256"],
                     "gate-pinned flow progress changed")
     if gate == "repair_decision":
         audit_evidence(run, folder, "initial")

@@ -43,7 +43,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               {isAuthenticated ? (
                 <>
                   <span className="text-gray-700 dark:text-gray-300">
-                    {user?.fullName || user?.full_name || user?.username}
+                    {user?.full_name || user?.username}
                   </span>
                   <button
                     onClick={handleLogout}
@@ -99,3 +99,4 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 }
 
 export default Layout
+

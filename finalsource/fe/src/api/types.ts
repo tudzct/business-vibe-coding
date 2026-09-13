@@ -7,12 +7,10 @@ export interface ApiResponse<T = any> {
 }
 
 export interface User {
-  id?: number
-  fullName?: string
-  user_id?: number
-  full_name?: string
+  user_id: number
+  full_name: string
   email: string
-  username?: string
+  username: string
   phone_number?: string
   profile_picture_url?: string
   total_balance: number

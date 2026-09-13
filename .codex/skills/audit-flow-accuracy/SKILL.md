@@ -1,6 +1,6 @@
 ---
 name: audit-flow-accuracy
-description: Audit frozen use-case flows and update canonical experiment results directly from researcher verdicts or LLM re-audits, retaining accepted results across repair. Preserve evidence; never change application source, generate tests or authorize repairs.
+description: Audit frozen use-case flows, save partial accuracy, and complete pending results from researcher verdicts or continued LLM measurement. Preserve immutable assessments; never change application source, generate tests or authorize repairs.
 ---
 
 # Audit Flow Accuracy
@@ -8,8 +8,6 @@ description: Audit frozen use-case flows and update canonical experiment results
 Score whole behavioral paths, not individual steps. This is supplementary evidence and never changes the Business Rule baseline or BR result.
 
 For partial results or researcher/LLM follow-up measurement, read [follow-up measurement](references/follow-up-measurement.md). Always save measured flow results, report missing parts immediately and offer both paths for the researcher to choose. Researcher supplies results only; the LLM records them and recalculates JSON. This evaluation step must never edit application source, even if repair was authorized earlier.
-
-The final reported flow result is the latest conclusive accepted verdict per flow across the experiment (`accepted-audit-results-v1`). Both researcher replies and validated LLM re-audits update canonical JSON in the same turn, without another save confirmation. Repair, changed source hashes and later `not_evaluable` attempts do not erase accepted results. A newer conclusive result can replace an older verdict. Retain actual stage/source provenance per result and show later audit limitations separately. See the follow-up contract for schema 2, stdin input and corrections to already scored flows.
 
 Before assessing, read the frozen UC, canonical run, [per-flow audit procedure](references/per-flow-audit.md) and [assessment schema](references/assessment-schema.md). Resolve the rubric from the checksum-pinned configuration through run activation. New schema-2.3 configurations use `completion-critical-flow-runtime-v2`: `correct` requires observed completion through the integrated runtime. Legacy v1 evidence remains under its original rubric. Require `docs/02-construction/implementation/<UC-ID>/flow-baseline.json`, frozen from the same UC checksum before generation. Never reconstruct its denominator after seeing implementation results.
 
@@ -38,6 +36,6 @@ Let `T = main + alternative + exception` and `W = incorrect`.
 - Error percentage: `W / T * 100`.
 - Accuracy percentage: `(T - W) / T * 100`.
 
-Each flow has equal weight. If an accepted result remains `not_evaluable`, whole-baseline error and accuracy remain null. Persist evaluated-only rates, coverage, bounds and pending details in canonical `flow_accuracy.current_summary`; do not create current or follow-up JSON mirrors in `flow-accuracy`. Immutable assessment/evidence files remain. Evaluated rates use correct + incorrect; never change the frozen denominator or present researcher verdicts as LLM runtime observations.
+Each flow has equal weight regardless of step count. If any flow is `not_evaluable`, whole-baseline error and accuracy remain null. The scorer also persists evaluated-only accuracy/error, coverage, bounds and pending details in `flow_accuracy.current_summary` and `flow-accuracy/current.{json,md}`. Evaluated-only rates use correct + incorrect as their clearly labeled denominator; the frozen whole-baseline denominator never changes. Accepted researcher verdicts carry explicit provenance in append-only follow-ups; never claim they are LLM runtime observations.
 
 Run this skill automatically during confirmed First-pass Audit Gate and from `audit-generation-metrics` within authorized repair work. No separate final-audit gate or researcher invocation is required. Return control to `audit-generation-metrics`. Do not ask the researcher to invoke this skill, mutate source, authorize repair, close telemetry or export Excel.

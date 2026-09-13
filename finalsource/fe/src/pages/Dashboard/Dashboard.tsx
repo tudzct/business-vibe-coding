@@ -54,7 +54,7 @@ const Dashboard: React.FC = () => {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          Welcome, {user?.fullName || user?.full_name || user?.username}!
+          Welcome, {user?.full_name || user?.username}!
         </h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
           Your financial overview
@@ -168,3 +168,4 @@ const Dashboard: React.FC = () => {
 }
 
 export default Dashboard
+

@@ -97,16 +97,6 @@ def main():
                       f"Evaluated coverage (%): {current.get('evaluated_coverage_percent')}",
                       f"Accuracy bounds (%): {current.get('accuracy_lower_bound_percent')}–{current.get('accuracy_upper_bound_percent')}", ""])
         if flow.get("current_summary") is not None:
-            if current.get("selection_policy"):
-                lines.extend([f"Result selection: `{current['selection_policy']}` (accepted audit results for this experiment).",
-                              f"Results retained from an earlier source revision: {current['retained_from_prior_source_count']}.",
-                              "An inconclusive later audit does not erase a conclusive result. Each result retains its actual evidence revision.",
-                              f"Latest source assessment: {current['latest_assessment_status']}; counts: {json.dumps(current['latest_assessment_counts'])}", "",
-                              "| Flow | Accepted result | Result source | Audit stage | Evidence revision |",
-                              "|---|---|---|---|---|"])
-                for row in current["flows"]:
-                    lines.append(f"| {row['flow_id']} | {row['status']} | {row['result_source']} | {row['stage']} | `{row['source_revision']}` |")
-                lines.append("")
             lines.extend([f"Evaluated-only accuracy (%): {current['evaluated_accuracy_percent'] if current['evaluated_accuracy_percent'] is not None else 'N/A'}",
                           f"Evaluated-only error (%): {current['evaluated_error_percent'] if current['evaluated_error_percent'] is not None else 'N/A'}",
                           f"Result basis: {current['result_basis']}; researcher results: {current['researcher_result_count']}",

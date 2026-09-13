@@ -37,21 +37,5 @@
   ],
   "outcome": "resolved",
   "reusable_resolution": "With researcher authorization, stop database consumers, start MySQL temporarily with grant tables disabled and networking disabled, change only the application-user password to the current environment value through the local Unix socket, then restart and verify the normal stack. No volume deletion is required.",
-  "prevention": "Keep the environment credential stable for the lifetime of the persistent MySQL volume, or rotate the database user credential before changing the environment file.",
-  "recurrences": [
-    {
-      "observed_at": "2026-09-13T14:54:29Z",
-      "source_revision": "sha256:147a1cac5801f7e08ba74af17c5fd454e2c145bad00884b5e9497571f10069ab",
-      "outcome": "blocked",
-      "evidence": "Current application and root credentials rejected by persistent MySQL volume (1045); no password values captured.",
-      "operation": "docs/03-audit/docker-deployment/operations/20260913T145429Z-audit.json"
-    },
-    {
-      "observed_at": "2026-09-13T15:17:17Z",
-      "source_revision": "sha256:a951d8f9760544c3372a98d10a706e70998e9d93959330c91ddca05cf7bd4fd0",
-      "outcome": "blocked",
-      "evidence": "Rebuilt backend still receives MySQL authentication rejection (1045); frontend /register returned 200 and API proxy returned 502. No credential values captured.",
-      "operation": "docs/03-audit/docker-deployment/operations/20260913T151717Z-repair-verification.json"
-    }
-  ]
+  "prevention": "Keep the environment credential stable for the lifetime of the persistent MySQL volume, or rotate the database user credential before changing the environment file."
 }
