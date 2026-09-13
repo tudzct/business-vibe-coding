@@ -10,6 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow-tokens/scripts"))
 from metrics_contract import ROOT, atomic_write, context, digest, epoch, read_json, require, run_lock, writable
 from runtime_contract import method, configured_rubric, validate_runtime, complete_chain
+from flow_summary import current_assessment, summarize, refresh_summary, markdown as progress_markdown
 
 OBSERVATION_STATUSES = {"met", "unmet", "not_evaluable"}
 FLOW_TYPES = ("main", "alternative", "exception")
@@ -199,8 +200,13 @@ def validate_run_result(run, folder, result):
         require(history[0]["input"]["baseline"] == result["input"]["baseline"], "flow baseline changed")
         require(all(method(r["input"]) == (version, rubric) for r in history), "mixed method history")
         if version == 2:
-            previous_end = max(epoch(r["input"]["captured_at"]) for r in history)
+            followups = block.get("followups", [])
+            previous_end = max([epoch(r["input"]["captured_at"]) for r in history] +
+                               [epoch(r["recorded_at"]) for r in followups
+                                if r["assessment_id"] in {a["assessment_id"] for a in history}])
             old_ids = {o["observation_id"] for r in history for o in r["input"]["observations"]}
+            old_ids.update(o["observation_id"] for r in followups if r["mode"] == "llm_measurement"
+                           for o in r["runtime_result"]["input"].get("observations", []))
             require(epoch(result["input"]["captured_at"]) > previous_end, "new final assessment must follow prior evidence capture")
             for observation in result["input"]["observations"]:
                 require(observation["observation_id"] not in old_ids and epoch(observation["started_at"]) > previous_end,
@@ -244,14 +250,23 @@ def main():
                 run["flow_accuracy_percent"] = result["flow_accuracy_percent"]
                 run["flow_error_percent"] = result["flow_error_percent"]
                 run["flow_accuracy_status"] = result["status"]
-                atomic_write(path, run)
+            summary = refresh_summary(run, folder)
+            atomic_write(path, run)
             if not json_path.exists():
                 atomic_write(json_path, result)
             if not md_path.exists():
                 atomic_write(md_path, markdown(result), raw=True)
+            atomic_write(folder / "flow-accuracy/current.json", summary)
+            atomic_write(folder / "flow-accuracy/current.md", progress_markdown(summary), raw=True)
     version, rubric = method(result["input"])
+    if args.dry_run:
+        block = run.get("flow_accuracy") or {}
+        existing = any(a["assessment_id"] == result["assessment_id"] for a in block.get("assessments", []))
+        summary = summarize(current_assessment(run) if existing else result, block.get("followups", []))
     print(json.dumps({"schema_version": version, "rubric_id": rubric,
-                      **{key: value for key, value in result.items() if key != "input"}}, ensure_ascii=False, indent=2))
+                      **{key: value for key, value in result.items() if key != "input"},
+                      "current_summary": summary},
+                     ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":

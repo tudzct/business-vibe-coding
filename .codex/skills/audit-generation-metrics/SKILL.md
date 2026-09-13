@@ -20,6 +20,8 @@ The repair caller must end its execution timer after correction and permitted ev
 
 Do not create/run tests or claim unsupported business correctness.
 
+When flow results are partial, preserve all measured fields and immediately display pending details and both choices from `audit-flow-accuracy/references/follow-up-measurement.md`. Researcher-provided results are entered by the LLM without requiring additional evidence; continued LLM measurement retains the configured evidence requirements. Both paths are flow-only evaluation: never modify application source, BRs, telemetry or repair authorization while resolving missing measurements. Report `current_summary.result_basis` explicitly; original assessments remain immutable.
+
 Flow assessment is an automatic child operation of first-pass audit and authorized repair verification and remains supplementary to the BR baseline. UI/Figma scoring and its Excel cells remain entirely researcher-managed.
 
 Report the flow schema/rubric alongside results. `calculate_metrics.py` accepts legacy v1 and runtime-v2, revalidates v2 evidence/links/scores, and rejects mixed initial/final methods. Do not relabel historical scores or combine unlike rubrics in a comparison. Audit never authorizes repairs; first-pass defects go to Repair Decision Gate. During authorized repair, return findings to the repair caller within its existing scope. Audit/runtime contributes no generation execution seconds.

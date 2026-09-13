@@ -25,10 +25,14 @@ Confirmed gates supply canonical `metrics` through the internal telemetry engine
 
 ## Flow accuracy
 
-- Status: `scored | repair_required | not_evaluable`
+- Status: `scored | repair_required | partial | not_evaluable`
 - Correct/incorrect/not evaluable: `<counts>`
 - Flow error/accuracy: `<percent or N/A>`
 - Evaluated coverage and bounds: `<values>`
+- Evaluated-only accuracy/error: `<percent or N/A; denominator = correct + incorrect>`
+- Result basis/researcher result count: `<rubric_evidence | includes_researcher_results>/<count>`
+- Pending flows, missing targets, reasons and attempts: `<stored details>`
+- Follow-up choices: researcher supplies results for LLM entry; or LLM continues measurement. Neither permits source changes.
 
 ## Researcher-managed Figma/UI accuracy
 

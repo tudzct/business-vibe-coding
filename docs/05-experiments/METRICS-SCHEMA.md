@@ -20,6 +20,10 @@ When explicitly requested, the skill adds `ui_accuracy.schema_version: 1`, `rubr
 
 ## Canonical record
 
+Flow-only partial progress is persisted in `flow_accuracy.current_summary` (projection schema 1, independent of the original assessment schema). It records evaluated-only accuracy/error, coverage, bounds, per-flow result source, pending targets/reasons/attempts, `measurement_status` and independent `has_incorrect_flows`. Top-level flow fields reflect this summary: `partial` means both evaluated and pending flows exist; whole-baseline percentages remain null until all flows are evaluated. Evaluated-only percentages are null if no flow is evaluated. Original `assessments` retain their original status, scoring and hashes.
+
+For each missing flow, immediately offer two choices: researcher supplies results only and the LLM records them, or the LLM continues bounded measurement and automatically records validated results. `flow_accuracy.followups` is append-only, pins parent assessment/hash, stage, baseline, source revision, request turn and record time, and stores per-flow results with `researcher_result` or `llm_measurement` provenance. Researcher verdicts require no additional runtime evidence and set `result_basis: includes_researcher_results`; do not present them as LLM-observed runtime-v2 proof. The LLM path retains the original evidence standard. Both paths forbid all application source changes and preserve BRs, metrics, run status and gate history. Current mirrors live at `flow-accuracy/current.{json,md}`; immutable supplements at `flow-accuracy/followups/<id>.json`. See [follow-up contract](../../.codex/skills/audit-flow-accuracy/references/follow-up-measurement.md). Existing telemetry may close/finalize with honest partial flow data under existing gates; this adds no gate and does not imply application success. Historical runs are updated only on an explicit follow-up request.
+
 The canonical run JSON records:
 
 - configuration, UC, prompt_variant (`full` or `rq3`), model, replicate, order, wall-clock time and token use;

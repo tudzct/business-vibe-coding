@@ -56,7 +56,7 @@ Types are `main`, `alternative`, and `exception`. Flow and step IDs are unique a
 
 `stage` is `initial` or `final`; observation status is `met`, `unmet` or `not_evaluable`. Evidence must be repository-local and checksum-valid.
 
-The scorer appends `flow_accuracy.assessments`, updates `flow_accuracy_percent`, `flow_error_percent` and `flow_accuracy_status`, and writes `flow-accuracy/<assessment-id>.{json,md}` beside run evidence. Same-ID retries are idempotent; changed content with the same ID fails.
+The scorer appends `flow_accuracy.assessments` and writes `flow-accuracy/<assessment-id>.{json,md}` beside run evidence. It also saves the current progress projection and top-level flow fields; see [follow-up measurement](follow-up-measurement.md) for partial rates, `current_summary`, researcher verdicts and append-only `followups`. Same-ID retries are idempotent; changed content with the same ID fails. Original assessment objects/reports remain unchanged by that projection.
 
 ## Runtime assessment input (v2)
 

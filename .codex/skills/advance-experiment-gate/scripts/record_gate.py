@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "gen-coding-prompt/
 from validate_prompt_contract import validate_prompt, normalize_variant, validate_configuration
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-generation-metrics/scripts"))
 from calculate_metrics import terminal_assessment_stage, validate_flow, validate_snapshot
+from flow_summary import summarize
 
 NEXT = {
     "prompt": {"confirmed": "source"},
@@ -81,8 +82,13 @@ def audit_evidence(run, folder, stage):
     require(isinstance(source, str) and re.fullmatch(r"sha256:[0-9a-f]{64}", source), "audited source hash required")
     if stage == "final":
         require(source == business.get("source_revision"), "final BR/flow source hash mismatch")
-    return {"business_rules_sha256": snapshot_hash(snapshot), "flow_assessment_id": summary["assessment_id"],
-            "flow_assessment_sha256": snapshot_hash(current), "source_revision": source}
+    evidence = {"business_rules_sha256": snapshot_hash(snapshot), "flow_assessment_id": summary["assessment_id"],
+                "flow_assessment_sha256": snapshot_hash(current), "source_revision": source}
+    if block.get("current_summary") is not None:
+        evidence["flow_progress_sha256"] = snapshot_hash(block["current_summary"])
+        evidence["flow_followup_ids"] = summary["followup_ids"]
+        evidence["flow_result_basis"] = summary["result_basis"]
+    return evidence
 
 
 def prepare_transition(run, folder, gate, outcome, turn_id, reason=None):
@@ -132,6 +138,18 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None):
             require(recorded.get("business_rules_sha256") == snapshot_hash(run["business_rules"]["initial"]), "initial BR evidence changed")
             initial = next((r for r in run["flow_accuracy"]["assessments"] if r["assessment_id"] == recorded.get("flow_assessment_id")), None)
             require(initial is not None and snapshot_hash(initial) == recorded.get("flow_assessment_sha256"), "initial flow evidence changed")
+        for prior_receipt in history:
+            pinned = prior_receipt.get("evidence") or {}
+            if "flow_progress_sha256" not in pinned:
+                continue
+            block = run["flow_accuracy"]
+            parent = next((a for a in block["assessments"] if a["assessment_id"] == pinned.get("flow_assessment_id")), None)
+            followup_ids = pinned.get("flow_followup_ids", [])
+            retained = [r for r in block.get("followups", []) if r["followup_id"] in followup_ids]
+            require(parent is not None and [r["followup_id"] for r in retained] == followup_ids,
+                    "gate-pinned flow follow-ups missing or reordered")
+            require(snapshot_hash(summarize(parent, retained)) == pinned["flow_progress_sha256"],
+                    "gate-pinned flow progress changed")
     if gate == "repair_decision":
         audit_evidence(run, folder, "initial")
         if outcome == "skipped":

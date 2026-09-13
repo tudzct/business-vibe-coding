@@ -62,12 +62,13 @@ def main():
     business = data.get("business_rules", {})
     final = business.get("final", {})
     rows = final.get("requirements")
-    if data.get("run_status") != "complete" or not isinstance(rows, list):
-        raise ValueError("input must be a complete run with final Business Rule results")
+    if data.get("run_status") not in {"complete", "blocked", "stopped", "repair_declined"} or not isinstance(rows, list):
+        raise ValueError("input must be a terminal run with final Business Rule results")
     lines = [
         f"# Experiment run {data.get('run_id', '')}", "",
         f"- UC: `{data.get('uc_id', '')}`",
         f"- Prompt variant: `{data.get('prompt_variant', 'full')}`",
+        f"- Run status: `{data.get('run_status')}`",
         f"- Canonical input: `{args.input}`",
         f"- Input SHA-256: `{hashlib.sha256(raw).hexdigest()}`", "",
         "## Final Business Rule assessment", "",
@@ -84,6 +85,7 @@ def main():
                         if item.get("assessment_id") == flow.get("current_assessment_id")), None)
         if current is None:
             raise ValueError("Flow current assessment is missing")
+        current = flow.get("current_summary") or current
         counts = current.get("counts", {})
         lines.extend(["## Flow accuracy", "", f"Assessment: `{current['assessment_id']}` ({current['stage']})",
                       f"Rubric: `{flow.get('rubric_id', 'completion-critical-flow-v1')}`; compare only runs with the same rubric.",
@@ -94,6 +96,18 @@ def main():
                       f"Flow accuracy (%): {current.get('flow_accuracy_percent') if current.get('flow_accuracy_percent') is not None else 'N/A'}",
                       f"Evaluated coverage (%): {current.get('evaluated_coverage_percent')}",
                       f"Accuracy bounds (%): {current.get('accuracy_lower_bound_percent')}–{current.get('accuracy_upper_bound_percent')}", ""])
+        if flow.get("current_summary") is not None:
+            lines.extend([f"Evaluated-only accuracy (%): {current['evaluated_accuracy_percent'] if current['evaluated_accuracy_percent'] is not None else 'N/A'}",
+                          f"Evaluated-only error (%): {current['evaluated_error_percent'] if current['evaluated_error_percent'] is not None else 'N/A'}",
+                          f"Result basis: {current['result_basis']}; researcher results: {current['researcher_result_count']}",
+                          f"Known incorrect flows: {current['counts']['incorrect']}",
+                          "Supplemental records: " + (", ".join(current['followup_ids']) or "none"), ""])
+            for pending in current["pending_flows"]:
+                lines.append(f"Pending {pending['flow_id']}: " + "; ".join(
+                    f"{target['target_id']}: {target['reason']}" for target in pending["missing_targets"]))
+            if current["pending_flows"]:
+                lines.extend(["", "Researcher chooses: supply per-flow results for the LLM to record, or ask the LLM to continue measurement.",
+                              "Flow evaluation never changes application source. Existing metrics remain saved.", ""])
     lines.extend(optional_ui_lines(data))
     if data.get("metrics") is not None:
         lines.append(metrics_markdown(data["metrics"]))

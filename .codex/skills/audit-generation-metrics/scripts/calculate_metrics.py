@@ -11,9 +11,10 @@ from metrics_contract import atomic_write, validate_metrics, context, run_lock
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-flow-accuracy" / "scripts"))
 from score_flow_accuracy import calculate as calculate_flow, validate_run_result, validate_evidence
 from runtime_contract import method, configured_rubric
+from flow_summary import validate_followups
 
 STATUSES = {"met", "unmet", "not_evaluable"}
-FLOW_STATUSES = {"scored", "repair_required", "not_evaluable"}
+FLOW_STATUSES = {"scored", "repair_required", "not_evaluable", "partial"}
 
 
 def validate_snapshot(snapshot, ordered, field):
@@ -77,15 +78,22 @@ def validate_flow(data, folder):
         validate_unchanged_initial(data, current)
     if (current.get("stage") == "final" or data.get("run_status") == "complete") and current["input"]["source_revision"] != data.get("business_rules", {}).get("source_revision"):
         raise ValueError("final BR/flow source revision mismatch")
-    status = current.get("status")
+    summary = validate_followups(data, folder)
+    stored_summary = block.get("current_summary")
+    if "followups" in block and stored_summary is None:
+        raise ValueError("flow follow-ups require their current summary")
+    if stored_summary is not None and stored_summary != summary:
+        raise ValueError("flow progress differs from immutable assessments/follow-ups")
+    effective = summary if stored_summary is not None else current
+    status = effective.get("status")
     if status not in FLOW_STATUSES or data.get("flow_accuracy_status") != status:
         raise ValueError("flow_accuracy status mismatch")
-    counts = current.get("counts")
+    counts = effective.get("counts")
     if not isinstance(counts, dict) or counts.get("total") != counts.get("correct", 0) + counts.get("incorrect", 0) + counts.get("not_evaluable", 0):
         raise ValueError("flow_accuracy counts do not reconcile")
-    if data.get("flow_accuracy_percent") != current.get("flow_accuracy_percent") or data.get("flow_error_percent") != current.get("flow_error_percent"):
+    if data.get("flow_accuracy_percent") != effective.get("flow_accuracy_percent") or data.get("flow_error_percent") != effective.get("flow_error_percent"):
         raise ValueError("flow percentage mismatch")
-    return {"schema_version": version, "rubric_id": rubric, **{key: current.get(key) for key in ("assessment_id", "status", "counts", "flow_accuracy_percent", "flow_error_percent", "evaluated_coverage_percent", "accuracy_lower_bound_percent", "accuracy_upper_bound_percent")}}
+    return {**summary, "schema_version": version, "rubric_id": rubric}
 
 
 def validate_unchanged_initial(data, current):
