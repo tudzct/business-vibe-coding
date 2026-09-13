@@ -13,7 +13,7 @@ def repo_root() -> Path:
     for parent in here.parents:
         if (parent / "PROJECT_CONTEXT.md").is_file():
             return parent
-    raise SystemExit("Không tìm thấy repository root chứa PROJECT_CONTEXT.md")
+    raise SystemExit("Cannot find the repository root containing PROJECT_CONTEXT.md")
 
 
 ROOT = repo_root()
@@ -37,15 +37,15 @@ def select_dataset(version: Optional[str]) -> Path:
     if version:
         candidate = DATASET_ROOT / version
         if not (candidate / "manifest.json").is_file():
-            raise FileNotFoundError(f"Dataset version không tồn tại hoặc thiếu manifest: {version}")
+            raise FileNotFoundError(f"Dataset version does not exist or is missing a manifest: {version}")
         return candidate
-    raise FileNotFoundError("Cần chỉ định dataset đã kích hoạt bằng --dataset-version; không tự chọn version mới nhất")
+    raise FileNotFoundError("The activated dataset must be specified with --dataset-version; do not automatically select the latest version")
 
 
 def normalize_uc(value: str) -> str:
     match = re.search(r"(?i)uc[-_ ]*0*(\d{1,3})", value)
     if not match:
-        raise ValueError(f"Không nhận diện được UC từ: {value}")
+        raise ValueError(f"Cannot identify the UC from: {value}")
     return f"UC-{int(match.group(1)):03d}"
 
 
@@ -79,7 +79,7 @@ def verify(dataset: Path) -> list[dict]:
         normalized_relative = relative.replace("\\", "/")
         relative_path = Path(normalized_relative)
         if relative_path.is_absolute() or ".." in relative_path.parts:
-            raise ValueError(f"Đường dẫn checksum không an toàn: {relative}")
+            raise ValueError(f"Unsafe checksum path: {relative}")
         target = dataset.joinpath(*relative_path.parts)
         actual = digest(target) if target.is_file() else None
         matched_via = "raw-bytes" if actual == expected else None
@@ -99,7 +99,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Resolve immutable UC to frozen Figma dataset")
     parser.add_argument("target", nargs="?", help="UC ID or UC file path")
     parser.add_argument("--validate-all", action="store_true")
-    parser.add_argument("--dataset-version", help="Tên thư mục dataset bất biến cần dùng")
+    parser.add_argument("--dataset-version", help="Name of the immutable dataset directory to use")
     args = parser.parse_args()
     try:
         dataset = select_dataset(args.dataset_version)
@@ -117,7 +117,7 @@ def main() -> int:
         print(json.dumps({"dataset_id": manifest["dataset_id"], "integrity_ok": integrity_ok, "files": checks}, ensure_ascii=False, indent=2))
         return 0 if integrity_ok else 2
     if not args.target:
-        parser.error("cần target hoặc --validate-all")
+        parser.error("target or --validate-all is required")
     try:
         key = normalize_uc(args.target)
     except ValueError as error:
@@ -125,7 +125,7 @@ def main() -> int:
         return 2
     entry = manifest["use_cases"].get(key)
     if entry is None:
-        print(json.dumps({"error": f"{key} không có trong manifest"}, ensure_ascii=False), file=sys.stderr)
+        print(json.dumps({"error": f"{key} is not in the manifest"}, ensure_ascii=False), file=sys.stderr)
         return 2
     node = manifest["nodes"].get(entry["node_id"]) if entry["node_id"] else None
     output = {"uc_id": key, "status": entry["status"], "dataset_id": manifest["dataset_id"], "node_id": entry["node_id"], "integrity_ok": integrity_ok}

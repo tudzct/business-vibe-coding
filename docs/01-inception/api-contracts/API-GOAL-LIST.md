@@ -71,7 +71,7 @@ Example: true
 Type: string; Required: Yes; Nullable: No
 Trigger: Goal data is calculated.
 Description: Human-readable success message.
-Example: Lấy danh sách mục tiêu thành công
+Example: Goal list retrieved successfully
 
 
 ### data.savingGoal
@@ -187,5 +187,5 @@ Note: The error envelope also contains success=false and may contain an error fi
 Type: string | string[]; Required: Yes; Nullable: No
 Trigger: Goal retrieval or progress calculation fails.
 Description: Error description returned by the global HTTP exception filter.
-Example: Đã xảy ra lỗi hệ thống khi tải mục tiêu, vui lòng thử lại sau.
+Example: A system error occurred while loading goals, please try again later.
 Note: The error envelope also contains success=false and may contain an error field.

@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
 /**
- * Custom hook để quản lý localStorage
- * @param key - Key trong localStorage
- * @param initialValue - Giá trị mặc định
+ * Custom hook to manage localStorage
+ * @param key - Key in localStorage
+ * @param initialValue - Default value
  * @returns [storedValue, setValue]
  */
 export const useLocalStorage = <T>(

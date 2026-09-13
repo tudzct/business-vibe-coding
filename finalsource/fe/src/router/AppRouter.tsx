@@ -20,7 +20,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactElement }> = ({ children }
   const { isAuthenticated, isLoading } = useAuth()
 
   if (isLoading) {
-    return <Loading fullScreen message="Đang tải..." />
+    return <Loading fullScreen message="Loading..." />
   }
 
   if (!isAuthenticated) {
@@ -34,7 +34,7 @@ const AppRouter: React.FC = () => {
   return (
     <BrowserRouter>
       <Layout>
-        <React.Suspense fallback={<Loading fullScreen message="Đang tải trang..." />}>
+        <React.Suspense fallback={<Loading fullScreen message="Loading page..." />}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />

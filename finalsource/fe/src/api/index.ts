@@ -1,4 +1,4 @@
-// Export tất cả services
+// Export all services
 export { default as axiosInstance } from './axiosInstance'
 export * from './types'
 export * from './auth.service'

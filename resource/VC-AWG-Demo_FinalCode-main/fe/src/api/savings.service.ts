@@ -3,8 +3,8 @@ import type { SavingsSummaryResponse } from './types'
 
 export const savingsService = {
   /**
-   * Lấy tổng hợp tiết kiệm theo tháng cho năm được chỉ định
-   * @param year - Năm cần lấy dữ liệu (mặc định là năm hiện tại)
+   * Get the monthly savings summary for the specified year
+   * @param year - Year to retrieve data for (defaults to the current year)
    */
   getSavingsSummary: async (year?: number): Promise<SavingsSummaryResponse> => {
     const params = year ? { year } : {}

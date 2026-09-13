@@ -19,28 +19,28 @@ export class AuthService {
   async login(loginDto: LoginDto): Promise<LoginResponseDto> {
     const { email, password } = loginDto;
 
-    // Tìm người dùng theo email
+    // Find the user by email
     const user = await this.userRepository.findOne({
       where: { email },
     });
 
-    // Kiểm tra người dùng có tồn tại không
+    // Check whether the user exists
     if (!user) {
-      throw new UnauthorizedException('Email hoặc mật khẩu không đúng.');
+      throw new UnauthorizedException('Incorrect email or password.');
     }
 
-    // So sánh mật khẩu với hash
+    // Compare the password with the hash
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Email hoặc mật khẩu không đúng.');
+      throw new UnauthorizedException('Incorrect email or password.');
     }
 
-    // Tạo JWT token
+    // Create a JWT token
     const payload = { sub: user.userId, email: user.email };
     const accessToken = this.jwtService.sign(payload);
 
-    // Trả về accessToken và thông tin người dùng
+    // Return accessToken and user information
     return {
       accessToken,
       user: {
@@ -54,12 +54,12 @@ export class AuthService {
   async register(registerDto: RegisterDto) {
     const { fullName, email, password, confirmPassword } = registerDto;
 
-    // Kiểm tra password và confirmPassword có trùng khớp không
+    // Check whether password and confirmPassword match
     if (password !== confirmPassword) {
       throw new BadRequestException({ error: 'Passwords do not match.' });
     }
 
-    // Kiểm tra email đã tồn tại chưa
+    // Check whether the email already exists
     const existingUser = await this.userRepository.findOne({
       where: { email },
     });
@@ -68,15 +68,15 @@ export class AuthService {
       throw new ConflictException({ error: 'This email is already registered.' });
     }
 
-    // Hash mật khẩu
+    // Hash the password
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    // Tạo username từ email (lấy phần trước @)
+    // Create a username from the email (take the portion before @)
     let username = email.split('@')[0];
     let usernameCounter = 1;
     
-    // Kiểm tra và tạo username unique nếu cần
+    // Check and create a unique username if needed
     let existingUsername = await this.userRepository.findOne({
       where: { username },
     });
@@ -89,7 +89,7 @@ export class AuthService {
       usernameCounter++;
     }
 
-    // Tạo user mới
+    // Create a new user
     const newUser = this.userRepository.create({
       fullName,
       email,
@@ -100,11 +100,11 @@ export class AuthService {
 
     const savedUser = await this.userRepository.save(newUser);
 
-    // Tạo JWT token
+    // Create a JWT token
     const payload = { sub: savedUser.userId, email: savedUser.email };
     const accessToken = this.jwtService.sign(payload);
 
-    // Trả về thông tin người dùng và token
+    // Return user information and the token
     return {
       message: 'Registration successful',
       user: {

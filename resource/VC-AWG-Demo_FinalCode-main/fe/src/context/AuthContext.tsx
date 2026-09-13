@@ -18,7 +18,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Kiểm tra token khi component mount
+  // Check the token when the component mounts
   useEffect(() => {
     const token = localStorage.getItem('token')
     const savedUser = localStorage.getItem('user')
@@ -27,7 +27,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       try {
         const userData = JSON.parse(savedUser)
         setUser(userData)
-        // Có thể gọi API để verify token và lấy user mới nhất
+        // Can call the API to verify the token and get the latest user
       } catch (error) {
         console.error('Error parsing user data:', error)
         localStorage.removeItem('token')
@@ -42,12 +42,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const response = await authService.login({ email, password })
       if (response.success && response.data) {
         const { user: userData, accessToken } = response.data
-        // Map user data từ response format mới sang User type
+        // Map user data from the new response format to the User type
         const mappedUser: User = {
           user_id: userData.id,
           full_name: userData.fullName,
           email: userData.email,
-          username: userData.email, // Fallback nếu không có username
+          username: userData.email, // Fallback if username is unavailable
           total_balance: 0,
         }
         localStorage.setItem('token', accessToken)
@@ -64,12 +64,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const register = async (fullName: string, email: string, password: string, confirmPassword: string) => {
     try {
       const response = await authService.register({ fullName, email, password, confirmPassword })
-      // Map user data từ response format mới sang User type
+      // Map user data from the new response format to the User type
       const mappedUser: User = {
         user_id: response.user.id,
         full_name: response.user.fullName,
         email: response.user.email,
-        username: response.user.email, // Fallback nếu không có username
+        username: response.user.email, // Fallback if username is unavailable
         total_balance: 0,
       }
       localStorage.setItem('token', response.token)

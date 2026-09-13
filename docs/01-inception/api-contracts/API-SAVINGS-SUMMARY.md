@@ -139,7 +139,7 @@ Example: 1200000
 Type: string | string[]; Required: Yes; Nullable: No
 Trigger: The JWT is missing, invalid, or expired.
 Description: Error description returned by the global HTTP exception filter.
-Example: Không thể xác thực người dùng. Vui lòng đăng nhập lại.
+Example: Unable to authenticate the user. Please log in again.
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 500

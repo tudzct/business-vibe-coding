@@ -112,7 +112,7 @@ export class AccountController {
     description: 'System error',
   })
   async getAccountDetail(@Request() req, @Param('id') id: string) {
-    // Kiểm tra và lấy userId từ JWT payload
+    // Check and get userId from the JWT payload
     if (!req.user || !req.user.userId) {
       throw new UnauthorizedException('User authentication failed. Please log in again.');
     }
@@ -161,7 +161,7 @@ export class AccountController {
     @Param('id') id: string,
     @Body() updateAccountDto: UpdateAccountDto,
   ) {
-    // Kiểm tra và lấy userId từ JWT payload
+    // Check and get userId from the JWT payload
     if (!req.user || !req.user.userId) {
       throw new UnauthorizedException('User authentication failed. Please log in again.');
     }
@@ -201,7 +201,7 @@ export class AccountController {
     description: 'System error',
   })
   async deleteAccount(@Request() req, @Param('id') id: string) {
-    // Kiểm tra và lấy userId từ JWT payload
+    // Check and get userId from the JWT payload
     if (!req.user || !req.user.userId) {
       throw new UnauthorizedException('User authentication failed. Please log in again.');
     }

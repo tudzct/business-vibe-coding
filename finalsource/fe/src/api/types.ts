@@ -1,4 +1,4 @@
-// Định nghĩa các type cho API response
+// Define types for API responses
 
 export interface ApiResponse<T = any> {
   success: boolean

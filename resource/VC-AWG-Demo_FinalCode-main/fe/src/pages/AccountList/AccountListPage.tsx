@@ -33,13 +33,13 @@ const AccountListPage: React.FC = () => {
         setAccounts([])
       }
     } catch (err: any) {
-      // Xử lý lỗi 401 - đã được xử lý bởi axios interceptor
+      // Handle 401 errors - already handled by the axios interceptor
       if (err.response?.status === 401) {
         navigate('/login')
         return
       }
 
-      // Xử lý lỗi server (500)
+      // Handle server errors (500)
       if (err.response?.status === 500) {
         setError('An error occurred, please try again later.')
       } else {
@@ -54,7 +54,7 @@ const AccountListPage: React.FC = () => {
     fetchAccounts()
   }, [])
 
-  // Hiển thị loading state
+  // Display loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#F4F5F7] p-8">
@@ -70,7 +70,7 @@ const AccountListPage: React.FC = () => {
     )
   }
 
-  // Hiển thị error state
+  // Display error state
   if (error) {
     return (
       <div className="min-h-screen bg-[#F4F5F7] p-8">
@@ -84,7 +84,7 @@ const AccountListPage: React.FC = () => {
     )
   }
 
-  // Hiển thị empty state
+  // Display empty state
   if (accounts.length === 0) {
     return (
       <div className="min-h-screen bg-[#F4F5F7] p-8">
@@ -101,7 +101,7 @@ const AccountListPage: React.FC = () => {
               onClick={() => navigate('/accounts/add')}
               className="bg-[#299D91] hover:bg-[#238a7f] text-white px-8 py-3 rounded"
             >
-              Thêm tài khoản
+              Add account
             </Button>
           </div>
         </div>

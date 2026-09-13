@@ -32,33 +32,33 @@ def main() -> int:
     args = parser.parse_args()
 
     if not re.fullmatch(r"\d{4}-\d{2}-\d{2}-\d{3}", args.new_version):
-        raise SystemExit("new-version phải có dạng YYYY-MM-DD-NNN")
+        raise SystemExit("new-version must have the format YYYY-MM-DD-NNN")
 
     source = DATASET_ROOT / args.source
     destination = DATASET_ROOT / args.new_version
     if not (source / "manifest.json").is_file():
-        raise SystemExit(f"Dataset nguồn không tồn tại: {args.source}")
+        raise SystemExit(f"Source dataset does not exist: {args.source}")
     if destination.exists():
-        raise SystemExit(f"Dataset đích đã tồn tại: {args.new_version}")
+        raise SystemExit(f"Destination dataset already exists: {args.new_version}")
 
     manifest = json.loads((source / "manifest.json").read_text(encoding="utf-8"))
     uc_id = f"UC-{int(re.search(r'\d+', args.uc_id).group()):03d}"
     uc_entry = manifest.get("use_cases", {}).get(uc_id)
     node = manifest.get("nodes", {}).get(args.plugin_node_id)
     if not uc_entry or uc_entry.get("node_id") != args.plugin_node_id or not node:
-        raise SystemExit("UC/node không khớp manifest nguồn")
+        raise SystemExit("UC/node does not match the source manifest")
     if (
         node.get("file_key") != args.plugin_file_key
         or node.get("frame_name") != args.plugin_frame_name
     ):
-        raise SystemExit("Metadata plugin không khớp file key/frame trong manifest nguồn")
+        raise SystemExit("Plugin metadata does not match the file key/frame in the source manifest")
 
     checks = verify(source)
     node_prefix = f"nodes/{args.plugin_node_id.replace(':', '-')}/"
     node_checks = [item for item in checks if item["path"].startswith(node_prefix)]
     node_failures = [item for item in node_checks if not item["ok"]]
     if not node_checks:
-        raise SystemExit("Checksum ledger không chứa payload của node mục tiêu")
+        raise SystemExit("Checksum ledger does not contain the target node payload")
     if node_failures:
         raise SystemExit(json.dumps({"status": "source-integrity-failed", "files": node_failures}, ensure_ascii=False, indent=2))
 
@@ -105,7 +105,7 @@ def main() -> int:
         metadata_path = staged / snapshot_relative / "metadata.json"
         metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
         if metadata.get("natural_width") != args.plugin_width or metadata.get("natural_height") != args.plugin_height:
-            raise SystemExit("Kích thước plugin không khớp metadata payload")
+            raise SystemExit("Plugin dimensions do not match the metadata payload")
         metadata["dataset_version"] = args.new_version
         metadata["source_dataset_version"] = args.source
         metadata["plugin_validated_at"] = refrozen_at

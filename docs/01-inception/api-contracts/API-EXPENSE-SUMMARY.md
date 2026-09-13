@@ -98,5 +98,5 @@ Note: The error envelope also contains success=false and may contain an error fi
 Type: string | string[]; Required: Yes; Nullable: No
 Trigger: Expense aggregation fails.
 Description: Error description returned by the global HTTP exception filter.
-Example: Không thể lấy dữ liệu chi tiêu.
+Example: Unable to retrieve expense data.
 Note: The error envelope also contains success=false and may contain an error field.

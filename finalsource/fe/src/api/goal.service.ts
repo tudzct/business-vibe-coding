@@ -2,31 +2,31 @@ import axiosInstance from './axiosInstance'
 import { ApiResponse, Goal } from './types'
 
 export const goalService = {
-  // Lấy danh sách mục tiêu của user
+  // Get the user's goals
   getGoals: async (): Promise<ApiResponse<Goal[]>> => {
     const response = await axiosInstance.get('/goals')
     return response.data
   },
 
-  // Lấy chi tiết một mục tiêu
+  // Get details of a goal
   getGoal: async (goalId: number): Promise<ApiResponse<Goal>> => {
     const response = await axiosInstance.get(`/goals/${goalId}`)
     return response.data
   },
 
-  // Tạo mục tiêu mới
+  // Create a new goal
   createGoal: async (data: Omit<Goal, 'goal_id' | 'last_updated'>): Promise<ApiResponse<Goal>> => {
     const response = await axiosInstance.post('/goals', data)
     return response.data
   },
 
-  // Cập nhật mục tiêu
+  // Update a goal
   updateGoal: async (goalId: number, data: Partial<Goal>): Promise<ApiResponse<Goal>> => {
     const response = await axiosInstance.put(`/goals/${goalId}`, data)
     return response.data
   },
 
-  // Xóa mục tiêu
+  // Delete a goal
   deleteGoal: async (goalId: number): Promise<ApiResponse<void>> => {
     const response = await axiosInstance.delete(`/goals/${goalId}`)
     return response.data

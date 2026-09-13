@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 
 
-ASSET_SHA256 = "1969ec9b2a6b2dc14f97131d9991c2422ae55c17e89f5f86f4985b1707013f06"
+ASSET_SHA256 = "9ca5ed2153960c1fff64b320a72f0fe253175ce437b2390a7fb6e8113f7ba73f"
 CONFIRMATION = "RESET_FINALSOURCE_TO_PROVIDED_BASELINE"
 ALLOWED_PREFIXES = ("baseline/be/src/", "baseline/fe/src/")
 

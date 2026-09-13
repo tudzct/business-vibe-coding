@@ -6,25 +6,25 @@ import type { CorsOptions } from '@nestjs/common/interfaces/external/cors-option
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Cấu hình CORS
+  // Configure CORS
   const allowedOrigins = process.env.CORS_ORIGINS
     ? process.env.CORS_ORIGINS.split(',')
     : ['http://localhost:3000', 'http://localhost:5173'];
 
   const corsOptions: CorsOptions = {
     origin: (origin, callback) => {
-      // Cho phép requests không có origin (mobile apps, Postman, etc.)
+      // Allow requests without an origin (mobile apps, Postman, etc.)
       if (!origin) {
         return callback(null, true);
       }
-      // Kiểm tra origin có trong danh sách allowed
+      // Check whether the origin is in the allowed list
       if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));
       }
     },
-    credentials: true, // Cho phép gửi cookies và authorization headers
+    credentials: true, // Allow cookies and authorization headers to be sent
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
     exposedHeaders: ['Authorization'],
@@ -32,10 +32,10 @@ async function bootstrap() {
 
   app.enableCors(corsOptions);
 
-  // Cấu hình Swagger
+  // Configure Swagger
   const config = new DocumentBuilder()
     .setTitle('Financial Management API')
-    .setDescription('API documentation cho ứng dụng quản lý tài chính')
+    .setDescription('API documentation for the financial management application')
     .setVersion('1.0')
     .addBearerAuth(
       {
@@ -48,14 +48,14 @@ async function bootstrap() {
       },
       'JWT-auth', // This name here is important for matching up with @ApiBearerAuth() in your controller!
     )
-    .addTag('auth', 'Xác thực người dùng')
-    .addTag('users', 'Quản lý người dùng')
-    .addTag('accounts', 'Quản lý tài khoản')
-    .addTag('transactions', 'Quản lý giao dịch')
-    .addTag('bills', 'Quản lý hóa đơn')
-    .addTag('goals', 'Quản lý mục tiêu')
-    .addTag('expenses', 'Quản lý chi tiêu')
-    .addTag('categories', 'Quản lý danh mục')
+    .addTag('auth', 'User authentication')
+    .addTag('users', 'User management')
+    .addTag('accounts', 'Account management')
+    .addTag('transactions', 'Transaction management')
+    .addTag('bills', 'Bill management')
+    .addTag('goals', 'Goal management')
+    .addTag('expenses', 'Expense management')
+    .addTag('categories', 'Category management')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

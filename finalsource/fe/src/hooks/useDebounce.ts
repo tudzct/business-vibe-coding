@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 
 /**
- * Custom hook để debounce giá trị
- * @param value - Giá trị cần debounce
- * @param delay - Thời gian delay (ms)
- * @returns Giá trị đã được debounce
+ * Custom hook to debounce a value
+ * @param value - Value to debounce
+ * @param delay - Delay time (ms)
+ * @returns Debounced value
  */
 export const useDebounce = <T>(value: T, delay: number = 500): T => {
   const [debouncedValue, setDebouncedValue] = useState<T>(value)

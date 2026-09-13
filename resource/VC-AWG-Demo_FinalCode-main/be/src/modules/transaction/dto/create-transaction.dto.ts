@@ -10,41 +10,41 @@ import {
 import { TransactionType, TransactionStatus } from '../transaction.entity';
 
 export class CreateTransactionDto {
-  @IsNotEmpty({ message: 'Account ID không được để trống' })
-  @IsNumber({}, { message: 'Account ID phải là một số' })
+  @IsNotEmpty({ message: 'Account ID must not be empty' })
+  @IsNumber({}, { message: 'Account ID must be a number' })
   accountId: number;
 
-  @IsNotEmpty({ message: 'Ngày giao dịch không được để trống' })
-  @IsDateString({}, { message: 'Ngày giao dịch không hợp lệ' })
+  @IsNotEmpty({ message: 'Transaction date must not be empty' })
+  @IsDateString({}, { message: 'Invalid transaction date' })
   transactionDate: string;
 
-  @IsNotEmpty({ message: 'Loại giao dịch không được để trống' })
-  @IsEnum(TransactionType, { message: 'Loại giao dịch phải là Revenue hoặc Expense' })
+  @IsNotEmpty({ message: 'Transaction type must not be empty' })
+  @IsEnum(TransactionType, { message: 'Transaction type must be Revenue or Expense' })
   type: TransactionType;
 
-  @IsNotEmpty({ message: 'Mô tả giao dịch không được để trống' })
-  @IsString({ message: 'Mô tả giao dịch phải là chuỗi ký tự' })
+  @IsNotEmpty({ message: 'Transaction description must not be empty' })
+  @IsString({ message: 'Transaction description must be a string' })
   itemDescription: string;
 
   @IsOptional()
-  @IsNumber({}, { message: 'Category ID phải là một số' })
+  @IsNumber({}, { message: 'Category ID must be a number' })
   category_id?: number;
 
   @IsOptional()
-  @IsString({ message: 'Tên cửa hàng phải là chuỗi ký tự' })
+  @IsString({ message: 'Store name must be a string' })
   shopName?: string;
 
-  @IsNotEmpty({ message: 'Số tiền không được để trống' })
-  @IsNumber({}, { message: 'Số tiền phải là một số' })
-  @Min(0.01, { message: 'Số tiền phải lớn hơn 0' })
+  @IsNotEmpty({ message: 'Amount must not be empty' })
+  @IsNumber({}, { message: 'Amount must be a number' })
+  @Min(0.01, { message: 'Amount must be greater than 0' })
   amount: number;
 
   @IsOptional()
-  @IsString({ message: 'Phương thức thanh toán phải là chuỗi ký tự' })
+  @IsString({ message: 'Payment method must be a string' })
   paymentMethod?: string;
 
   @IsOptional()
-  @IsEnum(TransactionStatus, { message: 'Trạng thái không hợp lệ' })
+  @IsEnum(TransactionStatus, { message: 'Invalid status' })
   status?: TransactionStatus;
 }
 

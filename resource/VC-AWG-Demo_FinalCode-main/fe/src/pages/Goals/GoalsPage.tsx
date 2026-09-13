@@ -10,7 +10,7 @@ import CreateGoalModal from '../../components/CreateGoalModal/CreateGoalModal'
 import SavingsSummaryChart from '../../components/SavingsSummaryChart/SavingsSummaryChart'
 
 /**
- * Trang hiển thị mục tiêu tiết kiệm và mục tiêu chi tiêu
+ * Page displaying savings and spending goals
  */
 const GoalsPage: React.FC = () => {
   const navigate = useNavigate()
@@ -29,7 +29,7 @@ const GoalsPage: React.FC = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false)
 
   /**
-   * Hàm bất đồng bộ để lấy dữ liệu mục tiêu từ API
+   * Asynchronous function to get goal data from the API
    */
   const fetchGoals = async () => {
     try {
@@ -44,13 +44,13 @@ const GoalsPage: React.FC = () => {
         setError('Unable to load target data')
       }
     } catch (err: any) {
-      // Xử lý lỗi 401 Unauthorized
+      // Handle 401 Unauthorized errors
       if (err.response?.status === 401) {
         navigate('/login')
         return
       }
 
-      // Xử lý lỗi hệ thống (500 hoặc các lỗi khác)
+      // Handle system errors (500 or other errors)
       const errorMessage =
         err.response?.data?.message ||
         'An error occurred while loading goals, please try again later.'
@@ -64,12 +64,12 @@ const GoalsPage: React.FC = () => {
     fetchGoals()
   }, [])
 
-  // Hiển thị loading state
+  // Display loading state
   if (isLoading) {
     return <Loading fullScreen message="Loading goals..." />
   }
 
-  // Hiển thị error state
+  // Display error state
   if (error) {
     return (
       <div className="min-h-screen bg-[#F4F5F7] dark:bg-gray-900 p-8">
@@ -80,7 +80,7 @@ const GoalsPage: React.FC = () => {
     )
   }
 
-  // Kiểm tra nếu không có dữ liệu mục tiêu
+  // Check whether there is no goal data
   const hasNoGoals =
     !goalsData?.savingGoal && (!goalsData?.expenseGoals || goalsData.expenseGoals.length === 0)
 
@@ -92,7 +92,7 @@ const GoalsPage: React.FC = () => {
             Goals
           </h1>
           
-          {/* Savings Summary Chart - Hiển thị ngay cả khi không có goals */}
+          {/* Savings Summary Chart - Display even when there are no goals */}
           <div className="mb-8">
             <SavingsSummaryChart />
           </div>
@@ -128,7 +128,7 @@ const GoalsPage: React.FC = () => {
           </Button>
         </div>
 
-        {/* Savings Goal và Savings Summary Chart - Hiển thị song song */}
+        {/* Savings Goal and Savings Summary Chart - Display side by side */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Savings Goal Section */}
           {savingGoal && (
@@ -182,7 +182,7 @@ const GoalsPage: React.FC = () => {
                 {/* Progress Bar */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Tiến độ</span>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">Progress</span>
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
                       {progressPercentage.toFixed(1)}%
                     </span>
@@ -265,7 +265,7 @@ const GoalsPage: React.FC = () => {
                     {/* Progress Bar */}
                     <div className="mt-3">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs text-gray-600 dark:text-gray-400">Tiến độ</span>
+                        <span className="text-xs text-gray-600 dark:text-gray-400">Progress</span>
                         <span
                           className={`text-xs font-medium ${
                             isOverLimit
@@ -287,7 +287,7 @@ const GoalsPage: React.FC = () => {
                         />
                       </div>
                     </div>
-                    {/* Chỉnh sửa Button */}
+                    {/* Edit Button */}
                     <div className="mt-4">
                       <Button
                         onClick={() =>

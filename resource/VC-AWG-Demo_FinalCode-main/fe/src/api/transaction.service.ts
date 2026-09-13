@@ -45,7 +45,7 @@ export interface CreateTransactionResponse {
 }
 
 export const transactionService = {
-  // Lấy danh sách giao dịch của user
+  // Get the user's transaction list
   getTransactions: async (params: GetTransactionsParams): Promise<GetTransactionsResponse> => {
     const { type, limit = 10, offset = 0 } = params
     const response = await axiosInstance.get('/v1/transactions', {
@@ -58,7 +58,7 @@ export const transactionService = {
     return response.data
   },
 
-  // Tạo giao dịch mới
+  // Create a new transaction
   createTransaction: async (
     payload: CreateTransactionPayload,
   ): Promise<CreateTransactionResponse> => {

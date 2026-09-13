@@ -138,7 +138,7 @@ Example: 2025-11-01
 Type: string | string[]; Required: Yes; Nullable: No
 Trigger: month is missing or does not match YYYY-MM.
 Description: Error description returned by the global HTTP exception filter.
-Example: Tham số month không hợp lệ. Vui lòng sử dụng định dạng YYYY-MM (ví dụ: 2025-11)
+Example: Invalid month parameter. Please use the YYYY-MM format (for example: 2025-11)
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 401
@@ -158,7 +158,7 @@ Note: The error envelope also contains success=false and may contain an error fi
 Type: string | string[]; Required: Yes; Nullable: No
 Trigger: The user has no account, the month is invalid, or no expense exists in the selected month.
 Description: Error description returned by the global HTTP exception filter.
-Example: Không có dữ liệu chi tiêu cho tháng này.
+Example: No expense data for this month.
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 500
@@ -168,5 +168,5 @@ Note: The error envelope also contains success=false and may contain an error fi
 Type: string | string[]; Required: Yes; Nullable: No
 Trigger: Breakdown calculation fails.
 Description: Error description returned by the global HTTP exception filter.
-Example: Không thể lấy dữ liệu breakdown chi tiêu.
+Example: Unable to retrieve expense breakdown data.
 Note: The error envelope also contains success=false and may contain an error field.

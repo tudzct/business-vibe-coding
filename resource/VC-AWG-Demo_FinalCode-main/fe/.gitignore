@@ -1,7 +1,7 @@
 # Dependencies
 /node_modules
 
-# Build artifacts (thư mục build/output)
+# Build artifacts (build/output directory)
 /dist
 /build
 /out

@@ -24,12 +24,12 @@ export class TransactionService {
   ) {}
 
   /**
-   * Lấy danh sách giao dịch của user với phân trang và lọc theo type
-   * @param userId - ID của người dùng
-   * @param type - Loại giao dịch: "All" | "Revenue" | "Expense"
-   * @param limit - Số lượng bản ghi mỗi trang (mặc định 10)
-   * @param offset - Vị trí bắt đầu (mặc định 0)
-   * @returns Danh sách giao dịch với total và hasMore
+   * Get the user's transaction list with pagination and filtering by type
+   * @param userId - User ID
+   * @param type - Transaction type: "All" | "Revenue" | "Expense"
+   * @param limit - Number of records per page (default 10)
+   * @param offset - Starting offset (default 0)
+   * @returns Transaction list with total and hasMore
    */
   async findAllByUserId(
     userId: number,
@@ -43,7 +43,7 @@ export class TransactionService {
         throw new BadRequestException('Invalid type parameter');
       }
 
-      // Lấy danh sách account_id của user
+      // Get the user's account_id list
       const accounts = await this.accountRepository.find({
         where: { userId },
         select: ['accountId'],
@@ -59,12 +59,12 @@ export class TransactionService {
 
       const accountIds = accounts.map((acc) => acc.accountId);
 
-      // Xây dựng query builder
+      // Build the query builder
       const queryBuilder = this.transactionRepository
         .createQueryBuilder('transaction')
         .where('transaction.accountId IN (:...accountIds)', { accountIds });
 
-      // Thêm điều kiện lọc theo type nếu không phải "All"
+      // Add a filter condition by type if it is not "All"
       if (type === 'Revenue') {
         queryBuilder.andWhere('transaction.type = :type', {
           type: TransactionType.REVENUE,
@@ -75,17 +75,17 @@ export class TransactionService {
         });
       }
 
-      // Đếm tổng số bản ghi (trước khi phân trang)
+      // Count total records (before pagination)
       const total = await queryBuilder.getCount();
 
-      // Áp dụng phân trang và sắp xếp
+      // Apply pagination and sorting
       const transactions = await queryBuilder
         .orderBy('transaction.transactionDate', 'DESC')
         .skip(offset)
         .take(limit)
         .getMany();
 
-      // Map dữ liệu để trả về đúng format (snake_case để khớp với frontend types)
+      // Map data to return the correct format (snake_case to match frontend types)
       const data = transactions.map((transaction) => ({
         transaction_id: transaction.transactionId,
         account_id: transaction.accountId,
@@ -98,7 +98,7 @@ export class TransactionService {
         status: transaction.status,
       }));
 
-      // Tính toán hasMore
+      // Calculate hasMore
       const hasMore = offset + transactions.length < total;
 
       return {
@@ -107,22 +107,22 @@ export class TransactionService {
         hasMore,
       };
     } catch (error) {
-      // Nếu là BadRequestException thì throw lại
+      // If it is a BadRequestException, rethrow it
       if (error instanceof BadRequestException) {
         throw error;
       }
-      // Các lỗi khác throw InternalServerErrorException
+      // For other errors, throw InternalServerErrorException
       throw new InternalServerErrorException(
-        'Đã xảy ra lỗi hệ thống khi lấy danh sách giao dịch. Vui lòng thử lại sau.',
+        'A system error occurred while retrieving the transaction list. Please try again later.',
       );
     }
   }
 
   /**
-   * Tạo giao dịch mới cho user
-   * @param userId - ID của người dùng (từ JWT)
-   * @param createTransactionDto - DTO chứa thông tin giao dịch
-   * @returns Giao dịch vừa được tạo
+   * Create a new transaction for the user
+   * @param userId - User ID (from JWT)
+   * @param createTransactionDto - DTO containing transaction information
+   * @returns The newly created transaction
    */
   async create(userId: number, createTransactionDto: CreateTransactionDto) {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -130,7 +130,7 @@ export class TransactionService {
     await queryRunner.startTransaction();
 
     try {
-      // 1. Kiểm tra tính hợp lệ của dữ liệu
+      // 1. Check data validity
       if (!createTransactionDto.itemDescription || createTransactionDto.itemDescription.trim() === '') {
         throw new BadRequestException('Invalid or missing transaction data');
       }
@@ -146,7 +146,7 @@ export class TransactionService {
         throw new BadRequestException('Invalid or missing transaction data');
       }
 
-      // 2. Kiểm tra category_id nếu có
+      // 2. Check category_id if present
       if (createTransactionDto.category_id) {
         const category = await queryRunner.manager.findOne(Category, {
           where: { categoryId: createTransactionDto.category_id },
@@ -157,7 +157,7 @@ export class TransactionService {
         }
       }
 
-      // 3. Kiểm tra accountId có thuộc về user_id hiện tại không
+      // 3. Check whether accountId belongs to the current user_id
       const account = await queryRunner.manager.findOne(Account, {
         where: {
           accountId: createTransactionDto.accountId,
@@ -169,7 +169,7 @@ export class TransactionService {
         throw new BadRequestException('Invalid or missing transaction data');
       }
 
-      // 4. Kiểm tra số dư nếu là Expense
+      // 4. Check the balance for Expense
       if (createTransactionDto.type === TransactionType.EXPENSE) {
         const currentBalance = Number(account.balance);
         if (currentBalance < createTransactionDto.amount) {
@@ -177,7 +177,7 @@ export class TransactionService {
         }
       }
 
-      // 5. Tạo transaction mới
+      // 5. Create a new transaction
       const newTransaction = new Transaction();
       newTransaction.accountId = createTransactionDto.accountId;
       newTransaction.transactionDate = new Date(createTransactionDto.transactionDate);
@@ -191,7 +191,7 @@ export class TransactionService {
 
       const savedTransaction = await queryRunner.manager.save(Transaction, newTransaction);
 
-      // 6. Cập nhật số dư trong Accounts
+      // 6. Update the balance in Accounts
       if (createTransactionDto.type === TransactionType.EXPENSE) {
         account.balance = Number(account.balance) - createTransactionDto.amount;
       } else if (createTransactionDto.type === TransactionType.REVENUE) {
@@ -203,7 +203,7 @@ export class TransactionService {
       // 7. Commit transaction
       await queryRunner.commitTransaction();
 
-      // 8. Trả về response theo format yêu cầu
+      // 8. Return the response in the required format
       return {
         message: 'Transaction created successfully',
         data: {
@@ -222,20 +222,20 @@ export class TransactionService {
         },
       };
     } catch (error) {
-      // Rollback transaction nếu có lỗi
+      // Roll back the transaction if an error occurs
       await queryRunner.rollbackTransaction();
 
-      // Nếu là BadRequestException thì throw lại
+      // If it is a BadRequestException, rethrow it
       if (error instanceof BadRequestException) {
         throw error;
       }
 
-      // Các lỗi khác throw InternalServerErrorException
+      // For other errors, throw InternalServerErrorException
       throw new InternalServerErrorException(
-        'Đã xảy ra lỗi hệ thống khi tạo giao dịch. Vui lòng thử lại sau.',
+        'A system error occurred while creating the transaction. Please try again later.',
       );
     } finally {
-      // Giải phóng query runner
+      // Release the query runner
       await queryRunner.release();
     }
   }

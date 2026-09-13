@@ -21,8 +21,8 @@ const TransactionsPage: React.FC = () => {
   const [toastMessage, setToastMessage] = useState<string>('')
 
   /**
-   * Hàm fetch transactions từ API
-   * @param isNewFilter - true nếu là filter mới (reset danh sách), false nếu là load more
+   * Function to fetch transactions from the API
+   * @param isNewFilter - true for a new filter (reset the list), false for load more
    */
   const fetchTransactions = async (isNewFilter: boolean) => {
     try {
@@ -39,27 +39,27 @@ const TransactionsPage: React.FC = () => {
       setIsLoading(false)
 
       if (isNewFilter) {
-        // Thay thế danh sách cũ bằng dữ liệu mới
+        // Replace the old list with new data
         setTransactions(response.data)
         setOffset(response.data.length)
       } else {
-        // Nối dữ liệu mới vào cuối danh sách
+        // Append new data to the end of the list
         setTransactions((prev) => [...prev, ...response.data])
         setOffset((prev) => prev + response.data.length)
       }
 
       setHasMore(response.hasMore)
 
-      // Hiển thị thông báo nếu danh sách trống
+      // Display a notification if the list is empty
       if (isNewFilter && response.data.length === 0) {
         setError('No transactions have been recorded yet.')
       }
     } catch (err: any) {
       setIsLoading(false)
 
-      // Xử lý lỗi API
+      // Handle API errors
       if (err.response?.status === 401) {
-        // Đã được xử lý bởi axios interceptor
+        // Already handled by the axios interceptor
         return
       }
 
@@ -73,10 +73,10 @@ const TransactionsPage: React.FC = () => {
   }
 
   /**
-   * Xử lý khi người dùng click vào tab
+   * Handle when the user clicks a tab
    */
   const handleTabClick = (type: FilterType) => {
-    if (isLoading) return // Vô hiệu hóa khi đang loading
+    if (isLoading) return // Disable while loading
 
     setFilterType(type)
     setOffset(0)
@@ -85,19 +85,19 @@ const TransactionsPage: React.FC = () => {
   }
 
   /**
-   * Xử lý khi người dùng click "Tải thêm"
+   * Handle when the user clicks "Load more"
    */
   const handleLoadMore = () => {
     if (isLoading || !hasMore) return
     fetchTransactions(false)
   }
 
-  // Fetch transactions khi filterType thay đổi
+  // Fetch transactions when filterType changes
   useEffect(() => {
     fetchTransactions(true)
   }, [filterType])
 
-  // Đóng toast sau 3 giây
+  // Close the toast after 3 seconds
   useEffect(() => {
     if (showToast) {
       const timer = setTimeout(() => {
@@ -108,7 +108,7 @@ const TransactionsPage: React.FC = () => {
   }, [showToast])
 
   /**
-   * Render icon cho loại giao dịch
+   * Render an icon for the transaction type
    */
   const getTransactionIcon = (type: string) => {
     if (type === 'Revenue') {
@@ -151,7 +151,7 @@ const TransactionsPage: React.FC = () => {
   }
 
   /**
-   * Render skeleton loader cho bảng
+   * Render a skeleton loader for the table
    */
   const renderSkeletonLoader = () => {
     return (
@@ -237,7 +237,7 @@ const TransactionsPage: React.FC = () => {
         {/* Transactions Table/List */}
         <div className="bg-white rounded-lg shadow-[0px_20px_25px_0px_rgba(76,103,100,0.1)] overflow-hidden">
           {isLoading && transactions.length === 0 ? (
-            // Skeleton loader khi đang tải lần đầu
+            // Skeleton loader during the initial load
             <div className="p-6">{renderSkeletonLoader()}</div>
           ) : transactions.length === 0 ? (
             // Empty state

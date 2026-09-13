@@ -213,5 +213,5 @@ Note: The error envelope also contains success=false and may contain an error fi
 Type: string | string[]; Required: Yes; Nullable: No
 Trigger: Transaction retrieval fails.
 Description: Error description returned by the global HTTP exception filter.
-Example: Đã xảy ra lỗi hệ thống khi lấy danh sách giao dịch. Vui lòng thử lại sau.
+Example: A system error occurred while retrieving the transaction list. Please try again later.
 Note: The error envelope also contains success=false and may contain an error field.

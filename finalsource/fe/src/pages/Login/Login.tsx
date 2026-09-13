@@ -32,7 +32,7 @@ const Login: React.FC = () => {
       await login(formData.username, formData.password)
       navigate('/dashboard')
     } catch (err: any) {
-      setError(err.message || 'Đăng nhập thất bại. Vui lòng thử lại.')
+      setError(err.message || 'Login failed. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -42,14 +42,14 @@ const Login: React.FC = () => {
     <div className="max-w-md mx-auto mt-8">
       <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-8">
         <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-6">
-          Đăng nhập
+          Log in
         </h2>
 
         {error && <Error message={error} />}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Tên đăng nhập"
+            label="Username"
             name="username"
             type="text"
             value={formData.username}
@@ -59,7 +59,7 @@ const Login: React.FC = () => {
           />
 
           <Input
-            label="Mật khẩu"
+            label="Password"
             name="password"
             type="password"
             value={formData.password}
@@ -68,14 +68,14 @@ const Login: React.FC = () => {
           />
 
           <Button type="submit" variant="primary" className="w-full" isLoading={isLoading}>
-            Đăng nhập
+            Log in
           </Button>
         </form>
 
         <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-          Chưa có tài khoản?{' '}
+          Don't have an account?{' '}
           <Link to="/register" className="text-blue-600 dark:text-blue-400 hover:underline">
-            Đăng ký ngay
+            Register now
           </Link>
         </p>
       </div>

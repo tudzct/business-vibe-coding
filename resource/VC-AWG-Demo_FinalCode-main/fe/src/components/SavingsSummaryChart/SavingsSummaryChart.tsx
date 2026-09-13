@@ -14,7 +14,7 @@ import { SavingsSummaryResponse, MonthlySavings } from '../../api/types'
 import { formatCurrency } from '../../utils/format'
 
 /**
- * Component hiển thị biểu đồ đường tổng hợp tiết kiệm theo tháng
+ * Component displaying a monthly savings summary line chart
  */
 const SavingsSummaryChart: React.FC = () => {
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
@@ -26,7 +26,7 @@ const SavingsSummaryChart: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
 
   /**
-   * Lấy dữ liệu tổng hợp tiết kiệm từ API
+   * Get savings summary data from the API
    */
   const fetchSavingsSummary = async (year: number) => {
     try {
@@ -35,7 +35,7 @@ const SavingsSummaryChart: React.FC = () => {
 
       const response: SavingsSummaryResponse = await savingsService.getSavingsSummary(year)
 
-      // Kiểm tra nếu cả hai mảng đều rỗng
+      // Check whether both arrays are empty
       const hasThisYearData = response.summary.this_year.some((item) => item.amount !== 0)
       const hasLastYearData = response.summary.last_year.some((item) => item.amount !== 0)
 
@@ -45,13 +45,13 @@ const SavingsSummaryChart: React.FC = () => {
         return
       }
 
-      // Cập nhật state với dữ liệu nhận được
+      // Update state with the received data
       setChartData({
         this_year: response.summary.this_year,
         last_year: response.summary.last_year,
       })
     } catch (err: any) {
-      // Xử lý lỗi API
+      // Handle API errors
       const errorMessage =
         err.response?.data?.message ||
         'Failed to load data. Please try again later.'
@@ -62,14 +62,14 @@ const SavingsSummaryChart: React.FC = () => {
     }
   }
 
-  // Gọi API mỗi khi selectedYear thay đổi
+  // Call the API whenever selectedYear changes
   useEffect(() => {
     fetchSavingsSummary(selectedYear)
   }, [selectedYear])
 
   /**
-   * Tạo dữ liệu cho biểu đồ từ API response
-   * Chuyển đổi format từ {month: "01", amount: 1500000} sang {name: "Jan", thisYear: 1500000, lastYear: 1200000}
+   * Create chart data from the API response
+   * Convert the format from {month: "01", amount: 1500000} to {name: "Jan", thisYear: 1500000, lastYear: 1200000}
    */
   const prepareChartData = () => {
     if (!chartData) return []
@@ -91,12 +91,12 @@ const SavingsSummaryChart: React.FC = () => {
   }
 
   /**
-   * Tạo danh sách các năm để hiển thị trong dropdown
+   * Create a list of years to display in the dropdown
    */
   const getYearOptions = (): number[] => {
     const currentYear = new Date().getFullYear()
     const years: number[] = []
-    // Tạo danh sách từ năm hiện tại trở về trước 10 năm
+    // Create a list from the current year going back 10 years
     for (let i = 0; i <= 10; i++) {
       years.push(currentYear - i)
     }
@@ -104,7 +104,7 @@ const SavingsSummaryChart: React.FC = () => {
   }
 
   /**
-   * Render skeleton loader cho biểu đồ
+   * Render a skeleton loader for the chart
    */
   const renderChartSkeletonLoader = () => {
     return (
@@ -119,7 +119,7 @@ const SavingsSummaryChart: React.FC = () => {
   }
 
   /**
-   * Custom tooltip cho biểu đồ
+   * Custom tooltip for the chart
    */
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -144,7 +144,7 @@ const SavingsSummaryChart: React.FC = () => {
   }
 
   /**
-   * Custom label cho trục Y
+   * Custom label for the Y-axis
    */
   const formatYAxisLabel = (value: number) => {
     if (value >= 1000000) {
@@ -155,7 +155,7 @@ const SavingsSummaryChart: React.FC = () => {
     return value.toString()
   }
 
-  // Hiển thị loading state
+  // Display loading state
   if (isLoading) {
     return (
       <div className="w-full bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8">
@@ -164,7 +164,7 @@ const SavingsSummaryChart: React.FC = () => {
     )
   }
 
-  // Hiển thị error state
+  // Display error state
   if (error) {
     return (
       <div className="w-full bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8">
@@ -176,13 +176,13 @@ const SavingsSummaryChart: React.FC = () => {
     )
   }
 
-  // Chuẩn bị dữ liệu cho biểu đồ
+  // Prepare chart data
   const chartDataFormatted = prepareChartData()
 
-  // Hiển thị biểu đồ
+  // Display the chart
   return (
     <div className="w-full bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8">
-      {/* Tiêu đề và Dropdown */}
+      {/* Title and Dropdown */}
       <div className="mb-8 flex items-center justify-between">
         <h2 className="text-[22px] leading-[32px] font-semibold text-gray-800 dark:text-gray-200">
           Saving Summary
@@ -210,7 +210,7 @@ const SavingsSummaryChart: React.FC = () => {
         </div>
       </div>
 
-      {/* Biểu đồ */}
+      {/* Chart */}
       <div className="w-full h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
@@ -237,7 +237,7 @@ const SavingsSummaryChart: React.FC = () => {
               wrapperStyle={{ paddingTop: '20px' }}
               iconType="line"
             />
-            {/* Đường năm hiện tại - đậm, màu xanh */}
+            {/* Current year line - bold, blue */}
             <Line
               type="monotone"
               dataKey="thisYear"
@@ -247,7 +247,7 @@ const SavingsSummaryChart: React.FC = () => {
               dot={{ fill: '#3B82F6', r: 4 }}
               activeDot={{ r: 6 }}
             />
-            {/* Đường năm trước - mờ, màu xám */}
+            {/* Previous year line - faded, gray */}
             <Line
               type="monotone"
               dataKey="lastYear"

@@ -54,23 +54,23 @@ const LoginForm: React.FC = () => {
     setIsLoading(true)
 
     try {
-      // Gọi login từ context, nó sẽ xử lý API call và lưu token/user
+      // Call login from context, which will handle the API call and save the token/user
       await login(email, password)
       
-      // Lưu token vào localStorage hoặc sessionStorage dựa trên rememberMe
+      // Save the token to localStorage or sessionStorage based on rememberMe
       const token = localStorage.getItem('token')
       const userData = localStorage.getItem('user')
       
       if (rememberMe && token && userData) {
-        // Token đã được lưu trong localStorage bởi context
-        // Không cần làm gì thêm
+        // The token has been saved to localStorage by context
+        // No further action is needed
       } else if (token && userData) {
-        // Nếu không chọn rememberMe, có thể xóa khi đóng trình duyệt
-        // Nhưng vẫn giữ trong localStorage để context hoạt động
-        // Có thể thêm logic xóa khi logout nếu cần
+        // If rememberMe is not selected, it can be deleted when the browser closes
+        // But keep it in localStorage for context to work
+        // Can add deletion logic on logout if needed
       }
       
-      // Điều hướng đến trang chủ
+      // Navigate to the home page
       navigate('/')
     } catch (err: any) {
       if (err.response?.status === 401) {

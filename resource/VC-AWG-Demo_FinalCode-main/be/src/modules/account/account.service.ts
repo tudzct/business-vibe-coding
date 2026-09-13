@@ -18,9 +18,9 @@ export class AccountService {
   ) {}
 
   /**
-   * Lấy danh sách tài khoản của user theo user_id
-   * @param userId - ID của người dùng
-   * @returns Danh sách tài khoản
+   * Get the user's accounts theo user_id
+   * @param userId - User ID
+   * @returns Account list
    */
   async findAllByUserId(userId: number) {
     try {
@@ -39,7 +39,7 @@ export class AccountService {
         },
       });
 
-      // Map dữ liệu để trả về đúng format
+      // Map data to return the correct format
       return accounts.map((account) => ({
         id: account.accountId,
         bank_name: account.bankName,
@@ -50,20 +50,20 @@ export class AccountService {
       }));
     } catch (error) {
       throw new InternalServerErrorException(
-        'Đã xảy ra lỗi hệ thống, vui lòng thử lại sau.',
+        'A system error occurred, please try again later.',
       );
     }
   }
 
   /**
-   * Tạo tài khoản mới cho user
-   * @param userId - ID của người dùng
-   * @param createAccountDto - DTO chứa thông tin tài khoản
-   * @returns Tài khoản vừa được tạo
+   * Create a new account for the user
+   * @param userId - User ID
+   * @param createAccountDto - DTO containing account information
+   * @returns The newly created account
    */
   async create(userId: number, createAccountDto: CreateAccountDto) {
     try {
-      // Kiểm tra xem số tài khoản đã tồn tại cho user này chưa
+      // Check whether the account number already exists for this user
       const existingAccount = await this.accountRepository.findOne({
         where: {
           userId,
@@ -72,13 +72,13 @@ export class AccountService {
       });
 
       if (existingAccount) {
-        throw new ConflictException('Tài khoản này đã tồn tại trong danh sách của bạn.');
+        throw new ConflictException('This account already exists in your list.');
       }
 
-      // Lấy 4 số cuối của số tài khoản
+      // Get the last 4 digits of the account number
       const accountNumberLast4 = createAccountDto.account_number_full.slice(-4);
 
-      // Tạo tài khoản mới
+      // Create a new account
       const newAccount = this.accountRepository.create({
         userId,
         bankName: createAccountDto.bank_name,
@@ -91,7 +91,7 @@ export class AccountService {
 
       const savedAccount = await this.accountRepository.save(newAccount);
 
-      // Trả về đúng format response
+      // Return the correct response format
       return {
         id: savedAccount.accountId,
         user_id: savedAccount.userId,
@@ -102,48 +102,48 @@ export class AccountService {
         balance: Number(savedAccount.balance),
       };
     } catch (error) {
-      // Nếu là ConflictException thì throw lại
+      // If it is a ConflictException, rethrow it
       if (error instanceof ConflictException) {
         throw error;
       }
-      // Các lỗi khác throw InternalServerErrorException
+      // For other errors, throw InternalServerErrorException
       throw new InternalServerErrorException(
-        'Không thể thêm tài khoản lúc này. Vui lòng thử lại sau.',
+        'Unable to add the account at this time. Please try again later.',
       );
     }
   }
 
   /**
-   * Lấy chi tiết tài khoản kèm 5 giao dịch gần đây nhất
-   * @param accountId - ID của tài khoản
-   * @param userId - ID của người dùng (từ JWT)
-   * @returns Chi tiết tài khoản với danh sách giao dịch gần đây
+   * Get account details with the 5 most recent transactions
+   * @param accountId - Account ID
+   * @param userId - User ID (from JWT)
+   * @returns Account details with the list of recent transactions
    */
   async findOneWithTransactions(accountId: number, userId: number) {
     try {
-      // 1. Tìm tài khoản theo accountId
+      // 1. Find the account by accountId
       const account = await this.accountRepository.findOne({
         where: { accountId },
       });
 
-      // 2. Validation 1: Kiểm tra tài khoản có tồn tại không
+      // 2. Validation 1: Check whether the account exists
       if (!account) {
-        throw new NotFoundException('Không tìm thấy tài khoản này.');
+        throw new NotFoundException('This account was not found.');
       }
 
-      // 3. Validation 2: Kiểm tra quyền sở hữu
+      // 3. Validation 2: Check ownership
       if (account.userId !== userId) {
-        throw new ForbiddenException('Bạn không có quyền xem thông tin tài khoản này.');
+        throw new ForbiddenException('You do not have permission to view information about this account.');
       }
 
-      // 4. Lấy 5 giao dịch gần đây nhất của tài khoản này
+      // 4. Get the 5 most recent transactions of this account
       const recentTransactions = await this.transactionRepository.find({
         where: { accountId },
         order: { transactionDate: 'DESC' },
         take: 5,
       });
 
-      // 5. Map dữ liệu để trả về đúng format
+      // 5. Map data to return the correct format
       const accountData = {
         id: account.accountId,
         bank_name: account.bankName,
@@ -152,20 +152,20 @@ export class AccountService {
         account_number_full: account.accountNumberFull,
         balance: Number(account.balance),
         recent_transactions: recentTransactions.map((transaction) => {
-          // Nếu là Expense, amount sẽ là số âm
+          // For Expense, amount will be negative
           const amount = Number(transaction.amount || 0)
           const finalAmount = transaction.type === TransactionType.EXPENSE ? -amount : amount
           
-          // Xử lý date an toàn - có thể là Date object hoặc string tùy database driver
+          // Handle dates safely - may be a Date object or a string depending on the database driver
           let formattedDate: string
           const transactionDate = transaction.transactionDate as Date | string
           if (transactionDate instanceof Date) {
             formattedDate = transactionDate.toISOString().split('T')[0]
           } else if (typeof transactionDate === 'string') {
-            // Nếu là string, lấy phần date (YYYY-MM-DD)
+            // If it is a string, get the date portion (YYYY-MM-DD)
             formattedDate = transactionDate.split('T')[0]
           } else {
-            // Fallback: tạo Date object mới
+            // Fallback: create a new Date object
             formattedDate = new Date(transactionDate as any).toISOString().split('T')[0]
           }
           
@@ -182,71 +182,71 @@ export class AccountService {
 
       return accountData;
     } catch (error) {
-      // Nếu là NotFoundException hoặc ForbiddenException thì throw lại
+      // If it is a NotFoundException or ForbiddenException, rethrow it
       if (error instanceof NotFoundException || error instanceof ForbiddenException) {
         throw error;
       }
       
-      // Log lỗi để debug (chỉ trong development)
+      // Log errors for debugging (only in development)
       if (process.env.NODE_ENV !== 'production') {
         console.error('Error in findOneWithTransactions:', error);
       }
       
-      // Các lỗi khác throw InternalServerErrorException
+      // For other errors, throw InternalServerErrorException
       throw new InternalServerErrorException(
-        'Đã xảy ra lỗi hệ thống khi lấy chi tiết tài khoản. Vui lòng thử lại sau.',
+        'A system error occurred while retrieving account details. Please try again later.',
       );
     }
   }
 
   /**
-   * Cập nhật thông tin tài khoản
-   * @param accountId - ID của tài khoản cần cập nhật
-   * @param userId - ID của người dùng (từ JWT)
-   * @param updateAccountDto - DTO chứa thông tin cập nhật
-   * @returns Tài khoản đã được cập nhật
+   * Update account information
+   * @param accountId - ID of the account to update
+   * @param userId - User ID (from JWT)
+   * @param updateAccountDto - DTO containing update information
+   * @returns The updated account
    */
   async update(accountId: number, userId: number, updateAccountDto: UpdateAccountDto) {
     try {
-      // 1. Tìm tài khoản theo accountId
+      // 1. Find the account by accountId
       const account = await this.accountRepository.findOne({
         where: { accountId },
       });
 
-      // 2. Validation 1: Kiểm tra tài khoản có tồn tại không
+      // 2. Validation 1: Check whether the account exists
       if (!account) {
-        throw new NotFoundException('Không tìm thấy tài khoản này.');
+        throw new NotFoundException('This account was not found.');
       }
 
-      // 3. Validation 2: Kiểm tra quyền sở hữu
+      // 3. Validation 2: Check ownership
       if (account.userId !== userId) {
-        throw new ForbiddenException('Bạn không có quyền chỉnh sửa thông tin tài khoản này.');
+        throw new ForbiddenException('You do not have permission to edit information about this account.');
       }
 
-      // 4. Validation 3: Xác thực dữ liệu đầu vào
-      // Kiểm tra các trường bắt buộc không rỗng
+      // 4. Validation 3: Validate input data
+      // Check that required fields are not empty
       if (!updateAccountDto.bank_name || updateAccountDto.bank_name.trim() === '') {
-        throw new BadRequestException('Tên ngân hàng không được để trống.');
+        throw new BadRequestException('Bank name must not be empty.');
       }
 
       if (!updateAccountDto.account_type) {
-        throw new BadRequestException('Loại tài khoản không được để trống.');
+        throw new BadRequestException('Account type must not be empty.');
       }
 
       if (!updateAccountDto.account_number_full || updateAccountDto.account_number_full.trim() === '') {
-        throw new BadRequestException('Số tài khoản đầy đủ không được để trống.');
+        throw new BadRequestException('Full account number must not be empty.');
       }
 
-      // Kiểm tra balance phải là số không âm
+      // Check that balance is a nonnegative number
       if (updateAccountDto.balance < 0) {
         throw new BadRequestException('balance must not be less than 0');
       }
 
-      // 5. Lấy 4 số cuối của số tài khoản nếu chưa có
+      // 5. Get the last 4 digits of the account number if unavailable
       const accountNumberLast4 = updateAccountDto.account_number_last_4 
         || updateAccountDto.account_number_full.slice(-4);
 
-      // 6. Cập nhật thông tin tài khoản
+      // 6. Update account information
       account.bankName = updateAccountDto.bank_name;
       account.accountType = updateAccountDto.account_type;
       account.branchName = updateAccountDto.branch_name || undefined;
@@ -256,7 +256,7 @@ export class AccountService {
 
       const updatedAccount = await this.accountRepository.save(account);
 
-      // 7. Trả về đối tượng tài khoản đã được cập nhật
+      // 7. Return the updated account object
       return {
         account_id: updatedAccount.accountId,
         user_id: updatedAccount.userId,
@@ -268,7 +268,7 @@ export class AccountService {
         balance: Number(updatedAccount.balance),
       };
     } catch (error) {
-      // Nếu là NotFoundException, ForbiddenException, hoặc BadRequestException thì throw lại
+      // If it is a NotFoundException, ForbiddenException, or BadRequestException, rethrow it
       if (
         error instanceof NotFoundException ||
         error instanceof ForbiddenException ||
@@ -277,81 +277,81 @@ export class AccountService {
         throw error;
       }
 
-      // Log lỗi để debug (chỉ trong development)
+      // Log errors for debugging (only in development)
       if (process.env.NODE_ENV !== 'production') {
         console.error('Error in update account:', error);
       }
 
-      // Các lỗi khác throw InternalServerErrorException
+      // For other errors, throw InternalServerErrorException
       throw new InternalServerErrorException(
-        'Đã xảy ra lỗi khi lưu dữ liệu. Vui lòng thử lại sau.',
+        'An error occurred while saving data. Please try again later.',
       );
     }
   }
 
   /**
-   * Xóa tài khoản và tất cả giao dịch liên quan
-   * @param accountId - ID của tài khoản cần xóa
-   * @param userId - ID của người dùng (từ JWT)
-   * @returns Thông tin tài khoản đã xóa
+   * Delete an account and all related transactions
+   * @param accountId - ID of the account to delete
+   * @param userId - User ID (from JWT)
+   * @returns Deleted account information
    */
   async delete(accountId: number, userId: number) {
-    // Sử dụng query runner để quản lý transaction
+    // Use a query runner to manage the transaction
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      // 1. Tìm tài khoản theo accountId
+      // 1. Find the account by accountId
       const account = await queryRunner.manager.findOne(Account, {
         where: { accountId },
       });
 
-      // 2. Validation 1: Kiểm tra tài khoản có tồn tại không
+      // 2. Validation 1: Check whether the account exists
       if (!account) {
         await queryRunner.rollbackTransaction();
         throw new NotFoundException('Account not found or not owned by current user');
       }
 
-      // 3. Validation 2: Kiểm tra quyền sở hữu
+      // 3. Validation 2: Check ownership
       if (account.userId !== userId) {
         await queryRunner.rollbackTransaction();
         throw new NotFoundException('Account not found or not owned by current user');
       }
 
-      // 4. Xóa tất cả các giao dịch liên quan đến tài khoản này
+      // 4. Delete all transactions related to this account
       await queryRunner.manager.delete(Transaction, { accountId });
 
-      // 5. Xóa tài khoản
+      // 5. Delete an account
       await queryRunner.manager.delete(Account, { accountId });
 
       // 6. Commit transaction
       await queryRunner.commitTransaction();
 
-      // 7. Trả về kết quả
+      // 7. Return the result
       return {
         deleted_account_id: accountId,
       };
     } catch (error) {
-      // Rollback transaction nếu có lỗi
+      // Roll back the transaction if an error occurs
       await queryRunner.rollbackTransaction();
 
-      // Nếu là NotFoundException thì throw lại
+      // If it is a NotFoundException, rethrow it
       if (error instanceof NotFoundException) {
         throw error;
       }
 
-      // Log lỗi để debug (chỉ trong development)
+      // Log errors for debugging (only in development)
       if (process.env.NODE_ENV !== 'production') {
         console.error('Error in delete account:', error);
       }
 
-      // Các lỗi khác throw InternalServerErrorException
+      // For other errors, throw InternalServerErrorException
       throw new InternalServerErrorException(
-        'Đã xảy ra lỗi hệ thống, không thể xóa tài khoản và giao dịch liên quan.',
+        'A system error occurred, unable to delete the account and related transactions.',
       );
     } finally {
-      // Giải phóng query runner
+      // Release the query runner
       await queryRunner.release();
     }
   }

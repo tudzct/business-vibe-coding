@@ -11,14 +11,14 @@ export class BillService {
   ) {}
 
   /**
-   * Lấy danh sách hóa đơn sắp tới của user
-   * @param userId - ID của người dùng
-   * @returns Danh sách hóa đơn đã được lọc và sắp xếp
+   * Get the user's upcoming bills
+   * @param userId - User ID
+   * @returns Filtered and sorted bill list
    */
   async findUpcomingBillsByUserId(userId: number) {
     try {
       const currentDate = new Date();
-      // Đặt thời gian về 00:00:00 để so sánh chỉ với ngày
+      // Set the time to 00:00:00 to compare dates only
       currentDate.setHours(0, 0, 0, 0);
 
       const bills = await this.billRepository.find({
@@ -31,7 +31,7 @@ export class BillService {
         },
       });
 
-      // Map dữ liệu để trả về đúng format
+      // Map data to return the correct format
       return bills.map((bill) => ({
         billId: bill.billId,
         userId: bill.userId,
@@ -42,7 +42,7 @@ export class BillService {
         amount: Number(bill.amount),
       }));
     } catch (error) {
-      // Log lỗi để debug (chỉ trong development)
+      // Log errors for debugging (only in development)
       if (process.env.NODE_ENV !== 'production') {
         console.error('Error in findUpcomingBillsByUserId:', error);
       }
@@ -54,15 +54,15 @@ export class BillService {
   }
 
   /**
-   * Format date thành string YYYY-MM-DD
-   * @param date - Date object hoặc string
+   * Format date as a YYYY-MM-DD string
+   * @param date - Date object or string
    * @returns String date format YYYY-MM-DD
    */
   private formatDate(date: Date | string): string {
     if (date instanceof Date) {
       return date.toISOString().split('T')[0];
     } else if (typeof date === 'string') {
-      // Nếu là string, lấy phần date (YYYY-MM-DD)
+      // If it is a string, get the date portion (YYYY-MM-DD)
       return date.split('T')[0];
     }
     // Fallback

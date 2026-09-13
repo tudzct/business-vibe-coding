@@ -60,7 +60,7 @@ Example: true
 Type: string; Required: Yes; Nullable: No
 Trigger: Categories are retrieved.
 Description: Human-readable success message.
-Example: Lấy danh sách danh mục thành công
+Example: Category list retrieved successfully
 
 
 ### data
@@ -93,5 +93,5 @@ Example: Entertainment
 Type: string | string[]; Required: Yes; Nullable: No
 Trigger: Category retrieval fails.
 Description: Error description returned by the global HTTP exception filter.
-Example: Đã xảy ra lỗi hệ thống khi lấy danh sách danh mục. Vui lòng thử lại sau.
+Example: A system error occurred while retrieving the category list. Please try again later.
 Note: The error envelope also contains success=false and may contain an error field.

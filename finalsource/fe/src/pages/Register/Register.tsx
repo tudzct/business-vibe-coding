@@ -31,7 +31,7 @@ const Register: React.FC = () => {
     setError('')
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Mật khẩu xác nhận không khớp')
+      setError('Password confirmation does not match')
       return
     }
 
@@ -42,12 +42,12 @@ const Register: React.FC = () => {
       const response = await authService.register(registerData)
       
       if (response.success) {
-        navigate('/login', { state: { message: 'Đăng ký thành công! Vui lòng đăng nhập.' } })
+        navigate('/login', { state: { message: 'Registration successful! Please log in.' } })
       } else {
-        setError(response.message || 'Đăng ký thất bại. Vui lòng thử lại.')
+        setError(response.message || 'Registration failed. Please try again.')
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Đăng ký thất bại. Vui lòng thử lại.')
+      setError(err.response?.data?.message || 'Registration failed. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -57,14 +57,14 @@ const Register: React.FC = () => {
     <div className="max-w-md mx-auto mt-8">
       <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-8">
         <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-6">
-          Đăng ký
+          Register
         </h2>
 
         {error && <Error message={error} />}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Họ và tên"
+            label="Full name"
             name="full_name"
             type="text"
             value={formData.full_name}
@@ -83,7 +83,7 @@ const Register: React.FC = () => {
           />
 
           <Input
-            label="Tên đăng nhập"
+            label="Username"
             name="username"
             type="text"
             value={formData.username}
@@ -92,7 +92,7 @@ const Register: React.FC = () => {
           />
 
           <Input
-            label="Số điện thoại"
+            label="Phone number"
             name="phone_number"
             type="tel"
             value={formData.phone_number}
@@ -100,7 +100,7 @@ const Register: React.FC = () => {
           />
 
           <Input
-            label="Mật khẩu"
+            label="Password"
             name="password"
             type="password"
             value={formData.password}
@@ -110,7 +110,7 @@ const Register: React.FC = () => {
           />
 
           <Input
-            label="Xác nhận mật khẩu"
+            label="Confirm password"
             name="confirmPassword"
             type="password"
             value={formData.confirmPassword}
@@ -119,14 +119,14 @@ const Register: React.FC = () => {
           />
 
           <Button type="submit" variant="primary" className="w-full" isLoading={isLoading}>
-            Đăng ký
+            Register
           </Button>
         </form>
 
         <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-          Đã có tài khoản?{' '}
+          Already have an account?{' '}
           <Link to="/login" className="text-blue-600 dark:text-blue-400 hover:underline">
-            Đăng nhập ngay
+            Log in now
           </Link>
         </p>
       </div>

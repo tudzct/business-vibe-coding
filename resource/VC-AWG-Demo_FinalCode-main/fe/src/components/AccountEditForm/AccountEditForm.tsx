@@ -215,7 +215,7 @@ const AccountEditForm: React.FC<AccountEditFormProps> = ({
         {/* Account Type */}
         <div className="w-full">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Loại tài khoản
+            Account type
           </label>
           <select
             value={accountType}
@@ -281,7 +281,7 @@ const AccountEditForm: React.FC<AccountEditFormProps> = ({
             onClick={onCancel}
             disabled={isLoading}
           >
-            Hủy
+            Cancel
           </Button>
           <Button type="submit" variant="primary" isLoading={isLoading}>
             Save Changes

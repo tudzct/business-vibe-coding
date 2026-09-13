@@ -336,7 +336,7 @@ Technical constraints:
 - Invalid goal_type, target_amount, dates, date ordering, or Expense_Limit category shall result in HTTP 400 Bad Request.
 - Validation failure shall not persist a Goal record.
 - An unexpected repository/database failure shall result in HTTP 500 Internal Server Error with message:
-  "Không thể tạo mục tiêu lúc này. Vui lòng thử lại sau."
+  "Unable to create the goal at this time. Please try again later."
 - The implementation does not enforce uniqueness for Saving goals or Expense_Limit goals. Existing goals of the same type or category do not prevent creation.
 ~~~
 

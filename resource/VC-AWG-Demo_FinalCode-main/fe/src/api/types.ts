@@ -1,4 +1,4 @@
-// Định nghĩa các type cho API response
+// Define types for API responses
 
 export interface ApiResponse<T = any> {
   success: boolean
@@ -19,8 +19,8 @@ export interface User {
 export type AccountType = 'Checking' | 'Credit Card' | 'Savings' | 'Investment' | 'Loan'
 
 export interface Account {
-  id?: number // Backend trả về 'id' trong getAccounts
-  account_id?: number // Fallback cho tương thích
+  id?: number // The backend returns 'id' in getAccounts
+  account_id?: number // Fallback for compatibility
   user_id: number
   bank_name: string
   account_type: AccountType

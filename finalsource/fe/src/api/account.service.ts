@@ -2,31 +2,31 @@ import axiosInstance from './axiosInstance'
 import { ApiResponse, Account } from './types'
 
 export const accountService = {
-  // Lấy danh sách tài khoản của user
+  // Get the user's accounts
   getAccounts: async (): Promise<ApiResponse<Account[]>> => {
     const response = await axiosInstance.get('/accounts')
     return response.data
   },
 
-  // Lấy chi tiết một tài khoản
+  // Get details of an account
   getAccount: async (accountId: number): Promise<ApiResponse<Account>> => {
     const response = await axiosInstance.get(`/accounts/${accountId}`)
     return response.data
   },
 
-  // Tạo tài khoản mới
+  // Create a new account
   createAccount: async (data: Omit<Account, 'account_id'>): Promise<ApiResponse<Account>> => {
     const response = await axiosInstance.post('/accounts', data)
     return response.data
   },
 
-  // Cập nhật tài khoản
+  // Update an account
   updateAccount: async (accountId: number, data: Partial<Account>): Promise<ApiResponse<Account>> => {
     const response = await axiosInstance.put(`/accounts/${accountId}`, data)
     return response.data
   },
 
-  // Xóa tài khoản
+  // Delete an account
   deleteAccount: async (accountId: number): Promise<ApiResponse<void>> => {
     const response = await axiosInstance.delete(`/accounts/${accountId}`)
     return response.data

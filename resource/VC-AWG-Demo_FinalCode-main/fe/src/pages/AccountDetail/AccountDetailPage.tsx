@@ -19,7 +19,7 @@ const AccountDetailPage: React.FC = () => {
 
   const fetchAccountDetails = async () => {
     if (!id) {
-      setError('ID tài khoản không hợp lệ.')
+      setError('Invalid account ID.')
       setIsLoading(false)
       return
     }
@@ -30,7 +30,7 @@ const AccountDetailPage: React.FC = () => {
 
       const accountId = parseInt(id, 10)
       if (isNaN(accountId)) {
-        setError('ID tài khoản không hợp lệ.')
+        setError('Invalid account ID.')
         setIsLoading(false)
         return
       }
@@ -41,19 +41,19 @@ const AccountDetailPage: React.FC = () => {
     } catch (err: any) {
       setIsLoading(false)
 
-      // Xử lý lỗi 401 - đã được xử lý bởi axios interceptor
+      // Handle 401 errors - already handled by the axios interceptor
       if (err.response?.status === 401) {
         navigate('/login')
         return
       }
 
-      // Xử lý lỗi theo status code
+      // Handle errors by status code
       if (err.response?.status === 404) {
-        setError('Không tìm thấy tài khoản này.')
+        setError('This account was not found.')
       } else if (err.response?.status === 403) {
-        setError('Bạn không có quyền xem thông tin tài khoản này.')
+        setError('You do not have permission to view information about this account.')
       } else {
-        setError('Đã có lỗi xảy ra, không thể tải dữ liệu.')
+        setError('An error occurred, unable to load data.')
       }
     }
   }
@@ -62,18 +62,18 @@ const AccountDetailPage: React.FC = () => {
     fetchAccountDetails()
   }, [id])
 
-  // Format date sử dụng utility function
+  // Format the date using the utility function
   const formatDate = (dateString: string) => {
     return formatDateUtil(dateString)
   }
 
-  // Format số tiền với màu sắc theo type
-  // Backend đã trả về amount âm cho Expense, dương cho Revenue
+  // Format monetary amounts with colors based on type
+  // The backend has returned negative amounts for Expense and positive amounts for Revenue
   const formatAmount = (amount: number, _type: 'Revenue' | 'Expense') => {
     const isPositive = amount >= 0
     const sign = isPositive ? '+' : ''
     const colorClass = isPositive ? 'text-green-600' : 'text-red-600'
-    // formatCurrency sẽ tự động xử lý dấu âm cho số âm
+    // formatCurrency will automatically handle the minus sign for negative numbers
     return (
       <span className={colorClass}>
         {sign}
@@ -82,20 +82,20 @@ const AccountDetailPage: React.FC = () => {
     )
   }
 
-  // Hiển thị loading state
+  // Display loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#F4F5F7] p-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center justify-center min-h-[400px]">
-            <Loading size="lg" message="Đang tải chi tiết tài khoản..." />
+            <Loading size="lg" message="Loading account details..." />
           </div>
         </div>
       </div>
     )
   }
 
-  // Hiển thị error state
+  // Display error state
   if (error) {
     return (
       <div className="min-h-screen bg-[#F4F5F7] p-8">
@@ -125,17 +125,17 @@ const AccountDetailPage: React.FC = () => {
     navigate('/accounts')
   }
 
-  // Hiển thị nội dung chính
+  // Display the main content
   if (!accountData) {
     return null
   }
 
-  // Hiển thị form chỉnh sửa nếu đang ở chế độ edit
+  // Display the edit form when in edit mode
   if (isEditing) {
     return (
       <div className="min-h-screen bg-[#F4F5F7] p-8">
         <div className="max-w-7xl mx-auto">
-          {/* Header với nút back */}
+          {/* Header with a back button */}
           <div className="mb-6">
             <button
               onClick={() => setIsEditing(false)}
@@ -174,7 +174,7 @@ const AccountDetailPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#F4F5F7] p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header với nút back */}
+        {/* Header with a back button */}
         <div className="mb-6">
           <button
             onClick={() => navigate('/accounts')}
@@ -199,7 +199,7 @@ const AccountDetailPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Card thông tin tài khoản */}
+        {/* Account information card */}
         <div className="bg-white rounded-lg shadow-[0px_20px_25px_0px_rgba(76,103,100,0.1)] p-6 mb-6">
           <div className="flex flex-col gap-6">
             {/* Header */}
@@ -209,7 +209,7 @@ const AccountDetailPage: React.FC = () => {
                 <span className="text-sm font-medium leading-5 text-[#666666] uppercase">
                   {accountData.account_type}
                 </span>
-                {/* Buttons Chỉnh sửa và Xóa */}
+                {/* Edit and Delete buttons */}
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setIsEditing(true)}
@@ -221,15 +221,15 @@ const AccountDetailPage: React.FC = () => {
                     onClick={handleDelete}
                     className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm font-medium"
                   >
-                    Xóa
+                    Delete
                   </button>
                 </div>
               </div>
             </div>
 
-            {/* Thông tin chi tiết */}
+            {/* Detailed information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Số dư */}
+              {/* Balance */}
               <div className="flex flex-col gap-1">
                 <p className="text-sm font-normal leading-5 text-[#9F9F9F]">Current balance</p>
                 <p className="text-2xl font-semibold leading-8 text-[#191919]">
@@ -237,7 +237,7 @@ const AccountDetailPage: React.FC = () => {
                 </p>
               </div>
 
-              {/* Loại tài khoản */}
+              {/* Account type */}
               <div className="flex flex-col gap-1">
                 <p className="text-sm font-normal leading-5 text-[#9F9F9F]">Account type</p>
                 <p className="text-lg font-semibold leading-7 text-[#191919] uppercase">
@@ -245,7 +245,7 @@ const AccountDetailPage: React.FC = () => {
                 </p>
               </div>
 
-              {/* Tên chi nhánh */}
+              {/* Branch name */}
               {accountData.branch_name && (
                 <div className="flex flex-col gap-1">
                   <p className="text-sm font-normal leading-5 text-[#9F9F9F]">Branch name</p>
@@ -255,7 +255,7 @@ const AccountDetailPage: React.FC = () => {
                 </div>
               )}
 
-              {/* Số tài khoản đầy đủ */}
+              {/* Full account number */}
               <div className="flex flex-col gap-1">
                 <p className="text-sm font-normal leading-5 text-[#9F9F9F]">Account number</p>
                 <p className="text-lg font-semibold leading-7 text-[#191919]">
@@ -266,11 +266,11 @@ const AccountDetailPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Bảng giao dịch gần đây */}
+        {/* Recent transactions table */}
         <div className="bg-white rounded-lg shadow-[0px_20px_25px_0px_rgba(76,103,100,0.1)] p-6">
           <h3 className="text-xl font-bold leading-7 text-[#191919] mb-6">Recent transactions</h3>
 
-          {/* Kiểm tra nếu không có giao dịch */}
+          {/* Check whether there are no transactions */}
           {accountData.recent_transactions.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-base font-normal leading-6 text-[#9F9F9F]">

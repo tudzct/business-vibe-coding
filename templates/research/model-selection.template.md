@@ -22,6 +22,6 @@ auditor_assignment: <fixed-auditor|same-as-generation|explicit cross auditor ID>
 
 # <RUN-ID> Run/Model Activation
 
-Projection này kích hoạt đúng một run đã được researcher xác nhận trong unified experiment configuration. Mọi field phải khớp configuration và checksum; file này không được dùng chung hoặc ghi đè cho run khác.
+This projection activates exactly one run confirmed by the researcher in the unified experiment configuration. Every field must match the configuration and checksum; this file must not be shared or overwritten for another run.
 
-Business Rule baseline đã được đóng băng trước đó để sinh Prompt E. Source mutation chỉ được phép sau khi activation này hợp lệ và prompt/schema cần thiết đã được phê duyệt.
+The Business Rule baseline was previously frozen to generate Prompt E. Source mutation is permitted only after this activation is valid and the required prompt/schema has been approved.

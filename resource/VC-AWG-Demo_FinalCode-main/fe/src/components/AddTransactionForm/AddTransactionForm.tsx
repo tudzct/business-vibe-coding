@@ -185,7 +185,7 @@ const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ onSuccess }) =>
     return (
       <div className="max-w-2xl mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
         <div className="text-center py-8">
-          <p className="text-gray-600 dark:text-gray-400">Đang tải dữ liệu...</p>
+          <p className="text-gray-600 dark:text-gray-400">Loading data...</p>
         </div>
       </div>
     )
@@ -305,7 +305,7 @@ const AddTransactionForm: React.FC<AddTransactionFormProps> = ({ onSuccess }) =>
             {accounts.map((account) => (
               <option key={account.account_id} value={account.account_id}>
                 {account.bank_name} - {account.account_type} ({account.account_number_last_4}) -{' '}
-                {account.balance.toLocaleString('vi-VN')} VNĐ
+                {account.balance.toLocaleString('vi-VN')} VND
               </option>
             ))}
           </select>

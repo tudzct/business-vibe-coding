@@ -134,7 +134,7 @@ Example: 5
 Type: string | string[]; Required: Yes; Nullable: No
 Trigger: Input validation fails, end_date is not after start_date, or an expense-limit category is missing or invalid.
 Description: Error description returned by the global HTTP exception filter.
-Example: target_amount phải lớn hơn 0.
+Example: target_amount must be greater than 0.
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 401
@@ -154,5 +154,5 @@ Note: The error envelope also contains success=false and may contain an error fi
 Type: string | string[]; Required: Yes; Nullable: No
 Trigger: The goal cannot be stored.
 Description: Error description returned by the global HTTP exception filter.
-Example: Không thể tạo mục tiêu lúc này. Vui lòng thử lại sau.
+Example: Unable to create the goal at this time. Please try again later.
 Note: The error envelope also contains success=false and may contain an error field.

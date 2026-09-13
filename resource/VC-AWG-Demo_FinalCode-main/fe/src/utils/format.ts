@@ -1,9 +1,9 @@
 /**
- * Utility functions để format dữ liệu
+ * Utility functions to format data
  */
 
 /**
- * Format số tiền theo định dạng VND
+ * Format monetary amounts in VND format
  */
 export const formatCurrency = (amount: number): string => {
   return new Intl.NumberFormat('vi-VN', {
@@ -13,7 +13,7 @@ export const formatCurrency = (amount: number): string => {
 }
 
 /**
- * Format ngày tháng theo định dạng Việt Nam
+ * Format dates in Vietnamese format
  */
 export const formatDate = (date: string | Date): string => {
   const dateObj = typeof date === 'string' ? new Date(date) : date
@@ -25,7 +25,7 @@ export const formatDate = (date: string | Date): string => {
 }
 
 /**
- * Format ngày giờ đầy đủ
+ * Format the full date and time
  */
 export const formatDateTime = (date: string | Date): string => {
   const dateObj = typeof date === 'string' ? new Date(date) : date

@@ -30,13 +30,13 @@ export class ExpensesService {
   ) {}
 
   /**
-   * Lấy tổng hợp chi tiêu theo tháng trong năm hiện tại
-   * @param userId - ID của người dùng
-   * @returns Mảng các đối tượng { month: string, totalExpense: number }
+   * Get the monthly expense summary for the current year
+   * @param userId - User ID
+   * @returns Array of objects { month: string, totalExpense: number }
    */
   async getExpenseSummary(userId: number) {
     try {
-      // Lấy danh sách account_id của user
+      // Get the user's account_id list
       const accounts = await this.accountRepository.find({
         where: { userId },
         select: ['accountId'],
@@ -48,13 +48,13 @@ export class ExpensesService {
 
       const accountIds = accounts.map((acc) => acc.accountId);
 
-      // Lấy năm hiện tại
+      // Get the current year
       const currentYear = new Date().getFullYear();
       const startOfYear = new Date(currentYear, 0, 1);
       const endOfYear = new Date(currentYear, 11, 31, 23, 59, 59);
 
-      // Truy vấn và nhóm theo tháng sử dụng raw SQL với parameterized query
-      // accountIds đã được validate từ database nên an toàn
+      // Query and group by month using raw SQL with a parameterized query
+      // accountIds have been validated from the database and are therefore safe
       const accountIdsStr = accountIds.join(',');
       const query = `
         SELECT 
@@ -75,7 +75,7 @@ export class ExpensesService {
         endOfYear,
       ]);
 
-      // Map kết quả thành format yêu cầu
+      // Map results to the required format
       const monthNames = [
         'Jan',
         'Feb',
@@ -99,20 +99,20 @@ export class ExpensesService {
       return summary;
     } catch (error) {
       throw new InternalServerErrorException({
-        error: 'Không thể lấy dữ liệu chi tiêu.',
+        error: 'Unable to retrieve expense data.',
       });
     }
   }
 
   /**
-   * Lấy breakdown chi tiêu theo danh mục cho một tháng cụ thể
-   * @param userId - ID của người dùng
-   * @param month - Chuỗi tháng định dạng 'YYYY-MM' (ví dụ: '2025-11')
-   * @returns Mảng các đối tượng breakdown theo category
+   * Get the expense breakdown by category for a specific month
+   * @param userId - User ID
+   * @param month - Month string in 'YYYY-MM' format (for example: '2025-11')
+   * @returns Array of breakdown objects by category
    */
   async getExpensesBreakdown(userId: number, month: string) {
     try {
-      // Lấy danh sách account_id của user
+      // Get the user's account_id list
       const accounts = await this.accountRepository.find({
         where: { userId },
         select: ['accountId'],
@@ -120,7 +120,7 @@ export class ExpensesService {
 
       if (accounts.length === 0) {
         throw new NotFoundException({
-          error: 'Không có dữ liệu chi tiêu cho tháng này.',
+          error: 'No expense data for this month.',
         });
       }
 
@@ -130,15 +130,15 @@ export class ExpensesService {
       const [year, monthNum] = month.split('-').map(Number);
       if (!year || !monthNum || monthNum < 1 || monthNum > 12) {
         throw new NotFoundException({
-          error: 'Không có dữ liệu chi tiêu cho tháng này.',
+          error: 'No expense data for this month.',
         });
       }
 
-      // Tính toán tháng hiện tại và tháng trước
+      // Calculate the current and previous months
       const currentMonthStart = new Date(year, monthNum - 1, 1);
       const currentMonthEnd = new Date(year, monthNum, 0, 23, 59, 59);
 
-      // Tính previous month
+      // Calculate the previous month
       let previousYear = year;
       let previousMonth = monthNum - 1;
       if (previousMonth === 0) {
@@ -148,7 +148,7 @@ export class ExpensesService {
       const previousMonthStart = new Date(previousYear, previousMonth - 1, 1);
       const previousMonthEnd = new Date(previousYear, previousMonth, 0, 23, 59, 59);
 
-      // Thực hiện 2 truy vấn song song sử dụng query builder
+      // Execute 2 queries in parallel using the query builder
       const currentMonthQuery = this.transactionRepository
         .createQueryBuilder('transaction')
         .leftJoinAndSelect('transaction.category', 'category')
@@ -172,11 +172,11 @@ export class ExpensesService {
         previousMonthQuery.getMany(),
       ]);
 
-      // Nhóm kết quả theo category_id và tính tổng
+      // Group results by category_id and calculate totals
       const currentMonthGrouped = new Map<number, { total: number; transactions: Transaction[] }>();
       const previousMonthGrouped = new Map<number, number>();
 
-      // Nhóm tháng hiện tại
+      // Group the current month
       for (const transaction of currentMonthData) {
         const categoryId = transaction.categoryId || 0;
         if (!currentMonthGrouped.has(categoryId)) {
@@ -187,21 +187,21 @@ export class ExpensesService {
         group.transactions.push(transaction);
       }
 
-      // Nhóm tháng trước
+      // Group the previous month
       for (const transaction of previousMonthData) {
         const categoryId = transaction.categoryId || 0;
         const currentTotal = previousMonthGrouped.get(categoryId) || 0;
         previousMonthGrouped.set(categoryId, currentTotal + Number(transaction.amount));
       }
 
-      // Kiểm tra nếu không có giao dịch trong tháng hiện tại
+      // Check whether there are no transactions in the current month
       if (currentMonthGrouped.size === 0) {
         throw new NotFoundException({
-          error: 'Không có dữ liệu chi tiêu cho tháng này.',
+          error: 'No expense data for this month.',
         });
       }
 
-      // Lấy thông tin category để có tên
+      // Get category information to obtain the name
       const categoryIds = Array.from(currentMonthGrouped.keys()).filter((id) => id !== 0);
       const categories = categoryIds.length > 0
         ? await this.categoryRepository
@@ -215,13 +215,13 @@ export class ExpensesService {
         categories.map((cat) => [cat.categoryId, cat.categoryName]),
       );
 
-      // Tạo kết quả
+      // Create the result
       const result: BreakdownResult[] = [];
 
       for (const [categoryId, { total, transactions }] of currentMonthGrouped.entries()) {
         const previousTotal = previousMonthGrouped.get(categoryId) || 0;
 
-        // Tính changePercent
+        // Calculate changePercent
         let changePercent: number | null = null;
         if (previousTotal === 0) {
           changePercent = total > 0 ? 100 : null;
@@ -229,12 +229,12 @@ export class ExpensesService {
           changePercent = ((total - previousTotal) / previousTotal) * 100;
         }
 
-        // Lấy tên category
+        // Get the category name
         const categoryName = categoryId === 0
           ? 'Uncategorized'
           : categoryMap.get(categoryId) || 'Unknown';
 
-        // Tạo subCategories từ transactions
+        // Create subCategories from transactions
         const subCategories = transactions.map((t) => {
           // Format date safely
           let dateStr = '';
@@ -260,23 +260,23 @@ export class ExpensesService {
         });
       }
 
-      // Sắp xếp theo total giảm dần
+      // Sort by total in descending order
       result.sort((a, b) => b.total - a.total);
 
       return result;
     } catch (error) {
-      // Nếu là NotFoundException hoặc BadRequestException thì throw lại
+      // If it is a NotFoundException or BadRequestException, rethrow it
       if (error instanceof NotFoundException || error instanceof BadRequestException) {
         throw error;
       }
       
-      // Log lỗi để debug (chỉ trong development)
+      // Log errors for debugging (only in development)
       if (process.env.NODE_ENV !== 'production') {
         console.error('Error in getExpensesBreakdown:', error);
       }
       
       throw new InternalServerErrorException({
-        error: 'Không thể lấy dữ liệu breakdown chi tiêu.',
+        error: 'Unable to retrieve expense breakdown data.',
       });
     }
   }

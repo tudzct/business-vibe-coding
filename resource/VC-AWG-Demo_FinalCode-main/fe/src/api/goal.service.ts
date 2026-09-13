@@ -2,19 +2,19 @@ import axiosInstance from './axiosInstance'
 import { ApiResponse, Goal, GoalsResponse } from './types'
 
 export const goalService = {
-  // Lấy danh sách mục tiêu của user
+  // Get the user's goals
   getGoals: async (): Promise<ApiResponse<GoalsResponse>> => {
     const response = await axiosInstance.get('/v1/goals')
     return response.data
   },
 
-  // Lấy chi tiết một mục tiêu
+  // Get details of a goal
   getGoal: async (goalId: number): Promise<ApiResponse<Goal>> => {
     const response = await axiosInstance.get(`/goals/${goalId}`)
     return response.data
   },
 
-  // Tạo mục tiêu mới
+  // Create a new goal
   createGoal: async (data: {
     goal_type: 'Saving' | 'Expense_Limit'
     category_id?: number | null
@@ -26,7 +26,7 @@ export const goalService = {
     return response.data
   },
 
-  // Cập nhật mục tiêu
+  // Update a goal
   updateGoal: async (
     goalId: number,
     data: { target_amount: number },
@@ -35,7 +35,7 @@ export const goalService = {
     return response.data
   },
 
-  // Xóa mục tiêu
+  // Delete a goal
   deleteGoal: async (goalId: number): Promise<ApiResponse<void>> => {
     const response = await axiosInstance.delete(`/goals/${goalId}`)
     return response.data

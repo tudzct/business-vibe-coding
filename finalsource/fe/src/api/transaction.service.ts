@@ -2,7 +2,7 @@ import axiosInstance from './axiosInstance'
 import { ApiResponse, Transaction } from './types'
 
 export const transactionService = {
-  // Lấy danh sách giao dịch
+  // Get the transaction list
   getTransactions: async (params?: {
     accountId?: number
     categoryId?: number
@@ -14,25 +14,25 @@ export const transactionService = {
     return response.data
   },
 
-  // Lấy chi tiết một giao dịch
+  // Get details of a transaction
   getTransaction: async (transactionId: number): Promise<ApiResponse<Transaction>> => {
     const response = await axiosInstance.get(`/transactions/${transactionId}`)
     return response.data
   },
 
-  // Tạo giao dịch mới
+  // Create a new transaction
   createTransaction: async (data: Omit<Transaction, 'transaction_id'>): Promise<ApiResponse<Transaction>> => {
     const response = await axiosInstance.post('/transactions', data)
     return response.data
   },
 
-  // Cập nhật giao dịch
+  // Update a transaction
   updateTransaction: async (transactionId: number, data: Partial<Transaction>): Promise<ApiResponse<Transaction>> => {
     const response = await axiosInstance.put(`/transactions/${transactionId}`, data)
     return response.data
   },
 
-  // Xóa giao dịch
+  // Delete a transaction
   deleteTransaction: async (transactionId: number): Promise<ApiResponse<void>> => {
     const response = await axiosInstance.delete(`/transactions/${transactionId}`)
     return response.data

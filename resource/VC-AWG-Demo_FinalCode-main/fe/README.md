@@ -1,14 +1,14 @@
 # Financial Management Frontend
 
-Frontend application được xây dựng với React + TypeScript + Vite + TailwindCSS.
+The frontend application is built with React + TypeScript + Vite + TailwindCSS.
 
-## 🚀 Cài đặt
+## 🚀 Installation
 
 ```bash
-# Cài đặt dependencies
+# Install dependencies
 npm install
 
-# Chạy development server
+# Run the development server
 npm run dev
 
 # Build production
@@ -18,31 +18,31 @@ npm run build
 npm run preview
 ```
 
-## 📁 Cấu trúc thư mục
+## 📁 Directory structure
 
 ```
 src/
- ├── api/            # Axios instance và các service functions
- ├── assets/         # Hình ảnh, icon
- ├── components/     # Component tái sử dụng
+ ├── api/            # Axios instance and service functions
+ ├── assets/         # Images, icons
+ ├── components/     # Reusable components
  ├── context/        # React Context (Auth, Theme)
  ├── hooks/          # Custom hooks
- ├── pages/          # Các trang chính
- ├── router/         # Định nghĩa routes
+ ├── pages/          # Main pages
+ ├── router/         # Route definitions
  ├── utils/          # Helper functions
  ├── App.tsx
  └── main.tsx
 ```
 
-## 🔧 Cấu hình môi trường
+## 🔧 Environment configuration
 
-Tạo file `.env` trong thư mục `fe/`:
+Create an `.env` file in the `fe/` directory:
 
 ```
 VITE_API_BASE_URL=http://localhost:8000/api
 ```
 
-## 📦 Dependencies chính
+## 📦 Main dependencies
 
 - **React 18** - UI library
 - **TypeScript** - Type safety
@@ -54,16 +54,16 @@ VITE_API_BASE_URL=http://localhost:8000/api
 
 ## 🎨 UI Components
 
-- `Button` - Button component với nhiều variants
-- `Input` - Input component với validation
+- `Button` - Button component with multiple variants
+- `Input` - Input component with validation
 - `Loading` - Loading spinner
 - `Error` - Error display component
-- `Layout` - Main layout với header và footer
+- `Layout` - Main layout with a header and footer
 
 ## 🔐 Authentication
 
-Ứng dụng sử dụng JWT token được lưu trong localStorage. Context API được sử dụng để quản lý authentication state.
+The application uses a JWT token stored in localStorage. The Context API is used to manage authentication state.
 
 ## 🌙 Theme
 
-Hỗ trợ dark mode thông qua ThemeContext. Theme được lưu trong localStorage.
+Dark mode is supported through ThemeContext. The theme is stored in localStorage.

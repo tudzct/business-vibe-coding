@@ -1,22 +1,22 @@
 # Full offline Figma capture specification
 
-Một node chỉ được đánh dấu `complete` khi dataset chứa đủ dữ liệu để các lần sinh code và audit không cần gọi lại Figma MCP:
+A node may be marked `complete` only when the dataset contains enough data for code generation and audit runs to avoid calling Figma MCP again:
 
-1. `design-context.md`: toàn bộ reference code và hướng dẫn semantic do `get_design_context` trả về; thay URL asset tạm bằng đường dẫn cục bộ.
-2. `metadata.json`: dataset version, file key, node ID, frame name, loại node, kích thước tự nhiên, thời điểm capture, tham số framework/language, trạng thái Code Connect và phiên bản capture schema.
-3. `screenshot.png`: ảnh context đúng node ở độ phân giải đủ đọc chi tiết.
-4. `export.png`: render toàn node từ `download_assets`.
-5. `assets/`: toàn bộ raw images và SVG assets MCP trả về; manifest ghi rõ mọi cờ truncated.
-6. `asset-map.json`: ánh xạ URL/identifier trong design context sang file cục bộ, MIME type, kích thước byte và SHA-256.
-7. `checksums.sha256`: checksum của mọi file dữ liệu trong version.
+1. `design-context.md`: all reference code and semantic instructions returned by `get_design_context`; replace temporary asset URLs with local paths.
+2. `metadata.json`: dataset version, file key, node ID, frame name, node type, natural dimensions, capture time, framework/language parameters, Code Connect status and capture schema version.
+3. `screenshot.png`: a context image of the correct node at a resolution sufficient to read details.
+4. `export.png`: render the entire node from `download_assets`.
+5. `assets/`: all raw images and SVG assets returned by MCP; the manifest explicitly records every truncated flag.
+6. `asset-map.json`: map URLs/identifiers in the design context to local files, MIME types, byte sizes and SHA-256.
+7. `checksums.sha256`: checksums of every data file in the version.
 
-## Không được coi là complete
+## Must not be considered complete
 
-- Chỉ có screenshot/export.
-- Thiếu design context hoặc metadata.
-- Asset bị truncated nhưng chưa được ghi nhận và xử lý.
-- Context còn phụ thuộc URL tạm.
-- Checksum thiếu hoặc sai.
-- Node ID được suy đoán thay vì xác minh qua plugin.
+- Only screenshot/export is present.
+- Design context or metadata is missing.
+- An asset is truncated but has not been recorded and handled.
+- Context still depends on temporary URLs.
+- Checksums are missing or incorrect.
+- Node IDs are guessed rather than verified through the plugin.
 
-Dataset là snapshot bất biến theo phiên bản. Thay đổi trên Figma phải được lấy bằng một capture run mới và tạo version mới; generation và audit dùng cùng một version để bảo đảm tái lập.
+The dataset is an immutable versioned snapshot. Changes on Figma must be retrieved through a new capture run and create a new version; generation and audit use the same version to ensure reproducibility.

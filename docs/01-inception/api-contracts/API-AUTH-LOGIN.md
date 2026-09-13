@@ -128,7 +128,7 @@ Example: user@example.com
 Type: string | string[]; Required: Yes; Nullable: No
 Trigger: Email is invalid, a required field is empty, or an undeclared field is supplied.
 Description: Error description returned by the global HTTP exception filter.
-Example: ["Email không hợp lệ"]
+Example: ["Invalid email"]
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 401

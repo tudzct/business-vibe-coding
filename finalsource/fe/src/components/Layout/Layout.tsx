@@ -49,7 +49,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     onClick={handleLogout}
                     className="px-4 py-2 text-sm text-white bg-red-600 rounded-md hover:bg-red-700"
                   >
-                    Đăng xuất
+                    Log out
                   </button>
                 </>
               ) : (
@@ -58,13 +58,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     to="/login"
                     className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
                   >
-                    Đăng nhập
+                    Log in
                   </Link>
                   <Link
                     to="/register"
                     className="px-4 py-2 text-sm text-white bg-blue-600 rounded-md hover:bg-blue-700"
                   >
-                    Đăng ký
+                    Register
                   </Link>
                 </>
               )}

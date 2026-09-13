@@ -17,7 +17,7 @@ Prompt E is Business Rules Compliance. Prompt F supplies implementation context 
 ## Authoritative sources
 
 - Business specification: [Financial Management Specification](https://docs.google.com/spreadsheets/d/1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM/edit?gid=0#gid=0), tab `Use cases`, columns A-B.
-- Prompt template: [Coding prompt template mới](https://docs.google.com/document/d/1-cQWpOig7A5HrSHkRvzdw6DsbYRI1-6W7b8BGurT7GY/edit?tab=t.ae82d3zcwy8f).
+- Prompt template: [New coding prompt template](https://docs.google.com/document/d/1-cQWpOig7A5HrSHkRvzdw6DsbYRI1-6W7b8BGurT7GY/edit?tab=t.ae82d3zcwy8f).
 - Frozen UC projections: `docs/01-inception/use-cases/`.
 - OCL utility definitions: `docs/00-context/business-rules/OCL-UTILITY-DEFINITIONS.md`.
 

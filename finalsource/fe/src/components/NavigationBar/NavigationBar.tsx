@@ -3,11 +3,11 @@ import { NavLink } from 'react-router-dom'
 
 const NavigationBar: React.FC = () => {
   const navItems = [
-    { path: '/bills', label: 'Hóa đơn', icon: '📄' },
-    { path: '/transactions', label: 'Giao dịch', icon: '💳' },
-    { path: '/account', label: 'Tài khoản', icon: '🏦' },
-    { path: '/goals', label: 'Mục tiêu', icon: '🎯' },
-    { path: '/expenses', label: 'Chi tiêu', icon: '💰' },
+    { path: '/bills', label: 'Bills', icon: '📄' },
+    { path: '/transactions', label: 'Transactions', icon: '💳' },
+    { path: '/account', label: 'Accounts', icon: '🏦' },
+    { path: '/goals', label: 'Goals', icon: '🎯' },
+    { path: '/expenses', label: 'Expenses', icon: '💰' },
   ]
 
   return (

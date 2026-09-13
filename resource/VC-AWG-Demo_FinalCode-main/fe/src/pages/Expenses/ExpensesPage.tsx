@@ -3,10 +3,10 @@ import ExpenseSummaryChart from '../../components/ExpenseSummaryChart/ExpenseSum
 import ExpensesBreakdown from '../../components/ExpensesBreakdown/ExpensesBreakdown'
 
 /**
- * Trang hiển thị tổng hợp chi tiêu theo tháng
+ * Page displaying the monthly expense summary
  */
 const ExpensesPage: React.FC = () => {
-  // State cho month picker - mặc định là tháng hiện tại
+  // State for the month picker - defaults to the current month
   const getCurrentMonth = (): string => {
     const now = new Date()
     const year = now.getFullYear()
@@ -20,7 +20,7 @@ const ExpensesPage: React.FC = () => {
     <div className="min-h-screen bg-[#F4F5F7] dark:bg-gray-900 p-8">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-[22px] leading-[32px] font-normal text-[#878787] dark:text-gray-400 mb-6">
-          Chi tiêu
+          Expenses
         </h1>
 
         {/* Monthly Comparison Chart */}

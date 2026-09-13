@@ -135,7 +135,7 @@ Note: The error envelope also contains success=false and may contain an error fi
 Type: string | string[]; Required: Yes; Nullable: No
 Trigger: The goal belongs to another user.
 Description: Error description returned by the global HTTP exception filter.
-Example: Bạn không có quyền chỉnh sửa mục tiêu này.
+Example: You do not have permission to edit this goal.
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 404
@@ -145,7 +145,7 @@ Note: The error envelope also contains success=false and may contain an error fi
 Type: string | string[]; Required: Yes; Nullable: No
 Trigger: The goal does not exist.
 Description: Error description returned by the global HTTP exception filter.
-Example: Mục tiêu không tồn tại.
+Example: The goal does not exist.
 Note: The error envelope also contains success=false and may contain an error field.
 
 ## Error Response — HTTP 500
@@ -155,5 +155,5 @@ Note: The error envelope also contains success=false and may contain an error fi
 Type: string | string[]; Required: Yes; Nullable: No
 Trigger: The goal update cannot be saved.
 Description: Error description returned by the global HTTP exception filter.
-Example: Không thể lưu thay đổi lúc này. Vui lòng thử lại sau.
+Example: Unable to save changes at this time. Please try again later.
 Note: The error envelope also contains success=false and may contain an error field.

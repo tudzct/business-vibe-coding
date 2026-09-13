@@ -78,19 +78,19 @@ export class SavingsController {
     @Request() req,
     @Query('year') year?: string,
   ): Promise<SavingsSummaryResponse> {
-    // Kiểm tra và lấy userId từ JWT payload
+    // Check and get userId from the JWT payload
     if (!req.user || !req.user.userId) {
       throw new UnauthorizedException('User authentication failed. Please log in again.');
     }
 
     const userId = req.user.userId;
 
-    // Xử lý tham số year: nếu không có hoặc không hợp lệ, mặc định là năm hiện tại
+    // Handle the year parameter: if missing or invalid, default to the current year
     let targetYear: number;
     if (year) {
       const parsedYear = parseInt(year, 10);
       if (isNaN(parsedYear) || parsedYear < 1900 || parsedYear > 2100) {
-        // Nếu year không hợp lệ, dùng năm hiện tại
+        // If year is invalid, use the current year
         targetYear = new Date().getFullYear();
       } else {
         targetYear = parsedYear;

@@ -4,7 +4,7 @@ import { ExpenseSummaryItem } from '../../api/types'
 import { formatCurrency } from '../../utils/format'
 
 /**
- * Component hiển thị biểu đồ cột tổng hợp chi tiêu theo tháng
+ * Component displaying a monthly expense summary bar chart
  */
 const ExpenseSummaryChart: React.FC = () => {
   const [summaryData, setSummaryData] = useState<ExpenseSummaryItem[]>([])
@@ -13,7 +13,7 @@ const ExpenseSummaryChart: React.FC = () => {
   const [hoveredMonth, setHoveredMonth] = useState<string | null>(null)
 
   /**
-   * Lấy dữ liệu tổng hợp chi tiêu từ API
+   * Get expense summary data from the API
    */
   const fetchExpenseSummary = async () => {
     try {
@@ -22,17 +22,17 @@ const ExpenseSummaryChart: React.FC = () => {
 
       const response = await expenseService.getExpenseSummary()
 
-      // Kiểm tra nếu mảng data rỗng
+      // Check whether the data array is empty
       if (!response.data || response.data.length === 0) {
         setSummaryData([])
         setError('No spending data has been recorded for analysis.')
         return
       }
 
-      // Cập nhật state với dữ liệu nhận được
+      // Update state with the received data
       setSummaryData(response.data)
     } catch (err: any) {
-      // Xử lý lỗi API
+      // Handle API errors
       const errorMessage =
         err.response?.data?.error || 'Cannot load expense data. Please try again later.'
       setError(errorMessage)
@@ -47,7 +47,7 @@ const ExpenseSummaryChart: React.FC = () => {
   }, [])
 
   /**
-   * Xác định tháng hiện tại
+   * Determine the current month
    */
   const getCurrentMonth = (): string => {
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -56,7 +56,7 @@ const ExpenseSummaryChart: React.FC = () => {
   }
 
   /**
-   * Tính chiều cao của cột dựa trên giá trị lớn nhất
+   * Calculate bar height based on the maximum value
    */
   const getMaxExpense = (): number => {
     if (summaryData.length === 0) return 1
@@ -64,7 +64,7 @@ const ExpenseSummaryChart: React.FC = () => {
   }
 
   /**
-   * Tính phần trăm chiều cao của cột
+   * Calculate the bar height percentage
    */
   const getBarHeight = (expense: number): number => {
     const maxExpense = getMaxExpense()
@@ -73,19 +73,19 @@ const ExpenseSummaryChart: React.FC = () => {
   }
 
   /**
-   * Tính toán các mốc giá trị cho trục Y
+   * Calculate Y-axis tick values
    */
   const getYAxisValues = (): number[] => {
     const maxExpense = getMaxExpense()
     if (maxExpense === 0) return [0]
     
-    // Tạo 5 mốc: 0%, 25%, 50%, 75%, 100%
+    // Create 5 ticks: 0%, 25%, 50%, 75%, 100%
     const steps = [0, 0.25, 0.5, 0.75, 1]
     return steps.map((step) => step * maxExpense)
   }
 
   /**
-   * Render skeleton loader cho biểu đồ
+   * Render a skeleton loader for the chart
    */
   const renderChartSkeletonLoader = () => {
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -111,13 +111,13 @@ const ExpenseSummaryChart: React.FC = () => {
   }
 
   /**
-   * Render biểu đồ cột theo thiết kế Monthly Comparison
+   * Render the bar chart according to the Monthly Comparison design
    */
   const renderChart = () => {
     const currentMonth = getCurrentMonth()
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     
-    // Tạo mảng đầy đủ 12 tháng với dữ liệu từ API
+    // Create a full array of 12 months with data from the API
     const fullYearData = monthNames.map((month) => {
       const found = summaryData.find((item) => item.month === month)
       return found || { month, totalExpense: 0 }
@@ -125,7 +125,7 @@ const ExpenseSummaryChart: React.FC = () => {
 
     return (
       <div className="w-full">
-        {/* Tiêu đề Monthly Comparison */}
+        {/* Monthly Comparison title */}
         <div className="mb-8">
           <h2 className="text-[22px] leading-[32px] font-normal text-[#878787] dark:text-gray-400 mb-2">
             Monthly Comparison
@@ -135,9 +135,9 @@ const ExpenseSummaryChart: React.FC = () => {
           </p>
         </div>
 
-        {/* Biểu đồ container */}
+        {/* Chart container */}
         <div className="relative flex">
-          {/* Trục Y - Nhãn giá trị */}
+          {/* Y-axis - Value labels */}
           <div className="flex flex-col justify-between h-[320px] pb-12 pr-4">
             {getYAxisValues()
               .slice()
@@ -153,9 +153,9 @@ const ExpenseSummaryChart: React.FC = () => {
               ))}
           </div>
 
-          {/* Biểu đồ chính */}
+          {/* Main chart */}
           <div className="flex-1 relative">
-            {/* Grid lines cho trục Y */}
+            {/* Grid lines for the Y-axis */}
             <div className="absolute inset-0 flex flex-col justify-between pb-12">
               {[0, 25, 50, 75, 100].map((percent) => (
                 <div
@@ -166,7 +166,7 @@ const ExpenseSummaryChart: React.FC = () => {
               ))}
             </div>
 
-            {/* Biểu đồ cột */}
+            {/* Bar chart */}
             <div className="relative w-full h-[320px] flex items-end justify-between gap-3 px-6 pb-12">
             {fullYearData.map((item) => {
               const isCurrentMonth = item.month === currentMonth
@@ -189,9 +189,9 @@ const ExpenseSummaryChart: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Container cho cột biểu đồ */}
+                  {/* Container for the chart bar */}
                   <div className="w-full flex flex-col items-center justify-end h-full relative">
-                    {/* Cột biểu đồ */}
+                    {/* Chart bar */}
                     <div
                       className={`w-full rounded-t-lg transition-all duration-300 cursor-pointer ${
                         isCurrentMonth
@@ -205,7 +205,7 @@ const ExpenseSummaryChart: React.FC = () => {
                     />
                   </div>
 
-                  {/* Nhãn tháng */}
+                  {/* Month label */}
                   <div
                     className={`text-xs font-medium ${
                       isCurrentMonth
@@ -216,7 +216,7 @@ const ExpenseSummaryChart: React.FC = () => {
                     {item.month}
                   </div>
 
-                  {/* Giá trị trên đầu cột (nếu có dữ liệu) */}
+                  {/* Value above the bar (if data is available) */}
                   {item.totalExpense > 0 && isHovered && (
                     <div className="absolute bottom-[calc(100%-8px)] left-1/2 transform -translate-x-1/2 -translate-y-full mb-2">
                       <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">
@@ -229,7 +229,7 @@ const ExpenseSummaryChart: React.FC = () => {
             })}
             </div>
 
-            {/* Trục X - Baseline */}
+            {/* X-axis - Baseline */}
             <div className="border-t-2 border-gray-300 dark:border-gray-600 mx-6" />
           </div>
         </div>
@@ -249,7 +249,7 @@ const ExpenseSummaryChart: React.FC = () => {
     )
   }
 
-  // Hiển thị loading state
+  // Display loading state
   if (isLoading) {
     return (
       <div className="w-full bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8">
@@ -258,7 +258,7 @@ const ExpenseSummaryChart: React.FC = () => {
     )
   }
 
-  // Hiển thị error state
+  // Display error state
   if (error) {
     return (
       <div className="w-full bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8">
@@ -270,7 +270,7 @@ const ExpenseSummaryChart: React.FC = () => {
     )
   }
 
-  // Hiển thị biểu đồ
+  // Display the chart
   return (
     <div className="w-full bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8">
       {renderChart()}

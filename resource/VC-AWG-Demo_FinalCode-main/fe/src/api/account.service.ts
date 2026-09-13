@@ -2,19 +2,19 @@ import axiosInstance from './axiosInstance'
 import { ApiResponse, Account, AccountDetail } from './types'
 
 export const accountService = {
-  // Lấy danh sách tài khoản của user
+  // Get the user's accounts
   getAccounts: async (): Promise<ApiResponse<any>> => {
     const response = await axiosInstance.get('/v1/accounts')
     return response.data
   },
 
-  // Lấy chi tiết một tài khoản kèm giao dịch gần đây
+  // Get details of an account with recent transactions
   getAccountDetail: async (accountId: number): Promise<AccountDetail> => {
     const response = await axiosInstance.get(`/v1/accounts/${accountId}`)
     return response.data
   },
 
-  // Tạo tài khoản mới
+  // Create a new account
   createAccount: async (data: {
     bank_name: string
     account_type: 'Checking' | 'Credit Card' | 'Savings' | 'Investment' | 'Loan'
@@ -26,7 +26,7 @@ export const accountService = {
     return response.data
   },
 
-  // Cập nhật tài khoản
+  // Update an account
   updateAccount: async (
     accountId: number,
     data: {
@@ -42,7 +42,7 @@ export const accountService = {
     return response.data
   },
 
-  // Xóa tài khoản
+  // Delete an account
   deleteAccount: async (accountId: number): Promise<ApiResponse<void>> => {
     const response = await axiosInstance.delete(`/v1/accounts/${accountId}`)
     return response.data

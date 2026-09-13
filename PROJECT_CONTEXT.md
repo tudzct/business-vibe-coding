@@ -12,7 +12,7 @@
 
 This project studies automated source-code generation from use-case specifications enriched with explicit Business Rules. Rules are expressed as OCL invariants, preconditions or postconditions when representable; remaining constraints stay in authoritative natural language.
 
-The method extends the two-phase method described by Đặng Thị Thanh Trúc across two experimental setups:
+The method extends the two-phase method described by Dang Thi Thanh Truc across two experimental setups:
 
 1. **Full method (RQ1/RQ2):** Uses the complete Prompt A-F template. Prompt A covers backend/API, Prompt B frontend UI, Prompt C frontend logic/API integration, Prompt D validation/error handling, Prompt E Business Rules Compliance (OCL and natural-language rules) and Prompt F Implementation Context.
 2. **Ablation study (RQ3):** Uses only Prompts A-D, omitting Prompts E and F together. It evaluates how LLMs perform without the explicit Business Rules/OCL projection and the additional implementation context, against the identical frozen Business Rule baseline.
@@ -38,7 +38,7 @@ The 16 files under `docs/01-inception/use-cases/` are frozen projections of this
 ### Prompt template
 
 - Document ID: `1-cQWpOig7A5HrSHkRvzdw6DsbYRI1-6W7b8BGurT7GY`
-- Tab: `Coding prompt template mới`
+- Tab: `New coding prompt template`
 - URL: https://docs.google.com/document/d/1-cQWpOig7A5HrSHkRvzdw6DsbYRI1-6W7b8BGurT7GY/edit?tab=t.ae82d3zcwy8f
 
 ### Method reference

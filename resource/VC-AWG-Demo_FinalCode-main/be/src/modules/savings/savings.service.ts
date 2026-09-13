@@ -18,21 +18,21 @@ export class SavingsService {
   ) {}
 
   /**
-   * Tính tổng tiết kiệm ròng theo tháng cho một năm cụ thể
-   * @param userId - ID của người dùng
-   * @param year - Năm cần tính toán
-   * @returns Mảng 12 tháng với số tiền tiết kiệm ròng
+   * Calculate total monthly net savings for a specific year
+   * @param userId - User ID
+   * @param year - Year to calculate
+   * @returns Array of 12 months with net savings amounts
    */
   async getSavingsSummary(userId: number, year: number): Promise<SavingsSummaryResponse> {
     try {
-      // 1. Lấy danh sách account_id của user
+      // 1. Get the user's account_id list
       const accounts = await this.accountRepository.find({
         where: { userId },
         select: ['accountId'],
       });
 
       if (accounts.length === 0) {
-        // Nếu không có tài khoản, trả về mảng 12 tháng với giá trị 0
+        // If there are no accounts, return an array of 12 months with values of 0
         const emptyYear = this.generateEmptyYear();
         return {
           user_id: userId,
@@ -46,10 +46,10 @@ export class SavingsService {
 
       const accountIds = accounts.map((acc) => acc.accountId);
 
-      // 2. Tính toán cho năm hiện tại (this_year)
+      // 2. Calculate for the current year (this_year)
       const thisYear = await this.calculateYearlySavings(accountIds, year);
 
-      // 3. Tính toán cho năm trước (last_year)
+      // 3. Calculate for the previous year (last_year)
       const lastYear = await this.calculateYearlySavings(accountIds, year - 1);
 
       return {
@@ -68,26 +68,26 @@ export class SavingsService {
   }
 
   /**
-   * Tính toán tiết kiệm ròng cho từng tháng trong một năm
-   * @param accountIds - Mảng các account_id
-   * @param year - Năm cần tính toán
-   * @returns Mảng 12 tháng với số tiền tiết kiệm ròng
+   * Calculate net savings for each month in a year
+   * @param accountIds - Array of account_id values
+   * @param year - Year to calculate
+   * @returns Array of 12 months with net savings amounts
    */
   private async calculateYearlySavings(
     accountIds: number[],
     year: number,
   ): Promise<MonthlySavings[]> {
-    // Tạo mảng kết quả cho 12 tháng
+    // Create a result array for 12 months
     const monthlySavings: MonthlySavings[] = [];
 
     for (let month = 1; month <= 12; month++) {
-      // Tạo khoảng thời gian cho tháng đó
-      // month - 1 vì Date month bắt đầu từ 0 (0 = January, 11 = December)
+      // Create the time interval for that month
+      // month - 1 because Date months start at 0 (0 = January, 11 = December)
       const startDate = new Date(year, month - 1, 1);
-      // month (không -1) sẽ tạo ngày đầu tháng sau, rồi set day = 0 sẽ lùi về ngày cuối tháng trước
+      // month (without -1) creates the first day of the next month, then setting day = 0 moves back to the last day of the previous month
       const endDate = new Date(year, month, 0, 23, 59, 59, 999);
 
-      // Truy vấn Revenue (Thu nhập) trong tháng
+      // Query Revenue (Income) for the month
       const revenueResult = await this.transactionRepository
         .createQueryBuilder('transaction')
         .select('COALESCE(SUM(transaction.amount), 0)', 'total')
@@ -99,7 +99,7 @@ export class SavingsService {
 
       const totalRevenue = parseFloat(revenueResult?.total || '0');
 
-      // Truy vấn Expense (Chi tiêu) trong tháng
+      // Query Expense (Expenses) for the month
       const expenseResult = await this.transactionRepository
         .createQueryBuilder('transaction')
         .select('COALESCE(SUM(transaction.amount), 0)', 'total')
@@ -111,15 +111,15 @@ export class SavingsService {
 
       const totalExpense = parseFloat(expenseResult?.total || '0');
 
-      // Tính tiết kiệm ròng = Thu nhập - Chi tiêu
+      // Calculate net savings = Income - Expenses
       const netSavings = totalRevenue - totalExpense;
 
-      // Format tháng với 2 chữ số (01, 02, ..., 12)
+      // Format the month with 2 digits (01, 02, ..., 12)
       const monthString = month.toString().padStart(2, '0');
 
       monthlySavings.push({
         month: monthString,
-        amount: Math.round(netSavings * 100) / 100, // Làm tròn đến 2 chữ số thập phân
+        amount: Math.round(netSavings * 100) / 100, // Round to 2 decimal places
       });
     }
 
@@ -127,8 +127,8 @@ export class SavingsService {
   }
 
   /**
-   * Tạo mảng 12 tháng với giá trị 0
-   * @returns Mảng 12 tháng với amount = 0
+   * Create an array of 12 months with values of 0
+   * @returns Array of 12 months with amount = 0
    */
   private generateEmptyYear(): MonthlySavings[] {
     return Array.from({ length: 12 }, (_, index) => ({

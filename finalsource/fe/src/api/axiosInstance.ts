@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-// Tạo Axios instance với cấu hình mặc định
+// Create an Axios instance with the default configuration
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api',
   timeout: 10000,
@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
   },
 })
 
-// Request interceptor - thêm token vào header nếu có
+// Request interceptor - add the token to the header if available
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token')
@@ -23,14 +23,14 @@ axiosInstance.interceptors.request.use(
   }
 )
 
-// Response interceptor - xử lý lỗi chung
+// Response interceptor - handle common errors
 axiosInstance.interceptors.response.use(
   (response) => {
     return response
   },
   (error) => {
     if (error.response?.status === 401) {
-      // Token hết hạn hoặc không hợp lệ
+      // Expired or invalid token
       localStorage.removeItem('token')
       localStorage.removeItem('user')
       window.location.href = '/login'

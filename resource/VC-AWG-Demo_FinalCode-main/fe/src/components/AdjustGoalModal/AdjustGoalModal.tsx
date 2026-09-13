@@ -42,7 +42,7 @@ const AdjustGoalModal: React.FC<AdjustGoalModalProps> = ({
     setError(null)
     setInputError(null)
 
-    // Client-side validation: Kiểm tra giá trị nhập vào
+    // Client-side validation: Check input values
     const amount = parseFloat(targetAmount)
     if (isNaN(amount) || amount <= 0) {
       setInputError('The target amount must be greater than 0.')
@@ -53,26 +53,26 @@ const AdjustGoalModal: React.FC<AdjustGoalModalProps> = ({
     setIsLoading(true)
 
     try {
-      // Gọi API để cập nhật mục tiêu
+      // Call the API to update the goal
       const response = await goalService.updateGoal(goalId, {
         target_amount: amount,
       })
 
-      // Kiểm tra response thành công
+      // Check for a successful response
       if (response.message === 'Goal updated successfully' || response.updated_goal) {
-        // 1. Hiển thị thông báo toast thành công
+        // 1. Display a success toast notification
         showToast('Adjusting the goals has been successful.', 'success')
 
-        // 2. Gọi hàm onClose() để đóng modal
+        // 2. Call onClose() to close the modal
         onClose()
 
-        // 3. Gọi hàm callback onSuccess() để làm mới lại danh sách mục tiêu
+        // 3. Call the onSuccess() callback to refresh the goal list
         if (onSuccess) {
           onSuccess()
         }
       }
     } catch (err: any) {
-      // Xử lý lỗi API
+      // Handle API errors
       setIsLoading(false)
 
       if (err.response) {
@@ -80,21 +80,21 @@ const AdjustGoalModal: React.FC<AdjustGoalModalProps> = ({
         const errorData = err.response.data
 
         if (status === 400) {
-          // Lỗi validation từ backend
+          // Validation errors from the backend
           setInputError(
             errorData.message?.[0] || 'The target amount must be greater than 0.',
           )
         } else if (status === 403) {
-          // Lỗi quyền truy cập
+          // Access permission errors
           setError('You do not have permission to edit this goal.')
         } else if (status === 500) {
-          // Lỗi hệ thống
+          // System errors
           setError(
             errorData.message ||
               'Changes cannot be saved at this time. Please try again later.',
           )
         } else {
-          // Các lỗi khác
+          // Other errors
           setError(
             errorData.message || 'An error occurred. Please try again later.',
           )
@@ -182,7 +182,7 @@ const AdjustGoalModal: React.FC<AdjustGoalModalProps> = ({
               onClick={onClose}
               disabled={isLoading}
             >
-              Hủy
+              Cancel
             </Button>
             <Button
               variant="primary"
@@ -190,7 +190,7 @@ const AdjustGoalModal: React.FC<AdjustGoalModalProps> = ({
               isLoading={isLoading}
               disabled={isLoading}
             >
-              Lưu
+              Save
             </Button>
           </div>
         </div>

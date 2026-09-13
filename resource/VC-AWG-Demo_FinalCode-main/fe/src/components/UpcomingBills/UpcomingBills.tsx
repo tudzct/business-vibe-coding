@@ -40,7 +40,7 @@ const UpcomingBills: React.FC = () => {
   }
 
   /**
-   * Render skeleton loader cho bills
+   * Render a skeleton loader for bills
    */
   const renderSkeletonLoader = () => {
     return (
@@ -113,7 +113,7 @@ const UpcomingBills: React.FC = () => {
           onClick={fetchUpcomingBills}
           className="bg-[#299D91] text-white px-6 py-2 rounded hover:bg-[#238a7f] transition-colors text-sm font-medium"
         >
-          Thử lại
+          Try again
         </button>
       </div>
     )
@@ -167,7 +167,7 @@ const UpcomingBills: React.FC = () => {
                         alt={bill.itemDescription}
                         className="w-16 h-16 rounded-lg object-cover"
                         onError={(e) => {
-                          // Fallback nếu logo không load được
+                          // Fallback if the logo cannot load
                           const target = e.target as HTMLImageElement
                           target.style.display = 'none'
                         }}

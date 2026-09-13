@@ -15,25 +15,25 @@ export interface RegisterRequest {
 }
 
 export const authService = {
-  // Đăng nhập
+  // Log in
   login: async (data: LoginRequest): Promise<ApiResponse<{ user: User; token: string }>> => {
     const response = await axiosInstance.post('/auth/login', data)
     return response.data
   },
 
-  // Đăng ký
+  // Register
   register: async (data: RegisterRequest): Promise<ApiResponse<User>> => {
     const response = await axiosInstance.post('/auth/register', data)
     return response.data
   },
 
-  // Đăng xuất
+  // Log out
   logout: (): void => {
     localStorage.removeItem('token')
     localStorage.removeItem('user')
   },
 
-  // Lấy thông tin user hiện tại
+  // Get current user information
   getCurrentUser: async (): Promise<ApiResponse<User>> => {
     const response = await axiosInstance.get('/auth/me')
     return response.data

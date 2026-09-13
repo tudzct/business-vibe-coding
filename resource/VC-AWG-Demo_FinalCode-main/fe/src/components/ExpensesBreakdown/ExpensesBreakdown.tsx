@@ -8,18 +8,18 @@ interface ExpensesBreakdownProps {
 }
 
 /**
- * Component hiển thị breakdown chi tiêu theo danh mục
+ * Component displaying expense breakdown by category
  */
 const ExpensesBreakdown: React.FC<ExpensesBreakdownProps> = ({ month }) => {
   const [expensesData, setExpensesData] = useState<ExpenseBreakdownItem[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(true) // Bắt đầu với true để hiển thị loading khi mount
+  const [isLoading, setIsLoading] = useState<boolean>(true) // Start with true to display loading on mount
   const [error, setError] = useState<string | null>(null)
 
   /**
-   * Lấy dữ liệu breakdown chi tiêu từ API
+   * Get expense breakdown data from the API
    */
   const fetchExpensesBreakdown = useCallback(async (monthParam: string) => {
-    // Validation: đảm bảo month có định dạng hợp lệ
+    // Validation: ensure month has a valid format
     if (!monthParam || !/^\d{4}-\d{2}$/.test(monthParam)) {
       setError('The month format is invalid. Please use the YYYY-MM format.')
       setIsLoading(false)
@@ -32,17 +32,17 @@ const ExpensesBreakdown: React.FC<ExpensesBreakdownProps> = ({ month }) => {
 
       const response = await expenseService.getExpensesBreakdown(monthParam)
 
-      // Kiểm tra nếu mảng data rỗng
+      // Check whether the data array is empty
       if (!response.data || response.data.length === 0) {
         setExpensesData([])
         setError('You have no expenses recorded for this month.')
         return
       }
 
-      // Cập nhật state với dữ liệu nhận được
+      // Update state with the received data
       setExpensesData(response.data)
     } catch (err: any) {
-      // Xử lý lỗi API
+      // Handle API errors
       const errorMessage =
         err.response?.data?.error ||
         err.response?.data?.message ||
@@ -61,10 +61,10 @@ const ExpensesBreakdown: React.FC<ExpensesBreakdownProps> = ({ month }) => {
   }, [month, fetchExpensesBreakdown])
 
   /**
-   * Render icon cho category (placeholder - có thể thay bằng icon thật từ thư viện)
+   * Render a category icon (placeholder - can be replaced with an actual icon from a library)
    */
   const getCategoryIcon = (categoryName: string): string => {
-    // Map category names to emoji icons (có thể thay bằng icon component)
+    // Map category names to emoji icons (can be replaced with an icon component)
     const iconMap: Record<string, string> = {
       Housing: '🏠',
       Food: '🍔',
@@ -130,7 +130,7 @@ const ExpensesBreakdown: React.FC<ExpensesBreakdownProps> = ({ month }) => {
   }
 
   /**
-   * Format change percentage với màu sắc theo Figma design
+   * Format change percentage with colors matching the Figma design
    */
   const formatChangePercent = (changePercent: number | null): { text: string; color: string; bgColor: string } => {
     if (changePercent === null) {
@@ -181,7 +181,7 @@ const ExpensesBreakdown: React.FC<ExpensesBreakdownProps> = ({ month }) => {
             {/* Header: Category Icon, Name, Total, Change Percent */}
             <div className="mb-4">
               <div className="flex items-center gap-3 mb-3">
-                {/* Category Icon với background màu */}
+                {/* Category Icon with a colored background */}
                 <div className="w-10 h-10 rounded-full bg-[#F3F4F6] flex items-center justify-center text-xl flex-shrink-0">
                   {getCategoryIcon(item.category)}
                 </div>

@@ -6,7 +6,7 @@ export interface BillsResponse {
 }
 
 export const billService = {
-  // Lấy danh sách hóa đơn sắp tới của user
+  // Get the user's upcoming bills
   getUpcomingBills: async (): Promise<BillsResponse> => {
     const response = await axiosInstance.get<BillsResponse>('/v1/bills')
     return response.data

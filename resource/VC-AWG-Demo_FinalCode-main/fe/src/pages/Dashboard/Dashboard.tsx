@@ -26,7 +26,7 @@ const Dashboard: React.FC = () => {
         ])
 
         if (accountsRes.success && accountsRes.data) {
-          // Hỗ trợ nhiều kiểu response shape từ backend
+          // Support multiple response shapes from the backend
           const accountsData = Array.isArray(accountsRes.data)
             ? accountsRes.data
             : accountsRes.data.accounts ?? accountsRes.data.items ?? []
@@ -47,9 +47,9 @@ const Dashboard: React.FC = () => {
             console.warn('No transactions available in API response')
           }
 
-          // Sắp xếp giao dịch theo thời gian giảm dần và lấy 5 giao dịch mới nhất
+          // Sort transactions by time in descending order and get the 5 latest transactions
           const sortedTransactions = txData
-            .filter((transaction) => transaction.transaction_date) // Lọc các giao dịch có ngày hợp lệ
+            .filter((transaction) => transaction.transaction_date) // Filter transactions with valid dates
             .sort((a: Transaction, b: Transaction) =>
               new Date(b.transaction_date).getTime() - new Date(a.transaction_date).getTime()
             )
@@ -91,7 +91,7 @@ const Dashboard: React.FC = () => {
         </p>
       </div>
 
-      {/* Tổng số dư */}
+      {/* Total balance */}
       <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white">
         <h2 className="text-lg font-medium mb-2">Total Balance</h2>
         <p className="text-3xl font-bold">
@@ -102,7 +102,7 @@ const Dashboard: React.FC = () => {
         </p>
       </div>
 
-      {/* Tài khoản */}
+      {/* Accounts */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
           My Accounts
@@ -134,7 +134,7 @@ const Dashboard: React.FC = () => {
         )}
       </div>
 
-      {/* Giao dịch gần đây */}
+      {/* Recent transactions */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
           Recent Transactions
@@ -147,16 +147,16 @@ const Dashboard: React.FC = () => {
               <thead className="bg-gray-50 dark:bg-gray-700">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                    Mô tả
+                    Description
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                    Loại
+                    Type
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                    Số tiền
+                    Amount
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">
-                    Ngày
+                    Date
                   </th>
                 </tr>
               </thead>

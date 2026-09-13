@@ -17,7 +17,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
-  // Kiểm tra token khi component mount
+  // Check the token when the component mounts
   useEffect(() => {
     const token = localStorage.getItem('token')
     const savedUser = localStorage.getItem('user')
@@ -26,7 +26,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       try {
         const userData = JSON.parse(savedUser)
         setUser(userData)
-        // Có thể gọi API để verify token và lấy user mới nhất
+        // Can call the API to verify the token and get the latest user
       } catch (error) {
         console.error('Error parsing user data:', error)
         localStorage.removeItem('token')
@@ -45,10 +45,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         localStorage.setItem('user', JSON.stringify(userData))
         setUser(userData)
       } else {
-        throw new Error(response.message || 'Đăng nhập thất bại')
+        throw new Error(response.message || 'Login failed')
       }
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || 'Đăng nhập thất bại')
+      throw new Error(error.response?.data?.message || 'Login failed')
     }
   }
 

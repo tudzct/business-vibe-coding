@@ -8,7 +8,7 @@ interface ErrorProps {
 }
 
 const Error: React.FC<ErrorProps> = ({
-  message = 'Đã xảy ra lỗi. Vui lòng thử lại sau.',
+  message = 'An error occurred. Please try again later.',
   onRetry,
   fullScreen = false,
 }) => {
@@ -25,12 +25,12 @@ const Error: React.FC<ErrorProps> = ({
         </svg>
       </div>
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-        Có lỗi xảy ra
+        An error occurred
       </h3>
       <p className="text-gray-600 dark:text-gray-400 text-center mb-4">{message}</p>
       {onRetry && (
         <Button onClick={onRetry} variant="primary">
-          Thử lại
+          Try again
         </Button>
       )}
     </div>

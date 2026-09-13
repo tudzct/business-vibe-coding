@@ -11,8 +11,8 @@ export class CategoryService {
   ) {}
 
   /**
-   * Lấy danh sách tất cả categories
-   * @returns Danh sách categories
+   * Get a list of all categories
+   * @returns Category list
    */
   async findAll() {
     try {
@@ -23,22 +23,22 @@ export class CategoryService {
         },
       });
 
-      // Map dữ liệu để trả về đúng format
+      // Map data to return the correct format
       return categories.map((category) => ({
         category_id: category.categoryId,
         category_name: category.categoryName,
       }));
     } catch (error) {
       throw new InternalServerErrorException(
-        'Đã xảy ra lỗi hệ thống khi lấy danh sách danh mục. Vui lòng thử lại sau.',
+        'A system error occurred while retrieving the category list. Please try again later.',
       );
     }
   }
 
   /**
-   * Lấy chi tiết một category
-   * @param categoryId - ID của category
-   * @returns Chi tiết category
+   * Get details of a category
+   * @param categoryId - Category ID
+   * @returns Category details
    */
   async findOne(categoryId: number) {
     try {
@@ -57,7 +57,7 @@ export class CategoryService {
       };
     } catch (error) {
       throw new InternalServerErrorException(
-        'Đã xảy ra lỗi hệ thống khi lấy chi tiết danh mục. Vui lòng thử lại sau.',
+        'A system error occurred while retrieving category details. Please try again later.',
       );
     }
   }
