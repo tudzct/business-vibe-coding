@@ -2,7 +2,7 @@
 
 | Phase | Required input | Output | Researcher action |
 |---|---|---|---|
-| 1. Prompt generation | frozen UC/UML/BR/flows + confirmed `.env`-derived configuration + pinned Figma dataset | BR/flow baselines + approved Prompt A-F or A-D | confirm Configuration and Prompt Gates |
+| 1. Prompt generation | frozen UC/UML/BR/flows + existing Confirmed JSON, BR/flow baselines and Draft Canonical Run JSON + pinned Figma dataset | read-only validate four pre-existing inputs; generate Draft Prompt A-F or A-D in one work turn | approve the completed Draft at Prompt Gate; no configuration reconfirmation |
 | 2. Source generation | approved prompt + active run + baseline source | generated source + initial/final BR/flow audit + optional repairs + final hash | confirm Source/Audit/Repair/Final Metrics Gates |
 
 Commands:

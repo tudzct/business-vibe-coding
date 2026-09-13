@@ -1,7 +1,7 @@
 {
   "schema_version": "2.3",
   "artifact_type": "experiment-configuration",
-  "status": "Draft | Confirmed",
+  "status": "Confirmed",
   "configuration_id": "<CONFIG-ID>",
   "comparison_group_id": "<COMPARISON-GROUP-ID>",
   "researcher_id": "<stable identifier>",

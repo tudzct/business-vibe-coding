@@ -7,6 +7,8 @@ description: Handle a researcher's plain-language confirmation of the pending Bu
 
 Use this automatically when the researcher confirms, approves, continues, repairs or skips at a gate shown by `run-business-vibe-coding`. Read [gate transitions](references/gates.md), the exact canonical UC/run and its pending gate. Reject ambiguous identity or an out-of-order confirmation.
 
+Configuration is not a confirmation gate. New runs start at `prompt` after automatic validation of the researcher-prepared Confirmed JSON. Never ask for configuration reconfirmation or record a new `configuration` transition. Preserve historical receipts; a legacy pending `configuration` with empty history can close through `--gate prompt` after actual prompt approval and all normal Prompt Gate checks.
+
 The researcher never needs to name Measure or Audit skills. Invoke those engines internally:
 
 - Prompt Gate: record prompt approval and close `prompt_generation` telemetry.

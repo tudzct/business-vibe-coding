@@ -1,45 +1,34 @@
 ---
 name: activate-experiment-run
-description: Prepare a Draft experiment configuration or validate a Confirmed configuration and create its immutable UC run-activation receipt. Use before source generation; do not generate prompts or source code.
+description: Validate an existing run activation receipt or optionally create one on explicit researcher request outside source generation; never generate prompts or source code.
 ---
 
 # Activate Experiment Run
 
-Use this skill when the researcher wants to prepare or activate one configured use-case run.
+This is an optional preparation/validation helper. The researcher chooses how to create the Confirmed configuration, frozen BR/flow baselines, Draft Canonical Run JSON and run activation receipt: manually, with an external script/model, or with optional repository helpers. A valid file is accepted regardless of its creator. Never require a skill invocation or creation-command history as evidence.
 
-Read the [shared execution timing protocol](../measure-uc-workflow-tokens/references/phase-ledger-schema.md). UC-specific configuration/confirmation/activation contributes tokens only to workflow under `configuration_and_approval`, even inside an open generation phase. It does not start a generation timer and contributes no phase/workflow execution seconds. A Draft canonical identity may be initialized without granting source permission. Common setup outside the UC is recorded separately. Do not run Measure here.
+Read `docs/00-context/workflow/gates/EXPERIMENT-CONFIGURATION-GATE.md`, `docs/00-context/workflow/gates/MODEL-SELECTION-GATE.md`, the selected frozen UC and referenced baselines. Configuration has no summary/reconfirmation gate and root `.env` is optional. Prompt generation requires its four inputs already present; source generation additionally requires an existing activation receipt. Neither generation path creates missing inputs.
 
-Read `docs/00-context/workflow/gates/EXPERIMENT-CONFIGURATION-GATE.md`, `docs/00-context/workflow/gates/MODEL-SELECTION-GATE.md`, and the selected frozen UC. For activation, also read the referenced Business Rule baseline.
+## Validate an existing receipt
 
-## Prepare a configuration
+Require the existing Canonical Run JSON, approved Full/RQ3 prompt and closed prompt telemetry. Resolve an available Python executable; PowerShell uses `& '<absolute-python-path>' ...`.
 
-Load researcher defaults from the ignored root `.env` using `scripts/load_experiment_env.py --ensure`. If `.env` is created or any researcher field is empty, list all missing keys once and stop. Never read experiment settings from `finalsource/.env`, which is reserved for runtime secrets.
-
-Treat `.env` as convenience input only. Build a Draft configuration from it, derive UC/BR/flow paths, unique run IDs and run order, pin the activated Figma dataset version/checksum, show one complete summary, and ask the researcher to confirm the Configuration Gate. On confirmation, persist a new immutable Confirmed configuration; later `.env` changes require a new configuration ID.
-
-Create a Draft configuration at `docs/05-experiments/configurations/<CONFIG-ID>.json` from `templates/research/experiment-configuration.template.json`. Every new configuration uses schema 2.3, retains `timing_method: system_timestamp_delta`, and pins the active Figma manifest. Use every ordered BR ID and record both BR and flow baseline paths; do not select rules or flows. Baselines are frozen before source generation and checked again at activation.
-
-Freeze `flow_audit_rubric: completion-critical-flow-runtime-v2` in the schema-2.3 configuration before generation and include it in the Configuration Gate summary. Keep `audit_design.protocol` for auditor assignment. All Full/RQ3/model conditions in the comparison group share this rubric. Existing configurations and receipts retain their original method/version. New activation receipts use gate version 5, pin the configuration checksum and approved prompt path/checksum, and record the canonical variant. Historical gate-3/4 receipts remain readable without backfilling fields.
-
-Never infer a model tuple, replicate, run order, audit assignment, alternative timing method, or a `Confirmed` status. Stop for the researcher to confirm the complete configuration.
-
-## Activate one run
-
-Activate only after the researcher explicitly confirms the configuration. First validate it:
-
-```bash
-python3 .codex/skills/run-business-vibe-coding/scripts/validate_experiment_configuration.py docs/05-experiments/configurations/<CONFIG-ID>.json
+```text
+<python-executable> .codex/skills/gen-coding-prompt/scripts/preflight_configuration.py --uc-id <UC-ID> --run-json <canonical.json> --stage source
 ```
 
-Then create the receipt without copying model or researcher fields into it:
+Alternatively, `scripts/create_run_activation.py <config.json> <UC-ID> <RUN-ID> --run-json <canonical.json> --validate-existing` validates without writing. Valid existing receipts return success; absence or any identity/checksum/status error blocks progress. Never replace an existing receipt merely because it was created externally.
 
-```bash
-python3 .codex/skills/activate-experiment-run/scripts/create_run_activation.py \
-  docs/05-experiments/configurations/<CONFIG-ID>.json UC-01 <RUN-ID>
+## Optional creation outside generation
+
+Only an explicit researcher request to create a receipt authorizes this mode. The four pre-prompt inputs and approved prompt must already exist. Use:
+
+```text
+<python-executable> .codex/skills/activate-experiment-run/scripts/create_run_activation.py <config.json> <UC-ID> <RUN-ID> --run-json <canonical.json> --dry-run
 ```
 
-The script resolves the canonical approved Full/RQ3 prompt (or explicit `--prompt <path>`), validates its identity/structure, configuration and frozen baseline, and pins the configuration and approved prompt SHA-256 values. Use `--dry-run` first for read-only preflight. It writes only:
+On successful validation, repeat without `--dry-run` only within that explicit creation request. The helper writes a missing receipt at `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/run-activation.json`. It accepts an existing valid receipt without overwriting it. `--prompt <path>` must match the canonical approved prompt. This helper is never required to establish that a valid external receipt exists.
 
-`docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/run-activation.json`
+New receipts use gate version 5 and pin the actual configuration and approved prompt SHA-256 with the configured variant. Preserve schema 2.3 timing method, Figma version/checksum and runtime-v2 flow rubric, requested model/replicate/order/audit assignment, and immutable historical receipts. Missing/conflicting settings block; never infer or change them.
 
-It refuses to overwrite an existing receipt. Do not begin source-generation model/version capture, source timing, source mutation, Docker execution, or `$gen-source-code` within this skill; activation is the gate for those later operations. Configuration/approval is excluded from measured generation and workflow execution time.
+Do not generate source, create other missing inputs or run Measure in this skill. Follow the [execution timing protocol](../measure-uc-workflow-tokens/references/phase-ledger-schema.md): standalone UC-specific setup/approval/activation turns contribute workflow tokens under their actual semantic label and no generation execution seconds. External preparation has no fabricated local telemetry. `scripts/load_experiment_env.py` remains an optional preparation helper only.

@@ -1,6 +1,6 @@
 # Run/model activation gate
 
-This is logical gate 2 of `EXPERIMENT-CONFIGURATION-GATE.md`. Before initial source generation, require one complete run assignment in the Confirmed unified configuration and persist a compact activation receipt. Never default, infer or store `null` for requested model fields.
+This activation requirement follows automatic configuration preflight and prompt approval; configuration needs no additional confirmation turn. Before initial source generation, require one complete run assignment in the Confirmed unified configuration and validate an existing compact activation receipt prepared outside source generation. Never default, infer or store `null` for requested model fields.
 
 ## Fixed choices
 
@@ -11,11 +11,11 @@ This is logical gate 2 of `EXPERIMENT-CONFIGURATION-GATE.md`. Before initial sou
 | 3 | `Terra Medium` | `gpt-5.6-terra` | `medium` | `standard` |
 | 4 | `Custom` | researcher supplies an exact supported model ID | researcher supplies an allowed effort | researcher supplies `standard` or `pro` |
 
-When no valid assignment exists, stop before `codex --version`, timing or source edits. Collect the model choice, `run_id`, positive `replicate_index`, unique positive `run_order` and audit protocol in a Draft unified configuration, then stop for researcher confirmation. Do not preselect a choice unless asked.
+When no valid assignment exists, stop before `codex --version`, timing or source edits. Report the exact missing or conflicting model choice, `run_id`, positive `replicate_index`, unique positive `run_order` or audit protocol. The researcher supplies a complete Confirmed JSON outside the workflow; never preselect a choice, edit its status or add an administrative confirmation gate.
 
 ## Persistent receipt
 
-Create `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/run-activation.json` from `templates/research/run-activation.template.json`. Validate its configuration checksum and resolve the complete assignment directly from that configuration. Do not copy researcher, model tuple, replicate, order or audit design into the receipt.
+The researcher prepares `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/run-activation.json` using any tool; `templates/research/run-activation.template.json` describes the required format. Source preflight reads it only; a missing/invalid receipt blocks. An existing valid receipt is accepted without invoking `$activate-experiment-run` or proving how it was created. Validate its configuration checksum and resolve the complete assignment directly from that configuration. Do not copy researcher, model tuple, replicate, order or audit design into the receipt.
 
 The configuration entry must match the receipt UC/run identity. Use the confirmed generation tuple for repair unless the researcher explicitly assigns a different complete repair tuple. Persist each repair's requested/effective fields in canonical run JSON.
 

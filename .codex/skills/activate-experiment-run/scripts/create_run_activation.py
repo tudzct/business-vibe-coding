@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create one immutable run-activation receipt from a Confirmed configuration."""
+"""Validate an existing receipt, or optionally create a missing one outside generation."""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "gen-coding-prompt/scripts"))
 from validate_prompt_contract import validate_prompt
+from preflight_configuration import preflight
 
 
 def fail(message: str) -> None:
@@ -47,7 +48,7 @@ def validate_configuration(root: Path, configuration: Path) -> None:
 
 def load_json(path: Path, label: str) -> dict:
     try:
-        data = json.loads(path.read_text(encoding="utf-8"))
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
     except (OSError, json.JSONDecodeError) as exc:
         fail(f"cannot read {label}: {exc}")
     if not isinstance(data, dict):
@@ -60,8 +61,10 @@ def main() -> None:
     parser.add_argument("configuration", help="Confirmed configuration JSON under docs/05-experiments/configurations")
     parser.add_argument("uc_id", help="Use-case ID, e.g. UC-01")
     parser.add_argument("run_id", help="Configured run ID")
-    parser.add_argument("--prompt", type=Path, help="Approved prompt; defaults to the UC/variant canonical path")
+    parser.add_argument("--prompt", type=Path, help="Approved prompt; defaults to the Canonical Run JSON reference")
     parser.add_argument("--dry-run", action="store_true", help="Validate without writing activation")
+    parser.add_argument("--validate-existing", action="store_true", help="Require and validate an existing receipt; never create files")
+    parser.add_argument("--run-json", type=Path, help="Existing Canonical Run JSON; otherwise resolve a unique matching file")
     args = parser.parse_args()
 
     root = repository_root()
@@ -73,6 +76,9 @@ def main() -> None:
         fail(f"configuration does not exist: {configuration_rel}")
 
     validate_configuration(root, configuration)
+    preflight_result = preflight(args.uc_id, configuration=configuration, run_id=args.run_id,
+                                 run_json=args.run_json, stage="activation")
+    configuration_checksum = preflight_result["experiment_configuration"]["checksum"]
     config = load_json(configuration, "configuration")
     uc_entries = [item for item in config["use_cases"] if item.get("uc_id") == args.uc_id]
     run_entries = [item for item in config["runs"] if item.get("run_id") == args.run_id]
@@ -109,10 +115,22 @@ def main() -> None:
     variant = run_entries[0].get("prompt_variant", "full")
     suffix = "rq3-coding-prompt" if variant == "rq3" else "business-coding-prompt"
     prompt = args.prompt or root / f"docs/02-construction/coding-prompts/{args.uc_id}-{suffix}.md"
+    canonical = load_json(root / preflight_result["canonical_run"]["path"], "Canonical Run JSON")
+    canonical_prompt = root / canonical["coding_prompt"]["path"]
+    if args.prompt is None:
+        prompt = canonical_prompt
+    if prompt.resolve() != canonical_prompt.resolve():
+        fail("requested prompt differs from canonical approved prompt")
     prompt_result = validate_prompt(configuration, args.uc_id, args.run_id, prompt)
     output = root / "docs/02-construction/implementation" / args.uc_id / "runs" / args.run_id / "run-activation.json"
     if output.exists():
-        fail(f"refusing to overwrite existing receipt: {relative_to_root(output, root)}")
+        validate_prompt(configuration, args.uc_id, args.run_id, prompt, activation=output)
+        print(json.dumps({"status": "valid", "path": relative_to_root(output, root), "existing_receipt": True}, indent=2))
+        return
+    if args.validate_existing:
+        fail(f"missing run activation receipt: {relative_to_root(output, root)}; prepare it outside source generation")
+    if "sha256:" + hashlib.sha256(configuration.read_bytes()).hexdigest() != configuration_checksum:
+        fail("configuration changed during activation preflight")
     receipt = {
         "artifact_type": "run-activation",
         "gate_version": 5,
@@ -120,7 +138,7 @@ def main() -> None:
         "run_id": args.run_id,
         "prompt_variant": run_entries[0].get("prompt_variant", "full"),
         "configuration_artifact": configuration_rel,
-        "configuration_checksum": "sha256:" + hashlib.sha256(configuration.read_bytes()).hexdigest(),
+        "configuration_checksum": configuration_checksum,
         "activated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "status": "Confirmed",
         "approved_prompt": prompt_result["prompt"],

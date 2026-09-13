@@ -12,19 +12,19 @@ The repository also provides `audit-figma-ui-accuracy` as a standalone optional 
 
 ## Phase 1
 
-1. Load researcher defaults from root `.env`. If missing, create it from `.env.example`, list all blank researcher fields once and stop. After completion, show one Configuration Gate summary and persist a new schema-2.3 Confirmed configuration only after confirmation. Pin the active Figma version and manifest checksum.
+1. Require four prepared inputs: Confirmed configuration, frozen BR baseline, frozen flow baseline and Draft Canonical Run JSON. The researcher chooses their creation tool. Resolve one exact UC/run and validate the existing configuration pin, identities, fields and checksums read-only. Missing/invalid inputs stop immediately; never create, fill or repair them during generation. Do not require `.env`, show a Configuration Gate summary or ask for reconfirmation. New configurations use schema 2.3 and pin the exact Figma version and manifest checksum.
 2. Select one frozen `docs/01-inception/use-cases/uc-*.md` projection and the configured `full` or `rq3` variant.
-3. Verify the UC checksum and recorded Sheet ID, tab, range and retrieval time. Compare raw bytes first; if only line endings differ, require an exact canonical-LF or canonical-CRLF checksum match and retain `docs/02-construction/implementation/<UC-ID>/source-checksum-normalization.json`. Do not rewrite the frozen UC or refresh connected sources for a line-ending-only match.
-4. Resolve every associated BR and explicit flow in source order. Freeze `business-rule-baseline.json` and `flow-baseline.json`; do not select, omit or add rules/flows.
+3. Verify the UC checksum and recorded Sheet ID, tab, range and retrieval time. Compare raw bytes first; if only line endings differ, require an exact canonical-LF or canonical-CRLF checksum match and the existing `docs/02-construction/implementation/<UC-ID>/source-checksum-normalization.json`. Do not rewrite the frozen UC or create normalization evidence during generation.
+4. Verify every associated BR and explicit flow in source order against the existing frozen `business-rule-baseline.json`, referenced BR resource and `flow-baseline.json`; do not recreate, select, omit or add rules/flows. No invocation of `gen-business-rule-resource` is required when files already validate.
 5. Resolve referenced API and checksum-valid frozen Figma evidence when applicable. Do not infer a missing or ambiguous mapping.
-6. Generate one Draft prompt:
+6. After all preflight and baseline checks pass, generate one Draft prompt in the same work turn as steps 1-5, without an intermediate approval:
    - Full: `docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md`, containing Prompts A-F.
    - RQ3: `docs/02-construction/coding-prompts/<UC-ID>-rq3-coding-prompt.md`, containing only Prompts A-D. Keep Prompt E, Prompt F and BR baseline content out of this artifact.
 7. Show Prompt Gate. On confirmation, approve the prompt and close prompt telemetry internally. Stop before source work.
 
 ## Phase 2
 
-1. Require closed prompt telemetry and validate the `Approved` prompt against one Confirmed experiment configuration, then activate exactly one run before modifying `finalsource/`.
+1. Require closed prompt telemetry and validate the `Approved` prompt against one Confirmed configuration and an existing valid `run-activation.json` before modifying `finalsource/`. The receipt may be prepared by any tool outside generation. Missing/invalid receipts block; never auto-create one or require an activation skill invocation.
 2. Generate only the source required by the approved prompt. For RQ3, validate baseline identity without loading BR expressions into generation context; load them only after first-pass generation stops.
 3. Preserve first-pass source/hash/model/raw-time evidence and show Source Gate. On confirmation, close source telemetry internally and stop.
 4. Show First-pass Audit Gate. On confirmation, run permitted checks and Docker observations, assess every frozen BR and invoke `audit-flow-accuracy` under the configuration's frozen rubric. Schema 2.3 pins `completion-critical-flow-runtime-v2` before generation: source-only evidence cannot establish flow `correct`; a connected observation from specified entry through terminal outcome is required. Preserve sanitized, checksummed observation evidence bound to this source revision. Optional UI inspection or a separate researcher invocation of `audit-figma-ui-accuracy` is outside this gate and never a prerequisite.

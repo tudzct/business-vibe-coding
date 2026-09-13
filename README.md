@@ -32,15 +32,15 @@ Prompt E is Business Rules Compliance. Prompt F supplies implementation context 
 
 Phase 1:
 
+Prepare a complete `Confirmed` JSON under `docs/05-experiments/configurations/` first. Also prepare the frozen BR/flow baselines and Draft Canonical Run JSON using any tool. The command validates the existing inputs and generates the Draft without configuration reconfirmation or creation of missing helper files. If several configurations/runs match, specify `--run-json <canonical.json>` and, if needed, `--configuration <config.json> --run-id <RUN-ID>`; ambiguous or invalid inputs block generation.
+
 ```text
 $gen-coding-prompt docs/01-inception/use-cases/uc-01-register-account.md
 ```
 
-The command creates:
+The baselines, BR resource and Canonical Run JSON must already exist. The command creates:
 
 ```text
-docs/02-construction/implementation/UC-01/business-rule-baseline.json
-docs/02-construction/business-rules/UC-01-business-rules.json
 docs/02-construction/coding-prompts/UC-01-business-coding-prompt.md
 ```
 
@@ -52,7 +52,7 @@ Phase 2:
 $gen-source-code docs/02-construction/coding-prompts/UC-01-business-coding-prompt.md
 ```
 
-The command activates one configured run, generates source in `finalsource/`, records the first pass, performs evidence-based repairs, validates the permitted non-test gates and freezes the final source hash.
+The command validates an existing run activation receipt created by any tool, generates source in `finalsource/`, records the first pass, performs evidence-based repairs, validates the permitted non-test gates and freezes the final source hash.
 
 Render a completed run report:
 

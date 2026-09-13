@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow-tokens/scripts"))
-from metrics_contract import ROOT, digest, read_json, require, writable
+from metrics_contract import ROOT, digest, read_json, require, writable, epoch
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "run-business-vibe-coding/scripts"))
 from validate_experiment_configuration import validate as validate_configuration
 
@@ -80,6 +80,8 @@ def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow
     if activation is not None:
         receipt = read_json(writable(activation))
         require(receipt.get("status") == "Confirmed" and receipt.get("artifact_type") == "run-activation", "invalid activation")
+        require(type(receipt.get("gate_version")) is int and receipt["gate_version"] in {3, 4, 5}, "invalid activation gate version")
+        epoch(receipt.get("activated_at"))
         require(receipt.get("uc_id") == uc_id and receipt.get("run_id") == run_id, "activation UC/run mismatch")
         require(normalize_variant(receipt.get("prompt_variant", "full")) == variant, "activation/prompt variant mismatch")
         require(receipt.get("configuration_artifact") == configuration.relative_to(ROOT).as_posix()

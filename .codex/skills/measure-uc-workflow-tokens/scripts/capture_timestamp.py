@@ -5,6 +5,7 @@ import argparse
 import re
 import sys
 from datetime import datetime
+from pathlib import Path
 
 from metrics_contract import (CORE, AUX, TIMING_PROTOCOL, context, journal, require, run_lock, save_journal)
 from measure_uc_tokens import analyze_session, classified_phase, find_turn
@@ -23,6 +24,11 @@ def main():
     parser.add_argument("--reason", help="Required for abandoning a missing endpoint after interruption")
     args = parser.parse_args()
     _, run, folder = context(args.run_json)
+    if args.event == "start" and args.phase in ("prompt_generation", "source_generation"):
+        sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "gen-coding-prompt/scripts"))
+        from preflight_configuration import preflight
+        preflight(run["uc_id"], run_id=run["run_id"], run_json=args.run_json,
+                  stage="prompt" if args.phase == "prompt_generation" else "source")
     require(re.fullmatch(r"sha256:[0-9a-fA-F]{64}", args.source_revision), "source revision needs full SHA-256")
     session = analyze_session(args.session)
     turn = find_turn(session, args.turn_id)

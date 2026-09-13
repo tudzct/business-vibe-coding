@@ -4,6 +4,7 @@
 import hashlib
 import json
 import sys
+from datetime import datetime
 from pathlib import Path
 
 EFFORTS = {"none", "low", "medium", "high", "xhigh", "max"}
@@ -14,6 +15,28 @@ SCHEMA_VERSIONS = {"2.0", "2.1", "2.2", "2.3"}
 TIMING_METHOD = "system_timestamp_delta"
 LEGACY_FLOW_RUBRIC = "completion-critical-flow-v1"
 RUNTIME_FLOW_RUBRIC = "completion-critical-flow-runtime-v2"
+ROOT = Path(__file__).resolve().parents[4]
+
+
+def unique_object(pairs):
+    data = {}
+    for key, value in pairs:
+        if key in data:
+            raise ValueError(f"duplicate JSON field: {key}")
+        data[key] = value
+    return data
+
+
+def invalid_constant(value):
+    raise ValueError(f"non-finite JSON value: {value}")
+
+
+def read_configuration_json(path):
+    data = json.loads(path.read_text(encoding="utf-8-sig"), object_pairs_hook=unique_object,
+                      parse_constant=invalid_constant)
+    if not isinstance(data, dict):
+        raise ValueError(f"JSON object required: {path}")
+    return data
 
 
 def flow_rubric(data):
@@ -27,12 +50,21 @@ def flow_rubric(data):
 def text(value, field):
     if not isinstance(value, str) or not value.strip():
         raise ValueError(f"{field} must be a non-empty string")
+    if "<" in value or ">" in value:
+        raise ValueError(f"{field} contains an unresolved template placeholder")
     return value.strip()
 
 
 def positive(value, field):
     if not isinstance(value, int) or isinstance(value, bool) or value < 1:
         raise ValueError(f"{field} must be a positive integer")
+    return value
+
+
+def identifier(value, field):
+    value = text(value, field)
+    if value in {".", ".."} or not all(c.isalnum() or c in "-_." for c in value):
+        raise ValueError(f"{field} must be a safe identifier, not a path")
     return value
 
 
@@ -48,7 +80,10 @@ def validate_model(model, field):
 
 
 def validate(path):
-    data = json.loads(path.read_text(encoding="utf-8"))
+    path = path.resolve()
+    if not path.is_relative_to(ROOT / "docs/05-experiments/configurations"):
+        raise ValueError("configuration must be stored under docs/05-experiments/configurations")
+    data = read_configuration_json(path)
     schema_version = data.get("schema_version")
     if schema_version not in SCHEMA_VERSIONS:
         raise ValueError(f"schema_version must be one of {sorted(SCHEMA_VERSIONS)}")
@@ -57,6 +92,10 @@ def validate(path):
         raise ValueError("configuration must be Confirmed")
     for field in ("configuration_id", "comparison_group_id", "researcher_id", "decided_at", "sheet_revision"):
         text(data.get(field), field)
+    identifier(data["configuration_id"], "configuration_id")
+    decided = datetime.fromisoformat(data["decided_at"].replace("Z", "+00:00"))
+    if decided.tzinfo is None:
+        raise ValueError("decided_at must include a timezone")
     timing_method = data.get("timing_method")
     if schema_version in {"2.1", "2.2", "2.3"} and timing_method != TIMING_METHOD:
         raise ValueError(f"schema {schema_version} timing_method must be {TIMING_METHOD}")
@@ -71,13 +110,15 @@ def validate(path):
         expected_path = f"resource/figma-design-dataset/{version}/manifest.json"
         if manifest_value.replace("\\", "/") != expected_path:
             raise ValueError("figma_dataset manifest path/version mismatch")
-        manifest_path = path.resolve().parents[3] / manifest_value
+        manifest_path = (ROOT / manifest_value).resolve()
+        if not manifest_path.is_relative_to(ROOT / "resource/figma-design-dataset"):
+            raise ValueError("figma_dataset manifest must stay inside the dataset directory")
         if not manifest_path.is_file():
             raise ValueError("figma_dataset manifest does not exist")
         expected_hash = "sha256:" + hashlib.sha256(manifest_path.read_bytes()).hexdigest()
         if figma.get("manifest_sha256") != expected_hash:
             raise ValueError("figma_dataset manifest checksum mismatch")
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        manifest = read_configuration_json(manifest_path)
         if manifest.get("dataset_version") != version or manifest.get("overall_status") != "complete":
             raise ValueError("figma_dataset must reference a complete matching version")
     audit = data.get("audit_design")
@@ -91,12 +132,14 @@ def validate(path):
         raise ValueError("use_cases must be non-empty")
     uc_ids = set()
     for index, uc in enumerate(use_cases):
-        uc_id = text(uc.get("uc_id"), f"use_cases[{index}].uc_id")
+        if not isinstance(uc, dict):
+            raise ValueError(f"use_cases[{index}] must be an object")
+        uc_id = identifier(uc.get("uc_id"), f"use_cases[{index}].uc_id")
         if uc_id in uc_ids:
             raise ValueError(f"duplicate UC ID: {uc_id}")
         uc_ids.add(uc_id)
         ids = uc.get("ordered_br_ids")
-        if not isinstance(ids, list) or not ids or len(ids) != len(set(ids)) or any(not isinstance(v, str) or not v.strip() for v in ids):
+        if not isinstance(ids, list) or not ids or any(not isinstance(v, str) or not v.strip() for v in ids) or len(ids) != len(set(ids)):
             raise ValueError(f"use_cases[{index}].ordered_br_ids must be a non-empty unique string array")
         text(uc.get("business_rule_baseline"), f"use_cases[{index}].business_rule_baseline")
         if schema_version in {"2.2", "2.3"}:
@@ -108,8 +151,10 @@ def validate(path):
     run_ids, orders, assignments = set(), set(), set()
     for index, run in enumerate(runs):
         prefix = f"runs[{index}]"
-        run_id = text(run.get("run_id"), prefix + ".run_id")
-        uc_id = text(run.get("uc_id"), prefix + ".uc_id")
+        if not isinstance(run, dict):
+            raise ValueError(f"{prefix} must be an object")
+        run_id = identifier(run.get("run_id"), prefix + ".run_id")
+        uc_id = identifier(run.get("uc_id"), prefix + ".uc_id")
         if run_id in run_ids or uc_id not in uc_ids:
             raise ValueError(f"{prefix} has duplicate run ID or unknown UC")
         run_ids.add(run_id)
@@ -133,7 +178,9 @@ def validate(path):
     for peer_path in path.parent.glob("*.json"):
         if peer_path.resolve() == path.resolve():
             continue
-        peer = json.loads(peer_path.read_text(encoding="utf-8-sig"))
+        peer = read_configuration_json(peer_path)
+        if peer.get("artifact_type") == "experiment-configuration" and peer.get("configuration_id") == data["configuration_id"]:
+            raise ValueError("duplicate configuration_id; select a unique immutable configuration")
         if (peer.get("artifact_type") == "experiment-configuration" and peer.get("status") == "Confirmed"
                 and peer.get("comparison_group_id") == data["comparison_group_id"] and flow_rubric(peer) != rubric):
             raise ValueError("comparison group mixes flow audit rubrics; use a new comparison_group_id")
@@ -146,5 +193,5 @@ if __name__ == "__main__":
     try:
         result = validate(Path(sys.argv[1]))
         print(json.dumps({"status": "valid", "configuration_id": result["configuration_id"], "flow_audit_rubric": flow_rubric(result), "use_cases": len(result["use_cases"]), "runs": len(result["runs"])}, indent=2))
-    except (OSError, json.JSONDecodeError, ValueError) as exc:
+    except (OSError, ValueError, TypeError, KeyError, AttributeError) as exc:
         raise SystemExit(f"experiment configuration error: {exc}")

@@ -38,7 +38,7 @@ Expected repository invariants:
 
 ## Local configuration
 
-Experiment defaults live in ignored root `.env`. If absent, create it from root `.env.example`; the researcher fills the listed experiment fields once. Validate with `.codex/skills/activate-experiment-run/scripts/load_experiment_env.py --ensure`. Do not copy runtime secrets into the root experiment file. New configurations freeze these values and the active Figma version/checksum.
+The researcher prepares `docs/05-experiments/configurations/<CONFIG-ID>.json` from `templates/research/experiment-configuration.template.json`, fills every required value and sets `status: Confirmed` before calling `$gen-coding-prompt`. The researcher also prepares frozen BR/flow baselines and a Draft Canonical Run JSON using any chosen tool before invocation. The skill validates all four inputs read-only and immediately generates the Draft; any missing/invalid input blocks without creating a replacement. Before source generation, an existing valid activation receipt is also required. No particular creation skill/command is mandatory; approval remains at Prompt Gate. Root `.env` and `load_experiment_env.py` are optional preparation conveniences, not prerequisites; do not create them or stop for their absence during generation. Never copy runtime secrets into experiment configuration. New configurations pin the exact Figma version/checksum, timing method and flow rubric.
 
 `finalsource/.env` is ignored and must not be committed. If it is absent, create it only when the researcher asks to initialize runtime:
 

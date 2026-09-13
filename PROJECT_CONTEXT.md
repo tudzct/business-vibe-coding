@@ -8,6 +8,8 @@
 - **Application user:** an actor represented in a use case.
 - **Reviewer:** an independent reader of the method and evidence.
 
+Configuration confirmation is supplied by the researcher's externally prepared JSON with `status: Confirmed`, not an additional chat approval. Prompt generation requires the configuration, BR baseline, flow baseline and Draft Canonical Run JSON already on disk, validates them read-only and persists only the Draft prompt and live measurement evidence in the work turn; the first confirmation gate is Prompt Gate. Any integrity issue blocks generation rather than being inferred or auto-corrected.
+
 ## Research objective
 
 This project studies automated source-code generation from use-case specifications enriched with explicit Business Rules. Rules are expressed as OCL invariants, preconditions or postconditions when representable; remaining constraints stay in authoritative natural language.
@@ -47,7 +49,7 @@ The 16 files under `docs/01-inception/use-cases/` are frozen projections of this
 
 ## Business-rule baseline
 
-Phase 1 uses all BRs supplied for the active UC. There is no rule-selection mode. Before prompt generation, the workflow records:
+Phase 1 uses all BRs supplied for the active UC. There is no rule-selection mode. Before invoking prompt generation, preparation by the researcher's chosen tool records:
 
 - frozen UC path and SHA-256;
 - spreadsheet ID, tab, range and retrieval time;
@@ -57,7 +59,7 @@ Phase 1 uses all BRs supplied for the active UC. There is no rule-selection mode
 
 This receipt prevents evaluation criteria from changing after source generation; it is not an approval or selection of rules.
 
-Before generation the workflow also freezes a supplementary flow baseline from every explicit Basic/Main, Alternative and Exception Flow. A flow is incorrect only when a completion-critical step fails or its specified terminal outcome is not achieved. Flow scoring never changes the BR denominator or BR result.
+Before invoking generation, preparation also freezes a supplementary flow baseline from every explicit Basic/Main, Alternative and Exception Flow. A flow is incorrect only when a completion-critical step fails or its specified terminal outcome is not achieved. Flow scoring never changes the BR denominator or BR result.
 
 New schema-2.3 configurations freeze `flow_audit_rubric: completion-critical-flow-runtime-v2` before generation. This rubric requires connected integrated-runtime observation for flow `correct`, with evidence linked to UC/run/stage/baseline/source revision. Source findings remain separate; unavailable critical/outcome or connected-runtime proof means `not_evaluable` unless a blocking failure is evidenced. Initial and final use the same rubric. Authorized repair automatically observes every flow on final source before repair closure. When repair is skipped and source is unchanged, the original first-pass assessment remains terminal evidence, preserving its original stage/ID/time; no duplicate assessment is required. Legacy configurations and v1 results remain immutable and are not mixed into comparisons using v2. Weights, formulas, BR criteria, gates and generation-only timing remain unchanged.
 

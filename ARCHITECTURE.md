@@ -19,6 +19,7 @@ flowchart LR
     P[Prompt A-F]
     APPROVE{Researcher approval}
     CONFIG[Confirmed experiment configuration]
+    PREFLIGHT[Automatic integrity preflight]
     RUN[Run activation]
     SRC[finalsource/fe + finalsource/be]
     AUDIT[BR conformance audit]
@@ -27,6 +28,8 @@ flowchart LR
     FREEZE[Final source hash + run JSON]
 
     R --> CONFIG
+    CONFIG --> PREFLIGHT
+    PREFLIGHT --> BASE
     SHEET --> UC
     FIGMA --> P
     UC --> BASE
@@ -46,6 +49,8 @@ flowchart LR
 ```
 
 ### Phase 1 - Generate Business Coding Prompt
+
+The researcher supplies a complete Confirmed configuration JSON before invocation. Automatic preflight validates its existing checksum pin, both frozen baselines and the Draft Canonical Run JSON. All four inputs must exist before invocation; generation creates the Draft and live measurement evidence only. The researcher chooses the creation method for these inputs and the activation receipt required before source generation. There is no configuration summary/confirmation gate; missing or conflicting evidence blocks generation. Prompt approval and source activation remain required.
 
 Inputs:
 

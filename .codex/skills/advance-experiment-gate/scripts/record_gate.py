@@ -17,7 +17,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-generation-m
 from calculate_metrics import terminal_assessment_stage, validate_flow, validate_snapshot
 
 NEXT = {
-    "configuration": {"confirmed": "prompt"},
     "prompt": {"confirmed": "source"},
     "source": {"confirmed": "first_pass_audit"},
     "first_pass_audit": {"confirmed": "repair_decision"},
@@ -27,15 +26,17 @@ NEXT = {
 }
 
 # Read old receipts without rewriting them or requiring their obsolete gate.
-LEGACY_NEXT = {**NEXT, "repair_decision": {"authorized": "repair", "skipped": "final_audit"},
+LEGACY_NEXT = {**NEXT, "configuration": {"confirmed": "prompt"},
+               "repair_decision": {"authorized": "repair", "skipped": "final_audit"},
                "repair": {"confirmed": "final_audit"}, "final_audit": {"confirmed": "final_metrics"}}
 
 
 def validate_gate_history(gates, gate):
     history = gates.get("history")
     require(isinstance(history, list), "invalid gate history")
-    possible = {"configuration"}
+    possible = {"prompt", "configuration"}
     for row in history:
+        require(isinstance(row, dict), "invalid gate receipt")
         prior = row.get("gate")
         require(prior in possible, "invalid gate sequence")
         possible = {table[prior][row["outcome"]] for table in (NEXT, LEGACY_NEXT)
@@ -43,7 +44,8 @@ def validate_gate_history(gates, gate):
         require(possible, "invalid gate outcome")
     current = gates.get("current")
     require(current in possible, "gate history does not reach current gate")
-    require(current == gate or (current == "final_audit" and gate == "final_metrics"), "gate is not current")
+    legacy_configuration = current == "configuration" and gate == "prompt" and not history
+    require(current == gate or legacy_configuration or (current == "final_audit" and gate == "final_metrics"), "gate is not current")
     return history
 
 
@@ -99,7 +101,7 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None):
     require(len(assignments) == 1, "gate needs configured UC/run")
     variant = normalize_variant(assignments[0].get("prompt_variant", "full"))
     require(normalize_variant(run.get("prompt_variant", "full")) == variant, "canonical run/configuration variant mismatch")
-    if gate not in {"configuration", "prompt"}:
+    if gate != "prompt":
         activation = read_json(folder / "run-activation.json")
         require(activation.get("uc_id") == run["uc_id"] and activation.get("run_id") == run["run_id"]
                 and activation.get("status") == "Confirmed", "gate activation mismatch")
