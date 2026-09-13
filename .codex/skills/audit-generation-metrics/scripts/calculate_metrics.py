@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow-tokens" / "scripts"))
-from metrics_contract import atomic_write, validate_metrics, context, run_lock
+from metrics_contract import atomic_write, validate_metrics, context, run_lock, epoch
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-flow-accuracy" / "scripts"))
 from score_flow_accuracy import calculate as calculate_flow, validate_run_result, validate_evidence
 from runtime_contract import method, configured_rubric
@@ -72,7 +72,13 @@ def validate_flow(data, folder):
             recalculated = calculate_flow(assessment["input"])
             if recalculated != assessment:
                 raise ValueError("persisted flow assessment differs from validated evidence/scoring")
-            prior_run = {**data, "flow_accuracy": {**block, "assessments": assessments[:index]}}
+            # Late researcher replies may reference old evidence. They did not exist
+            # at this historical capture and must not invalidate its chronology.
+            prior_followups = [r for r in block.get("followups", []) if not (
+                r.get("schema_version") == 2 and r.get("mode") == "researcher_result"
+                and epoch(r["recorded_at"]) > epoch(assessment["input"]["captured_at"]))]
+            prior_run = {**data, "flow_accuracy": {**block, "assessments": assessments[:index],
+                                                   "followups": prior_followups}}
             validate_run_result(prior_run, folder, recalculated)
     if data.get("run_status") == "complete" and current.get("stage") != "final":
         validate_unchanged_initial(data, current)

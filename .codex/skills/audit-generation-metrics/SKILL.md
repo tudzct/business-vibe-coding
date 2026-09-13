@@ -24,4 +24,6 @@ When flow results are partial, preserve all measured fields and immediately disp
 
 Flow assessment is an automatic child operation of first-pass audit and authorized repair verification and remains supplementary to the BR baseline. UI/Figma scoring and its Excel cells remain entirely researcher-managed.
 
+Report canonical `flow_accuracy.current_summary` using `accepted-audit-results-v1`: a repair/source change or later inconclusive audit does not erase an accepted verdict. New conclusive audit results update it per flow. Keep final-source assessment validation and limitations separate from accepted experiment results, with actual source provenance. Both follow-up paths save directly to canonical JSON; never reset its percentages from the latest raw assessment after the flow scorer returns.
+
 Report the flow schema/rubric alongside results. `calculate_metrics.py` accepts legacy v1 and runtime-v2, revalidates v2 evidence/links/scores, and rejects mixed initial/final methods. Do not relabel historical scores or combine unlike rubrics in a comparison. Audit never authorizes repairs; first-pass defects go to Repair Decision Gate. During authorized repair, return findings to the repair caller within its existing scope. Audit/runtime contributes no generation execution seconds.
