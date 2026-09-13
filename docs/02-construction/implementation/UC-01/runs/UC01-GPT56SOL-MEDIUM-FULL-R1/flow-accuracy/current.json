@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "assessment_id": "UC01-GPT56SOL-MEDIUM-FULL-R1-final-20260913",
+  "stage": "final",
+  "source_revision": "sha256:a951d8f9760544c3372a98d10a706e70998e9d93959330c91ddca05cf7bd4fd0",
+  "rubric_id": "completion-critical-flow-v1",
+  "followup_ids": [],
+  "status": "not_evaluable",
+  "measurement_status": "not_evaluable",
+  "has_incorrect_flows": false,
+  "result_basis": "rubric_evidence",
+  "researcher_result_count": 0,
+  "counts": {
+    "main": 1,
+    "alternative": 2,
+    "exception": 1,
+    "total": 4,
+    "correct": 0,
+    "incorrect": 0,
+    "not_evaluable": 4,
+    "evaluated": 0
+  },
+  "flow_accuracy_percent": null,
+  "flow_error_percent": null,
+  "evaluated_accuracy_percent": null,
+  "evaluated_error_percent": null,
+  "evaluated_coverage_percent": 0.0,
+  "accuracy_lower_bound_percent": 0.0,
+  "accuracy_upper_bound_percent": 100.0,
+  "flows": [
+    {
+      "flow_id": "BF-1",
+      "type": "main",
+      "status": "not_evaluable",
+      "result_source": "assessment",
+      "record_id": "UC01-GPT56SOL-MEDIUM-FULL-R1-final-20260913"
+    },
+    {
+      "flow_id": "AF-1",
+      "type": "alternative",
+      "status": "not_evaluable",
+      "result_source": "assessment",
+      "record_id": "UC01-GPT56SOL-MEDIUM-FULL-R1-final-20260913"
+    },
+    {
+      "flow_id": "AF-2",
+      "type": "alternative",
+      "status": "not_evaluable",
+      "result_source": "assessment",
+      "record_id": "UC01-GPT56SOL-MEDIUM-FULL-R1-final-20260913"
+    },
+    {
+      "flow_id": "EF-1",
+      "type": "exception",
+      "status": "not_evaluable",
+      "result_source": "assessment",
+      "record_id": "UC01-GPT56SOL-MEDIUM-FULL-R1-final-20260913"
+    }
+  ],
+  "pending_flows": [
+    {
+      "flow_id": "BF-1",
+      "missing_targets": [
+        {
+          "target_id": "BF-1.2",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        },
+        {
+          "target_id": "BF-1.3",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        },
+        {
+          "target_id": "BF-1.4",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        },
+        {
+          "target_id": "BF-1.5",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        },
+        {
+          "target_id": "BF-1.6",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        },
+        {
+          "target_id": "BF-1.7",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        },
+        {
+          "target_id": "BF-1.8",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        },
+        {
+          "target_id": "BF-1.9",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        },
+        {
+          "target_id": "BF-1.10",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        },
+        {
+          "target_id": "terminal_outcome",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        }
+      ],
+      "limitations": [
+        "Final source was rebuilt into Compose images; frontend /register returned HTTP 200, while API proxy health returned 502 because backend MySQL authentication received error 1045.",
+        "Computer-use exposed no browser or app surface; no connected user action, request, persistence, session, navigation or exception-branch outcome could be observed.",
+        "The initial-stage researcher-provided 100% flow verdict is retained with its original source provenance and is not relabeled as a final-source observation."
+      ],
+      "attempts": [],
+      "resolution_options": [
+        "researcher_result",
+        "llm_measurement"
+      ]
+    },
+    {
+      "flow_id": "AF-1",
+      "missing_targets": [
+        {
+          "target_id": "AF-1.1",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        },
+        {
+          "target_id": "AF-1.2",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        },
+        {
+          "target_id": "AF-1.3",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        },
+        {
+          "target_id": "terminal_outcome",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        }
+      ],
+      "limitations": [
+        "Final source was rebuilt into Compose images; frontend /register returned HTTP 200, while API proxy health returned 502 because backend MySQL authentication received error 1045.",
+        "Computer-use exposed no browser or app surface; no connected user action, request, persistence, session, navigation or exception-branch outcome could be observed.",
+        "The initial-stage researcher-provided 100% flow verdict is retained with its original source provenance and is not relabeled as a final-source observation."
+      ],
+      "attempts": [],
+      "resolution_options": [
+        "researcher_result",
+        "llm_measurement"
+      ]
+    },
+    {
+      "flow_id": "AF-2",
+      "missing_targets": [
+        {
+          "target_id": "AF-2.1",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        },
+        {
+          "target_id": "AF-2.2",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        },
+        {
+          "target_id": "AF-2.3",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        },
+        {
+          "target_id": "terminal_outcome",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        }
+      ],
+      "limitations": [
+        "Final source was rebuilt into Compose images; frontend /register returned HTTP 200, while API proxy health returned 502 because backend MySQL authentication received error 1045.",
+        "Computer-use exposed no browser or app surface; no connected user action, request, persistence, session, navigation or exception-branch outcome could be observed.",
+        "The initial-stage researcher-provided 100% flow verdict is retained with its original source provenance and is not relabeled as a final-source observation."
+      ],
+      "attempts": [],
+      "resolution_options": [
+        "researcher_result",
+        "llm_measurement"
+      ]
+    },
+    {
+      "flow_id": "EF-1",
+      "missing_targets": [
+        {
+          "target_id": "EF-1.1",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        },
+        {
+          "target_id": "EF-1.2",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        },
+        {
+          "target_id": "terminal_outcome",
+          "reason": "Final-source execution did not reach this target: backend/database authentication remains blocked and no controllable browser was available. Source paths exist in the frozen final archive but do not prove the terminal behavior."
+        }
+      ],
+      "limitations": [
+        "Final source was rebuilt into Compose images; frontend /register returned HTTP 200, while API proxy health returned 502 because backend MySQL authentication received error 1045.",
+        "Computer-use exposed no browser or app surface; no connected user action, request, persistence, session, navigation or exception-branch outcome could be observed.",
+        "The initial-stage researcher-provided 100% flow verdict is retained with its original source provenance and is not relabeled as a final-source observation."
+      ],
+      "attempts": [],
+      "resolution_options": [
+        "researcher_result",
+        "llm_measurement"
+      ]
+    }
+  ]
+}

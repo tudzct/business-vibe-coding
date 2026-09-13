@@ -1,0 +1,33 @@
+{
+  "artifact_type": "source-input",
+  "uc_id": "UC-01",
+  "run_id": "UC01-GPT56SOL-MEDIUM-FULL-R1",
+  "recorded_at": "2026-09-13T14:35:59Z",
+  "configuration": {
+    "path": "docs/05-experiments/configurations/CFG-UC01-GPT56SOL-MEDIUM-FULL-20260913.json",
+    "sha256": "sha256:f561633d985c8be0a9aa8b6d7cdc02d1b3ab917c75f7128a0fb95531cd372b3f"
+  },
+  "approved_prompt": {
+    "path": "docs/02-construction/implementation/UC-01/runs/UC01-GPT56SOL-MEDIUM-FULL-R1/UC-01-business-coding-prompt.md",
+    "sha256": "sha256:b52133d0f19e72463a34baf5f8d796d0090446d5b3adb6b16ff1396d1c8778a4"
+  },
+  "approved_schema": "docs/02-construction/implementation/UC-01/schema.json",
+  "prompt_variant": "full",
+  "model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "requested_reasoning_mode": "standard"
+  },
+  "replicate_index": 1,
+  "run_order": 1,
+  "comparison_group_id": "CG-UC01-20260913",
+  "input_source_sha256": "sha256:88150646558078215bb8feb051cf5c3056e4f3163091333b73ce6de9f587677c",
+  "input_tree_sha256": {
+    "be": "a4aced28a5595c7425f25bd1308b1346854e16b9ae1be978eb7c4eb21dcd5d97",
+    "fe": "928ad7bb4a0fb56c3a0406fa694ea1d036b1ade3b7705ff613d8c573745cc45f"
+  },
+  "source_hash_method": "sha256 of UTF-8 be:<be tree sha256> LF fe:<fe tree sha256> LF; each tree hash includes sorted relative path, NUL, raw bytes, NUL",
+  "baseline_evidence": ".codex/skills/restore-source-baseline/assets/source-baseline.zip and read-only --check matched both trees",
+  "predecessor_run_id": null,
+  "predecessor_final_source_sha256": null
+}

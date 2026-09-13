@@ -1,12 +1,12 @@
 {
   "artifact_type": "docker-environment-current",
-  "observed_at": "2026-08-29T03:07:06Z",
-  "repository_revision": "5684cc9",
-  "source_revision": "sha256:b6f0b95196c7d6538fd416c54ccc5f285068a0b1f215dd5a48b7be9fcc55115c",
+  "observed_at": "2026-09-13T15:17:17Z",
+  "repository_revision": "4bc443b",
+  "source_revision": "sha256:a951d8f9760544c3372a98d10a706e70998e9d93959330c91ddca05cf7bd4fd0",
   "docker": {
-    "cli": "29.6.1",
-    "compose": "5.3.0",
-    "daemon": "29.6.1"
+    "cli": "29.2.1",
+    "compose": "5.0.2",
+    "daemon": "29.2.1"
   },
   "configuration": {
     "env_present": true,
@@ -15,11 +15,11 @@
     "compose_valid": true
   },
   "services": {
-    "database": "running and healthy; approved users schema inspected read-only",
-    "backend": "current repaired image running and healthy",
-    "frontend": "current repaired image running and healthy; /register reachable and same-origin /api proxy observed"
+    "database": "running and healthy; credentials from current environment rejected and schema not inspected",
+    "backend": "repaired source image built but unhealthy: MySQL 1045",
+    "frontend": "repaired source image healthy; /register HTTP 200 on temporary host port 18081; /api proxy HTTP 502"
   },
-  "status": "READY",
-  "blocking_incident": null,
-  "next_action": "Use http://localhost:8081/register in the browser or http://localhost:8081/api/auth/register for host-side API calls."
+  "status": "BLOCKED",
+  "blocking_incident": "backend-startup-mysql-application-user-access-denied",
+  "next_action": "Resolve persistent-volume credential mismatch with separate researcher authorization, then rerun integrated observation; preserve the database volume."
 }

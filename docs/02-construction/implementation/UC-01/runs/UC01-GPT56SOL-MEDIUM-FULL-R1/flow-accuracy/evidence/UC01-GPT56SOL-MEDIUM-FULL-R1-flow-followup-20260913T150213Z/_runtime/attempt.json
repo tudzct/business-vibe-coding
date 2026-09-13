@@ -1,0 +1,47 @@
+{
+  "artifact_type": "flow-followup-bounded-observation",
+  "followup_id": "UC01-GPT56SOL-MEDIUM-FULL-R1-flow-followup-20260913T150213Z",
+  "uc_id": "UC-01",
+  "run_id": "UC01-GPT56SOL-MEDIUM-FULL-R1",
+  "source_revision": "sha256:147a1cac5801f7e08ba74af17c5fd454e2c145bad00884b5e9497571f10069ab",
+  "rubric_id": "completion-critical-flow-v1",
+  "planned_at": "2026-09-13T15:01:23Z",
+  "ended_at": "2026-09-13T15:02:13Z",
+  "time_limit_seconds": 90,
+  "scope": "Read-only Compose health, registration route and API reachability, UI availability; no registration payload, database edit, service restart or fault injection.",
+  "source_hash_matches_first_pass": true,
+  "services": {
+    "frontend": {
+      "container_id": "eaa78579ec52a81947df8abefd0d5da3b6a07978cca1005d2c85cf2f4331aa54",
+      "image_id": "sha256:a2fcaf4c54b7983f14d1f870c39a7e4a4a96d522e95e89993f103f0ce3b6d001",
+      "state": "running",
+      "health": "healthy"
+    },
+    "backend": {
+      "container_id": "e38e4ccd7a1c485b129761a381e8bde19aae7985c3ed5818222de68cd62591d9",
+      "image_id": "sha256:58d1ce73382aef7935671f8d3871c7afdb09d18eee4eb5bd3487f20906514090",
+      "state": "running/restarting",
+      "health": "starting/unhealthy"
+    },
+    "database": {
+      "container_id": "e617069804bc68d558ec26c1f406f77b928c33f8f72bdf952b036005702b680b",
+      "image_id": "sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb",
+      "state": "running",
+      "health": "healthy"
+    }
+  },
+  "observed": {
+    "GET /register": "HTTP 200 text/html",
+    "GET /api/health through frontend": "HTTP 502",
+    "GET /api/health direct backend": "unavailable; connection failure",
+    "backend_diagnostic": "TypeORM database connection rejected with MySQL access-denied error 1045",
+    "browser_surface": "computer-use state reported no apps or browsers"
+  },
+  "flow_outcomes": {
+    "BF-1": "No UI submission, persistence, session or redirect observation; backend unavailable.",
+    "AF-1": "No UI interaction or scoped network capture to show validation error and absent API call.",
+    "AF-2": "No reachable backend or UI interaction; no duplicate-email conflict or rendered error observation.",
+    "EF-1": "No UI interaction or authorized way to produce and observe an unexpected request failure."
+  },
+  "sensitive_payloads_saved": false
+}

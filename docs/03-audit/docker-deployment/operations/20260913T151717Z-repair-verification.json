@@ -1,0 +1,19 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "mode": "run",
+  "observed_at": "2026-09-13T15:17:17Z",
+  "uc_id": "UC-01",
+  "run_id": "UC01-GPT56SOL-MEDIUM-FULL-R1",
+  "source_revision": "sha256:a951d8f9760544c3372a98d10a706e70998e9d93959330c91ddca05cf7bd4fd0",
+  "commands": [
+    {"identifier": "compose build backend frontend", "exit_code": 0},
+    {"identifier": "compose up backend frontend using temporary host-port overrides", "exit_code": 1, "error": "backend became unhealthy after MySQL authentication rejection"},
+    {"identifier": "compose up frontend without dependencies", "exit_code": 0},
+    {"identifier": "GET /register", "http_status": 200},
+    {"identifier": "GET /api/health through frontend", "http_status": 502}
+  ],
+  "status": "BLOCKED",
+  "incident_fingerprint": "backend-startup-mysql-application-user-access-denied",
+  "database_volume_preserved": true,
+  "credentials_or_payloads_saved": false
+}

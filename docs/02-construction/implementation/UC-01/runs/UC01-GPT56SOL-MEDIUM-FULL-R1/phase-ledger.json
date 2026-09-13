@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "uc_id": "UC-01",
+  "run_id": "UC01-GPT56SOL-MEDIUM-FULL-R1",
+  "session_id": "01a09b13-6599-7f71-be20-f222170bf021",
+  "phases": {
+    "prompt_generation": {
+      "status": "closed",
+      "first_turn_id": "01a09b17-a138-74a2-aafd-6041aab7c734",
+      "measurement_turn_id": "01a09b1d-3bb2-7cd3-a5f5-df6e52ee2fcf"
+    },
+    "source_generation": {
+      "status": "closed",
+      "first_turn_id": "01a09b31-164e-79f0-8b99-c969bc3afb14",
+      "measurement_turn_id": "01a09b38-f464-7dc2-8838-a92cbf8e3253"
+    },
+    "repair": {
+      "status": "open",
+      "first_turn_id": "01a09b4f-832f-79b1-ac10-8751869079c3"
+    }
+  },
+  "segments": [
+    {
+      "start": {
+        "at": "2026-09-13T21:08:23.732+07:00",
+        "epoch_ms": 1789308503732,
+        "timing_protocol": "generation_execution_only_v1",
+        "uc_id": "UC-01",
+        "run_id": "UC01-GPT56SOL-MEDIUM-FULL-R1",
+        "session_id": "01a09b13-6599-7f71-be20-f222170bf021",
+        "turn_id": "01a09b17-a138-74a2-aafd-6041aab7c734",
+        "phase": "prompt_generation",
+        "event": "start",
+        "segment_id": "prompt-001",
+        "source_revision": "sha256:945ed5b61774b7cc571ec1e61f135de13924e466cab6c7a8291e0980e58ad431"
+      },
+      "end": {
+        "at": "2026-09-13T21:09:21.396+07:00",
+        "epoch_ms": 1789308561396,
+        "timing_protocol": "generation_execution_only_v1",
+        "uc_id": "UC-01",
+        "run_id": "UC01-GPT56SOL-MEDIUM-FULL-R1",
+        "session_id": "01a09b13-6599-7f71-be20-f222170bf021",
+        "turn_id": "01a09b17-a138-74a2-aafd-6041aab7c734",
+        "phase": "prompt_generation",
+        "event": "end",
+        "segment_id": "prompt-001",
+        "source_revision": "sha256:945ed5b61774b7cc571ec1e61f135de13924e466cab6c7a8291e0980e58ad431"
+      }
+    },
+    {
+      "start": {
+        "at": "2026-09-13T21:09:48.645+07:00",
+        "epoch_ms": 1789308588645,
+        "timing_protocol": "generation_execution_only_v1",
+        "uc_id": "UC-01",
+        "run_id": "UC01-GPT56SOL-MEDIUM-FULL-R1",
+        "session_id": "01a09b13-6599-7f71-be20-f222170bf021",
+        "turn_id": "01a09b17-a138-74a2-aafd-6041aab7c734",
+        "phase": "prompt_generation",
+        "event": "start",
+        "segment_id": "prompt-002",
+        "source_revision": "sha256:945ed5b61774b7cc571ec1e61f135de13924e466cab6c7a8291e0980e58ad431"
+      },
+      "end": {
+        "at": "2026-09-13T21:10:02.793+07:00",
+        "epoch_ms": 1789308602793,
+        "timing_protocol": "generation_execution_only_v1",
+        "uc_id": "UC-01",
+        "run_id": "UC01-GPT56SOL-MEDIUM-FULL-R1",
+        "session_id": "01a09b13-6599-7f71-be20-f222170bf021",
+        "turn_id": "01a09b17-a138-74a2-aafd-6041aab7c734",
+        "phase": "prompt_generation",
+        "event": "end",
+        "segment_id": "prompt-002",
+        "source_revision": "sha256:945ed5b61774b7cc571ec1e61f135de13924e466cab6c7a8291e0980e58ad431"
+      }
+    },
+    {
+      "start": {
+        "at": "2026-09-13T21:10:41.769+07:00",
+        "epoch_ms": 1789308641769,
+        "timing_protocol": "generation_execution_only_v1",
+        "uc_id": "UC-01",
+        "run_id": "UC01-GPT56SOL-MEDIUM-FULL-R1",
+        "session_id": "01a09b13-6599-7f71-be20-f222170bf021",
+        "turn_id": "01a09b17-a138-74a2-aafd-6041aab7c734",
+        "phase": "prompt_generation",
+        "event": "start",
+        "segment_id": "prompt-003",
+        "source_revision": "sha256:945ed5b61774b7cc571ec1e61f135de13924e466cab6c7a8291e0980e58ad431"
+      },
+      "end": {
+        "at": "2026-09-13T21:10:58.447+07:00",
+        "epoch_ms": 1789308658447,
+        "timing_protocol": "generation_execution_only_v1",
+        "uc_id": "UC-01",
+        "run_id": "UC01-GPT56SOL-MEDIUM-FULL-R1",
+        "session_id": "01a09b13-6599-7f71-be20-f222170bf021",
+        "turn_id": "01a09b17-a138-74a2-aafd-6041aab7c734",
+        "phase": "prompt_generation",
+        "event": "end",
+        "segment_id": "prompt-003",
+        "source_revision": "sha256:945ed5b61774b7cc571ec1e61f135de13924e466cab6c7a8291e0980e58ad431"
+      }
+    },
+    {
+      "start": {
+        "at": "2026-09-13T21:36:20.724+07:00",
+        "epoch_ms": 1789310180725,
+        "timing_protocol": "generation_execution_only_v1",
+        "uc_id": "UC-01",
+        "run_id": "UC01-GPT56SOL-MEDIUM-FULL-R1",
+        "session_id": "01a09b13-6599-7f71-be20-f222170bf021",
+        "turn_id": "01a09b31-164e-79f0-8b99-c969bc3afb14",
+        "phase": "source_generation",
+        "event": "start",
+        "segment_id": "source-001",
+        "source_revision": "sha256:88150646558078215bb8feb051cf5c3056e4f3163091333b73ce6de9f587677c"
+      },
+      "end": {
+        "at": "2026-09-13T21:42:02.405+07:00",
+        "epoch_ms": 1789310522406,
+        "timing_protocol": "generation_execution_only_v1",
+        "uc_id": "UC-01",
+        "run_id": "UC01-GPT56SOL-MEDIUM-FULL-R1",
+        "session_id": "01a09b13-6599-7f71-be20-f222170bf021",
+        "turn_id": "01a09b31-164e-79f0-8b99-c969bc3afb14",
+        "phase": "source_generation",
+        "event": "end",
+        "segment_id": "source-001",
+        "source_revision": "sha256:147a1cac5801f7e08ba74af17c5fd454e2c145bad00884b5e9497571f10069ab"
+      }
+    },
+    {
+      "start": {
+        "at": "2026-09-13T22:11:08.276+07:00",
+        "epoch_ms": 1789312268276,
+        "timing_protocol": "generation_execution_only_v1",
+        "uc_id": "UC-01",
+        "run_id": "UC01-GPT56SOL-MEDIUM-FULL-R1",
+        "session_id": "01a09b13-6599-7f71-be20-f222170bf021",
+        "turn_id": "01a09b4f-832f-79b1-ac10-8751869079c3",
+        "phase": "repair",
+        "event": "start",
+        "segment_id": "repair-001",
+        "source_revision": "sha256:147a1cac5801f7e08ba74af17c5fd454e2c145bad00884b5e9497571f10069ab",
+        "repair_id": "UC01-GPT56SOL-MEDIUM-FULL-R1-REPAIR-001"
+      },
+      "end": {
+        "at": "2026-09-13T22:12:39.679+07:00",
+        "epoch_ms": 1789312359679,
+        "timing_protocol": "generation_execution_only_v1",
+        "uc_id": "UC-01",
+        "run_id": "UC01-GPT56SOL-MEDIUM-FULL-R1",
+        "session_id": "01a09b13-6599-7f71-be20-f222170bf021",
+        "turn_id": "01a09b4f-832f-79b1-ac10-8751869079c3",
+        "phase": "repair",
+        "event": "end",
+        "segment_id": "repair-001",
+        "source_revision": "sha256:a951d8f9760544c3372a98d10a706e70998e9d93959330c91ddca05cf7bd4fd0",
+        "repair_id": "UC01-GPT56SOL-MEDIUM-FULL-R1-REPAIR-001"
+      }
+    }
+  ],
+  "observations": [
+    {
+      "measurement_turn_id": "01a09b1d-3bb2-7cd3-a5f5-df6e52ee2fcf",
+      "action": "close-phase:prompt_generation",
+      "last_turn_id": "01a09b17-a138-74a2-aafd-6041aab7c734",
+      "evidence_sha256": "sha256:62695e2e8c03bc577bfb23875952e09b28bb0decb259a361e1f4bec66dc5ebe3"
+    },
+    {
+      "measurement_turn_id": "01a09b38-f464-7dc2-8838-a92cbf8e3253",
+      "action": "close-phase:source_generation",
+      "last_turn_id": "01a09b31-164e-79f0-8b99-c969bc3afb14",
+      "evidence_sha256": "sha256:76edd50ba3bb704552c29d38a240e1e9bd222773d2673681cf2f6af50f3150f1"
+    }
+  ],
+  "workflow_status": "open",
+  "timing_protocol": "generation_execution_only_v1"
+}

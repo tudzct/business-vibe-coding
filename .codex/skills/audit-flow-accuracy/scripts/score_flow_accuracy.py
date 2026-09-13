@@ -10,7 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow-tokens/scripts"))
 from metrics_contract import ROOT, atomic_write, context, digest, epoch, read_json, require, run_lock, writable
 from runtime_contract import method, configured_rubric, validate_runtime, complete_chain
-from flow_summary import current_assessment, summarize, refresh_summary, markdown as progress_markdown
+from flow_summary import refresh_report, refresh_summary
 
 OBSERVATION_STATUSES = {"met", "unmet", "not_evaluable"}
 FLOW_TYPES = ("main", "alternative", "exception")
@@ -220,6 +220,7 @@ def main():
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     path, run, folder = context(args.run_json)
+    require(path.is_relative_to(ROOT / "docs/05-experiments"), "flow scores require canonical experiment JSON")
     result = calculate(read_json(args.assessment))
     validate_run_result(run, folder, result)
     if not args.dry_run:
@@ -256,13 +257,18 @@ def main():
                 atomic_write(json_path, result)
             if not md_path.exists():
                 atomic_write(md_path, markdown(result), raw=True)
-            atomic_write(folder / "flow-accuracy/current.json", summary)
-            atomic_write(folder / "flow-accuracy/current.md", progress_markdown(summary), raw=True)
+            refresh_report(path, run)
     version, rubric = method(result["input"])
     if args.dry_run:
-        block = run.get("flow_accuracy") or {}
-        existing = any(a["assessment_id"] == result["assessment_id"] for a in block.get("assessments", []))
-        summary = summarize(current_assessment(run) if existing else result, block.get("followups", []))
+        import copy
+        preview = copy.deepcopy(run)
+        block = preview.setdefault("flow_accuracy", None)
+        if block is None:
+            block = preview["flow_accuracy"] = {"schema_version": version, "rubric_id": rubric, "assessments": []}
+        if not any(a["assessment_id"] == result["assessment_id"] for a in block["assessments"]):
+            block["assessments"].append(result)
+            block["current_assessment_id"] = result["assessment_id"]
+        summary = refresh_summary(preview, folder)
     print(json.dumps({"schema_version": version, "rubric_id": rubric,
                       **{key: value for key, value in result.items() if key != "input"},
                       "current_summary": summary},

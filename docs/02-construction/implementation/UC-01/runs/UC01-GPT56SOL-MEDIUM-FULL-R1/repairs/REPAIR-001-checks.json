@@ -1,0 +1,19 @@
+{
+  "artifact_type": "repair-verification",
+  "repair_id": "UC01-GPT56SOL-MEDIUM-FULL-R1-REPAIR-001",
+  "source_revision_before": "sha256:147a1cac5801f7e08ba74af17c5fd454e2c145bad00884b5e9497571f10069ab",
+  "source_revision_after": "sha256:a951d8f9760544c3372a98d10a706e70998e9d93959330c91ddca05cf7bd4fd0",
+  "changed_files": [
+    "finalsource/be/src/modules/auth/auth.service.ts",
+    "finalsource/fe/src/pages/Register/SignUpForm.tsx",
+    "finalsource/be/src/database/migrations/1789310000000-CreateUsersForUc01.ts"
+  ],
+  "targeted_lint": "passed for all three repaired files",
+  "production_build": {"backend": "passed", "frontend": "passed"},
+  "full_lint": {
+    "backend": "failed with 11 inherited baseline diagnostics in main.ts and five pre-existing entities",
+    "frontend": "failed with four inherited baseline errors and two warnings in api/types.ts, AuthContext, ThemeContext, Dashboard and Login"
+  },
+  "tests_created_or_run": false,
+  "sensitive_payloads_saved": false
+}

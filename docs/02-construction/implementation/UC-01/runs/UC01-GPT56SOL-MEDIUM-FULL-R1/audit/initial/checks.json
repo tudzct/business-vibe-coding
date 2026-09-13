@@ -1,0 +1,21 @@
+{
+  "artifact_type": "first-pass-checks",
+  "uc_id": "UC-01",
+  "run_id": "UC01-GPT56SOL-MEDIUM-FULL-R1",
+  "source_revision": "sha256:147a1cac5801f7e08ba74af17c5fd454e2c145bad00884b5e9497571f10069ab",
+  "observed_at": "2026-09-13T14:54:29Z",
+  "docker_compose_version": "5.0.2 (Compose v2 CLI)",
+  "build": {
+    "backend": "passed: Nest production build",
+    "frontend": "passed: TypeScript and Vite production build"
+  },
+  "lint": {
+    "backend": "failed: generated migration down method require-await; generated auth regex no-useless-escape; inherited main.ts and other entity diagnostics",
+    "frontend": "failed: generated signup regex no-useless-escape; inherited types/context/dashboard/login diagnostics"
+  },
+  "source_archive": {
+    "path": "docs/02-construction/implementation/UC-01/runs/UC01-GPT56SOL-MEDIUM-FULL-R1/first-pass-source.zip",
+    "sha256": "sha256:8238ed6ef4bcce2ac140f101a8d289e09887483ab6811a6393f495a619bcdcf9"
+  },
+  "source_mutation_during_audit": false
+}

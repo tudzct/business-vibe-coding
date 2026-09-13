@@ -7,6 +7,7 @@ interface AuthContextType {
   isAuthenticated: boolean
   isLoading: boolean
   login: (username: string, password: string) => Promise<void>
+  establishSession: (user: User, accessToken: string) => void
   logout: () => void
   updateUser: (userData: User) => void
 }
@@ -57,6 +58,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setUser(null)
   }
 
+  const establishSession = (registeredUser: User, accessToken: string) => {
+    localStorage.setItem('token', accessToken)
+    localStorage.setItem('user', JSON.stringify(registeredUser))
+    setUser(registeredUser)
+  }
+
   const updateUser = (userData: User) => {
     setUser(userData)
     localStorage.setItem('user', JSON.stringify(userData))
@@ -69,6 +76,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         isAuthenticated: !!user,
         isLoading,
         login,
+        establishSession,
         logout,
         updateUser,
       }}

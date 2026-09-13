@@ -1,0 +1,52 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "observed_at": "2026-09-13T14:54:29Z",
+  "mode": "run",
+  "source_revision": "sha256:147a1cac5801f7e08ba74af17c5fd454e2c145bad00884b5e9497571f10069ab",
+  "commands": [
+    {
+      "id": "compose-config-validation",
+      "exit_code": 0
+    },
+    {
+      "id": "compose-build-backend-frontend",
+      "exit_code": 0
+    },
+    {
+      "id": "compose-up-default-ports",
+      "exit_code": 1,
+      "error_excerpt": "host port 3002 already allocated"
+    },
+    {
+      "id": "compose-up-temporary-ports",
+      "exit_code": 1,
+      "error_excerpt": "backend unhealthy: MySQL ER_ACCESS_DENIED_ERROR 1045"
+    },
+    {
+      "id": "compose-up-frontend-no-deps",
+      "exit_code": 0
+    },
+    {
+      "id": "frontend-register-reachability",
+      "exit_code": 0,
+      "result": "HTTP 200"
+    },
+    {
+      "id": "frontend-api-proxy-health",
+      "exit_code": 0,
+      "result": "HTTP 502"
+    },
+    {
+      "id": "mysql-read-only-root-metadata",
+      "exit_code": 1,
+      "error_excerpt": "MySQL 1045; no schema metadata returned"
+    }
+  ],
+  "docker": {
+    "cli": "29.2.1",
+    "compose": "5.0.2",
+    "daemon": "29.2.1"
+  },
+  "status": "BLOCKED",
+  "blocking_fingerprint": "backend-startup-mysql-application-user-access-denied"
+}

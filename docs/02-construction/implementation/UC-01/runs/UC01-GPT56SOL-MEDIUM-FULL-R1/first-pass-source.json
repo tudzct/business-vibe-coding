@@ -1,0 +1,163 @@
+{
+  "artifact_type": "first-pass-source",
+  "uc_id": "UC-01",
+  "run_id": "UC01-GPT56SOL-MEDIUM-FULL-R1",
+  "stage": "initial",
+  "generated_at": "2026-09-13T14:42:38Z",
+  "source_revision": "sha256:147a1cac5801f7e08ba74af17c5fd454e2c145bad00884b5e9497571f10069ab",
+  "source_input_sha256": "sha256:88150646558078215bb8feb051cf5c3056e4f3163091333b73ce6de9f587677c",
+  "source_tree_sha256": {
+    "be": "c088a8738ee68448c0e7e2b8a5167550948ec40944521aa481c7133e989efcdd",
+    "fe": "3a6ec355752a5385d3c8949a90607fa56514915ecd9dfb419aeab7ecb475c54a"
+  },
+  "archive": {
+    "path": "docs/02-construction/implementation/UC-01/runs/UC01-GPT56SOL-MEDIUM-FULL-R1/first-pass-source.zip",
+    "sha256": "sha256:8238ed6ef4bcce2ac140f101a8d289e09887483ab6811a6393f495a619bcdcf9"
+  },
+  "delta_against_clean_baseline": [
+    {
+      "path": "be/src/app.module.ts",
+      "change": "modified",
+      "before_sha256": "sha256:21366ae45455c42843d8032071a2805cf96f8414b4690ff4ee5e678f5790583c",
+      "after_sha256": "sha256:a248c54b3c4000663a879395aad9619fa94d852de42f1045d1e96bb3a5b6d41e"
+    },
+    {
+      "path": "be/src/config/database.config.ts",
+      "change": "modified",
+      "before_sha256": "sha256:9afa72420c0abcdcd28bebae8c3070ec05b503a40b7591725ebfffbb1412e260",
+      "after_sha256": "sha256:8f1cb1ccde308caffb79b0d2c4acb2eb42cc5c202ad9c1846006decffcfda82d"
+    },
+    {
+      "path": "be/src/database/data-source.ts",
+      "change": "added",
+      "before_sha256": null,
+      "after_sha256": "sha256:84daec6666eef4a61692f247da3c1376ecc35d014377ca0e2a1120c779e46b09"
+    },
+    {
+      "path": "be/src/database/migrations/1789310000000-CreateUsersForUc01.ts",
+      "change": "added",
+      "before_sha256": null,
+      "after_sha256": "sha256:c258e212a69234463a411a53a05ca5892e6d1d7f6e6271a6d519837a6120e535"
+    },
+    {
+      "path": "be/src/filters/http-exception.filter.ts",
+      "change": "modified",
+      "before_sha256": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "sha256:a0c90675d8a3152d9d5fdbec207f219dea5db872cefb393417faef959be8e546"
+    },
+    {
+      "path": "be/src/main.ts",
+      "change": "modified",
+      "before_sha256": "sha256:32c87d0097e6854ded6cd3d7268c2fd98537396de3815a9e1dfbef3d646bdbaf",
+      "after_sha256": "sha256:4549c9969f85d38a5ea9754f04f59203cced606f3edb552d2322a109d7f5726f"
+    },
+    {
+      "path": "be/src/modules/auth/auth.controller.ts",
+      "change": "added",
+      "before_sha256": null,
+      "after_sha256": "sha256:a60d8359b1e2642434eea3315b0900aabf3dd5ce66f5554afe7c5c0f6708b4f7"
+    },
+    {
+      "path": "be/src/modules/auth/auth.module.ts",
+      "change": "added",
+      "before_sha256": null,
+      "after_sha256": "sha256:e66cadb27bddfc719d673cb8fdb737ac6a9964497d2eaf67e476c1cdeaa207f9"
+    },
+    {
+      "path": "be/src/modules/auth/auth.service.ts",
+      "change": "added",
+      "before_sha256": null,
+      "after_sha256": "sha256:11484dc40c6a611edf5136c5a517bcfb6f43f88554af1d215cefa6d4b9ebd465"
+    },
+    {
+      "path": "be/src/modules/auth/dto/register.dto.ts",
+      "change": "added",
+      "before_sha256": null,
+      "after_sha256": "sha256:cecf433c54396a773bdf931e9d52cd2882fbd324447234c494598d4795e8c1d4"
+    },
+    {
+      "path": "be/src/modules/user/user.entity.ts",
+      "change": "modified",
+      "before_sha256": "sha256:ed046b6e7db1105cbb6358e2d4d86b51ad2d1cdf0fc3723528068981a7407a8a",
+      "after_sha256": "sha256:cbcd2cbf3709214024bdc03b3a377e75d176e7321870c2bf09a4578fee44f765"
+    },
+    {
+      "path": "be/src/types/bcrypt.d.ts",
+      "change": "added",
+      "before_sha256": null,
+      "after_sha256": "sha256:49e82367e0e38abe8b4e0b027dac7de39531d3ceaa49d643e074b2b84760f5dd"
+    },
+    {
+      "path": "fe/src/api/auth.service.ts",
+      "change": "modified",
+      "before_sha256": "sha256:e6c24b31707b14cb1deb1107294060a3931ee55d9544295e5059e7110721ff6f",
+      "after_sha256": "sha256:a099a063b63705cb07b741abe164a82f5556389f9a1c99d07626d9fe2f0c7669"
+    },
+    {
+      "path": "fe/src/api/axiosInstance.ts",
+      "change": "modified",
+      "before_sha256": "sha256:d304ddf02134dea9bf894b6a5571d16fccf4ba2240c6452f1fec80cdc8037f96",
+      "after_sha256": "sha256:50ba407d3d32d58b5847726d6f57fbb25b8337876586fa2a93e6e1022dbdf268"
+    },
+    {
+      "path": "fe/src/api/types.ts",
+      "change": "modified",
+      "before_sha256": "sha256:74799a7d2c852690c2b237cfe73f76935481bd71bd1ffd1c0cacd4cba9d02d4f",
+      "after_sha256": "sha256:1eb3e1648d880bb53a2426261959aee21a06cc9b5344c9e3cfb9f86ce5c4fa0d"
+    },
+    {
+      "path": "fe/src/components/Layout/Layout.tsx",
+      "change": "modified",
+      "before_sha256": "sha256:e5b4f1b65472842e7be39918c452f524e7acf31e9a7cc05318e1f3bbdd0ff301",
+      "after_sha256": "sha256:cb66d5af083ccec85370020a461fa84e8e546ea327450efe885d93505e450121"
+    },
+    {
+      "path": "fe/src/context/AuthContext.tsx",
+      "change": "modified",
+      "before_sha256": "sha256:fd837bc9728a8f318dd1092db31eead154797670a90d690dd311867550b0bc25",
+      "after_sha256": "sha256:ae6db86822322168c0dfbe3bf96cc8eee5de6fcc4ec188b75c5577ac7c5b6a0a"
+    },
+    {
+      "path": "fe/src/pages/Dashboard/Dashboard.tsx",
+      "change": "modified",
+      "before_sha256": "sha256:0c646823f85e38e74cc8998585506e6ef45212bf42dc28a246db9ca106a21b1c",
+      "after_sha256": "sha256:a57d6d33663635f74d154d379bdafa7322a4cdc389c7107dfc3f1b4eaa757d6f"
+    },
+    {
+      "path": "fe/src/pages/Register/Register.tsx",
+      "change": "modified",
+      "before_sha256": "sha256:39212df102a12dadaf015213a429e784f6f848672e46832abf4e2790b81438f9",
+      "after_sha256": "sha256:b8e458ebd26f5783a230b6afb66177e196ed275c60c157fc7d30a01ad363580b"
+    },
+    {
+      "path": "fe/src/pages/Register/SignUpForm.tsx",
+      "change": "added",
+      "before_sha256": null,
+      "after_sha256": "sha256:2eb12fb2be112125553a7d5bebf90bd21e15867fc9c9e8b6efa1567ef1b0305e"
+    },
+    {
+      "path": "fe/src/router/AppRouter.tsx",
+      "change": "modified",
+      "before_sha256": "sha256:f0c25059aea67a58573200909daf4d67aa4c28e5db7e1f62bf9bf5256bc5b438",
+      "after_sha256": "sha256:19a41bed60bd3c5819eade844f88532b232730d2c9156ba4ed96e08baa4ae9fc"
+    }
+  ],
+  "delta_counts": {
+    "added": 8,
+    "modified": 13,
+    "deleted": 0
+  },
+  "timing": {
+    "phase": "source_generation",
+    "segment_id": "source-001",
+    "turn_id": "01a09b31-164e-79f0-8b99-c969bc3afb14"
+  },
+  "model": {
+    "requested_model_id": "gpt-5.6-sol",
+    "requested_reasoning_effort": "medium",
+    "effective_model_id": "gpt-5.6-sol",
+    "effective_snapshot": null,
+    "codex_client_version": "0.154.0-alpha.6.2"
+  },
+  "checks_status": "deferred_to_first_pass_audit_gate"
+}

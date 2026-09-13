@@ -1,0 +1,171 @@
+{
+  "schema_version": 1,
+  "artifact_type": "flow-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-01",
+  "use_case_path": "docs/01-inception/use-cases/uc-01-register-account.md",
+  "use_case_sha256": "sha256:945ed5b61774b7cc571ec1e61f135de13924e466cab6c7a8291e0980e58ad431",
+  "frozen_at": "2026-09-13T13:56:00Z",
+  "ordered_flow_ids": [
+    "BF-1",
+    "AF-1",
+    "AF-2",
+    "EF-1"
+  ],
+  "counts": {
+    "main": 1,
+    "alternative": 2,
+    "exception": 1,
+    "total": 4
+  },
+  "flows": [
+    {
+      "flow_id": "BF-1",
+      "type": "main",
+      "title": "Basic Flow: Successful Account Registration",
+      "source_anchor": "Functional Use-Case Specification / Basic Flow",
+      "branch_from_step": null,
+      "terminal_outcome": "A new user account is created and persisted, an authenticated session is established, and the user is redirected to the home page (/)",
+      "steps": [
+        {
+          "step_id": "BF-1.1",
+          "text": "The visitor opens the registration page (/register).",
+          "completion_critical": true,
+          "criticality_reason": "The registration page must be accessible for registration to begin."
+        },
+        {
+          "step_id": "BF-1.2",
+          "text": "The frontend displays the registration form (SignUpForm).",
+          "completion_critical": true,
+          "criticality_reason": "The registration form must render for the user to input details."
+        },
+        {
+          "step_id": "BF-1.3",
+          "text": "The visitor enters registration details: fullName, email, password, and confirmPassword.",
+          "completion_critical": true,
+          "criticality_reason": "Registration inputs are required to proceed with registration."
+        },
+        {
+          "step_id": "BF-1.4",
+          "text": "The visitor submits the registration form.",
+          "completion_critical": true,
+          "criticality_reason": "Form submission triggers the registration pipeline."
+        },
+        {
+          "step_id": "BF-1.5",
+          "text": "The frontend performs preliminary validation on the submitted form fields.",
+          "completion_critical": true,
+          "criticality_reason": "Form validation is necessary to ensure submitted data meets basic field requirements."
+        },
+        {
+          "step_id": "BF-1.6",
+          "text": "The frontend sends the registration request (POST /api/auth/register) to the backend API.",
+          "completion_critical": true,
+          "criticality_reason": "The registration request must reach the backend API to create an account."
+        },
+        {
+          "step_id": "BF-1.7",
+          "text": "The backend validates and processes the registration data according to established business rules.",
+          "completion_critical": true,
+          "criticality_reason": "The backend must enforce business rules to validate registration data."
+        },
+        {
+          "step_id": "BF-1.8",
+          "text": "Upon successful validation, the backend persists the new user account securely and generates an authenticated session.",
+          "completion_critical": true,
+          "criticality_reason": "Account persistence and session generation are mandatory for successful registration."
+        },
+        {
+          "step_id": "BF-1.9",
+          "text": "The backend returns a successful response containing the authentication token and created user profile data.",
+          "completion_critical": true,
+          "criticality_reason": "Auth token and profile data must be returned to the client."
+        },
+        {
+          "step_id": "BF-1.10",
+          "text": "The frontend establishes the authenticated user session and redirects the user to the home page (/).",
+          "completion_critical": true,
+          "criticality_reason": "Client session establishment and redirection complete the user registration flow."
+        }
+      ]
+    },
+    {
+      "flow_id": "AF-1",
+      "type": "alternative",
+      "title": "AF-1: Client-side validation failure",
+      "source_anchor": "Functional Use-Case Specification / Alternative Flow / AF-1",
+      "branch_from_step": "BF-1.5",
+      "terminal_outcome": "Form submission halts without calling the API, field-level error messages are displayed, and no account is created.",
+      "steps": [
+        {
+          "step_id": "AF-1.1",
+          "text": "The visitor enters invalid or incomplete registration details into the registration form.",
+          "completion_critical": true,
+          "criticality_reason": "Invalid form input is required to trigger client-side validation failure."
+        },
+        {
+          "step_id": "AF-1.2",
+          "text": "The visitor submits the registration form.",
+          "completion_critical": true,
+          "criticality_reason": "Form submission triggers preliminary validation."
+        },
+        {
+          "step_id": "AF-1.3",
+          "text": "If any submitted field fails preliminary validation, the frontend displays field-level error messages and halts form submission without calling the API.",
+          "completion_critical": true,
+          "criticality_reason": "Client must show field error messages and block the API call when validation fails."
+        }
+      ]
+    },
+    {
+      "flow_id": "AF-2",
+      "type": "alternative",
+      "title": "AF-2: Registration conflict / Duplicate account",
+      "source_anchor": "Functional Use-Case Specification / Alternative Flow / AF-2",
+      "branch_from_step": "BF-1.7",
+      "terminal_outcome": "The backend rejects registration due to policy conflict (e.g., duplicate email), frontend displays the error message, and no duplicate account is created.",
+      "steps": [
+        {
+          "step_id": "AF-2.1",
+          "text": "The visitor submits registration data that conflicts with existing account policies (e.g., email already registered).",
+          "completion_critical": true,
+          "criticality_reason": "Conflicting registration input is required to trigger backend conflict rejection."
+        },
+        {
+          "step_id": "AF-2.2",
+          "text": "The frontend sends the registration request (POST /api/auth/register) to the backend API.",
+          "completion_critical": true,
+          "criticality_reason": "The request must reach backend to be checked against existing accounts."
+        },
+        {
+          "step_id": "AF-2.3",
+          "text": "If registration data conflicts with existing account policies, the backend rejects the request and the frontend displays the returned error message.",
+          "completion_critical": true,
+          "criticality_reason": "Backend conflict rejection and user notification are critical to prevent duplicate accounts."
+        }
+      ]
+    },
+    {
+      "flow_id": "EF-1",
+      "type": "exception",
+      "title": "EF-1: Registration request failure",
+      "source_anchor": "Functional Use-Case Specification / Exception Flow / EF-1",
+      "branch_from_step": "BF-1.6",
+      "terminal_outcome": "The frontend displays a failure notification and remains on the registration form without creating an account or establishing a session.",
+      "steps": [
+        {
+          "step_id": "EF-1.1",
+          "text": "The frontend sends the registration request (POST /api/auth/register) to the backend API.",
+          "completion_critical": true,
+          "criticality_reason": "Registration request transmission precedes network or server exception."
+        },
+        {
+          "step_id": "EF-1.2",
+          "text": "If the registration request encounters an unexpected network or server error, the frontend displays a failure notification and remains on the registration form.",
+          "completion_critical": true,
+          "criticality_reason": "User must receive failure notification while retaining form state during unexpected errors."
+        }
+      ]
+    }
+  ]
+}

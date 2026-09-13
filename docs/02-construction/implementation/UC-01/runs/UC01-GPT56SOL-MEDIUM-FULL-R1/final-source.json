@@ -1,0 +1,20 @@
+{
+  "artifact_type": "final-source",
+  "uc_id": "UC-01",
+  "run_id": "UC01-GPT56SOL-MEDIUM-FULL-R1",
+  "frozen_at": "2026-09-13T15:15:23.707406Z",
+  "source_revision": "sha256:a951d8f9760544c3372a98d10a706e70998e9d93959330c91ddca05cf7bd4fd0",
+  "source_tree_sha256": {
+    "be": "fdf610620fac1ada3f1b57d2e69778fe9e703493cafa66d936353437c738065b",
+    "fe": "44b8e7c73a0816ee9c97ad5a5aac82d778cf13863c486f8548903a72c6dcd4e1"
+  },
+  "source_file_counts": {
+    "be": 20,
+    "fe": 41
+  },
+  "archive": {
+    "path": "docs/02-construction/implementation/UC-01/runs/UC01-GPT56SOL-MEDIUM-FULL-R1/final-source.zip",
+    "sha256": "sha256:5bbfd9625c0bc0e821581cbc76250044a8f4a8bc495cfc99894304fc54e0c565"
+  },
+  "repair_id": "UC01-GPT56SOL-MEDIUM-FULL-R1-REPAIR-001"
+}

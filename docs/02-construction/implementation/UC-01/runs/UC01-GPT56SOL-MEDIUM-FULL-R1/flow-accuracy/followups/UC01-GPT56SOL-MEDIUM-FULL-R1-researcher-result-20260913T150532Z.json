@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "followup_id": "UC01-GPT56SOL-MEDIUM-FULL-R1-researcher-result-20260913T150532Z",
+  "assessment_id": "UC01-GPT56SOL-MEDIUM-FULL-R1-initial-20260913",
+  "assessment_sha256": "sha256:76342f87f2d69d8f5faa44f81eacbe3c217cda1051bd12505b60a28dd47db1ce",
+  "uc_id": "UC-01",
+  "run_id": "UC01-GPT56SOL-MEDIUM-FULL-R1",
+  "stage": "initial",
+  "source_revision": "sha256:147a1cac5801f7e08ba74af17c5fd454e2c145bad00884b5e9497571f10069ab",
+  "baseline": {
+    "path": "docs/02-construction/implementation/UC-01/flow-baseline.json",
+    "sha256": "sha256:1a59d0c68a708fa3c08e2596fd225aa6a509a322e59b492a021839440d98b8b4"
+  },
+  "source_unchanged": true,
+  "request_turn_id": "01a09b4d-5805-7161-a9b5-8648f76cff88",
+  "recorded_at": "2026-09-13T15:06:10.071178Z",
+  "mode": "researcher_result",
+  "researcher_result": "cả 4 đều đáp ứng 100%",
+  "results": [
+    {
+      "flow_id": "BF-1",
+      "status": "correct"
+    },
+    {
+      "flow_id": "AF-1",
+      "status": "correct"
+    },
+    {
+      "flow_id": "AF-2",
+      "status": "correct"
+    },
+    {
+      "flow_id": "EF-1",
+      "status": "correct"
+    }
+  ]
+}

@@ -65,6 +65,8 @@ New schema-2.3 configurations freeze `flow_audit_rubric: completion-critical-flo
 
 Flow accuracy retains partial progress: evaluated-only accuracy/error, coverage, known failures and pending targets remain saved while whole-baseline percentages are null. Immediately offer the researcher two paths for missing flows: supply results for the LLM to enter, or ask the LLM to continue measuring. Researcher results alone are accepted into an explicitly attributed supplemental summary; they are never relabeled as LLM runtime proof. Append-only follow-ups preserve the original assessment, baseline, stage and source hash. These evaluation operations never change application source, BRs, telemetry or gates, even with prior repair authorization. See `.codex/skills/audit-flow-accuracy/references/follow-up-measurement.md` for persistence and provenance.
 
+The reported experiment flow result follows `accepted-audit-results-v1`: use the latest conclusive accepted verdict per flow across audit stages. Both researcher results and LLM re-audits update canonical JSON directly; repair/source changes or later inconclusive observations do not erase accepted results. Per-flow source/stage provenance and latest-source limitations remain visible. This reporting policy does not change frozen evidence rubrics, BR acceptance, telemetry or gates. Historical stage-only projections remain readable; show the selection policy in comparisons and update only explicitly requested runs.
+
 ## System baseline
 
 - Frontend: React 18, TypeScript, Vite, Tailwind, React Router, Axios, Context/Zustand, Recharts.
