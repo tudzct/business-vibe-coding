@@ -201,10 +201,10 @@ def validate_run_result(run, folder, result):
         if version == 2:
             previous_end = max(epoch(r["input"]["captured_at"]) for r in history)
             old_ids = {o["observation_id"] for r in history for o in r["input"]["observations"]}
-            require(epoch(result["input"]["captured_at"]) > previous_end, "final audit must be captured again")
+            require(epoch(result["input"]["captured_at"]) > previous_end, "new final assessment must follow prior evidence capture")
             for observation in result["input"]["observations"]:
                 require(observation["observation_id"] not in old_ids and epoch(observation["started_at"]) > previous_end,
-                        "final audit requires fresh observations, including after skipped repair")
+                        "new final assessments require fresh observations")
 
 
 def main():

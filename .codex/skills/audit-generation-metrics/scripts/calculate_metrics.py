@@ -73,9 +73,9 @@ def validate_flow(data, folder):
                 raise ValueError("persisted flow assessment differs from validated evidence/scoring")
             prior_run = {**data, "flow_accuracy": {**block, "assessments": assessments[:index]}}
             validate_run_result(prior_run, folder, recalculated)
-    if version == 2 and data.get("run_status") == "complete" and current.get("stage") != "final":
-        raise ValueError("complete runtime-v2 run requires a fresh final flow audit")
-    if version == 2 and current.get("stage") == "final" and current["input"]["source_revision"] != data.get("business_rules", {}).get("source_revision"):
+    if data.get("run_status") == "complete" and current.get("stage") != "final":
+        validate_unchanged_initial(data, current)
+    if (current.get("stage") == "final" or data.get("run_status") == "complete") and current["input"]["source_revision"] != data.get("business_rules", {}).get("source_revision"):
         raise ValueError("final BR/flow source revision mismatch")
     status = current.get("status")
     if status not in FLOW_STATUSES or data.get("flow_accuracy_status") != status:
@@ -86,6 +86,33 @@ def validate_flow(data, folder):
     if data.get("flow_accuracy_percent") != current.get("flow_accuracy_percent") or data.get("flow_error_percent") != current.get("flow_error_percent"):
         raise ValueError("flow percentage mismatch")
     return {"schema_version": version, "rubric_id": rubric, **{key: current.get(key) for key in ("assessment_id", "status", "counts", "flow_accuracy_percent", "flow_error_percent", "evaluated_coverage_percent", "accuracy_lower_bound_percent", "accuracy_upper_bound_percent")}}
+
+
+def validate_unchanged_initial(data, current):
+    """Reuse first-pass evidence only when no correction changed the audited source."""
+    business = data.get("business_rules") or {}
+    if current.get("stage") != "initial" or data.get("repairs"):
+        raise ValueError("repaired source requires its integrated final assessment")
+    if not isinstance(data.get("repair_skip_reason"), str) or not data["repair_skip_reason"].strip():
+        raise ValueError("unchanged-source completion needs a recorded no-repair decision")
+    revision = current.get("input", {}).get("source_revision")
+    if not isinstance(revision, str) or not re.fullmatch(r"sha256:[0-9a-f]{64}", revision):
+        raise ValueError("initial audited source hash required")
+    if revision != business.get("source_revision") or business.get("initial") != business.get("final"):
+        raise ValueError("unchanged-source completion must preserve initial BR results and source hash")
+
+
+def terminal_assessment_stage(data):
+    """Choose existing terminal evidence, never demand a separate audit turn."""
+    block = data.get("flow_accuracy") or {}
+    matches = [a for a in block.get("assessments", [])
+               if a.get("assessment_id") == block.get("current_assessment_id")]
+    if len(matches) != 1:
+        raise ValueError("terminal flow assessment must resolve exactly once")
+    current = matches[0]
+    if current.get("stage") != "final":
+        validate_unchanged_initial(data, current)
+    return current["stage"]
 
 
 def calculate(path_string):

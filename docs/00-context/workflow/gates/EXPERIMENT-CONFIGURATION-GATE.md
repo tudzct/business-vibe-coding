@@ -14,4 +14,6 @@ New schema 2.3 configurations fix `timing_method` to `system_timestamp_delta`, p
 
 Show one Configuration Gate summary derived from `.env`. Only researcher confirmation changes the Draft to Confirmed. Generate IDs/order deterministically; do not ask repeatedly for values already supplied in `.env`.
 
+Verification is automatic inside authorized repair work using the configured auditor/rubric. Repair telemetry closure or a recorded no-repair decision on unchanged first-pass source proceeds directly to Final Metrics; configuration never requires a separately confirmed final-audit gate. Preserve evidence-backed outcomes and immutable configuration hashes.
+
 Exactly one run is activated through its `run-activation.json` before source-generation model/version capture, source timing or source mutation. A Draft canonical UC/run identity and live prompt/setup telemetry may be recorded before activation; that does not authorize source work. Changing a frozen configuration requires a new configuration ID and checksum; prior evidence remains immutable.

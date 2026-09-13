@@ -25,6 +25,8 @@ The first core START opens that phase and binds `first_turn_id`. An open phase i
 
 If an earlier terminal/aborted turn lost its END, use `--event abandon --segment-id <unfinished-id> --reason <evidence-backed-reason>` in a later turn with current turn ID and original phase/repair ID. This records the missing endpoint and permits subsequent work without inventing an end. The original selected generation turn must retain `timing_unavailable_reason`; phase/workflow time remains null. Never abandon a running turn to evade measurement.
 
+Repair automatically invokes BR/flow/runtime audit after its execution END and before its work response finishes. This removes an extra audit turn, not the timing boundary: do not extend or backfill execution seconds to include audit appending. Closing repair telemetry permits workflow finalization in the next measurement turn without a separate audit gate. No-repair completion uses existing initial evidence on unchanged source with the recorded decision.
+
 ## Aggregation and evidence
 
 - Phase time sums only that phase's non-overlapping execution intervals. `metrics.repair_timing` records each canonical repair's seconds, segment IDs and missing-evidence reason. Missing repair endpoints make repair time unavailable, not zero.

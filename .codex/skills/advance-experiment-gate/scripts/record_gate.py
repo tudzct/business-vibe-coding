@@ -14,18 +14,37 @@ from metrics_contract import ROOT, atomic_write, context, digest, read_json, req
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "gen-coding-prompt/scripts"))
 from validate_prompt_contract import validate_prompt, normalize_variant, validate_configuration
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-generation-metrics/scripts"))
-from calculate_metrics import validate_flow, validate_snapshot
+from calculate_metrics import terminal_assessment_stage, validate_flow, validate_snapshot
 
 NEXT = {
     "configuration": {"confirmed": "prompt"},
     "prompt": {"confirmed": "source"},
     "source": {"confirmed": "first_pass_audit"},
     "first_pass_audit": {"confirmed": "repair_decision"},
-    "repair_decision": {"authorized": "repair", "skipped": "final_audit"},
-    "repair": {"confirmed": "final_audit"},
-    "final_audit": {"confirmed": "final_metrics"},
+    "repair_decision": {"authorized": "repair", "skipped": "final_metrics"},
+    "repair": {"confirmed": "final_metrics"},
     "final_metrics": {"confirmed": None},
 }
+
+# Read old receipts without rewriting them or requiring their obsolete gate.
+LEGACY_NEXT = {**NEXT, "repair_decision": {"authorized": "repair", "skipped": "final_audit"},
+               "repair": {"confirmed": "final_audit"}, "final_audit": {"confirmed": "final_metrics"}}
+
+
+def validate_gate_history(gates, gate):
+    history = gates.get("history")
+    require(isinstance(history, list), "invalid gate history")
+    possible = {"configuration"}
+    for row in history:
+        prior = row.get("gate")
+        require(prior in possible, "invalid gate sequence")
+        possible = {table[prior][row["outcome"]] for table in (NEXT, LEGACY_NEXT)
+                    if row.get("outcome") in table.get(prior, {})}
+        require(possible, "invalid gate outcome")
+    current = gates.get("current")
+    require(current in possible, "gate history does not reach current gate")
+    require(current == gate or (current == "final_audit" and gate == "final_metrics"), "gate is not current")
+    return history
 
 
 def snapshot_hash(value):
@@ -68,14 +87,8 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None):
     """Validate the common pipeline and its evidence; mutate only the in-memory copy."""
     require(gate in NEXT and outcome in NEXT[gate], "invalid gate/outcome")
     gates = run.get("gates")
-    require(isinstance(gates, dict) and gates.get("current") == gate, "gate is not current")
-    history = gates.get("history")
-    require(isinstance(history, list), "invalid gate history")
-    expected = "configuration"
-    for row in history:
-        require(row.get("gate") == expected and row.get("outcome") in NEXT.get(expected, {}), "invalid gate sequence")
-        expected = NEXT[expected][row["outcome"]]
-    require(expected == gate, "gate history does not reach current gate")
+    require(isinstance(gates, dict), "gate state required")
+    history = validate_gate_history(gates, gate)
     require(isinstance(turn_id, str) and turn_id.strip(), "confirmation turn ID required")
     require(not any(r.get("turn_id") == turn_id for r in history), "one gate operation per turn")
     config_ref = run.get("experiment_configuration") or {}
@@ -103,11 +116,12 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None):
         require(normalize_variant(run.get("prompt_variant", "full")) == result["prompt_variant"], "run/prompt variant mismatch")
         closed_phase(run, "prompt_generation" if gate == "prompt" else "source_generation")
         evidence["coding_prompt"] = reference
-    if gate in {"first_pass_audit", "repair_decision", "repair", "final_audit", "final_metrics"}:
+    if gate in {"first_pass_audit", "repair_decision", "repair", "final_metrics"}:
         closed_phase(run, "source_generation")
-    if gate in {"first_pass_audit", "final_audit", "final_metrics"}:
-        evidence = audit_evidence(run, folder, "initial" if gate == "first_pass_audit" else "final")
-    if gate in {"repair_decision", "repair", "final_audit", "final_metrics"}:
+    if gate in {"first_pass_audit", "repair", "final_metrics"}:
+        stage = "initial" if gate == "first_pass_audit" else ("final" if gate == "repair" else terminal_assessment_stage(run))
+        evidence = audit_evidence(run, folder, stage)
+    if gate in {"repair_decision", "repair", "final_metrics"}:
         first = next((r for r in history if r["gate"] == "first_pass_audit"), None)
         require(first is not None, "first-pass audit must precede repair/finalization")
         recorded = first.get("evidence") or {}
@@ -122,6 +136,18 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None):
             require(isinstance(reason, str) and reason.strip(), "skip requires the researcher's reason")
             require(not run.get("repairs"), "cannot skip already executed repair")
             run["repair_skip_reason"] = reason
+            # Final values are the same observation, not a fabricated second audit.
+            initial_evidence = audit_evidence(run, folder, "initial")
+            require(run["business_rules"].get("source_revision") == initial_evidence["source_revision"],
+                    "no-repair decision requires the unchanged audited source hash")
+            require(run["business_rules"].get("final") == run["business_rules"]["initial"],
+                    "no-repair decision requires unchanged BR results")
+            evidence = initial_evidence
+            if run.get("run_status") not in {"blocked", "stopped", "repair_declined"}:
+                initial = run["business_rules"]["initial"]
+                flow = validate_flow(run, folder)["counts"]
+                verified = (initial["met"] == initial["total"] and flow["correct"] == flow["total"])
+                run["run_status"] = "complete" if verified else "repair_declined"
         run["repair_authorization"] = {"approved": outcome == "authorized", "turn_id": turn_id}
     if gate == "repair":
         decision = next((r for r in history if r["gate"] == "repair_decision"), None)

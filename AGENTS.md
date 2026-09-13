@@ -31,7 +31,7 @@ For an identified UC/run, follow the phase-ledger and selection schemas. Prompt/
 
 Internal telemetry gates never invoke Excel export. After Final Metrics Gate, the researcher may invoke `$export-experiment-excel <UC-ID> <LINK_OR_FILEPATH> <TAB_NAME>`. The standalone skill dynamically maps every result heading to stored canonical JSON, including BR/flow/repair and optional UI data; unavailable or ambiguous values become N/A. It preserves formulas, protected/manual content and canonical evidence, and saves a new workbook copy without clarification questions.
 
-Full and RQ3 first-pass generation end at Source Gate. Preserve source/hash/evidence and wait for confirmation; close telemetry internally without auditing or generating. First-pass Audit Gate separately assesses BRs and flows. Repair Decision Gate authorization remains mandatory before repair.
+Full and RQ3 first-pass generation end at Source Gate. Preserve source/hash/evidence and wait for confirmation; close telemetry internally without auditing or generating. First-pass Audit Gate separately assesses BRs and flows. Repair Decision Gate authorization remains mandatory before repair. Authorized repair automatically invokes BR/flow/runtime verification and freezes terminal source evidence before Repair Gate. Closing repair telemetry proceeds directly to Final Metrics. Without repairs, the existing first-pass assessment on unchanged source supplies terminal evidence with a recorded skip reason; no separate final-audit gate is required. Explicit Measure commands are accepted as confirmation of their measurement operation.
 
 ## Business-rule contract
 
