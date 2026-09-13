@@ -46,11 +46,6 @@ if (mode === 'inspect') {
     ? {kind: 'region', sheetId: options.sheet, range: options.range ?? 'A1:Z30', maxChars: 12000, tableMaxRows: 30, tableMaxCols: 26}
     : {kind: 'workbook,sheet,table', maxChars: 8000, tableMaxRows: 6, tableMaxCols: 8};
   console.log((await workbook.inspect(query)).ndjson);
-  if (options.preview) {
-    requireValue(options.sheet && options.range, '--preview requires --sheet and a bounded --range');
-    const preview = await workbook.render({sheetName: options.sheet, range: options.range, scale: 1});
-    await fs.writeFile(await safeOutput(options.preview), new Uint8Array(await preview.arrayBuffer()), {flag: 'wx'});
-  }
 } else {
   requireValue(options.output, '--output is required');
   const output = await safeOutput(options.output);
@@ -89,11 +84,8 @@ if (mode === 'inspect') {
   }
   workbook.recalculate();
   const checks = [];
-  let index = 0;
   for (const region of regions.values()) {
     checks.push((await workbook.inspect({kind: 'region', sheetId: region.sheetName, range: region.range, maxChars: 6000})).ndjson);
-    const preview = await workbook.render({...region, scale: 1});
-    await fs.writeFile(await safeOutput(output + `.preview-${++index}.png`), new Uint8Array(await preview.arrayBuffer()), {flag: 'wx'});
   }
   const errors = (await workbook.inspect({kind: 'match', searchTerm: '#REF!|#DIV/0!|#VALUE!|#NAME\\?|#N/A|#NUM!|#NULL!|#SPILL!|#CALC!', options: {useRegex: true, maxResults: 100}, maxChars: 8000})).ndjson;
   const xlsx = await SpreadsheetFile.exportXlsx(workbook);
@@ -104,7 +96,7 @@ if (mode === 'inspect') {
     requireValue(same(actual, cell.value) || (typeof cell.value === 'string' && cell.value.startsWith('=') && actual === "'" + cell.value), 'Saved value mismatch');
   }
   const receipt = {...updates, output, output_sha256: hash(await fs.readFile(output)), checks, formula_error_scan: errors,
-    verification: 'Mapped cells reimported and checked. Agent must view previews and verify native-feature/scope preservation.'};
+    verification: 'Mapped cells reimported and checked against planned values. Region inspection and formula-error scan retained; native-feature preservation requires separate data/structure checks.'};
   await fs.writeFile(receiptPath, JSON.stringify(receipt, null, 2) + '\n', {flag: 'wx'});
   console.log(JSON.stringify({output, receipt: receiptPath, filled_count: updates.filled_count, na_count: updates.na_count}, null, 2));
 }

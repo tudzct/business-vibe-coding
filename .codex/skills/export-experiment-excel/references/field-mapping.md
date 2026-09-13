@@ -70,9 +70,9 @@ Use `export_mode: dynamic_semantic` for new operations. `finalized_workflow_tele
 Discover bundled Python/Node executables rather than assuming PATH. These are internal helper commands, not additional arguments the researcher must provide:
 
 ```text
-<node> <scratch>/fill_workbook.mjs inspect --repo-root <repo> --workbook <xlsx> --sheet <exact-tab> --range <bounded-range> --preview <before.png>
+<node> <scratch>/fill_workbook.mjs inspect --repo-root <repo> --workbook <xlsx> --sheet <exact-tab> --range <bounded-range>
 <python> .codex/skills/export-experiment-excel/scripts/prepare_excel_updates.py --mapping <mapping.json> --output <updates.json>
 <node> <scratch>/fill_workbook.mjs fill --repo-root <repo> --updates <updates.json> --output <new.xlsx>
 ```
 
-Follow the installed spreadsheets skill for runtime, operation notices, preview, export preservation and saved-value verification. The writer makes a new `.xlsx` copy, not an online-sheet update; it is a values-only helper, not a universal macro/native-feature preservation engine. Keep canonical result JSON unchanged.
+Follow the installed spreadsheets skill for runtime, operation notices, export preservation and saved-value verification. Verification uses cell values, formulas, formats and workbook structure only. The writer makes a new `.xlsx` copy, not an online-sheet update; it is a values-only helper, not a universal macro/native-feature preservation engine. Keep canonical result JSON unchanged.
