@@ -2,7 +2,7 @@
 
 Validate the active run and closed prompt telemetry, complete input/Figma/schema preflight, capture START immediately before the first source mutation, generate the smallest prompt diff (Prompt A-F for Full or Prompt A-D for RQ3), capture END immediately after first-pass source generation before build/audit/runtime/repair and preserve first-pass source/hash/evidence. End the response. Final token values are pending until the researcher confirms Source Gate and its internal telemetry closure runs.
 
-For both Full and RQ3, require Source Gate confirmation and internal telemetry closure before First-pass Audit Gate. Audit BRs and flows, then obtain explicit Repair Decision Gate authorization. Never repair in a generation or telemetry gate-close turn.
+For both Full and RQ3, require Source Gate confirmation and internal telemetry closure before First-pass Audit Gate. Audit BRs and flows, then require a recorded explicit or policy-based Repair Decision. After a saved flow follow-up, [automatic continuation](../../../../docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md) records authorization and starts bounded repair in the same work turn without another confirmation. Never repair in first-pass generation, initial Audit Gate closure or a telemetry gate-close turn.
 
 When repairs are authorized, classify evidenced repairs as `technical`, `business_rule`, `ui` or `flow`; each invocation repairs one fingerprint and retains independent telemetry. Complete permitted non-test checks and authorized Docker observations before freezing the final hash.
 

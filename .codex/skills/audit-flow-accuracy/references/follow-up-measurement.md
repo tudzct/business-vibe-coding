@@ -1,6 +1,6 @@
 # Partial flow results and follow-up measurement
 
-Use this procedure after audit, when the researcher supplies flow results, or asks the LLM to audit again (including already scored flows). Scope is flow accuracy only. Never update BR decisions, telemetry, UI scores, run status, repair authorization or gate history in this operation.
+Use this procedure after audit, when the researcher supplies flow results, or asks the LLM to audit again (including already scored flows). This evaluation/write operation is flow-only: never update BR decisions, telemetry, UI scores, run status, repair authorization or gate history inside it. After saving, return to the coordinator for [automatic continuation](../../../../docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md). The coordinator records the policy decision and starts evidenced repair in the same work turn without another researcher confirmation.
 
 ## Accepted experiment result
 
@@ -21,11 +21,11 @@ Always offer both choices together in plain language:
 1. Researcher measures manually and supplies per-flow results; the LLM writes JSON and recalculates percentages.
 2. LLM continues bounded measurement of the pending flows and automatically writes validated results.
 
-Wait for the researcher's choice unless the current request already selects a path. A supplied result selects path 1; an explicit request to continue measuring selects path 2. This is not a repair decision or permission to advance an experiment gate. Leave the existing gate pending; no additional gate is introduced. Partial flow results alone do not prevent existing telemetry closure/finalization; preserve the honest run status and existing confirmation requirements. Completion of measurement is separate from correctness of the application.
+Wait for the researcher's choice unless the current request already selects a path. A supplied result selects path 1; an explicit request to continue measuring selects path 2. Saving needs no additional confirmation. Then invoke the coordinator's automatic continuation policy: the standing repository policy supplies repair authorization, rather than treating a verdict as a new approval. Existing defects can enter repair while other flows remain pending. Missing evidence alone triggers no repair; all-passing results can record that repair is unnecessary. Other confirmation gates remain. Completion of measurement is separate from correctness of the application.
 
 ## Absolute source boundary
 
-This operation finds defects and evaluates behavior. Never edit any application source, entities, migrations, runtime configuration, dependencies, mocks or audit-only endpoints to make a flow observable or correct. This remains true if earlier repair authorization exists. Record a detected defect for a separate repair step; do not invoke a repair skill here. Read-only source inspection and bounded observation of an authorized Docker Compose runtime are permitted. Do not create/run tests or test cases, fall back to native services, or force infrastructure failures outside authorization.
+This operation finds defects and evaluates behavior. Never edit any application source, entities, migrations, runtime configuration, dependencies, mocks or audit-only endpoints during evaluation to make a flow observable or correct. This remains true if earlier repair authorization exists. Record detected defects and finish the validated flow write before returning to the coordinator; it may then invoke the separate repair step in the same turn under the automatic policy. Read-only source inspection and bounded observation of an authorized Docker Compose runtime are permitted. Do not create/run tests or test cases, fall back to native services, or force infrastructure failures outside authorization.
 
 Resolve the exact UC/run and evidence parent. For LLM runtime observation use the current assessment's pinned source/baseline and verify source/deployment before and after observation. Source drift blocks that observation; never mix runtime revisions. Retaining an earlier accepted report result does not relax evidence validation. This script only writes experiment JSON and an existing derived experiment report.
 

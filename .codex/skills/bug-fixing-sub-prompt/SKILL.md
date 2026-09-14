@@ -5,7 +5,7 @@ description: Repair one evidenced source/build/runtime or Business Rule implemen
 
 # Bug-fixing Sub-prompt
 
-Use only after the initial BR/flow audit is persisted. Require closed Source Gate telemetry and explicit Repair Decision Gate authorization with its actual turn ID. Never initiate repair from source generation or a telemetry gate-close turn.
+Use only after the initial BR/flow audit is persisted. Require closed Source Gate telemetry and a validated Repair Decision authorization: either explicit researcher approval or `flow-followup-auto-repair-v1` under [automatic continuation](../../../docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md). After the coordinator records automatic authorization, begin bounded repair in the same work turn without asking again. Never initiate repair from source generation or a telemetry gate-close turn.
 
 1. Select one evidenced defect and fingerprint it; do not repair speculation or add a feature.
 2. Create one numbered repair artifact with allowed files, affected BR IDs and permitted non-test checks under `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/repairs/`.

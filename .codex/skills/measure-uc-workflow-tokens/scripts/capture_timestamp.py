@@ -78,16 +78,20 @@ def main():
             if args.phase == "repair":
                 require(run.get("business_rules", {}).get("initial", {}).get("requirements"),
                         "repair requires persisted first-pass BR assessment")
-                approval = run.get("repair_authorization", {})
-                require(approval.get("approved") is True and approval.get("turn_id"),
-                        "repair requires researcher authorization with exact turn ID")
+                sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "advance-experiment-gate/scripts"))
+                from record_gate import validate_repair_authorization
+                approval = validate_repair_authorization(run)
+                require(run.get("gates", {}).get("current") == "repair", "repair gate must be current")
+                if approval.get("mode") == "automatic_policy":
+                    require(args.source_revision == approval["automatic_decision"]["source_revision"],
+                            "source changed after automatic decision; inspect drift before repair")
                 approval_turn = find_turn(session, approval["turn_id"])
                 source_boundary = find_turn(session, state["phases"]["source_generation"]["measurement_turn_id"])
                 require(source_boundary["turn_number"] < approval_turn["turn_number"] <= turn["turn_number"],
-                        "repair approval must follow source measurement")
+                        "repair decision must follow source measurement")
                 require(approval_turn["message"].strip() and approval["turn_id"] not in
                         {o["measurement_turn_id"] for o in state["observations"]},
-                        "approval must be a researcher work turn, never a measurement turn")
+                        "repair decision must belong to a work turn, never a measurement turn")
             state["phases"][args.phase] = {"status": "open", "first_turn_id": args.turn_id}
         expected = classified_phase(state, turn, session)
         require(args.phase in AUX or args.phase == expected,

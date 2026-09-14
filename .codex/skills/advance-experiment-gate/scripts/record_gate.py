@@ -17,6 +17,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-generation-m
 from calculate_metrics import terminal_assessment_stage, validate_flow, validate_snapshot
 from flow_summary import accepted_summary, summarize
 
+AUTO_REPAIR_POLICY = "flow-followup-auto-repair-v1"
+AUTO_REPAIR_REFERENCE = "docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md"
+
 NEXT = {
     "prompt": {"confirmed": "source"},
     "source": {"confirmed": "first_pass_audit"},
@@ -94,13 +97,84 @@ def audit_evidence(run, folder, stage):
     return evidence
 
 
-def prepare_transition(run, folder, gate, outcome, turn_id, reason=None):
+def validate_repair_authorization(run):
+    """Accept historical explicit decisions or a traceable policy decision."""
+    decision = next((r for r in run.get("gates", {}).get("history", [])
+                     if r.get("gate") == "repair_decision"), None)
+    approval = run.get("repair_authorization") or {}
+    require(decision and decision["outcome"] == "authorized" and approval.get("approved") is True
+            and approval.get("turn_id") == decision["turn_id"], "repair authorization mismatch")
+    mode = approval.get("mode", "researcher")
+    require(mode in {"researcher", "automatic_policy"}, "unknown repair authorization mode")
+    automatic = decision.get("automatic_decision")
+    if mode == "automatic_policy":
+        require(automatic and approval.get("automatic_decision") == automatic,
+                "automatic repair decision mismatch")
+        require(automatic.get("policy_id") == AUTO_REPAIR_POLICY
+                and automatic.get("policy_artifact") == AUTO_REPAIR_REFERENCE
+                and re.fullmatch(r"sha256:[0-9a-f]{64}", automatic.get("policy_sha256", "")),
+                "automatic repair policy reference required")
+        followup = next((r for r in run.get("flow_accuracy", {}).get("followups", [])
+                         if r.get("followup_id") == automatic.get("followup_id")), None)
+        require(followup and snapshot_hash(followup) == automatic.get("followup_sha256"),
+                "automatic repair trigger changed")
+        require(automatic.get("defect_br_ids") or automatic.get("defect_flow_ids"),
+                "automatic repair requires evidenced defects")
+        require(automatic.get("source_revision") == decision.get("evidence", {}).get("source_revision"),
+                "automatic repair source binding mismatch")
+    else:
+        require(automatic is None, "policy decision cannot be relabeled as researcher approval")
+    return approval
+
+
+def automatic_context(run, folder, followup_id, source_revision):
+    """Read validated persisted results; unknown evidence is never a repair defect."""
+    require(run.get("run_status") not in {"complete", "blocked", "stopped", "repair_declined"}
+            and (run.get("metrics") or {}).get("status") != "finalized",
+            "automatic continuation cannot reopen a terminal run")
+    require(not run.get("repairs"), "automatic continuation cannot restart executed repairs")
+    require((run.get("metrics") or {}).get("phases", {}).get("repair", {}).get("status") != "closed",
+            "automatic continuation cannot reopen closed repair telemetry")
+    closed_phase(run, "source_generation")
+    evidence = audit_evidence(run, folder, "initial")
+    require(source_revision == evidence["source_revision"]
+            == run["business_rules"].get("source_revision"),
+            "current source differs from initial audit; inspect drift before repair")
+    followups = run["flow_accuracy"].get("followups", [])
+    require(followups and followups[-1]["followup_id"] == followup_id,
+            "automatic continuation requires the latest saved follow-up")
+    followup = followups[-1]
+    require(followup.get("results"), "a summary refresh is not an automatic repair trigger")
+    summary = validate_flow(run, folder)
+    require(summary.get("selection_policy") == "accepted-audit-results-v1",
+            "automatic continuation requires accepted flow results")
+    require(all(f["source_revision"] == source_revision for f in summary["flows"]
+                if f["status"] != "not_evaluable"),
+            "accepted results belong to older source; inspect current defects first")
+    business = run["business_rules"]["initial"]
+    br_ids = [r["br_id"] for r in business["requirements"] if r["status"] == "unmet"]
+    flow_ids = [r["flow_id"] for r in summary["flows"] if r["status"] == "incorrect"]
+    outcome = "authorized" if br_ids or flow_ids else (
+        "skipped" if business["met"] == business["total"]
+        and summary["counts"]["correct"] == summary["counts"]["total"] else None)
+    context = {"policy_id": AUTO_REPAIR_POLICY, "policy_artifact": AUTO_REPAIR_REFERENCE,
+               "policy_sha256": digest((ROOT / AUTO_REPAIR_REFERENCE).read_bytes()),
+               "followup_id": followup_id, "followup_sha256": snapshot_hash(followup),
+               "source_revision": source_revision, "defect_br_ids": br_ids, "defect_flow_ids": flow_ids}
+    return outcome, context
+
+
+def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automatic=None):
     """Validate the common pipeline and its evidence; mutate only the in-memory copy."""
     require(gate in NEXT and outcome in NEXT[gate], "invalid gate/outcome")
     gates = run.get("gates")
     require(isinstance(gates, dict), "gate state required")
     history = validate_gate_history(gates, gate)
-    require(isinstance(turn_id, str) and turn_id.strip(), "confirmation turn ID required")
+    if automatic is not None:
+        require(gate == "repair_decision", "automatic policy applies only to Repair Decision")
+        selected, validated = automatic_context(run, folder, automatic["followup_id"], automatic["source_revision"])
+        require(selected == outcome and validated == automatic, "automatic decision differs from current evidence")
+    require(isinstance(turn_id, str) and turn_id.strip(), "actual gate decision turn ID required")
     require(not any(r.get("turn_id") == turn_id for r in history), "one gate operation per turn")
     config_ref = run.get("experiment_configuration") or {}
     config_path = writable(ROOT / config_ref.get("artifact", ""))
@@ -164,9 +238,11 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None):
             require(snapshot_hash(projection) == pinned["flow_progress_sha256"],
                     "gate-pinned flow progress changed")
     if gate == "repair_decision":
-        audit_evidence(run, folder, "initial")
+        initial_evidence = audit_evidence(run, folder, "initial")
+        if automatic is not None:
+            evidence = initial_evidence
         if outcome == "skipped":
-            require(isinstance(reason, str) and reason.strip(), "skip requires the researcher's reason")
+            require(isinstance(reason, str) and reason.strip(), "skip requires the actual decision reason")
             require(not run.get("repairs"), "cannot skip already executed repair")
             run["repair_skip_reason"] = reason
             # Final values are the same observation, not a fabricated second audit.
@@ -182,16 +258,18 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None):
                 verified = (initial["met"] == initial["total"] and flow["correct"] == flow["total"])
                 run["run_status"] = "complete" if verified else "repair_declined"
         run["repair_authorization"] = {"approved": outcome == "authorized", "turn_id": turn_id}
+        if automatic is not None:
+            run["repair_authorization"].update(mode="automatic_policy", automatic_decision=automatic)
     if gate == "repair":
-        decision = next((r for r in history if r["gate"] == "repair_decision"), None)
-        approval = run.get("repair_authorization") or {}
-        require(decision and decision["outcome"] == "authorized" and approval.get("approved") is True
-                and approval.get("turn_id") == decision["turn_id"], "repair authorization mismatch")
+        validate_repair_authorization(run)
         closed_phase(run, "repair")
     if gate == "final_metrics":
         require(run.get("metrics", {}).get("status") == "finalized", "final workflow metrics must be persisted")
     receipt = {"gate": gate, "outcome": outcome, "turn_id": turn_id,
                "confirmed_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")}
+    if automatic is not None:
+        receipt["decided_at"] = receipt.pop("confirmed_at")
+        receipt["automatic_decision"] = automatic
     if evidence:
         receipt["evidence"] = evidence
     if gate == "repair_decision" and outcome == "skipped":

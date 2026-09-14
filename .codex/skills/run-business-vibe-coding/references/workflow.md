@@ -13,3 +13,5 @@ $gen-source-code <business-coding-prompt.md>
 ```
 
 Telemetry and audit engines run internally after gate confirmation; the researcher does not invoke them by skill name. Figma/UI scoring is optional: the researcher may inspect visually or manually request the independent `audit-figma-ui-accuracy` skill. Its absence or local validation result never blocks any gate. No step creates or runs tests.
+
+After either researcher results or requested LLM remeasurement are saved as a flow follow-up, apply [automatic continuation](../../../../docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md). Record the policy-based Repair Decision and start bounded repair in the same work turn without another confirmation. This exception does not close telemetry or reopen terminal runs; Source, initial Audit, Repair and Final Metrics confirmations remain.

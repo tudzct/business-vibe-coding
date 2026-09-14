@@ -1,6 +1,6 @@
 ---
 name: advance-experiment-gate
-description: Handle a researcher's plain-language confirmation of the pending Business experiment gate, invoke the required measurement or audit engine internally, and persist the transition without requiring skill commands. Never combine a gate close with later generation work.
+description: Handle Business experiment gate confirmations and automatic repair decisions after saved flow follow-ups; persist validated transitions and invoke internal engines without researcher skill commands. Never combine telemetry closure with source work.
 ---
 
 # Advance Experiment Gate
@@ -14,14 +14,14 @@ The researcher never needs to name Measure or Audit skills. Invoke those engines
 - Prompt Gate: record prompt approval and close `prompt_generation` telemetry.
 - Source Gate: close `source_generation` telemetry.
 - First-pass Audit Gate: run permitted checks, Business Rule audit and `audit-flow-accuracy`; preserve immutable initial evidence.
-- Repair Decision Gate: record explicit authorize/skip only; measurement is not authorization.
+- Repair Decision Gate: record explicit authorize/skip, or automatically record the standing policy decision after a saved flow follow-up; see [automatic continuation](../../../docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md).
 - Repair Gate: close repair telemetry after authorized repair has automatically completed BR/flow/runtime verification and frozen the source hash in its work turn. Proceed directly to Final Metrics.
 - Skipped repair: preserve the existing first-pass assessment and its original flow ID/stage/time when source is unchanged, retain equal initial/final BR snapshots and `repair_skip_reason`, and proceed directly to Final Metrics.
 - Final Metrics Gate: internally finalize workflow telemetry and refresh the report.
 
-A gate-close turn performs only its gate operation. It may combine the researcher's approval with the corresponding close receipt, but must not mutate application source, begin the next generation segment or execute another gate. End with the next pending gate and the one confirmation/action required from the researcher.
+A confirmation gate-close turn performs only its gate operation. It may combine the researcher's approval with the corresponding close receipt, but must not mutate application source, begin the next generation segment or execute another gate. The sole exception is the automatic Repair Decision after a saved flow follow-up: record it and begin repair in the same work turn under the linked policy. This does not close telemetry. End other gate-close turns with the next pending gate and required action.
 
-If the researcher supplies pending flow results or chooses continued flow measurement, route to `audit-flow-accuracy` and its follow-up procedure, not to a gate transition or repair. Show both measurement paths when reporting missing flows. The LLM writes accepted results and recalculates flow JSON; the follow-up leaves gates, BRs, telemetry and application source unchanged. Partial flow measurement can coexist with recorded failures and does not by itself prevent telemetry finalization. Keep existing authorize/skip confirmations separate.
+If the researcher supplies flow results or chooses continued measurement, first route to `audit-flow-accuracy` and save its validated follow-up. Then automatically run `scripts/continue_after_flow.py` according to the linked policy, dry-run before persistence. On `begin_repair`, invoke bounded repair immediately without another confirmation; on `final_metrics`, present that gate. Pending-only evidence does not justify repair. Terminal/out-of-scope runs and repeated decisions do not start another cycle. Evaluation and decision/repair remain sequential operations in the same work turn.
 
 After the internal action succeeds, persist the confirmation and actual turn ID with `scripts/record_gate.py`. Never close a gate before its action succeeds, infer confirmation, approve on behalf of the researcher, backfill a gate, or change immutable evidence. Telemetry-only work remains excluded; audit contributes no generation execution seconds.
 

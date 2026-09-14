@@ -1,4 +1,4 @@
 interface:
   display_name: "Advance Experiment Gate"
-  short_description: "Confirm and close the next experiment gate"
-  default_prompt: "Confirm the pending experiment gate and perform only its internal close action."
+  short_description: "Advance gates and continue saved flow follow-ups"
+  default_prompt: "Use $advance-experiment-gate for the pending gate or to record the automatic repair decision after a saved flow follow-up; keep telemetry closure separate from source work."
