@@ -1,4 +1,4 @@
 interface:
-  display_name: "Internal Experiment Telemetry"
-  short_description: "Close telemetry from a confirmed experiment gate"
-  default_prompt: "Use $measure-uc-workflow-tokens after a confirmed gate or explicit measurement request; close repair telemetry then allow workflow finalization without a separate audit gate. Persist telemetry only and do not start later work."
+  display_name: "Measure UC Workflow Tokens"
+  short_description: "Close a phase or finalize without extra confirmations"
+  default_prompt: "Use $measure-uc-workflow-tokens for my requested close/finalize command. Prompt close also approves the Draft. Record the internal command after telemetry succeeds; do not request another gate or perform later generation/audit/repair work."

@@ -1,4 +1,4 @@
 interface:
-  display_name: "Advance Experiment Gate"
-  short_description: "Advance gates and continue saved flow follow-ups"
-  default_prompt: "Use $advance-experiment-gate for the pending gate; acknowledge saved manual flow results and wait for a repair request. Treat $bug-fixing-sub-prompt as explicit authorization once flow verdicts are complete, and begin repair without reconfirmation."
+  display_name: "Record Workflow Commands"
+  short_description: "Record command steps without extra confirmations"
+  default_prompt: "Use $advance-experiment-gate only for internal command bookkeeping under FILE-DRIVEN-WORKFLOW.md. Never ask extra gate confirmations or require activation. Save either follow-up path and wait for the repair command if defects remain."

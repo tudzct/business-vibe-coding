@@ -182,7 +182,7 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
             require(trigger.get("mode") != "researcher_result",
                     "saved researcher results require a subsequent explicit repair request")
     require(isinstance(turn_id, str) and turn_id.strip(), "actual gate decision turn ID required")
-    require(not any(r.get("turn_id") == turn_id for r in history), "one gate operation per turn")
+    require(not any(r.get("gate") == gate for r in history), "workflow step already recorded")
     config_ref = run.get("experiment_configuration") or {}
     config_path = writable(ROOT / config_ref.get("artifact", ""))
     require(config_path.is_file() and digest(config_path.read_bytes()) == config_ref.get("checksum"), "configuration checksum mismatch")
@@ -191,7 +191,7 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
     require(len(assignments) == 1, "gate needs configured UC/run")
     variant = normalize_variant(assignments[0].get("prompt_variant", "full"))
     require(normalize_variant(run.get("prompt_variant", "full")) == variant, "canonical run/configuration variant mismatch")
-    if gate != "prompt":
+    if gate != "prompt" and (folder / "run-activation.json").is_file():
         activation = read_json(folder / "run-activation.json")
         require(activation.get("uc_id") == run["uc_id"] and activation.get("run_id") == run["run_id"]
                 and activation.get("status") == "Confirmed", "gate activation mismatch")
@@ -204,7 +204,7 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
         prompt = writable(ROOT / reference.get("path", ""))
         require(prompt.is_file() and digest(prompt.read_bytes()) == reference.get("sha256"), "approved coding_prompt reference required")
         result = validate_prompt(config_path, run["uc_id"], run["run_id"], prompt,
-                                 folder / "run-activation.json" if gate == "source" else None)
+                                 folder / "run-activation.json" if gate == "source" and (folder / "run-activation.json").is_file() else None)
         require(normalize_variant(run.get("prompt_variant", "full")) == result["prompt_variant"], "run/prompt variant mismatch")
         closed_phase(run, "prompt_generation" if gate == "prompt" else "source_generation")
         evidence["coding_prompt"] = reference

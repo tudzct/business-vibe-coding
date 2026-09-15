@@ -69,12 +69,12 @@ def main():
                     "preceding phase must be measured and closed first")
             if args.phase in ("source_generation", "repair"):
                 activation = run.get("experiment_configuration", {}).get("run_activation")
-                require(activation, "source/repair requires run activation reference")
                 from metrics_contract import ROOT, read_json
-                receipt = read_json(ROOT / activation)
-                require(all(receipt.get(k) == run[k] for k in ("uc_id", "run_id")), "run activation mismatch")
-                require(receipt.get("status") == "Confirmed" and receipt.get("artifact_type") == "run-activation",
-                        "source/repair requires Confirmed run activation")
+                if activation and (ROOT / activation).is_file():
+                    receipt = read_json(ROOT / activation)
+                    require(all(receipt.get(k) == run[k] for k in ("uc_id", "run_id")), "run activation mismatch")
+                    require(receipt.get("status") == "Confirmed" and receipt.get("artifact_type") == "run-activation",
+                            "existing run activation must be Confirmed")
             if args.phase == "repair":
                 require(run.get("business_rules", {}).get("initial", {}).get("requirements"),
                         "repair requires persisted first-pass BR assessment")

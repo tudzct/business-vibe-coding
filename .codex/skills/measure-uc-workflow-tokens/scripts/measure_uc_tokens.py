@@ -247,12 +247,18 @@ def measure(args):
             require(state["workflow_status"] == "open", "workflow already finalized")
             if args.command == "close-phase":
                 entry = state["phases"].get(args.phase)
-                require(entry and entry["status"] == "open", "phase must be open before closing")
-                require(any(r["timing_phase"] == args.phase for r in rows), "no evidence for closing phase")
-                require(all(s.get("end") or s.get("timing_unavailable_reason")
-                            for s in state["segments"] if s["start"]["phase"] == args.phase),
-                        "end captured work interval before closing phase")
-                entry.update(status="closed", measurement_turn_id=args.measurement_turn_id)
+                if args.phase == "repair" and entry is None:
+                    require(not run.get("repairs") and bool(run.get("repair_skip_reason"))
+                            and run.get("gates", {}).get("current") == "final_metrics",
+                            "repair skip requires the all-passing audit decision")
+                    state["phases"]["repair"] = {"status": "skipped", "reason": run["repair_skip_reason"]}
+                else:
+                    require(entry and entry["status"] == "open", "phase must be open before closing")
+                    require(any(r["timing_phase"] == args.phase for r in rows), "no evidence for closing phase")
+                    require(all(s.get("end") or s.get("timing_unavailable_reason")
+                                for s in state["segments"] if s["start"]["phase"] == args.phase),
+                            "end captured work interval before closing phase")
+                    entry.update(status="closed", measurement_turn_id=args.measurement_turn_id)
             else:
                 require(all(state["phases"].get(p, {}).get("status") == "closed" for p in CORE[:2]),
                         "prompt/source phases must be closed")
@@ -262,7 +268,7 @@ def measure(args):
                             "unperformed repair needs researcher decision and no repair entries")
                     state["phases"]["repair"] = {"status": "skipped", "reason": selection["repair_skip_reason"]}
                 else:
-                    require(repair["status"] == "closed", "repair phase must be closed")
+                    require(repair["status"] in {"closed", "skipped"}, "repair phase must be closed or skipped")
                 require(run.get("run_status") in ("complete", "blocked", "stopped", "repair_declined"),
                         "workflow requires an explicit terminal run status")
                 state["workflow_status"] = "finalized"
@@ -315,6 +321,17 @@ def measure(args):
                 renderer = ROOT / ".codex/skills/render-experiment-report/scripts/render_report.py"
                 subprocess.run([sys.executable, "-B", str(renderer), str(path), "--output", str(report_path)], check=True)
         print(metrics_markdown(metrics))
+    # Telemetry succeeds first; record the command in the same excluded close turn.
+    # A failed receipt is recoverable by record_command.py without remeasuring tokens.
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "advance-experiment-gate/scripts"))
+    from record_command import prepare, commit
+    action = ({"prompt_generation": "prompt-close", "source_generation": "source-close", "repair": "repair-close"}
+              [args.phase] if args.command == "close-phase" else "finalize")
+    with run_lock(folder):
+        current = read_json(path)
+        updated, _ = prepare(current, folder, action, args.measurement_turn_id)
+        if updated != current or action == "prompt-close":
+            commit(path, updated, folder, action, args.measurement_turn_id)
 
 
 def main():

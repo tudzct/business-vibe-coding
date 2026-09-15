@@ -1,20 +1,14 @@
-# Experiment gate transitions
+# Internal command step records
 
-The [manual-result exception](../../../../docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md) takes precedence over automatic repair below: a manual-result save waits for a subsequent repair request if defects remain. `$bug-fixing-sub-prompt` itself confirms the pending Repair Decision and may record authorization and begin repair in the same turn without another confirmation or telemetry closure. Any pending accepted flow verdict blocks new authorization. All-passing skip remains unchanged.
+The human-facing sequence is [FILE-DRIVEN-WORKFLOW.md](../../../../docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md). No additional confirmations are required. Existing canonical `gates` and historical names remain internal compatibility records only.
 
-| Pending gate | Researcher confirmation | Internal action | Next gate |
-|---|---|---|---|
-| prompt | approves Draft | persist approval and close prompt telemetry | run activation/source generation |
-| source | confirms first-pass evidence | close source telemetry | first-pass audit |
-| first-pass audit | confirms audit execution | run non-test checks, BR audit and flow audit; preserve initial evidence | repair decision |
-| repair decision | explicit authorize/skip, or standing policy after a saved flow follow-up | persist exact decision/turn and attribution; automatic authorization immediately starts bounded repair; skip retains unchanged first-pass evidence | repair or final metrics |
-| repair | confirms repair with automatic BR/flow/runtime verification already persisted | close repair telemetry | final metrics |
-| final metrics | confirms terminal summary | finalize workflow telemetry and refresh report | complete |
+| Command | Internal receipt | Next command |
+|---|---|---|
+| close prompt | prompt, plus approved prompt checksum | generate source |
+| close source | source | audit |
+| audit | first_pass_audit; all-passing repair_decision skipped | repair or close repair |
+| repair | repair_decision authorized within same work turn | close repair after automatic verification |
+| close repair | repair, or existing skip | finalize |
+| finalize | final_metrics | optional export |
 
-Every transition stores its outcome, actual turn ID and timestamp under canonical run `gates`. Automatic Repair Decision uses `decided_at` and policy attribution instead of a fabricated confirmation. A confirmation-close turn never begins work belonging to the next row. The sole exception is [automatic continuation](../../../../docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md) after a saved follow-up: record Repair Decision and begin bounded repair in the same work turn without closing telemetry. Schema/public API/ownership/destructive ambiguities still require their separate decision.
-
-Pending flow measurement has two researcher-selectable paths: researcher supplies per-flow results for the LLM to record, or the LLM continues measuring. Persist those results without source changes, then invoke `continue_after_flow.py` under the standing policy; no separate repair confirmation is required. The continuation records its decision only while `repair_decision` is pending. Existing initial/final assessment hashes stay pinned; new receipts also identify the flow progress hash, supplement IDs and result basis used at closure. Later supplements do not rewrite older receipts or restart a completed run.
-
-Configuration also freezes `flow_audit_rubric: completion-critical-flow-runtime-v2`; legacy configurations remain v1. First-pass audit and automatic repair verification resolve the same rubric through activation/configuration checksum. Runtime-v2 requires actual integrated completion evidence for `correct`; repair work observes all flows on final source before repair closure. No-repair completion retains the initial observation on unchanged source, without relabelling its ID/stage/time. Preserve first-pass artifacts, report runtime blockers/unknowns, and return defects to Repair Decision Gate. Audit/runtime never extends generation execution time.
-
-Use the [shared Full/RQ3 contract](../../../../docs/00-context/workflow/FULL-RQ3-CONTRACT.md). The gate recorder checks the same evidence preconditions for both variants and supports read-only `--dry-run`. Require new canonical gates already prepared at `prompt` with empty history; generation preflight validates the existing Canonical Run JSON and never initializes it. Configuration is not a human gate. Preserve historical configuration receipts; a legacy pending `configuration` with empty history can close through `--gate prompt` after actual prompt approval and all normal Prompt Gate checks, without inventing a configuration receipt. Prompt Gate requires the approved `coding_prompt` path/hash and closed prompt telemetry; Source Gate additionally verifies activation and closed source telemetry. First-pass audit requires initial evidence; repaired-source closure requires final evidence already produced within repair. First-pass gate receipts pin result hashes, and later gates preserve them. Record skip with `--reason` describing the actual researcher decision; skip goes directly to final metrics with equal initial/final BR results and unchanged source hash. An obsolete pending `final_audit` can use `--gate final_metrics` after evidence/telemetry validation without another audit turn. Missing UI scores are not a gate condition.
+Use `record_command.py` and actual turn IDs; no fabricated confirmation times. Audit and all-passing skip can be recorded within the same audit turn. Closing telemetry never executes later generation/audit/repair work. Preserve old receipts and their original hashes/times; validate optional activation when present. Initial/final BR/flow evidence, frozen rubric and source provenance remain required; UI scoring is optional.

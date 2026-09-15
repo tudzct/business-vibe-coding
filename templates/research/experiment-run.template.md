@@ -15,7 +15,7 @@
 | Repair | | | | | | | | |
 | Workflow | | | | | | | | |
 
-Confirmed gates supply canonical `metrics` through the internal telemetry engine. Cached input is part of input; reasoning is part of output. Gate-close/report turns and researcher waiting are excluded. Phase closure happens only after the work response completes.
+Explicit close/finalize commands supply canonical `metrics` through the telemetry engine without additional gate confirmations. Cached input is part of input; reasoning is part of output. Measurement/report/export turns and researcher waiting are excluded. Phase closure happens only after the work response completes.
 
 ## Business Rule assessment
 

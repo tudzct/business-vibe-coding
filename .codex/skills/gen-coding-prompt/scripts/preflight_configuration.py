@@ -126,7 +126,7 @@ def check_canonical(run, config, assignment, uc, stage):
     require(isinstance(business, dict) and business.get("baseline") == uc["business_rule_baseline"]
             and business.get("ordered_br_ids") == uc["ordered_br_ids"], "canonical BR baseline/IDs mismatch")
     expected_activation = f"docs/02-construction/implementation/{run['uc_id']}/runs/{run['run_id']}/run-activation.json"
-    require(run["experiment_configuration"].get("run_activation") == expected_activation,
+    require(run["experiment_configuration"].get("run_activation") in (None, expected_activation),
             "canonical activation path mismatch")
     require(isinstance(run.get("repairs"), list), "canonical repairs must be an array")
     approval = run.get("repair_authorization")
@@ -205,7 +205,8 @@ def preflight(uc_id, configuration=None, run_id=None, variant=None, run_json=Non
         prompt_path = writable(ROOT / prompt_ref.get("path", ""))
         require(prompt_path.is_file() and digest(prompt_path.read_bytes()) == prompt_ref.get("sha256"),
                 "canonical approved prompt path/checksum mismatch")
-        activation = ROOT / canonical["experiment_configuration"]["run_activation"] if stage == "source" else None
+        activation_path = ROOT / "docs/02-construction/implementation" / uc_id / "runs" / assignment["run_id"] / "run-activation.json"
+        activation = activation_path if stage == "source" and activation_path.is_file() else None
         validate_prompt(path, uc_id, assignment["run_id"], prompt_path, activation=activation)
     require(digest(path.read_bytes()) == checksum, "configuration changed during preflight")
     require(digest(canonical_path.read_bytes()) == canonical_checksum, "Canonical Run JSON changed during preflight")

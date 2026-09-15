@@ -10,95 +10,33 @@ It is not a set of continuously running AI services. Codex executes repository-l
 
 ```mermaid
 flowchart LR
-    R[Researcher]
-    SHEET[Google Sheet A-B\nUC + UML + BR]
-    FIGMA[Frozen Figma dataset]
-    UC[Frozen UC projection]
-    BASE[Business-rule baseline\nUC checksum + BR IDs]
-    BR[Business Rule resource]
-    P[Prompt A-F]
-    APPROVE{Researcher approval}
-    CONFIG[Confirmed experiment configuration]
-    PREFLIGHT[Automatic integrity preflight]
-    RUN[Run activation]
-    SRC[finalsource/fe + finalsource/be]
-    AUDIT[BR conformance audit]
-    REPAIR[Bug-fixing sub-prompt]
-    DOCKER[Docker build/runtime gate]
-    FREEZE[Final source hash + run JSON]
-
-    R --> CONFIG
-    CONFIG --> PREFLIGHT
-    PREFLIGHT --> BASE
-    SHEET --> UC
-    FIGMA --> P
-    UC --> BASE
-    BASE --> BR
-    BR --> P
-    UC --> P
-    P --> APPROVE
-    APPROVE -- Draft --> R
-    APPROVE -- Approved --> RUN
-    CONFIG --> RUN
-    RUN --> SRC
-    SRC --> AUDIT
-    AUDIT -- evidenced defect --> REPAIR
-    REPAIR --> SRC
-    AUDIT -- all BRs assessed --> DOCKER
-    DOCKER --> FREEZE
+    INPUT[Four prepared files and frozen dependencies] --> PREFLIGHT[Read-only preflight]
+    PREFLIGHT --> PROMPT[1 Generate Draft prompt]
+    PROMPT --> PCLOSE[2 Close prompt and approve]
+    PCLOSE --> SOURCE[3 Generate first-pass source]
+    SOURCE --> SCLOSE[4 Close source]
+    SCLOSE --> AUDIT[5 Audit all BRs and flows]
+    AUDIT -- defects with conclusive verdicts --> REPAIR[6 Requested repair and automatic verification]
+    AUDIT -- unknown results --> FOLLOW[Save researcher verdicts or LLM measurement]
+    FOLLOW -- defects remain; wait for command --> REPAIR
+    AUDIT -- all pass; skip correction --> RCLOSE[7 Close repair]
+    FOLLOW -- all pass; skip correction --> RCLOSE
+    REPAIR --> RCLOSE
+    RCLOSE --> FINAL[8 Finalize telemetry and report]
+    FINAL --> EXPORT[9 Optional workbook export]
 ```
 
 ### Phase 1 - Generate Business Coding Prompt
 
-The researcher supplies a complete Confirmed configuration JSON before invocation. Automatic preflight validates its existing checksum pin, both frozen baselines and the Draft Canonical Run JSON. All four inputs must exist before invocation; generation creates the Draft and live measurement evidence only. The researcher chooses the creation method for these inputs and the activation receipt required before source generation. There is no configuration summary/confirmation gate; missing or conflicting evidence blocks generation. Prompt approval and source activation remain required.
+Read [FILE-DRIVEN-WORKFLOW.md](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md). The researcher prepares Confirmed configuration, frozen BR baseline, frozen flow baseline and Draft Canonical Run JSON before generation. Frozen UC/UML/API/Figma/resource/template dependencies must validate read-only. Generation never creates missing inputs.
 
-Inputs:
-
-- one frozen use-case Markdown file;
-- UML Model and Business Rules embedded in that specification;
-- OCL utility definitions;
-- related API and UI identifiers;
-- frozen Figma dataset where applicable;
-- Prompt A-F template and project/database rules.
-
-Processing:
-
-1. Validate source provenance and UC identity.
-2. Extract all unique BR IDs in source order; do not select a subset.
-3. Copy each BR's OCL and natural-language constraints into a canonical Business Rule resource.
-4. Record the UC checksum and BR IDs in `business-rule-baseline.json`.
-5. Generate coding prompt:
-   - For Full branch: Prompt A-F (Prompt E is an exact BR projection; A/D reference it; F sets context and priority).
-   - For RQ3 branch: Prompt A-D (omitting E and F; A/D derive strictly from functional/UI/API specifications).
-6. Stop at researcher approval.
-
-Outputs:
-
-```text
-docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json
-docs/02-construction/business-rules/<UC-ID>-business-rules.json
-docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md (Full)
-docs/02-construction/coding-prompts/<UC-ID>-rq3-coding-prompt.md (RQ3)
-```
+Generate Draft Full A-F or RQ3 A-D with complete functional-flow coverage and the configured input boundaries. Capture actual prompt START/END and return the prompt-close command. That subsequent command approves and pins the Draft and closes telemetry, without another approval or activation turn.
 
 ### Phase 2 - Generate Source Code
 
-Inputs:
+Validate pinned configuration/approved prompt/closed prompt telemetry and cumulative source provenance. Optional historical activation is validated when present. Generate only first-pass source, preserve immutable hash/model/timing evidence, then stop before audit. The source-close command precedes directly requested BR/flow audit.
 
-- approved business coding prompt;
-- Confirmed experiment configuration and active run receipt;
-- current clean source baseline;
-- project/database rules and frozen Figma inputs.
-
-Processing:
-
-1. Activate exactly one model/run before timing or source mutation.
-2. Generate the smallest UC-scoped source diff through the React and/or NestJS skill.
-3. Persist first-pass telemetry and BR assessments before any repair.
-4. For each evidenced technical, business-rule, UI or flow defect, create one bounded sub-prompt and apply the smallest correction.
-5. Reassess all frozen BRs without changing the denominator.
-6. Run permitted validators, lint/typecheck/build and Docker runtime checks.
-7. Freeze the final source hash and canonical run JSON.
+Audit persists every frozen result and source-linked evidence. All-passing unchanged-source audit records repair unnecessary. Unknown verdicts are saved as partial progress and completed by attributed researcher results or requested bounded LLM measurement. Neither audit nor follow-up automatically repairs source. The subsequent repair command supplies authorization, executes bounded corrections and automatically verifies final BR/flow/runtime evidence before freezing terminal hash/status. Close repair (or skipped repair), finalize and optionally export in successive turns.
 
 ## Prompt contract
 
@@ -131,14 +69,12 @@ Prompt text alone cannot prove implementation. Evidence must point to inspectabl
 
 Authentication, ownership, validation and related controls required by a UC or BR remain ordinary implementation behavior rather than a separate research dimension.
 
-## Gates
+## Command boundaries
 
-- **Business-rule baseline:** deterministic Phase 1 receipt; all rules are included.
-- **Prompt approval:** researcher changes Draft to Approved.
-- **Schema approval:** researcher approves entity/migration changes.
-- **Run activation:** exactly one configured model/run before Phase 2 mutation.
-- **Completion:** all BR assessments plus build/runtime/final-source evidence.
+Each command authorizes its operation without further human gate confirmations. Existing canonical `gates` names are internal compatibility bookkeeping, recorded through `record_command.py`; historical receipts/evidence remain immutable. Concrete schema changes still need their approved proposal before entity/migration edits, and material specification ambiguity still needs researcher resolution. Optional UI scoring never blocks audit, telemetry, export or completion.
 
 ## Test boundary
 
 The research currently does not create or run tests. Source inspection, validators, lint, typecheck, builds, container health and bounded runtime observation are permitted.
+
+Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt, or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.

@@ -25,40 +25,30 @@ Prompt E is Business Rules Compliance. Prompt F supplies implementation context 
 
 1. Read `PROJECT_CONTEXT.md`.
 2. Run the setup review in `CODEX_SETUP_GUIDE.md`.
-3. Read `ARCHITECTURE.md` for components and gates.
+3. Read `ARCHITECTURE.md` for components and command boundaries.
 4. Follow `docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md`.
 
 ## Main commands
 
-Phase 1:
+Prepare the four files described in [FILE-DRIVEN-WORKFLOW.md](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md): Confirmed configuration, frozen BR/flow baselines and Draft Canonical Run JSON. Generation validates them read-only. Activation is optional; no additional gate confirmation turns are required.
 
-Prepare a complete `Confirmed` JSON under `docs/05-experiments/configurations/` first. Also prepare the frozen BR/flow baselines and Draft Canonical Run JSON using any tool. The command validates the existing inputs and generates the Draft without configuration reconfirmation or creation of missing helper files. If several configurations/runs match, specify `--run-json <canonical.json>` and, if needed, `--configuration <config.json> --run-id <RUN-ID>`; ambiguous or invalid inputs block generation.
+Run these commands in separate turns for the same UC/run:
 
 ```text
 $gen-coding-prompt docs/01-inception/use-cases/uc-01-register-account.md
-```
-
-The baselines, BR resource and Canonical Run JSON must already exist. The command creates:
-
-```text
-docs/02-construction/coding-prompts/UC-01-business-coding-prompt.md
-```
-
-Review the prompt and set `status: Approved` only after checking the UC, UML and every Prompt E BR.
-
-Phase 2:
-
-```text
+$measure-uc-workflow-tokens close-phase prompt_generation
 $gen-source-code docs/02-construction/coding-prompts/UC-01-business-coding-prompt.md
+$measure-uc-workflow-tokens close-phase source_generation
+$audit-generation-metrics
+$bug-fixing-sub-prompt
+$measure-uc-workflow-tokens close-phase repair
+$measure-uc-workflow-tokens finalize-workflow
+$export-experiment-excel uc-01 "<LINK_OR_FILEPATH>" "<TAB_NAME>"
 ```
 
-The command validates an existing run activation receipt created by any tool, generates source in `finalsource/`, records the first pass, performs evidence-based repairs, validates the permitted non-test gates and freezes the final source hash.
+Prompt close also approves/pins the Draft. For RQ3, use `UC-01-rq3-coding-prompt.md`. Audit includes flow measurement. If all frozen results pass, skip the correction command and close skipped repair. If flows are unknown, save researcher verdicts or requested LLM observations, then wait for the repair command when defects remain. Repair automatically verifies final BR/flow/runtime evidence. Export is optional, excluded from workflow telemetry, and produces a new filled `.xlsx` copy.
 
-Render a completed run report:
-
-```text
-$render-experiment-report docs/05-experiments/<UC-ID>/<RUN-ID>.json
-```
+Render a finalized run separately with `$render-experiment-report docs/05-experiments/<UC-ID>/<RUN-ID>.json`.
 
 ## Use cases
 
@@ -85,3 +75,5 @@ Do not create or run tests or test cases. The workflow may inspect source/config
 ## Application controls
 
 JWT, bcrypt, DTO validation, ownership checks, secret handling, safe errors and database transactions remain when required by the UC, Business Rules, API contract or technical baseline. They are ordinary business/technical implementation requirements.
+
+Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt, or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.

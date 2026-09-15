@@ -21,16 +21,18 @@ def method(data):
 
 
 def configured_rubric(run, folder, validate_evidence, baseline=None):
-    """Resolve method through the immutable activation/configuration checksum."""
+    """Resolve the pinned configuration; validate optional historical activation."""
     metadata = run.get("experiment_configuration") or {}
     activation_path = folder / "run-activation.json"
-    if not activation_path.exists():
-        require(not metadata, "configured run requires its activation receipt")
+    if not activation_path.exists() and not metadata:
         return LEGACY_RUBRIC  # Pre-activation historical runs only.
-    activation = read_json(activation_path)
-    require(activation.get("status") == "Confirmed", "run activation must be Confirmed")
-    require(all(activation.get(k) == run.get(k) for k in ("uc_id", "run_id")), "activation identity mismatch")
-    ref = {"path": activation.get("configuration_artifact"), "sha256": activation.get("configuration_checksum")}
+    activation = read_json(activation_path) if activation_path.exists() else None
+    if activation is not None:
+        require(activation.get("status") == "Confirmed", "run activation must be Confirmed")
+        require(all(activation.get(k) == run.get(k) for k in ("uc_id", "run_id")), "activation identity mismatch")
+        ref = {"path": activation.get("configuration_artifact"), "sha256": activation.get("configuration_checksum")}
+    else:
+        ref = {"path": metadata.get("artifact"), "sha256": metadata.get("checksum")}
     config = read_json(validate_evidence(ref))
     require(config.get("status") == "Confirmed", "flow rubric requires Confirmed configuration")
     if metadata:
@@ -48,8 +50,9 @@ def configured_rubric(run, folder, validate_evidence, baseline=None):
         require(len(uc_entries) == 1 and baseline["path"] == uc_entries[0].get("flow_baseline"),
                 "assessment must use the configured flow baseline")
         baseline_data = read_json(validate_evidence(baseline))
-        require(epoch(baseline_data.get("frozen_at")) <= epoch(activation.get("activated_at")),
-                "flow baseline must be frozen before run activation")
+        if activation is not None:
+            require(epoch(baseline_data.get("frozen_at")) <= epoch(activation.get("activated_at")),
+                    "flow baseline must be frozen before run activation")
     return rubric
 
 

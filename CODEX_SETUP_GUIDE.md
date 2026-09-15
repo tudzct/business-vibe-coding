@@ -38,22 +38,7 @@ Expected repository invariants:
 
 ## Local configuration
 
-The researcher prepares `docs/05-experiments/configurations/<CONFIG-ID>.json` from `templates/research/experiment-configuration.template.json`, fills every required value and sets `status: Confirmed` before calling `$gen-coding-prompt`. The researcher also prepares frozen BR/flow baselines and a Draft Canonical Run JSON using any chosen tool before invocation. The skill validates all four inputs read-only and immediately generates the Draft; any missing/invalid input blocks without creating a replacement. Before source generation, an existing valid activation receipt is also required. No particular creation skill/command is mandatory; approval remains at Prompt Gate. Root `.env` and `load_experiment_env.py` are optional preparation conveniences, not prerequisites; do not create them or stop for their absence during generation. Never copy runtime secrets into experiment configuration. New configurations pin the exact Figma version/checksum, timing method and flow rubric.
-
-`finalsource/.env` is ignored and must not be committed. If it is absent, create it only when the researcher asks to initialize runtime:
-
-```bash
-cp finalsource/.env.example finalsource/.env
-```
-
-The researcher fills at least:
-
-```dotenv
-MYSQL_PASSWORD=<strong-local-password>
-JWT_SECRET=<at-least-32-random-characters>
-```
-
-Never print secret values. Verify only presence and Git ignore status.
+Read [FILE-DRIVEN-WORKFLOW.md](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md) for the researcher command sequence. Prepare four core files: Confirmed configuration, frozen BR/flow baselines and Draft Canonical Run JSON. Generation validates them read-only without extra confirmation or initialization. Prompt close approves the Draft and pins its bytes; activation is optional. Root `.env` is optional preparation convenience. Runtime `finalsource/.env` remains ignored and is initialized only on a runtime setup request; never print secrets.
 
 ## Runtime authorization
 
@@ -99,6 +84,8 @@ Next action: <one concrete action>
 
 - `$audit-figma-ui-accuracy`: optional standalone comparison of implemented UI against frozen Figma evidence, called manually only when the researcher requests it. Manual visual inspection or skipping this skill is valid. Neither a UI score nor a passing UI validation is required for experiment readiness/completion, BR/flow audit or export.
 
-- `$export-experiment-excel <UC-ID> <LINK_OR_FILEPATH> <TAB_NAME>`: after Final Metrics Gate, invoke separately with exactly three positional arguments (quote paths/tab names containing spaces). It dynamically maps every result heading against canonical JSON, including recorded BR/flow/repair and optional UI data, and saves a new filled copy plus provenance. Unavailable values become N/A; formulas and protected/manual content remain unchanged. No additional prose or clarification is required.
+- `$export-experiment-excel <UC-ID> <LINK_OR_FILEPATH> <TAB_NAME>`: after workflow finalization, invoke separately with exactly three positional arguments (quote paths/tab names containing spaces). It dynamically maps every result heading against canonical JSON, including recorded BR/flow/repair and optional UI data, and saves a new filled copy plus provenance. Unavailable values become N/A; formulas and protected/manual content remain unchanged. No additional prose or clarification is required.
 
 Figma/UI accuracy may be inspected manually or measured through the optional `audit-figma-ui-accuracy` skill. Gate-driven BR/flow audit never invokes that skill. All UI fields may be missing/null without blocking validation or reports. Excel export remains reporting-only.
+
+Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt, or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.

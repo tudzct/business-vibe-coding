@@ -16,7 +16,7 @@ Prompt prose alone is not evidence. Cite source/configuration/build/bounded-runt
 - Figma/UI accuracy is researcher-managed. Audit never calculates, validates or overwrites it.
 - Complexity records actors, main steps, alternate/exception flows, entities, integrations, Business Rules and UI states.
 - Time comes from automatic timezone-qualified ISO/epoch pairs; tokens come only from telemetry.
-- Confirmed telemetry gates invoke the internal measurement engine, which owns canonical `metrics`; Audit preserves it while validating BR/flow evidence.
+- Explicit close/finalize commands invoke the measurement engine, which owns canonical `metrics`; Audit preserves it while validating BR/flow evidence.
 - Export input, cached input, output, reasoning output and total per prompt/source/repair and full workflow, plus captured seconds, selected turn count and observable tool-call count. Cached/reasoning are subsets, never added again. Do not publish fresh input, usage-update count, estimated call counts, money cost or a three-phase subtotal. Missing telemetry is null with a reason.
 - Workflow seconds = Prompt execution + first-pass Source execution + all Repair executions at the shared START/END boundaries. Configuration, approval, dataset resolution, separate audit/runtime/finalization and Measure/report work are excluded from time. Capture endpoints live; aggregate after completion. Never substitute UI duration, whole-chat elapsed time or missing endpoints.
 - Record generation, audit and each repair model independently. Start model variants from the same approved prompt and source baseline.
