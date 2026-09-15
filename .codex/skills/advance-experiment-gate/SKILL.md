@@ -5,6 +5,8 @@ description: Handle Business experiment gate confirmations and automatic repair 
 
 # Advance Experiment Gate
 
+Manual-result exception to automatic continuation: after a `researcher_result` follow-up is saved, acknowledge the updated results and wait for the researcher's subsequent repair request when defects remain. `continue_after_flow.py` returns `await_repair_request` without changing gates or authorization. Invoking `$bug-fixing-sub-prompt` is that explicit authorization: validate readiness, record the pending Repair Decision with the invocation turn ID (dry-run first), and execute repair in the same work turn without another confirmation. This explicit decision/work operation is an exception to the confirmation-close separation below and never closes telemetry. Any pending accepted flow verdict blocks new repair authorization; report the missing flow IDs. Preserve the existing all-passing skip and LLM remeasurement continuation paths, subject to that readiness check.
+
 Use this automatically when the researcher confirms, approves, continues, repairs or skips at a gate shown by `run-business-vibe-coding`. Read [gate transitions](references/gates.md), the exact canonical UC/run and its pending gate. Reject ambiguous identity or an out-of-order confirmation.
 
 Configuration is not a confirmation gate. New runs start at `prompt` after automatic validation of the researcher-prepared Confirmed JSON. Never ask for configuration reconfirmation or record a new `configuration` transition. Preserve historical receipts; a legacy pending `configuration` with empty history can close through `--gate prompt` after actual prompt approval and all normal Prompt Gate checks.

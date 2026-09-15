@@ -5,6 +5,8 @@ description: Repair one evidenced source/build/runtime or Business Rule implemen
 
 # Bug-fixing Sub-prompt
 
+Invoking `$bug-fixing-sub-prompt` is explicit researcher authorization for the pending Repair Decision. After the initial Audit Gate receipt and closed Source telemetry are present, validate that every frozen flow has a conclusive accepted verdict and an evidenced defect exists. Record `repair_decision: authorized` with this invocation's actual turn ID through `record_gate.py` (dry-run first), then begin repair in this same work turn. Do not ask for another audit-result or repair confirmation. Saving manual flow results alone never authorizes repair: acknowledge the save and wait for this subsequent request. Pending `not_evaluable` flows block new repair authorization even when other defects are known; accept saved researcher verdicts without demanding LLM runtime proof again. This explicit decision/work turn is permitted and does not close telemetry. Existing source, schema and runtime prerequisites still apply.
+
 Use only after the initial BR/flow audit is persisted. Require closed Source Gate telemetry and a validated Repair Decision authorization: either explicit researcher approval or `flow-followup-auto-repair-v1` under [automatic continuation](../../../docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md). After the coordinator records automatic authorization, begin bounded repair in the same work turn without asking again. Never initiate repair from source generation or a telemetry gate-close turn.
 
 1. Select one evidenced defect and fingerprint it; do not repair speculation or add a feature.

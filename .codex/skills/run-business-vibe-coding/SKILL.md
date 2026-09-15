@@ -5,6 +5,8 @@ description: "Run the research product's two phases: generate a Business Coding 
 
 # Run Business Vibe Coding
 
+Apply the [manual-result exception](../../../docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md) before automatic continuation below: acknowledge saved researcher flow results and wait for a subsequent repair request when defects remain. `$bug-fixing-sub-prompt` is explicit authorization; record the pending Repair Decision and run repair in the same turn without another confirmation. Pending accepted flow verdicts block new repair authorization. All-passing skip remains unchanged.
+
 Read the project context and two-phase workflow.
 
 Read the [shared Full/RQ3 contract](../../../docs/00-context/workflow/FULL-RQ3-CONTRACT.md). Resolve variant from configuration, cover every functional flow in A-D for both variants, and preserve identical evaluation/gate requirements. RQ3 omits E/F from generation input only. Both variants use automatic verification within repair and the same final measurement boundary.

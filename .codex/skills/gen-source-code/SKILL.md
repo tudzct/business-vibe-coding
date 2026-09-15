@@ -5,6 +5,8 @@ description: Implement source from an approved Full Prompt A-F or RQ3 Prompt A-D
 
 # Generate Source Code
 
+For manual flow follow-ups, the [manual-result exception](../../../docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md) takes precedence over automatic repair below: acknowledge saved results and wait for a subsequent `$bug-fixing-sub-prompt` if defects remain. That command authorizes and starts repair in the same turn without reconfirmation, once all accepted flow verdicts are conclusive. Keep the all-passing skip path.
+
 Accept one approved prompt path (`*-business-coding-prompt.md` or `*-rq3-coding-prompt.md`). Resolve frozen UC and BR baseline identity, configuration and activation; read generation content only within the configured variant's input boundary. Reject mismatches or unresolved blockers.
 
 Require the four existing experiment inputs plus an existing `run-activation.json`. The researcher chooses how to create all five files; validate content/checksums only, never tool invocation history or creator identity. Run `gen-coding-prompt/scripts/preflight_configuration.py --uc-id <UC-ID> --run-json <canonical.json> --stage source` before source START. This read-only preflight validates the approved prompt, closed prompt telemetry and existing activation. Missing/invalid files stop generation; do not call activation creation or initialize configuration, baselines or Canonical Run JSON in this turn. An externally prepared valid activation needs no `$activate-experiment-run` call.

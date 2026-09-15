@@ -1,4 +1,4 @@
 interface:
   display_name: "Advance Experiment Gate"
   short_description: "Advance gates and continue saved flow follow-ups"
-  default_prompt: "Use $advance-experiment-gate for the pending gate or to record the automatic repair decision after a saved flow follow-up; keep telemetry closure separate from source work."
+  default_prompt: "Use $advance-experiment-gate for the pending gate; acknowledge saved manual flow results and wait for a repair request. Treat $bug-fixing-sub-prompt as explicit authorization once flow verdicts are complete, and begin repair without reconfirmation."

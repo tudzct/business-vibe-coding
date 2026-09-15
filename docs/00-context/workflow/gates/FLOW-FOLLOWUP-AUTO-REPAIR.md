@@ -2,6 +2,14 @@
 
 Policy ID: `flow-followup-auto-repair-v1`.
 
+## Manual-result exception and repair readiness
+
+For new decisions, a saved `mode: researcher_result` follow-up does not authorize repair. If defects remain and every frozen flow has a conclusive accepted verdict, the helper returns `await_repair_request`, preserving gates and authorization. Acknowledge that the results were saved and wait for the researcher's subsequent `$bug-fixing-sub-prompt` invocation. That invocation constitutes explicit authorization: validate prerequisites, record `repair_decision` with outcome `authorized` and its actual turn ID using `record_gate.py` (dry-run first), then start bounded repair immediately in the same turn without another audit or repair confirmation. This is a decision/work turn, not telemetry closure.
+
+If any accepted flow is still `not_evaluable`, return `measurement_pending` and reject new repair authorization, including an explicit bug-fixing invocation. Save conclusive researcher results or complete authorized measurement first; missing observations alone are not defects. Researcher verdicts retain their attribution and do not require a second LLM runtime measurement. If all BRs and accepted flows pass, keep the existing no-defect skip/Final Metrics path.
+
+These rules override the automatic-repair and partial-measurement permission below for new decisions. The existing LLM remeasurement path remains automatic when all flow verdicts are conclusive and defects exist. Preserve historical policy receipts and already authorized repair scopes; do not rewrite or revoke them.
+
 The researcher has authorized this repository policy: after researcher-provided flow results or a requested bounded LLM remeasurement are saved, the LLM records the applicable Repair Decision and continues into bounded repair in the same work turn, without asking for another repair confirmation. Apply identically to Full and RQ3. This policy concerns follow-ups, not the initial First-pass Audit Gate or telemetry closure.
 
 ## Ordered operations

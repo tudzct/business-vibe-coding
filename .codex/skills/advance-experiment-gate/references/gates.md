@@ -1,5 +1,7 @@
 # Experiment gate transitions
 
+The [manual-result exception](../../../../docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md) takes precedence over automatic repair below: a manual-result save waits for a subsequent repair request if defects remain. `$bug-fixing-sub-prompt` itself confirms the pending Repair Decision and may record authorization and begin repair in the same turn without another confirmation or telemetry closure. Any pending accepted flow verdict blocks new authorization. All-passing skip remains unchanged.
+
 | Pending gate | Researcher confirmation | Internal action | Next gate |
 |---|---|---|---|
 | prompt | approves Draft | persist approval and close prompt telemetry | run activation/source generation |

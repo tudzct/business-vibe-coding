@@ -24,7 +24,10 @@ def prepare(run, folder, followup_id, turn_id, source_revision):
     outcome, automatic = automatic_context(run, folder, followup_id, source_revision)
     if outcome is None:
         return updated, {"action": "measurement_pending", "current_gate": gate,
-                         "reason": "Evidence is incomplete and no repairable failure is established."}
+                         "reason": "Measurement remains incomplete; save conclusive results for pending flows before repair."}
+    if outcome == "authorized" and run["flow_accuracy"]["followups"][-1].get("mode") == "researcher_result":
+        return updated, {"action": "await_repair_request", "current_gate": gate,
+                         "reason": "Researcher results saved. Invoke $bug-fixing-sub-prompt to authorize and begin repair without another confirmation."}
     reason = "No evidenced defects remain after the saved flow follow-up; repair is unnecessary." if outcome == "skipped" else None
     receipt = prepare_transition(updated, folder, "repair_decision", outcome, turn_id, reason, automatic)
     return updated, {"action": "begin_repair" if outcome == "authorized" else "final_metrics",

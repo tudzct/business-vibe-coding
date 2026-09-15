@@ -1,5 +1,7 @@
 # File-driven workflow
 
+For manual flow results, apply the [manual-result exception](gates/FLOW-FOLLOWUP-AUTO-REPAIR.md) before the general automatic continuation rules below: save and acknowledge results, then wait for a subsequent `$bug-fixing-sub-prompt` when defects remain. The command itself authorizes the pending Repair Decision and starts repair in the same turn, without another confirmation or telemetry closure. Pending accepted flow verdicts block new repair authorization; all-passing skip remains unchanged.
+
 The method has exactly two phases. Frozen inputs, approved prompts and first-pass evidence are immutable; later artifacts reference them by path and checksum.
 
 Follow [the shared Full/RQ3 contract](FULL-RQ3-CONTRACT.md) for generation input boundaries, complete functional-flow coverage, prompt/activation identity and cumulative source provenance. Both variants use the same gates; repair verification is automatic within repair work, and skipping repair proceeds directly to Final Metrics using unchanged first-pass evidence.

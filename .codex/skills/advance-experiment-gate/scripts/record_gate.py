@@ -157,6 +157,8 @@ def automatic_context(run, folder, followup_id, source_revision):
     outcome = "authorized" if br_ids or flow_ids else (
         "skipped" if business["met"] == business["total"]
         and summary["counts"]["correct"] == summary["counts"]["total"] else None)
+    if summary["counts"].get("not_evaluable", 0):
+        outcome = None
     context = {"policy_id": AUTO_REPAIR_POLICY, "policy_artifact": AUTO_REPAIR_REFERENCE,
                "policy_sha256": digest((ROOT / AUTO_REPAIR_REFERENCE).read_bytes()),
                "followup_id": followup_id, "followup_sha256": snapshot_hash(followup),
@@ -174,6 +176,11 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
         require(gate == "repair_decision", "automatic policy applies only to Repair Decision")
         selected, validated = automatic_context(run, folder, automatic["followup_id"], automatic["source_revision"])
         require(selected == outcome and validated == automatic, "automatic decision differs from current evidence")
+        if outcome == "authorized":
+            trigger = next(r for r in run["flow_accuracy"].get("followups", [])
+                           if r["followup_id"] == automatic["followup_id"])
+            require(trigger.get("mode") != "researcher_result",
+                    "saved researcher results require a subsequent explicit repair request")
     require(isinstance(turn_id, str) and turn_id.strip(), "actual gate decision turn ID required")
     require(not any(r.get("turn_id") == turn_id for r in history), "one gate operation per turn")
     config_ref = run.get("experiment_configuration") or {}
@@ -239,6 +246,12 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
                     "gate-pinned flow progress changed")
     if gate == "repair_decision":
         initial_evidence = audit_evidence(run, folder, "initial")
+        if outcome == "authorized":
+            summary = validate_flow(run, folder)
+            require(summary["counts"].get("not_evaluable", 0) == 0,
+                    "repair requires conclusive accepted results for every frozen flow; save missing researcher results or complete measurement first")
+            require(any(r["status"] == "unmet" for r in run["business_rules"]["initial"]["requirements"])
+                    or summary["counts"]["incorrect"] > 0, "repair requires an evidenced defect")
         if automatic is not None:
             evidence = initial_evidence
         if outcome == "skipped":

@@ -5,6 +5,8 @@ description: Assess Business Rule implementation and frozen use-case flow accura
 
 # Audit Generation Metrics
 
+The [manual-result exception](../../../docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md) overrides automatic repair after researcher-provided flow results below. Save and acknowledge those results, then wait for a subsequent `$bug-fixing-sub-prompt` when defects remain; that command authorizes and starts repair without another confirmation. Pending accepted flow verdicts block new repair authorization. Preserve all-passing skip behavior.
+
 Read the approved prompt, frozen Business Rule baseline/resource, active run configuration, current diff and metric rubric.
 
 The repair caller must end its execution timer after correction and permitted evidence collection, before appending this audit. Standalone BR/flow audit is outside generation and workflow execution time; do not start or extend a core timer for audit.

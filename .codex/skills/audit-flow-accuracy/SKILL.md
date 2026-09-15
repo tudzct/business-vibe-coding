@@ -5,6 +5,8 @@ description: Audit frozen use-case flows and update canonical experiment results
 
 # Audit Flow Accuracy
 
+For `researcher_result` follow-ups, apply the [manual-result exception](../../../docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md) instead of automatically starting repair: acknowledge the saved results and wait for a subsequent `$bug-fixing-sub-prompt` if defects remain. That command is explicit repair authorization and needs no additional confirmation. Pending accepted flow verdicts block new repair authorization. All-passing skip remains unchanged.
+
 Score whole behavioral paths, not individual steps. This is supplementary evidence and never changes the Business Rule baseline or BR result.
 
 For partial results or researcher/LLM follow-up measurement, read [follow-up measurement](references/follow-up-measurement.md). Always save measured flow results, report missing parts immediately and offer both paths for the researcher to choose. Researcher supplies results only; the LLM records them and recalculates JSON. Evaluation never edits application source. After either follow-up is saved, return to the coordinator for [automatic continuation](../../../docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md): it records the standing policy decision and begins evidenced repair in the same work turn without another confirmation. The scorer itself never authorizes or performs repair.

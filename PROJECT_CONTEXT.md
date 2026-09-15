@@ -49,6 +49,8 @@ The 16 files under `docs/01-inception/use-cases/` are frozen projections of this
 
 ## Business-rule baseline
 
+Manual flow follow-ups use the [manual-result exception](docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md): save and acknowledge researcher verdicts, then wait for `$bug-fixing-sub-prompt` when defects remain. That subsequent command authorizes and starts repair in one turn without reconfirmation. Pending accepted flow verdicts block new repair authorization. This takes precedence over automatic continuation below; the all-passing skip path remains unchanged.
+
 Phase 1 uses all BRs supplied for the active UC. There is no rule-selection mode. Before invoking prompt generation, preparation by the researcher's chosen tool records:
 
 - frozen UC path and SHA-256;

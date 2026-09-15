@@ -1,5 +1,7 @@
 # Partial flow results and follow-up measurement
 
+For the researcher-result path, the manual-result exception in `docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md` takes precedence over automatic repair below: save and acknowledge results, then wait for a subsequent `$bug-fixing-sub-prompt` request when defects remain. The save is not repair authorization. That subsequent command records explicit authorization and starts repair without another confirmation, provided every frozen flow has a conclusive accepted verdict. Remaining unknown flows block new repair even if other flows are incorrect. All-passing skip behavior remains unchanged.
+
 Use this procedure after audit, when the researcher supplies flow results, or asks the LLM to audit again (including already scored flows). This evaluation/write operation is flow-only: never update BR decisions, telemetry, UI scores, run status, repair authorization or gate history inside it. After saving, return to the coordinator for [automatic continuation](../../../../docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md). The coordinator records the policy decision and starts evidenced repair in the same work turn without another researcher confirmation.
 
 ## Accepted experiment result
