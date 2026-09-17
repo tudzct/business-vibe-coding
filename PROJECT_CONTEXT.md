@@ -3,7 +3,7 @@
 ## Canonical terminology
 
 - **Research product:** this repository, its two-phase generation workflow, artifacts, source and experiment evidence.
-- **Researcher:** the human who supplies sources, confirms experiment configuration, approves prompts/schema and resolves ambiguity.
+- **Researcher:** the human who supplies sources, confirms experiment configuration, approves prompts and resolves ambiguity.
 - **Codex/AI:** the agent that projects sources, generates prompts/source and records evidence. It never approves its own output.
 - **Application user:** an actor represented in a use case.
 - **Reviewer:** an independent reader of the method and evidence.
@@ -49,7 +49,7 @@ The 16 files under `docs/01-inception/use-cases/` are frozen projections of this
 
 ## Business-rule baseline
 
-Follow the researcher command sequence in [FILE-DRIVEN-WORKFLOW.md](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md). Every command authorizes its operation without extra gate confirmations. Prompt close approves the Draft; repair invocation authorizes the correction. Four prepared files suffice; activation is optional. Internal historical `gates` fields remain bookkeeping only.
+Follow the researcher command sequence in [FILE-DRIVEN-WORKFLOW.md](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md). Every command authorizes its operation without extra gate confirmations. Prompt close approves the Draft; repair invocation authorizes the correction. Four research JSON inputs plus a researcher-provided database baseline are required for generation; activation is optional. Internal historical `gates` fields remain bookkeeping only.
 
 Phase 1 uses all BRs supplied for the active UC. There is no rule-selection mode. Before invoking prompt generation, preparation by the researcher's chosen tool records:
 
@@ -63,11 +63,15 @@ This receipt prevents evaluation criteria from changing after source generation;
 
 Before invoking generation, preparation also freezes a supplementary flow baseline from every explicit Basic/Main, Alternative and Exception Flow. A flow is incorrect only when a completion-critical step fails or its specified terminal outcome is not achieved. Flow scoring never changes the BR denominator or BR result.
 
-New schema-2.3 configurations freeze `flow_audit_rubric: completion-critical-flow-runtime-v2` before generation. This rubric requires connected integrated-runtime observation for flow `correct`, with evidence linked to UC/run/stage/baseline/source revision. Source findings remain separate; unavailable critical/outcome or connected-runtime proof means `not_evaluable` unless a blocking failure is evidenced. Initial and final use the same rubric. Authorized repair automatically observes every flow on final source before repair closure. When repair is skipped and source is unchanged, the original first-pass assessment remains terminal evidence, preserving its original stage/ID/time; no duplicate assessment is required. Legacy configurations and v1 results remain immutable and are not mixed into comparisons using v2. Weights, formulas, BR criteria and generation-only timing remain unchanged; the researcher command sequence supplies authorization without extra confirmations.
+Schema-2.3 and schema-2.4 configurations freeze `flow_audit_rubric: completion-critical-flow-runtime-v2` before generation. This rubric requires connected integrated-runtime observation for flow `correct`, with evidence linked to UC/run/stage/baseline/source revision. Source findings remain separate; unavailable critical/outcome or connected-runtime proof means `not_evaluable` unless a blocking failure is evidenced. Initial and final use the same rubric. Authorized repair automatically observes every flow on final source before repair closure. When repair is skipped and source is unchanged, the original first-pass assessment remains terminal evidence, preserving its original stage/ID/time; no duplicate assessment is required. Legacy configurations and v1 results remain immutable and are not mixed into comparisons using v2. Weights, formulas, BR criteria and generation-only timing remain unchanged; the researcher command sequence supplies authorization without extra confirmations.
 
 Flow accuracy retains evaluated-only accuracy/error, coverage, failures and pending targets. Offer researcher verdicts or bounded LLM measurement; persist attributed follow-ups without changing source/telemetry. After saving either path, wait for `$bug-fixing-sub-prompt` if defects remain. Unknown accepted flow verdicts block new repair. All-passing unchanged-source audit records repair unnecessary. Never automatically reopen terminal runs. See the [follow-up contract](docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md).
 
 The reported experiment flow result follows `accepted-audit-results-v1`: use the latest conclusive accepted verdict per flow across audit stages. Both researcher results and LLM re-audits update canonical JSON directly; repair/source changes or later inconclusive observations do not erase accepted results. Per-flow source/stage provenance and latest-source limitations remain visible. This reporting policy does not change frozen evidence rubrics, BR acceptance, telemetry or gates. Historical stage-only projections remain readable; show the selection policy in comparisons and update only explicitly requested runs.
+
+## Database input
+
+The fifth input is the fixed researcher-provided MySQL database and its DBML description. New schema-2.4 configurations pin exactly `dbml_path`, `dbml_sha256` and `schema_fingerprint_sha256` inside `database_baseline`; no separate status or manifest. See [database policy](docs/00-context/engineering/DATABASE-SCHEMA.md). Generation reads DBML, maps existing tables and may perform authorized business DML, but never changes structure or creates migrations. There is no schema proposal/approval gate. Preflight verifies DBML and runtime pins before Prompt/Source START. Database initialization/reset is external setup once per new pipeline; subsequent UCs retain data. Historical configurations remain readable without invented pins.
 
 ## System baseline
 

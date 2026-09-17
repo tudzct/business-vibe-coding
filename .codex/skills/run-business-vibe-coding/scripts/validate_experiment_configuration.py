@@ -11,7 +11,7 @@ EFFORTS = {"none", "low", "medium", "high", "xhigh", "max"}
 MODES = {"standard", "pro"}
 PROTOCOLS = {"fixed", "matched", "cross"}
 PROMPT_VARIANTS = {"full", "rq3"}
-SCHEMA_VERSIONS = {"2.0", "2.1", "2.2", "2.3"}
+SCHEMA_VERSIONS = {"2.0", "2.1", "2.2", "2.3", "2.4"}
 TIMING_METHOD = "system_timestamp_delta"
 LEGACY_FLOW_RUBRIC = "completion-critical-flow-v1"
 RUNTIME_FLOW_RUBRIC = "completion-critical-flow-runtime-v2"
@@ -40,7 +40,7 @@ def read_configuration_json(path):
 
 
 def flow_rubric(data):
-    expected = RUNTIME_FLOW_RUBRIC if data.get("schema_version") == "2.3" else LEGACY_FLOW_RUBRIC
+    expected = RUNTIME_FLOW_RUBRIC if data.get("schema_version") in {"2.3", "2.4"} else LEGACY_FLOW_RUBRIC
     actual = data.get("flow_audit_rubric", LEGACY_FLOW_RUBRIC)
     if actual != expected:
         raise ValueError("flow_audit_rubric does not match configuration schema")
@@ -97,11 +97,16 @@ def validate(path):
     if decided.tzinfo is None:
         raise ValueError("decided_at must include a timezone")
     timing_method = data.get("timing_method")
-    if schema_version in {"2.1", "2.2", "2.3"} and timing_method != TIMING_METHOD:
+    if schema_version in {"2.1", "2.2", "2.3", "2.4"} and timing_method != TIMING_METHOD:
         raise ValueError(f"schema {schema_version} timing_method must be {TIMING_METHOD}")
     if timing_method is not None and timing_method != TIMING_METHOD:
         raise ValueError(f"unsupported timing_method: {timing_method}")
-    if schema_version in {"2.2", "2.3"}:
+    # Offline validation only. Runtime checks belong to generation/audit, never Measure.
+    if schema_version == "2.4" or "database_baseline" in data:
+        sys.path.insert(0, str(ROOT / ".codex/skills/gen-coding-prompt/scripts"))
+        from database_baseline import validate_input
+        validate_input(data)
+    if schema_version in {"2.2", "2.3", "2.4"}:
         figma = data.get("figma_dataset")
         if not isinstance(figma, dict):
             raise ValueError(f"schema {schema_version} requires figma_dataset")
@@ -142,7 +147,7 @@ def validate(path):
         if not isinstance(ids, list) or not ids or any(not isinstance(v, str) or not v.strip() for v in ids) or len(ids) != len(set(ids)):
             raise ValueError(f"use_cases[{index}].ordered_br_ids must be a non-empty unique string array")
         text(uc.get("business_rule_baseline"), f"use_cases[{index}].business_rule_baseline")
-        if schema_version in {"2.2", "2.3"}:
+        if schema_version in {"2.2", "2.3", "2.4"}:
             text(uc.get("flow_baseline"), f"use_cases[{index}].flow_baseline")
 
     runs = data.get("runs")

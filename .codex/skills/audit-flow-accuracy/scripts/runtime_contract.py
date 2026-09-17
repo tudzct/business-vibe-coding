@@ -41,11 +41,11 @@ def configured_rubric(run, folder, validate_evidence, baseline=None):
     require(sum(r.get("uc_id") == run["uc_id"] and r.get("run_id") == run["run_id"]
                 for r in config.get("runs", [])) == 1, "configured run assignment mismatch")
     version = config.get("schema_version")
-    require(version in {"2.0", "2.1", "2.2", "2.3"}, "unknown configuration schema")
+    require(version in {"2.0", "2.1", "2.2", "2.3", "2.4"}, "unknown configuration schema")
     rubric = config.get("flow_audit_rubric", LEGACY_RUBRIC)
-    require(rubric == (RUNTIME_RUBRIC if version == "2.3" else LEGACY_RUBRIC),
+    require(rubric == (RUNTIME_RUBRIC if version in {"2.3", "2.4"} else LEGACY_RUBRIC),
             "configuration flow rubric mismatch")
-    if version == "2.3" and baseline is not None:
+    if version in {"2.3", "2.4"} and baseline is not None:
         uc_entries = [u for u in config.get("use_cases", []) if u.get("uc_id") == run["uc_id"]]
         require(len(uc_entries) == 1 and baseline["path"] == uc_entries[0].get("flow_baseline"),
                 "assessment must use the configured flow baseline")

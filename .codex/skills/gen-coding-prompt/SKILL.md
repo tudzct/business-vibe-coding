@@ -11,7 +11,7 @@ Read [configuration input contract](../../../docs/00-context/workflow/gates/EXPE
 
 ## Read-only preflight
 
-Before START, all four core inputs must already exist: Confirmed Experiment Configuration JSON, frozen `business-rule-baseline.json`, frozen `flow-baseline.json` and Draft Canonical Run JSON. Canonical draft state is `run_status: draft`, with `coding_prompt: null`, `metrics: null` before first measurement, and initial gates at `prompt` with empty history. Resume only an open prompt phase with valid existing evidence.
+Before START, require four prepared research JSON inputs (Confirmed configuration, frozen BR baseline, frozen flow baseline and Draft Canonical Run JSON) plus the fifth input: the researcher-provided database baseline. Configuration schema 2.4 pins `database_baseline.dbml_path`, `dbml_sha256` and `schema_fingerprint_sha256`, with no separate database status. Canonical draft state is `run_status: draft`, with `coding_prompt: null`, `metrics: null` before first measurement, and initial gates at `prompt` with empty history. Resume only an open prompt phase with valid existing evidence.
 
 The researcher may prepare these files manually, with another model, external Python or optional repository helpers. Validate their contents, identities and checksums; never require a particular creator, skill invocation, creation command or fabricated historical receipt. Configuration has no confirmation gate or summary for approval. Root `.env` is not required.
 
@@ -26,6 +26,8 @@ Both baselines and the Canonical Run JSON are mandatory on every invocation, inc
 Referenced BR resource/provenance, frozen UC, API/Figma and template dependencies must also exist and validate under their existing contracts; they are not silently generated as a workaround. A read-only deterministic Prompt E rendering from the existing BR resource is allowed. If a checksum-normalization receipt is required by the existing UC contract, it must already exist.
 
 ## Generate the Draft
+
+The same preflight imports `database_baseline.py` internally to verify DBML bytes and live MySQL metadata against the configured pins. Follow [database policy](../../../docs/00-context/engineering/DATABASE-SCHEMA.md). Require an initialized running Compose database and `finalsource/.env`; root `.env` remains unnecessary. Do not start/reset/bootstrap the database, create/repair the fifth input, rewrite pins or dump SQL/metadata into context. Missing/mismatched input blocks before START. After PASS, read DBML once as shared Full/RQ3 technical input and use its exact structure in Prompt A/D. No schema proposal/approval or generation of DDL/migrations. An incompatible requirement is a blocker.
 
 1. Read `PROJECT_CONTEXT.md`, source/workflow rules and the configured template: `templates/construction/coding-prompt.template.md` for Full or `templates/construction/coding-prompt-rq3.template.md` for RQ3.
 2. Verify frozen UC provenance and the exact source path returned by preflight. Resolve referenced API contracts and frozen Figma evidence through `resolve-figma-design-dataset` in read-only resolution mode. Missing dataset/API evidence stops generation; no capture, refresh or helper-file setup occurs here.

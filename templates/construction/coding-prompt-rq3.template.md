@@ -46,7 +46,7 @@ Preserve the source status and message through `{ "success": false, "statusCode"
 
 Follow the existing project architecture. Do not introduce new architectural layers or dependencies.
 
-Handle ownership, transaction, concurrency, idempotency, date/timezone, and monetary-rounding behavior only when required by the functional specification, UML model, API contract, or project technical baseline. Use existing ORM mappings and migration conventions. Do not alter the schema without an explicit source requirement and researcher-approved schema proposal.
+Handle ownership, transaction, concurrency, idempotency, date/timezone, and monetary-rounding behavior only when required by the functional specification, UML model, API contract, or project technical baseline. Read the configured checksum-pinned DBML as shared technical input. Map entities/queries to existing tables and exact column/key definitions. Allow authorized business DML only; never change schema/DBML/init SQL, generate/run migrations or enable synchronization. Missing necessary structure is an input blocker; no schema proposal or approval gate.
 
 ## Prompt B: Frontend UI
 

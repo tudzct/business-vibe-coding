@@ -1,5 +1,7 @@
 # Technical-stack skill routing
 
+Persistence follows [DATABASE-SCHEMA.md](DATABASE-SCHEMA.md): read the configured DBML and map existing structure. No naming convention, stack skill or repair grants permission to alter the supplied schema. Keep synchronization and migrations disabled.
+
 `$gen-source-code` reads this routing table and invokes the applicable stack skill; researchers do not need to invoke each stack skill manually. Each stack skill loads only the references required by the active change areas.
 
 | Change area | Skill | References loaded conditionally |

@@ -35,6 +35,8 @@ If the request is ambiguous, begin with `review`. Ask before the first package i
 5. Explain that the mandatory Docker runtime uses only `finalsource/.env`. Do not create or use per-app env files or native Node.js/MySQL commands as a fallback; they must not override Compose networking.
 ## Run and verify
 
+Follow [database policy](../../../docs/00-context/engineering/DATABASE-SCHEMA.md). The researcher supplies DBML and `finalsource/init.sql`. Initialization on a fresh MySQL volume happens once before a new pipeline with explicit setup authorization. During preparation use `database_baseline.py --dbml <path> --require-empty` to print pins; it never writes configuration or changes the database. For a configured run use `--configuration <path>` to verify pins. Never generate/alter schema, rewrite pins, run migrations, enable synchronization or treat mismatch as reset permission. Keep the same volume/data between cumulative UCs; no per-UC emptiness requirement. Troubleshooting restores connectivity without changing the frozen schema. The helper uses container-root for metadata reads only; application operations use the backend account. Claim DML-only privileges only when verified during setup.
+
 1. Use the explicit root command from `references/project-runbook.md`; never depend on the current directory implicitly.
 2. Build/start only after authorization. Never run `docker compose down -v`, prune volumes/images globally, reset MySQL, or perform a destructive migration without a separate explicit request.
 3. Inspect `docker compose ps`, database/backend/frontend health and bounded logs. Redact credentials, tokens, account data and sensitive payloads before reporting or persisting evidence.

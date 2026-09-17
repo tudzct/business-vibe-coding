@@ -24,4 +24,4 @@ auditor_assignment: <fixed-auditor|same-as-generation|explicit cross auditor ID>
 
 This projection activates exactly one run confirmed by the researcher in the unified experiment configuration. Every field must match the configuration and checksum; this file must not be shared or overwritten for another run.
 
-The Business Rule baseline was previously frozen to generate Prompt E. Model assignment comes from the pinned Confirmed configuration; this optional historical activation adds no workflow gate. Source mutation requires prompt-close approval and closed prompt telemetry. Required concrete schema decisions remain explicit.
+The Business Rule baseline was previously frozen to generate Prompt E. Model assignment comes from the pinned Confirmed configuration; this optional historical activation adds no workflow gate. Source mutation requires prompt-close approval and closed prompt telemetry. The researcher-provided database schema is fixed; verify its configured pins without proposing or approving schema changes.

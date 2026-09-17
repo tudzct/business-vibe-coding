@@ -4,14 +4,16 @@ The researcher invokes the following commands in separate turns. Each command au
 
 Reference: [researcher command sequence](https://docs.google.com/document/d/1R9Z4LQ_FEbEop_TmGMTyCPnM3HdNau9JvLBV4uB8ZMg/edit?tab=t.0).
 
-## Prepare four files before generation
+## Prepare four JSON files and the database input before generation
 
 1. `docs/05-experiments/configurations/CFG-<UC-ID>-<MODEL>-<VARIANT>-<DATE>.json`: complete, Confirmed configuration.
 2. `docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json`: every frozen BR in source order.
 3. `docs/02-construction/implementation/<UC-ID>/flow-baseline.json`: every explicit Main/Basic, Alternative and Exception Flow.
 4. `docs/05-experiments/<UC-ID>/<UC-ID>-<MODEL>-<VARIANT>.json`: Draft Canonical Run JSON with pinned configuration and baseline identities.
 
-The researcher chooses the preparation tool. Validate the four files and their frozen UC/resource/API/Figma dependencies read-only; never initialize, repair or fill missing inputs during generation. Resolve one exact UC/run, never the newest file. Root `.env` is optional. `run-activation.json` is optional historical evidence, not a fifth prerequisite; validate it when present. Requested model, replicate and run order come from the pinned configuration.
+5. Database input: a researcher-prepared DBML file and existing MySQL tables initialized from `finalsource/init.sql`. Schema-2.4 configuration pins the DBML path/hash and runtime fingerprint. Follow [database policy](../engineering/DATABASE-SCHEMA.md).
+
+The researcher chooses the preparation tool. Validate the four JSON files, database pins and frozen UC/resource/API/Figma dependencies read-only; never initialize, repair or fill missing inputs during generation. Resolve one exact UC/run, never the newest file. Root `.env` is optional; initialized Docker MySQL and `finalsource/.env` are required for the database preflight. `run-activation.json` is optional historical evidence, not an additional prepared input; validate it when present. Requested model, replicate and run order come from the pinned configuration.
 
 ## Command sequence
 
@@ -36,6 +38,6 @@ Preserve identical frozen BR/flow evaluation for Full and RQ3. RQ3 excludes E/F 
 
 Capture only actual Prompt + first-pass Source + Repair execution intervals. Under `generation_execution_with_repair_audit_v2`, Repair includes its integrated BR/flow/runtime verification and final evidence/hash/status persistence before END. Standalone audit/runtime/follow-up observation contributes no generation execution seconds; close/report/export turns are excluded from workflow tokens. Each work turn has one semantic token label, matching any captured core execution; a repair's child audit remains `repair`. Preserve historical protocols without rewriting or mixing endpoints. Keep phase-ledger/selection evidence and never fabricate missing counters/endpoints.
 
-Preserve cumulative source provenance; do not reset between cumulative UCs. API envelopes and required application controls remain. Material business/API ambiguity requires researcher resolution; schema edits still require their concrete approved proposal. Docker Compose v2 is the only runtime; missing daemon is BLOCKED. Never create or run tests/test cases or store secrets in evidence.
+Preserve cumulative source provenance; do not reset between cumulative UCs. API envelopes and required application controls remain. Material business/API ambiguity requires researcher resolution; database structure is immutable. Read pinned DBML; perform authorized business DML only. No schema proposal/approval, DDL, migration or schema sync. A missing/conflicting schema element blocks the work. Docker Compose v2 is the only runtime; missing daemon is BLOCKED. Never create or run tests/test cases or store secrets in evidence.
 
 Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt, or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.

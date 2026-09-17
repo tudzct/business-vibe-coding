@@ -48,7 +48,7 @@ Preserve the source status and message through `{ "success": false, "statusCode"
 
 Follow the existing project architecture. Do not introduce new architectural layers or dependencies.
 
-Handle relevant ownership, transaction, concurrency, idempotency, date/timezone, and monetary-rounding rules. Use existing ORM mappings and migration conventions. Do not alter the schema without an explicit source requirement and researcher-approved schema proposal.
+Handle relevant ownership, transaction, concurrency, idempotency, date/timezone, and monetary-rounding rules. Read the configured checksum-pinned DBML as the database contract. Map entities/queries to existing tables and exact column/key definitions. Allow authorized business DML only; never change schema/DBML/init SQL, generate/run migrations or enable synchronization. Missing required structure is an input blocker; no schema proposal or approval gate.
 
 ## Prompt B: Frontend UI
 
@@ -190,4 +190,4 @@ Priority:
 3. Frozen Figma evidence
 4. Existing source-code conventions
 
-Generate source only. Modify only files required by the use case. Do not create or run tests or test cases. Do not introduce unapproved schema, public API, ownership, dependency or destructive changes.
+Generate source only. Modify only files required by the use case. Do not create or run tests or test cases. Never change the supplied database schema. Do not introduce unapproved public API, ownership, dependency or destructive-data changes.

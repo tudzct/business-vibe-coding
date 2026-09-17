@@ -3,7 +3,7 @@
 ## Entity and repository
 
 - Register every entity through the existing Nest/TypeORM configuration and give every entity a primary column.
-- Model nullability, uniqueness, precision/scale, length and relation ownership explicitly. Do not enable cascade broadly; choose `onDelete` deliberately.
+- Map nullability, uniqueness, precision/scale, length, relation ownership and `onDelete` exactly from the configured DBML. Do not invent or broaden cascades.
 - Inject the entity repository using established Nest patterns. Use repository/find options or QueryBuilder parameters, never SQL string interpolation.
 - Map DTO fields explicitly. Do not pass untrusted request objects directly into `save`/`update`.
 - Scope owned-resource queries by both resource identifier and authenticated owner identifier where possible.
@@ -14,13 +14,13 @@
 - Use a transaction when one business operation performs multiple dependent writes or financial state changes.
 - Inside a TypeORM transaction use only the provided transactional entity manager/repositories, never the global manager/repository.
 - Choose isolation, locking and idempotency only from explicit UC/Business Rule requirements. Handle duplicate/deadlock outcomes without exposing database errors.
-- Do not use `synchronize: true` in production. Schema change requires an explicit migration and user-approved scope.
+- Keep `synchronize: false` and automatic migrations disabled in every environment. Do not generate/run migrations or schema synchronization. Entity edits map existing tables only.
 
 ## MySQL
 
-- Use appropriate fixed precision for money; never persist financial amounts as floating-point values.
-- Back uniqueness/foreign-key/business invariants with constraints where approved.
-- Add indexes for demonstrated query/filter/order and ownership patterns, but avoid speculative indexes because each index adds write/storage cost.
+- Preserve supplied database types and monetary precision; report incompatible requirements without changing the schema.
+- Use existing constraints and required application enforcement. Missing necessary structure is an input blocker, not permission for DDL.
+- Use existing indexes; never add, drop or change indexes during generation or repair.
 - Keep timestamps/timezone semantics explicit and consistent with the API contract.
 
 Official basis:

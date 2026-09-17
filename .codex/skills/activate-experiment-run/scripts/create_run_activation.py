@@ -100,7 +100,7 @@ def main() -> None:
     if baseline_data.get("ordered_br_ids") != uc_entries[0].get("ordered_br_ids"):
         fail("configuration BR IDs do not exactly match the frozen baseline")
 
-    if config.get("schema_version") in {"2.2", "2.3"}:
+    if config.get("schema_version") in {"2.2", "2.3", "2.4"}:
         flow_baseline_rel = uc_entries[0].get("flow_baseline")
         if not isinstance(flow_baseline_rel, str) or not flow_baseline_rel:
             fail("configuration UC entry has no flow_baseline")

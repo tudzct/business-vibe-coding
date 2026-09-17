@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "run-business-vibe-
 from validate_experiment_configuration import read_configuration_json as read_json, validate
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-flow-accuracy/scripts"))
 from score_flow_accuracy import validate_baseline as validate_flow_baseline
+from database_baseline import validate_input as validate_database_input, verify_database
 
 
 def check_reference(reference, path, config, checksum):
@@ -196,6 +197,12 @@ def preflight(uc_id, configuration=None, run_id=None, variant=None, run_json=Non
     uc = next(u for u in data["use_cases"] if u["uc_id"] == uc_id)
     baselines = check_baselines(uc, require_baselines)
     check_canonical(canonical, data, assignment, uc, stage)
+    # Fifth prepared input: never infer or create expected hashes from the live DB.
+    # Activation/Measure uses this preflight too: it must remain offline.
+    if stage in {"prompt", "source"}:
+        verify_database(data)
+    elif data.get("schema_version") == "2.4" or "database_baseline" in data:
+        validate_database_input(data)
     baseline = read_json(writable(ROOT / uc["business_rule_baseline"]))
     if use_case is not None:
         require(writable(use_case) == writable(ROOT / baseline["use_case_path"]), "requested UC path differs from frozen baseline")

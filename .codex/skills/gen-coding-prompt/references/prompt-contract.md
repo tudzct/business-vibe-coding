@@ -6,7 +6,7 @@
 - C: typed client integration, state and success flow.
 - D: validation, loading, exceptions and recovery (references Prompt E).
 - E: exact ordered projection of all frozen Business Rules.
-- F: project/database/source context, priority, source-only and no-tests limits.
+- F: project/source context, priority, source-only and no-tests limits. The configured DBML is shared technical input in A/D for both Full and RQ3; preserve its exact schema and prohibit DDL/migrations/schema sync.
 
 ## RQ3 ablation variant (Prompts A-D)
 - A: backend endpoint, DTO, domain logic and API response envelope derived directly from functional specification and UML (no Prompt E references).

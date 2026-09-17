@@ -30,7 +30,7 @@ Prompt E is Business Rules Compliance. Prompt F supplies implementation context 
 
 ## Main commands
 
-Prepare the four files described in [FILE-DRIVEN-WORKFLOW.md](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md): Confirmed configuration, frozen BR/flow baselines and Draft Canonical Run JSON. Generation validates them read-only. Activation is optional; no additional gate confirmation turns are required.
+Prepare the four research JSON files and the database input described in [FILE-DRIVEN-WORKFLOW.md](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md): Confirmed configuration, frozen BR/flow baselines and Draft Canonical Run JSON. Generation validates them read-only, including configured DBML SHA-256 and live MySQL structure fingerprint. See [database preparation](docs/00-context/engineering/DATABASE-SCHEMA.md). The schema is fixed; data accumulates across UCs. Activation is optional; no additional gate confirmation turns are required.
 
 Run these commands in separate turns for the same UC/run:
 
