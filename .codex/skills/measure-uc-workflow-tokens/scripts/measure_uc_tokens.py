@@ -10,7 +10,7 @@ from pathlib import Path
 from metrics_contract import (CORE, AUX, USAGE, METHOD, TIMING_PROTOCOL, aggregate, execution_phase_aggregate,
                               execution_workflow_aggregate, repair_timing, token_breakdown, atomic_write, context,
                               digest, duration, epoch, journal, metrics_markdown, read_json,
-                              require, run_lock, save_journal, usage, validate_metrics)
+                              require, run_lock, save_journal, usage, validate_core_token_phase, validate_metrics)
 
 START = {"turn_started", "task_started"}
 END = {"turn_complete", "turn_completed", "task_complete", "task_completed"}
@@ -151,7 +151,7 @@ def measure(args):
     with run_lock(folder):
         state = journal(run, folder)
         require(state.get("timing_protocol") == TIMING_PROTOCOL,
-                "legacy timing ledger is read-only; use a new run for execution timing")
+                "legacy timing ledger is read-only; use a new run for repair-inclusive execution timing")
         require(state["session_id"] in (None, session["session_id"]), "one session per UC/run required")
         state["session_id"] = session["session_id"]
         ids = [s["turn_id"] for s in selection["turns"]]
@@ -181,8 +181,8 @@ def measure(args):
         require(run["uc_id"].casefold() in selected[0]["message"].casefold(), "first workflow message must identify UC")
         old_metrics = run.get("metrics")
         if old_metrics:
-            require(old_metrics.get("schema_version") == 3,
-                    "legacy measured runs are read-only; use a new run for execution timing")
+            require(old_metrics.get("schema_version") == 3 and old_metrics.get("timing_protocol") == TIMING_PROTOCOL,
+                    "legacy measured runs are read-only; use a new run for repair-inclusive execution timing")
             require(old_metrics["session"]["session_id"] == session["session_id"], "metrics session mismatch")
             old_ids = [r["turn_id"] for r in old_metrics["turns"]]
             require(ids[:len(old_ids)] == old_ids, "cannot remove/reorder previously measured workflow turns")
@@ -199,6 +199,7 @@ def measure(args):
             require(phase in AUX or phase == expected_phase,
                     f"{turn['turn_id']} core token label is outside its generation window")
             segments = [s for s in state["segments"] if s["start"]["turn_id"] == turn["turn_id"]]
+            validate_core_token_phase(phase, segments)
             counted = [s for s in segments if s["start"]["phase"] in CORE]
             timing_phases = {s["start"]["phase"] for s in counted}
             require(len(timing_phases) <= 1, "one core execution phase per turn required")

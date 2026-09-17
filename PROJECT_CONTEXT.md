@@ -113,7 +113,7 @@ A run is complete only when:
 
 No test or test-case generation is part of this method.
 
-Telemetry uses prompt/source/repair buckets within the two phases and follows [the command sequence](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md). Close/report/export turns are excluded; time follows `generation_execution_only_v1`. Audit and repair verification preserve frozen BR/flow evidence. The existing gate field records completed commands without asking the researcher for further approval.
+Telemetry uses prompt/source/repair buckets within the two phases and follows [the command sequence](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md). Close/report/export turns are excluded. New captures follow `generation_execution_with_repair_audit_v2`: Repair includes integrated BR/flow/runtime verification and final evidence persistence, and a turn's token label must match any captured core execution. Standalone audit remains workflow-only tokens and excluded from counted execution time. Historical timing protocols remain readable and unchanged; use a new run rather than mixing protocols. Audit and repair verification preserve frozen BR/flow evidence. The existing gate field records completed commands without asking the researcher for further approval.
 
 Optional `audit-figma-ui-accuracy` is manually requested only; missing/null UI scores never block audit, measurements, reports, export or completion. After finalization, `$export-experiment-excel <UC-ID> <LINK_OR_FILEPATH> <TAB_NAME>` is a separate reporting operation that copies stored canonical values into a new workbook while preserving formulas/protected/manual content.
 

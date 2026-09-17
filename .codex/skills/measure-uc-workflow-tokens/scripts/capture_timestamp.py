@@ -36,7 +36,7 @@ def main():
     with run_lock(folder):
         state = journal(run, folder)
         require(state.get("timing_protocol") == TIMING_PROTOCOL,
-                "legacy timing ledger is read-only; use a new run for execution timing")
+                "legacy timing ledger is read-only; use a new run for repair-inclusive execution timing")
         require(args.phase != "repair" or bool(args.repair_id), "repair timing requires --repair-id")
         require(state["workflow_status"] == "open", "workflow is finalized")
         require(state["session_id"] in (None, session["session_id"]), "session identity mismatch")

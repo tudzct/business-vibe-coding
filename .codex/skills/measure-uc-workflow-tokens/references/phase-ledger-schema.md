@@ -1,12 +1,12 @@
 # Execution timing and phase protocol
 
-Use `timing_method: system_timestamp_delta` with `timing_protocol: generation_execution_only_v1`. The AI invokes the helper at the following boundaries; the helper records the actual system instant and code calculates the delta. It does not infer readiness automatically. This is not UI Worked-for or full-turn latency.
+Use `timing_method: system_timestamp_delta` with `timing_protocol: generation_execution_with_repair_audit_v2`. The AI invokes the helper at the following boundaries; the helper records the actual system instant and code calculates the delta. It does not infer readiness automatically. This is not UI Worked-for or full-turn latency. Historical `generation_execution_only_v1` captures excluded the repair audit and remain read-only; use a new run for the new protocol, never rewrite or mix historical endpoints.
 
 | Execution | START | END |
 |---|---|---|
 | Prompt | After all required inputs, configuration, frozen resources and Figma resolution are ready; immediately before generating the Draft | Immediately after the complete Draft is persisted, before researcher review/approval |
 | First-pass Source | After read-only preflight and prompt-close approval, immediately before the first source mutation | Immediately after complete first-pass source generation, before build, audit, runtime verification or repair |
-| Each Repair | After defect selection, sub-prompt planning, required resolution and authorization; immediately before executing the correction | After correction and permitted evidence collection, before appending the repair audit |
+| Each Repair | After defect selection, sub-prompt planning, required resolution and authorization; immediately before executing the correction | After correction, integrated BR/flow/runtime verification and final evidence/hash/status persistence, before responding or waiting for the researcher |
 
 Never start a generation timer merely because a request arrived or a phase remains open. Configuration, approvals, missing-input/Figma resolution, standalone audit/runtime, finalization and reporting are outside execution intervals. For an unexpected blocker during execution, end the segment before resolution or researcher waiting; start a fresh segment only when generation resumes. Retain time already spent on actual failed execution; never exclude attempts merely for failing.
 
@@ -25,14 +25,14 @@ The first core START opens that phase and binds `first_turn_id`. An open phase i
 
 If an earlier terminal/aborted turn lost its END, use `--event abandon --segment-id <unfinished-id> --reason <evidence-backed-reason>` in a later turn with current turn ID and original phase/repair ID. This records the missing endpoint and permits subsequent work without inventing an end. The original selected generation turn must retain `timing_unavailable_reason`; phase/workflow time remains null. Never abandon a running turn to evade measurement.
 
-Repair automatically invokes BR/flow/runtime audit after its execution END and before its work response finishes. This removes an extra audit turn, not the timing boundary: do not extend or backfill execution seconds to include audit appending. Closing repair telemetry permits workflow finalization in the next measurement turn without a separate audit gate. No-repair completion uses existing initial evidence on unchanged source with the recorded decision.
+Repair automatically invokes BR/flow/runtime audit inside its execution interval and before its work response finishes. Capture END after the integrated verification and final evidence/hash/status persistence; never start an overlapping audit/runtime timer or count the same interval twice. If blocked, end before resolution or researcher waiting and resume unfinished correction/verification with a fresh segment for the same repair ID. Do not backfill endpoints. Closing repair telemetry permits workflow finalization in the next measurement turn without a separate audit gate. No-repair completion uses existing initial evidence on unchanged source with the recorded decision.
 
 ## Aggregation and evidence
 
 - Phase time sums only that phase's non-overlapping execution intervals. `metrics.repair_timing` records each canonical repair's seconds, segment IDs and missing-evidence reason. Missing repair endpoints make repair time unavailable, not zero.
 - Workflow time = Prompt execution + first-pass Source execution + all Repair executions. Pending/missing phase time makes workflow time null; explicitly skipped repair contributes zero. This is not all workflow activity or first-to-last-message elapsed time.
 - Auxiliary-only turns need no generation timestamps. Their counted generation seconds are zero with `timing_exclusion_reason`, not a claim of zero actual elapsed time. Optional auxiliary diagnostic captures remain raw evidence only, never included in phase/workflow seconds.
-- Tokens remain independent: apply selection-schema.md to all UC work including setup/approval/dataset/audit-only turns. Mixed turns keep one semantic primary label; seconds still come only from actual core segments. Every Measure/report-only turn is excluded from both metrics.
+- Tokens cover whole turns: apply selection-schema.md to all UC work including setup/approval/dataset/audit-only turns. A turn with core execution must use that core token label, including repair's child audit; seconds still come only from actual core segments. Auxiliary-only turns remain workflow-only tokens. Every Measure/report-only turn is excluded from both metrics.
 
 The Canonical Run JSON under `docs/05-experiments/<UC-ID>/` is a required pre-existing input and is distinct from the timestamp journal. Preflight never initializes it or the other three core inputs. After validation, the deterministic capture helper may create/append its runtime timestamp journal and generated view as measurement evidence; it does not recreate configuration inputs. Later measurement persists results in the existing canonical run. Whole-turn tokens retain this actual overhead.
 

@@ -9,7 +9,7 @@ Read [FILE-DRIVEN-WORKFLOW.md](../../../docs/00-context/workflow/FILE-DRIVEN-WOR
 
 After initial BR/flow evidence is persisted and validated, run `advance-experiment-gate/scripts/record_command.py --run-json <canonical.json> --action audit --turn-id <actual-id>` (dry-run first) within the audit turn. It records first-pass completion and, if all BRs/flows pass on unchanged source, repair unnecessary. End with close repair when all pass, the repair command when defects exist, or missing verdict details when unknowns remain. Do not automatically repair or request result approval. Activation is optional.
 
-The repair caller must end its execution timer after correction and permitted evidence collection, before appending this audit. Standalone BR/flow audit is outside generation and workflow execution time; do not start or extend a core timer for audit.
+When invoked inside an authorized repair, keep the caller's repair timer running through BR/flow/runtime verification and final evidence/hash/status persistence; the caller captures END afterward, before its response or a blocker wait. The whole turn retains token label `repair`. Do not open an overlapping audit/runtime timer. Standalone BR/flow audit remains outside generation and workflow execution time; never start a core timer for a standalone audit.
 
 1. Preserve requested and effective model metadata separately; never infer unavailable telemetry.
 2. Read the shared timing protocol. Audit-only turns use workflow-only token label `audit`. Audit does not capture generation time or extract live-turn tokens. Explicit measurement commands own canonical `metrics`; preserve that block byte-for-value when saving audit results.
