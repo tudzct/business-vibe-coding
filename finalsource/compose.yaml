@@ -9,7 +9,10 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE:-vibe_business}
       MYSQL_USER: ${MYSQL_USER:-vibe_business}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:  
+      - "3307:3306"   
     volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql 
       - mysql_data:/var/lib/mysql
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --silent"]
