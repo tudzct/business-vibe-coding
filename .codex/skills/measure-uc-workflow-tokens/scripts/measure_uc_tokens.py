@@ -140,6 +140,45 @@ def classified_phase(state, turn, session):
     return None
 
 
+def close_repair_and_finalize(state, run, rows, selection, measurement_turn_id):
+    """Close/skip Repair and finalize the ledger as one validated operation."""
+    require(all(state["phases"].get(p, {}).get("status") == "closed" for p in CORE[:2]),
+            "prompt/source phases must be closed")
+    require(run.get("run_status") in ("complete", "blocked", "stopped", "repair_declined"),
+            "workflow requires an explicit terminal run status")
+    repair = state["phases"].get("repair")
+    if not repair:
+        skip_reason = run.get("repair_skip_reason") or selection.get("repair_skip_reason")
+        require(not run.get("repairs") and bool(skip_reason)
+                and run.get("gates", {}).get("current") == "final_metrics",
+                "unperformed repair needs the persisted all-passing/no-repair decision")
+        selected_reason = selection.get("repair_skip_reason")
+        require(not selected_reason or selected_reason == skip_reason,
+                "selection repair-skip reason conflicts with the canonical decision")
+        state["phases"]["repair"] = {"status": "skipped", "reason": skip_reason}
+    elif repair["status"] == "open":
+        require(any(row["timing_phase"] == "repair" for row in rows),
+                "no evidence for closing repair phase")
+        require(all(segment.get("end") or segment.get("timing_unavailable_reason")
+                    for segment in state["segments"] if segment["start"]["phase"] == "repair"),
+                "end captured repair interval before finalizing")
+        repair.update(status="closed", measurement_turn_id=measurement_turn_id)
+    else:
+        require(repair["status"] in {"closed", "skipped"},
+                "repair phase must be open, closed or skipped")
+    state["workflow_status"] = "finalized"
+
+
+def prepare_finalize_run(run, folder, measurement_turn_id):
+    """Validate compatible Repair-close then Final receipts before canonical commit."""
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "advance-experiment-gate/scripts"))
+    from record_command import prepare
+    if run.get("gates", {}).get("current") == "repair":
+        run, _ = prepare(run, folder, "repair-close", measurement_turn_id)
+    run, _ = prepare(run, folder, "finalize", measurement_turn_id)
+    return run
+
+
 def measure(args):
     path, run, folder = context(args.run_json)
     selection = read_json(args.selection)
@@ -261,18 +300,7 @@ def measure(args):
                             "end captured work interval before closing phase")
                     entry.update(status="closed", measurement_turn_id=args.measurement_turn_id)
             else:
-                require(all(state["phases"].get(p, {}).get("status") == "closed" for p in CORE[:2]),
-                        "prompt/source phases must be closed")
-                repair = state["phases"].get("repair")
-                if not repair:
-                    require(not run.get("repairs") and bool(selection.get("repair_skip_reason")),
-                            "unperformed repair needs researcher decision and no repair entries")
-                    state["phases"]["repair"] = {"status": "skipped", "reason": selection["repair_skip_reason"]}
-                else:
-                    require(repair["status"] in {"closed", "skipped"}, "repair phase must be closed or skipped")
-                require(run.get("run_status") in ("complete", "blocked", "stopped", "repair_declined"),
-                        "workflow requires an explicit terminal run status")
-                state["workflow_status"] = "finalized"
+                close_repair_and_finalize(state, run, rows, selection, args.measurement_turn_id)
         phases = {p: {"status": state["phases"].get(p, {}).get("status", "not_started"), "values": None}
                   for p in CORE}
         repair_ids = [r.get("repair_id") for r in run.get("repairs", [])]
@@ -302,10 +330,14 @@ def measure(args):
                    "excluded_turns": exclusions + [{"turn_id": args.measurement_turn_id, "reason": "measurement/report turn"}],
                    "phase_ledger": state}
         validate_metrics(metrics)
-        # Canonical run is committed first. Ledger/mirrors can be recovered from this snapshot.
+        # Finalize pre-validates both internal transitions and commits them with
+        # telemetry in one canonical write. Ledger/mirrors remain recoverable.
         run = read_json(path)
         run["metrics_schema_version"] = 3
         run["metrics"] = metrics
+        finalize_committed = args.command == "finalize-workflow"
+        if finalize_committed:
+            run = prepare_finalize_run(run, folder, args.measurement_turn_id)
         atomic_write(path, run)
         atomic_write(folder / "workflow-metrics.json", metrics)
         save_journal(folder, state)
@@ -322,17 +354,18 @@ def measure(args):
                 renderer = ROOT / ".codex/skills/render-experiment-report/scripts/render_report.py"
                 subprocess.run([sys.executable, "-B", str(renderer), str(path), "--output", str(report_path)], check=True)
         print(metrics_markdown(metrics))
-    # Telemetry succeeds first; record the command in the same excluded close turn.
+    # Non-final telemetry succeeds first; record its command in the same excluded close turn.
     # A failed receipt is recoverable by record_command.py without remeasuring tokens.
-    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "advance-experiment-gate/scripts"))
-    from record_command import prepare, commit
-    action = ({"prompt_generation": "prompt-close", "source_generation": "source-close", "repair": "repair-close"}
-              [args.phase] if args.command == "close-phase" else "finalize")
-    with run_lock(folder):
-        current = read_json(path)
-        updated, _ = prepare(current, folder, action, args.measurement_turn_id)
-        if updated != current or action == "prompt-close":
-            commit(path, updated, folder, action, args.measurement_turn_id)
+    if not finalize_committed:
+        sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "advance-experiment-gate/scripts"))
+        from record_command import prepare, commit
+        action = {"prompt_generation": "prompt-close", "source_generation": "source-close",
+                  "repair": "repair-close"}[args.phase]
+        with run_lock(folder):
+            current = read_json(path)
+            updated, _ = prepare(current, folder, action, args.measurement_turn_id)
+            if updated != current or action == "prompt-close":
+                commit(path, updated, folder, action, args.measurement_turn_id)
 
 
 def main():

@@ -6,9 +6,9 @@ The human-facing sequence is [FILE-DRIVEN-WORKFLOW.md](../../../../docs/00-conte
 |---|---|---|
 | close prompt | prompt, plus approved prompt checksum | generate source |
 | close source | source | audit |
-| audit | first_pass_audit; all-passing repair_decision skipped | repair or close repair |
-| repair | repair_decision authorized within same work turn | close repair after automatic verification |
-| close repair | repair, or existing skip | finalize |
-| finalize | final_metrics | optional export |
+| audit | first_pass_audit; all-passing repair_decision skipped | repair or finalize workflow |
+| repair | repair_decision authorized within same work turn | finalize workflow after automatic verification |
+| finalize workflow (internal first step when Repair is open) | repair | internal finalization in the same turn |
+| finalize workflow (internal final step) | final_metrics | optional export |
 
 Use `record_command.py` and actual turn IDs; no fabricated confirmation times. Audit and all-passing skip can be recorded within the same audit turn. Closing telemetry never executes later generation/audit/repair work. Preserve old receipts and their original hashes/times; validate optional activation when present. Initial/final BR/flow evidence, frozen rubric and source provenance remain required; UI scoring is optional.

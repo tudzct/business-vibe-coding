@@ -7,7 +7,7 @@ description: Record internal Business experiment command steps without extra con
 
 This compatibility skill records internal command steps; it never presents or requests a human confirmation gate. Read [FILE-DRIVEN-WORKFLOW.md](../../../docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md).
 
-Use `scripts/record_command.py --run-json <canonical.json> --action <action> --turn-id <actual-id>` (dry-run first for work actions). Actions: `approve-prompt --prompt <prompt.md>`, `prompt-close`, `source-close`, `audit`, `repair`, `repair-close`, `finalize`. The researcher never needs to invoke this helper.
+Use `scripts/record_command.py --run-json <canonical.json> --action <action> --turn-id <actual-id>` (dry-run first for work actions). Actions: `approve-prompt --prompt <prompt.md>`, `prompt-close`, `source-close`, `audit`, `repair`, `repair-close`, `finalize`. The researcher never needs to invoke this helper. The Measure `finalize-workflow` command prepares `repair-close` when required and then `finalize` in the same excluded turn before one canonical commit.
 
 Prompt close approves/pins the Draft before Measure; Measure automatically records its completed close/finalize action after successful persistence. After initial BR/flow audit is saved, run `--action audit` in that audit turn. It records no-repair automatically only when all frozen results pass. At the repair command, run `--action repair` and begin correction in the same work turn without another confirmation. Preserve immutable initial assessments and evidence hashes; internal historic gate names remain compatibility bookkeeping.
 
