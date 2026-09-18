@@ -9,12 +9,12 @@ Commands:
 
 ```text
 $gen-coding-prompt <use-case.md>
-$measure-uc-workflow-tokens close-phase prompt_generation
+$measure-uc-workflow close-phase prompt_generation
 $gen-source-code <business-coding-prompt.md>
-$measure-uc-workflow-tokens close-phase source_generation
+$measure-uc-workflow close-phase source_generation
 $audit-generation-metrics
 $bug-fixing-sub-prompt
-$measure-uc-workflow-tokens finalize-workflow
+$measure-uc-workflow finalize-workflow
 ```
 
 Follow [the command sequence](../../../../docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md). Each command authorizes its own operation without another confirmation. Skip the repair command when all frozen BR/flow results pass on unchanged source; finalize records the skipped Repair bucket. Finalize closes or skips Repair and finalizes telemetry in one measurement turn. Figma/UI scoring is optional: the researcher may inspect visually or manually request the independent `audit-figma-ui-accuracy` skill. Its absence or local validation result never blocks any gate. No step creates or runs tests.

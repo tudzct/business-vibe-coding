@@ -7,7 +7,7 @@ description: Generate a Full Prompt A-F or RQ3 Prompt A-D from validated, pre-ex
 
 Accept one readable `docs/01-inception/use-cases/uc-*.md` path. Optional `--configuration <config.json>`, `--run-id <RUN-ID>`, `--run-json <canonical.json>` and `--variant [full|rq3]` disambiguate existing inputs; explicit values must match their recorded identities. Resolve only a unique matching Canonical Run JSON. Never select the newest file or silently default a configured RQ3 run to Full.
 
-Read [configuration input contract](../../../docs/00-context/workflow/gates/EXPERIMENT-CONFIGURATION-GATE.md), [shared Full/RQ3 contract](../../../docs/00-context/workflow/FULL-RQ3-CONTRACT.md) and [execution timing protocol](../measure-uc-workflow-tokens/references/phase-ledger-schema.md).
+Read [configuration input contract](../../../docs/00-context/workflow/gates/EXPERIMENT-CONFIGURATION-GATE.md), [shared Full/RQ3 contract](../../../docs/00-context/workflow/FULL-RQ3-CONTRACT.md) and [execution timing protocol](../measure-uc-workflow/references/phase-ledger-schema.md).
 
 ## Read-only preflight
 
@@ -35,6 +35,6 @@ The same preflight imports `database_baseline.py` internally to verify DBML byte
 4. Once all input checks pass, immediately capture live prompt START and generate A-D from functional UC/UML/API/Figma inputs, covering every frozen flow and terminal outcome. Apply the standard response envelope without changing domain status, fields or message semantics.
 5. For Full, insert deterministic Prompt E verbatim and fill F with source priority and implementation boundaries. For RQ3, omit E/F together and exclude BR resource/baseline links, OCL projections and BR-derived additions.
 6. Persist the Draft at `docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md` or `<UC-ID>-rq3-coding-prompt.md`. Immediately capture END, then run `scripts/validate_prompt_contract.py --configuration <config.json> --uc-id <UC-ID> --run-id <RUN-ID> --prompt <prompt.md> --allow-draft`. Recheck configuration with preflight `--expected-checksum <original checksum>`; review semantic flow coverage and provenance. Any unresolved anomaly prevents reporting success.
-7. Present the Draft and next command `$measure-uc-workflow-tokens close-phase prompt_generation`. That command approves/pins the Draft and closes telemetry without another confirmation. Do not start source here.
+7. Present the Draft and next command `$measure-uc-workflow close-phase prompt_generation`. That command approves/pins the Draft and closes telemetry without another confirmation. Do not start source here.
 
 The existing timing helper appends actual timestamps to its runtime journal after successful input validation. This is measurement evidence, not initialization of the four configuration inputs. Preflight must not mutate the Canonical Run JSON; later approval/audit/measurement operations may update its results normally. Whole-turn token telemetry still includes reads, validation and timestamp calls; never invent a token deduction or promise zero measurement overhead. No tests or test cases.

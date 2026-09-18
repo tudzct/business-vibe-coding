@@ -36,12 +36,12 @@ Run these commands in separate turns for the same UC/run:
 
 ```text
 $gen-coding-prompt docs/01-inception/use-cases/uc-01-register-account.md
-$measure-uc-workflow-tokens close-phase prompt_generation
+$measure-uc-workflow close-phase prompt_generation
 $gen-source-code docs/02-construction/coding-prompts/UC-01-business-coding-prompt.md
-$measure-uc-workflow-tokens close-phase source_generation
+$measure-uc-workflow close-phase source_generation
 $audit-generation-metrics
 $bug-fixing-sub-prompt
-$measure-uc-workflow-tokens finalize-workflow
+$measure-uc-workflow finalize-workflow
 $export-experiment-excel uc-01 "<LINK_OR_FILEPATH>" "<TAB_NAME>"
 ```
 

@@ -8,7 +8,7 @@ import re
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow-tokens/scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow/scripts"))
 from metrics_contract import ROOT, atomic_write, digest, read_json, require, validate_metrics, writable
 
 IDENTITY = {"uc_id", "run_id", "prompt_variant", "replicate_index", "run_order", "generation_model.requested_model_id"}

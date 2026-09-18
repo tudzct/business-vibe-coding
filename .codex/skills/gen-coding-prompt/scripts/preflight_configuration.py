@@ -6,7 +6,7 @@ import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow-tokens/scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow/scripts"))
 from metrics_contract import ROOT, digest, require, writable, validate_metrics
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "run-business-vibe-coding/scripts"))
 from validate_experiment_configuration import read_configuration_json as read_json, validate

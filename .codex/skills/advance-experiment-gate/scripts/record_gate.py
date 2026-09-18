@@ -9,7 +9,7 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow-tokens/scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow/scripts"))
 from metrics_contract import ROOT, atomic_write, context, digest, read_json, require, run_lock, validate_metrics, writable
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "gen-coding-prompt/scripts"))
 from validate_prompt_contract import validate_prompt, normalize_variant, validate_configuration

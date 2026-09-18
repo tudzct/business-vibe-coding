@@ -1,11 +1,11 @@
 ---
-name: measure-uc-workflow-tokens
+name: measure-uc-workflow
 description: Close prompt/source telemetry or atomically close Repair and finalize the workflow without extra confirmations; prompt close creates or validates run activation. Never read or write Excel.
 ---
 
-# Measure UC Workflow Tokens
+# Measure UC Workflow
 
-Read [FILE-DRIVEN-WORKFLOW.md](../../../docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md), [selection schema](references/selection-schema.md) and [phase ledger](references/phase-ledger-schema.md). The normal researcher interface accepts `$measure-uc-workflow-tokens close-phase <prompt_generation|source_generation>` and `$measure-uc-workflow-tokens finalize-workflow`. Finalize closes or skips Repair and finalizes the workflow atomically in the same excluded measurement turn. Each invocation authorizes its operation; never ask another approval or execute later source/audit/repair work.
+Read [FILE-DRIVEN-WORKFLOW.md](../../../docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md), [selection schema](references/selection-schema.md) and [phase ledger](references/phase-ledger-schema.md). The normal researcher interface accepts `$measure-uc-workflow close-phase <prompt_generation|source_generation>` and `$measure-uc-workflow finalize-workflow`. Finalize closes or skips Repair and finalizes the workflow atomically in the same excluded measurement turn. Each invocation authorizes its operation; never ask another approval or execute later source/audit/repair work.
 
 1. Resolve exact existing UC/run, rollout, current measurement turn ID and prior completed work. Never choose newest/largest-token evidence. Build cumulative selection with one semantic phase/reason per work turn; preserve closed measurements and explicitly exclude close/report/export turns. Missing counters/endpoints stay null with reasons.
 2. For prompt close, the invocation also approves the Draft: run `advance-experiment-gate/scripts/record_command.py --run-json <canonical.json> --action approve-prompt --prompt <configured-prompt.md> --turn-id <current-id>` (dry-run first). Preserve a run-local approved snapshot if the common path will be reused. This is not a separate researcher turn. Do not require activation.

@@ -18,7 +18,7 @@ Load only the references required by the active change areas:
 
 - For Figma-backed work, require a checksum-valid frozen dataset and map every visible node/state. Use Figma only to create or refresh a missing dataset through the repository resolver.
 - UC-backed controls are functional; design-only controls remain visual. Add only the smallest design-consistent control when the UC requires one that the frame omits, and record it.
-- Reuse the HTTP client, router, shell and established state patterns. Implement typed loading, empty, success, validation and error states.
+- Reuse the HTTP client, router, shell and established state patterns. Implement typed loading, empty, success, validation and error states. Apply accessible labels, keyboard/focus behavior and responsive Tailwind.
 - Enforce frontend-applicable BRs for UX, while backend enforcement remains authoritative where required.
 - Do not invent navigation, API calls or business behavior; stop for material business/API/schema/ownership ambiguity.
 - Run only permitted non-test lint/typecheck/build and visual/runtime observations.

@@ -7,7 +7,7 @@ import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow-tokens/scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow/scripts"))
 from metrics_contract import ROOT, atomic_write, context, read_json, require, run_lock
 from flow_summary import RESULT_POLICY, current_assessment, fingerprint, refresh_report, refresh_summary
 

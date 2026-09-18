@@ -7,7 +7,7 @@ import re
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow-tokens/scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow/scripts"))
 from metrics_contract import ROOT, atomic_write, context, digest, epoch, read_json, require, run_lock, writable
 from runtime_contract import method, configured_rubric, validate_runtime, complete_chain
 from flow_summary import refresh_report, refresh_summary

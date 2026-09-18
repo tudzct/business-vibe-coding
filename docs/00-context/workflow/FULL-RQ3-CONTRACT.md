@@ -24,7 +24,7 @@ Prompt metadata requires `prompt_variant: full` or `rq3`; configuration, canonic
 
 `gen-coding-prompt/scripts/validate_prompt_contract.py` validates the configured UC/run, approved status (or `--allow-draft`), source UC, filename, ordered A-F/A-D headings, BR reference boundaries and optional activation checksum. It is read-only. It does not prove semantic flow coverage or absence of paraphrased BR information.
 
-At `$measure-uc-workflow-tokens close-phase prompt_generation`, approve the Draft and pin canonical `coding_prompt: {path, sha256}` and configured variant. Keep a run-local approved snapshot if the common prompt path will be reused. Optional activation receipts remain immutable and are validated when present; no activation preparation or turn is mandatory.
+At `$measure-uc-workflow close-phase prompt_generation`, approve the Draft and pin canonical `coding_prompt: {path, sha256}` and configured variant. Keep a run-local approved snapshot if the common prompt path will be reused. Optional activation receipts remain immutable and are validated when present; no activation preparation or turn is mandatory.
 
 ## One command sequence
 
