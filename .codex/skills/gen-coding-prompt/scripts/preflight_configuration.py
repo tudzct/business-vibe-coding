@@ -43,14 +43,10 @@ def check_pinned_evidence(path, config, checksum):
                     and evidence.get("configuration_checksum") == checksum, "activation configuration checksum/identity conflict")
 
 
-def check_baselines(uc, required=True):
-    # The compatibility argument never permits missing inputs.
+def check_baselines(uc):
     result, baselines = {}, []
     for field, kind in (("business_rule_baseline", "business-rule-baseline"), ("flow_baseline", "flow-baseline")):
         value = uc.get(field)
-        # Legacy schemas may omit flow paths; generation still uses the canonical destination.
-        if field == "flow_baseline" and value is None:
-            value = f"docs/02-construction/implementation/{uc['uc_id']}/flow-baseline.json"
         require(isinstance(value, str) and value.strip(), f"missing {field}")
         path = writable(ROOT / value)
         require(path.is_relative_to(ROOT / "docs/02-construction/implementation" / uc["uc_id"]),
@@ -98,7 +94,7 @@ def select_canonical(uc_id, run_id=None, variant=None, configuration=None, run_j
             continue
         if run_id is not None and candidate.get("run_id") != run_id:
             continue
-        if variant is not None and candidate.get("prompt_variant", "full") != variant:
+        if variant is not None and candidate.get("prompt_variant") != variant:
             continue
         reference = candidate.get("experiment_configuration") or {}
         if configuration is not None and writable(ROOT / reference.get("artifact", "")) != writable(configuration):
@@ -159,7 +155,7 @@ def check_canonical(run, config, assignment, uc, stage):
 
 
 def preflight(uc_id, configuration=None, run_id=None, variant=None, run_json=None,
-              expected_checksum=None, require_baselines=True, stage="prompt", use_case=None):
+              expected_checksum=None, stage="prompt", use_case=None):
     require(stage in {"prompt", "activation", "source"}, "invalid preflight stage")
     require(isinstance(uc_id, str) and uc_id and all(c.isalnum() or c in "-_." for c in uc_id)
             and uc_id not in {".", ".."}, "invalid UC ID")
@@ -185,23 +181,23 @@ def preflight(uc_id, configuration=None, run_id=None, variant=None, run_json=Non
         require(digest(path.read_bytes()) == original_checksum, "configuration changed during validation")
         for assignment in data["runs"]:
             if assignment["uc_id"] == uc_id and (run_id is None or assignment["run_id"] == run_id):
-                if variant is None or assignment.get("prompt_variant", "full") == variant:
+                if variant is None or assignment.get("prompt_variant") == variant:
                     matches.append((path, data, assignment, original_checksum))
     require(len(matches) == 1, "configuration/UC/run selection is missing, conflicting or ambiguous; provide exact --configuration and --run-id")
     path, data, assignment, checksum = matches[0]
     require(expected_checksum is None or checksum == expected_checksum, "configuration changed since preflight")
     if canonical is not None:
         check_reference(canonical.get("experiment_configuration"), path, data, checksum)
-        require(canonical.get("prompt_variant", "full") == assignment.get("prompt_variant", "full"), "canonical variant mismatch")
+        require(canonical.get("prompt_variant") == assignment.get("prompt_variant"), "canonical variant mismatch")
     check_pinned_evidence(path, data, checksum)
     uc = next(u for u in data["use_cases"] if u["uc_id"] == uc_id)
-    baselines = check_baselines(uc, require_baselines)
+    baselines = check_baselines(uc)
     check_canonical(canonical, data, assignment, uc, stage)
     # Fifth prepared input: never infer or create expected hashes from the live DB.
     # Activation/Measure uses this preflight too: it must remain offline.
     if stage in {"prompt", "source"}:
         verify_database(data)
-    elif data.get("schema_version") == "2.4" or "database_baseline" in data:
+    else:
         validate_database_input(data)
     baseline = read_json(writable(ROOT / uc["business_rule_baseline"]))
     if use_case is not None:
@@ -218,7 +214,7 @@ def preflight(uc_id, configuration=None, run_id=None, variant=None, run_json=Non
     require(digest(path.read_bytes()) == checksum, "configuration changed during preflight")
     require(digest(canonical_path.read_bytes()) == canonical_checksum, "Canonical Run JSON changed during preflight")
     return {"status": "valid", "uc_id": uc_id, "run_id": assignment["run_id"],
-            "prompt_variant": assignment.get("prompt_variant", "full"),
+            "prompt_variant": assignment.get("prompt_variant"),
             "experiment_configuration": {"artifact": path.relative_to(ROOT).as_posix(),
                                          "configuration_id": data["configuration_id"], "checksum": checksum,
                                          "comparison_group_id": data["comparison_group_id"],
@@ -238,8 +234,6 @@ def main():
     parser.add_argument("--use-case", type=Path)
     parser.add_argument("--stage", choices=("prompt", "activation", "source"), default="prompt")
     parser.add_argument("--expected-checksum")
-    parser.add_argument("--require-baselines", action="store_true", default=True,
-                        help="Compatibility flag; both baselines are always required")
     args = parser.parse_args()
     print(json.dumps(preflight(**vars(args)), indent=2))
 

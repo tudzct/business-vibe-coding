@@ -11,9 +11,8 @@ EFFORTS = {"none", "low", "medium", "high", "xhigh", "max"}
 MODES = {"standard", "pro"}
 PROTOCOLS = {"fixed", "matched", "cross"}
 PROMPT_VARIANTS = {"full", "rq3"}
-SCHEMA_VERSIONS = {"2.0", "2.1", "2.2", "2.3", "2.4"}
+SCHEMA_VERSION = "2.4"
 TIMING_METHOD = "system_timestamp_delta"
-LEGACY_FLOW_RUBRIC = "completion-critical-flow-v1"
 RUNTIME_FLOW_RUBRIC = "completion-critical-flow-runtime-v2"
 ROOT = Path(__file__).resolve().parents[4]
 
@@ -40,8 +39,8 @@ def read_configuration_json(path):
 
 
 def flow_rubric(data):
-    expected = RUNTIME_FLOW_RUBRIC if data.get("schema_version") in {"2.3", "2.4"} else LEGACY_FLOW_RUBRIC
-    actual = data.get("flow_audit_rubric", LEGACY_FLOW_RUBRIC)
+    expected = RUNTIME_FLOW_RUBRIC
+    actual = data.get("flow_audit_rubric")
     if actual != expected:
         raise ValueError("flow_audit_rubric does not match configuration schema")
     return actual
@@ -85,8 +84,8 @@ def validate(path):
         raise ValueError("configuration must be stored under docs/05-experiments/configurations")
     data = read_configuration_json(path)
     schema_version = data.get("schema_version")
-    if schema_version not in SCHEMA_VERSIONS:
-        raise ValueError(f"schema_version must be one of {sorted(SCHEMA_VERSIONS)}")
+    if schema_version != SCHEMA_VERSION:
+        raise ValueError(f"schema_version must be {SCHEMA_VERSION}")
     rubric = flow_rubric(data)
     if data.get("artifact_type") != "experiment-configuration" or data.get("status") != "Confirmed":
         raise ValueError("configuration must be Confirmed")
@@ -97,35 +96,31 @@ def validate(path):
     if decided.tzinfo is None:
         raise ValueError("decided_at must include a timezone")
     timing_method = data.get("timing_method")
-    if schema_version in {"2.1", "2.2", "2.3", "2.4"} and timing_method != TIMING_METHOD:
+    if timing_method != TIMING_METHOD:
         raise ValueError(f"schema {schema_version} timing_method must be {TIMING_METHOD}")
-    if timing_method is not None and timing_method != TIMING_METHOD:
-        raise ValueError(f"unsupported timing_method: {timing_method}")
     # Offline validation only. Runtime checks belong to generation/audit, never Measure.
-    if schema_version == "2.4" or "database_baseline" in data:
-        sys.path.insert(0, str(ROOT / ".codex/skills/gen-coding-prompt/scripts"))
-        from database_baseline import validate_input
-        validate_input(data)
-    if schema_version in {"2.2", "2.3", "2.4"}:
-        figma = data.get("figma_dataset")
-        if not isinstance(figma, dict):
-            raise ValueError(f"schema {schema_version} requires figma_dataset")
-        version = text(figma.get("dataset_version"), "figma_dataset.dataset_version")
-        manifest_value = text(figma.get("manifest_path"), "figma_dataset.manifest_path")
-        expected_path = f"resource/figma-design-dataset/{version}/manifest.json"
-        if manifest_value.replace("\\", "/") != expected_path:
-            raise ValueError("figma_dataset manifest path/version mismatch")
-        manifest_path = (ROOT / manifest_value).resolve()
-        if not manifest_path.is_relative_to(ROOT / "resource/figma-design-dataset"):
-            raise ValueError("figma_dataset manifest must stay inside the dataset directory")
-        if not manifest_path.is_file():
-            raise ValueError("figma_dataset manifest does not exist")
-        expected_hash = "sha256:" + hashlib.sha256(manifest_path.read_bytes()).hexdigest()
-        if figma.get("manifest_sha256") != expected_hash:
-            raise ValueError("figma_dataset manifest checksum mismatch")
-        manifest = read_configuration_json(manifest_path)
-        if manifest.get("dataset_version") != version or manifest.get("overall_status") != "complete":
-            raise ValueError("figma_dataset must reference a complete matching version")
+    sys.path.insert(0, str(ROOT / ".codex/skills/gen-coding-prompt/scripts"))
+    from database_baseline import validate_input
+    validate_input(data)
+    figma = data.get("figma_dataset")
+    if not isinstance(figma, dict):
+        raise ValueError(f"schema {schema_version} requires figma_dataset")
+    version = text(figma.get("dataset_version"), "figma_dataset.dataset_version")
+    manifest_value = text(figma.get("manifest_path"), "figma_dataset.manifest_path")
+    expected_path = f"resource/figma-design-dataset/{version}/manifest.json"
+    if manifest_value.replace("\\", "/") != expected_path:
+        raise ValueError("figma_dataset manifest path/version mismatch")
+    manifest_path = (ROOT / manifest_value).resolve()
+    if not manifest_path.is_relative_to(ROOT / "resource/figma-design-dataset"):
+        raise ValueError("figma_dataset manifest must stay inside the dataset directory")
+    if not manifest_path.is_file():
+        raise ValueError("figma_dataset manifest does not exist")
+    expected_hash = "sha256:" + hashlib.sha256(manifest_path.read_bytes()).hexdigest()
+    if figma.get("manifest_sha256") != expected_hash:
+        raise ValueError("figma_dataset manifest checksum mismatch")
+    manifest = read_configuration_json(manifest_path)
+    if manifest.get("dataset_version") != version or manifest.get("overall_status") != "complete":
+        raise ValueError("figma_dataset must reference a complete matching version")
     audit = data.get("audit_design")
     if not isinstance(audit, dict) or audit.get("protocol") not in PROTOCOLS:
         raise ValueError("audit_design.protocol is invalid")
@@ -147,8 +142,7 @@ def validate(path):
         if not isinstance(ids, list) or not ids or any(not isinstance(v, str) or not v.strip() for v in ids) or len(ids) != len(set(ids)):
             raise ValueError(f"use_cases[{index}].ordered_br_ids must be a non-empty unique string array")
         text(uc.get("business_rule_baseline"), f"use_cases[{index}].business_rule_baseline")
-        if schema_version in {"2.2", "2.3", "2.4"}:
-            text(uc.get("flow_baseline"), f"use_cases[{index}].flow_baseline")
+        text(uc.get("flow_baseline"), f"use_cases[{index}].flow_baseline")
 
     runs = data.get("runs")
     if not isinstance(runs, list) or not runs:
@@ -169,7 +163,7 @@ def validate(path):
         orders.add(order)
         replicate = positive(run.get("replicate_index"), prefix + ".replicate_index")
         validate_model(run, prefix)
-        variant = run.get("prompt_variant", "full")
+        variant = run.get("prompt_variant")
         if variant not in PROMPT_VARIANTS:
             raise ValueError(f"{prefix}.prompt_variant must be one of {sorted(PROMPT_VARIANTS)}")
         key = (uc_id, variant, run["requested_model_id"], run["requested_reasoning_effort"], run["requested_reasoning_mode"], replicate)

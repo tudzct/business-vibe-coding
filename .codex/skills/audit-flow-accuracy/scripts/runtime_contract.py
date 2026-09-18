@@ -4,28 +4,25 @@ from pathlib import Path
 
 from metrics_contract import ROOT, epoch, read_json, require, writable
 
-LEGACY_RUBRIC = "completion-critical-flow-v1"
 RUNTIME_RUBRIC = "completion-critical-flow-runtime-v2"
-RUBRICS = {1: LEGACY_RUBRIC, 2: RUNTIME_RUBRIC}
 RUNTIME_KINDS = {"ui", "network", "backend", "data", "runtime_trace"}
 STATIC_KINDS = {"source", "build", "health", "deployment", "limitation"}
 IDENTITY = ("uc_id", "run_id", "stage", "source_revision")
 
 
 def method(data):
-    version = data.get("schema_version", 1)
-    require(type(version) is int and version in RUBRICS, "unsupported flow schema")
-    rubric = data.get("rubric_id", LEGACY_RUBRIC if version == 1 else None)
-    require(rubric == RUBRICS[version], "flow schema/rubric mismatch")
+    version = data.get("schema_version")
+    require(type(version) is int and version == 2, "unsupported flow schema")
+    rubric = data.get("rubric_id")
+    require(rubric == RUNTIME_RUBRIC, "flow schema/rubric mismatch")
     return version, rubric
 
 
 def configured_rubric(run, folder, validate_evidence, baseline=None):
-    """Resolve the pinned configuration; validate optional historical activation."""
+    """Resolve the pinned configuration; validate optional activation."""
     metadata = run.get("experiment_configuration") or {}
     activation_path = folder / "run-activation.json"
-    if not activation_path.exists() and not metadata:
-        return LEGACY_RUBRIC  # Pre-activation historical runs only.
+    require(metadata, "pinned experiment configuration required")
     activation = read_json(activation_path) if activation_path.exists() else None
     if activation is not None:
         require(activation.get("status") == "Confirmed", "run activation must be Confirmed")
@@ -41,11 +38,11 @@ def configured_rubric(run, folder, validate_evidence, baseline=None):
     require(sum(r.get("uc_id") == run["uc_id"] and r.get("run_id") == run["run_id"]
                 for r in config.get("runs", [])) == 1, "configured run assignment mismatch")
     version = config.get("schema_version")
-    require(version in {"2.0", "2.1", "2.2", "2.3", "2.4"}, "unknown configuration schema")
-    rubric = config.get("flow_audit_rubric", LEGACY_RUBRIC)
-    require(rubric == (RUNTIME_RUBRIC if version in {"2.3", "2.4"} else LEGACY_RUBRIC),
+    require(version == "2.4", "unknown configuration schema")
+    rubric = config.get("flow_audit_rubric")
+    require(rubric == RUNTIME_RUBRIC,
             "configuration flow rubric mismatch")
-    if version in {"2.3", "2.4"} and baseline is not None:
+    if baseline is not None:
         uc_entries = [u for u in config.get("use_cases", []) if u.get("uc_id") == run["uc_id"]]
         require(len(uc_entries) == 1 and baseline["path"] == uc_entries[0].get("flow_baseline"),
                 "assessment must use the configured flow baseline")

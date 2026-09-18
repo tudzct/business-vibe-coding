@@ -44,10 +44,7 @@ def prepare(run, folder, payload=None):
 
 
 def persist(path, run, folder, summary):
-    # Existing artifacts remain immutable; all new results live in canonical JSON.
-    for record in run["flow_accuracy"].get("followups", []):
-        target = folder / "flow-accuracy/followups" / (record["followup_id"] + ".json")
-        require(not target.exists() or read_json(target) == record, "follow-up artifact is immutable")
+    # Follow-ups are validated append-only records in canonical JSON.
     atomic_write(path, run)
     refresh_report(path, run)
 

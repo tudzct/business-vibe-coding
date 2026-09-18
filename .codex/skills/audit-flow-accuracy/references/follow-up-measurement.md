@@ -8,11 +8,11 @@ Follow [the command sequence](../../../../docs/00-context/workflow/FILE-DRIVEN-W
 
 Both paths update `flow_accuracy.current_summary` and top-level flow percentages/status directly in the Canonical Run JSON under `docs/05-experiments/`, in the same response turn without a second save/approval question. Resolve the question's run and evidence context internally. A researcher reply to an earlier question may keep its older evidence parent after repair and still update the experiment result. Do not ask the researcher to repeat accepted verdicts merely because source changed.
 
-Projection schema 2 uses `result_scope: experiment_accepted_audit`, `stage: experiment`, and null aggregate `source_revision`. `assessment_id` and `current_assessment_id` identify the latest assessment context; each selected flow keeps its actual evidence record, assessment, stage and source revision. `current_source_revision`, `latest_assessment_status`, `latest_assessment_counts` and `retained_from_prior_source_count` expose later audit limitations and retained earlier results. Never relabel earlier evidence as observations of repaired source. Report the selection policy alongside the rubric when comparing runs; legacy stage-only projections have a different reporting policy.
+Projection schema 2 uses `result_scope: experiment_accepted_audit`, `stage: experiment`, and null aggregate `source_revision`. `assessment_id` and `current_assessment_id` identify the latest assessment context; each selected flow keeps its actual evidence record, assessment, stage and source revision. `current_source_revision`, `latest_assessment_status`, `latest_assessment_counts` and `retained_from_prior_source_count` expose later audit limitations and retained earlier results. Never relabel earlier evidence as observations of repaired source. Report the selection policy alongside the rubric when comparing runs..
 
 ## Save and offer both paths
 
-The scorer saves `flow_accuracy.current_summary` in canonical JSON. For an explicitly requested existing run, run `record_flow_followup.py --run-json <run.json>` (dry-run first) to adopt the accepted-result projection without inventing an observation or verdict. Existing `flow-accuracy/current.{json,md}` mirrors are historical and no longer maintained; never read them as current results.
+The scorer saves `flow_accuracy.current_summary` in canonical JSON. Use `record_flow_followup.py --run-json <run.json>` (dry-run first) to refresh the accepted-result projection from saved evidence. The canonical JSON is authoritative.
 
 Immediately report accepted correct/incorrect/pending counts, evaluated-only accuracy/error, coverage, whole-baseline accuracy/error (null until every flow has an accepted verdict), and bounds from canonical current_summary. List pending targets and attempts. Show later audit limitations separately when an earlier conclusive result is retained. State the updated canonical file and result source. Do not wait for every flow before saving results.
 
@@ -43,7 +43,7 @@ Prepare a fresh full assessment input with ID equal to `followup_id`, matching t
 
 ## Internal payload and commands
 
-The LLM passes this payload through stdin (`--input -`) without creating an input JSON in flow-accuracy. Use actual identities/timestamps and schema 2 for new follow-ups, including corrections to already scored flows:
+The LLM passes this payload through stdin (`--input -`) without creating an input JSON in flow-accuracy. Use actual identities/timestamps and schema 2 for follow-ups, including corrections to already scored flows:
 
 ```json
 {
@@ -72,15 +72,13 @@ python -B .codex/skills/audit-flow-accuracy/scripts/record_flow_followup.py --ru
 python -B .codex/skills/audit-flow-accuracy/scripts/record_flow_followup.py --run-json <canonical.json> --input -
 ```
 
-Dry-run first, then repeat without --dry-run with identical payload. Same ID/content retries are idempotent; changed content with the same ID is rejected. Append `flow_accuracy.followups` and atomically refresh canonical summary/top-level fields under the run lock. Do not create `flow-accuracy/followups/<id>.json` or current JSON/Markdown mirrors. Existing legacy files remain unchanged and are checked when present. Keep immutable assessment artifacts and runtime evidence. Refresh an existing derived experiment report automatically; Excel remains separately requested. Initial/final assessments and previous gate receipts retain IDs, times, hashes and content. Source/stage changes retain earlier accepted verdicts until conclusive newer results replace them.
 
-## Formulas and compatibility
+## Formulas and evidence integrity
 
-For accepted result rows let `C = correct`, `W = incorrect`, `U = not_evaluable`, `T = C + W + U`, `E = C + W`. Each frozen whole flow retains equal weight. Legacy projection/follow-up schema 1 and historical gate hashes retain their original validation; no historical evidence is rewritten.
 
 - `evaluated_accuracy_percent = C / E * 100`; `evaluated_error_percent = W / E * 100`. Both are null when E is zero.
 - `evaluated_coverage_percent = E / T * 100`.
 - Whole-baseline `flow_accuracy_percent = C / T * 100` and `flow_error_percent = W / T * 100` only when U is zero; otherwise null.
 - Lower/upper bounds remain `C / T * 100` and `(C + U) / T * 100`.
 
-`measurement_status` is `not_evaluable`, `partial` or `complete`; `has_incorrect_flows` is independent. Summary/top-level status is `partial` when E and U are positive, `not_evaluable` when E is zero, otherwise `repair_required` or `scored`. Original assessments retain their original status/formulas for checksum compatibility. No configuration, activation, frozen baseline or historical assessment migration is required. Existing runs gain a projection only on an explicitly requested audit/follow-up operation; do not rewrite unrelated runs.
+`measurement_status` is `not_evaluable`, `partial` or `complete`; `has_incorrect_flows` is independent. Summary/top-level status is `partial` when E and U are positive, `not_evaluable` when E is zero, otherwise `repair_required` or `scored`. Original assessments are immutable, including their statuses and checksums. Refresh the projection only on an explicitly requested audit/follow-up operation; do not rewrite unrelated runs.

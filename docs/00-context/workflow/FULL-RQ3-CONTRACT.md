@@ -4,7 +4,7 @@ RQ1/RQ2 use Full Prompts A-F. RQ3 uses A-D and omits E and F together. Both vari
 
 ## Input boundaries
 
-Both variants receive the same researcher-prepared database baseline through configuration `database_baseline`. DBML is shared technical input in A/D even when E/F are omitted. Read the configured DBML; use existing structure and authorized business DML only. Prompt/Source preflight verifies DBML bytes and runtime fingerprint before START. No schema proposal, approval gate, migration or DDL is part of either variant. See [database policy](../engineering/DATABASE-SCHEMA.md). Database data persists across cumulative UCs.
+Both variants receive the same researcher-prepared database baseline through configuration `database_baseline`. DBML is shared technical input in A/D even when E/F are omitted. Read the configured DBML; use existing structure and authorized business DML only. Prompt/Source preflight verifies DBML bytes and runtime fingerprint before START. Neither variant permits migrations or DDL. See [database policy](../engineering/DATABASE-SCHEMA.md). Database data persists across cumulative UCs.
 
 | Operation | Full | RQ3 |
 |---|---|---|
@@ -18,25 +18,25 @@ For both variants, map every frozen flow and terminal clause to the relevant A-D
 
 For RQ3, use bounded reads or a functional projection to avoid passing BR/OCL sections and evaluation resources into generation. Baseline preparation may inspect those resources for evaluation, but do not silently paraphrase them into the generated prompt. A validator can check identity/headings/explicit references; the author must review provenance and semantic leakage. If excluded material has already entered the generation context, record that limitation and resolve the generation context before claiming a clean ablation; never claim that an instruction to ignore it erased it.
 
-## Identity and compatibility
+## Identity
 
-New prompt metadata uses `prompt_variant: full` or `rq3`; configuration, canonical run and activation use those same values. The reader accepts historical `rq3-ad` as an alias for `rq3` and absent Full metadata as legacy Full only when the actual heading structure and filename agree. Do not rewrite approved historical prompts/configurations/activations to normalize their metadata.
+Prompt metadata requires `prompt_variant: full` or `rq3`; configuration, canonical run and activation use the same value. Validate the exact heading structure, filename and approved prompt checksum.
 
 `gen-coding-prompt/scripts/validate_prompt_contract.py` validates the configured UC/run, approved status (or `--allow-draft`), source UC, filename, ordered A-F/A-D headings, BR reference boundaries and optional activation checksum. It is read-only. It does not prove semantic flow coverage or absence of paraphrased BR information.
 
-At `$measure-uc-workflow-tokens close-phase prompt_generation`, approve the Draft and pin canonical `coding_prompt: {path, sha256}` and configured variant. Keep a run-local approved snapshot if the common prompt path will be reused. Optional historical activation receipts remain immutable and are validated when present; no activation preparation or turn is mandatory.
+At `$measure-uc-workflow-tokens close-phase prompt_generation`, approve the Draft and pin canonical `coding_prompt: {path, sha256}` and configured variant. Keep a run-local approved snapshot if the common prompt path will be reused. Optional activation receipts remain immutable and are validated when present; no activation preparation or turn is mandatory.
 
 ## One command sequence
 
 Both variants follow [FILE-DRIVEN-WORKFLOW.md](FILE-DRIVEN-WORKFLOW.md): prompt -> close prompt -> source -> close source -> audit -> requested repair if needed -> finalize (atomically close/skip Repair and finalize workflow) -> optional export. Each command supplies authorization without extra gate confirmations. Audit includes all frozen BRs/flows. Follow-ups save attributed results and wait for a repair command when defects remain; unknown accepted flow verdicts block new repair. All-passing unchanged-source audit records repair unnecessary and skips correction.
 
-`record_command.py` preserves the compatible internal `gates` history, with actual command turn/time and evidence hashes; it does not ask for confirmation. Audit evidence remains pinned and immutable. Repair records authorization within its work turn; final verification is automatic there. `finalize-workflow` closes or skips Repair, validates all aggregates and records Repair-close plus Final receipts before one canonical commit. Historical receipts, separately closed Repair buckets and legacy `final_audit` states remain readable. Missing UI scores never block a command.
+`record_command.py` preserves the internal `gates` history, with actual command turn/time and evidence hashes; it does not ask for confirmation. Audit evidence remains pinned and immutable. Repair records authorization within its work turn; final verification is automatic there. `finalize-workflow` closes or skips Repair, validates all aggregates and records Repair-close plus Final receipts before one canonical commit. Missing UI scores never block a command.
 
 ## Cumulative source provenance
 
 Allow cumulative UCs within the configured pipeline and source order. Before each source generation, record in the run's `source-input.json`: UC/run, configuration reference/checksum, prompt variant, model tuple, replicate, run order, input source SHA-256 and predecessor run/final hash (null at pipeline start), with references to the preserved source/hash evidence. Compare the observed input to that predecessor or the documented clean baseline before mutation.
 
-Do not restore between cumulative UCs. A new pipeline/model/replicate condition uses its documented starting baseline; it cannot silently inherit another condition's generated source. An unresolved source identity is a preflight blocker, not permission to bypass comparison checks or reset files automatically. Restore only within the researcher's authorized scope. Preserve existing source and historical evidence while resolving provenance.
+Do not restore between cumulative UCs. A new pipeline/model/replicate condition uses its documented starting baseline; it cannot silently inherit another condition's generated source. An unresolved source identity is a preflight blocker, not permission to bypass comparison checks or reset files automatically. Restore only within the researcher's authorized scope. Preserve existing source and recorded evidence while resolving provenance.
 
 Prompt/source/repair remain telemetry buckets in two phases. Audit, runtime, approval and finalization do not add generation execution seconds. No tests or test cases are created or run by this contract.
 

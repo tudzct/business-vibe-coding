@@ -14,7 +14,6 @@ AUX = ("configuration_and_approval", "dataset_resolution", "audit",
 USAGE = ("input_tokens", "cached_input_tokens", "output_tokens",
          "reasoning_output_tokens", "total_tokens")
 METHOD = "system_timestamp_delta"
-LEGACY_TIMING_PROTOCOL = "generation_execution_only_v1"
 TIMING_PROTOCOL = "generation_execution_with_repair_audit_v2"
 ROOT = Path(__file__).resolve().parents[4]
 
@@ -177,7 +176,7 @@ def aggregate(rows):
 def phase_aggregate(rows, phase):
     """Token/count membership is semantic; time retains its captured bucket."""
     result = aggregate([r for r in rows if r["phase"] == phase])
-    timed = aggregate([r for r in rows if r.get("timing_phase", r["phase"]) == phase])
+    timed = aggregate([r for r in rows if r["timing_phase"] == phase])
     for key in ("duration_seconds", "timing_unavailable_reason"):
         result[key] = timed[key]
     return result
@@ -233,15 +232,11 @@ def validate_core_token_phase(phase, segments):
 
 
 def validate_metrics(metrics):
-    require(metrics.get("schema_version") in (1, 2, 3), "unsupported metrics schema")
-    semantic = metrics["schema_version"] >= 2
-    execution = metrics["schema_version"] == 3
+    require(metrics.get("schema_version") == 3, "unsupported metrics schema")
     protocol = metrics.get("timing_protocol")
-    if execution:
-        require(protocol in (LEGACY_TIMING_PROTOCOL, TIMING_PROTOCOL), "unsupported timing protocol")
-    if semantic:
-        require(metrics.get("token_attribution_method") == "semantic_primary_phase_per_turn",
-                "unsupported token attribution method")
+    require(protocol == TIMING_PROTOCOL, "unsupported timing protocol")
+    require(metrics.get("token_attribution_method") == "semantic_primary_phase_per_turn",
+            "unsupported token attribution method")
     require(metrics.get("timing_method") == METHOD, "unsupported timing method")
     rows = metrics.get("turns", [])
     require(len({(r["session_id"], r["turn_id"]) for r in rows}) == len(rows), "duplicate turn")
@@ -249,15 +244,13 @@ def validate_metrics(metrics):
         usage(row["tokens"])
         require(row["phase"] in CORE + AUX and row["completed"], "invalid selected turn")
         require(bool(row.get("reason")), "turn classification needs a reason")
-        if semantic:
-            require(row.get("timing_phase") in CORE + AUX, "valid timing bucket required")
+        require(row.get("timing_phase") in CORE + AUX, "valid timing bucket required")
         require(type(row.get("tool_call_count")) is int and row["tool_call_count"] >= 0, "invalid tool-call count")
         require(row["duration_seconds"] is None or row["duration_seconds"] >= 0, "negative time")
         segments = row.get("timing_segments", [])
-        if execution and protocol == TIMING_PROTOCOL:
-            validate_core_token_phase(row["phase"], segments)
-        timed_segments = [s for s in segments if s["start"]["phase"] in CORE] if execution else segments
-        if execution and not timed_segments and row["phase"] in AUX:
+        validate_core_token_phase(row["phase"], segments)
+        timed_segments = [s for s in segments if s["start"]["phase"] in CORE]
+        if not timed_segments and row["phase"] in AUX:
             require(row["duration_seconds"] == 0 and bool(row.get("timing_exclusion_reason")),
                     "auxiliary-only work must have zero counted generation seconds and an exclusion reason")
         elif row["duration_seconds"] is None:
@@ -266,39 +259,35 @@ def validate_metrics(metrics):
             require(bool(timed_segments), "observed duration needs captured segments")
             require(round(sum(duration(s) for s in timed_segments), 3) == row["duration_seconds"],
                     "duration differs from captured endpoints")
-        if execution:
-            for segment in segments:
-                require(segment["start"].get("timing_protocol") == protocol,
-                        "timestamps must retain their recorded timing protocol")
-                if "end" in segment:
-                    require(segment["end"].get("timing_protocol") == protocol, "end timing protocol mismatch")
-                    duration(segment)
-                if segment["start"]["phase"] == "repair":
-                    require(segment["start"].get("repair_id") in metrics.get("repair_timing", {}),
-                            "repair segment missing canonical repair identity")
+        for segment in segments:
+            require(segment["start"].get("timing_protocol") == protocol,
+                    "timestamps must retain their recorded timing protocol")
+            if "end" in segment:
+                require(segment["end"].get("timing_protocol") == protocol, "end timing protocol mismatch")
+                duration(segment)
+            if segment["start"]["phase"] == "repair":
+                require(segment["start"].get("repair_id") in metrics.get("repair_timing", {}),
+                        "repair segment missing canonical repair identity")
         for segment in segments:
             require(all(segment["start"].get(k) == metrics[k] for k in ("uc_id", "run_id")),
                     "segment UC/run mismatch")
             require(all(segment["start"].get(k) == row[k] for k in ("turn_id", "session_id")),
                     "segment turn identity mismatch")
-            require((execution and segment["start"]["phase"] in AUX) or
-                    segment["start"]["phase"] == row.get("timing_phase", row["phase"]),
+            require((segment["start"]["phase"] in AUX) or
+                    segment["start"]["phase"] == row["timing_phase"],
                     "segment timing bucket mismatch")
-    if execution:
-        require(isinstance(metrics.get("repair_timing"), dict), "repair timing breakdown required")
-        require(metrics["repair_timing"] == repair_timing(rows, metrics["repair_timing"]), "repair timing mismatch")
-    expected_workflow = execution_workflow_aggregate(rows, metrics["phases"]) if execution else aggregate(rows)
+    require(isinstance(metrics.get("repair_timing"), dict), "repair timing breakdown required")
+    require(metrics["repair_timing"] == repair_timing(rows, metrics["repair_timing"]), "repair timing mismatch")
+    expected_workflow = execution_workflow_aggregate(rows, metrics["phases"])
     require(metrics["workflow"] == expected_workflow, "workflow metrics differ from selected turns")
-    if semantic:
-        require(metrics.get("token_phase_breakdown") == token_breakdown(rows), "token phase breakdown mismatch")
+    require(metrics.get("token_phase_breakdown") == token_breakdown(rows), "token phase breakdown mismatch")
     require(not {r["turn_id"] for r in rows}.intersection(e["turn_id"] for e in metrics.get("excluded_turns", [])),
             "a selected turn cannot also be excluded")
     require(set(metrics["phases"]) == set(CORE), "exactly three metric phases required")
     for phase in CORE:
         item = metrics["phases"][phase]
         if item["status"] in ("closed", "skipped"):
-            expected = (execution_phase_aggregate(rows, phase, metrics["repair_timing"]) if execution else
-                        phase_aggregate(rows, phase) if semantic else aggregate([r for r in rows if r["phase"] == phase]))
+            expected = execution_phase_aggregate(rows, phase, metrics["repair_timing"])
             require(item["values"] == expected, f"{phase} metrics mismatch")
             if item["status"] == "skipped":
                 require(phase == "repair" and bool(item.get("reason")) and not any(r["phase"] == phase for r in rows),
@@ -323,31 +312,27 @@ def metrics_markdown(metrics):
     lines += ["", "Cached input is included in input; reasoning output is included in output.",
               "Seconds sum captured work intervals. Waiting between turns and measurement/report turns are excluded.",
               "Model call count: unavailable (token usage updates are not model call evidence).", ""]
-    if metrics["schema_version"] >= 2:
-        lines += ["Tokens and turn/tool counts cover each whole turn by semantic phase label. "
-                  "Seconds cover only captured execution intervals under timing_phase.", "",
-                  "### Token attribution by label", "",
-                  "| Label | Input | Cached input | Output | Reasoning output | Total | Turns | Tool calls |",
-                  "|---|---:|---:|---:|---:|---:|---:|---:|"]
-        for phase, values in metrics["token_phase_breakdown"].items():
-            cells = [values["tokens"][k] for k in USAGE] + [values["workflow_turn_count"], values["tool_call_count"]]
-            lines.append("| " + phase + " | " + " | ".join("N/A" if v is None else str(v) for v in cells) + " |")
-        lines += ["", "| Turn | Token label | Timing bucket | Reason |", "|---|---|---|---|"]
-        for row in metrics["turns"]:
-            reason = row["reason"].replace("|", "\\|").replace("\n", " ")
-            lines.append(f"| {row['turn_id']} | {row['phase']} | {row['timing_phase']} | {reason} |")
-        lines.append("")
-    if metrics["schema_version"] == 3:
-        lines += [f"Timing protocol: `{metrics['timing_protocol']}`.", "",
-                  ("Repair seconds include integrated BR/flow/runtime verification and final evidence persistence. "
-                   "A turn with core execution must retain that core token label."
-                   if metrics["timing_protocol"] == TIMING_PROTOCOL else
-                   "Historical protocol: Repair seconds exclude the subsequent integrated audit; evidence is unchanged."), "",
-                  "Workflow seconds = Prompt execution + first-pass Source execution + all Repair executions. "
-                  "Configuration, approvals, dataset resolution, separate audit/runtime and reporting are excluded from time. "
-                  "Their eligible tokens remain in workflow. Pending/missing generation time is N/A, not zero.", ""]
-        for repair_id, item in metrics["repair_timing"].items():
-            lines.append(f"- {repair_id}: {item['duration_seconds'] if item['duration_seconds'] is not None else 'N/A'} seconds")
+    lines += ["Tokens and turn/tool counts cover each whole turn by semantic phase label. "
+              "Seconds cover only captured execution intervals under timing_phase.", "",
+              "### Token attribution by label", "",
+              "| Label | Input | Cached input | Output | Reasoning output | Total | Turns | Tool calls |",
+              "|---|---:|---:|---:|---:|---:|---:|---:|"]
+    for phase, values in metrics["token_phase_breakdown"].items():
+        cells = [values["tokens"][k] for k in USAGE] + [values["workflow_turn_count"], values["tool_call_count"]]
+        lines.append("| " + phase + " | " + " | ".join("N/A" if v is None else str(v) for v in cells) + " |")
+    lines += ["", "| Turn | Token label | Timing bucket | Reason |", "|---|---|---|---|"]
+    for row in metrics["turns"]:
+        reason = row["reason"].replace("|", "\\|").replace("\n", " ")
+        lines.append(f"| {row['turn_id']} | {row['phase']} | {row['timing_phase']} | {reason} |")
+    lines.append("")
+    lines += [f"Timing protocol: `{metrics['timing_protocol']}`.", "",
+              ("Repair seconds include integrated BR/flow/runtime verification and final evidence persistence. "
+               "A turn with core execution must retain that core token label."), "",
+              "Workflow seconds = Prompt execution + first-pass Source execution + all Repair executions. "
+              "Configuration, approvals, dataset resolution, separate audit/runtime and reporting are excluded from time. "
+              "Their eligible tokens remain in workflow. Pending/missing generation time is N/A, not zero.", ""]
+    for repair_id, item in metrics["repair_timing"].items():
+        lines.append(f"- {repair_id}: {item['duration_seconds'] if item['duration_seconds'] is not None else 'N/A'} seconds")
     if metrics["phases"]["repair"]["status"] == "skipped":
         lines += ["Repair skipped: " + metrics["phases"]["repair"]["reason"], ""]
     for row in metrics["turns"]:

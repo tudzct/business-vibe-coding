@@ -80,14 +80,13 @@ def calculate(data):
     supplied = data.get("flows")
     require(isinstance(supplied, list), "flow observations required")
     require([row.get("flow_id") for row in supplied] == baseline["ordered_flow_ids"], "assessment flow inventory mismatch")
-    attempts, validate_target = validate_runtime(data, definitions, validate_evidence) if version == 2 else ({}, None)
+    attempts, validate_target = validate_runtime(data, definitions, validate_evidence)
 
     results = []
     for definition, assessed in zip(definitions, supplied):
         outcome = assessed.get("terminal_outcome")
         validate_observation(outcome, f"{definition['flow_id']} outcome")
-        if validate_target:
-            validate_target(outcome, "terminal_outcome", definition["flow_id"], True)
+        validate_target(outcome, "terminal_outcome", definition["flow_id"], True)
         steps = assessed.get("steps")
         require(isinstance(steps, list), "step observations required")
         require([row.get("step_id") for row in steps] == [row["step_id"] for row in definition["steps"]],
@@ -99,13 +98,12 @@ def calculate(data):
         for step_definition, step in zip(definition["steps"], steps):
             validate_observation(step, step_definition["step_id"])
             critical = step_definition["completion_critical"]
-            if validate_target:
-                validate_target(step, step_definition["step_id"], definition["flow_id"], critical)
+            validate_target(step, step_definition["step_id"], definition["flow_id"], critical)
             blocking_failure = blocking_failure or (critical and step["status"] == "unmet")
             critical_unknown = critical_unknown or (critical and step["status"] == "not_evaluable")
             deviations += int(not critical and step["status"] == "unmet")
             computed_steps.append({**step, "completion_critical": critical})
-        chain_complete = complete_chain(assessed, definition, attempts) if version == 2 else True
+        chain_complete = complete_chain(assessed, definition, attempts)
         if blocking_failure or outcome["status"] == "unmet":
             status = "incorrect"
         elif critical_unknown or outcome["status"] == "not_evaluable" or not chain_complete:
@@ -121,7 +119,7 @@ def calculate(data):
     unknown = total - correct - incorrect
     exact = unknown == 0
     return {
-        **({"schema_version": version, "rubric_id": rubric} if version == 2 else {}),
+        "schema_version": version, "rubric_id": rubric,
         "assessment_id": data["assessment_id"],
         "stage": data["stage"],
         "input_sha256": digest(json.dumps(data, sort_keys=True, separators=(",", ":")).encode()),
@@ -156,16 +154,15 @@ def markdown(result):
     lines.append("")
     for limitation in result["input"]["limitations"]:
         lines.append(json.dumps(limitation, ensure_ascii=False) if isinstance(limitation, dict) else limitation)
-    if method(result["input"])[0] == 2:
-        lines.extend(["", "## Observation trace", ""])
-        for observation in result["input"]["observations"]:
-            lines.append(f"- {observation['observation_id']} / {observation['flow_id']}: "
-                         f"{observation['started_at']} to {observation['ended_at']}; {observation['state']}; "
-                         f"entry {observation['entry_point']}; end {observation['end_state']}")
-            for action in observation["actions"]:
-                lines.append(f"  {action['sequence']}. {action['action']} -> {action['actual_result']} "
-                             f"({', '.join(action['target_ids'])})")
-        lines.extend(["", "Evidence paths, SHA-256 values, target decisions and source findings: companion JSON input."])
+    lines.extend(["", "## Observation trace", ""])
+    for observation in result["input"]["observations"]:
+        lines.append(f"- {observation['observation_id']} / {observation['flow_id']}: "
+                     f"{observation['started_at']} to {observation['ended_at']}; {observation['state']}; "
+                     f"entry {observation['entry_point']}; end {observation['end_state']}")
+        for action in observation["actions"]:
+            lines.append(f"  {action['sequence']}. {action['action']} -> {action['actual_result']} "
+                         f"({', '.join(action['target_ids'])})")
+    lines.extend(["", "Evidence paths, SHA-256 values, target decisions and source findings: companion JSON input."])
     lines.append("")
     return "\n".join(lines)
 
@@ -181,7 +178,7 @@ def validate_run_result(run, folder, result):
     md_path = destination.with_name(destination.name + ".md")
     if json_path.exists():
         require(read_json(json_path) == result, "assessment artifact is immutable")
-    if md_path.exists() and version == 2:
+    if md_path.exists():
         require(md_path.read_text(encoding="utf-8") == markdown(result), "assessment report is immutable")
     block = run.get("flow_accuracy")
     history = []
@@ -199,18 +196,17 @@ def validate_run_result(run, folder, result):
     if history:
         require(history[0]["input"]["baseline"] == result["input"]["baseline"], "flow baseline changed")
         require(all(method(r["input"]) == (version, rubric) for r in history), "mixed method history")
-        if version == 2:
-            followups = block.get("followups", [])
-            previous_end = max([epoch(r["input"]["captured_at"]) for r in history] +
-                               [epoch(r["recorded_at"]) for r in followups
-                                if r["assessment_id"] in {a["assessment_id"] for a in history}])
-            old_ids = {o["observation_id"] for r in history for o in r["input"]["observations"]}
-            old_ids.update(o["observation_id"] for r in followups if r["mode"] == "llm_measurement"
-                           for o in r["runtime_result"]["input"].get("observations", []))
-            require(epoch(result["input"]["captured_at"]) > previous_end, "new final assessment must follow prior evidence capture")
-            for observation in result["input"]["observations"]:
-                require(observation["observation_id"] not in old_ids and epoch(observation["started_at"]) > previous_end,
-                        "new final assessments require fresh observations")
+        followups = block.get("followups", [])
+        previous_end = max([epoch(r["input"]["captured_at"]) for r in history] +
+                           [epoch(r["recorded_at"]) for r in followups
+                            if r["assessment_id"] in {a["assessment_id"] for a in history}])
+        old_ids = {o["observation_id"] for r in history for o in r["input"]["observations"]}
+        old_ids.update(o["observation_id"] for r in followups if r["mode"] == "llm_measurement"
+                       for o in r["runtime_result"]["input"].get("observations", []))
+        require(epoch(result["input"]["captured_at"]) > previous_end, "new final assessment must follow prior evidence capture")
+        for observation in result["input"]["observations"]:
+            require(observation["observation_id"] not in old_ids and epoch(observation["started_at"]) > previous_end,
+                    "new final assessments require fresh observations")
 
 
 def main():

@@ -10,7 +10,7 @@ It is not a set of continuously running AI services. Codex executes repository-l
 
 ```mermaid
 flowchart LR
-    INPUT[Four prepared files and frozen dependencies] --> PREFLIGHT[Read-only preflight]
+    INPUT[Four prepared JSON files, fixed database and frozen dependencies] --> PREFLIGHT[Read-only preflight]
     PREFLIGHT --> PROMPT[1 Generate Draft prompt]
     PROMPT --> PCLOSE[2 Close prompt and approve]
     PCLOSE --> SOURCE[3 Generate first-pass source]
@@ -19,24 +19,23 @@ flowchart LR
     AUDIT -- defects with conclusive verdicts --> REPAIR[6 Requested repair and automatic verification]
     AUDIT -- unknown results --> FOLLOW[Save researcher verdicts or LLM measurement]
     FOLLOW -- defects remain; wait for command --> REPAIR
-    AUDIT -- all pass; skip correction --> RCLOSE[7 Close repair]
-    FOLLOW -- all pass; skip correction --> RCLOSE
-    REPAIR --> RCLOSE
-    RCLOSE --> FINAL[8 Finalize telemetry and report]
-    FINAL --> EXPORT[9 Optional workbook export]
+    AUDIT -- all pass; skip correction --> FINAL[7 Close or skip Repair and finalize telemetry atomically]
+    FOLLOW -- all pass; skip correction --> FINAL
+    REPAIR --> FINAL
+    FINAL --> EXPORT[8 Optional workbook export]
 ```
 
 ### Phase 1 - Generate Business Coding Prompt
 
-Read [FILE-DRIVEN-WORKFLOW.md](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md). The researcher prepares Confirmed configuration, frozen BR baseline, frozen flow baseline and Draft Canonical Run JSON before generation. Frozen UC/UML/API/Figma/resource/template dependencies must validate read-only. Generation never creates missing inputs.
+Read [FILE-DRIVEN-WORKFLOW.md](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md). The researcher prepares Confirmed configuration, frozen BR baseline, frozen flow baseline and Draft Canonical Run JSON before generation, plus the fixed database and its configuration-pinned DBML. Frozen UC/UML/API/Figma/resource/template dependencies and database pins must validate read-only. Generation never creates missing inputs.
 
 Generate Draft Full A-F or RQ3 A-D with complete functional-flow coverage and the configured input boundaries. Capture actual prompt START/END and return the prompt-close command. That subsequent command approves and pins the Draft and closes telemetry, without another approval or activation turn.
 
 ### Phase 2 - Generate Source Code
 
-Validate pinned configuration/approved prompt/closed prompt telemetry and cumulative source provenance. Optional historical activation is validated when present. Generate only first-pass source, preserve immutable hash/model/timing evidence, then stop before audit. The source-close command precedes directly requested BR/flow audit.
+Validate pinned configuration/approved prompt/closed prompt telemetry and cumulative source provenance. Optional activation is validated when present. Generate only first-pass source, preserve immutable hash/model/timing evidence, then stop before audit. The source-close command precedes directly requested BR/flow audit.
 
-Audit persists every frozen result and source-linked evidence. All-passing unchanged-source audit records repair unnecessary. Unknown verdicts are saved as partial progress and completed by attributed researcher results or requested bounded LLM measurement. Neither audit nor follow-up automatically repairs source. The subsequent repair command supplies authorization, executes bounded corrections and automatically verifies final BR/flow/runtime evidence before freezing terminal hash/status. Close repair (or skipped repair), finalize and optionally export in successive turns.
+Audit persists every frozen result and source-linked evidence. All-passing unchanged-source audit records repair unnecessary. Unknown verdicts are saved as partial progress and completed by attributed researcher results or requested bounded LLM measurement. Neither audit nor follow-up automatically repairs source. The subsequent repair command supplies authorization, executes bounded corrections and automatically verifies final BR/flow/runtime evidence before freezing terminal hash/status. The next `finalize-workflow` command closes or skips Repair and finalizes telemetry atomically. Optional export runs in a separate subsequent turn.
 
 ## Prompt contract
 
@@ -71,7 +70,7 @@ Authentication, ownership, validation and related controls required by a UC or B
 
 ## Command boundaries
 
-Each command authorizes its operation without further human gate confirmations. Existing canonical `gates` names are internal compatibility bookkeeping, recorded through `record_command.py`; historical receipts/evidence remain immutable. Concrete schema changes still need their approved proposal before entity/migration edits, and material specification ambiguity still needs researcher resolution. Optional UI scoring never blocks audit, telemetry, export or completion.
+Each command authorizes its operation without further human gate confirmations. Canonical `gates` names are internal command bookkeeping, recorded through `record_command.py`; recorded receipts/evidence remain immutable. Database structure is a fixed researcher-provided input: read the pinned DBML and verify database pins, allow authorized business DML, and never change schema or generate migrations. Material specification ambiguity or input incompatibility requires researcher resolution. Optional UI scoring never blocks audit, telemetry, export or completion.
 
 ## Test boundary
 

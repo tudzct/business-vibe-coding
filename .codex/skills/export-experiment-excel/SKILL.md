@@ -1,6 +1,6 @@
 ---
 name: export-experiment-excel
-description: "Export canonical experiment JSON into an inspected Excel tab using dynamic semantic mapping. Invoke explicitly as $export-experiment-excel <UC-ID> <LINK_OR_FILEPATH> <TAB_NAME> after final workflow measurement; unavailable values become N/A."
+description: "Export canonical experiment JSON into an inspected Excel tab using dynamic semantic mapping. Invoke explicitly as $export-experiment-excel [UC-ID] [LINK_OR_FILEPATH] [TAB_NAME] after final workflow measurement; unavailable values become N/A."
 ---
 
 # Export Experiment Excel

@@ -100,19 +100,18 @@ def main() -> None:
     if baseline_data.get("ordered_br_ids") != uc_entries[0].get("ordered_br_ids"):
         fail("configuration BR IDs do not exactly match the frozen baseline")
 
-    if config.get("schema_version") in {"2.2", "2.3", "2.4"}:
-        flow_baseline_rel = uc_entries[0].get("flow_baseline")
-        if not isinstance(flow_baseline_rel, str) or not flow_baseline_rel:
-            fail("configuration UC entry has no flow_baseline")
-        flow_baseline = (root / flow_baseline_rel).resolve()
-        relative_to_root(flow_baseline, root)
-        if not flow_baseline.is_file():
-            fail(f"Flow baseline does not exist: {flow_baseline_rel}")
-        flow_data = load_json(flow_baseline, "Flow baseline")
-        if flow_data.get("status") != "Frozen" or flow_data.get("uc_id") != args.uc_id:
-            fail("Flow baseline is not frozen for the requested UC")
+    flow_baseline_rel = uc_entries[0].get("flow_baseline")
+    if not isinstance(flow_baseline_rel, str) or not flow_baseline_rel:
+        fail("configuration UC entry has no flow_baseline")
+    flow_baseline = (root / flow_baseline_rel).resolve()
+    relative_to_root(flow_baseline, root)
+    if not flow_baseline.is_file():
+        fail(f"Flow baseline does not exist: {flow_baseline_rel}")
+    flow_data = load_json(flow_baseline, "Flow baseline")
+    if flow_data.get("status") != "Frozen" or flow_data.get("uc_id") != args.uc_id:
+        fail("Flow baseline is not frozen for the requested UC")
 
-    variant = run_entries[0].get("prompt_variant", "full")
+    variant = run_entries[0]["prompt_variant"]
     suffix = "rq3-coding-prompt" if variant == "rq3" else "business-coding-prompt"
     prompt = args.prompt or root / f"docs/02-construction/coding-prompts/{args.uc_id}-{suffix}.md"
     canonical = load_json(root / preflight_result["canonical_run"]["path"], "Canonical Run JSON")
@@ -136,7 +135,7 @@ def main() -> None:
         "gate_version": 5,
         "uc_id": args.uc_id,
         "run_id": args.run_id,
-        "prompt_variant": run_entries[0].get("prompt_variant", "full"),
+        "prompt_variant": run_entries[0]["prompt_variant"],
         "configuration_artifact": configuration_rel,
         "configuration_checksum": configuration_checksum,
         "activated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),

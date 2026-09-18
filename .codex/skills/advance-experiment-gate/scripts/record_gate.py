@@ -15,7 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "gen-coding-prompt/
 from validate_prompt_contract import validate_prompt, normalize_variant, validate_configuration
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-generation-metrics/scripts"))
 from calculate_metrics import terminal_assessment_stage, validate_flow, validate_snapshot
-from flow_summary import accepted_summary, summarize
+from flow_summary import accepted_summary
 
 AUTO_REPAIR_POLICY = "flow-followup-auto-repair-v1"
 AUTO_REPAIR_REFERENCE = "docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md"
@@ -29,27 +29,19 @@ NEXT = {
     "final_metrics": {"confirmed": None},
 }
 
-# Read old receipts without rewriting them or requiring their obsolete gate.
-LEGACY_NEXT = {**NEXT, "configuration": {"confirmed": "prompt"},
-               "repair_decision": {"authorized": "repair", "skipped": "final_audit"},
-               "repair": {"confirmed": "final_audit"}, "final_audit": {"confirmed": "final_metrics"}}
-
-
 def validate_gate_history(gates, gate):
     history = gates.get("history")
     require(isinstance(history, list), "invalid gate history")
-    possible = {"prompt", "configuration"}
+    possible = {"prompt"}
     for row in history:
         require(isinstance(row, dict), "invalid gate receipt")
         prior = row.get("gate")
         require(prior in possible, "invalid gate sequence")
-        possible = {table[prior][row["outcome"]] for table in (NEXT, LEGACY_NEXT)
-                    if row.get("outcome") in table.get(prior, {})}
+        possible = {NEXT[prior][row["outcome"]]} if row.get("outcome") in NEXT.get(prior, {}) else set()
         require(possible, "invalid gate outcome")
     current = gates.get("current")
     require(current in possible, "gate history does not reach current gate")
-    legacy_configuration = current == "configuration" and gate == "prompt" and not history
-    require(current == gate or legacy_configuration or (current == "final_audit" and gate == "final_metrics"), "gate is not current")
+    require(current == gate, "gate is not current")
     return history
 
 
@@ -98,32 +90,14 @@ def audit_evidence(run, folder, stage):
 
 
 def validate_repair_authorization(run):
-    """Accept historical explicit decisions or a traceable policy decision."""
+    """Validate authorization recorded by the researcher repair command."""
     decision = next((r for r in run.get("gates", {}).get("history", [])
                      if r.get("gate") == "repair_decision"), None)
     approval = run.get("repair_authorization") or {}
     require(decision and decision["outcome"] == "authorized" and approval.get("approved") is True
             and approval.get("turn_id") == decision["turn_id"], "repair authorization mismatch")
-    mode = approval.get("mode", "researcher")
-    require(mode in {"researcher", "automatic_policy"}, "unknown repair authorization mode")
-    automatic = decision.get("automatic_decision")
-    if mode == "automatic_policy":
-        require(automatic and approval.get("automatic_decision") == automatic,
-                "automatic repair decision mismatch")
-        require(automatic.get("policy_id") == AUTO_REPAIR_POLICY
-                and automatic.get("policy_artifact") == AUTO_REPAIR_REFERENCE
-                and re.fullmatch(r"sha256:[0-9a-f]{64}", automatic.get("policy_sha256", "")),
-                "automatic repair policy reference required")
-        followup = next((r for r in run.get("flow_accuracy", {}).get("followups", [])
-                         if r.get("followup_id") == automatic.get("followup_id")), None)
-        require(followup and snapshot_hash(followup) == automatic.get("followup_sha256"),
-                "automatic repair trigger changed")
-        require(automatic.get("defect_br_ids") or automatic.get("defect_flow_ids"),
-                "automatic repair requires evidenced defects")
-        require(automatic.get("source_revision") == decision.get("evidence", {}).get("source_revision"),
-                "automatic repair source binding mismatch")
-    else:
-        require(automatic is None, "policy decision cannot be relabeled as researcher approval")
+    require(approval.get("mode", "researcher") == "researcher", "repair requires an explicit researcher command")
+    require(decision.get("automatic_decision") is None, "repair requires an explicit researcher command")
     return approval
 
 
@@ -176,11 +150,7 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
         require(gate == "repair_decision", "automatic policy applies only to Repair Decision")
         selected, validated = automatic_context(run, folder, automatic["followup_id"], automatic["source_revision"])
         require(selected == outcome and validated == automatic, "automatic decision differs from current evidence")
-        if outcome == "authorized":
-            trigger = next(r for r in run["flow_accuracy"].get("followups", [])
-                           if r["followup_id"] == automatic["followup_id"])
-            require(trigger.get("mode") != "researcher_result",
-                    "saved researcher results require a subsequent explicit repair request")
+        require(outcome == "skipped", "follow-up can record a skip; repair needs an explicit command")
     require(isinstance(turn_id, str) and turn_id.strip(), "actual gate decision turn ID required")
     require(not any(r.get("gate") == gate for r in history), "workflow step already recorded")
     config_ref = run.get("experiment_configuration") or {}
@@ -189,15 +159,15 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
     config = validate_configuration(config_path)
     assignments = [r for r in config["runs"] if r.get("uc_id") == run["uc_id"] and r.get("run_id") == run["run_id"]]
     require(len(assignments) == 1, "gate needs configured UC/run")
-    variant = normalize_variant(assignments[0].get("prompt_variant", "full"))
-    require(normalize_variant(run.get("prompt_variant", "full")) == variant, "canonical run/configuration variant mismatch")
+    variant = normalize_variant(assignments[0].get("prompt_variant"))
+    require(normalize_variant(run.get("prompt_variant")) == variant, "canonical run/configuration variant mismatch")
     if gate != "prompt" and (folder / "run-activation.json").is_file():
         activation = read_json(folder / "run-activation.json")
         require(activation.get("uc_id") == run["uc_id"] and activation.get("run_id") == run["run_id"]
                 and activation.get("status") == "Confirmed", "gate activation mismatch")
         require(activation.get("configuration_artifact") == config_ref["artifact"]
                 and activation.get("configuration_checksum") == config_ref["checksum"], "activation/configuration mismatch")
-        require(normalize_variant(activation.get("prompt_variant", "full")) == variant, "gate activation variant mismatch")
+        require(normalize_variant(activation.get("prompt_variant")) == variant, "gate activation variant mismatch")
     evidence = {}
     if gate in {"prompt", "source"}:
         reference = run.get("coding_prompt") or {}
@@ -205,7 +175,7 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
         require(prompt.is_file() and digest(prompt.read_bytes()) == reference.get("sha256"), "approved coding_prompt reference required")
         result = validate_prompt(config_path, run["uc_id"], run["run_id"], prompt,
                                  folder / "run-activation.json" if gate == "source" and (folder / "run-activation.json").is_file() else None)
-        require(normalize_variant(run.get("prompt_variant", "full")) == result["prompt_variant"], "run/prompt variant mismatch")
+        require(normalize_variant(run.get("prompt_variant")) == result["prompt_variant"], "run/prompt variant mismatch")
         closed_phase(run, "prompt_generation" if gate == "prompt" else "source_generation")
         evidence["coding_prompt"] = reference
     if gate in {"first_pass_audit", "repair_decision", "repair", "final_metrics"}:
@@ -217,11 +187,10 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
         first = next((r for r in history if r["gate"] == "first_pass_audit"), None)
         require(first is not None, "first-pass audit must precede repair/finalization")
         recorded = first.get("evidence") or {}
-        # Historical gate receipts may lack hashes; never fabricate or rewrite them.
-        if recorded:
-            require(recorded.get("business_rules_sha256") == snapshot_hash(run["business_rules"]["initial"]), "initial BR evidence changed")
-            initial = next((r for r in run["flow_accuracy"]["assessments"] if r["assessment_id"] == recorded.get("flow_assessment_id")), None)
-            require(initial is not None and snapshot_hash(initial) == recorded.get("flow_assessment_sha256"), "initial flow evidence changed")
+        require(recorded, "first-pass audit evidence is required")
+        require(recorded.get("business_rules_sha256") == snapshot_hash(run["business_rules"]["initial"]), "initial BR evidence changed")
+        initial = next((r for r in run["flow_accuracy"]["assessments"] if r["assessment_id"] == recorded.get("flow_assessment_id")), None)
+        require(initial is not None and snapshot_hash(initial) == recorded.get("flow_assessment_sha256"), "initial flow evidence changed")
         for prior_receipt in history:
             pinned = prior_receipt.get("evidence") or {}
             if "flow_progress_sha256" not in pinned:
@@ -232,16 +201,14 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
             retained = [r for r in block.get("followups", []) if r["followup_id"] in followup_ids]
             require(parent is not None and [r["followup_id"] for r in retained] == followup_ids,
                     "gate-pinned flow follow-ups missing or reordered")
-            if pinned.get("flow_selection_policy"):
-                assessment_ids = pinned.get("flow_assessment_ids", [])
-                assessments = [a for a in block["assessments"] if a["assessment_id"] in assessment_ids]
-                require([a["assessment_id"] for a in assessments] == assessment_ids, "gate-pinned flow assessments changed")
-                frozen = {"flow_accuracy": {"assessments": assessments, "followups": retained,
-                                           "current_assessment_id": parent["assessment_id"]}}
-                projection = accepted_summary(frozen)
-                require(projection["selection_policy"] == pinned["flow_selection_policy"], "gate flow policy changed")
-            else:
-                projection = summarize(parent, retained)
+            require(pinned.get("flow_selection_policy") == "accepted-audit-results-v1", "flow policy required")
+            assessment_ids = pinned.get("flow_assessment_ids", [])
+            assessments = [a for a in block["assessments"] if a["assessment_id"] in assessment_ids]
+            require([a["assessment_id"] for a in assessments] == assessment_ids, "gate-pinned flow assessments changed")
+            frozen = {"flow_accuracy": {"assessments": assessments, "followups": retained,
+                                       "current_assessment_id": parent["assessment_id"]}}
+            projection = accepted_summary(frozen)
+            require(projection["selection_policy"] == pinned["flow_selection_policy"], "gate flow policy changed")
             require(snapshot_hash(projection) == pinned["flow_progress_sha256"],
                     "gate-pinned flow progress changed")
     if gate == "repair_decision":

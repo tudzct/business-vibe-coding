@@ -7,7 +7,7 @@ description: Review whether a research environment can install and run Docker, i
 
 Read the shared timing protocol. Standalone deployment/setup/runtime contributes no generation execution seconds. End core segments before waiting; final token calculation belongs to a later confirmed telemetry gate, not a researcher-invoked skill.
 
-Always read `AGENTS.md`, the artifact/context policy, `finalsource/compose.yaml`, affected Dockerfiles/env examples and only the selected mode section of `references/project-runbook.md`. Read `CODEX_SETUP_GUIDE.md` only for fresh setup/install/initialize. Read `PROJECT_CONTEXT.md` only when a research invariant cannot be resolved from `AGENTS.md`. Read `environment-current.json` when present; otherwise treat current state as unknown and create it from its template when persisting the first result. For troubleshooting, query `incidents/index.json` when present and read only a matching incident. Historical Markdown logs are legacy evidence and must not be loaded by default.
+Always read `AGENTS.md`, the artifact/context policy, `finalsource/compose.yaml`, affected Dockerfiles/env examples and only the selected mode section of `references/project-runbook.md`. Read `CODEX_SETUP_GUIDE.md` only for fresh setup/install/initialize. Read `PROJECT_CONTEXT.md` only when a research invariant cannot be resolved from `AGENTS.md`. Read `environment-current.json` when present; otherwise treat current state as unknown and create it from its template when persisting the first result. For troubleshooting, query `incidents/index.json` when present and read only a matching incident. Read only the current state and the incident records needed for the requested operation.
 
 ## Select the mode
 
@@ -57,5 +57,5 @@ Follow [database policy](../../../docs/00-context/engineering/DATABASE-SCHEMA.md
 - Do not edit immutable `docs/01-inception/use-cases/uc-*.md` files.
 - Do not commit `.env`, credentials, raw sensitive logs or connector secrets.
 - Do not claim Business Rule compliance from successful deployment alone; per-rule conclusions require the audit workflow.
-- Keep canonical current state and indexed incident evidence in `docs/03-audit/docker-deployment/`. Preserve legacy Markdown history without reading it by default.
+- Keep canonical current state and indexed incident evidence in `docs/03-audit/docker-deployment/`.
 - Persist only command identifier, exit code, timestamp, tool version, source hash and a bounded relevant error excerpt; never persist successful raw transcripts or complete build logs.

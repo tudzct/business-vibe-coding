@@ -13,7 +13,7 @@ from record_gate import (ROOT, atomic_write, context, digest, prepare_transition
 
 
 def approve_prompt(run, path, prompt, dry_run):
-    require(run.get("gates", {}).get("current") in {"prompt", "configuration"},
+    require(run.get("gates", {}).get("current") == "prompt",
             "prompt close is out of order")
     config_ref = run["experiment_configuration"]
     config = writable(ROOT / config_ref["artifact"])
@@ -64,7 +64,7 @@ def prepare(run, folder, action, turn_id):
     # An already persisted command is a replay, never a new confirmation or repair cycle.
     prior = next((r for r in updated["gates"]["history"] if r["gate"] == gate), None)
     if prior:
-        require(prior["outcome"] == outcome, "conflicting historical command outcome")
+        require(prior["outcome"] == outcome, "conflicting recorded command outcome")
         if action == "repair":
             validate_repair_authorization(updated)
         return updated, {"action": action, "status": "already_recorded", "receipts": []}

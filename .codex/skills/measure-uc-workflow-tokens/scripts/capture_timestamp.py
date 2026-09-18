@@ -36,7 +36,7 @@ def main():
     with run_lock(folder):
         state = journal(run, folder)
         require(state.get("timing_protocol") == TIMING_PROTOCOL,
-                "legacy timing ledger is read-only; use a new run for repair-inclusive execution timing")
+                "unsupported timing protocol")
         require(args.phase != "repair" or bool(args.repair_id), "repair timing requires --repair-id")
         require(state["workflow_status"] == "open", "workflow is finalized")
         require(state["session_id"] in (None, session["session_id"]), "session identity mismatch")
@@ -82,9 +82,6 @@ def main():
                 from record_gate import validate_repair_authorization
                 approval = validate_repair_authorization(run)
                 require(run.get("gates", {}).get("current") == "repair", "repair gate must be current")
-                if approval.get("mode") == "automatic_policy":
-                    require(args.source_revision == approval["automatic_decision"]["source_revision"],
-                            "source changed after automatic decision; inspect drift before repair")
                 approval_turn = find_turn(session, approval["turn_id"])
                 source_boundary = find_turn(session, state["phases"]["source_generation"]["measurement_turn_id"])
                 require(source_boundary["turn_number"] < approval_turn["turn_number"] <= turn["turn_number"],

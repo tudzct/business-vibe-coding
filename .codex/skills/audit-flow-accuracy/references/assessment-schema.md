@@ -34,35 +34,11 @@
 
 Types are `main`, `alternative`, and `exception`. Flow and step IDs are unique and source ordered. Explicit nested variants may use `UC-08.1/BF-1`; referenced “identical” flows are not copied.
 
-## Legacy assessment input (v1)
+## Assessment input
 
-```json
-{
-  "uc_id": "UC-01",
-  "run_id": "<RUN-ID>",
-  "assessment_id": "<path-safe ID>",
-  "stage": "initial",
-  "source_revision": "sha256:<64 hex>",
-  "captured_at": "<ISO-8601>",
-  "baseline": {"path": "docs/02-construction/implementation/UC-01/flow-baseline.json", "sha256": "sha256:<64 hex>"},
-  "limitations": [],
-  "flows": [{
-    "flow_id": "BF-1",
-    "terminal_outcome": {"status": "met", "evidence": [{"path": "<repo path>", "sha256": "sha256:<64 hex>"}], "rationale": "<observation>"},
-    "steps": [{"step_id": "BF-1.1", "status": "met", "evidence": [{"path": "<repo path>", "sha256": "sha256:<64 hex>"}], "rationale": "<observation>"}]
-  }]
-}
-```
+Configuration requires `flow_audit_rubric: completion-critical-flow-runtime-v2`. Assessment input requires integer `schema_version: 2` and the same `rubric_id`, nonempty `uc_id`, `run_id`, path-safe `assessment_id`, `stage: initial|final`, `source_revision` (full SHA-256), timezone-qualified `captured_at`, baseline `{path, sha256}`, `limitations`, `runtime`, `observations` and `flows`. Flows and steps match the baseline's exact ordered inventory. Each flow includes `flow_id`, `steps`, `terminal_outcome` and `completion_observation_id`. Each step includes its frozen `step_id`. Observation statuses are `met`, `unmet` and `not_evaluable`. The flow baseline uses schema 1.
 
-`stage` is `initial` or `final`; observation status is `met`, `unmet` or `not_evaluable`. Evidence must be repository-local and checksum-valid.
-
-The scorer appends `flow_accuracy.assessments` and writes immutable `flow-accuracy/<assessment-id>.{json,md}` evidence. It saves accepted experiment results in canonical `current_summary` and top-level flow fields, without current/follow-up JSON mirrors. See [follow-up measurement](follow-up-measurement.md) for projection schema 2, `accepted-audit-results-v1`, researcher verdicts and append-only follow-ups. Same-ID retries are idempotent; changed content fails. Original assessment objects/reports remain unchanged; later inconclusive assessments do not erase accepted results.
-
-## Runtime assessment input (v2)
-
-New configurations use schema `"2.3"` and `flow_audit_rubric: "completion-critical-flow-runtime-v2"`. Assessment input uses integer `schema_version: 2` and `rubric_id: "completion-critical-flow-runtime-v2"`. Keep all v1 identity, baseline, flow and step fields. Baseline schema remains 1; neither its inventory nor its criticality changes.
-
-All paths are repository-relative. A baseline reference retains the v1 `{path, sha256}` shape. All other v2 evidence must live under `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/flow-accuracy/evidence/<assessment-id>/`. The source revision is the stage's preserved full source SHA-256, not a Git branch name. Compare it against Source Gate/final source evidence before assessing. The deployment record must substantiate its association with running containers, including mounted source.
+All paths are repository-relative. A baseline reference uses `{path, sha256}`. All other runtime evidence must live under `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/flow-accuracy/evidence/<assessment-id>/`. The source revision is the stage's preserved full source SHA-256, not a Git branch name. Compare it against Source Gate/final source evidence before assessing. The deployment record must substantiate its association with running containers, including mounted source.
 
 ### Runtime object
 
@@ -94,7 +70,7 @@ Action/evidence target IDs are frozen step IDs (including a necessary shared mai
 
 ### Evidence reference
 
-Every non-baseline v2 evidence reference has:
+Every non-baseline runtime evidence reference has:
 
 | Field | Contract |
 |---|---|
@@ -125,12 +101,10 @@ The validator rejects unsupported critical/outcome `met`; it never silently rewr
 
 Each flow adds `completion_observation_id` (null if unavailable). `correct` requires this ID to resolve to a completed attempt used by all its critical/outcome `met` decisions. Fragmented proof across attempts without that chain yields `not_evaluable` unless a blocking failure establishes `incorrect`. Invalid non-null observation references are rejected. Noncritical discrepancies do not automatically fail the flow. Formula, equal weights, coverage, null exact percentages for unknown flows and bounds remain unchanged.
 
-### Persistence, validation and compatibility
+### Persistence and validation
 
-The canonical `flow_accuracy` block uses the same schema/rubric pair as the input. V2 results include that pair explicitly and retain the complete input. Scorer dry-run performs identity, configuration/checksum, rubric, history, evidence and scoring validation without writes. Persistence is append-only: same ID and identical input/result can retry; changed content or existing artifact conflicts fail. Existing initial JSON/Markdown is never replaced. Aggregation revalidates all v2 evidence and recomputes scores before accepting stored results.
+The canonical `flow_accuracy` block uses the same schema/rubric pair as the input. Results include that pair explicitly and retain the complete input. Scorer dry-run performs identity, configuration/checksum, rubric, history, evidence and scoring validation without writes. Persistence is append-only: same ID and identical input/result can retry; changed content or existing artifact conflicts fail. Existing initial JSON/Markdown is never replaced. Aggregation revalidates all runtime evidence and recomputes scores before accepting stored results.
 
 Initial/final share baseline and rubric. Repair automatically creates final evidence before its work turn ends: fresh stage-specific observations captured after prior assessment completion, distinct observation IDs and its own evidence directory. Runtime-blocked final records fresh limitations rather than copying initial success. When repair is skipped and the audited source hash is unchanged, retain the initial assessment as terminal evidence with its original stage/ID/time, equal initial/final BR snapshots and a recorded `repair_skip_reason`. Do not fabricate another assessment or require a separate Final Audit Gate. Terminal aggregation checks the source revision against the final BR/source hash.
 
-Omitted assessment `schema_version`/`rubric_id` means legacy v1; explicit `(1, completion-critical-flow-v1)` is also supported. Configuration 2.0–2.2 retains implicit v1. Configuration 2.3 requires v2. `audit_design.protocol` continues to assign auditors (`fixed`, `matched`, `cross`); it is not a rubric. Activation stays checksum-linked without copying mutable method values into the receipt. Configuration validator forbids mixed rubrics in a comparison group, including across configurations and Full/RQ3/model conditions. Reports identify the rubric.
-
-Never migrate historical configuration/activation/assessment or relabel v1 scores as v2. Researcher-requested re-evaluation of old source requires a separate linked evaluation record and explicit scope; it must not be appended to the old run's canonical history by changing its rubric. This scorer deliberately rejects that method change.
+The canonical `flow_accuracy` block requires `selection_policy: accepted-audit-results-v1` and `current_summary`. The scorer writes immutable `flow-accuracy/<assessment-id>.{json,md}` and stores the accepted result and follow-ups directly in canonical JSON. See [follow-up measurement](follow-up-measurement.md). Configuration, activation and evidence remain checksum-linked. `audit_design.protocol` assigns auditors (`fixed`, `matched`, `cross`); it is not a scoring rubric.

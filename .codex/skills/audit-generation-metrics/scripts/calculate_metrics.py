@@ -42,7 +42,6 @@ def validate_snapshot(snapshot, ordered, field):
     snapshot["total"] = len(rows)
     for status, count in counts.items():
         snapshot[status] = count
-    snapshot.pop("acceptance_percent", None)
 
 
 def validate_flow(data, folder):
@@ -60,7 +59,7 @@ def validate_flow(data, folder):
     if len(matches) != 1:
         raise ValueError("flow_accuracy current assessment must resolve exactly once")
     current = matches[0]
-    if version == 2 and current_id != assessments[-1].get("assessment_id"):
+    if current_id != assessments[-1].get("assessment_id"):
         raise ValueError("current flow assessment must be the latest immutable entry")
     ids = [item.get("assessment_id") for item in assessments]
     if len(ids) != len(set(ids)) or assessments[0].get("stage") != "initial":
@@ -68,29 +67,25 @@ def validate_flow(data, folder):
     for index, assessment in enumerate(assessments):
         if method(assessment.get("input", {})) != (version, rubric):
             raise ValueError("mixed flow rubrics in one run")
-        if version == 2:
-            recalculated = calculate_flow(assessment["input"])
-            if recalculated != assessment:
-                raise ValueError("persisted flow assessment differs from validated evidence/scoring")
-            # Late researcher replies may reference old evidence. They did not exist
-            # at this historical capture and must not invalidate its chronology.
-            prior_followups = [r for r in block.get("followups", []) if not (
-                r.get("schema_version") == 2 and r.get("mode") == "researcher_result"
-                and epoch(r["recorded_at"]) > epoch(assessment["input"]["captured_at"]))]
-            prior_run = {**data, "flow_accuracy": {**block, "assessments": assessments[:index],
-                                                   "followups": prior_followups}}
-            validate_run_result(prior_run, folder, recalculated)
+        recalculated = calculate_flow(assessment["input"])
+        if recalculated != assessment:
+            raise ValueError("persisted flow assessment differs from validated evidence/scoring")
+        # Researcher replies recorded after this capture do not alter its chronology.
+        prior_followups = [r for r in block.get("followups", []) if not (
+            r.get("mode") == "researcher_result"
+            and epoch(r["recorded_at"]) > epoch(assessment["input"]["captured_at"]))]
+        prior_run = {**data, "flow_accuracy": {**block, "assessments": assessments[:index],
+                                               "followups": prior_followups}}
+        validate_run_result(prior_run, folder, recalculated)
     if data.get("run_status") == "complete" and current.get("stage") != "final":
         validate_unchanged_initial(data, current)
     if (current.get("stage") == "final" or data.get("run_status") == "complete") and current["input"]["source_revision"] != data.get("business_rules", {}).get("source_revision"):
         raise ValueError("final BR/flow source revision mismatch")
     summary = validate_followups(data, folder)
     stored_summary = block.get("current_summary")
-    if "followups" in block and stored_summary is None:
-        raise ValueError("flow follow-ups require their current summary")
-    if stored_summary is not None and stored_summary != summary:
+    if stored_summary != summary:
         raise ValueError("flow progress differs from immutable assessments/follow-ups")
-    effective = summary if stored_summary is not None else current
+    effective = summary
     status = effective.get("status")
     if status not in FLOW_STATUSES or data.get("flow_accuracy_status") != status:
         raise ValueError("flow_accuracy status mismatch")
@@ -132,7 +127,7 @@ def terminal_assessment_stage(data):
 def calculate(path_string):
     path = Path(path_string)
     data = json.loads(path.read_text(encoding="utf-8"))
-    # Audit validates telemetry committed by a confirmed gate, without overwriting it.
+    # Audit validates telemetry committed by a telemetry-close command, without overwriting it.
     if data.get("metrics") is not None:
         validate_metrics(data["metrics"])
         if any(data["metrics"].get(k) != data.get(k) for k in ("uc_id", "run_id")):

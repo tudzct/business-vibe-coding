@@ -3,7 +3,7 @@
 import json
 import re
 
-from metrics_contract import digest, epoch, read_json, require
+from metrics_contract import digest, epoch, require
 
 RESULT_POLICY = "accepted-audit-results-v1"
 
@@ -36,30 +36,6 @@ def pending_details(flow, assessment):
             "resolution_options": ["researcher_result", "llm_measurement"]}
 
 
-def summarize(assessment, followups):
-    flows = [{"flow_id": f["flow_id"], "type": f["type"], "status": f["status"],
-              "result_source": "assessment", "record_id": assessment["assessment_id"]}
-             for f in assessment["flows"]]
-    by_id = {f["flow_id"]: f for f in flows}
-    pending_inputs = {f["flow_id"]: (f, assessment) for f in assessment["flows"]}
-    applied = []
-    for record in followups:
-        if record["assessment_id"] != assessment["assessment_id"]:
-            continue
-        applied.append(record["followup_id"])
-        for result in record["results"]:
-            row = by_id[result["flow_id"]]
-            require(record.get("schema_version") == 2 or row["status"] == "not_evaluable",
-                    "legacy follow-up can only resolve pending flows")
-            if record.get("schema_version") != 2 or result["status"] != "not_evaluable" or row["status"] == "not_evaluable":
-                row.update(status=result["status"], result_source=record["mode"], record_id=record["followup_id"])
-            if record["mode"] == "llm_measurement":
-                measured = record["runtime_result"]
-                pending_inputs[row["flow_id"]] = (next(f for f in measured["flows"]
-                                                     if f["flow_id"] == row["flow_id"]), measured)
-    return summary_from_rows(assessment, flows, pending_inputs, applied)
-
-
 def summary_from_rows(assessment, flows, pending_inputs, applied):
     total = len(flows)
     require(total > 0 and assessment["counts"]["total"] == total, "flow inventory/count mismatch")
@@ -70,9 +46,9 @@ def summary_from_rows(assessment, flows, pending_inputs, applied):
     unknown = total - evaluated
     manual = sum(f["result_source"] == "researcher_result" and f["status"] != "not_evaluable" for f in flows)
     pending = [pending_details(*pending_inputs[f["flow_id"]]) for f in flows if f["status"] == "not_evaluable"]
-    return {"schema_version": 1, "assessment_id": assessment["assessment_id"], "stage": assessment["stage"],
+    return {"schema_version": 2, "assessment_id": assessment["assessment_id"], "stage": assessment["stage"],
             "source_revision": assessment["input"]["source_revision"],
-            "rubric_id": assessment["input"].get("rubric_id", "completion-critical-flow-v1"),
+            "rubric_id": assessment["input"]["rubric_id"],
             "followup_ids": applied, "status": "partial" if unknown and evaluated else
             ("not_evaluable" if unknown else ("repair_required" if incorrect else "scored")),
             "measurement_status": "partial" if unknown and evaluated else ("not_evaluable" if unknown else "complete"),
@@ -150,26 +126,22 @@ def refresh_report(path, run):
 
 
 def validate_followups(run, folder):
-    # Lazy imports allow the original scorer to use this projection unchanged.
+    # Lazy imports avoid a scorer/projection import cycle.
     from score_flow_accuracy import calculate, validate_evidence
     from runtime_contract import configured_rubric, method
     block = run["flow_accuracy"]
     policy = block.get("selection_policy")
-    require(policy in (None, RESULT_POLICY), "unknown flow result selection policy")
+    require(policy == RESULT_POLICY, "unknown flow result selection policy")
     history = block.get("followups", [])
     require(isinstance(history, list), "invalid flow follow-up history")
     assessments = {a["assessment_id"]: a for a in block["assessments"]}
     accepted, ids = [], set()
     for record in history:
-        require(isinstance(record, dict) and record.get("schema_version") in (1, 2), "invalid follow-up schema")
-        require(record["schema_version"] == 1 or policy == RESULT_POLICY, "re-audit result requires accepted-result policy")
+        require(isinstance(record, dict) and record.get("schema_version") == 2, "invalid follow-up schema")
         identity = record.get("followup_id")
         require(isinstance(identity, str) and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", identity), "unsafe follow-up ID")
         require(identity not in ids, "duplicate follow-up ID")
         ids.add(identity)
-        artifact = folder / "flow-accuracy/followups" / (identity + ".json")
-        if artifact.exists():
-            require(read_json(artifact) == record, "follow-up artifact changed")
         parent = assessments.get(record.get("assessment_id"))
         require(parent is not None and record.get("assessment_sha256") == fingerprint(parent), "follow-up parent changed")
         for key in ("uc_id", "run_id", "stage", "source_revision", "baseline"):
@@ -184,11 +156,10 @@ def validate_followups(run, folder):
         require(recorded >= previous_end, "follow-up predates previous results")
         parent_index = block["assessments"].index(parent)
         if parent_index + 1 < len(block["assessments"]) and not (
-                record["schema_version"] == 2 and record["mode"] == "researcher_result"):
+                record["mode"] == "researcher_result"):
             require(recorded <= epoch(block["assessments"][parent_index + 1]["input"]["captured_at"]),
                     "follow-up cannot revise a superseded source stage")
-        progress = summarize(parent, accepted)
-        pending = {f["flow_id"] for f in (parent["flows"] if record["schema_version"] == 2 else progress["pending_flows"])}
+        pending = {f["flow_id"] for f in parent["flows"]}
         results = record.get("results")
         require(isinstance(results, list) and results, "nonempty per-flow results required")
         target_ids = [r.get("flow_id") for r in results]
@@ -216,7 +187,7 @@ def validate_followups(run, folder):
             scored = {f["flow_id"]: f["status"] for f in measured["flows"]}
             require(all(scored[r["flow_id"]] == r["status"] for r in results), "follow-up verdict mismatch")
         accepted.append(record)
-    return accepted_summary(run) if policy == RESULT_POLICY else summarize(current_assessment(run), accepted)
+    return accepted_summary(run)
 
 
 def refresh_summary(run, folder):

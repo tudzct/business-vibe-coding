@@ -20,4 +20,4 @@ Replace `environment-current.json` from `templates/operations/docker-environment
 - Outcome: resolved, unresolved or blocked.
 - Reusable resolution and prevention note.
 
-Append operation records chronologically. Update current state and index deterministically; never delete incident records. If evidence may contain a secret, summarize it instead of storing raw text. Legacy Markdown history remains read-only and is not loaded by default.
+Append operation records chronologically. Update current state and index deterministically; never delete incident records. If evidence may contain a secret, summarize it instead of storing raw text.

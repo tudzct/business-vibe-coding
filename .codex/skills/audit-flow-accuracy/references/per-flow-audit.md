@@ -1,6 +1,5 @@
 # Per-flow audit procedure
 
-Read this before each audit. This procedure governs `completion-critical-flow-runtime-v2`; legacy assessments retain `completion-critical-flow-v1`. It changes evidence requirements, not frozen behavior, weights, BR acceptance, phases or gates. Standalone audit/runtime time is excluded from generation execution time. Under `generation_execution_with_repair_audit_v2`, verification invoked inside an authorized repair remains within that repair's timer and token label through final evidence persistence; do not open an overlapping audit timer.
 
 ## Establish the subject and bounds
 

@@ -4,7 +4,7 @@ The database is the fifth prepared generation input, alongside the four existing
 
 ## Configuration contract
 
-New Experiment Configurations use schema `2.4` with exactly three database fields:
+Experiment Configurations require exactly three database fields:
 
 ```json
 "database_baseline": {
@@ -14,7 +14,7 @@ New Experiment Configurations use schema `2.4` with exactly three database field
 }
 ```
 
-The configuration's existing `status: Confirmed` applies to this block. No separate database status, ID, manifest, confirmation or duplicate block in BR/flow baselines or Canonical Run JSON is required. The canonical configuration checksum pins all three fields. Preserve historical inputs/results; changed frozen inputs require a new configuration/run, not replacement hashes in existing evidence.
+The configuration's existing `status: Confirmed` applies to this block. No separate database status, ID, manifest, confirmation or duplicate block in BR/flow baselines or Canonical Run JSON is required. The canonical configuration checksum pins all three fields. Preserve frozen inputs/results; changed frozen inputs require a new configuration/run, not replacement hashes in existing evidence.
 
 The DBML hash covers exact file bytes, including comments and line endings. The fingerprint covers normalized metadata from the researcher-verified MySQL baseline. These pins are independent: matching both proves each input still matches its own baseline, not that DBML and SQL were semantically equivalent when prepared. The researcher checks that correspondence before pinning. Never derive a replacement expected fingerprint from an unverified runtime during preflight.
 
@@ -55,7 +55,7 @@ This protocol supports base tables including partitions. Views, triggers, stored
 - Allow authorized business `SELECT`, `INSERT`, `UPDATE`, `DELETE` and transactions. Never arbitrarily seed, erase or reset data to make audit pass.
 - Keep `synchronize: false` and automatic migration execution disabled everywhere. Never generate/run migrations, schema sync, DDL, `TRUNCATE`, grants, or alter DBML/init SQL during generation, audit or repair.
 - Incompatible requirements are input blockers: report the exact missing/conflicting element and stop. Do not weaken requirements or request in-run permission to alter schema.
-- No per-UC `schema.json` creation/approval or schema gate remains. Preserve old artifacts as historical evidence only. Public API, ownership and destructive-data decisions retain their existing boundaries.
+- Public API, ownership and destructive-data decisions retain their existing boundaries.
 - DML-only application-account grants are a useful setup defense. Fingerprinting detects drift but does not enforce privileges; never claim DDL is technically impossible without verified grants.
 
 ## Pipeline lifecycle
@@ -64,4 +64,4 @@ Reset only on explicit researcher instruction at the start of a new pipeline/rep
 
 Metadata reference: https://dev.mysql.com/doc/refman/8.4/en/information-schema.html
 
-The helper accepts the `docker compose` v2 CLI and its compatible v5 successor, not legacy `docker-compose` v1. See https://docs.docker.com/compose/support-and-feedback/faq/ .
+The helper requires the `docker compose` CLI, major version 2 or 5. See https://docs.docker.com/compose/support-and-feedback/faq/ .

@@ -14,8 +14,8 @@ from validate_experiment_configuration import validate as validate_configuration
 
 
 def normalize_variant(value):
-    require(value in {"full", "rq3", "rq3-ad"}, "unsupported prompt variant")
-    return "rq3" if value == "rq3-ad" else value
+    require(value in {"full", "rq3"}, "unsupported prompt variant")
+    return value
 
 
 def prompt_metadata(path):
@@ -56,12 +56,11 @@ def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow
     config = validate_configuration(configuration)
     assignments = [r for r in config["runs"] if r.get("uc_id") == uc_id and r.get("run_id") == run_id]
     require(len(assignments) == 1, "prompt needs unique configured UC/run")
-    variant = normalize_variant(assignments[0].get("prompt_variant", "full"))
+    variant = normalize_variant(assignments[0].get("prompt_variant"))
     meta, body, headings = prompt_metadata(prompt)
     require(meta.get("artifact_type") == "business-coding-prompt" and meta.get("uc_id") == uc_id, "prompt UC/type mismatch")
     require(meta.get("status") in ({"Draft", "Approved"} if allow_draft else {"Approved"}), "prompt approval status mismatch")
-    # Missing Full metadata and rq3-ad are historical read aliases only.
-    actual = normalize_variant(meta.get("prompt_variant", "full"))
+    actual = normalize_variant(meta.get("prompt_variant"))
     require(actual == variant, "configuration/prompt variant mismatch")
     require(headings == list("ABCDEF" if variant == "full" else "ABCD"), "prompt sections must match configured variant exactly")
     require(prompt.name.endswith("-rq3-coding-prompt.md" if variant == "rq3" else "-business-coding-prompt.md"), "prompt filename/variant mismatch")
@@ -80,14 +79,13 @@ def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow
     if activation is not None:
         receipt = read_json(writable(activation))
         require(receipt.get("status") == "Confirmed" and receipt.get("artifact_type") == "run-activation", "invalid activation")
-        require(type(receipt.get("gate_version")) is int and receipt["gate_version"] in {3, 4, 5}, "invalid activation gate version")
+        require(type(receipt.get("gate_version")) is int and receipt["gate_version"] == 5, "invalid activation gate version")
         epoch(receipt.get("activated_at"))
         require(receipt.get("uc_id") == uc_id and receipt.get("run_id") == run_id, "activation UC/run mismatch")
-        require(normalize_variant(receipt.get("prompt_variant", "full")) == variant, "activation/prompt variant mismatch")
+        require(normalize_variant(receipt.get("prompt_variant")) == variant, "activation/prompt variant mismatch")
         require(receipt.get("configuration_artifact") == configuration.relative_to(ROOT).as_posix()
                 and receipt.get("configuration_checksum") == digest(configuration.read_bytes()), "activation configuration mismatch")
-        if receipt.get("gate_version", 0) >= 5 or "approved_prompt" in receipt:
-            require(receipt.get("approved_prompt") == reference, "activated prompt is immutable")
+        require(receipt.get("approved_prompt") == reference, "activated prompt is immutable")
     return {"status": "valid", "uc_id": uc_id, "run_id": run_id, "prompt_variant": variant, "prompt": reference}
 
 

@@ -67,7 +67,7 @@ def main():
     lines = [
         f"# Experiment run {data.get('run_id', '')}", "",
         f"- UC: `{data.get('uc_id', '')}`",
-        f"- Prompt variant: `{data.get('prompt_variant', 'full')}`",
+        f"- Prompt variant: `{data['prompt_variant']}`",
         f"- Run status: `{data.get('run_status')}`",
         f"- Canonical input: `{args.input}`",
         f"- Input SHA-256: `{hashlib.sha256(raw).hexdigest()}`", "",
@@ -85,10 +85,10 @@ def main():
                         if item.get("assessment_id") == flow.get("current_assessment_id")), None)
         if current is None:
             raise ValueError("Flow current assessment is missing")
-        current = flow.get("current_summary") or current
+        current = flow["current_summary"]
         counts = current.get("counts", {})
         lines.extend(["## Flow accuracy", "", f"Assessment: `{current['assessment_id']}` ({current['stage']})",
-                      f"Rubric: `{flow.get('rubric_id', 'completion-critical-flow-v1')}`; compare only runs with the same rubric.",
+                      f"Rubric: `{flow['rubric_id']}`; compare only runs with the same rubric.",
                       f"Status: {current['status']}",
                       f"Flows: {counts.get('correct', 0)} correct, {counts.get('incorrect', 0)} incorrect, "
                       f"{counts.get('not_evaluable', 0)} not evaluable, {counts.get('total', 0)} total",
@@ -121,10 +121,10 @@ def main():
     lines.extend(optional_ui_lines(data))
     if data.get("metrics") is not None:
         lines.append(metrics_markdown(data["metrics"]))
-    elif data.get("metrics_schema_version") in (1, 2, 3):
-        lines.extend(["Metrics pending: confirm the next telemetry gate after work completion.", ""])
+    elif data.get("metrics_schema_version") == 3:
+        lines.extend(["Metrics pending: run the requested telemetry command after work completion.", ""])
     else:
-        lines.extend(["Legacy run: historical metrics retain their original scope; no phase split was reconstructed.", ""])
+        raise ValueError("unsupported metrics schema")
     output = "\n".join(lines)
     if args.output:
         atomic_write(args.output, output, raw=True)

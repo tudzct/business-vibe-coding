@@ -30,7 +30,7 @@ def prepare(run, folder, followup_id, turn_id, source_revision):
                          "reason": "Researcher results saved. Invoke $bug-fixing-sub-prompt to authorize and begin repair without another confirmation."}
     reason = "No evidenced defects remain after the saved flow follow-up; repair is unnecessary." if outcome == "skipped" else None
     receipt = prepare_transition(updated, folder, "repair_decision", outcome, turn_id, reason, automatic)
-    return updated, {"action": "begin_repair" if outcome == "authorized" else "final_metrics",
+    return updated, {"action": "final_metrics",
                      "current_gate": updated["gates"]["current"], "receipt": receipt}
 
 

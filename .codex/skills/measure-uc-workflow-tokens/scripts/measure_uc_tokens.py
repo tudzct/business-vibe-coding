@@ -170,7 +170,7 @@ def close_repair_and_finalize(state, run, rows, selection, measurement_turn_id):
 
 
 def prepare_finalize_run(run, folder, measurement_turn_id):
-    """Validate compatible Repair-close then Final receipts before canonical commit."""
+    """Validate internal Repair-close then Final receipts before canonical commit."""
     sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "advance-experiment-gate/scripts"))
     from record_command import prepare
     if run.get("gates", {}).get("current") == "repair":
@@ -190,7 +190,7 @@ def measure(args):
     with run_lock(folder):
         state = journal(run, folder)
         require(state.get("timing_protocol") == TIMING_PROTOCOL,
-                "legacy timing ledger is read-only; use a new run for repair-inclusive execution timing")
+                "unsupported timing protocol")
         require(state["session_id"] in (None, session["session_id"]), "one session per UC/run required")
         state["session_id"] = session["session_id"]
         ids = [s["turn_id"] for s in selection["turns"]]
@@ -221,7 +221,7 @@ def measure(args):
         old_metrics = run.get("metrics")
         if old_metrics:
             require(old_metrics.get("schema_version") == 3 and old_metrics.get("timing_protocol") == TIMING_PROTOCOL,
-                    "legacy measured runs are read-only; use a new run for repair-inclusive execution timing")
+                    "unsupported metrics schema or timing protocol")
             require(old_metrics["session"]["session_id"] == session["session_id"], "metrics session mismatch")
             old_ids = [r["turn_id"] for r in old_metrics["turns"]]
             require(ids[:len(old_ids)] == old_ids, "cannot remove/reorder previously measured workflow turns")
@@ -256,7 +256,7 @@ def measure(args):
                 seconds = round(sum(duration(s) for s in counted), 3)
             for segment in segments:
                 require(segment["start"].get("timing_protocol") == TIMING_PROTOCOL,
-                        "legacy capture cannot be converted into execution time")
+                        "capture timing protocol mismatch")
                 if "end" in segment:
                     duration(segment)
                     a, b = segment["start"]["epoch_ms"], segment["end"]["epoch_ms"]
@@ -287,18 +287,12 @@ def measure(args):
             require(state["workflow_status"] == "open", "workflow already finalized")
             if args.command == "close-phase":
                 entry = state["phases"].get(args.phase)
-                if args.phase == "repair" and entry is None:
-                    require(not run.get("repairs") and bool(run.get("repair_skip_reason"))
-                            and run.get("gates", {}).get("current") == "final_metrics",
-                            "repair skip requires the all-passing audit decision")
-                    state["phases"]["repair"] = {"status": "skipped", "reason": run["repair_skip_reason"]}
-                else:
-                    require(entry and entry["status"] == "open", "phase must be open before closing")
-                    require(any(r["timing_phase"] == args.phase for r in rows), "no evidence for closing phase")
-                    require(all(s.get("end") or s.get("timing_unavailable_reason")
-                                for s in state["segments"] if s["start"]["phase"] == args.phase),
-                            "end captured work interval before closing phase")
-                    entry.update(status="closed", measurement_turn_id=args.measurement_turn_id)
+                require(entry and entry["status"] == "open", "phase must be open before closing")
+                require(any(r["timing_phase"] == args.phase for r in rows), "no evidence for closing phase")
+                require(all(s.get("end") or s.get("timing_unavailable_reason")
+                            for s in state["segments"] if s["start"]["phase"] == args.phase),
+                        "end captured work interval before closing phase")
+                entry.update(status="closed", measurement_turn_id=args.measurement_turn_id)
             else:
                 close_repair_and_finalize(state, run, rows, selection, args.measurement_turn_id)
         phases = {p: {"status": state["phases"].get(p, {}).get("status", "not_started"), "values": None}
@@ -359,8 +353,7 @@ def measure(args):
     if not finalize_committed:
         sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "advance-experiment-gate/scripts"))
         from record_command import prepare, commit
-        action = {"prompt_generation": "prompt-close", "source_generation": "source-close",
-                  "repair": "repair-close"}[args.phase]
+        action = {"prompt_generation": "prompt-close", "source_generation": "source-close"}[args.phase]
         with run_lock(folder):
             current = read_json(path)
             updated, _ = prepare(current, folder, action, args.measurement_turn_id)
@@ -379,7 +372,7 @@ def main():
         sub.add_argument("--selection", type=Path, required=True)
         sub.add_argument("--measurement-turn-id", required=True)
         if command == "close-phase":
-            sub.add_argument("--phase", choices=CORE, required=True)
+            sub.add_argument("--phase", choices=("prompt_generation", "source_generation"), required=True)
     args = parser.parse_args()
     if args.command == "list":
         session = analyze_session(args.session)

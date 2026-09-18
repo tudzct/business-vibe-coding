@@ -41,7 +41,7 @@ def resolve_value(record, field, kind, conversion, source_unit=None):
     parts = path_parts(field)
     if parts[0] == "metrics":
         metrics = record.get("metrics")
-        require(isinstance(metrics, dict) and metrics.get("schema_version") in (1, 2, 3), "no phase-aware finalized metrics")
+        require(isinstance(metrics, dict) and metrics.get("schema_version") == 3, "no phase-aware finalized metrics")
         validate_metrics(metrics)
         require(metrics.get("uc_id") == record.get("uc_id") and metrics.get("run_id") == record.get("run_id"),
                 "metrics/run identity mismatch")
@@ -75,13 +75,12 @@ def resolve_value(record, field, kind, conversion, source_unit=None):
 def prepare(mapping):
     require(mapping.get("schema_version") == 1, "unknown mapping schema")
     export_mode = mapping.get("export_mode")
-    require(export_mode in ("dynamic_semantic", "finalized_workflow_telemetry"), "unknown export mode")
+    require(export_mode == "dynamic_semantic", "unknown export mode")
     requested_uc = mapping.get("requested_uc_id")
     target_sheet = mapping.get("target_sheet")
-    if export_mode == "dynamic_semantic":
-        require(isinstance(requested_uc, str) and re.fullmatch(r"UC-[0-9]+(?:\.[0-9]+)?", requested_uc), "canonical requested_uc_id required")
-        require(isinstance(target_sheet, str) and target_sheet.strip(), "exact target_sheet required")
-        require(isinstance(mapping.get("header_coverage"), list) and mapping["header_coverage"], "header coverage required")
+    require(isinstance(requested_uc, str) and re.fullmatch(r"UC-[0-9]+(?:\.[0-9]+)?", requested_uc), "canonical requested_uc_id required")
+    require(isinstance(target_sheet, str) and target_sheet.strip(), "exact target_sheet required")
+    require(isinstance(mapping.get("header_coverage"), list) and mapping["header_coverage"], "header coverage required")
     require(Path(mapping["repo_root"]).resolve() == ROOT, "repo_root must be the Business repository")
     workbook = (ROOT / mapping["workbook"]).resolve()
     require(workbook.is_file() and workbook.suffix.lower() == ".xlsx", "existing .xlsx workbook required")
@@ -94,7 +93,7 @@ def prepare(mapping):
         seen_sources.add(path)
         require(path.is_relative_to(ROOT / "docs/05-experiments") and path.parent.parent == ROOT / "docs/05-experiments"
                 and path.parent.name != "configurations" and path.suffix == ".json", "source must be canonical UC/run JSON")
-        require(requested_uc is None or path.parent.name == requested_uc, "source outside requested UC")
+        require(path.parent.name == requested_uc, "source outside requested UC")
         try:
             raw = path.read_bytes()
             record = json.loads(raw.decode("utf-8-sig"))
@@ -103,7 +102,7 @@ def prepare(mapping):
             metrics = record.get("metrics")
             require(isinstance(metrics, dict), "canonical run has no measured metrics")
             validate_metrics(metrics)
-            require(metrics.get("status") == "finalized", "workflow metrics are not finalized; close Final Metrics Gate first")
+            require(metrics.get("status") == "finalized", "workflow metrics are not finalized; run finalize-workflow first")
             require(all(item.get("status") in ("closed", "skipped") for item in metrics["phases"].values()),
                     "finalized workflow contains an unclosed phase")
             require(metrics.get("uc_id") == record.get("uc_id") and metrics.get("run_id") == record.get("run_id"),
@@ -115,16 +114,15 @@ def prepare(mapping):
     require(isinstance(mapping.get("cells"), list) and mapping["cells"], "no writable result cells identified; report unresolved destinations without exporting")
     for cell in mapping["cells"]:
         require(isinstance(cell.get("sheet"), str) and cell["sheet"], "sheet required")
-        require(target_sheet is None or cell["sheet"] == target_sheet, "cell outside requested tab")
+        require(cell["sheet"] == target_sheet, "cell outside requested tab")
         require(re.fullmatch(r"[A-Z]{1,3}[1-9][0-9]{0,6}", cell.get("cell", "")), "single A1 cell required")
         key = (cell["sheet"], cell["cell"])
         require(key not in seen, f"duplicate target {key}")
         seen.add(key)
         require("expected_value" in cell and cell.get("basis") and cell.get("review_range"), "observed cell/header context required")
         require(type(cell.get("overwrite_existing", False)) is bool, "invalid overwrite flag")
-        if requested_uc is not None:
-            require(isinstance(cell.get("identity"), dict) and cell["identity"].get("uc_id") == requested_uc,
-                    "cell outside requested UC")
+        require(isinstance(cell.get("identity"), dict) and cell["identity"].get("uc_id") == requested_uc,
+                "cell outside requested UC")
         update = dict(cell, value="N/A", reason=None, source=None, source_sha256=None)
         try:
             identity = cell.get("identity", {})
