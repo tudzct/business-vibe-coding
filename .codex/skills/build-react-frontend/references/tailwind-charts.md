@@ -14,7 +14,7 @@
 - Wrap responsive charts in `ResponsiveContainer` whose parent has a defined usable size.
 - Provide axis/legend/unit labels and safe tooltip formatters. Do not expose raw sensitive data in tooltips.
 - Preserve the accessibility layer and provide a text summary/table when the visualization alone cannot convey the result accessibly.
-- Format currency/date consistently with project utilities; never rely on floating-point display defaults for financial values.
+- Format numeric/date values consistently with project utilities; never rely on floating-point display defaults for precision-sensitive values.
 
 Official basis:
 

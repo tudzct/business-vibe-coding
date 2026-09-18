@@ -48,7 +48,7 @@ Preserve the source status and message through `{ "success": false, "statusCode"
 
 Follow the existing project architecture. Do not introduce new architectural layers or dependencies.
 
-Handle relevant ownership, transaction, concurrency, idempotency, date/timezone, and monetary-rounding rules. Read the configured checksum-pinned DBML as the database contract. Map entities/queries to existing tables and exact column/key definitions. Allow authorized business DML only; never change schema/DBML/init SQL, generate/run migrations or enable synchronization. Missing required structure is an input blocker.
+Handle relevant ownership, transaction, concurrency, idempotency, date/timezone, and data-precision rules. Read the configured checksum-pinned DBML as the database contract. Map entities/queries to existing tables and exact column/key definitions. Allow authorized business DML only; never change schema/DBML/init SQL, generate/run migrations or enable synchronization. Missing required structure is an input blocker.
 
 ## Prompt B: Frontend UI
 
@@ -118,7 +118,7 @@ When successful:
 
 Preserve API request idempotency where applicable.
 
-Normalize date/timezone and monetary values according to the API contract and existing project conventions.
+Normalize date/timezone and numeric values according to the API contract and existing project conventions.
 
 ## Prompt D: Validation and Error Handling
 

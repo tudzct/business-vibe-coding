@@ -30,7 +30,7 @@ Implement the main logic in `[BUSINESS LOGIC LOCATION]`.
 
 Implement the backend flow for `[USE CASE / API ID]`.
 
-Implement backend and database behaviors derived strictly from the use-case functional specification, UML model, API contract, and required project controls. Do not infer unsupported behavior.
+Enforce all backend and database rules specified in the use-case functional specification and API contract, including applicable normalization, validation, authorization, persistence, transaction, concurrency, and sensitive-data handling.
 
 ### Success Response
 
@@ -46,7 +46,7 @@ Preserve the source status and message through `{ "success": false, "statusCode"
 
 Follow the existing project architecture. Do not introduce new architectural layers or dependencies.
 
-Handle ownership, transaction, concurrency, idempotency, date/timezone, and monetary-rounding behavior only when required by the functional specification, UML model, API contract, or project technical baseline. Read the configured checksum-pinned DBML as shared technical input. Map entities/queries to existing tables and exact column/key definitions. Allow authorized business DML only; never change schema/DBML/init SQL, generate/run migrations or enable synchronization. Missing necessary structure is an input blocker.
+Handle relevant ownership, transaction, concurrency, idempotency, date/timezone, and data-precision rules. Read the configured checksum-pinned DBML as the database contract. Map entities/queries to existing tables and exact column/key definitions. Allow authorized business DML only; never change schema/DBML/init SQL, generate/run migrations or enable synchronization. Missing required structure is an input blocker.
 
 ## Prompt B: Frontend UI
 
@@ -116,7 +116,7 @@ When successful:
 
 Preserve API request idempotency where applicable.
 
-Normalize date/timezone and monetary values according to the API contract and existing project conventions.
+Normalize date/timezone and numeric values according to the API contract and existing project conventions.
 
 ## Prompt D: Validation and Error Handling
 
@@ -141,7 +141,7 @@ If the API returns `[STATUS / ERROR CONDITION]`:
 
 ### Client-Side Validation
 
-Before calling the API, enforce client-applicable validation explicitly stated in the use-case functional specification, Basic/Main, Alternative and Exception Flows, UI specification, and API contract for `[USE CASE / API ID]`. Do not infer additional validation.
+Before calling the API, enforce every client-applicable validation rule in the use-case functional specification and API contract for `[USE CASE / API ID]`.
 
 Display validation messages at `[VALIDATION MESSAGE LOCATION]`.
 

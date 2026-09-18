@@ -11,14 +11,14 @@
 
 ## Transactions and concurrency
 
-- Use a transaction when one business operation performs multiple dependent writes or financial state changes.
+- Use a transaction when one business operation performs multiple dependent writes or state changes.
 - Inside a TypeORM transaction use only the provided transactional entity manager/repositories, never the global manager/repository.
 - Choose isolation, locking and idempotency only from explicit UC/Business Rule requirements. Handle duplicate/deadlock outcomes without exposing database errors.
 - Keep `synchronize: false` and automatic migrations disabled in every environment. Do not generate/run migrations or schema synchronization. Entity edits map existing tables only.
 
 ## MySQL
 
-- Preserve supplied database types and monetary precision; report incompatible requirements without changing the schema.
+- Preserve supplied database types and numeric precision; report incompatible requirements without changing the schema.
 - Use existing constraints and required application enforcement. Missing necessary structure is an input blocker, not permission for DDL.
 - Use existing indexes; never add, drop or change indexes during generation or repair.
 - Keep timestamps/timezone semantics explicit and consistent with the API contract.
