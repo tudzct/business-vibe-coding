@@ -1,8 +1,3 @@
-
--- ---------------------- THIS IS JUST AN EXAMPLE ------------------------
--- - PLEASE DELETE THIS AND REPLACE IT WITH YOUR ACTUAL PROJECT SCHEMA ---
-
-
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255),

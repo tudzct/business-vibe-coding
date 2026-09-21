@@ -1,8 +1,6 @@
 // schema.dbml
 // This is the source of truth for the database schema in this project.
 
-// ------------------------ THIS IS JUST AN EXAMPLE ------------------------
-// --- PLEASE DELETE THIS AND REPLACE IT WITH YOUR ACTUAL PROJECT SCHEMA ---
 
 Table users {
   id integer
