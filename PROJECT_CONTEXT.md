@@ -71,7 +71,7 @@ The reported experiment flow result follows `accepted-audit-results-v1`: use the
 
 ## Database input
 
-The fifth input is the fixed researcher-provided MySQL database and its DBML description. Configurations pin exactly `dbml_path`, `dbml_sha256` and `schema_fingerprint_sha256` inside `database_baseline`; no separate status or manifest. See [database policy](docs/00-context/engineering/DATABASE-SCHEMA.md). Generation reads DBML, maps existing tables and may perform authorized business DML, but never changes structure or creates migrations. Preflight verifies DBML and runtime pins before Prompt/Source START. Database initialization/reset is external setup once per new pipeline; subsequent UCs retain data.
+The fifth input is the researcher-prepared MySQL database and `docs/00-context/engineering/schema.dbml`. Configurations pin exactly `migration_head`, `dbml_sha256` and `schema_fingerprint_sha256` inside `database_baseline`; no separate status or manifest. See [database policy](docs/00-context/engineering/DATABASE-SCHEMA.md). Researcher setup builds a complete initial schema with TypeORM migrations and adds migrations between runs only when needed. Each run locks its schema/history/DBML; AI maps existing tables and may perform authorized business DML only. Prompt/Source preflight checks migration history and both hashes before START. Subsequent UCs retain data; changed baselines require new configuration/run identities. Docker setup applies migrations; application rebuilds within a run use `--no-deps backend frontend`.
 
 ## System baseline
 

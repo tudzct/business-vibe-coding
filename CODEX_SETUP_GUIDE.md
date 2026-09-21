@@ -38,7 +38,7 @@ Expected repository invariants:
 
 ## Local configuration
 
-Read [FILE-DRIVEN-WORKFLOW.md](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md) for the researcher command sequence. Prepare four research JSON files (Confirmed configuration, frozen BR/flow baselines and Draft Canonical Run JSON) and the fifth database input under [DATABASE-SCHEMA.md](docs/00-context/engineering/DATABASE-SCHEMA.md). Initialize the researcher-supplied SQL on a fresh volume once before the pipeline; preserve data between UCs. Capture DBML/runtime pins outside generation and store them in configuration. Generation preflight verifies those pins using the existing running database; it never creates schema or asks for schema approval. Generation validates them read-only without extra confirmation or initialization. Prompt close approves the Draft and pins its bytes; activation is optional. Root `.env` is optional preparation convenience. Runtime `finalsource/.env` remains ignored and is prepared only on a setup request, before database preflight; never print secrets.
+Read [FILE-DRIVEN-WORKFLOW.md](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md) for the researcher command sequence. Prepare four research JSON files (Confirmed configuration, frozen BR/flow baselines and Draft Canonical Run JSON) and the fifth database input under [DATABASE-SCHEMA.md](docs/00-context/engineering/DATABASE-SCHEMA.md). Researcher setup initializes a complete schema through TypeORM migrations on a fresh database and adds migrations between runs only when needed; preserve data between UCs. Capture migration head, DBML hash and runtime fingerprint outside generation and store them in configuration. Generation preflight verifies those pins using the existing running database; it never creates schema or asks for schema approval. Generation validates them read-only without extra confirmation or initialization. Prompt close approves the Draft and pins its bytes; activation is optional. Root `.env` is optional preparation convenience. Runtime `finalsource/.env` remains ignored and is prepared only on a setup request, before database preflight; never print secrets.
 
 ## Runtime authorization
 
@@ -49,7 +49,7 @@ docker compose --env-file finalsource/.env -f finalsource/compose.yaml up --buil
 docker compose --env-file finalsource/.env -f finalsource/compose.yaml ps
 ```
 
-Distinguish container state, health and UI/API reachability. Do not run `docker compose down -v` unless the researcher explicitly requests destructive database reset.
+The whole-stack command above is researcher setup outside active runs and executes the migration service. Within a pinned run, after database preflight, rebuild with `up -d --build --no-deps backend frontend`; never invoke setup migrations. Distinguish container state, health and UI/API reachability. Do not run `docker compose down -v` unless the researcher explicitly requests destructive database reset.
 
 ## Connected sources
 

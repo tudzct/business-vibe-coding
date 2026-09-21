@@ -4,7 +4,7 @@ RQ1/RQ2 use Full Prompts A-F. RQ3 uses A-D and omits E and F together. Both vari
 
 ## Input boundaries
 
-Both variants receive the same researcher-prepared database baseline through configuration `database_baseline`. DBML is shared technical input in A/D even when E/F are omitted. Read the configured DBML; use existing structure and authorized business DML only. Prompt/Source preflight verifies DBML bytes and runtime fingerprint before START. Neither variant permits migrations or DDL. See [database policy](../engineering/DATABASE-SCHEMA.md). Database data persists across cumulative UCs.
+Both variants receive the same researcher-prepared per-run database baseline through configuration `database_baseline`. DBML is shared technical input in A/D even when E/F are omitted. Read the configured DBML; use existing structure and authorized business DML only. Prompt/Source preflight verifies migration history, DBML bytes and runtime fingerprint before START. Neither variant permits in-run migrations or DDL. Researcher setup may evolve schema between runs; matched UC comparisons use identical migration history and hashes. See [database policy](../engineering/DATABASE-SCHEMA.md). Database data persists across cumulative UCs.
 
 | Operation | Full | RQ3 |
 |---|---|---|

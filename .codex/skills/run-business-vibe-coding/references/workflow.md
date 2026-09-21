@@ -2,8 +2,8 @@
 
 | Phase | Required input | Output | Researcher action |
 |---|---|---|---|
-| 1. Prompt generation | frozen UC/UML/BR/flows + existing Confirmed JSON, BR/flow baselines and Draft Canonical Run JSON + pinned Figma dataset + fixed database/DBML | read-only validate prepared inputs; generate Draft Prompt A-F or A-D in one work turn | invoke prompt telemetry close, which approves/pins the Draft and creates/validates activation |
-| 2. Source generation | approved prompt + closed prompt telemetry + pinned configuration + baseline source + fixed database/DBML | first-pass source + initial/final BR/flow audit + authorized repairs if needed + final hash | invoke source close, audit, repair if needed, and finalize in separate turns |
+| 1. Prompt generation | frozen UC/UML/BR/flows + existing Confirmed JSON, BR/flow baselines and Draft Canonical Run JSON + pinned Figma dataset + per-run database/DBML | read-only validate prepared inputs; generate Draft Prompt A-F or A-D in one work turn | invoke prompt telemetry close, which approves/pins the Draft and creates/validates activation |
+| 2. Source generation | approved prompt + closed prompt telemetry + pinned configuration + baseline source + per-run database/DBML | first-pass source + initial/final BR/flow audit + authorized repairs if needed + final hash | invoke source close, audit, repair if needed, and finalize in separate turns |
 
 Commands:
 

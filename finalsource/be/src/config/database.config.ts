@@ -11,7 +11,8 @@ export default registerAs(
     password: process.env.DB_PASSWORD || 'trucdang02',
     database: process.env.DB_DATABASE || 'financial1',
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-    synchronize: false, // The database has already been created, do not synchronize automatically
+    synchronize: false,
+    migrationsRun: false,
     logging: process.env.NODE_ENV === 'development',
   }),
 );

@@ -1,6 +1,6 @@
 ---
 name: build-nest-backend
-description: Build or review NestJS 11, TypeScript, TypeORM/MySQL backend code for Prompts A/D/E against the researcher-provided fixed database; enforce Business Rules without schema changes or tests.
+description: Build or review NestJS 11, TypeScript, TypeORM/MySQL backend code for Prompts A/D/E against the researcher-pinned database; enforce Business Rules without schema changes or tests.
 ---
 
 # Build Nest Backend
@@ -19,7 +19,7 @@ Load only the references required by the active change areas:
 
 - Keep controllers thin; enforce business/ownership rules in services and persistence constraints where explicitly required.
 - Use validated DTOs, injected repositories, standard response/error handling and existing authentication/configuration mechanisms.
-- Read the configured checksum-valid DBML and [database contract](../../../docs/00-context/engineering/DATABASE-SCHEMA.md). Map entities to existing names/types/keys exactly. Allow authorized business-data operations only; keep `synchronize: false` and migrations disabled. Never change tables, columns, relationships, constraints, indexes or schema files. Missing necessary structure blocks work; no schema proposal or approval gate exists.
+- Read the configured checksum-valid DBML and [database contract](../../../docs/00-context/engineering/DATABASE-SCHEMA.md). Map entities to existing names/types/keys exactly. Allow authorized business-data operations only; keep `synchronize: false` and application `migrationsRun: false`. Researcher setup may manage TypeORM migrations between runs; this implementation skill cannot create, edit or execute them. Never change tables, columns, relationships, constraints, indexes or schema files. Missing necessary structure blocks work under the database policy's restart procedure; no schema proposal or approval gate exists.
 - Do not invent endpoints, rules, dependencies, schema or policies.
 - Preserve application controls required by the UC/BR/API, including authentication, hashing, ownership, validation, secrets, safe errors and transactions.
 - Run only permitted non-test lint/typecheck/build checks.

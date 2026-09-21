@@ -14,7 +14,7 @@
 - Use a transaction when one business operation performs multiple dependent writes or state changes.
 - Inside a TypeORM transaction use only the provided transactional entity manager/repositories, never the global manager/repository.
 - Choose isolation, locking and idempotency only from explicit UC/Business Rule requirements. Handle duplicate/deadlock outcomes without exposing database errors.
-- Keep `synchronize: false` and automatic migrations disabled in every environment. Do not generate/run migrations or schema synchronization. Entity edits map existing tables only.
+- Keep `synchronize: false` and application `migrationsRun: false`. Researcher setup executes reviewed TypeORM migrations between runs. Do not generate/edit/run migrations or schema synchronization during generation, audit or repair. Entity edits map existing tables only.
 
 ## MySQL
 

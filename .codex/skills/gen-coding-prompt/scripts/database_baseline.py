@@ -17,7 +17,10 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[4]
 PROTOCOL = "mysql84-tables-v1"
 HASH = re.compile(r"sha256:[0-9a-f]{64}\Z")
-FIELDS = {"dbml_path", "dbml_sha256", "schema_fingerprint_sha256"}
+FIELDS = {"migration_head", "dbml_sha256", "schema_fingerprint_sha256"}
+DBML_PATH = "docs/00-context/engineering/schema.dbml"
+MIGRATIONS_PATH = "finalsource/be/src/database/migrations"
+MIGRATION_TABLE = "typeorm_migrations"
 
 # Explicit metadata allow-list excludes row counts, cardinality, timestamps,
 # physical sizes and the current AUTO_INCREMENT counter. Case is preserved.
@@ -65,11 +68,8 @@ def unique_object(pairs):
     return result
 
 
-def dbml_file(value):
-    require(isinstance(value, str) and value.strip(), "database_baseline.dbml_path is required")
-    relative = Path(value)
-    require(not relative.is_absolute() and ".." not in relative.parts, "DBML path must be repository-relative")
-    path = (ROOT / relative).resolve()
+def dbml_file():
+    path = (ROOT / DBML_PATH).resolve()
     require(path.is_relative_to(ROOT) and path.suffix.lower() == ".dbml", "DBML must be a repository .dbml file")
     require(path.is_file(), "configured DBML file is missing; prepare it outside generation")
     raw = path.read_bytes()
@@ -77,14 +77,57 @@ def dbml_file(value):
     return path, sha256(raw)
 
 
+def migration_catalog():
+    """Read TypeORM's timestamp/name convention without importing executable migrations."""
+    folder = ROOT / MIGRATIONS_PATH
+    require(folder.is_dir(), "researcher-prepared migration directory is missing")
+    require(folder.resolve().is_relative_to(ROOT), "migration directory must remain in the repository")
+    result = []
+    for path in sorted(folder.glob("*.ts")):
+        require(path.resolve().is_relative_to(ROOT), "migration must remain in the repository")
+        match = re.fullmatch(r"([0-9]{13})-([A-Za-z][A-Za-z0-9_]*)\.ts", path.name)
+        require(match is not None, f"invalid migration filename: {path.name}")
+        timestamp, label = match.groups()
+        name = label + timestamp
+        raw = path.read_bytes()
+        source = raw.decode("utf-8-sig")
+        exports = re.findall(r"export\s+class\s+(\w+)\s+implements\s+MigrationInterface\b", source)
+        require(exports == [name], f"migration class must match filename: {path.name}")
+        overrides = re.findall(r"\bname\s*=\s*['\"]([^'\"]+)['\"]", source)
+        require(not overrides or overrides == [name], f"migration name override differs: {path.name}")
+        result.append((int(timestamp), name, sha256(raw)))
+    require(result, "no prepared migrations found")
+    require(len({item[0] for item in result}) == len(result), "duplicate migration timestamps")
+    return sorted(result)
+
+
+def verify_execution_settings():
+    # These literal settings form the research runtime contract. Do not evaluate TS.
+    for relative in ("finalsource/be/src/config/database.config.ts",
+                     "finalsource/be/src/database/migration-data-source.ts"):
+        path = ROOT / relative
+        require(path.is_file(), f"missing database settings: {relative}")
+        source = re.sub(r"/\*.*?\*/|//[^\n]*", "", path.read_text(encoding="utf-8-sig"), flags=re.S)
+        for setting in ("synchronize", "migrationsRun"):
+            values = re.findall(rf"\b{setting}\s*:\s*([^,\n}}]+)", source)
+            require([value.strip() for value in values] == ["false"],
+                    f"{relative} must set {setting}: false exactly once")
+    cli = (ROOT / "finalsource/be/src/database/migration-data-source.ts").read_text(encoding="utf-8-sig")
+    require(re.search(r"migrationsTableName\s*:\s*['\"]typeorm_migrations['\"]", cli),
+            "CLI migration table must be typeorm_migrations")
+
+
 def validate_input(config):
     """Validate the three-field input without contacting Docker/MySQL."""
     block = config.get("database_baseline")
     require(isinstance(block, dict), "missing database_baseline; prepare the fifth input outside generation")
-    require(set(block) == FIELDS, "database_baseline requires exactly dbml_path, dbml_sha256 and schema_fingerprint_sha256")
+    require(set(block) == FIELDS, "database_baseline requires exactly migration_head, dbml_sha256 and schema_fingerprint_sha256")
     for name in ("dbml_sha256", "schema_fingerprint_sha256"):
         require(isinstance(block[name], str) and HASH.fullmatch(block[name]), f"invalid database_baseline.{name}")
-    _, actual = dbml_file(block["dbml_path"])
+    require(isinstance(block["migration_head"], str) and block["migration_head"] in
+            {item[1] for item in migration_catalog()}, "database migration_head is not a prepared migration class")
+    verify_execution_settings()
+    _, actual = dbml_file()
     require(actual == block["dbml_sha256"], "database DBML checksum mismatch")
     return block
 
@@ -121,7 +164,6 @@ class Runtime:
         compose = ROOT / "finalsource/compose.yaml"
         env_file = ROOT / "finalsource/.env"
         require(compose.is_file() and env_file.is_file(), "database preflight requires finalsource/compose.yaml and finalsource/.env")
-        require((ROOT / "finalsource/init.sql").is_file(), "researcher-prepared finalsource/init.sql is missing")
         self.prefix = [docker_executable(), "compose", "--env-file", str(env_file), "-f", str(compose)]
         version = command(self.prefix + ["version", "--short"], "Compose version").strip().lstrip("v")
         # Compose v5 preserves the v2 CLI (Docker's official compatibility policy).
@@ -133,6 +175,7 @@ class Runtime:
         self.schema = db_env.get("MYSQL_DATABASE")
         require(isinstance(self.schema, str) and re.fullmatch(r"[A-Za-z0-9_]+", self.schema), "invalid Compose MYSQL_DATABASE")
         self.check_backend(be_env)
+        self.check_backend(services.get("migration", {}).get("environment", {}))
         # If backend is running, check its actual connection target as well as Compose.
         ids = command(self.prefix + ["ps", "-q", "backend"], "backend identity").split()
         require(len(ids) <= 1, "multiple backend containers; database target is ambiguous")
@@ -195,24 +238,48 @@ def fingerprint(rows):
     return sha256(serial([PROTOCOL, normalized]).encode("utf-8"))
 
 
-def capture(require_empty=False):
+def read_migration_history(runtime, catalog):
+    exists = runtime.query("SELECT JSON_ARRAY('migration_table', COUNT(*)) FROM INFORMATION_SCHEMA.TABLES "
+                           "WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'typeorm_migrations';")
+    require(exists == [["migration_table", 1]], "TypeORM migration history is missing; prepare the database outside generation")
+    rows = runtime.query("SELECT JSON_ARRAY('migration', id, timestamp, name) FROM typeorm_migrations ORDER BY id;")
+    require(all(len(row) == 4 and row[0] == "migration" and isinstance(row[1], int) for row in rows),
+            "invalid TypeORM migration history")
+    try:
+        applied = [(int(row[2]), row[3]) for row in rows]
+    except (ValueError, TypeError):
+        raise ValueError("invalid migration timestamp") from None
+    expected = [(timestamp, name) for timestamp, name, _ in catalog]
+    require(applied == expected,
+            "migration history differs from prepared files (pending, missing, extra or reordered migration); setup required")
+    return rows
+
+
+def capture(require_empty=False, expected_head=None):
+    catalog = migration_catalog()
+    verify_execution_settings()
     runtime = Runtime()
+    history = read_migration_history(runtime, catalog)
+    head = history[-1][3]
+    require(expected_head is None or head == expected_head, "database migration_head mismatch")
     rows = runtime.query(metadata_sql())
     actual = fingerprint(rows)
     require(next(row[2] for row in rows if row[0] == "server") == runtime.schema, "running database differs from Compose MYSQL_DATABASE")
     if require_empty:
         # Used explicitly at pipeline setup only; never infer emptiness from TABLE_ROWS.
         for row in rows:
-            if row[0] == "table":
+            if row[0] == "table" and row[1] != MIGRATION_TABLE:
                 name = row[1].replace("`", "``")
                 result = runtime.query(f"SELECT JSON_ARRAY('has_rows', EXISTS(SELECT 1 FROM `{name}` LIMIT 1));")
                 require(result == [["has_rows", 0]], "database contains rows; empty database required only at pipeline initialization")
-    return actual
+    require(read_migration_history(runtime, catalog) == history, "migration history changed during inspection")
+    require(migration_catalog() == catalog, "migration files changed during inspection")
+    return head, actual
 
 
 def verify_database(config):
     block = validate_input(config)
-    actual = capture()
+    _, actual = capture(expected_head=block["migration_head"])
     require(actual == block["schema_fingerprint_sha256"],
             f"database schema fingerprint mismatch: expected {block['schema_fingerprint_sha256']}, actual {actual}")
     validate_input(config)  # Detect file changes during runtime inspection.
@@ -222,9 +289,9 @@ def verify_database(config):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     mode = parser.add_mutually_exclusive_group(required=True)
-    mode.add_argument("--dbml", help="Print three configuration fields from a researcher-verified runtime")
+    mode.add_argument("--capture", action="store_true", help="Print three pins from a researcher-verified migrated runtime")
     mode.add_argument("--configuration", type=Path, help="Verify existing pins, without updating them")
-    parser.add_argument("--require-empty", action="store_true", help="Preparation only: require all tables empty")
+    parser.add_argument("--require-empty", action="store_true", help="Preparation only: require application tables empty")
     args = parser.parse_args()
     if args.configuration:
         require(not args.require_empty, "--require-empty is preparation-only; cumulative UCs retain data")
@@ -235,10 +302,10 @@ def main():
         require(args.configuration.read_bytes() == raw, "configuration changed during database validation")
         print("PASS database_baseline")
     else:
-        path, checksum = dbml_file(args.dbml)
-        actual = capture(args.require_empty)
-        require(dbml_file(args.dbml)[1] == checksum, "DBML changed during fingerprint capture")
-        print(json.dumps({"dbml_path": path.relative_to(ROOT).as_posix(), "dbml_sha256": checksum,
+        _, checksum = dbml_file()
+        head, actual = capture(args.require_empty)
+        require(dbml_file()[1] == checksum, "DBML changed during fingerprint capture")
+        print(json.dumps({"migration_head": head, "dbml_sha256": checksum,
                           "schema_fingerprint_sha256": actual}, indent=2))
 
 

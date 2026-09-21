@@ -98,7 +98,8 @@ def validate(path):
     timing_method = data.get("timing_method")
     if timing_method != TIMING_METHOD:
         raise ValueError(f"schema {schema_version} timing_method must be {TIMING_METHOD}")
-    # Offline validation only. Runtime checks belong to generation/audit, never Measure.
+    # Offline database contract: migration_head, dbml_sha256, schema_fingerprint_sha256.
+    # Runtime history/drift checks belong to generation/audit, never Measure.
     sys.path.insert(0, str(ROOT / ".codex/skills/gen-coding-prompt/scripts"))
     from database_baseline import validate_input
     validate_input(data)

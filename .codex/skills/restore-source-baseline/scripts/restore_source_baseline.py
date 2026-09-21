@@ -17,6 +17,7 @@ from pathlib import Path, PurePosixPath
 ASSET_SHA256 = "9ca5ed2153960c1fff64b320a72f0fe253175ce437b2390a7fb6e8113f7ba73f"
 CONFIRMATION = "RESET_FINALSOURCE_TO_PROVIDED_BASELINE"
 ALLOWED_PREFIXES = ("baseline/be/src/", "baseline/fe/src/")
+DATABASE_INFRASTRUCTURE = ("database/migrations", "database/migration-data-source.ts", "config/database.config.ts")
 
 
 def fail(message: str) -> None:
@@ -74,6 +75,23 @@ def extract_archive(archive: Path, destination: Path) -> None:
     validate_archive(archive)
     with zipfile.ZipFile(archive) as bundle:
         bundle.extractall(destination)
+
+
+def preserve_database_infrastructure(current: Path, baseline: Path) -> None:
+    """Overlay researcher-owned database files on the temporary source baseline."""
+    for relative in DATABASE_INFRASTRUCTURE:
+        source = current / relative
+        if not source.exists():
+            fail(f"missing database infrastructure: {relative}; prepare it before source restoration")
+        paths = [source, *source.rglob("*")] if source.is_dir() else [source]
+        if any(path.is_symlink() or not path.resolve().is_relative_to(current.resolve()) for path in paths):
+            fail(f"unsafe database infrastructure: {relative}")
+        destination = baseline / relative
+        if source.is_dir():
+            shutil.copytree(source, destination, dirs_exist_ok=True)
+        else:
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, destination)
 
 
 def make_backup(targets: dict[str, Path], backup_dir: Path) -> Path:
@@ -157,6 +175,7 @@ def main() -> int:
             "be": extracted / "baseline" / "be" / "src",
             "fe": extracted / "baseline" / "fe" / "src",
         }
+        preserve_database_infrastructure(targets["be"], baseline["be"])
         before = summary(targets, baseline)
         if args.check:
             print(json.dumps({"mode": "check", "targets": before}, indent=2))

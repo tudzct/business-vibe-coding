@@ -1,6 +1,6 @@
 # Technical-stack skill routing
 
-Persistence follows [DATABASE-SCHEMA.md](DATABASE-SCHEMA.md): read the configured DBML and map existing structure. No naming convention, stack skill or repair grants permission to alter the supplied schema. Keep synchronization and migrations disabled.
+Persistence follows [DATABASE-SCHEMA.md](DATABASE-SCHEMA.md): read the configured DBML and map existing structure. No naming convention, stack skill or repair grants permission to alter the supplied schema. Keep `synchronize: false` and application `migrationsRun: false`. Researcher setup alone may execute TypeORM migrations between runs; generation/audit/repair cannot edit or execute them.
 
 `$gen-source-code` reads this routing table and invokes the applicable stack skill; researchers do not need to invoke each stack skill manually. Each stack skill loads only the references required by the active change areas.
 

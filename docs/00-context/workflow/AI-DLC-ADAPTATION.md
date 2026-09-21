@@ -13,7 +13,7 @@ Inputs: frozen UC/UML/BR projection, OCL utilities, applicable API/Figma source,
 
 ## Phase 2 — Generate Source Code
 
-Inputs: approved prompt, existing codebase, configuration-pinned DBML and existing MySQL schema, and project rules. Database preflight verifies file/runtime pins. Schema is immutable: no proposal/approval, migrations or DDL; allow only compatible mappings and authorized business DML.
+Inputs: approved prompt, existing codebase, configuration-pinned DBML and existing MySQL schema, and project rules. Database preflight verifies migration history and file/runtime pins. Schema is immutable within a run: no proposal/approval, migrations or DDL; allow only compatible mappings and authorized business DML. Researcher setup may add migrations between runs; a changed baseline requires a new configuration/run.
 
 1. Validate the pinned configuration and approved prompt for exactly one run; activation is optional. Then capture model/time metadata.
 2. Generate only the source needed for the UC.

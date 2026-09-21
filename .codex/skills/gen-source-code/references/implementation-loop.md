@@ -1,6 +1,6 @@
 # Implementation loop
 
-Database preflight uses the fixed researcher-provided input under `docs/00-context/engineering/DATABASE-SCHEMA.md`: read pinned DBML, verify the live schema fingerprint and map existing tables. Never create DDL or migrations, or change the DBML/init SQL. An incompatibility blocks work; keep data across cumulative UCs.
+Database preflight uses the per-run researcher-provided input under `docs/00-context/engineering/DATABASE-SCHEMA.md`: read pinned DBML, verify migration history/head and the live schema fingerprint and map existing tables. Never create DDL or migrations, or change the DBML/migration files. An incompatibility blocks work; preserve actual END/partial evidence and follow the database policy before restarting with new pins. Keep data across cumulative UCs. Rebuild within a run only with `--no-deps backend frontend`, never the setup migration service.
 
 Validate the active run and closed prompt telemetry, complete input/Figma/schema preflight, capture START immediately before the first source mutation, generate the smallest prompt diff (Prompt A-F for Full or Prompt A-D for RQ3), capture END immediately after first-pass source generation before build/audit/runtime/repair and preserve first-pass source/hash/evidence. End the response. Final token values are persisted by the subsequent `$measure-uc-workflow close-phase source_generation` command.
 

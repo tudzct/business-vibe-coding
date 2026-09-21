@@ -13,6 +13,7 @@ The bundled `assets/source-baseline.zip` is the runnable research projection of 
 
 - Replace only `finalsource/be/src` and `finalsource/fe/src`.
 - Preserve manifests/lockfiles, Docker files, root infrastructure, `.env` files, research artifacts and database state.
+- Preserve `be/src/database/migrations/`, `be/src/database/migration-data-source.ts` and `be/src/config/database.config.ts` byte-for-byte. These are researcher-prepared database infrastructure. The checker overlays them onto its temporary baseline before computing the expected hash; the bundled archive is unchanged. Missing infrastructure blocks restore.
 - Never delete Docker volumes or modify files outside `finalsource/{be,fe}/src`.
 - Before applying, confirm previous run evidence is finalized, run the read-only check, report the changed-tree summary and obtain explicit researcher approval.
 - The apply command creates a recoverable source-only backup under `.tmp/source-baseline-backups/` and rolls back automatically if restoration fails.

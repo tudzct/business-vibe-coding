@@ -21,7 +21,7 @@ Apply the smallest change that corrects this defect while preserving Prompts A-F
 - Allowed files: `<paths>`
 - Affected BRs: `<BR IDs>`
 - Permitted non-test verification: `<lint/typecheck/build/runtime observation>`
-- Prohibited: new features, speculative refactors, any database schema/DBML/init SQL change or migration, public-API/ownership decisions without researcher approval, and all test creation/execution.
+- Prohibited: new features, speculative refactors, any database schema/DBML/migration-file change or migration, public-API/ownership decisions without researcher approval, and all test creation/execution.
 
 ## Completion
 

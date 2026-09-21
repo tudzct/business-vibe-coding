@@ -9,7 +9,7 @@ A comparison group uses a researcher-prepared Confirmed configuration before pro
 - audit protocol and timing method.
 - the activated Figma dataset version and manifest checksum;
 - per-UC frozen BR and flow baseline paths;
-- `database_baseline`: DBML path/hash and runtime MySQL schema fingerprint, governed by the configuration's existing status.
+- `database_baseline`: TypeORM migration head, DBML hash and runtime MySQL schema fingerprint, governed by the configuration's existing status.
 
 Configurations fix `timing_method` to `system_timestamp_delta`, pin the active Figma dataset, and freeze `flow_audit_rubric: completion-critical-flow-runtime-v2` before generation. The validator rejects missing/mismatched values and mixed flow rubrics within one comparison group, including Full/RQ3 and model conditions. `audit_design.protocol` still assigns auditors; it never stores the rubric.
 
@@ -21,7 +21,7 @@ Preparation must already have set canonical `gates` to `{"current": "prompt", "h
 
 Verification runs inside explicitly requested repair work. Follow [the command sequence](../FILE-DRIVEN-WORKFLOW.md). Prompt close approves the Draft and pins its checksum; source close ends first-pass telemetry; audit is directly requested; the repair command records authorization; finalize closes Repair and workflow telemetry.
 
-Generation additionally requires the fifth database input. Configuration requires exactly `database_baseline.dbml_path`, `dbml_sha256` and `schema_fingerprint_sha256`. Offline configuration validation checks the file/pins; Prompt/Source preflight calls the runtime helper internally in the same invocation before START. Missing database pins block generation. Activation/Measure do not query MySQL. See [database policy](../../engineering/DATABASE-SCHEMA.md). Never initialize missing DB inputs, change pins or request schema approval within generation.
+Generation additionally requires the fifth database input. Configuration requires exactly `database_baseline.migration_head`, `dbml_sha256` and `schema_fingerprint_sha256`. DBML uses the fixed path `docs/00-context/engineering/schema.dbml`. Offline configuration validation checks the file/pins and prepared migration; Prompt/Source preflight calls the runtime helper internally in the same invocation before START. Missing database pins block generation. Activation/Measure do not query MySQL. See [database policy](../../engineering/DATABASE-SCHEMA.md). Never initialize missing DB inputs, change pins or request schema approval within generation. Researcher setup may add migrations between runs. A missing schema element blocks work; preserve actual intervals/evidence and use a new configuration/run after a baseline change.
 
 The four JSON inputs and the database input are mandatory for generation. `run-activation.json` is validated when present and created by prompt close when missing, as described below; it is never bootstrapped by source/audit/repair. Model/replicate/order, Figma pin and rubric come from the Confirmed configuration. Preserve immutable existing receipts/configurations.
 

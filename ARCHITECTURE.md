@@ -10,7 +10,7 @@ It is not a set of continuously running AI services. Codex executes repository-l
 
 ```mermaid
 flowchart LR
-    INPUT[Four prepared JSON files, fixed database and frozen dependencies] --> PREFLIGHT[Read-only preflight]
+    INPUT[Four prepared JSON files, per-run database baseline and frozen dependencies] --> PREFLIGHT[Read-only preflight]
     PREFLIGHT --> PROMPT[1 Generate Draft prompt]
     PROMPT --> PCLOSE[2 Close prompt and approve]
     PCLOSE --> SOURCE[3 Generate first-pass source]
@@ -27,7 +27,7 @@ flowchart LR
 
 ### Phase 1 - Generate Business Coding Prompt
 
-Read [FILE-DRIVEN-WORKFLOW.md](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md). The researcher prepares Confirmed configuration, frozen BR baseline, frozen flow baseline and Draft Canonical Run JSON before generation, plus the fixed database and its configuration-pinned DBML. Frozen UC/UML/API/Figma/resource/template dependencies and database pins must validate read-only. Generation never creates missing inputs.
+Read [FILE-DRIVEN-WORKFLOW.md](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md). The researcher prepares Confirmed configuration, frozen BR baseline, frozen flow baseline and Draft Canonical Run JSON before generation, plus the per-run database baseline and its configuration-pinned DBML. Frozen UC/UML/API/Figma/resource/template dependencies and database pins must validate read-only. Generation never creates missing inputs.
 
 Generate Draft Full A-F or RQ3 A-D with complete functional-flow coverage and the configured input boundaries. Capture actual prompt START/END and return the prompt-close command. That subsequent command approves and pins the Draft and closes telemetry, without another approval or activation turn.
 
@@ -70,7 +70,7 @@ Authentication, ownership, validation and related controls required by a UC or B
 
 ## Command boundaries
 
-Each command authorizes its operation without further human gate confirmations. Canonical `gates` names are internal command bookkeeping, recorded through `record_command.py`; recorded receipts/evidence remain immutable. Database structure is a fixed researcher-provided input: read the pinned DBML and verify database pins, allow authorized business DML, and never change schema or generate migrations. Material specification ambiguity or input incompatibility requires researcher resolution. Optional UI scoring never blocks audit, telemetry, export or completion.
+Each command authorizes its operation without further human gate confirmations. Canonical `gates` names are internal command bookkeeping, recorded through `record_command.py`; recorded receipts/evidence remain immutable. Database structure is researcher-managed through TypeORM migrations between runs and immutable within each run: read the pinned DBML, verify migration history and hashes, and allow authorized business DML only. Missing structure blocks the run; baseline changes require researcher setup and a new configuration/run. Application rebuilds within runs use `--no-deps backend frontend`, never the setup migration service. Material specification ambiguity or input incompatibility requires researcher resolution. Optional UI scoring never blocks audit, telemetry, export or completion.
 
 ## Test boundary
 

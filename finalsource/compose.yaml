@@ -12,7 +12,6 @@ services:
     ports:  
       - "3307:3306"   
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql 
       - mysql_data:/var/lib/mysql
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p$$MYSQL_ROOT_PASSWORD --silent"]
@@ -20,6 +19,24 @@ services:
       timeout: 5s
       retries: 20
       start_period: 20s
+    networks:
+      - app_network
+
+  migration:
+    build:
+      context: ./be
+      dockerfile: Dockerfile
+    restart: "no"
+    command: ["npm", "run", "migration:run"]
+    environment:
+      DB_HOST: database
+      DB_PORT: 3306
+      DB_USERNAME: ${MYSQL_USER:-vibe_business}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_DATABASE: ${MYSQL_DATABASE:-vibe_business}
+    depends_on:
+      database:
+        condition: service_healthy
     networks:
       - app_network
 
@@ -42,6 +59,8 @@ services:
     depends_on:
       database:
         condition: service_healthy
+      migration:
+        condition: service_completed_successfully
     ports:
       - "127.0.0.1:${BACKEND_PORT:-3000}:3000"
     healthcheck:

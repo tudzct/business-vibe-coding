@@ -193,7 +193,8 @@ def preflight(uc_id, configuration=None, run_id=None, variant=None, run_json=Non
     uc = next(u for u in data["use_cases"] if u["uc_id"] == uc_id)
     baselines = check_baselines(uc)
     check_canonical(canonical, data, assignment, uc, stage)
-    # Fifth prepared input: never infer or create expected hashes from the live DB.
+    # Fifth prepared input: ordered migration history/head and DBML/runtime hashes.
+    # Never initialize migrations or derive replacement pins from the live DB.
     # Activation/Measure uses this preflight too: it must remain offline.
     if stage in {"prompt", "source"}:
         verify_database(data)
