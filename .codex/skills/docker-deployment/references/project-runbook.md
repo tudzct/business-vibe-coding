@@ -4,7 +4,7 @@
 - Configuration: `finalsource/.env` created from the committed example after researcher authorization.
 - Services: MySQL, one-shot TypeORM migration setup, NestJS backend and React/Nginx frontend.
 - Use Compose v2 only; no native host fallback.
-- The researcher supplies reviewed TypeORM migrations and the consolidated DBML. Follow `docs/00-context/engineering/DATABASE-SCHEMA.md` for setup, migration history checks and capturing the three pins. Migrations may evolve schema between runs; within a run all schema inputs are immutable. Do not reset between cumulative UCs or change schema to recover runtime. Verify existing pins with the helper; never replace them automatically.
+- The researcher supplies reviewed TypeORM migrations and the consolidated DBML. Follow `docs/00-context/engineering/DATABASE-SCHEMA.md` for setup, migration history checks and capturing the three pins, and the [shared operational constitution](../../../../AGENTS.md#shared-operational-constitution) for mutation boundaries. Verify existing pins with the helper.
 
 Researcher setup outside active runs:
 
@@ -32,4 +32,4 @@ Database must already be healthy. Verify backend/frontend health separately afte
 
 Review with `docker --version`, `docker compose version`, daemon status and Compose configuration. In authorized run mode, build from current source, start the stack, then verify containers, healthchecks, frontend reachability, backend health, and the bounded UC checkpoints required by the active prompt.
 
-Common URLs use the configured ports: frontend root, backend `/api/health`, Swagger `/docs`, and OpenAPI `/docs-json`. Never persist secrets or full logs, and never run destructive volume/image cleanup without a separate explicit request.
+Common URLs use the configured ports: frontend root, backend `/api/health`, Swagger `/docs`, and OpenAPI `/docs-json`. Persist sanitized evidence under the shared operational constitution.

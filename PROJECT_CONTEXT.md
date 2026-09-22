@@ -16,8 +16,8 @@ This project studies automated source-code generation from use-case specificatio
 
 The method extends the two-phase method described by Dang Thi Thanh Truc across two experimental setups:
 
-1. **Full method (RQ1/RQ2):** Uses the complete Prompt A-F template. Prompt A covers backend/API, Prompt B frontend UI, Prompt C frontend logic/API integration, Prompt D validation/error handling, Prompt E Business Rules Compliance (OCL and natural-language rules) and Prompt F Implementation Context.
-2. **Ablation study (RQ3):** Uses only Prompts A-D, omitting Prompts E and F together. It evaluates how LLMs perform without the explicit Business Rules/OCL projection and the additional implementation context, against the identical frozen Business Rule baseline.
+1. **Full method (RQ1/RQ2):** Uses the complete Prompt A-F template.
+2. **Ablation study (RQ3):** Uses only Prompts A-D, omitting Prompts E and F together, against the identical frozen evaluation baseline.
 
 Both setups follow the two-phase method:
 - **Phase 1 - Generate Business Coding Prompt:** produce and approve the designated prompt artifact (`*-business-coding-prompt.md` for Full, `*-rq3-coding-prompt.md` for RQ3).
@@ -51,7 +51,7 @@ The 16 files under `docs/01-inception/use-cases/` are frozen projections of this
 
 Follow the researcher command sequence in [FILE-DRIVEN-WORKFLOW.md](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md). Every command authorizes its operation without extra gate confirmations. Prompt close approves the Draft; repair invocation authorizes the correction. Four research JSON inputs plus a researcher-provided database baseline are required for generation; activation is optional. Internal `gates` fields remain bookkeeping only.
 
-Phase 1 uses all BRs supplied for the active UC. There is no rule-selection mode. Before invoking prompt generation, preparation by the researcher's chosen tool records:
+The evaluation baseline contains all BRs supplied for the active UC. There is no rule-selection mode. Before invoking prompt generation, preparation by the researcher's chosen tool records:
 
 - frozen UC path and SHA-256;
 - spreadsheet ID, tab, range and retrieval time;
@@ -83,7 +83,7 @@ The fifth input is the researcher-prepared MySQL database and `docs/00-context/e
 - Error envelope: `{ success: false, statusCode, message, timestamp, path }`.
 - Domain: users own accounts, bills and goals; accounts own transactions; categories classify transactions and goals.
 
-Implementation controls such as authentication, hashing, ownership, validation, secret handling, safe errors and transactions remain when required by BRs, APIs or the baseline. They are not treated as a separate experimental dimension.
+The [shared operational constitution](AGENTS.md#shared-operational-constitution) governs every skill and both variants, including testing, database mutations, secrets and destructive operations.
 
 ## Repository map
 

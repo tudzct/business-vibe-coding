@@ -1,12 +1,11 @@
 # Prompt template notes
 
 ## Full prompt variant (Prompts A-F)
-- A: backend/API and domain logic (references Prompt E).
+- A: backend/API and domain logic.
 - B: frontend UI from the applicable frozen design.
 - C: frontend state and API integration.
-- D: validation, loading and error behavior (references Prompt E).
-- E: every frozen Business Rule with ID, representation, exact expression/text, context, enforcement layer, failure behavior and traceability.
-- F: project/database/source context, priority and source-only/no-tests limits.
+- D: validation, loading and error behavior.
+- E-F: included from the configured Full template.
 
 ## RQ3 ablation variant (Prompts A-D)
 - A: backend/API and domain logic without Prompt E references.
@@ -16,4 +15,4 @@
 - E: omitted.
 - F: omitted.
 
-OCL is preserved verbatim in the frozen BR baseline and in Prompt E for Full runs. A rule that cannot be expressed adequately in OCL stays in natural language. Missing information is recorded as unresolved, never guessed. In both variants, evaluation against the frozen BR baseline remains identical.
+Validate prompt structure and provenance using the existing prompt contract. Evaluation against the frozen BR baseline remains identical in both variants.

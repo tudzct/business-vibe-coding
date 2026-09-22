@@ -16,7 +16,7 @@ When a UC contains a Figma reference, resolve it through `resolve-figma-design-d
 
 The research method has exactly two phases:
 
-1. **Phase 1 - Generate the business coding prompt.** Read one frozen UC, its UML model, all associated Business Rules, OCL utility definitions, API/Figma sources and the approved prompt template (Prompts A-F for full runs, or Prompts A-D for RQ3 ablation runs). Read the pre-existing exact Business Rule resource and frozen baselines, then create a Draft business coding prompt. In full runs, Prompt E is Business Rules Compliance and Prompt F is Implementation Context; in RQ3 runs, Prompts E and F are omitted together.
+1. **Phase 1 - Generate the business coding prompt.** Validate the prepared inputs and create a Draft using the configured template: Prompts A-F for Full or Prompts A-D for RQ3. Apply the existing input boundaries in `docs/00-context/workflow/FULL-RQ3-CONTRACT.md`.
 2. **Phase 2 - Generate source code.** After the prompt-close command approves the Draft, implement the approved prompt in `finalsource/fe` and/or `finalsource/be`. Record first-pass evidence, assess every frozen BR from the baseline, create bounded bug-fixing sub-prompts for evidenced errors, rebuild/run with Docker Compose and freeze the final source hash.
 
 Do not use a separate dimension to change Business Rule acceptance. Both Full and RQ3 runs evaluate against the identical frozen BR baseline; flow accuracy is a supplementary frozen measurement. The repository provides `audit-figma-ui-accuracy` as an independent, strictly optional skill, invoked manually only on an explicit researcher request. The researcher may inspect UI by eye or skip scoring. Neither invoking this skill nor passing its UI validation is required by any experiment gate; missing/null `ui_accuracy` or UI scores never block BR/flow audit, telemetry, export or completion.
@@ -39,24 +39,28 @@ Prompt/source/repair remain telemetry buckets within two phases. Close telemetry
 
 ## Business-rule contract
 
-Preserve each Rule ID and its supplied OCL invariant, precondition or postcondition verbatim. Preserve natural-language and technical constraints for content that is not represented in OCL. Map every rule to its enforceable layer and failure behavior without weakening, duplicating or inventing requirements.
-
-In full runs, Prompt A and Prompt D implement and reference Prompt E rules; they do not redefine them. In RQ3 runs, Prompts A-D derive strictly from functional/UI/API specifications without Prompt E references. Backend/database enforcement is authoritative when a rule crosses trust boundaries. Frontend validation is an additional user-experience control only.
+Baseline preparation and validation preserve source Rule IDs, OCL and natural-language text exactly. In RQ3 runs, Prompts A-D derive strictly from functional/UI/API specifications without Prompt E references.
 
 Every frozen BR receives exactly one evidence-based result: `met`, `unmet` or `not_evaluable`. Evidence may come from inspectable source, configuration, non-test build/lint checks and bounded Docker runtime observation. Prompt text alone is never evidence.
 
-## Technical and operational invariants
+## Shared operational constitution
+
+These rules apply to every skill and to both Full and RQ3, independently of the selected coding-prompt template. Skills inherit them; no prompt or missing local repetition grants an exception.
+
+During source generation, generate source only and modify only files required by the active use case. Do not introduce unapproved public API, ownership, dependency or destructive-data changes. Stop for researcher resolution when a material business/API/schema/ownership decision is missing. Skill-specific preflight checks, evidence requirements and stopping conditions remain mandatory.
 
 Apply the project-wide API normalization downstream: successful payloads use `{ success: true, message, data }`; errors use `{ success: false, statusCode, message, timestamp, path }`. Preserve source status, business fields and message semantics.
-
-Keep JWT, password hashing, validation, ownership, secret handling, safe errors, transactionality and concurrency behavior when the UC, BR, API contract or required technical baseline calls for them. They are ordinary application controls, not a separate research intervention.
 
 Database follows `docs/00-context/engineering/DATABASE-SCHEMA.md`. The researcher prepares a complete initial schema and may add reviewed TypeORM migrations between runs when necessary; retain cumulative data. Configuration pins exactly `migration_head`, `dbml_sha256` and `schema_fingerprint_sha256` using its existing status. Read `docs/00-context/engineering/schema.dbml` and map code to existing tables. Schema and migration inputs are immutable within each run. AI may perform authorized business DML but never DDL, migration execution/edits, DBML edits or schema sync. Missing structure blocks work; preserve actual END/partial evidence, then researcher setup and a new configuration/run are required if the baseline changes. Prompt/Source verify pins/history before START; Audit/Repair recheck drift. Within a run, rebuild only backend/frontend with `--no-deps` so Docker cannot invoke the setup migration service. Measure/activation/export perform no live DB check.
 
 Docker Compose v2 is mandatory for FE/BE/MySQL execution. A missing daemon is `BLOCKED`; do not fall back to native host Node.js/MySQL.
 
+Generation preflight reads the existing database only. Never start, reset or bootstrap database inputs, replace expected pins, or dump SQL/metadata into generation context. Use the existing validators to report missing or mismatched inputs.
+
 Do not create or run tests or test cases. Permitted checks are source inspection, deterministic validators, typecheck, lint, build, Docker health/reachability and bounded manual runtime observation.
 
 Never store credentials, access tokens, passwords, full account numbers or sensitive payloads in source, logs, prompts or reports.
+
+Keep secrets out of client bundles, `.env.example`, public API documentation and persisted tool output. Never commit `.env` or raw sensitive logs. Use sanitized evidence. Destructive database resets, volume/image cleanup and destructive migrations require an explicit researcher request outside an active run. Preserve cumulative data and frozen evidence.
 
 Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt, or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.

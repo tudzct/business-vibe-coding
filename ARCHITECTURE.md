@@ -45,10 +45,6 @@ Audit persists every frozen result and source-linked evidence. All-passing uncha
 | B | Frontend UI from Figma |
 | C | Frontend state, API integration and success flow |
 | D | Loading, client validation and API error behavior |
-| E | Business Rules Compliance: Rule ID, OCL/NL constraints, layer and failure behavior |
-| F | Implementation context, source priority and source-code-only restriction |
-
-Priority is: Prompt E BRs; project/database rules; API contract; Figma; existing conventions. A conflict with higher-priority source is a researcher decision, not an AI inference.
 
 ## Evidence and metrics
 
@@ -63,10 +59,6 @@ The canonical run JSON records:
 - build/runtime evidence and final source hash.
 
 Prompt text alone cannot prove implementation. Evidence must point to inspectable source/configuration/build/runtime observations.
-
-## Application-control boundary
-
-Authentication, ownership, validation and related controls required by a UC or BR remain ordinary implementation behavior rather than a separate research dimension.
 
 ## Command boundaries
 

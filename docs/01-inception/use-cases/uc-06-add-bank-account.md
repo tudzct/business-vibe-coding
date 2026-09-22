@@ -170,8 +170,6 @@ AccountResponseDto ..> Account : mapped from
 
 ## Business Rules
 
-The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
-
 ~~~text
 BR-ACC-07: Allowed account type
 context AccountService::create(

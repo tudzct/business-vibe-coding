@@ -14,7 +14,6 @@
 - Add `@Type` for nested/converted values where class-transformer requires it; do not assume query strings are numbers/booleans.
 - Do not use `skipMissingProperties` for create DTOs. For updates, use explicit optional/mapped fields while retaining constraints.
 - Avoid exposing rejected values or DTO targets in production validation errors when they contain sensitive data.
-- Validation enforces shape; services still enforce business rules, object ownership and database-dependent uniqueness.
 
 Official basis:
 

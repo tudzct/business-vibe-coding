@@ -14,7 +14,7 @@ Use the connected Google Drive/Sheets interface. Never scrape, reconstruct or gu
 
 - Google Doc ID: `1-cQWpOig7A5HrSHkRvzdw6DsbYRI1-6W7b8BGurT7GY`
 - Tab: `New coding prompt template` (`t.ae82d3zcwy8f`)
-- Structure: Prompts A-F, where E is Business Rules Compliance and F is Implementation Context.
+- Structure: Prompts A-F.
 
 ## Figma and API sources
 

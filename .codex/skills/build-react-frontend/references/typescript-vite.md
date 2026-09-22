@@ -12,7 +12,7 @@
 ## Vite
 
 - Use `import.meta.env`; type custom client variables in `vite-env.d.ts`.
-- Treat every `VITE_*` value as public because it is bundled into client code. Never put secrets, private keys or backend credentials there.
+- Treat every `VITE_*` value as public because it is bundled into client code. Apply the [shared operational constitution](../../../../AGENTS.md#shared-operational-constitution) to client configuration.
 - Parse env strings explicitly into validated booleans/numbers/URLs. Do not rely on truthiness of string values.
 - Keep `.env.*.local` ignored. Provide placeholders only in `.env.example` when requested.
 - Use static ESM imports and project aliases already configured. Do not add Vite plugins without an explicit need and dependency approval.

@@ -1,6 +1,6 @@
 # Business Rule baseline
 
-Before Prompt E, freeze a receipt containing the UC path/checksum, Business Rule resource path/checksum, Sheet provenance, ordered BR IDs and timestamp.
+Before generation, freeze a receipt containing the UC path/checksum, Business Rule resource path/checksum, Sheet provenance, ordered BR IDs and timestamp.
 
 All Sheet-supplied BRs for the UC are included. This gate does not select or score rules; it prevents the evaluated rule set from changing after generation begins.
 

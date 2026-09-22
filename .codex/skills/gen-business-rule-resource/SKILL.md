@@ -1,9 +1,11 @@
 ---
 name: gen-business-rule-resource
-description: Generate and freeze a use-case-specific Business Rule resource from the canonical Sheet-derived UC, preserving OCL and natural-language rules exactly for Prompt E; never generate tests.
+description: Generate and freeze a use-case-specific Business Rule resource from the canonical Sheet-derived UC with exact source provenance.
 ---
 
 # Generate Business Rule Resource
+
+Apply the [shared operational constitution](../../../AGENTS.md#shared-operational-constitution).
 
 This is an optional preparation tool, used only when the researcher explicitly requests resource/baseline creation outside prompt/source generation. Valid externally prepared artifacts are equally acceptable; no validator may require this skill's invocation or creator identity. `gen-coding-prompt` only reads existing resources/baselines and must never invoke this creation workflow to fill missing inputs. Preserve existing matching frozen artifacts and report conflicts without overwriting them.
 
@@ -15,5 +17,3 @@ Read `PROJECT_CONTEXT.md`, the selected frozen UC, `docs/00-context/business-rul
 4. Put missing information in `unresolved_items`. Stop for the researcher when it changes semantics, public API, ownership, schema or destructive behavior.
 5. Write `docs/02-construction/business-rules/<UC-ID>-business-rules.{json,md}` and freeze `docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json` with ordered BR IDs and checksums.
 6. Run `scripts/render_prompt_e.py <resource.json>` to produce the deterministic Prompt E projection.
-
-Do not create or run tests or test cases.

@@ -1,9 +1,11 @@
 ---
 name: docker-deployment
-description: Review whether a research environment can install and run Docker, initialize local FE/BE/MySQL configuration, run Compose when explicitly authorized, diagnose deployment failures, and persist sanitized environment history. Use for setup review, Docker installation, project startup, health checks, deployment troubleshooting, or resuming a failed deployment; do not use to generate features or tests.
+description: Review whether a research environment can install and run Docker, initialize local FE/BE/MySQL configuration, run Compose when explicitly authorized, diagnose deployment failures, and persist sanitized environment history. Use for setup review, Docker installation, project startup, health checks, deployment troubleshooting, or resuming a failed deployment; do not use to generate features.
 ---
 
 # Guide Docker Deployment
+
+Apply the [shared operational constitution](../../../AGENTS.md#shared-operational-constitution).
 
 Read the shared timing protocol. Standalone deployment/setup/runtime contributes no generation execution seconds. End core segments before waiting; final token calculation belongs to a later confirmed telemetry gate, not a researcher-invoked skill.
 
@@ -35,10 +37,10 @@ If the request is ambiguous, begin with `review`. Ask before the first package i
 5. Explain that the mandatory Docker runtime uses only `finalsource/.env`. Do not create or use per-app env files or native Node.js/MySQL commands as a fallback; they must not override Compose networking.
 ## Run and verify
 
-Follow [database policy](../../../docs/00-context/engineering/DATABASE-SCHEMA.md). The researcher prepares a complete initial schema with TypeORM migrations and maintains `docs/00-context/engineering/schema.dbml`. Between runs, reviewed migrations may add necessary structure while retaining data. In researcher-authorized setup, whole-stack Compose creates an empty database on a fresh volume, runs the one-shot migration service and starts backend only after success. For later migrations, rebuild/recreate that service as documented in the runbook; do not assume a previously exited container applied new files. During preparation use `database_baseline.py --capture --require-empty` (omit emptiness between UCs) to print migration head, DBML hash and fingerprint. For a pinned run use `--configuration <path>` to verify them. Within Prompt/Source/Audit/Repair, build/start only backend/frontend using `--no-deps`; never run whole-stack setup, migrations, schema sync or a volume reset. Missing schema blocks the run and requires researcher setup/new configuration before restart. Never rewrite pins. Keep application `synchronize: false` and `migrationsRun: false`. Metadata access uses container-root internally; application operations use the backend account. Claim DML-only privileges only when verified.
+Follow [database policy](../../../docs/00-context/engineering/DATABASE-SCHEMA.md). The researcher prepares a complete initial schema with TypeORM migrations and maintains `docs/00-context/engineering/schema.dbml`. Between runs, reviewed migrations may add necessary structure while retaining data. In researcher-authorized setup, whole-stack Compose creates an empty database on a fresh volume, runs the one-shot migration service and starts backend only after success. For later migrations, rebuild/recreate that service as documented in the runbook; do not assume a previously exited container applied new files. During preparation use `database_baseline.py --capture --require-empty` (omit emptiness between UCs) to print migration head, DBML hash and fingerprint. For a pinned run use `--configuration <path>` to verify them. Within Prompt/Source/Audit/Repair, build/start backend/frontend using `--no-deps`. Missing schema blocks the run and requires researcher setup/new configuration before restart. Use application `synchronize: false` and `migrationsRun: false`. Metadata access uses container-root internally; application operations use the backend account. Claim DML-only privileges only when verified.
 
 1. Use the explicit root command from `references/project-runbook.md`; never depend on the current directory implicitly.
-2. Build/start only after authorization. Never run `docker compose down -v`, prune volumes/images globally, reset MySQL, or perform a destructive migration without a separate explicit request.
+2. Build/start only after authorization under the shared operational constitution.
 3. Inspect `docker compose ps`, database/backend/frontend health and bounded logs. Redact credentials, tokens, account data and sensitive payloads before reporting or persisting evidence.
 4. Verify three distinct outcomes: containers running, healthchecks passing, and the UI/API reachable. Do not infer one from another.
 5. Record a compact operation JSON. On failure, update `incidents/index.json` and one fingerprint-addressed incident JSON using `references/history-contract.md`.
@@ -53,9 +55,7 @@ Follow [database policy](../../../docs/00-context/engineering/DATABASE-SCHEMA.md
 
 ## Boundaries
 
-- Do not create or run tests/test cases.
 - Do not edit immutable `docs/01-inception/use-cases/uc-*.md` files.
-- Do not commit `.env`, credentials, raw sensitive logs or connector secrets.
 - Do not claim Business Rule compliance from successful deployment alone; per-rule conclusions require the audit workflow.
 - Keep canonical current state and indexed incident evidence in `docs/03-audit/docker-deployment/`.
 - Persist only command identifier, exit code, timestamp, tool version, source hash and a bounded relevant error excerpt; never persist successful raw transcripts or complete build logs.

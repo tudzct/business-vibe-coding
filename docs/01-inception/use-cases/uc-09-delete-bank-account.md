@@ -172,8 +172,6 @@ AccountService ..> Transaction : deletes cascade
 
 ## Business Rules
 
-The following rules are authoritative for Prompt E. OCL is preserved where supplied; technical or non-OCL constraints remain authoritative natural-language requirements.
-
 ~~~text
 BR-ACC-27: Account deletion ownership validation
 context AccountService::delete(accountId : Integer, userId : Integer) : DeleteAccountResponseDto

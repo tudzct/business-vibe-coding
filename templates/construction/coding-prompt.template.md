@@ -155,7 +155,7 @@ Do not call the API when client-side validation fails.
 
 ### Objective: Implement the complete frozen Business Rule set for this use case without changing its meaning.
 
-The ordered Rule IDs below MUST exactly match the frozen Business Rule baseline. Every rule appears exactly once in this projection; one implementation control may enforce multiple rules when appropriate.
+One implementation control may enforce multiple rules when appropriate.
 
 ### Business Rule: `[BR-ID]`
 
@@ -171,23 +171,21 @@ Preserve every Rule ID, OCL expression and authoritative natural-language constr
 
 Prompts A and D must reference applicable Rule IDs without redefining them. Backend/database enforcement remains authoritative across trust boundaries; frontend enforcement is an additional user-experience control.
 
-Do not invent missing thresholds, statuses, ownership, schema, enforcement layers or failure behavior. Record unresolved source information and stop for the researcher when it changes implementation.
+Do not invent missing thresholds, statuses, ownership, schema, enforcement layers or failure behavior.
 
 ## Prompt F: Implementation Context
 
 Use every prompt present in this approved artifact together with:
 
 - project rules and target manifests/lockfiles;
-- approved database contract;
-- approved API contract;
-- checksum-valid frozen Figma evidence when applicable;
+- database contract;
+- API contract;
+- Figma evidence when applicable;
 - existing source-code conventions.
 
 Priority:
 
 1. Requirements explicitly present in this approved prompt
-2. Approved API and database/project contracts
-3. Frozen Figma evidence
+2. API and database/project contracts
+3. Figma evidence
 4. Existing source-code conventions
-
-Generate source only. Modify only files required by the use case. Do not create or run tests or test cases. Never change the supplied database schema. Do not introduce unapproved public API, ownership, dependency or destructive-data changes.

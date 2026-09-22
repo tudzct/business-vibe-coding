@@ -1,9 +1,11 @@
 ---
 name: gen-coding-prompt
-description: Generate a Full Prompt A-F or RQ3 Prompt A-D from validated, pre-existing experiment inputs and one frozen UC; never initialize configuration/baselines/trackers or generate tests.
+description: Generate a Full Prompt A-F or RQ3 Prompt A-D from validated, pre-existing experiment inputs and one frozen UC; never initialize configuration/baselines/trackers.
 ---
 
 # Generate Business Coding Prompt
+
+Apply the [shared operational constitution](../../../AGENTS.md#shared-operational-constitution).
 
 Accept one readable `docs/01-inception/use-cases/uc-*.md` path. Optional `--configuration <config.json>`, `--run-id <RUN-ID>`, `--run-json <canonical.json>` and `--variant [full|rq3]` disambiguate existing inputs; explicit values must match their recorded identities. Resolve only a unique matching Canonical Run JSON. Never select the newest file or silently default a configured RQ3 run to Full.
 
@@ -27,14 +29,14 @@ Referenced BR resource/provenance, frozen UC, API/Figma and template dependencie
 
 ## Generate the Draft
 
-The same preflight imports `database_baseline.py` internally to verify the ordered TypeORM migration history, DBML bytes and live MySQL metadata against the configured pins. Follow [database policy](../../../docs/00-context/engineering/DATABASE-SCHEMA.md). Require an initialized running Compose database and `finalsource/.env`; root `.env` remains unnecessary. Do not start/reset/bootstrap the database, create/repair the fifth input, rewrite pins or dump SQL/metadata into context. Missing/mismatched input blocks before START. After PASS, read DBML once as shared Full/RQ3 technical input and use its exact structure in Prompt A/D. Do not generate DDL/migrations. An incompatible requirement is a blocker. Follow the database policy's missing-schema procedure: close an open interval before waiting, preserve partial evidence, and require a new configuration/run if researcher setup changes the baseline.
+The same preflight imports `database_baseline.py` internally to verify the ordered TypeORM migration history, DBML bytes and live MySQL metadata against the configured pins. Follow [database policy](../../../docs/00-context/engineering/DATABASE-SCHEMA.md). Require an initialized running Compose database and `finalsource/.env`; root `.env` remains unnecessary. Missing/mismatched input blocks before START. After PASS, read DBML once as shared Full/RQ3 technical input and use its exact structure in Prompt A/D. An incompatible requirement is a blocker. Follow the database policy's missing-schema procedure: close an open interval before waiting, preserve partial evidence, and require a new configuration/run if researcher setup changes the baseline.
 
 1. Read `PROJECT_CONTEXT.md`, source/workflow rules and the configured template: `templates/construction/coding-prompt.template.md` for Full or `templates/construction/coding-prompt-rq3.template.md` for RQ3.
 2. Verify frozen UC provenance and the exact source path returned by preflight. Resolve referenced API contracts and frozen Figma evidence through `resolve-figma-design-dataset` in read-only resolution mode. Missing dataset/API evidence stops generation; no capture, refresh or helper-file setup occurs here.
 3. Validate equality of source-order BR IDs, existing resource and BR baseline, and complete Main/Alternative/Exception Flow coverage in the existing flow baseline. Preserve these artifacts unchanged. For RQ3, use metadata/deterministic validation for excluded BR/OCL inputs and retain the shared ablation context boundary.
 4. Once all input checks pass, immediately capture live prompt START and generate A-D from functional UC/UML/API/Figma inputs, covering every frozen flow and terminal outcome. Apply the standard response envelope without changing domain status, fields or message semantics.
-5. For Full, insert deterministic Prompt E verbatim and fill F with source priority and implementation boundaries. For RQ3, omit E/F together and exclude BR resource/baseline links, OCL projections and BR-derived additions.
+5. For Full, assemble the configured template using the existing deterministic renderer. For RQ3, omit E/F together and exclude BR resource/baseline links, OCL projections and BR-derived additions.
 6. Persist the Draft at `docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md` or `<UC-ID>-rq3-coding-prompt.md`. Immediately capture END, then run `scripts/validate_prompt_contract.py --configuration <config.json> --uc-id <UC-ID> --run-id <RUN-ID> --prompt <prompt.md> --allow-draft`. Recheck configuration with preflight `--expected-checksum <original checksum>`; review semantic flow coverage and provenance. Any unresolved anomaly prevents reporting success.
 7. Present the Draft and next command `$measure-uc-workflow close-phase prompt_generation`. That command approves/pins the Draft and closes telemetry without another confirmation. Do not start source here.
 
-The existing timing helper appends actual timestamps to its runtime journal after successful input validation. This is measurement evidence, not initialization of the four configuration inputs. Preflight must not mutate the Canonical Run JSON; later approval/audit/measurement operations may update its results normally. Whole-turn token telemetry still includes reads, validation and timestamp calls; never invent a token deduction or promise zero measurement overhead. No tests or test cases.
+The existing timing helper appends actual timestamps to its runtime journal after successful input validation. This is measurement evidence, not initialization of the four configuration inputs. Preflight must not mutate the Canonical Run JSON; later approval/audit/measurement operations may update its results normally. Whole-turn token telemetry still includes reads, validation and timestamp calls; never invent a token deduction or promise zero measurement overhead.

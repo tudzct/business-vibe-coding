@@ -1,13 +1,15 @@
 ---
 name: build-nest-backend
-description: Build or review NestJS 11, TypeScript, TypeORM/MySQL backend code for Prompts A/D/E against the researcher-pinned database; enforce Business Rules without schema changes or tests.
+description: Build or review NestJS 11, TypeScript and TypeORM/MySQL backend code from the approved prompt against the researcher-pinned database.
 ---
 
 # Build Nest Backend
 
-Read the approved prompt, project context, baseline and `docs/00-context/engineering/TECHNICAL-STACK-RULES.md`. Inspect `finalsource/be/package.json` and its lockfile, then extend existing modules under `finalsource/be`.
+Apply the [shared operational constitution](../../../AGENTS.md#shared-operational-constitution).
 
-Resolve the configured variant first. During RQ3 first-pass generation, use only approved A-D and functional/UML/API/technical inputs; do not load the evaluation BR resource/OCL or recreate omitted E/F. Full may use approved E rules. Both variants implement all applicable Basic/Main, Alternative and Exception Flows. BR/flow audit and authorized repair subsequently use the full frozen evaluation baseline. See [shared contract](../../../docs/00-context/workflow/FULL-RQ3-CONTRACT.md).
+Extend existing modules under `finalsource/be` from the approved prompt.
+
+Resolve the configured variant first. During RQ3 first-pass generation, use only approved A-D and functional/UML/API/technical inputs; do not load the evaluation BR resource/OCL or recreate omitted E/F. Both variants implement all applicable Basic/Main, Alternative and Exception Flows. BR/flow audit and authorized repair subsequently use the full frozen evaluation baseline. See [shared contract](../../../docs/00-context/workflow/FULL-RQ3-CONTRACT.md).
 
 Load only the references required by the active change areas:
 
@@ -17,11 +19,7 @@ Load only the references required by the active change areas:
 - Existing database/entity mapping: [references/database-schema-template.md](references/database-schema-template.md)
 - JWT, Passport, bcrypt, configuration or OpenAPI: [references/auth-config-openapi.md](references/auth-config-openapi.md)
 
-- Keep controllers thin; enforce business/ownership rules in services and persistence constraints where explicitly required.
+- Keep controllers thin.
 - Use validated DTOs, injected repositories, standard response/error handling and existing authentication/configuration mechanisms.
-- Read the configured checksum-valid DBML and [database contract](../../../docs/00-context/engineering/DATABASE-SCHEMA.md). Map entities to existing names/types/keys exactly. Allow authorized business-data operations only; keep `synchronize: false` and application `migrationsRun: false`. Researcher setup may manage TypeORM migrations between runs; this implementation skill cannot create, edit or execute them. Never change tables, columns, relationships, constraints, indexes or schema files. Missing necessary structure blocks work under the database policy's restart procedure; no schema proposal or approval gate exists.
-- Do not invent endpoints, rules, dependencies, schema or policies.
-- Preserve application controls required by the UC/BR/API, including authentication, hashing, ownership, validation, secrets, safe errors and transactions.
+- Read the configured checksum-valid DBML and [database contract](../../../docs/00-context/engineering/DATABASE-SCHEMA.md). Map entities to existing names/types/keys exactly. Use `synchronize: false` and application `migrationsRun: false`. Missing necessary structure blocks work under the database policy's restart procedure; no schema proposal or approval gate exists.
 - Run only permitted non-test lint/typecheck/build checks.
-
-Do not create or run tests.

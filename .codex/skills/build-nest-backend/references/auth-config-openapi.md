@@ -5,14 +5,13 @@
 - Keep authentication in Passport/JWT guards/strategies and authorization/ownership in guards or services according to the existing architecture.
 - Extract subject identity only from the verified JWT; never trust a client-provided owner/user ID.
 - Validate JWT algorithm, expiry and approved issuer/audience policy. Load signing secrets from validated configuration; never use fallback secrets.
-- Return generic authentication failures that do not reveal account existence. Never log credentials, hashes or tokens.
+- Return generic authentication failures that do not reveal account existence.
 - Hash passwords with the existing bcrypt package and an approved cost. Compare through bcrypt; never decrypt, truncate or pre-hash passwords insecurely.
 
 ## Configuration
 
 - Use `@nestjs/config` and validate required environment variables at startup. Keep production defaults fail-closed.
-- Configure least-privilege CORS and production-safe logging/error behavior. Do not enable schema synchronization or debug output in production.
-- Keep secrets out of source, `.env.example`, Swagger examples and audit evidence.
+- Configure least-privilege CORS and production-safe logging/error behavior under the [shared operational constitution](../../../../AGENTS.md#shared-operational-constitution).
 
 ## Swagger/OpenAPI
 
