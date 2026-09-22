@@ -5,7 +5,7 @@
 - Preserve the project's declarative React Router v7 mode and central route definition under `src/router`.
 - Use `Link`/`NavLink` for navigation and `useNavigate` for imperative transitions after an event; do not assign `window.location` for internal routes.
 - Keep route paths stable and constants centralized when already established. Validate/encode dynamic path and query values.
-- Use nested/layout routes with `Outlet` when the parent layout is truly shared.
+- Use nested/layout routes with `Outlet` when the parent layout is truly shared. Do not duplicate authorization logic in route components; server authorization remains authoritative.
 
 ## Axios 1.x
 

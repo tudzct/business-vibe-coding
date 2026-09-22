@@ -9,7 +9,7 @@
 ## Layer responsibilities
 
 - Controller: bind HTTP method/path, receive decorated parameters/DTOs, call a service and return the project response envelope. Keep business/persistence logic out.
-- Service/provider: orchestration and transaction boundaries.
+- Service/provider: own business rules, authorization/ownership decisions, orchestration and transaction boundaries.
 - Repository/TypeORM: own persistence expressions. Do not expose entities directly as public response contracts when fields differ.
 - DTO class: define runtime-validatable inbound structure. Do not use erased TypeScript interfaces for ValidationPipe inputs.
 - Module: import/export only required capabilities. Keep providers singleton/stateless unless a documented scope is required.

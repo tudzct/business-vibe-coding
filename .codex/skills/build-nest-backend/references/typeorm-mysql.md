@@ -13,13 +13,13 @@
 
 - Use a transaction when one business operation performs multiple dependent writes or state changes.
 - Inside a TypeORM transaction use only the provided transactional entity manager/repositories, never the global manager/repository.
-- Handle duplicate/deadlock outcomes without exposing database errors.
+- Choose isolation, locking and idempotency only from explicit UC/Business Rule requirements. Handle duplicate/deadlock outcomes without exposing database errors.
 - Use `synchronize: false` and application `migrationsRun: false` under the [shared operational constitution](../../../../AGENTS.md#shared-operational-constitution). Entity edits map existing tables.
 
 ## MySQL
 
 - Preserve supplied database types and numeric precision; report incompatible requirements.
-- Use existing constraints. Missing necessary structure is an input blocker.
+- Use existing constraints and required application enforcement. Missing necessary structure is an input blocker.
 - Use existing indexes.
 - Keep timestamps/timezone semantics explicit and consistent with the API contract.
 

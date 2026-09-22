@@ -1,4 +1,0 @@
-interface:
-  display_name: "Activate Experiment Run"
-  short_description: "Validate an existing receipt or optionally create one"
-  default_prompt: "Use $activate-experiment-run to validate the existing run activation receipt without creating missing inputs."

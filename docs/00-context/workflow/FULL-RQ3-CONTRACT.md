@@ -9,12 +9,12 @@ Both variants receive the same researcher-prepared per-run database baseline thr
 | Operation | Full | RQ3 |
 |---|---|---|
 | Evaluation preparation | Freeze all BRs and flows before generation | Same complete baseline, stored separately from generation input |
-| Prompt generation | Configured Full template and its permitted inputs | Functional/UML/UI/API sources and required technical baseline; no E/F, BR resource links, OCL projection or BR-derived additions |
+| Prompt generation | Functional/UML/UI/API sources, configured Full template and its permitted inputs | Functional/UML/UI/API sources and required technical baseline; no E/F, BR resource links, OCL projection or BR-derived additions |
 | First-pass source | Approved A-F and their permitted inputs | Approved A-D and their permitted inputs; inspect baseline identity through validators/metadata, not BR expressions |
 | First-pass audit / automatic repair verification | Every frozen BR and flow, configured rubric | Identical criteria and evidence standard |
 | Authorized repair | One evidenced defect per bounded sub-prompt | Same; repair evidence must remain distinguishable from first-pass ablation results |
 
-For both variants, map every frozen flow and terminal clause to the relevant A-D sections before approval. This is a traceability check, not a new flow denominator.
+For both variants, map every frozen flow and terminal clause to the relevant A-D sections before approval. This is a traceability check, not a new flow denominator. Required JWT/hash/ownership/validation and other technical controls remain where the permitted functional/API/technical sources require them.
 
 For RQ3, use bounded reads or a functional projection to avoid passing BR/OCL sections and evaluation resources into generation. Baseline preparation may inspect those resources for evaluation, but do not silently paraphrase them into the generated prompt. A validator can check identity/headings/explicit references; the author must review provenance and semantic leakage. If excluded material has already entered the generation context, record that limitation and resolve the generation context before claiming a clean ablation; never claim that an instruction to ignore it erased it.
 

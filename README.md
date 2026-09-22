@@ -5,7 +5,7 @@ Business vibe coding is a research workbench for generating source code from use
 ## Method
 
 ```text
-Phase 1: validated inputs + configured template
+Phase 1: UC/UML + applicable API/Figma + prepared inputs + configured template
          -> approved Business Coding Prompt A-F
 
 Phase 2: approved prompt + codebase + project/database rules
@@ -69,5 +69,9 @@ The researcher must provide strong local values for `MYSQL_PASSWORD` and `JWT_SE
 ## Current verification boundary
 
 Do not create or run tests or test cases. The workflow may inspect source/configuration, run deterministic artifact validators, lint/typecheck/build, rebuild Docker images, inspect health/reachability and perform bounded manual runtime observation.
+
+## Application controls
+
+JWT, bcrypt, DTO validation, ownership checks, secret handling, safe errors and database transactions remain when required by the UC, Business Rules, API contract or technical baseline. They are ordinary business/technical implementation requirements.
 
 Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt, or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.

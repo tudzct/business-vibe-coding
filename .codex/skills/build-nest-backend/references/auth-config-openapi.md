@@ -12,6 +12,7 @@
 
 - Use `@nestjs/config` and validate required environment variables at startup. Keep production defaults fail-closed.
 - Configure least-privilege CORS and production-safe logging/error behavior under the [shared operational constitution](../../../../AGENTS.md#shared-operational-constitution).
+- Do not enable debug output in production.
 
 ## Swagger/OpenAPI
 

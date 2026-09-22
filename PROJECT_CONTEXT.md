@@ -16,7 +16,7 @@ This project studies automated source-code generation from use-case specificatio
 
 The method extends the two-phase method described by Dang Thi Thanh Truc across two experimental setups:
 
-1. **Full method (RQ1/RQ2):** Uses the complete Prompt A-F template.
+1. **Full method (RQ1/RQ2):** Uses the complete Prompt A-F template. Prompt A covers backend/API, Prompt B frontend UI, Prompt C frontend logic/API integration and Prompt D validation/error handling.
 2. **Ablation study (RQ3):** Uses only Prompts A-D, omitting Prompts E and F together, against the identical frozen evaluation baseline.
 
 Both setups follow the two-phase method:
@@ -85,6 +85,8 @@ The fifth input is the researcher-prepared MySQL database and `docs/00-context/e
 
 The [shared operational constitution](AGENTS.md#shared-operational-constitution) governs every skill and both variants, including testing, database mutations, secrets and destructive operations.
 
+Implementation controls such as authentication, hashing, ownership, validation, secret handling, safe errors and transactions remain when required by BRs, APIs or the baseline. They are not treated as a separate experimental dimension.
+
 ## Repository map
 
 ```text
@@ -119,6 +121,6 @@ No test or test-case generation is part of this method.
 
 Telemetry uses prompt/source/repair buckets within the two phases and follows [the command sequence](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md). Close/report/export turns are excluded. Captures follow `generation_execution_with_repair_audit_v2`: Repair includes integrated BR/flow/runtime verification and final evidence persistence, and a turn's token label must match any captured core execution. Standalone audit remains workflow-only tokens and excluded from counted execution time. Audit and repair verification preserve frozen BR/flow evidence. The existing gate field records completed commands without asking the researcher for further approval.
 
-Optional `audit-figma-ui-accuracy` is manually requested only; missing/null UI scores never block audit, measurements, reports, export or completion. After finalization, `$export-experiment-excel <UC-ID> <LINK_OR_FILEPATH> <TAB_NAME>` is a separate reporting operation that copies stored canonical values into a new workbook while preserving formulas/protected/manual content.
+Missing/null UI scores never block audit, measurements, reports, export or completion. After finalization, `$export-experiment-excel <UC-ID> <LINK_OR_FILEPATH> <TAB_NAME>` is a separate reporting operation that copies stored canonical values into a new workbook while preserving formulas/protected/manual content.
 
 Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt, or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.

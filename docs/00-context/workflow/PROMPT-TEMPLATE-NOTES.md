@@ -15,4 +15,6 @@
 - E: omitted.
 - F: omitted.
 
+OCL is preserved verbatim in the frozen BR baseline. A rule that cannot be expressed adequately in OCL stays in natural language. Missing information is recorded as unresolved, never guessed.
+
 Validate prompt structure and provenance using the existing prompt contract. Evaluation against the frozen BR baseline remains identical in both variants.

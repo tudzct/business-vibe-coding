@@ -60,6 +60,10 @@ The canonical run JSON records:
 
 Prompt text alone cannot prove implementation. Evidence must point to inspectable source/configuration/build/runtime observations.
 
+## Application-control boundary
+
+Authentication, ownership, validation and related controls required by a UC or BR remain ordinary implementation behavior rather than a separate research dimension.
+
 ## Command boundaries
 
 Each command authorizes its operation without further human gate confirmations. Canonical `gates` names are internal command bookkeeping, recorded through `record_command.py`; recorded receipts/evidence remain immutable. Database structure is researcher-managed through TypeORM migrations between runs and immutable within each run: read the pinned DBML, verify migration history and hashes, and allow authorized business DML only. Missing structure blocks the run; baseline changes require researcher setup and a new configuration/run. Application rebuilds within runs use `--no-deps backend frontend`, never the setup migration service. Material specification ambiguity or input incompatibility requires researcher resolution. Optional UI scoring never blocks audit, telemetry, export or completion.

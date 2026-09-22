@@ -16,10 +16,10 @@ When a UC contains a Figma reference, resolve it through `resolve-figma-design-d
 
 The research method has exactly two phases:
 
-1. **Phase 1 - Generate the business coding prompt.** Validate the prepared inputs and create a Draft using the configured template: Prompts A-F for Full or Prompts A-D for RQ3. Apply the existing input boundaries in `docs/00-context/workflow/FULL-RQ3-CONTRACT.md`.
+1. **Phase 1 - Generate the business coding prompt.** Read one frozen UC, its UML model and applicable API/Figma sources under the existing input boundaries in `docs/00-context/workflow/FULL-RQ3-CONTRACT.md`. Source locations are recorded in `docs/00-context/sources/CONNECTED-SOURCES.md`. Validate the prepared inputs and create a Draft using the configured template: Prompts A-F for Full or Prompts A-D for RQ3.
 2. **Phase 2 - Generate source code.** After the prompt-close command approves the Draft, implement the approved prompt in `finalsource/fe` and/or `finalsource/be`. Record first-pass evidence, assess every frozen BR from the baseline, create bounded bug-fixing sub-prompts for evidenced errors, rebuild/run with Docker Compose and freeze the final source hash.
 
-Do not use a separate dimension to change Business Rule acceptance. Both Full and RQ3 runs evaluate against the identical frozen BR baseline; flow accuracy is a supplementary frozen measurement. The repository provides `audit-figma-ui-accuracy` as an independent, strictly optional skill, invoked manually only on an explicit researcher request. The researcher may inspect UI by eye or skip scoring. Neither invoking this skill nor passing its UI validation is required by any experiment gate; missing/null `ui_accuracy` or UI scores never block BR/flow audit, telemetry, export or completion.
+Do not use a separate dimension to change Business Rule acceptance. Both Full and RQ3 runs evaluate against the identical frozen BR baseline; flow accuracy is a supplementary frozen measurement. The researcher may inspect UI by eye or skip scoring. Missing/null `ui_accuracy` or UI scores never block BR/flow audit, telemetry, export or completion.
 
 Before Phase 1, resolve every BR and every explicit Basic/Main, Alternative and Exception Flow associated with the UC. Persist `business-rule-baseline.json` and `flow-baseline.json`; do not select, omit or add rules/flows after implementation is visible.
 
@@ -50,6 +50,8 @@ These rules apply to every skill and to both Full and RQ3, independently of the 
 During source generation, generate source only and modify only files required by the active use case. Do not introduce unapproved public API, ownership, dependency or destructive-data changes. Stop for researcher resolution when a material business/API/schema/ownership decision is missing. Skill-specific preflight checks, evidence requirements and stopping conditions remain mandatory.
 
 Apply the project-wide API normalization downstream: successful payloads use `{ success: true, message, data }`; errors use `{ success: false, statusCode, message, timestamp, path }`. Preserve source status, business fields and message semantics.
+
+Keep JWT, password hashing, validation, ownership, secret handling, safe errors, transactionality and concurrency behavior when the UC, BR, API contract or required technical baseline calls for them. They are ordinary application controls, not a separate research intervention.
 
 Database follows `docs/00-context/engineering/DATABASE-SCHEMA.md`. The researcher prepares a complete initial schema and may add reviewed TypeORM migrations between runs when necessary; retain cumulative data. Configuration pins exactly `migration_head`, `dbml_sha256` and `schema_fingerprint_sha256` using its existing status. Read `docs/00-context/engineering/schema.dbml` and map code to existing tables. Schema and migration inputs are immutable within each run. AI may perform authorized business DML but never DDL, migration execution/edits, DBML edits or schema sync. Missing structure blocks work; preserve actual END/partial evidence, then researcher setup and a new configuration/run are required if the baseline changes. Prompt/Source verify pins/history before START; Audit/Repair recheck drift. Within a run, rebuild only backend/frontend with `--no-deps` so Docker cannot invoke the setup migration service. Measure/activation/export perform no live DB check.
 
