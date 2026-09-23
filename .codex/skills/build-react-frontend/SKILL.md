@@ -9,7 +9,7 @@ Apply the [shared operational constitution](../../../AGENTS.md#shared-operationa
 
 Read the approved prompt, project context, connected sources and `docs/00-context/engineering/TECHNICAL-STACK-RULES.md`. Inspect `finalsource/fe/package.json` and its lockfile, then extend the existing app under `finalsource/fe`.
 
-Resolve the configured variant first. RQ3 first-pass generation uses approved A-D and functional/UI/API/technical inputs, not evaluation BR/OCL resources or omitted E/F. In RQ3 first-pass, derive validation from the permitted specifications. Both variants cover all applicable Basic/Main, Alternative and Exception Flows. See [shared contract](../../../docs/00-context/workflow/FULL-RQ3-CONTRACT.md).
+Cover all applicable Basic/Main, Alternative and Exception Flows. See [shared contract](../../../docs/00-context/workflow/FULL-CONTRACT.md).
 
 Load only the references required by the active change areas:
 

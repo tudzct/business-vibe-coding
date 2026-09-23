@@ -29,7 +29,7 @@ flowchart LR
 
 Read [FILE-DRIVEN-WORKFLOW.md](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md). The researcher prepares Confirmed configuration, frozen BR baseline, frozen flow baseline and Draft Canonical Run JSON before generation, plus the per-run database baseline and its configuration-pinned DBML. Frozen UC/UML/API/Figma/resource/template dependencies and database pins must validate read-only. Generation never creates missing inputs.
 
-Generate Draft Full A-F or RQ3 A-D with complete functional-flow coverage and the configured input boundaries. Capture actual prompt START/END and return the prompt-close command. That subsequent command approves and pins the Draft and closes telemetry, without another approval or activation turn.
+Generate Draft Full A-F with complete functional-flow coverage and the configured input boundaries. Capture actual prompt START/END and return the prompt-close command. That subsequent command approves and pins the Draft and closes telemetry, without another approval or activation turn.
 
 ### Phase 2 - Generate Source Code
 

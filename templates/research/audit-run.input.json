@@ -1,6 +1,6 @@
 {
   "run_id": "<run-id>",
-  "prompt_variant": "full | rq3",
+  "prompt_variant": "full",
   "coding_prompt": null,
   "experiment_configuration": {
     "configuration_id": "<CONFIG-ID>",

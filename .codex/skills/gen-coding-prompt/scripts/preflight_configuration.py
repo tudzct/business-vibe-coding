@@ -230,7 +230,7 @@ def main():
     parser.add_argument("--uc-id", required=True)
     parser.add_argument("--configuration", type=Path)
     parser.add_argument("--run-id")
-    parser.add_argument("--variant", choices=("full", "rq3"))
+    parser.add_argument("--variant", choices=("full",))
     parser.add_argument("--run-json", type=Path)
     parser.add_argument("--use-case", type=Path)
     parser.add_argument("--stage", choices=("prompt", "activation", "source"), default="prompt")

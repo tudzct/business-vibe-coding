@@ -10,7 +10,7 @@ from pathlib import Path
 EFFORTS = {"none", "low", "medium", "high", "xhigh", "max"}
 MODES = {"standard", "pro"}
 PROTOCOLS = {"fixed", "matched", "cross"}
-PROMPT_VARIANTS = {"full", "rq3"}
+PROMPT_VARIANTS = {"full"}
 SCHEMA_VERSION = "2.4"
 TIMING_METHOD = "system_timestamp_delta"
 RUNTIME_FLOW_RUBRIC = "completion-critical-flow-runtime-v2"
@@ -174,7 +174,7 @@ def validate(path):
         text(run.get("auditor_assignment"), prefix + ".auditor_assignment")
         if "flow_audit_rubric" in run and run["flow_audit_rubric"] != rubric:
             raise ValueError("run-level rubric cannot override comparison-group rubric")
-    # One evidence standard across Full/RQ3/models, including other configurations in the group.
+    # One evidence standard across Full models, including other configurations in the group.
     for peer_path in path.parent.glob("*.json"):
         if peer_path.resolve() == path.resolve():
             continue

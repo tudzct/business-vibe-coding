@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only validation of Full/RQ3 prompt identity, structure and activation links."""
+"""Read-only validation of Full prompt identity, structure and activation links."""
 
 import argparse
 import json
@@ -14,7 +14,7 @@ from validate_experiment_configuration import validate as validate_configuration
 
 
 def normalize_variant(value):
-    require(value in {"full", "rq3"}, "unsupported prompt variant")
+    require(value in {"full"}, "unsupported prompt variant")
     return value
 
 
@@ -62,19 +62,14 @@ def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow
     require(meta.get("status") in ({"Draft", "Approved"} if allow_draft else {"Approved"}), "prompt approval status mismatch")
     actual = normalize_variant(meta.get("prompt_variant"))
     require(actual == variant, "configuration/prompt variant mismatch")
-    require(headings == list("ABCDEF" if variant == "full" else "ABCD"), "prompt sections must match configured variant exactly")
-    require(prompt.name.endswith("-rq3-coding-prompt.md" if variant == "rq3" else "-business-coding-prompt.md"), "prompt filename/variant mismatch")
+    require(headings == list("ABCDEF"), "prompt sections must match configured variant exactly")
+    require(prompt.name.endswith("-business-coding-prompt.md"), "prompt filename/variant mismatch")
     uc = next(u for u in config["use_cases"] if u["uc_id"] == uc_id)
     baseline = read_json(writable(ROOT / uc["business_rule_baseline"]))
     require(baseline.get("status") == "Frozen" and baseline.get("uc_id") == uc_id, "BR baseline identity mismatch")
     require(meta.get("source_use_case") == baseline.get("use_case_path"), "prompt source UC mismatch")
-    if variant == "rq3":
-        require(not any(k in meta for k in ("business_rule_resource", "business_rule_baseline")), "RQ3 cannot link BR generation inputs")
-        require(not re.search(r"\bPrompt\s+[EF]\b|\bBR-[A-Z0-9-]+\b|business-rule(?:s|-baseline)|\bcontext\s+\w+\s+inv\b", body, re.I),
-                "RQ3 contains excluded prompt/BR/OCL references; inspect source provenance")
-    else:
-        require(meta.get("business_rule_baseline") == uc["business_rule_baseline"], "Full BR baseline reference mismatch")
-        require(meta.get("business_rule_resource") == baseline.get("business_rule_resource_path"), "Full BR resource reference mismatch")
+    require(meta.get("business_rule_baseline") == uc["business_rule_baseline"], "Full BR baseline reference mismatch")
+    require(meta.get("business_rule_resource") == baseline.get("business_rule_resource_path"), "Full BR resource reference mismatch")
     reference = {"path": prompt.relative_to(ROOT).as_posix(), "sha256": digest(prompt.read_bytes())}
     if activation is not None:
         receipt = read_json(writable(activation))

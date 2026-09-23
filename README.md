@@ -44,7 +44,7 @@ $measure-uc-workflow finalize-workflow
 $export-experiment-excel uc-01 "<LINK_OR_FILEPATH>" "<TAB_NAME>"
 ```
 
-Prompt close also approves/pins the Draft. For RQ3, use `UC-01-rq3-coding-prompt.md`. Audit includes flow measurement. If all frozen results pass, skip the correction command and invoke `finalize-workflow`, which records skipped Repair and finalizes telemetry. If flows are unknown, save researcher verdicts or requested LLM observations, then wait for the repair command when defects remain. Repair automatically verifies final BR/flow/runtime evidence. Export is optional, excluded from workflow telemetry, and produces a new filled `.xlsx` copy.
+Prompt close also approves/pins the Draft. Audit includes flow measurement. If all frozen results pass, skip the correction command and invoke `finalize-workflow`, which records skipped Repair and finalizes telemetry. If flows are unknown, save researcher verdicts or requested LLM observations, then wait for the repair command when defects remain. Repair automatically verifies final BR/flow/runtime evidence. Export is optional, excluded from workflow telemetry, and produces a new filled `.xlsx` copy.
 
 Render a finalized run separately with `$render-experiment-report docs/05-experiments/<UC-ID>/<RUN-ID>.json`.
 

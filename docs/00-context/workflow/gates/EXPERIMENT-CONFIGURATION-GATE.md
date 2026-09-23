@@ -11,7 +11,7 @@ A comparison group uses a researcher-prepared Confirmed configuration before pro
 - per-UC frozen BR and flow baseline paths;
 - `database_baseline`: TypeORM migration head, DBML hash and runtime MySQL schema fingerprint, governed by the configuration's existing status.
 
-Configurations fix `timing_method` to `system_timestamp_delta`, pin the active Figma dataset, and freeze `flow_audit_rubric: completion-critical-flow-runtime-v2` before generation. The validator rejects missing/mismatched values and mixed flow rubrics within one comparison group, including Full/RQ3 and model conditions. `audit_design.protocol` still assigns auditors; it never stores the rubric.
+Configurations fix `timing_method` to `system_timestamp_delta`, pin the active Figma dataset, and freeze `flow_audit_rubric: completion-critical-flow-runtime-v2` before generation. The validator rejects missing/mismatched values and mixed flow rubrics within one comparison group, including model conditions. `audit_design.protocol` still assigns auditors; it never stores the rubric.
 
 On `$gen-coding-prompt`, resolve exactly one configuration and UC/run assignment from explicit arguments, the checksum-pinned canonical run, or a unique matching configuration. Never select the newest file or guess between matching runs. Run `gen-coding-prompt/scripts/preflight_configuration.py` before creating artifacts. Missing/invalid/ambiguous configuration, non-Confirmed status, conflicting identities, checksum drift or unresolved input semantics stops generation with the exact blocker. Never repair or confirm a configuration automatically; the researcher supplies a corrected configuration, with a new ID if already frozen by evidence.
 

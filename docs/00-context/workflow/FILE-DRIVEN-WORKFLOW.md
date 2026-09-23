@@ -19,9 +19,9 @@ The researcher chooses the preparation tool. Validate the four JSON files, datab
 
 | Turn | Researcher command | Completion and next step |
 |---|---|---|
-| 1 | `$gen-coding-prompt docs/01-inception/use-cases/<UC-file>.md` | Validate prepared inputs; generate Draft Full A-F or RQ3 A-D; preserve actual START/END. Next: Turn 2. |
+| 1 | `$gen-coding-prompt docs/01-inception/use-cases/<UC-file>.md` | Validate prepared inputs; generate Draft Full A-F; preserve actual START/END. Next: Turn 2. |
 | 2 | `$measure-uc-workflow close-phase prompt_generation` | This invocation approves the Draft, pins approved bytes/checksum, closes prompt telemetry and creates/validates activation in the same turn. Next: Turn 3, without another approval or activation turn. |
-| 3 | `$gen-source-code docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md` | Generate first-pass source only; preserve source/hash/model/timing evidence; stop before audit/build/repair. For RQ3 use `<UC-ID>-rq3-coding-prompt.md`. Next: Turn 4. |
+| 3 | `$gen-source-code docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md` | Generate first-pass source only; preserve source/hash/model/timing evidence; stop before audit/build/repair. Next: Turn 4. |
 | 4 | `$measure-uc-workflow close-phase source_generation` | Close source telemetry and record completion. Next: Turn 5. |
 | 5 | `$audit-generation-metrics` (includes `$audit-flow-accuracy`) | Run permitted checks and bounded Docker observations; persist every frozen BR/flow result and first-pass evidence. Do not ask to approve audit results. If all pass, record repair unnecessary and go to Turn 7. If defects exist, go to Turn 6. If results are unknown, save partial results and request missing verdicts or bounded LLM measurement. |
 | 6 | `$bug-fixing-sub-prompt` | This invocation records repair authorization and starts bounded corrections immediately. Automatically verify BR/flow/runtime on final source and freeze terminal hash/status before returning. Next: Turn 7. |
@@ -34,7 +34,7 @@ For unknown flow results, accept attributed researcher verdicts directly into ca
 
 The `gates` JSON field records internal command steps. `record_command.py` records commands with actual turn IDs, timestamps and evidence hashes. Measure records its step after telemetry succeeds. Audit records its step after evidence is persisted. Repair authorization is recorded within Turn 6. Do not rewrite frozen configurations, baselines, assessments, activations or gate receipts.
 
-Preserve identical frozen BR/flow evaluation for Full and RQ3. RQ3 excludes E/F and BR expressions from generation context; use metadata/validators for baseline identity. Resolve frozen Figma evidence through the dataset skill and review mapping. Optional UI scoring never blocks any command. See [Full/RQ3 boundaries](FULL-RQ3-CONTRACT.md).
+Preserve frozen BR/flow evaluation for Full. Resolve frozen Figma evidence through the dataset skill and review mapping. Optional UI scoring never blocks any command. See [Full boundaries](FULL-CONTRACT.md).
 
 Capture only actual Prompt + first-pass Source + Repair execution intervals. Under `generation_execution_with_repair_audit_v2`, Repair includes its integrated BR/flow/runtime verification and final evidence/hash/status persistence before END. Standalone audit/runtime/follow-up observation contributes no generation execution seconds; close/report/export turns are excluded from workflow tokens. Each work turn has one semantic token label, matching any captured core execution; a repair's child audit remains `repair`. Keep phase-ledger/selection evidence and never fabricate missing counters/endpoints.
 

@@ -14,16 +14,15 @@ Configuration confirmation is supplied by the researcher's externally prepared J
 
 This project studies automated source-code generation from use-case specifications enriched with explicit Business Rules. Rules are expressed as OCL invariants, preconditions or postconditions when representable; remaining constraints stay in authoritative natural language.
 
-The method extends the two-phase method described by Dang Thi Thanh Truc across two experimental setups:
+The method extends the two-phase method described by Dang Thi Thanh Truc for the Full method:
 
-1. **Full method (RQ1/RQ2):** Uses the complete Prompt A-F template. Prompt A covers backend/API, Prompt B frontend UI, Prompt C frontend logic/API integration and Prompt D validation/error handling.
-2. **Ablation study (RQ3):** Uses only Prompts A-D, omitting Prompts E and F together, against the identical frozen evaluation baseline.
+**Full method (RQ1/RQ2):** Uses the complete Prompt A-F template. Prompt A covers backend/API, Prompt B frontend UI, Prompt C frontend logic/API integration and Prompt D validation/error handling.
 
-Both setups follow the two-phase method:
-- **Phase 1 - Generate Business Coding Prompt:** produce and approve the designated prompt artifact (`*-business-coding-prompt.md` for Full, `*-rq3-coding-prompt.md` for RQ3).
+Full follows the two-phase method:
+- **Phase 1 - Generate Business Coding Prompt:** produce and approve the designated prompt artifact (`*-business-coding-prompt.md`).
 - **Phase 2 - Generate Source Code:** implement the approved prompt starting from clean baseline, record first-pass evidence, assess every frozen BR, perform bounded repairs, and run Docker runtime observations.
 
-The [shared Full/RQ3 contract](docs/00-context/workflow/FULL-RQ3-CONTRACT.md) defines identical functional-flow coverage, gates, evaluation and provenance controls. Cumulative UCs extend the recorded predecessor within the configured pipeline; new experimental conditions use their documented baseline. RQ3 differs in permitted generation input (A-D without E/F), not in required Alternative/Exception Flows or the evidence standard used during repair verification and no-repair completion.
+The [Full contract](docs/00-context/workflow/FULL-CONTRACT.md) defines functional-flow coverage, gates, evaluation and provenance controls. Cumulative UCs extend the recorded predecessor within the configured pipeline; new experimental conditions use their documented baseline.
 
 ## Authoritative sources
 
@@ -83,7 +82,7 @@ The fifth input is the researcher-prepared MySQL database and `docs/00-context/e
 - Error envelope: `{ success: false, statusCode, message, timestamp, path }`.
 - Domain: users own accounts, bills and goals; accounts own transactions; categories classify transactions and goals.
 
-The [shared operational constitution](AGENTS.md#shared-operational-constitution) governs every skill and both variants, including testing, database mutations, secrets and destructive operations.
+The [shared operational constitution](AGENTS.md#shared-operational-constitution) governs every skill, including testing, database mutations, secrets and destructive operations.
 
 Implementation controls such as authentication, hashing, ownership, validation, secret handling, safe errors and transactions remain when required by BRs, APIs or the baseline. They are not treated as a separate experimental dimension.
 
@@ -106,9 +105,9 @@ finalsource/be                         generated NestJS source
 
 A run is complete only when:
 
-- the approved prompt has the configured structure: Prompts A-F with the exact frozen BR set for Full, or Prompts A-D with no Prompt E or F content for RQ3;
+- the approved prompt has the configured structure: Prompts A-F with the exact frozen BR set for Full;
 - initial generation telemetry is preserved before repair;
-- Full and RQ3 first-pass generation end before audit; the subsequent close command preserves telemetry, and the repair command supplies explicit authorization when needed;
+- Full first-pass generation ends before audit; the subsequent close command preserves telemetry, and the repair command supplies explicit authorization when needed;
 - every BR has one `met`, `unmet` or `not_evaluable` assessment with evidence;
 - every frozen flow has one `correct`, `incorrect` or `not_evaluable` assessment with evidence;
 - every evidenced defect has a bounded repair record or an explicit researcher decision;

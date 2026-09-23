@@ -3,7 +3,7 @@
   "gate_version": 5,
   "uc_id": "<UC-ID>",
   "run_id": "<RUN-ID>",
-  "prompt_variant": "full | rq3",
+  "prompt_variant": "full",
   "approved_prompt": {"path": "<approved prompt repo path>", "sha256": "sha256:<approved bytes checksum>"},
   "configuration_artifact": "docs/05-experiments/configurations/<CONFIG-ID>.json",
   "configuration_checksum": "sha256:<checksum>",

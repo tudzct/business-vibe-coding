@@ -9,7 +9,7 @@ Apply the [shared operational constitution](../../../AGENTS.md#shared-operationa
 
 Read the approved prompt, project context, baseline and `docs/00-context/engineering/TECHNICAL-STACK-RULES.md`. Inspect `finalsource/be/package.json` and its lockfile, then extend existing modules under `finalsource/be`.
 
-Resolve the configured variant first. During RQ3 first-pass generation, use only approved A-D and functional/UML/API/technical inputs; do not load the evaluation BR resource/OCL or recreate omitted E/F. Both variants implement all applicable Basic/Main, Alternative and Exception Flows. BR/flow audit and authorized repair subsequently use the full frozen evaluation baseline. See [shared contract](../../../docs/00-context/workflow/FULL-RQ3-CONTRACT.md).
+Implement all applicable Basic/Main, Alternative and Exception Flows. BR/flow audit and authorized repair subsequently use the full frozen evaluation baseline. See [shared contract](../../../docs/00-context/workflow/FULL-CONTRACT.md).
 
 Load only the references required by the active change areas:
 

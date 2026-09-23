@@ -2,10 +2,10 @@
 
 ## Phase 1 — Generate Business Coding Prompt
 
-Inputs: frozen UC/UML, applicable API/Figma sources, existing project context, prepared artifacts and the configured template under the existing Full/RQ3 input boundaries.
+Inputs: frozen UC/UML, applicable API/Figma sources, existing project context, prepared artifacts and the configured template under the existing Full input boundaries.
 
 1. Verify provenance and checksum of the UC projection.
-2. Resolve the configured variant and its permitted generation inputs.
+2. Resolve the configured Full template and its permitted generation inputs.
 3. Validate the existing Business Rule resource, BR/flow baselines and Canonical Run JSON prepared by the researcher's chosen tool before invocation. Missing or invalid inputs stop generation; no creation skill is mandatory and preflight never creates them.
 4. Produce Prompts A-D from functional/UI/API inputs, then assemble the Draft with the configured template and existing renderer where applicable.
 5. Stop for researcher resolution if an ambiguity changes rule semantics, public API, ownership, schema or destructive behavior.

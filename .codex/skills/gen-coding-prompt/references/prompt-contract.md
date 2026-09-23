@@ -7,14 +7,6 @@
 - D: validation, loading, exceptions and recovery.
 - E-F: included from the configured Full template.
 
-## RQ3 ablation variant (Prompts A-D)
-- A: backend endpoint, DTO, domain logic and API response envelope derived directly from functional specification and UML (no Prompt E references).
-- B: source-backed UI and visual states.
-- C: typed client integration, state and success flow (no Prompt E references).
-- D: validation, loading, exceptions and recovery derived from all applicable Basic/Main, Alternative and Exception Flows and functional/UI/API specifications.
-- E: omitted.
-- F: omitted.
-
 Raw UC success fields become the domain payload in the standard success envelope; UC error status/message use the standard error envelope. This transport normalization must not change business meaning.
 
-The configured DBML is shared technical input in A/D for both Full and RQ3. Apply the [shared operational constitution](../../../../AGENTS.md#shared-operational-constitution) and existing database preflight.
+The configured DBML is shared technical input in A/D for Full. Apply the [shared operational constitution](../../../../AGENTS.md#shared-operational-constitution) and existing database preflight.

@@ -97,7 +97,7 @@ If a core interval is open, record its actual END before waiting, preserve parti
 - AI may read DBML/migrations and map entities/queries to exact existing tables, keys and types. It must not edit migration files, CLI schema infrastructure, DBML or live schema during generation/audit/repair.
 - Allow authorized business SELECT/INSERT/UPDATE/DELETE and transactions. Never seed, truncate, reset or erase data just to make an audit pass.
 - Keep `synchronize: false` and application `migrationsRun: false`. Docker migration execution belongs only to researcher setup outside runs.
-- A later UC may retain the same migration head if no schema change is needed. Full/RQ3 for the same UC use matching migration history, DBML hash, schema fingerprint and the agreed starting-data protocol on independent runtime state.
+- A later UC may retain the same migration head if no schema change is needed. Matched Full runs for the same UC use matching migration history, DBML hash, schema fingerprint and the agreed starting-data protocol on independent runtime state.
 - Reset a volume only on explicit researcher instruction. Source baseline restoration preserves database infrastructure and never resets MySQL.
 - Fingerprinting is detection, not privilege enforcement. Do not claim DDL is technically impossible without checking account grants.
 

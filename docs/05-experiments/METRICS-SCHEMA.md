@@ -28,7 +28,7 @@ Researcher repair commands record `gate: repair_decision`, outcome `authorized`,
 
 The canonical run JSON records:
 
-- configuration, UC, prompt_variant (`full` or `rq3`), model, replicate, order, wall-clock time and token use;
+- configuration, UC, prompt_variant (`full`), model, replicate, order, wall-clock time and token use;
 - frozen final-source checksum;
 - initial and final assessment for every frozen BR;
 - each BR status: `met`, `unmet` or `not_evaluable`, with evidence and rationale;
@@ -80,4 +80,4 @@ Timestamp endpoints are captured live by the shared helper with ISO/epoch, UC/ru
 
 One turn is indivisible. After the prior response completes, the researcher invokes the appropriate Measure command to close prompt/source telemetry or finalize the workflow. The script rejects current/incomplete selections, missing telemetry, duplicate turns, unexplained gaps, identity conflicts and changes to committed rows. Whole-file session hashes are observation-specific; completed-turn prefix hashes remain stable.
 
-Work may reach terminal `run_status` before `metrics.status=finalized`. The one final workflow measurement turn closes an open Repair bucket (or persists a validated skipped bucket), recomputes and validates all aggregates, records the internal Repair-close and Final transitions in order, and commits finalized canonical telemetry atomically. Repair automatically persists terminal verification and source identity before this command; no separate Repair-close or final-audit turn is required. Explicit refusal and automatic no-defect decisions use their actual `repair_skip_reason`; they do not fabricate successful source results. Full and RQ3 both hold after first generation, require source measurement and first-pass BR assessment, and require a recorded authorization from the explicit repair command before correction.
+Work may reach terminal `run_status` before `metrics.status=finalized`. The one final workflow measurement turn closes an open Repair bucket (or persists a validated skipped bucket), recomputes and validates all aggregates, records the internal Repair-close and Final transitions in order, and commits finalized canonical telemetry atomically. Repair automatically persists terminal verification and source identity before this command; no separate Repair-close or final-audit turn is required. Explicit refusal and automatic no-defect decisions use their actual `repair_skip_reason`; they do not fabricate successful source results. Full runs hold after first generation, require source measurement and first-pass BR assessment, and require a recorded authorization from the explicit repair command before correction.
