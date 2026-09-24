@@ -53,7 +53,7 @@ def main():
         ])
     out.extend([
         "Preserve every Rule ID, OCL expression and authoritative natural-language constraint exactly.", "",
-        "Prompts A and D must reference applicable Rule IDs without redefining them. Backend/database enforcement remains authoritative across trust boundaries; frontend enforcement is an additional user-experience control.", "",
+        "Trace every Rule ID to its implementing controls without redefining the rule. Backend/database enforcement remains authoritative across trust boundaries; frontend enforcement is an additional user-experience control.", "",
         "Do not invent missing thresholds, statuses, ownership, schema, enforcement layers or failure behavior. Record unresolved source information and stop for the researcher when it changes implementation.",
     ])
     print("\n".join(out).rstrip())

@@ -32,7 +32,7 @@ Implement the main logic in `[BUSINESS LOGIC LOCATION]`.
 
 Implement the backend flow for `[USE CASE / API ID]`.
 
-Enforce all backend and database rules specified in Prompt E, including applicable normalization, validation, authorization, persistence, transaction, concurrency, and sensitive-data handling.
+Implement backend and database behavior specified by the functional use-case flows, UML model, applicable API contract, and configured database contract, including applicable normalization, validation, authorization, persistence, transaction, concurrency, and sensitive-data handling.
 
 ### Success Response
 
@@ -143,7 +143,7 @@ If the API returns `[STATUS / ERROR CONDITION]`:
 
 ### Client-Side Validation
 
-Before calling the API, enforce every client-applicable validation rule in Prompt E for `[USE CASE / API ID]`.
+Before calling the API, enforce client-side validation specified by the functional use-case flows and applicable UI/API contracts for `[USE CASE / API ID]`.
 
 Display validation messages at `[VALIDATION MESSAGE LOCATION]`.
 
@@ -169,7 +169,7 @@ One implementation control may enforce multiple rules when appropriate.
 
 Preserve every Rule ID, OCL expression and authoritative natural-language constraint exactly.
 
-Prompts A and D must reference applicable Rule IDs without redefining them. Backend/database enforcement remains authoritative across trust boundaries; frontend enforcement is an additional user-experience control.
+Trace every Rule ID to its implementing controls without redefining the rule. Backend/database enforcement remains authoritative across trust boundaries; frontend enforcement is an additional user-experience control.
 
 Do not invent missing thresholds, statuses, ownership, schema, enforcement layers or failure behavior.
 
