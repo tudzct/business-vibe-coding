@@ -21,7 +21,7 @@ Use paired double quotes around a path or tab containing spaces. Quoting groups 
 
 ```text
 $export-experiment-excel uc-01 results.xlsx Results
-$export-experiment-excel uc-01 "C:\Research Data\results.xlsx" "Full Results"
+$export-experiment-excel uc-01 "C:\Research Data\results.xlsx" "Summary Results"
 $export-experiment-excel uc-01 https://docs.google.com/spreadsheets/d/1bxVKta6-jkRyN1FN4rknT8ACP9ruVhn4gLBo-g6xThY/edit Results
 ```
 

@@ -2,12 +2,11 @@
 
 Input: one frozen Sheet-derived use-case Markdown file.
 
+Pre-existing Business Rule resources, BR/flow baselines and applicable Figma evidence are validated inputs, not outputs of prompt generation.
+
 Outputs:
 
-- optional UI reconstruction record when applicable;
-- `docs/02-construction/business-rules/<UC-ID>-business-rules.{json,md}`;
-- `docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json`;
-- `docs/02-construction/implementation/<UC-ID>/flow-baseline.json`;
-- Full: `docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md`.
+- `docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md` as the Draft;
+- live prompt timing evidence under the active run.
 
 Every output carries enough provenance and checksums for Phase 2 without relying on chat history.

@@ -1,4 +1,4 @@
-# Full offline Figma capture specification
+# Complete offline Figma capture specification
 
 A node may be marked `complete` only when the dataset contains enough data for code generation and audit runs to avoid calling Figma MCP again:
 

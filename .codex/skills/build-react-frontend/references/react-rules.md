@@ -15,7 +15,7 @@
 - Use components through JSX; never call component functions directly.
 - Use an effect only to synchronize with an external system. Derive values during render and handle user actions in event handlers.
 - Declare complete hook dependency arrays. Do not silence `react-hooks/exhaustive-deps`; restructure unstable values or callbacks.
-- Prefer controlled form inputs when Prompt D requires field-level state/errors. Prevent duplicate submissions explicitly.
+- Prefer controlled form inputs when [the approved prompt](../../../../docs/02-construction/coding-prompts/%3CUC-ID%3E-business-coding-prompt.md) requires field-level state/errors. Prevent duplicate submissions explicitly.
 
 ## State and UI behavior
 

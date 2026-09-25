@@ -10,7 +10,6 @@ from pathlib import Path
 EFFORTS = {"none", "low", "medium", "high", "xhigh", "max"}
 MODES = {"standard", "pro"}
 PROTOCOLS = {"fixed", "matched", "cross"}
-PROMPT_VARIANTS = {"full"}
 SCHEMA_VERSION = "2.4"
 TIMING_METHOD = "system_timestamp_delta"
 RUNTIME_FLOW_RUBRIC = "completion-critical-flow-runtime-v2"
@@ -164,9 +163,9 @@ def validate(path):
         orders.add(order)
         replicate = positive(run.get("replicate_index"), prefix + ".replicate_index")
         validate_model(run, prefix)
-        variant = run.get("prompt_variant")
-        if variant not in PROMPT_VARIANTS:
-            raise ValueError(f"{prefix}.prompt_variant must be one of {sorted(PROMPT_VARIANTS)}")
+        variant = identifier(run.get("prompt_variant"), prefix + ".prompt_variant")
+        if run["prompt_variant"] != variant:
+            raise ValueError(f"{prefix}.prompt_variant must be a canonical identifier")
         key = (uc_id, variant, run["requested_model_id"], run["requested_reasoning_effort"], run["requested_reasoning_mode"], replicate)
         if key in assignments:
             raise ValueError(f"duplicate UC/variant/model/replicate assignment: {key}")
@@ -174,7 +173,7 @@ def validate(path):
         text(run.get("auditor_assignment"), prefix + ".auditor_assignment")
         if "flow_audit_rubric" in run and run["flow_audit_rubric"] != rubric:
             raise ValueError("run-level rubric cannot override comparison-group rubric")
-    # One evidence standard across Full models, including other configurations in the group.
+    # One evidence standard across matched runs, including other configurations in the group.
     for peer_path in path.parent.glob("*.json"):
         if peer_path.resolve() == path.resolve():
             continue

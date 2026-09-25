@@ -1,6 +1,6 @@
 ---
 artifact_type: business-coding-prompt
-prompt_variant: full
+prompt_variant: <value from pinned configuration>
 status: Draft | Approved
 uc_id: <UC-ID>
 uc_name: <Use case name>

@@ -1,6 +1,6 @@
 {
   "run_id": "<run-id>",
-  "prompt_variant": "full",
+  "prompt_variant": "<value from pinned configuration>",
   "coding_prompt": null,
   "experiment_configuration": {
     "configuration_id": "<CONFIG-ID>",

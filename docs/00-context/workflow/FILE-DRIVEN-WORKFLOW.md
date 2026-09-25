@@ -19,7 +19,7 @@ The researcher chooses the preparation tool. Validate the four JSON files, datab
 
 | Turn | Researcher command | Completion and next step |
 |---|---|---|
-| 1 | `$gen-coding-prompt docs/01-inception/use-cases/<UC-file>.md` | Validate prepared inputs; generate Draft Full A-F; preserve actual START/END. Next: Turn 2. |
+| 1 | `$gen-coding-prompt docs/01-inception/use-cases/<UC-file>.md` | Validate prepared inputs; generate the Draft from [the configured coding-prompt template](../../../templates/construction/coding-prompt.template.md); preserve actual START/END. Next: Turn 2. |
 | 2 | `$measure-uc-workflow close-phase prompt_generation` | This invocation approves the Draft, pins approved bytes/checksum, closes prompt telemetry and creates/validates activation in the same turn. Next: Turn 3, without another approval or activation turn. |
 | 3 | `$gen-source-code docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md` | Generate first-pass source only; preserve source/hash/model/timing evidence; stop before audit/build/repair. Next: Turn 4. |
 | 4 | `$measure-uc-workflow close-phase source_generation` | Close source telemetry and record completion. Next: Turn 5. |
@@ -34,10 +34,10 @@ For unknown flow results, accept attributed researcher verdicts directly into ca
 
 The `gates` JSON field records internal command steps. `record_command.py` records commands with actual turn IDs, timestamps and evidence hashes. Measure records its step after telemetry succeeds. Audit records its step after evidence is persisted. Repair authorization is recorded within Turn 6. Do not rewrite frozen configurations, baselines, assessments, activations or gate receipts.
 
-Preserve frozen BR/flow evaluation for Full. Resolve frozen Figma evidence through the dataset skill and review mapping. Optional UI scoring never blocks any command. See [Full boundaries](FULL-CONTRACT.md).
+Preserve frozen BR/flow evaluation for the current run. Resolve frozen Figma evidence through the dataset skill and review mapping. Optional UI scoring never blocks any command. See [workflow boundaries](WORKFLOW-CONTRACT.md).
 
 Capture only actual Prompt + first-pass Source + Repair execution intervals. Under `generation_execution_with_repair_audit_v2`, Repair includes its integrated BR/flow/runtime verification and final evidence/hash/status persistence before END. Standalone audit/runtime/follow-up observation contributes no generation execution seconds; close/report/export turns are excluded from workflow tokens. Each work turn has one semantic token label, matching any captured core execution; a repair's child audit remains `repair`. Keep phase-ledger/selection evidence and never fabricate missing counters/endpoints.
 
 Preserve cumulative source provenance; do not reset between cumulative UCs. API envelopes and required application controls remain. Material business/API ambiguity requires researcher resolution; database structure is immutable within each run. Researcher setup may add migrations between runs when required. Read pinned DBML; perform authorized business DML only. No in-run DDL, migration or schema sync. A missing/conflicting schema element blocks work; close any open interval and preserve partial evidence. Changed baseline requires researcher setup and a new configuration/run. Within runs, Docker rebuilds use `--no-deps backend frontend` and never execute the migration service. Docker Compose v2 is the only runtime; missing daemon is BLOCKED. Never create or run tests/test cases or store secrets in evidence.
 
-Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt, or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.
+Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md), or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.

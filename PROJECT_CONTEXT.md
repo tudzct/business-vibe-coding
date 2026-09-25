@@ -14,15 +14,15 @@ Configuration confirmation is supplied by the researcher's externally prepared J
 
 This project studies automated source-code generation from use-case specifications enriched with explicit Business Rules. Rules are expressed as OCL invariants, preconditions or postconditions when representable; remaining constraints stay in authoritative natural language.
 
-The method extends the two-phase method described by Dang Thi Thanh Truc for the Full method:
+The configured method extends the two-phase method described by Dang Thi Thanh Truc:
 
-**Full method (RQ1/RQ2):** Uses the complete Prompt A-F template. Prompt A covers backend/API, Prompt B frontend UI, Prompt C frontend logic/API integration and Prompt D validation/error handling.
+[The configured coding-prompt template](templates/construction/coding-prompt.template.md) defines all prompt structure and section responsibilities.
 
-Full follows the two-phase method:
+The method has two phases:
 - **Phase 1 - Generate Business Coding Prompt:** produce and approve the designated prompt artifact (`*-business-coding-prompt.md`).
-- **Phase 2 - Generate Source Code:** implement the approved prompt starting from clean baseline, record first-pass evidence, assess every frozen BR, perform bounded repairs, and run Docker runtime observations.
+- **Phase 2 - Generate Source Code:** implement [the approved prompt](docs/02-construction/coding-prompts/%3CUC-ID%3E-business-coding-prompt.md) starting from clean baseline, record first-pass evidence, assess every frozen BR, perform bounded repairs, and run Docker runtime observations.
 
-The [Full contract](docs/00-context/workflow/FULL-CONTRACT.md) defines functional-flow coverage, gates, evaluation and provenance controls. Cumulative UCs extend the recorded predecessor within the configured pipeline; new experimental conditions use their documented baseline.
+The [workflow contract](docs/00-context/workflow/WORKFLOW-CONTRACT.md) defines functional-flow coverage, gates, evaluation and provenance controls. Cumulative UCs extend the recorded predecessor within the configured pipeline; new experimental conditions use their documented baseline.
 
 ## Authoritative sources
 
@@ -93,7 +93,7 @@ Implementation controls such as authentication, hashing, ownership, validation, 
 docs/00-context/business-rules/        OCL utilities and business-method guidance
 docs/01-inception/use-cases/           frozen Sheet-derived UC/UML/BR specifications
 docs/02-construction/business-rules/   per-UC exact Business Rule resources
-docs/02-construction/coding-prompts/   approved Prompt A-F artifacts
+docs/02-construction/coding-prompts/   approved coding-prompt artifacts (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md)
 docs/02-construction/implementation/   BR baseline, schema, run and repair records
 docs/05-experiments/                   canonical run JSON and rendered views
 templates/                             artifact contracts
@@ -105,9 +105,9 @@ finalsource/be                         generated NestJS source
 
 A run is complete only when:
 
-- the approved prompt has the configured structure: Prompts A-F with the exact frozen BR set for Full;
+- the approved prompt follows the configured coding-prompt template;
 - initial generation telemetry is preserved before repair;
-- Full first-pass generation ends before audit; the subsequent close command preserves telemetry, and the repair command supplies explicit authorization when needed;
+- first-pass generation ends before audit; the subsequent close command preserves telemetry, and the repair command supplies explicit authorization when needed;
 - every BR has one `met`, `unmet` or `not_evaluable` assessment with evidence;
 - every frozen flow has one `correct`, `incorrect` or `not_evaluable` assessment with evidence;
 - every evidenced defect has a bounded repair record or an explicit researcher decision;
@@ -122,4 +122,4 @@ Telemetry uses prompt/source/repair buckets within the two phases and follows [t
 
 Missing/null UI scores never block audit, measurements, reports, export or completion. After finalization, `$export-experiment-excel <UC-ID> <LINK_OR_FILEPATH> <TAB_NAME>` is a separate reporting operation that copies stored canonical values into a new workbook while preserving formulas/protected/manual content.
 
-Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt, or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.
+Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md), or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.

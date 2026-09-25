@@ -13,4 +13,4 @@ Prompt close approves/pins the Draft before Measure; Measure automatically recor
 
 After researcher or LLM follow-up saves, `continue_after_flow.py` reports measurement pending, waits for a repair request when defects remain, or records all-passing skip. It never grants new automatic repair authorization. Never reopen terminal runs. Optional activation/UI evidence is not a prerequisite.
 
-Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt, or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.
+Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md), or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.

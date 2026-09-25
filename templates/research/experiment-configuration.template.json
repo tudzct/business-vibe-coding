@@ -32,7 +32,7 @@
   "runs": [{
     "run_id": "<unique RUN-ID>",
     "uc_id": "<UC-ID>",
-    "prompt_variant": "full",
+    "prompt_variant": "<configured-variant>",
     "requested_label": "<model label>",
     "requested_model_id": "<exact model ID>",
     "requested_reasoning_effort": "none | low | medium | high | xhigh | max",

@@ -16,14 +16,14 @@ When a UC contains a Figma reference, resolve it through `resolve-figma-design-d
 
 The research method has exactly two phases:
 
-1. **Phase 1 - Generate the business coding prompt.** Read one frozen UC, its UML model and applicable API/Figma sources under the existing input boundaries in `docs/00-context/workflow/FULL-CONTRACT.md`. Source locations are recorded in `docs/00-context/sources/CONNECTED-SOURCES.md`. Validate the prepared inputs and create a Draft using the configured template: Prompts A-F for Full.
-2. **Phase 2 - Generate source code.** After the prompt-close command approves the Draft, implement the approved prompt in `finalsource/fe` and/or `finalsource/be`. Record first-pass evidence, assess every frozen BR from the baseline, create bounded bug-fixing sub-prompts for evidenced errors, rebuild/run with Docker Compose and freeze the final source hash.
+1. **Phase 1 - Generate the business coding prompt.** Read one frozen UC, its UML model and applicable API/Figma sources under the existing input boundaries in `docs/00-context/workflow/WORKFLOW-CONTRACT.md`. Source locations are recorded in `docs/00-context/sources/CONNECTED-SOURCES.md`. Validate the prepared inputs and create the configured prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md) as a Draft from its template. [The configured coding-prompt template](templates/construction/coding-prompt.template.md) defines all prompt structure and section responsibilities.
+2. **Phase 2 - Generate source code.** After the prompt-close command approves the Draft, implement [the approved prompt](docs/02-construction/coding-prompts/%3CUC-ID%3E-business-coding-prompt.md) in `finalsource/fe` and/or `finalsource/be`. Record first-pass evidence, assess every frozen BR from the baseline, create bounded bug-fixing sub-prompts for evidenced errors, rebuild/run with Docker Compose and freeze the final source hash.
 
-Do not use a separate dimension to change Business Rule acceptance. Full runs evaluate against the frozen BR baseline; flow accuracy is a supplementary frozen measurement. The researcher may inspect UI by eye or skip scoring. Missing/null `ui_accuracy` or UI scores never block BR/flow audit, telemetry, export or completion.
+Do not use a separate dimension to change Business Rule acceptance. The current run evaluates against the frozen BR baseline; flow accuracy is a supplementary frozen measurement. The researcher may inspect UI by eye or skip scoring. Missing/null `ui_accuracy` or UI scores never block BR/flow audit, telemetry, export or completion.
 
 Before Phase 1, resolve every BR and every explicit Basic/Main, Alternative and Exception Flow associated with the UC. Persist `business-rule-baseline.json` and `flow-baseline.json`; do not select, omit or add rules/flows after implementation is visible.
 
-Before Phase 2 source mutation, validate the pinned configuration, approved prompt and closed prompt telemetry. `run-activation.json` is optional and validated when present; no activation file or turn is required.
+Before Phase 2 source mutation, validate the pinned configuration, approved prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md) and closed prompt telemetry. `run-activation.json` is optional and validated when present; no activation file or turn is required.
 
 ## Command and measurement boundaries
 
@@ -65,4 +65,4 @@ Never store credentials, access tokens, passwords, full account numbers or sensi
 
 Keep secrets out of client bundles, `.env.example`, public API documentation and persisted tool output. Never commit `.env` or raw sensitive logs. Use sanitized evidence. Destructive database resets, volume/image cleanup and destructive migrations require an explicit researcher request outside an active run. Preserve cumulative data and frozen evidence.
 
-Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt, or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.
+Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md), or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.

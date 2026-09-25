@@ -25,4 +25,4 @@ Generation additionally requires the fifth database input. Configuration require
 
 The four JSON inputs and the database input are mandatory for generation. `run-activation.json` is validated when present and created by prompt close when missing, as described below; it is never bootstrapped by source/audit/repair. Model/replicate/order, Figma pin and rubric come from the Confirmed configuration. Preserve immutable existing receipts/configurations.
 
-Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt, or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.
+Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md), or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.

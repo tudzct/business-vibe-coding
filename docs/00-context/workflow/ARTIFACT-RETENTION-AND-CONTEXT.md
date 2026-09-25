@@ -5,7 +5,7 @@ Retain separately:
 - immutable Sheet-derived UC/UML/BR projections;
 - a source-checksum normalization receipt only when raw checkout bytes differ solely by line endings;
 - frozen Business Rule resource and baseline receipt;
-- approved prompt artifact: Prompts A-F for Full;
+- approved configured prompt artifact (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md);
 - optional run activation, model/time/token metadata and immutable first-pass assessment;
 - each repair sub-prompt and reassessment;
 - final per-BR assessment and final-source checksum.

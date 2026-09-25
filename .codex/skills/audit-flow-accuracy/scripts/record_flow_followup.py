@@ -13,7 +13,7 @@ from flow_summary import RESULT_POLICY, current_assessment, fingerprint, refresh
 
 
 def prepare(run, folder, payload=None):
-    # Full audit validation is read-only here, including the prior immutable assessments.
+    # Audit validation is read-only here, including the prior immutable assessments.
     sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-generation-metrics/scripts"))
     from calculate_metrics import validate_flow
     from score_flow_accuracy import calculate

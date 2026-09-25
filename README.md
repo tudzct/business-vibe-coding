@@ -5,10 +5,10 @@ Business vibe coding is a research workbench for generating source code from use
 ## Method
 
 ```text
-Phase 1: UC/UML + applicable API/Figma + prepared inputs + configured template
-         -> approved Business Coding Prompt A-F
+Phase 1: UC/UML + applicable API/Figma + prepared inputs + configured template (templates/construction/coding-prompt.template.md)
+         -> approved Business Coding Prompt
 
-Phase 2: approved prompt + codebase + project/database rules
+Phase 2: approved prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md) + codebase + project/database rules
          -> source -> evidence-based repair loop -> runnable final source
 ```
 
@@ -74,4 +74,4 @@ Do not create or run tests or test cases. The workflow may inspect source/config
 
 JWT, bcrypt, DTO validation, ownership checks, secret handling, safe errors and database transactions remain when required by the UC, Business Rules, API contract or technical baseline. They are ordinary business/technical implementation requirements.
 
-Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt, or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.
+Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md), or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.

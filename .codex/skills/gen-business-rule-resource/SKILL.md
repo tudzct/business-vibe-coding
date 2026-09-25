@@ -16,4 +16,3 @@ Read `PROJECT_CONTEXT.md`, the selected frozen UC, `docs/00-context/business-rul
 3. Classify only the observable representation (`ocl_invariant`, `ocl_precondition`, `ocl_postcondition`, `natural_language`). Record context, enforcement layer, failure behavior and traceability only when sources support them.
 4. Put missing information in `unresolved_items`. Stop for the researcher when it changes semantics, public API, ownership, schema or destructive behavior.
 5. Write `docs/02-construction/business-rules/<UC-ID>-business-rules.{json,md}` and freeze `docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json` with ordered BR IDs and checksums.
-6. Run `scripts/render_prompt_e.py <resource.json>` to produce the deterministic Prompt E projection.

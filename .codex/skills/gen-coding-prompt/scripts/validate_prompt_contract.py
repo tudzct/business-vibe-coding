@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read-only validation of Full prompt identity, structure and activation links."""
+"""Read-only validation of prompt identity, structure and activation links."""
 
 import argparse
 import json
@@ -10,12 +10,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow/scripts"))
 from metrics_contract import ROOT, digest, read_json, require, writable, epoch
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "run-business-vibe-coding/scripts"))
-from validate_experiment_configuration import validate as validate_configuration
+from validate_experiment_configuration import validate as validate_configuration, identifier
 
 
 def normalize_variant(value):
-    require(value in {"full"}, "unsupported prompt variant")
-    return value
+    normalized = identifier(value, "prompt_variant")
+    require(value == normalized, "prompt_variant must be a canonical identifier")
+    return normalized
 
 
 def prompt_metadata(path):
@@ -51,6 +52,15 @@ def prompt_metadata(path):
     return metadata, body, headings
 
 
+def configured_headings():
+    template = writable(ROOT / "templates/construction/coding-prompt.template.md")
+    require(template.is_file(), "configured coding prompt template missing")
+    _, _, headings = prompt_metadata(template)
+    require(headings and len(headings) == len(set(headings)),
+            "configured coding prompt template has invalid prompt sections")
+    return headings
+
+
 def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow_draft=False):
     configuration, prompt = writable(configuration), writable(prompt)
     config = validate_configuration(configuration)
@@ -62,14 +72,14 @@ def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow
     require(meta.get("status") in ({"Draft", "Approved"} if allow_draft else {"Approved"}), "prompt approval status mismatch")
     actual = normalize_variant(meta.get("prompt_variant"))
     require(actual == variant, "configuration/prompt variant mismatch")
-    require(headings == list("ABCDEF"), "prompt sections must match configured variant exactly")
+    require(headings == configured_headings(), "prompt sections must match configured template exactly")
     require(prompt.name.endswith("-business-coding-prompt.md"), "prompt filename/variant mismatch")
     uc = next(u for u in config["use_cases"] if u["uc_id"] == uc_id)
     baseline = read_json(writable(ROOT / uc["business_rule_baseline"]))
     require(baseline.get("status") == "Frozen" and baseline.get("uc_id") == uc_id, "BR baseline identity mismatch")
     require(meta.get("source_use_case") == baseline.get("use_case_path"), "prompt source UC mismatch")
-    require(meta.get("business_rule_baseline") == uc["business_rule_baseline"], "Full BR baseline reference mismatch")
-    require(meta.get("business_rule_resource") == baseline.get("business_rule_resource_path"), "Full BR resource reference mismatch")
+    require(meta.get("business_rule_baseline") == uc["business_rule_baseline"], "BR baseline reference mismatch")
+    require(meta.get("business_rule_resource") == baseline.get("business_rule_resource_path"), "BR resource reference mismatch")
     reference = {"path": prompt.relative_to(ROOT).as_posix(), "sha256": digest(prompt.read_bytes())}
     if activation is not None:
         receipt = read_json(writable(activation))

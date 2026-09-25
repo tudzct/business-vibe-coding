@@ -29,22 +29,17 @@ flowchart LR
 
 Read [FILE-DRIVEN-WORKFLOW.md](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md). The researcher prepares Confirmed configuration, frozen BR baseline, frozen flow baseline and Draft Canonical Run JSON before generation, plus the per-run database baseline and its configuration-pinned DBML. Frozen UC/UML/API/Figma/resource/template dependencies and database pins must validate read-only. Generation never creates missing inputs.
 
-Generate Draft Full A-F with complete functional-flow coverage and the configured input boundaries. Capture actual prompt START/END and return the prompt-close command. That subsequent command approves and pins the Draft and closes telemetry, without another approval or activation turn.
+Generate the configured prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md) as a Draft with complete functional-flow coverage and the configured input boundaries. Capture actual prompt START/END and return the prompt-close command. That subsequent command approves and pins the Draft and closes telemetry, without another approval or activation turn.
 
 ### Phase 2 - Generate Source Code
 
-Validate pinned configuration/approved prompt/closed prompt telemetry and cumulative source provenance. Optional activation is validated when present. Generate only first-pass source, preserve immutable hash/model/timing evidence, then stop before audit. The source-close command precedes directly requested BR/flow audit.
+Validate pinned configuration/approved prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md)/closed prompt telemetry and cumulative source provenance. Optional activation is validated when present. Generate only first-pass source, preserve immutable hash/model/timing evidence, then stop before audit. The source-close command precedes directly requested BR/flow audit.
 
 Audit persists every frozen result and source-linked evidence. All-passing unchanged-source audit records repair unnecessary. Unknown verdicts are saved as partial progress and completed by attributed researcher results or requested bounded LLM measurement. Neither audit nor follow-up automatically repairs source. The subsequent repair command supplies authorization, executes bounded corrections and automatically verifies final BR/flow/runtime evidence before freezing terminal hash/status. The next `finalize-workflow` command closes or skips Repair and finalizes telemetry atomically. Optional export runs in a separate subsequent turn.
 
 ## Prompt contract
 
-| Prompt | Responsibility |
-| --- | --- |
-| A | Backend endpoint, business logic, server validation and errors |
-| B | Frontend UI from Figma |
-| C | Frontend state, API integration and success flow |
-| D | Loading, client validation and API error behavior |
+[The configured coding-prompt template](templates/construction/coding-prompt.template.md) defines all prompt structure and section responsibilities.
 
 ## Evidence and metrics
 
@@ -72,4 +67,4 @@ Each command authorizes its operation without further human gate confirmations. 
 
 The research currently does not create or run tests. Source inspection, validators, lint, typecheck, builds, container health and bounded runtime observation are permitted.
 
-Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt, or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.
+Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md), or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.
