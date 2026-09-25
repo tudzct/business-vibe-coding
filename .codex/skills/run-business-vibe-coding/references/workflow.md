@@ -3,7 +3,7 @@
 | Phase | Required input | Output | Researcher action |
 |---|---|---|---|
 | 1. Prompt generation | frozen UC/UML/BR/flows + existing Confirmed JSON, BR/flow baselines and Draft Canonical Run JSON + pinned Figma dataset + per-run database/DBML | read-only validate prepared inputs; generate the Draft from [the configured coding-prompt template](../../../../templates/construction/coding-prompt.template.md) in one work turn | invoke prompt telemetry close, which approves/pins the Draft and creates/validates activation |
-| 2. Source generation | approved prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md) + closed prompt telemetry + pinned configuration + baseline source + per-run database/DBML | first-pass source + initial/final BR/flow audit + authorized repairs if needed + final hash | invoke source close, audit, repair if needed, and finalize in separate turns |
+| 2. Source generation | [approved prompt](../../../../docs/02-construction/coding-prompts/%3CUC-ID%3E-business-coding-prompt.md) + closed prompt telemetry + pinned configuration + baseline source + per-run database/DBML | first-pass source + initial/final BR/flow audit + authorized repairs if needed + final hash | invoke source close, audit, repair if needed, and finalize in separate turns |
 
 Commands:
 

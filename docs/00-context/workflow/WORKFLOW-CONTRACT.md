@@ -1,6 +1,6 @@
 # Workflow contract
 
-The configured method uses the configured prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md). [The configured coding-prompt template](../../../templates/construction/coding-prompt.template.md) defines all prompt structure and section responsibilities. Preserve all functional Basic/Main, Alternative and Exception Flows, required technical controls, frozen BR/flow evaluation baseline, audit rubric, gate sequence and telemetry rules.
+The configured method uses [the configured prompt](../../../docs/02-construction/coding-prompts/%3CUC-ID%3E-business-coding-prompt.md). [The configured coding-prompt template](../../../templates/construction/coding-prompt.template.md) defines all prompt structure and section responsibilities. Preserve all functional Basic/Main, Alternative and Exception Flows, required technical controls, frozen BR/flow evaluation baseline, audit rubric, gate sequence and telemetry rules.
 
 ## Input boundaries
 
@@ -9,18 +9,18 @@ The current run receives the researcher-prepared per-run database baseline throu
 | Operation | Configured method |
 |---|---|
 | Evaluation preparation | Freeze all BRs and flows before generation |
-| Prompt generation | Functional/UML/UI/API sources, configured template (templates/construction/coding-prompt.template.md) and its permitted inputs |
-| First-pass source | Approved prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md) from the configured template (templates/construction/coding-prompt.template.md) and its permitted inputs |
+| Prompt generation | Functional/UML/UI/API sources, configured template and its permitted inputs |
+| First-pass source | Approved prompt from the configured template and its permitted inputs |
 | First-pass audit / automatic repair verification | Every frozen BR and flow, configured rubric |
 | Authorized repair | One evidenced defect per bounded sub-prompt |
 
-Map every frozen flow and terminal clause to the applicable sections defined by the configured template (templates/construction/coding-prompt.template.md) before approval. This is a traceability check, not a new flow denominator. Required JWT/hash/ownership/validation and other technical controls remain where the permitted functional/API/technical sources require them.
+Map every frozen flow and terminal clause to the applicable sections defined by the configured template before approval. This is a traceability check, not a new flow denominator. Required JWT/hash/ownership/validation and other technical controls remain where the permitted functional/API/technical sources require them.
 
 ## Identity
 
-Prompt metadata requires `prompt_variant` to match the pinned configuration; the canonical run and activation use that same value. Validate the exact heading structure, filename and approved prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md) checksum.
+Prompt metadata requires `prompt_variant` to match the pinned configuration; the canonical run and activation use that same value. Validate the exact heading structure, filename and approved prompt checksum.
 
-`gen-coding-prompt/scripts/validate_prompt_contract.py` validates the configured UC/run, approved status (or `--allow-draft`), source UC, filename, the prompt headings defined by the configured template (templates/construction/coding-prompt.template.md), BR reference boundaries and optional activation checksum. It is read-only. It does not prove semantic flow coverage.
+`gen-coding-prompt/scripts/validate_prompt_contract.py` validates the configured UC/run, approved status (or `--allow-draft`), source UC, filename, the prompt headings defined by the configured template, BR reference boundaries and optional activation checksum. It is read-only. It does not prove semantic flow coverage.
 
 At `$measure-uc-workflow close-phase prompt_generation`, approve the Draft and pin canonical `coding_prompt: {path, sha256}` and configured variant. Keep a run-local approved snapshot if the common prompt path will be reused. Optional activation receipts remain immutable and are validated when present; no activation preparation or turn is mandatory.
 
@@ -38,4 +38,4 @@ Do not restore between cumulative UCs. A new pipeline/model/replicate condition 
 
 Prompt/source/repair remain telemetry buckets in two phases. Audit, runtime, approval and finalization do not add generation execution seconds. No tests or test cases are created or run by this contract.
 
-Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md), or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.
+Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt, or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.

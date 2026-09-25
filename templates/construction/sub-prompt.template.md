@@ -14,7 +14,7 @@ affected_br_ids: [<BR-ID>]
 
 ## Required correction
 
-Apply the smallest change that corrects this defect while preserving the approved configured prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md) and unrelated behavior.
+Apply the smallest change that corrects this defect while preserving the [approved configured prompt](../../docs/02-construction/coding-prompts/%3CUC-ID%3E-business-coding-prompt.md) and unrelated behavior.
 
 ## Scope
 

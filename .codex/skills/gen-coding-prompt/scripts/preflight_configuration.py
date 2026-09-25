@@ -3,6 +3,7 @@
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -43,6 +44,19 @@ def check_pinned_evidence(path, config, checksum):
                     and evidence.get("configuration_checksum") == checksum, "activation configuration checksum/identity conflict")
 
 
+def source_br_ids(raw):
+    content = raw.decode("utf-8-sig")
+    headings = list(re.finditer(r"(?m)^## Business Rules[ \t]*\r?$", content))
+    require(len(headings) == 1, "frozen UC Business Rules section missing or ambiguous")
+    section = content[headings[0].end():]
+    following_heading = re.search(r"(?m)^## [^\r\n]+", section)
+    if following_heading:
+        section = section[:following_heading.start()]
+    ids = re.findall(r"(?m)^BR-[A-Z]+-\d+(?=[ \t]*(?::|-)[ \t]+\S)", section)
+    require(ids and len(ids) == len(set(ids)), "frozen UC BR IDs missing or duplicated")
+    return ids
+
+
 def check_baselines(uc):
     result, baselines = {}, []
     for field, kind in (("business_rule_baseline", "business-rule-baseline"), ("flow_baseline", "flow-baseline")):
@@ -73,6 +87,12 @@ def check_baselines(uc):
             if expected != digest(raw):
                 receipt = ROOT / "docs/02-construction/implementation" / uc["uc_id"] / "source-checksum-normalization.json"
                 require(receipt.is_file(), "UC newline-only match requires source-checksum-normalization.json")
+            source_ids = source_br_ids(raw)
+            require(data["ordered_br_ids"] == source_ids, "frozen UC/BR baseline order conflict")
+            rules = resource_data.get("rules")
+            require(isinstance(rules, list) and all(isinstance(rule, dict) for rule in rules)
+                    and [rule.get("br_id") for rule in rules] == source_ids,
+                    "BR resource rules/order conflict with frozen UC")
         else:
             validate_flow_baseline(data)
         baselines.append(data)

@@ -86,4 +86,4 @@ Next action: <one concrete action>
 
 Figma/UI accuracy may be inspected manually. All UI fields may be missing/null without blocking validation or reports. Excel export remains reporting-only.
 
-Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md), or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.
+Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and [approved prompt](docs/02-construction/coding-prompts/%3CUC-ID%3E-business-coding-prompt.md), or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.

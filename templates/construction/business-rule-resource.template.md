@@ -22,9 +22,6 @@ source_use_case_sha256: sha256:<checksum>
 - Representation: `<OCL invariant | OCL precondition | OCL postcondition | natural language>`
 - Expression / authoritative text: `<verbatim source content>`
 - Context: `<class/operation/business scope>`
-- Enforcement layer(s): `<frontend/backend/database>`
-- Failure behavior: `<source-backed behavior or unresolved>`
-- Traceability: `<UC/API/UI/source range>`
 
 ## Unresolved items
 

@@ -17,10 +17,7 @@
     "name": "<name>",
     "representation": "ocl_invariant | ocl_precondition | ocl_postcondition | natural_language",
     "expression_or_text": "<verbatim source content>",
-    "context": "<class/operation/business scope>",
-    "enforcement_layers": ["frontend | backend | database"],
-    "failure_behavior": "<source-backed behavior or unresolved>",
-    "traceability": ["<UC/API/UI/source range>"]
+    "context": "<class/operation/business scope>"
   }],
   "ordered_br_ids": ["<BR-ID>"],
   "unresolved_items": []

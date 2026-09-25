@@ -4,7 +4,7 @@ The human-facing sequence is [FILE-DRIVEN-WORKFLOW.md](../../../../docs/00-conte
 
 | Command | Internal receipt | Next command |
 |---|---|---|
-| close prompt | prompt, plus approved prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md) checksum | generate source |
+| close prompt | prompt, plus [approved prompt](../../../../docs/02-construction/coding-prompts/%3CUC-ID%3E-business-coding-prompt.md) checksum | generate source |
 | close source | source | audit |
 | audit | first_pass_audit; all-passing repair_decision skipped | repair or finalize workflow |
 | repair | repair_decision authorized within same work turn | finalize workflow after automatic verification |

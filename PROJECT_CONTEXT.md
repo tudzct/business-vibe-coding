@@ -93,7 +93,7 @@ Implementation controls such as authentication, hashing, ownership, validation, 
 docs/00-context/business-rules/        OCL utilities and business-method guidance
 docs/01-inception/use-cases/           frozen Sheet-derived UC/UML/BR specifications
 docs/02-construction/business-rules/   per-UC exact Business Rule resources
-docs/02-construction/coding-prompts/   approved coding-prompt artifacts (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md)
+docs/02-construction/coding-prompts/   approved coding-prompt artifacts
 docs/02-construction/implementation/   BR baseline, schema, run and repair records
 docs/05-experiments/                   canonical run JSON and rendered views
 templates/                             artifact contracts
@@ -122,4 +122,4 @@ Telemetry uses prompt/source/repair buckets within the two phases and follows [t
 
 Missing/null UI scores never block audit, measurements, reports, export or completion. After finalization, `$export-experiment-excel <UC-ID> <LINK_OR_FILEPATH> <TAB_NAME>` is a separate reporting operation that copies stored canonical values into a new workbook while preserving formulas/protected/manual content.
 
-Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md), or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.
+Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt, or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.

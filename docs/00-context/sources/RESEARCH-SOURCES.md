@@ -1,7 +1,7 @@
 # Research sources and authority
 
 1. The canonical Google Sheet is authoritative for use-case fields, UML, Business Rules, UI/API references and notes.
-2. The canonical prompt-template Google Doc is authoritative for the configured prompt (docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md). [The configured coding-prompt template](../../../templates/construction/coding-prompt.template.md) defines all prompt structure and section responsibilities.
+2. The canonical prompt-template Google Doc is authoritative for [the configured prompt](../../../docs/02-construction/coding-prompts/%3CUC-ID%3E-business-coding-prompt.md). [The configured coding-prompt template](../../../templates/construction/coding-prompt.template.md) defines all prompt structure and section responsibilities.
 3. The reference thesis is authoritative for retaining the original two phases: prompt generation, then source generation with bounded self-correction.
 4. Existing source/database/Figma/API artifacts provide implementation context.
 

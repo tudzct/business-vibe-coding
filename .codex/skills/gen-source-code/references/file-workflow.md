@@ -1,6 +1,6 @@
 # File-driven implementation workflow
 
-Input: one approved `*-business-coding-prompt.md` generated from [the configured coding-prompt template](../../../../templates/construction/coding-prompt.template.md), matching configuration and activation.
+Input: one [approved `*-business-coding-prompt.md`](../../../../docs/02-construction/coding-prompts/%3CUC-ID%3E-business-coding-prompt.md) generated from [the configured coding-prompt template](../../../../templates/construction/coding-prompt.template.md), matching configuration and activation.
 
 Resolved bundle: checksum-pinned prompt, functional UC/UML/UI/API inputs, technical baseline, source provenance and active run. Audits subsequently use every frozen BR and flow. Follow [workflow contract](../../../../docs/00-context/workflow/WORKFLOW-CONTRACT.md).
 
