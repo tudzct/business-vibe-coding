@@ -45,7 +45,7 @@ Every frozen BR receives exactly one evidence-based result: `met`, `unmet` or `n
 
 ## Shared operational constitution
 
-These rules apply to every skill, independently of the coding-prompt template. Skills inherit them; no prompt or missing local repetition grants an exception.
+These rules apply to every skill.
 
 Any path containing `<UC-ID>` or its URL-encoded form `%3CUC-ID%3E` is a generic path pattern, not a literal file. During execution, substitute the actual active use-case ID before opening, validating or writing the referenced artifact; never treat the placeholder itself as an existing file.
 

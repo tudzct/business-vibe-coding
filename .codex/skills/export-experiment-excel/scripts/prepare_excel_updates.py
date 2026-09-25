@@ -91,7 +91,7 @@ def prepare(mapping):
         path = writable(ROOT / source)
         require(path not in seen_sources, "duplicate source path")
         seen_sources.add(path)
-        require(path.is_relative_to(ROOT / "docs/05-experiments") and path.parent.parent == ROOT / "docs/05-experiments"
+        require(path.is_relative_to(ROOT / "docs/04-experiments") and path.parent.parent == ROOT / "docs/04-experiments"
                 and path.parent.name != "configurations" and path.suffix == ".json", "source must be canonical UC/run JSON")
         require(path.parent.name == requested_uc, "source outside requested UC")
         try:

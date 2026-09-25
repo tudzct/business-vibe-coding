@@ -6,7 +6,7 @@
     "configuration_id": "<CONFIG-ID>",
     "comparison_group_id": "<COMPARISON-GROUP-ID>",
     "researcher_id": "<researcher identifier>",
-    "artifact": "docs/05-experiments/configurations/<CONFIG-ID>.json",
+    "artifact": "docs/04-experiments/configurations/<CONFIG-ID>.json",
     "checksum": "sha256:<checksum>",
     "run_activation": "docs/02-construction/implementation/<UC-ID>/runs/<run-id>/run-activation.json"
   },

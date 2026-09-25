@@ -4,7 +4,6 @@
 
 - Use existing Tailwind theme tokens/utilities and component patterns; avoid inline styles and duplicated arbitrary values.
 - Work mobile-first: unprefixed utilities define the base layout; breakpoint variants enhance larger viewports.
-- Preserve Figma dimensions/tokens where explicit, but reuse an equivalent project token instead of creating near-duplicates.
 - Keep conditional class construction readable and deterministic. Do not generate class names dynamically in ways Tailwind cannot detect.
 - Maintain visible focus, readable contrast, text wrapping and overflow behavior at supported sizes.
 

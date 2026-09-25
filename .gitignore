@@ -34,6 +34,6 @@ tmp/
 *.tmp
 
 # Experiment-local scratch data
-docs/05-experiments/**/scratch/
+docs/04-experiments/**/scratch/
 
 # Keep research artifacts, prompts, lockfiles and audit reports tracked.

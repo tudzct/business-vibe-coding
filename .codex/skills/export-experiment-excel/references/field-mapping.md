@@ -33,7 +33,7 @@ Generate this from the current three-argument invocation and actual workbook ins
   "repo_root": "<absolute Business repository path>",
   "workbook": "<local workbook snapshot path>",
   "workbook_sha256": "sha256:<hash>",
-  "sources": ["docs/05-experiments/UC-01/run-1.json"],
+  "sources": ["docs/04-experiments/UC-01/run-1.json"],
   "header_coverage": [
     {"sheet": "Results", "column": "D", "header": "Final BR met", "status": "mapped", "cells": ["D5"]}
   ],

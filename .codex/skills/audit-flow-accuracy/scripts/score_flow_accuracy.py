@@ -216,7 +216,7 @@ def main():
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     path, run, folder = context(args.run_json)
-    require(path.is_relative_to(ROOT / "docs/05-experiments"), "flow scores require canonical experiment JSON")
+    require(path.is_relative_to(ROOT / "docs/04-experiments"), "flow scores require canonical experiment JSON")
     result = calculate(read_json(args.assessment))
     validate_run_result(run, folder, result)
     if not args.dry_run:

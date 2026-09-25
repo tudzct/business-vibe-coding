@@ -56,8 +56,8 @@ def main():
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     path, run, folder = context(args.run_json)
-    require(path.is_relative_to(ROOT / "docs/05-experiments"),
-            "flow follow-up writes only canonical experiment JSON under docs/05-experiments")
+    require(path.is_relative_to(ROOT / "docs/04-experiments"),
+            "flow follow-up writes only canonical experiment JSON under docs/04-experiments")
     reserved = (folder / "flow-accuracy").resolve()
     require(not path.is_relative_to(reserved), "canonical JSON cannot be a flow evidence artifact")
     payload = json.load(sys.stdin) if args.input == "-" else (read_json(Path(args.input)) if args.input else None)

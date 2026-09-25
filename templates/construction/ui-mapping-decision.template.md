@@ -44,4 +44,4 @@ Every visible/interactive design node or component group must be accounted for. 
 
 ## Non-gating status
 
-This record is optional traceability, not a researcher approval artifact or a source-generation gate. The checksum-valid Figma dataset is the visual contract; the immutable UC is the behavioral contract. Stop only for an invalid/incomplete dataset or a material behavioral, authorization, API or schema conflict.
+This record is optional traceability, not a researcher approval artifact or a source-generation gate. Stop only for an invalid/incomplete dataset or a material behavioral, authorization, API or schema conflict.

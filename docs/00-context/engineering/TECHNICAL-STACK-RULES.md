@@ -1,6 +1,6 @@
 # Technical-stack skill routing
 
-Persistence follows [DATABASE-SCHEMA.md](DATABASE-SCHEMA.md): read the configured DBML and map existing structure. No naming convention, stack skill or repair grants permission to alter the supplied schema. Keep `synchronize: false` and application `migrationsRun: false`. Researcher setup alone may execute TypeORM migrations between runs; generation/audit/repair cannot edit or execute them.
+Persistence follows [DATABASE-SCHEMA.md](DATABASE-SCHEMA.md): read the configured DBML and map existing structure. Keep `synchronize: false` and application `migrationsRun: false`. Researcher setup alone may execute TypeORM migrations between runs; generation/audit/repair cannot edit or execute them.
 
 `$gen-source-code` reads this routing table and invokes the applicable stack skill; researchers do not need to invoke each stack skill manually. Each stack skill loads only the references required by the active change areas.
 
@@ -15,8 +15,8 @@ Persistence follows [DATABASE-SCHEMA.md](DATABASE-SCHEMA.md): read the configure
 | Entity/repository/MySQL/transaction | `$build-nest-backend` | `typeorm-mysql.md` |
 | JWT/Passport/bcrypt/config/Swagger | `$build-nest-backend` | `auth-config-openapi.md` |
 
-Version rule: use the versions declared in the target `package.json` and lockfile. Official latest documentation supplies principles, but an agent must not copy APIs from a different major version without checking compatibility. Existing project conventions win for purely stylistic choices; explicit UC/BR/API/project controls and framework correctness win when an existing pattern conflicts with them. Do not introduce a separate security requirement or evaluation dimension.
+Version rule: use the versions declared in the target `package.json` and lockfile. Do not introduce a separate security requirement or evaluation dimension.
 
-Current FE baseline pins Vite 8 and React Router 7 because the Vite 5/Router 6 versions in the reference code have unresolved registry advisories. Skills must follow the baseline manifest/lockfile rather than reintroducing reference versions.
+Current FE baseline pins Vite 8 and React Router 7 because the Vite 5/Router 6 versions in the reference code have unresolved registry advisories.
 
 Lint/type/build rule: do not create or run tests/test cases, but run permitted ESLint, TypeScript compilation and production build commands. Do not suppress diagnostics to obtain a green result.

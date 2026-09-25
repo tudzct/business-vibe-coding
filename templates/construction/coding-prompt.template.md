@@ -85,7 +85,7 @@ STRICTLY follow the frozen Figma design at `[DATASET / FRAME / NODE / CHECKSUM]`
 
 Ensure the layout, spacing, typography, colors, components, states, and responsive behavior match the design.
 
-Use the project's existing styling system and component conventions. UC-backed controls are functional; design-only controls remain visual unless a source defines behavior. If a UC-required control is absent, add the smallest design-consistent element and record the mapping decision.
+Use the project's existing styling system and component conventions.
 
 ## Prompt C: Frontend Logic and API Integration
 

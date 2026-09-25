@@ -28,7 +28,7 @@ def check_reference(reference, path, config, checksum):
 
 def check_pinned_evidence(path, config, checksum):
     relative = path.relative_to(ROOT).as_posix()
-    for evidence_path in (ROOT / "docs/05-experiments").glob("*/*.json"):
+    for evidence_path in (ROOT / "docs/04-experiments").glob("*/*.json"):
         if evidence_path.parent.name == "configurations":
             continue
         evidence = read_json(evidence_path)
@@ -108,7 +108,7 @@ def select_canonical(uc_id, run_id=None, variant=None, configuration=None, run_j
         require(path.is_file(), f"missing Canonical Run JSON: {path}")
         return path, read_json(path)
     matches = []
-    for path in (ROOT / "docs/05-experiments" / uc_id).glob("*.json"):
+    for path in (ROOT / "docs/04-experiments" / uc_id).glob("*.json"):
         candidate = read_json(path)
         if candidate.get("uc_id") != uc_id or "experiment_configuration" not in candidate:
             continue
@@ -190,7 +190,7 @@ def preflight(uc_id, configuration=None, run_id=None, variant=None, run_json=Non
         pinned_path = writable(ROOT / reference.get("artifact", ""))
         require(configuration is None or writable(configuration) == pinned_path, "canonical configuration mismatch")
         configuration = pinned_path
-    paths = [writable(configuration)] if configuration else sorted((ROOT / "docs/05-experiments/configurations").glob("*.json"))
+    paths = [writable(configuration)] if configuration else sorted((ROOT / "docs/04-experiments/configurations").glob("*.json"))
     matches = []
     for path in paths:
         original_checksum = digest(path.read_bytes())

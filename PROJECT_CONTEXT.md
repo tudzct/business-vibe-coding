@@ -95,7 +95,7 @@ docs/01-inception/use-cases/           frozen Sheet-derived UC/UML/BR specificat
 docs/02-construction/business-rules/   per-UC exact Business Rule resources
 docs/02-construction/coding-prompts/   approved coding-prompt artifacts
 docs/02-construction/implementation/   BR baseline, schema, run and repair records
-docs/05-experiments/                   canonical run JSON and rendered views
+docs/04-experiments/                   canonical run JSON and rendered views
 templates/                             artifact contracts
 finalsource/fe                         generated React source
 finalsource/be                         generated NestJS source

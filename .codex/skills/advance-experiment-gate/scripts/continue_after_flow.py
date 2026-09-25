@@ -43,7 +43,7 @@ def main():
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     path, run, folder = context(args.run_json)
-    require(path.is_relative_to(ROOT / "docs/05-experiments"), "continuation requires canonical experiment JSON")
+    require(path.is_relative_to(ROOT / "docs/04-experiments"), "continuation requires canonical experiment JSON")
     if args.dry_run:
         _, result = prepare(run, folder, args.followup_id, args.turn_id, args.source_revision)
     else:

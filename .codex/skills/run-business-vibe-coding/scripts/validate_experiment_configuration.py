@@ -79,8 +79,8 @@ def validate_model(model, field):
 
 def validate(path):
     path = path.resolve()
-    if not path.is_relative_to(ROOT / "docs/05-experiments/configurations"):
-        raise ValueError("configuration must be stored under docs/05-experiments/configurations")
+    if not path.is_relative_to(ROOT / "docs/04-experiments/configurations"):
+        raise ValueError("configuration must be stored under docs/04-experiments/configurations")
     data = read_configuration_json(path)
     schema_version = data.get("schema_version")
     if schema_version != SCHEMA_VERSION:
