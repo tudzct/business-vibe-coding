@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 
 
-ASSET_SHA256 = "9ca5ed2153960c1fff64b320a72f0fe253175ce437b2390a7fb6e8113f7ba73f"
+ASSET_SHA256 = "e40b213d289e80a89f8fecc516c426a007df1dc9e8491583b29ef89605206eb3"
 CONFIRMATION = "RESET_FINALSOURCE_TO_PROVIDED_BASELINE"
 ALLOWED_PREFIXES = ("baseline/be/src/", "baseline/fe/src/")
 DATABASE_INFRASTRUCTURE = ("database/migrations", "database/migration-data-source.ts", "config/database.config.ts")
