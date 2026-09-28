@@ -79,7 +79,6 @@ def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow
     require(baseline.get("status") == "Frozen" and baseline.get("uc_id") == uc_id, "BR baseline identity mismatch")
     require(meta.get("source_use_case") == baseline.get("use_case_path"), "prompt source UC mismatch")
     require(meta.get("business_rule_baseline") == uc["business_rule_baseline"], "BR baseline reference mismatch")
-    require(meta.get("business_rule_resource") == baseline.get("business_rule_resource_path"), "BR resource reference mismatch")
     reference = {"path": prompt.relative_to(ROOT).as_posix(), "sha256": digest(prompt.read_bytes())}
     if activation is not None:
         receipt = read_json(writable(activation))

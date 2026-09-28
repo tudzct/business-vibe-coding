@@ -9,34 +9,20 @@
   "schema_version": 1,
   "artifact_type": "flow-baseline",
   "status": "Frozen",
-  "uc_id": "UC-01",
-  "use_case_path": "docs/01-inception/use-cases/uc-01-register-account.md",
-  "use_case_sha256": "sha256:<64 hex>",
-  "frozen_at": "<ISO-8601>",
-  "ordered_flow_ids": ["BF-1", "AF-1", "EF-1"],
-  "counts": {"main": 1, "alternative": 1, "exception": 1, "total": 3},
-  "flows": [{
-    "flow_id": "BF-1",
-    "type": "main",
-    "title": "Basic Flow",
-    "source_anchor": "Functional Use-Case Specification / Basic Flow",
-    "branch_from_step": null,
-    "terminal_outcome": "<observable completion outcome>",
-    "steps": [{
-      "step_id": "BF-1.1",
-      "text": "<frozen step>",
-      "completion_critical": true,
-      "criticality_reason": "<why failure blocks completion>"
-    }]
-  }]
+  "uc_id": "<UC-ID>",
+  "use_case_path": "docs/01-inception/use-cases/<uc-file>.md",
+  "use_case_sha256": "sha256:<64-hex>",
+  "spreadsheet_source": "Use cases!<range>",
+  "ordered_flow_ids": ["<FLOW-ID>"],
+  "frozen_at": "<ISO-8601>"
 }
 ```
 
-Types are `main`, `alternative`, and `exception`. Flow and step IDs are unique and source ordered. Explicit nested variants may use `UC-08.1/BF-1`; referenced “identical” flows are not copied.
+The ordered IDs are the complete audit inventory and denominator. `BF-n`, `AF-n` and `EF-n` identify Basic/Main, Alternative and Exception Flows in source order. Explicit nested variants may use `UC-08.1/BF-1`; referenced “identical” flows are not copied. The checksum-pinned frozen UC supplies each listed flow's requirements.
 
 ## Assessment input
 
-Configuration requires `flow_audit_rubric: completion-critical-flow-runtime-v2`. Assessment input requires integer `schema_version: 2` and the same `rubric_id`, nonempty `uc_id`, `run_id`, path-safe `assessment_id`, `stage: initial|final`, `source_revision` (full SHA-256), timezone-qualified `captured_at`, baseline `{path, sha256}`, `limitations`, `runtime`, `observations` and `flows`. Flows and steps match the baseline's exact ordered inventory. Each flow includes `flow_id`, `steps`, `terminal_outcome` and `completion_observation_id`. Each step includes its frozen `step_id`. Observation statuses are `met`, `unmet` and `not_evaluable`. The flow baseline uses schema 1.
+Configuration requires `flow_audit_rubric: completion-critical-flow-runtime-v2`. Assessment input requires integer `schema_version: 2` and the same `rubric_id`, nonempty `uc_id`, `run_id`, path-safe `assessment_id`, `stage: initial|final`, `source_revision` (full SHA-256), timezone-qualified `captured_at`, baseline `{path, sha256}`, `limitations`, `runtime`, `observations` and `flows`. Flow IDs match the baseline's exact ordered inventory. Each flow includes `flow_id`, a nonempty frozen-UC `source_anchor`, UC-derived `steps`, `terminal_outcome` and `completion_observation_id`. Each step includes `step_id`, source-grounded `text`, Boolean `completion_critical`, nonempty `criticality_reason` and its observation decision. `terminal_outcome` includes source-grounded `text` and its observation decision. Observation statuses are `met`, `unmet` and `not_evaluable`. The flow baseline uses schema 1.
 
 All paths are repository-relative. A baseline reference uses `{path, sha256}`. All other runtime evidence must live under `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/flow-accuracy/evidence/<assessment-id>/`. The source revision is the stage's preserved full source SHA-256, not a Git branch name. Compare it against Source Gate/final source evidence before assessing. The deployment record must substantiate its association with running containers, including mounted source.
 
@@ -66,7 +52,7 @@ All paths are repository-relative. A baseline reference uses `{path, sha256}`. A
 - `state`: `completed`, `incomplete`, or `blocked`. Completed means the connected attempt reached the terminal observation, not that the scored behavior is necessarily correct.
 - Nonempty `actions`, chronologically ordered. Each has consecutive integer `sequence` starting at 1, `at` timestamp within the attempt, nonempty `action` and `actual_result`, nonempty `target_ids`, and nonempty behavioral `evidence`.
 
-Action/evidence target IDs are frozen step IDs (including a necessary shared main-flow prefix) or audit markers `entry`, `branch`, `terminal_outcome`. Markers are evidence links, never new scored steps. Evidence attached to an action must cover its target IDs. The first action covers `entry` (with UI evidence for UI-entry flows). A completed attempt's last action covers `terminal_outcome`; Alternative/Exception completion also requires an actual `branch` observation. The reviewer checks the correct prefix and condition against the frozen branch, not merely marker presence.
+Action/evidence target IDs are the assessment's UC-derived step IDs (including a necessary shared main-flow prefix) or audit markers `entry`, `branch`, `terminal_outcome`. Markers are evidence links, never new scored steps. Evidence attached to an action must cover its target IDs. The first action covers `entry` (with UI evidence for UI-entry flows). A completed attempt's last action covers `terminal_outcome`; Alternative/Exception completion also requires an actual `branch` observation. The reviewer checks the correct prefix and condition against the frozen UC, not merely marker presence.
 
 ### Evidence reference
 
@@ -93,7 +79,7 @@ Each retains `status`, nonempty `rationale`, nonempty `evidence` and adds `sourc
 For a critical step or terminal outcome with `status: "met"`, also require:
 
 - `observation_id`: the matching verified runtime attempt;
-- `required_runtime_kinds`: nonempty array drawn from behavioral kinds, chosen from the frozen behavior;
+- `required_runtime_kinds`: nonempty array drawn from behavioral kinds, chosen from the frozen UC behavior;
 - `evidence_requirement_rationale`: nonempty explanation tying those kinds to the original requirement;
 - target-specific evidence of every declared required kind from that same attempt, also present in its action sequence.
 

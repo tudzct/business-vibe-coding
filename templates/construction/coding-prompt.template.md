@@ -5,7 +5,6 @@ status: Draft | Approved
 uc_id: <UC-ID>
 uc_name: <Use case name>
 source_use_case: docs/01-inception/use-cases/<use-case-file>.md
-business_rule_resource: docs/02-construction/business-rules/<UC-ID>-business-rules.json
 business_rule_baseline: docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json
 generated_at: <ISO-8601 timestamp>
 ---

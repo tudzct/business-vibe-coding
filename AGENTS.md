@@ -39,7 +39,7 @@ Prompt/source/repair remain telemetry buckets within two phases. Close telemetry
 
 ## Business-rule contract
 
-Baseline preparation and validation preserve source Rule IDs, OCL and natural-language text exactly.
+Baseline preparation and validation preserve the complete ordered Rule ID inventory and pin the frozen UC that contains the exact OCL and natural-language text.
 
 Every frozen BR receives exactly one evidence-based result: `met`, `unmet` or `not_evaluable`. Evidence may come from inspectable source, configuration, non-test build/lint checks and bounded Docker runtime observation. Prompt text alone is never evidence.
 

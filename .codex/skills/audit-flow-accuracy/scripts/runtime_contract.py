@@ -204,7 +204,7 @@ def validate_runtime(data, definitions, validate_evidence):
                 require(ref["kind"] == "source" and ref.get("observation_id") is None, "source finding needs static snapshot")
         if critical and item["status"] == "met":
             kinds = item.get("required_runtime_kinds")
-            require(isinstance(kinds, list) and kinds and set(kinds) <= RUNTIME_KINDS, "critical met needs baseline-derived runtime evidence kinds")
+            require(isinstance(kinds, list) and kinds and set(kinds) <= RUNTIME_KINDS, "critical met needs frozen-requirement-derived runtime evidence kinds")
             require(isinstance(item.get("evidence_requirement_rationale"), str) and item["evidence_requirement_rationale"].strip(),
                     "explain required evidence from frozen behavior")
             oid = item.get("observation_id")

@@ -11,14 +11,14 @@ Save either attributed researcher verdicts or validated bounded LLM observations
 
 The final reported flow result is the latest conclusive accepted verdict per flow across the experiment (`accepted-audit-results-v1`). Both researcher replies and validated LLM re-audits update canonical JSON in the same turn, without another save confirmation. Repair, changed source hashes and later `not_evaluable` attempts do not erase accepted results. A newer conclusive result can replace an older verdict. Retain actual stage/source provenance per result and show later audit limitations separately. See the follow-up contract for schema 2, stdin input and corrections to already scored flows.
 
-Before assessing, read the frozen UC, canonical run, [per-flow audit procedure](references/per-flow-audit.md) and [assessment schema](references/assessment-schema.md). Resolve the rubric from the checksum-pinned configuration directly; optional activation is validated when present. Configurations use `completion-critical-flow-runtime-v2`: `correct` requires observed completion through the integrated runtime. Require `docs/02-construction/implementation/<UC-ID>/flow-baseline.json`, frozen from the same UC checksum before generation. Never reconstruct its denominator after seeing implementation results.
+Before assessing, read the frozen UC, canonical run, [per-flow audit procedure](references/per-flow-audit.md) and [assessment schema](references/assessment-schema.md). Resolve the rubric from the checksum-pinned configuration directly; optional activation is validated when present. Configurations use `completion-critical-flow-runtime-v2`: `correct` requires observed completion through the integrated runtime. Require `docs/02-construction/implementation/<UC-ID>/flow-baseline.json`, frozen from the same UC checksum before generation. Read `ordered_flow_ids` as the complete ordered audit inventory, assess every listed flow exactly once and use its length as the frozen denominator. Resolve every listed flow's steps, branch and terminal outcome from the checksum-pinned frozen UC. Never add, omit, reorder or reconstruct the denominator after seeing implementation results.
 
 ## Baseline
 
-1. Include every explicit Basic/Main Flow and each named Alternative and Exception Flow in source order. Include explicit nested UI-variant flows; an “identical to” reference does not duplicate a flow.
+1. `ordered_flow_ids` includes every explicit Basic/Main Flow and each named Alternative and Exception Flow in source order. Include explicit nested UI-variant flows; an “identical to” reference does not duplicate a flow.
 2. Do not count triggers, conditions, postconditions, Business Rules, steps, UI states or API operations as additional flows.
-3. Preserve every step. Mark `completion_critical: true` only when failure prevents the branch-specific terminal outcome or a mandatory completion state. Record why and stop for researcher resolution when material ambiguity remains.
-4. Freeze UC path/checksum, ordered flow IDs, counts, branch points, steps and terminal outcomes. Validate it with `scripts/validate_flow_baseline.py`. Initial and final audit must use this exact baseline.
+3. Freeze the UC path/checksum and complete ordered flow IDs. Validate them with `scripts/validate_flow_baseline.py`. Initial and final audit must use this exact baseline.
+4. During assessment, read each listed flow from the frozen UC, preserve every step in the assessment, and mark `completion_critical: true` only when failure prevents the branch-specific terminal outcome or a mandatory completion state. Record why and stop for researcher resolution when material ambiguity remains.
 
 ## Audit (runtime-v2)
 

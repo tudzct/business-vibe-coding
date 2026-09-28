@@ -7,13 +7,13 @@ Reference: [researcher command sequence](https://docs.google.com/document/d/1R9Z
 ## Prepare four JSON files and the database input before generation
 
 1. `docs/04-experiments/configurations/CFG-<UC-ID>-<MODEL>-<VARIANT>-<DATE>.json`: complete, Confirmed configuration.
-2. `docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json`: every frozen BR in source order.
-3. `docs/02-construction/implementation/<UC-ID>/flow-baseline.json`: every explicit Main/Basic, Alternative and Exception Flow.
+2. `docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json`: the complete ordered BR ID inventory and checksum-pinned frozen UC.
+3. `docs/02-construction/implementation/<UC-ID>/flow-baseline.json`: the complete ordered Main/Basic, Alternative and Exception Flow ID inventory and checksum-pinned frozen UC.
 4. `docs/04-experiments/<UC-ID>/<UC-ID>-<MODEL>-<VARIANT>.json`: Draft Canonical Run JSON with pinned configuration and baseline identities.
 
 5. Database input: `docs/00-context/engineering/schema.dbml` and MySQL tables prepared by researcher-managed TypeORM migrations. Configuration pins migration head, DBML hash and runtime fingerprint. Follow [database policy](../engineering/DATABASE-SCHEMA.md).
 
-The researcher chooses the preparation tool. Validate the four JSON files, database pins and frozen UC/resource/API/Figma dependencies read-only; never initialize, repair or fill missing inputs during generation. Resolve one exact UC/run, never the newest file. Root `.env` is optional; initialized Docker MySQL and `finalsource/.env` are required for the database preflight. `run-activation.json` is an optional run receipt, not an additional prepared input; validate it when present. Requested model, replicate and run order come from the pinned configuration.
+The researcher chooses the preparation tool. Validate the four JSON files, database pins and frozen UC/API/Figma dependencies read-only; never initialize, repair or fill missing inputs during generation. Resolve one exact UC/run, never the newest file. Root `.env` is optional; initialized Docker MySQL and `finalsource/.env` are required for the database preflight. `run-activation.json` is an optional run receipt, not an additional prepared input; validate it when present. Requested model, replicate and run order come from the pinned configuration.
 
 ## Command sequence
 

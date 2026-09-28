@@ -4,7 +4,7 @@
 ## Establish the subject and bounds
 
 1. Resolve UC/run/stage, activation and its configuration checksum. Check `flow_audit_rubric`, baseline path/checksum, frozen UC checksum and source revision against the stage's preserved source evidence. Initial uses first-pass source; final uses final source. Do not use a moving worktree as the sole initial source reference.
-2. Read every frozen flow in order: entry, preconditions, necessary shared main steps, branch condition, all steps and terminal outcome. Preserve IDs/text/order/criticality/branch points. A multi-clause step may have several evidence checks within one observation; never split the baseline or change the denominator. Record precise Sheet provenance/cell if ambiguous behavior affects evaluation and stop for researcher resolution; never repair the frozen UC.
+2. Read `ordered_flow_ids` from the flow baseline as the complete ordered denominator. For each ID, read the corresponding frozen UC flow in order: entry, preconditions, necessary shared main steps, branch condition, all steps and terminal outcome. Preserve the UC-derived text/order/criticality/branch points in the assessment. A multi-clause step may have several evidence checks within one observation; never split the baseline or change the denominator. Record precise Sheet provenance/cell if ambiguous behavior affects evaluation and stop for researcher resolution; never repair the frozen UC.
 3. Trace UI -> event handler -> API client -> controller/service -> storage -> response -> UI consumption. Save source findings separately with original path/lines, claim, limits and a sanitized immutable snapshot/excerpt checksum. A handler's existence does not show invocation; a `catch` does not show exception handling occurred.
 4. Before operating, declare each attempt's scope, allowed data/actions, `planned_at` and time limit. Use only authorized runtime operations. Choose the limit from the flow's expected latency and available observation tools, then stop at completion, blocker or the limit. Preserve every attempt, including failures; explain divergent results rather than selecting only a lucky success.
 
@@ -28,7 +28,7 @@ Assign a unique `observation_id`. Record actual preconditions, entry kind/locati
 
 For Alternative/Exception Flows, traverse the required main-flow prefix to the frozen branch. Record the branch condition actually occurring, the branch response and its terminal outcome. Shared prefix steps retain their original IDs and create no new flow. An Exception Flow succeeds when the specified failure handling finishes; the primary operation need not succeed.
 
-Choose evidence from the frozen requirement, not a universal layer checklist:
+Choose evidence from the frozen UC requirement, not a universal layer checklist:
 
 | Required behavior | Appropriate evidence |
 |---|---|
@@ -39,7 +39,7 @@ Choose evidence from the frozen requirement, not a universal layer checklist:
 | No registration API call | Network observation started before submission and ending after validation settles, with target/filter scope and capture method. Missing logs alone prove nothing. |
 | Whole terminal outcome | Evidence for every frozen terminal clause, including UI consumption/session/navigation when required. |
 
-A client-only validation branch can require UI and network-absence evidence without database evidence unless the frozen outcome requires storage verification. `runtime_trace` is a behavioral transcript with actual actions/results; never relabel source, build or health output as runtime evidence. Record required evidence kinds and their baseline-derived rationale on each critical/outcome `met` decision.
+A client-only validation branch can require UI and network-absence evidence without database evidence unless the frozen outcome requires storage verification. `runtime_trace` is a behavioral transcript with actual actions/results; never relabel source, build or health output as runtime evidence. Record required evidence kinds and their frozen-UC-derived rationale on each critical/outcome `met` decision.
 
 Do not change source, install mocks or add audit-only endpoints to force a branch. Do not stop shared services or change infrastructure beyond existing authorization. If the exception condition cannot be reached within authorized scope, record the limitation and `not_evaluable`; a source `catch` cannot make it `correct`.
 
@@ -57,7 +57,7 @@ Before authorized repair work ends, its automatic audit creates a fresh assessme
 
 ## UC-01 illustrations (not assessments or test cases)
 
-Read the frozen UC-01 specification, provenance `Use cases!A5:B25`, and its frozen baseline for actual IDs/criticality. These illustrations do not rescore any existing run or add behavior:
+Read the frozen UC-01 specification, provenance `Use cases!A5:B25`, and its frozen baseline for the ordered IDs. Resolve criticality from the frozen UC. These illustrations do not rescore any existing run or add behavior:
 
 - Basic: operate `/register`, submit through the form, observe `POST /api/auth/register`, correlate persistence and response to that submission, then observe authenticated session establishment and navigation to `/`. If the API succeeds and creates the account but the frontend demonstrably fails to establish the required session, the terminal outcome is `unmet` and the flow is `incorrect`. If session behavior cannot be observed, that clause remains `not_evaluable`.
 - AF-1: traverse the form prefix to preliminary validation, observe field errors and the scoped absence of the registration request. A screenshot of errors alone does not establish absence of API activity.

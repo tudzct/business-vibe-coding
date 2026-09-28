@@ -50,17 +50,16 @@ The 16 files under `docs/01-inception/use-cases/` are frozen projections of this
 
 Follow the researcher command sequence in [FILE-DRIVEN-WORKFLOW.md](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md). Every command authorizes its operation without extra gate confirmations. Prompt close approves the Draft; repair invocation authorizes the correction. Four research JSON inputs plus a researcher-provided database baseline are required for generation; activation is optional. Internal `gates` fields remain bookkeeping only.
 
-The evaluation baseline contains all BRs supplied for the active UC. There is no rule-selection mode. Before invoking prompt generation, preparation by the researcher's chosen tool records:
+The evaluation baseline identifies all BRs supplied for the active UC. There is no rule-selection mode. Before invoking prompt generation, preparation by the researcher's chosen tool records:
 
 - frozen UC path and SHA-256;
-- spreadsheet ID, tab, range and retrieval time;
+- spreadsheet source range;
 - exact ordered BR IDs;
-- UML and OCL utility source references;
-- baseline status.
+- baseline status and freeze time.
 
-This receipt prevents evaluation criteria from changing after source generation; it is not an approval or selection of rules.
+This receipt prevents the evaluation inventory from changing after source generation; it is not an approval, selection or semantic restatement of rules. Resolve each listed Rule ID from the checksum-pinned frozen UC.
 
-Before invoking generation, preparation also freezes a supplementary flow baseline from every explicit Basic/Main, Alternative and Exception Flow. A flow is incorrect only when a completion-critical step fails or its specified terminal outcome is not achieved. Flow scoring never changes the BR denominator or BR result.
+Before invoking generation, preparation also freezes the ordered IDs of every explicit Basic/Main, Alternative and Exception Flow. Resolve each listed flow from the checksum-pinned frozen UC. A flow is incorrect only when a completion-critical step fails or its specified terminal outcome is not achieved. Flow scoring never changes the BR denominator or BR result.
 
 Configurations freeze `flow_audit_rubric: completion-critical-flow-runtime-v2` before generation. This rubric requires connected integrated-runtime observation for flow `correct`, with evidence linked to UC/run/stage/baseline/source revision. Source findings remain separate; unavailable critical/outcome or connected-runtime proof means `not_evaluable` unless a blocking failure is evidenced. Initial and final use the same rubric. Authorized repair automatically observes every flow on final source before repair closure. When repair is skipped and source is unchanged, the original first-pass assessment remains terminal evidence, preserving its original stage/ID/time; no duplicate assessment is required. Weights, formulas, BR criteria and generation-only timing remain unchanged; the researcher command sequence supplies authorization without extra confirmations.
 
@@ -92,7 +91,6 @@ Implementation controls such as authentication, hashing, ownership, validation, 
 .codex/skills/                         two-phase workflow and implementation skills
 docs/00-context/business-rules/        OCL utilities and business-method guidance
 docs/01-inception/use-cases/           frozen Sheet-derived UC/UML/BR specifications
-docs/02-construction/business-rules/   per-UC exact Business Rule resources
 docs/02-construction/coding-prompts/   approved coding-prompt artifacts
 docs/02-construction/implementation/   BR baseline, schema, run and repair records
 docs/04-experiments/                   canonical run JSON and rendered views

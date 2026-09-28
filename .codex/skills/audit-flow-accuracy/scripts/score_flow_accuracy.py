@@ -14,6 +14,7 @@ from flow_summary import refresh_report, refresh_summary
 
 OBSERVATION_STATUSES = {"met", "unmet", "not_evaluable"}
 FLOW_TYPES = ("main", "alternative", "exception")
+FLOW_PREFIX_TYPES = {"BF": "main", "AF": "alternative", "EF": "exception"}
 
 
 def nonempty(value):
@@ -37,31 +38,88 @@ def validate_observation(item, label):
         validate_evidence(ref)
 
 
+def source_flow_ids(raw):
+    """Extract the ordered flow inventory without interpreting flow semantics."""
+    content = raw.decode("utf-8-sig")
+    headings = list(re.finditer(r"(?m)^(##|###)\s+([^\r\n]+?)\s*\r?$", content))
+    require(headings, "frozen UC flow headings missing")
+    scope, result, basic_counts = "", [], {}
+    for index, heading in enumerate(headings):
+        level, title = heading.group(1), heading.group(2).strip()
+        if level == "##":
+            variant = re.match(r"(UC-[0-9]+(?:\.[0-9]+)?)\s+UI Variant\b", title, re.I)
+            scope = f"{variant.group(1).upper()}/" if variant else ""
+            continue
+        end = headings[index + 1].start() if index + 1 < len(headings) else len(content)
+        section = content[heading.end():end]
+        if re.fullmatch(r"(?:Basic|Main) Flow", title, re.I):
+            count = basic_counts.get(scope, 0) + 1
+            basic_counts[scope] = count
+            result.append(f"{scope}BF-{count}")
+        elif re.fullmatch(r"Alternative Flow", title, re.I):
+            result.extend(f"{scope}{value}" for value in re.findall(r"(?m)^(AF-[0-9]+)(?=:)", section))
+        elif re.fullmatch(r"Exception Flow", title, re.I):
+            result.extend(f"{scope}{value}" for value in re.findall(r"(?m)^(EF-[0-9]+)(?=:)", section))
+    require(result and len(result) == len(set(result)), "frozen UC flow IDs missing or duplicated")
+    return result
+
+
+def flow_type(flow_id):
+    match = re.fullmatch(r"(?:UC-[0-9]+(?:\.[0-9]+)?/)?(BF|AF|EF)-[0-9]+", flow_id or "")
+    require(match is not None, f"invalid flow ID: {flow_id}")
+    return FLOW_PREFIX_TYPES[match.group(1)]
+
+
 def validate_baseline(data):
+    expected_fields = {"schema_version", "artifact_type", "status", "uc_id", "use_case_path",
+                       "use_case_sha256", "spreadsheet_source", "ordered_flow_ids", "frozen_at"}
+    require(set(data) == expected_fields, "invalid flow baseline fields")
     require(data.get("schema_version") == 1 and data.get("artifact_type") == "flow-baseline", "invalid baseline schema")
     require(data.get("status") == "Frozen" and nonempty(data.get("uc_id")), "baseline must be Frozen")
+    require(nonempty(data.get("spreadsheet_source")), "flow baseline spreadsheet source missing")
     uc_path = writable(ROOT / data.get("use_case_path", ""))
     require(uc_path.is_file(), "baseline UC path missing")
-    require(data.get("use_case_sha256") == digest(uc_path.read_bytes()), "frozen UC changed")
+    raw = uc_path.read_bytes()
+    require(data.get("use_case_sha256") == digest(raw), "frozen UC changed")
     epoch(data.get("frozen_at"))
-    flows = data.get("flows")
-    require(isinstance(flows, list) and flows, "nonempty flow baseline required")
-    ids = [row.get("flow_id") for row in flows]
-    require(ids == data.get("ordered_flow_ids") and len(ids) == len(set(ids)), "flow order/identity mismatch")
-    counts = {kind: sum(row.get("type") == kind for row in flows) for kind in FLOW_TYPES}
-    counts["total"] = len(flows)
-    require(counts["main"] > 0 and data.get("counts") == counts, "baseline counts mismatch")
-    for flow in flows:
-        require(flow.get("type") in FLOW_TYPES and nonempty(flow.get("title")), "invalid flow definition")
-        require(nonempty(flow.get("source_anchor")) and nonempty(flow.get("terminal_outcome")), "flow provenance/outcome required")
-        steps = flow.get("steps")
-        require(isinstance(steps, list) and steps, f"{flow.get('flow_id')} needs steps")
-        step_ids = [step.get("step_id") for step in steps]
-        require(all(nonempty(value) for value in step_ids) and len(step_ids) == len(set(step_ids)), "invalid step IDs")
+    ids = data.get("ordered_flow_ids")
+    require(isinstance(ids, list) and ids and all(nonempty(value) for value in ids), "ordered flow IDs required")
+    require(len(ids) == len(set(ids)), "duplicate flow IDs")
+    for flow_id in ids:
+        flow_type(flow_id)
+    require(ids == source_flow_ids(raw), "frozen UC/flow baseline order conflict")
+    counts = {kind: sum(flow_type(value) == kind for value in ids) for kind in FLOW_TYPES}
+    counts["total"] = len(ids)
+    require(counts["main"] > 0, "flow baseline needs a Basic/Main Flow")
+    return ids, counts
+
+
+def assessment_definitions(supplied, ordered_ids):
+    """Validate the auditor's UC-derived flow breakdown used by the runtime rubric."""
+    require([row.get("flow_id") for row in supplied] == ordered_ids, "assessment flow inventory mismatch")
+    definitions, all_steps = [], set()
+    for assessed in supplied:
+        flow_id = assessed["flow_id"]
+        require(nonempty(assessed.get("source_anchor")), f"{flow_id} frozen UC source anchor required")
+        steps = assessed.get("steps")
+        require(isinstance(steps, list) and steps, f"{flow_id} needs UC-derived steps")
+        step_definitions = []
         for step in steps:
-            require(nonempty(step.get("text")) and type(step.get("completion_critical")) is bool, "invalid baseline step")
-            require(nonempty(step.get("criticality_reason")), "criticality reason required")
-    return flows, counts
+            step_id = step.get("step_id")
+            require(nonempty(step_id) and step_id.startswith(flow_id + "."), f"invalid step ID for {flow_id}")
+            require(step_id not in all_steps, "duplicate step ID")
+            all_steps.add(step_id)
+            require(nonempty(step.get("text")) and type(step.get("completion_critical")) is bool,
+                    f"invalid UC-derived step: {step_id}")
+            require(nonempty(step.get("criticality_reason")), f"criticality reason required: {step_id}")
+            step_definitions.append({key: step[key] for key in
+                                     ("step_id", "text", "completion_critical", "criticality_reason")})
+        outcome = assessed.get("terminal_outcome") or {}
+        require(nonempty(outcome.get("text")), f"{flow_id} UC-derived terminal outcome required")
+        definitions.append({"flow_id": flow_id, "type": flow_type(flow_id),
+                            "source_anchor": assessed["source_anchor"], "steps": step_definitions,
+                            "terminal_outcome": outcome["text"]})
+    return definitions
 
 
 def calculate(data):
@@ -75,11 +133,11 @@ def calculate(data):
     epoch(data.get("captured_at"))
     baseline_path = validate_evidence(data.get("baseline"))
     baseline = read_json(baseline_path)
-    definitions, type_counts = validate_baseline(baseline)
+    ordered_ids, type_counts = validate_baseline(baseline)
     require(baseline.get("uc_id") == data.get("uc_id"), "baseline UC mismatch")
     supplied = data.get("flows")
     require(isinstance(supplied, list), "flow observations required")
-    require([row.get("flow_id") for row in supplied] == baseline["ordered_flow_ids"], "assessment flow inventory mismatch")
+    definitions = assessment_definitions(supplied, ordered_ids)
     attempts, validate_target = validate_runtime(data, definitions, validate_evidence)
 
     results = []

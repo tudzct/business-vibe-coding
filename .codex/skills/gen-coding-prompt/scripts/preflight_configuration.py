@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow/scripts"))
-from metrics_contract import ROOT, digest, require, writable, validate_metrics
+from metrics_contract import ROOT, digest, epoch, require, writable, validate_metrics
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "run-business-vibe-coding/scripts"))
 from validate_experiment_configuration import read_configuration_json as read_json, validate
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-flow-accuracy/scripts"))
@@ -70,14 +70,14 @@ def check_baselines(uc):
         require(data.get("status") == "Frozen" and data.get("artifact_type") == kind
                 and data.get("uc_id") == uc["uc_id"], f"invalid {field} identity/status")
         if field == "business_rule_baseline":
+            expected_fields = {"schema_version", "artifact_type", "status", "uc_id", "use_case_path",
+                               "use_case_sha256", "spreadsheet_source", "ordered_br_ids", "frozen_at"}
+            require(set(data) == expected_fields, "invalid BR baseline fields")
+            require(data.get("schema_version") == 1, "invalid BR baseline schema")
+            require(isinstance(data.get("spreadsheet_source"), str) and data["spreadsheet_source"].strip(),
+                    "BR baseline spreadsheet source missing")
+            epoch(data.get("frozen_at"))
             require(data.get("ordered_br_ids") == uc["ordered_br_ids"], "configuration/BR baseline order mismatch")
-            resource = writable(ROOT / data.get("business_rule_resource_path", ""))
-            require(resource.is_file() and digest(resource.read_bytes()) == data.get("business_rule_resource_sha256"),
-                    "BR resource missing or checksum mismatch")
-            resource_data = read_json(resource)
-            require(resource_data.get("artifact_type") == "business-rule-resource"
-                    and resource_data.get("status") == "Frozen" and resource_data.get("uc_id") == uc["uc_id"]
-                    and resource_data.get("ordered_br_ids") == uc["ordered_br_ids"], "BR resource identity/order conflict")
             source = writable(ROOT / data.get("use_case_path", ""))
             require(source.is_file(), "BR baseline UC source missing")
             raw = source.read_bytes()
@@ -89,10 +89,6 @@ def check_baselines(uc):
                 require(receipt.is_file(), "UC newline-only match requires source-checksum-normalization.json")
             source_ids = source_br_ids(raw)
             require(data["ordered_br_ids"] == source_ids, "frozen UC/BR baseline order conflict")
-            rules = resource_data.get("rules")
-            require(isinstance(rules, list) and all(isinstance(rule, dict) for rule in rules)
-                    and [rule.get("br_id") for rule in rules] == source_ids,
-                    "BR resource rules/order conflict with frozen UC")
         else:
             validate_flow_baseline(data)
         baselines.append(data)
