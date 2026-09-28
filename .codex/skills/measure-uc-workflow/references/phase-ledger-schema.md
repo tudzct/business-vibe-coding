@@ -2,6 +2,8 @@
 
 Use `timing_method: system_timestamp_delta` with `timing_protocol: generation_execution_with_repair_audit_v2`. The AI invokes the helper at the following boundaries; the helper records the actual system instant and code calculates the delta. It does not infer readiness automatically. This is not UI Worked-for or full-turn latency.
 
+This capture protocol governs `duration_seconds` (Duration seconds). Measure also records `wall_clock_seconds` (Wall-clock seconds) from the selected turns' explicit rollout start/end timestamps, following [selection-schema.md](selection-schema.md). Wall-clock requires no live capture calls and uses the same turn membership as tokens, including auxiliary workflow turns. It includes approval waits within a turn and excludes gaps between turns and excluded Measure/report/export turns. The execution intervals and duration aggregation below remain independent of wall-clock aggregation.
+
 | Execution | START | END |
 |---|---|---|
 | Prompt | After all required inputs, configuration, frozen resources and Figma resolution are ready; immediately before generating the Draft | Immediately after the complete Draft is persisted, before researcher review/approval |

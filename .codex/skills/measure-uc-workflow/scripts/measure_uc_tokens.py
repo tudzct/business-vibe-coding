@@ -10,7 +10,8 @@ from pathlib import Path
 from metrics_contract import (CORE, AUX, USAGE, METHOD, TIMING_PROTOCOL, aggregate, execution_phase_aggregate,
                               execution_workflow_aggregate, repair_timing, token_breakdown, atomic_write, context,
                               digest, duration, epoch, journal, metrics_markdown, read_json,
-                              require, run_lock, save_journal, usage, validate_core_token_phase, validate_metrics)
+                              require, run_lock, save_journal, usage, validate_core_token_phase, validate_metrics,
+                              wall_clock_seconds)
 
 START = {"turn_started", "task_started"}
 END = {"turn_complete", "turn_completed", "task_complete", "task_completed"}
@@ -266,6 +267,7 @@ def measure(args):
             row = public_turn(turn) | {"session_id": session["session_id"], "phase": phase,
                                       "timing_phase": timing_phase,
                                       "reason": selector["reason"], "duration_seconds": seconds,
+                                      "wall_clock_seconds": wall_clock_seconds(turn),
                                       "timing_unavailable_reason": missing if seconds is None else None,
                                       "timing_exclusion_reason": "Auxiliary work excluded from generation time" if excluded_time else None,
                                       "timing_segments": segments}

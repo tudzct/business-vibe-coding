@@ -130,6 +130,14 @@ def endpoint(value):
     return ms
 
 
+def wall_clock_seconds(turn):
+    """Elapsed seconds within one selected rollout turn, including approval waits."""
+    require(turn.get("completed"), "wall-clock requires a completed turn")
+    start, end = epoch(turn.get("started_at")), epoch(turn.get("ended_at"))
+    require(end >= start, "negative turn wall-clock duration")
+    return round((end - start) / 1000, 3)
+
+
 def duration(segment):
     start, end = segment["start"], segment["end"]
     for key in ("uc_id", "run_id", "session_id", "turn_id", "phase", "segment_id"):
@@ -166,6 +174,7 @@ def aggregate(rows):
     times = [r["duration_seconds"] for r in rows]
     return {"tokens": result, "token_unavailable_reasons": reasons,
             "duration_seconds": None if any(t is None for t in times) else round(sum(times), 3),
+            "wall_clock_seconds": round(sum(r["wall_clock_seconds"] for r in rows), 3),
             "timing_unavailable_reason": "Missing captured endpoints; see turns" if None in times else None,
             "workflow_turn_count": len(rows),
             "tool_call_count": sum(r["tool_call_count"] for r in rows),
@@ -187,7 +196,7 @@ def token_breakdown(rows):
     for phase in sorted({r["phase"] for r in rows}):
         values = aggregate([r for r in rows if r["phase"] == phase])
         result[phase] = {k: values[k] for k in (
-            "tokens", "token_unavailable_reasons", "workflow_turn_count", "tool_call_count")}
+            "tokens", "token_unavailable_reasons", "wall_clock_seconds", "workflow_turn_count", "tool_call_count")}
     return result
 
 
@@ -247,6 +256,9 @@ def validate_metrics(metrics):
         require(row.get("timing_phase") in CORE + AUX, "valid timing bucket required")
         require(type(row.get("tool_call_count")) is int and row["tool_call_count"] >= 0, "invalid tool-call count")
         require(row["duration_seconds"] is None or row["duration_seconds"] >= 0, "negative time")
+        require(type(row.get("wall_clock_seconds")) in (int, float)
+                and row["wall_clock_seconds"] == wall_clock_seconds(row),
+                "turn wall-clock differs from rollout boundaries")
         segments = row.get("timing_segments", [])
         validate_core_token_phase(row["phase"], segments)
         timed_segments = [s for s in segments if s["start"]["phase"] in CORE]
@@ -302,35 +314,39 @@ def validate_metrics(metrics):
 def metrics_markdown(metrics):
     validate_metrics(metrics)
     lines = ["## Observed workflow metrics", "", f"Status: {metrics['status']}", "",
-             "| Scope | Input | Cached input | Output | Reasoning output | Total | Seconds | Turns | Tool calls |",
-             "|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
+             "| Scope | Input | Cached input | Output | Reasoning output | Total | Duration seconds | Wall-clock seconds | Turns | Tool calls |",
+             "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
     values = [(p, metrics["phases"][p]["values"]) for p in CORE] + [("workflow", metrics["workflow"])]
     for name, item in values:
-        cells = ([item["tokens"][k] for k in USAGE] + [item["duration_seconds"],
-                 item["workflow_turn_count"], item["tool_call_count"]]) if item else [None] * 8
+        cells = ([item["tokens"][k] for k in USAGE] + [item["duration_seconds"], item["wall_clock_seconds"],
+                 item["workflow_turn_count"], item["tool_call_count"]]) if item else [None] * 9
         lines.append("| " + name + " | " + " | ".join("N/A" if c is None else str(c) for c in cells) + " |")
     lines += ["", "Cached input is included in input; reasoning output is included in output.",
-              "Seconds sum captured work intervals. Waiting between turns and measurement/report turns are excluded.",
+              "Duration seconds sum captured work intervals. Wall-clock seconds sum rollout durations of the same turns as tokens. "
+              "Waiting between turns and measurement/report/export turns are excluded; Allow/Deny waits within selected turns are included.",
               "Model call count: unavailable (token usage updates are not model call evidence).", ""]
     lines += ["Tokens and turn/tool counts cover each whole turn by semantic phase label. "
-              "Seconds cover only captured execution intervals under timing_phase.", "",
+              "Wall-clock seconds use that same label; duration seconds cover captured intervals under timing_phase.", "",
               "### Token attribution by label", "",
-              "| Label | Input | Cached input | Output | Reasoning output | Total | Turns | Tool calls |",
-              "|---|---:|---:|---:|---:|---:|---:|---:|"]
+              "| Label | Input | Cached input | Output | Reasoning output | Total | Wall-clock seconds | Turns | Tool calls |",
+              "|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for phase, values in metrics["token_phase_breakdown"].items():
-        cells = [values["tokens"][k] for k in USAGE] + [values["workflow_turn_count"], values["tool_call_count"]]
+        cells = [values["tokens"][k] for k in USAGE] + [values["wall_clock_seconds"], values["workflow_turn_count"], values["tool_call_count"]]
         lines.append("| " + phase + " | " + " | ".join("N/A" if v is None else str(v) for v in cells) + " |")
-    lines += ["", "| Turn | Token label | Timing bucket | Reason |", "|---|---|---|---|"]
+    lines += ["", "| Turn | Token label | Timing bucket | Duration seconds | Wall-clock seconds | Reason |", "|---|---|---|---:|---:|---|"]
     for row in metrics["turns"]:
         reason = row["reason"].replace("|", "\\|").replace("\n", " ")
-        lines.append(f"| {row['turn_id']} | {row['phase']} | {row['timing_phase']} | {reason} |")
+        core = row["duration_seconds"] if row["duration_seconds"] is not None else "N/A"
+        lines.append(f"| {row['turn_id']} | {row['phase']} | {row['timing_phase']} | {core} | {row['wall_clock_seconds']} | {reason} |")
     lines.append("")
     lines += [f"Timing protocol: `{metrics['timing_protocol']}`.", "",
               ("Repair seconds include integrated BR/flow/runtime verification and final evidence persistence. "
                "A turn with core execution must retain that core token label."), "",
-              "Workflow seconds = Prompt execution + first-pass Source execution + all Repair executions. "
-              "Configuration, approvals, dataset resolution, separate audit/runtime and reporting are excluded from time. "
-              "Their eligible tokens remain in workflow. Pending/missing generation time is N/A, not zero.", ""]
+              "Workflow duration seconds = Prompt execution + first-pass Source execution + all Repair executions. "
+              "Configuration, approvals, dataset resolution, separate audit/runtime and reporting are excluded from duration seconds. "
+              "Eligible auxiliary turns contribute tokens and wall-clock time to workflow. "
+              "Pending/missing duration seconds are N/A, not zero. Workflow wall-clock covers selected completed turns to date; "
+              "it is final only when workflow status is finalized.", ""]
     for repair_id, item in metrics["repair_timing"].items():
         lines.append(f"- {repair_id}: {item['duration_seconds'] if item['duration_seconds'] is not None else 'N/A'} seconds")
     if metrics["phases"]["repair"]["status"] == "skipped":
