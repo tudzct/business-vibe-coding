@@ -80,7 +80,8 @@ def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow
     require(actual == variant, "configuration/prompt variant mismatch")
     require(headings == configured_headings(), "prompt sections must match configured template exactly")
     require(prompt.name.endswith("-business-coding-prompt.md"), "prompt filename/variant mismatch")
-    uc = next(u for u in config["use_cases"] if u["uc_id"] == uc_id)
+    uc = config["use_case"]
+    require(uc.get("uc_id") == uc_id, "configuration/prompt UC mismatch")
     baseline = read_json(writable(ROOT / uc["business_rule_baseline"]))
     require(baseline.get("status") == "Frozen" and baseline.get("uc_id") == uc_id, "BR baseline identity mismatch")
     require(meta.get("source_use_case") == baseline.get("use_case_path"), "prompt source UC mismatch")

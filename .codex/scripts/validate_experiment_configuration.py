@@ -159,31 +159,24 @@ def validate(path):
     if audit["protocol"] == "fixed":
         validate_model(audit.get("fixed_auditor"), "audit_design.fixed_auditor")
 
-    use_cases = data.get("use_cases")
-    if not isinstance(use_cases, list) or not use_cases:
-        raise ValueError("use_cases must be non-empty")
-    uc_ids = set()
-    for index, uc in enumerate(use_cases):
-        if not isinstance(uc, dict):
-            raise ValueError(f"use_cases[{index}] must be an object")
-        uc_id = identifier(uc.get("uc_id"), f"use_cases[{index}].uc_id")
-        if uc_id in uc_ids:
-            raise ValueError(f"duplicate UC ID: {uc_id}")
-        uc_ids.add(uc_id)
-        ids = uc.get("ordered_br_ids")
-        if not isinstance(ids, list) or not ids or any(not isinstance(v, str) or not v.strip() for v in ids) or len(ids) != len(set(ids)):
-            raise ValueError(f"use_cases[{index}].ordered_br_ids must be a non-empty unique string array")
-        text(uc.get("business_rule_baseline"), f"use_cases[{index}].business_rule_baseline")
-        text(uc.get("flow_baseline"), f"use_cases[{index}].flow_baseline")
-        contracts = uc.get("api_contracts")
-        if not isinstance(contracts, list) or not contracts:
-            raise ValueError(f"use_cases[{index}].api_contracts must be a non-empty array")
-        frozen = [frozen_api_contract(entry, f"use_cases[{index}].api_contracts[{api_index}]")
-                  for api_index, entry in enumerate(contracts)]
-        api_ids = [entry["api_id"] for entry in frozen]
-        api_paths = [entry["path"] for entry in frozen]
-        if len(api_ids) != len(set(api_ids)) or len(api_paths) != len(set(api_paths)):
-            raise ValueError(f"use_cases[{index}].api_contracts contains duplicate IDs or paths")
+    if "use_cases" in data:
+        raise ValueError("configuration must use one use_case object, not a use_cases array")
+    uc = data.get("use_case")
+    expected_uc_fields = {"uc_id", "business_rule_baseline", "flow_baseline", "api_contracts"}
+    if not isinstance(uc, dict) or set(uc) != expected_uc_fields:
+        raise ValueError("use_case must contain exactly uc_id, business_rule_baseline, flow_baseline and api_contracts")
+    configured_uc_id = identifier(uc.get("uc_id"), "use_case.uc_id")
+    text(uc.get("business_rule_baseline"), "use_case.business_rule_baseline")
+    text(uc.get("flow_baseline"), "use_case.flow_baseline")
+    contracts = uc.get("api_contracts")
+    if not isinstance(contracts, list) or not contracts:
+        raise ValueError("use_case.api_contracts must be a non-empty array")
+    frozen = [frozen_api_contract(entry, f"use_case.api_contracts[{api_index}]")
+              for api_index, entry in enumerate(contracts)]
+    api_ids = [entry["api_id"] for entry in frozen]
+    api_paths = [entry["path"] for entry in frozen]
+    if len(api_ids) != len(set(api_ids)) or len(api_paths) != len(set(api_paths)):
+        raise ValueError("use_case.api_contracts contains duplicate IDs or paths")
 
     runs = data.get("runs")
     if not isinstance(runs, list) or not runs:
@@ -194,9 +187,9 @@ def validate(path):
         if not isinstance(run, dict):
             raise ValueError(f"{prefix} must be an object")
         run_id = identifier(run.get("run_id"), prefix + ".run_id")
-        uc_id = identifier(run.get("uc_id"), prefix + ".uc_id")
-        if run_id in run_ids or uc_id not in uc_ids:
-            raise ValueError(f"{prefix} has duplicate run ID or unknown UC")
+        run_uc_id = identifier(run.get("uc_id"), prefix + ".uc_id")
+        if run_id in run_ids or run_uc_id != configured_uc_id:
+            raise ValueError(f"{prefix} has duplicate run ID or does not belong to the configured UC")
         run_ids.add(run_id)
         order = positive(run.get("run_order"), prefix + ".run_order")
         if order in orders:
@@ -207,7 +200,7 @@ def validate(path):
         variant = identifier(run.get("prompt_variant"), prefix + ".prompt_variant")
         if run["prompt_variant"] != variant:
             raise ValueError(f"{prefix}.prompt_variant must be a canonical identifier")
-        key = (uc_id, variant, run["requested_model_id"], run["requested_reasoning_effort"], run["requested_reasoning_mode"], replicate)
+        key = (run_uc_id, variant, run["requested_model_id"], run["requested_reasoning_effort"], run["requested_reasoning_mode"], replicate)
         if key in assignments:
             raise ValueError(f"duplicate UC/variant/model/replicate assignment: {key}")
         assignments.add(key)
@@ -232,6 +225,6 @@ if __name__ == "__main__":
         raise SystemExit("usage: validate_experiment_configuration.py <configuration.json>")
     try:
         result = validate(Path(sys.argv[1]))
-        print(json.dumps({"status": "valid", "configuration_id": result["configuration_id"], "flow_audit_rubric": flow_rubric(result), "use_cases": len(result["use_cases"]), "runs": len(result["runs"])}, indent=2))
+        print(json.dumps({"status": "valid", "configuration_id": result["configuration_id"], "flow_audit_rubric": flow_rubric(result), "uc_id": result["use_case"]["uc_id"], "runs": len(result["runs"])}, indent=2))
     except (OSError, ValueError, TypeError, KeyError, AttributeError) as exc:
         raise SystemExit(f"experiment configuration error: {exc}")

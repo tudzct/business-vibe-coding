@@ -48,8 +48,9 @@ def configured_rubric(run, folder, validate_evidence, baseline=None):
     require(rubric == RUNTIME_RUBRIC,
             "configuration flow rubric mismatch")
     if baseline is not None:
-        uc_entries = [u for u in config.get("use_cases", []) if u.get("uc_id") == run["uc_id"]]
-        require(len(uc_entries) == 1 and baseline["path"] == uc_entries[0].get("flow_baseline"),
+        configured_uc = config.get("use_case")
+        require(isinstance(configured_uc, dict) and configured_uc.get("uc_id") == run["uc_id"]
+                and baseline["path"] == configured_uc.get("flow_baseline"),
                 "assessment must use the configured flow baseline")
         baseline_data = read_json(validate_evidence(baseline))
         if activation is not None:

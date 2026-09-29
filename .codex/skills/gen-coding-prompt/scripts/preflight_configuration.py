@@ -94,7 +94,6 @@ def check_baselines(uc):
             require(isinstance(data.get("spreadsheet_source"), str) and data["spreadsheet_source"].strip(),
                     "BR baseline spreadsheet source missing")
             epoch(data.get("frozen_at"))
-            require(data.get("ordered_br_ids") == uc["ordered_br_ids"], "configuration/BR baseline order mismatch")
             source = writable(ROOT / data.get("use_case_path", ""))
             require(source.is_file(), "BR baseline UC source missing")
             raw = source.read_bytes()
@@ -159,8 +158,9 @@ def check_canonical(run, config, assignment, uc, stage):
         if field in model:
             require(model[field] == assignment[field], f"canonical {field} mismatch")
     business = run.get("business_rules")
+    baseline = read_json(writable(ROOT / uc["business_rule_baseline"]))
     require(isinstance(business, dict) and business.get("baseline") == uc["business_rule_baseline"]
-            and business.get("ordered_br_ids") == uc["ordered_br_ids"], "canonical BR baseline/IDs mismatch")
+            and business.get("ordered_br_ids") == baseline.get("ordered_br_ids"), "canonical BR baseline/IDs mismatch")
     expected_activation = f"docs/02-construction/implementation/{run['uc_id']}/runs/{run['run_id']}/run-activation.json"
     require(run["experiment_configuration"].get("run_activation") in (None, expected_activation),
             "canonical activation path mismatch")
@@ -214,7 +214,8 @@ def preflight(uc_id, configuration=None, run_id=None, variant=None, run_json=Non
     for path in paths:
         original_checksum = digest(path.read_bytes())
         data = read_json(path)
-        if configuration is None and not any(isinstance(u, dict) and u.get("uc_id") == uc_id for u in data.get("use_cases", [])):
+        if configuration is None and (not isinstance(data.get("use_case"), dict)
+                                      or data["use_case"].get("uc_id") != uc_id):
             continue
         data = validate(path)
         require(digest(path.read_bytes()) == original_checksum, "configuration changed during validation")
@@ -229,7 +230,7 @@ def preflight(uc_id, configuration=None, run_id=None, variant=None, run_json=Non
         check_reference(canonical.get("experiment_configuration"), path, data, checksum)
         require(canonical.get("prompt_variant") == assignment.get("prompt_variant"), "canonical variant mismatch")
     check_pinned_evidence(path, data, checksum)
-    uc = next(u for u in data["use_cases"] if u["uc_id"] == uc_id)
+    uc = data["use_case"]
     baselines = check_baselines(uc)
     check_canonical(canonical, data, assignment, uc, stage)
     # Fifth prepared input: ordered migration history/head and DBML/runtime hashes.

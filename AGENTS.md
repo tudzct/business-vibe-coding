@@ -55,7 +55,7 @@ During source generation, generate source only and modify only files required by
 
 When a material ambiguity, contradiction, missing decision or other blocker becomes apparent, do not invent or change requirements, behavior, API, data structures, ownership, security or evaluation semantics. Report the exact evidence and wait for researcher resolution, unless the active skill contract defines a specific evidence-preserving outcome for that condition.
 
-In particular, during business coding-prompt generation or first-pass source generation, if a material contradiction involving the active frozen UC, its configured API contracts, the configured DBML or the existing database schema becomes apparent, stop and report the exact conflicting evidence. Do not modify the affected inputs, choose precedence among them or infer a resolution. Skill-specific preflight checks, evidence requirements and stopping conditions remain mandatory.
+In particular, during business coding-prompt generation or first-pass source generation, if a material contradiction involving the active frozen UC, its configured API contracts, the configured DBML or the existing database schema becomes apparent, stop and report the exact conflicting evidence. Do not modify the affected inputs or infer a resolution. Skill-specific preflight checks, evidence requirements and stopping conditions remain mandatory.
 
 Apply the project-wide API normalization downstream: successful payloads use `{ success: true, message, data }`; errors use `{ success: false, statusCode, message, timestamp, path }`. Preserve source status, business fields and message semantics.
 
