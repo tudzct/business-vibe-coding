@@ -2,9 +2,9 @@
 
 ## Phase 1 — Generate Business Coding Prompt
 
-Inputs: frozen UC/UML, applicable API/Figma sources, existing project context, prepared artifacts and [the configured template](../../../templates/construction/coding-prompt.template.md) under the workflow input boundaries.
+Inputs: frozen UC/UML, ordered checksum-pinned API contracts, applicable frozen Figma sources, existing project context, prepared artifacts and [the configured template](../../../templates/construction/coding-prompt.template.md) under the workflow input boundaries.
 
-1. Verify provenance and checksum of the UC projection.
+1. Verify provenance and checksum of the UC projection and the configured Frozen identity/path/SHA-256 of every referenced API contract.
 2. Resolve the configured coding-prompt template and its permitted generation inputs.
 3. Validate the existing Business Rule resource, BR/flow baselines and Canonical Run JSON prepared by the researcher's chosen tool before invocation. Missing or invalid inputs stop generation; no creation skill is mandatory and preflight never creates them.
 4. The AI analyzes the validated inputs and authors the complete Draft prompt following the configured coding-prompt template.

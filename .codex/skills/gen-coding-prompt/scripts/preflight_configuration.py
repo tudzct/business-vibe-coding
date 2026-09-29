@@ -57,8 +57,25 @@ def source_br_ids(raw):
     return ids
 
 
+def source_api_ids(raw):
+    content = raw.decode("utf-8-sig")
+    headings = list(re.finditer(r"(?m)^### Related API IDs[ \t]*\r?$", content))
+    require(headings, "frozen UC Related API IDs section missing")
+    ids = []
+    for heading in headings:
+        section = content[heading.end():]
+        following_heading = re.search(r"(?m)^###? [^\r\n]+", section)
+        if following_heading:
+            section = section[:following_heading.start()]
+        for api_id in re.findall(r"\bAPI-[A-Z0-9]+(?:-[A-Z0-9]+)*\b", section):
+            if api_id not in ids:
+                ids.append(api_id)
+    require(ids, "frozen UC Related API IDs are missing")
+    return ids
+
+
 def check_baselines(uc):
-    result, baselines = {}, []
+    result, baselines, source_raw = {}, [], None
     for field, kind in (("business_rule_baseline", "business-rule-baseline"), ("flow_baseline", "flow-baseline")):
         value = uc.get(field)
         require(isinstance(value, str) and value.strip(), f"missing {field}")
@@ -81,6 +98,7 @@ def check_baselines(uc):
             source = writable(ROOT / data.get("use_case_path", ""))
             require(source.is_file(), "BR baseline UC source missing")
             raw = source.read_bytes()
+            source_raw = raw
             lf = raw.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
             expected = data.get("use_case_sha256")
             require(expected in {digest(raw), digest(lf), digest(lf.replace(b"\n", b"\r\n"))}, "BR baseline UC checksum mismatch")
@@ -95,6 +113,11 @@ def check_baselines(uc):
         result[field] = "valid"
     if len(baselines) == 2:
         require(baselines[0]["use_case_path"] == baselines[1]["use_case_path"], "BR/flow baseline UC source conflict")
+    contracts = uc.get("api_contracts")
+    require(isinstance(contracts, list) and contracts, "configured API contracts missing")
+    configured_ids = [entry.get("api_id") for entry in contracts]
+    require(configured_ids == source_api_ids(source_raw), "configuration/frozen UC API contract order mismatch")
+    result["api_contracts"] = contracts
     return result
 
 

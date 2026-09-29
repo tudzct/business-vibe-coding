@@ -4,7 +4,7 @@ The configured method uses [the configured prompt](../../../docs/02-construction
 
 ## Input boundaries
 
-The current run receives the researcher-prepared per-run database baseline through configuration `database_baseline`. DBML is technical input for prompt generation. Read the configured DBML; use existing structure and authorized business DML only. Prompt/Source preflight verifies migration history, DBML bytes and runtime fingerprint before START. In-run migrations and DDL are prohibited. Researcher setup may evolve schema between runs; matched UC comparisons use identical migration history and hashes. See [database policy](../engineering/DATABASE-SCHEMA.md). Database data persists across cumulative UCs.
+The current run receives the researcher-prepared per-run database baseline through configuration `database_baseline`. The same configuration pins the complete ordered API contract ID/path/SHA-256 inventory for each UC. Prompt/Source preflight verifies that inventory against the frozen UC and verifies every API's Frozen identity and current bytes before START. DBML is technical input for prompt generation. Read the configured DBML; use existing structure and authorized business DML only. Prompt/Source preflight verifies migration history, DBML bytes and runtime fingerprint before START. In-run migrations and DDL are prohibited. Researcher setup may evolve schema between runs; matched UC comparisons use identical API pins, migration history and hashes. See [database policy](../engineering/DATABASE-SCHEMA.md). Database data persists across cumulative UCs.
 
 | Operation | Configured method |
 |---|---|
@@ -20,7 +20,7 @@ Map every frozen flow and terminal clause to the applicable sections defined by 
 
 Prompt metadata requires `prompt_variant` to match the pinned configuration; the canonical run and activation use that same value. Validate the exact heading structure, filename and approved prompt checksum.
 
-`gen-coding-prompt/scripts/validate_prompt_contract.py` validates the configured UC/run, approved status (or `--allow-draft`), source UC, filename, the prompt headings defined by the configured template, BR reference boundaries and optional activation checksum. It is read-only. It does not prove semantic flow coverage.
+`gen-coding-prompt/scripts/validate_prompt_contract.py` validates the configured UC/run, approved status (or `--allow-draft`), source UC, exact configured API metadata, filename, the prompt headings defined by the configured template, BR reference boundaries and optional activation checksum. It is read-only. It does not prove semantic flow coverage.
 
 At `$measure-uc-workflow close-phase prompt_generation`, approve the Draft and pin canonical `coding_prompt: {path, sha256}` and configured variant. Keep a run-local approved snapshot if the common prompt path will be reused. Optional activation receipts remain immutable and are validated when present; no activation preparation or turn is mandatory.
 

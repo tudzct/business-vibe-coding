@@ -36,6 +36,10 @@ The [workflow contract](docs/00-context/workflow/WORKFLOW-CONTRACT.md) defines f
 
 The 16 files under `docs/01-inception/use-cases/` are frozen projections of this source. UC-08.1 is a UI-level variant inside UC-08 and is not a seventeenth experiment unit.
 
+### API contracts
+
+Files under `docs/01-inception/api-contracts/` are frozen API specification inputs. For each UC, the Confirmed configuration records the complete ordered API ID/path/SHA-256 inventory resolved from the frozen UC's `Related API IDs`. Configuration validation checks each API's Frozen identity and bytes; Prompt and Source preflight also require the configured order to match the frozen UC before START.
+
 ### Prompt template
 
 - Document ID: `1-cQWpOig7A5HrSHkRvzdw6DsbYRI1-6W7b8BGurT7GY`

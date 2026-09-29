@@ -3,6 +3,7 @@
 
 import hashlib
 import json
+import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -77,6 +78,37 @@ def validate_model(model, field):
         raise ValueError(f"{field} has invalid reasoning mode")
 
 
+def frozen_api_contract(entry, field):
+    if not isinstance(entry, dict) or set(entry) != {"api_id", "path", "sha256"}:
+        raise ValueError(f"{field} must contain exactly api_id, path and sha256")
+    api_id = identifier(entry.get("api_id"), field + ".api_id")
+    path_value = text(entry.get("path"), field + ".path").replace("\\", "/")
+    if entry.get("path") != path_value or Path(path_value).is_absolute():
+        raise ValueError(f"{field}.path must be a canonical repository-relative path")
+    path = (ROOT / path_value).resolve()
+    api_root = (ROOT / "docs/01-inception/api-contracts").resolve()
+    if not path.is_relative_to(api_root) or path.suffix.lower() != ".md":
+        raise ValueError(f"{field}.path must identify a Markdown API contract under docs/01-inception/api-contracts")
+    if not path.is_file():
+        raise ValueError(f"{field}.path does not exist")
+    expected = "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
+    if entry.get("sha256") != expected:
+        raise ValueError(f"{field}.sha256 mismatch")
+    content = path.read_text(encoding="utf-8-sig")
+    frontmatter = re.match(r"\A---\s*\r?\n(.*?)\r?\n---(?:\r?\n|$)", content, re.S)
+    if frontmatter is None:
+        raise ValueError(f"{field} API contract frontmatter missing")
+    metadata = {}
+    for line in frontmatter.group(1).splitlines():
+        match = re.fullmatch(r"([a-z_]+):\s*(.*?)\s*", line)
+        if match:
+            metadata[match.group(1)] = match.group(2)
+    if (metadata.get("artifact_type") != "api-contract" or metadata.get("status") != "Frozen"
+            or metadata.get("api_id") != api_id):
+        raise ValueError(f"{field} API contract identity/status mismatch")
+    return {"api_id": api_id, "path": path_value, "sha256": expected}
+
+
 def validate(path):
     path = path.resolve()
     if not path.is_relative_to(ROOT / "docs/04-experiments/configurations"):
@@ -143,6 +175,15 @@ def validate(path):
             raise ValueError(f"use_cases[{index}].ordered_br_ids must be a non-empty unique string array")
         text(uc.get("business_rule_baseline"), f"use_cases[{index}].business_rule_baseline")
         text(uc.get("flow_baseline"), f"use_cases[{index}].flow_baseline")
+        contracts = uc.get("api_contracts")
+        if not isinstance(contracts, list) or not contracts:
+            raise ValueError(f"use_cases[{index}].api_contracts must be a non-empty array")
+        frozen = [frozen_api_contract(entry, f"use_cases[{index}].api_contracts[{api_index}]")
+                  for api_index, entry in enumerate(contracts)]
+        api_ids = [entry["api_id"] for entry in frozen]
+        api_paths = [entry["path"] for entry in frozen]
+        if len(api_ids) != len(set(api_ids)) or len(api_paths) != len(set(api_paths)):
+            raise ValueError(f"use_cases[{index}].api_contracts contains duplicate IDs or paths")
 
     runs = data.get("runs")
     if not isinstance(runs, list) or not runs:

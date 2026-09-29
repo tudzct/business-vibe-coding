@@ -1,8 +1,12 @@
 """Structural validation for completion-critical-flow-runtime-v2 (no execution)."""
 
+import sys
 from pathlib import Path
 
 from metrics_contract import ROOT, epoch, read_json, require, writable
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "run-business-vibe-coding/scripts"))
+from validate_experiment_configuration import validate as validate_configuration
 
 RUNTIME_RUBRIC = "completion-critical-flow-runtime-v2"
 RUNTIME_KINDS = {"ui", "network", "backend", "data", "runtime_trace"}
@@ -30,7 +34,8 @@ def configured_rubric(run, folder, validate_evidence, baseline=None):
         ref = {"path": activation.get("configuration_artifact"), "sha256": activation.get("configuration_checksum")}
     else:
         ref = {"path": metadata.get("artifact"), "sha256": metadata.get("checksum")}
-    config = read_json(validate_evidence(ref))
+    config_path = validate_evidence(ref)
+    config = validate_configuration(config_path)
     require(config.get("status") == "Confirmed", "flow rubric requires Confirmed configuration")
     if metadata:
         require(metadata.get("artifact") == ref["path"] and metadata.get("checksum") == ref["sha256"],
