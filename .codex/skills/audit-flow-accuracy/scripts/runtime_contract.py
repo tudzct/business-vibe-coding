@@ -5,7 +5,7 @@ from pathlib import Path
 
 from metrics_contract import ROOT, epoch, read_json, require, writable
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "run-business-vibe-coding/scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from validate_experiment_configuration import validate as validate_configuration
 
 RUNTIME_RUBRIC = "completion-critical-flow-runtime-v2"

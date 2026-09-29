@@ -9,7 +9,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow/scripts"))
 from metrics_contract import ROOT, digest, epoch, require, writable, validate_metrics
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "run-business-vibe-coding/scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from validate_experiment_configuration import read_configuration_json as read_json, validate
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-flow-accuracy/scripts"))
 from score_flow_accuracy import validate_baseline as validate_flow_baseline

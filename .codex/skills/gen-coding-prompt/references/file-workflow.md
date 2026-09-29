@@ -2,7 +2,7 @@
 
 Input: one frozen Sheet-derived use-case Markdown file.
 
-Pre-existing Business Rule resources, BR/flow baselines and applicable Figma evidence are validated inputs, not outputs of prompt generation.
+Pre-existing BR/flow baselines and applicable Figma evidence are validated inputs, not outputs of prompt generation.
 
 Outputs:
 

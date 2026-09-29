@@ -14,7 +14,7 @@ PROTOCOLS = {"fixed", "matched", "cross"}
 SCHEMA_VERSION = "2.4"
 TIMING_METHOD = "system_timestamp_delta"
 RUNTIME_FLOW_RUBRIC = "completion-critical-flow-runtime-v2"
-ROOT = Path(__file__).resolve().parents[4]
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def unique_object(pairs):
