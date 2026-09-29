@@ -90,7 +90,10 @@ def validate_runtime(data, definitions, validate_evidence):
         require(all(isinstance(limitation.get(k), str) and limitation[k].strip() for k in ("affected_targets", "reason", "impact")),
                 "limitation needs affected targets, reason and impact")
     require(runtime.get("status") in {"ready", "BLOCKED", "unverified"}, "invalid runtime status")
-    require(runtime.get("compose_version") == 2, "Docker Compose v2 required; no host fallback")
+    require(
+        runtime.get("compose_version") in {2, 5},
+        "Docker Compose v2-compatible CLI required (major 2 or 5); no host fallback",
+    )
     require(isinstance(runtime.get("reason"), str) and runtime["reason"].strip(), "runtime reason required")
     deployment = runtime.get("deployment")
     require(isinstance(deployment, dict), "deployment linkage required")

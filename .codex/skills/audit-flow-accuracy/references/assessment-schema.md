@@ -33,7 +33,7 @@ All paths are repository-relative. A baseline reference uses `{path, sha256}`. A
 | Field | Contract |
 |---|---|
 | `status` | `ready`, `BLOCKED`, or `unverified`. Only `ready` with verified deployment supports runtime verdicts. |
-| `compose_version` | Integer 2. No native host fallback. |
+| `compose_version` | Integer 2 or 5, recording the installed Compose CLI major. Both are accepted as v2-compatible; no native host fallback. |
 | `reason` | Nonempty observed readiness/blocker explanation. |
 | `compose_project` | Nonempty project name for ready runtime; null allowed otherwise. |
 | `services` | For ready runtime, nonempty array of `{name, container_id, image_id, state}` with observed values. Include relevant FE/BE/MySQL services. Empty allowed when blocked. |
