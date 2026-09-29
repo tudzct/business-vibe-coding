@@ -76,6 +76,7 @@ The fifth input is the researcher-prepared MySQL database and `docs/00-context/e
 - Frontend: React 18, TypeScript, Vite, Tailwind, React Router, Axios, Context/Zustand, Recharts.
 - Backend: NestJS 11, TypeScript, TypeORM/MySQL, class-validator, Passport JWT, bcrypt and Swagger.
 - Runtime: Docker Compose v2 with frontend, backend and MySQL.
+- Clean source baseline: `.codex/skills/restore-source-baseline/assets/source-baseline.zip`, with its project-specific asset checksum pinned by `PROJECT_PROFILE.json` as `clean_source_baseline_sha256`.
 - API prefix: `/api`.
 - Success envelope: `{ success: true, message, data }`.
 - Error envelope: `{ success: false, statusCode, message, timestamp, path }`.

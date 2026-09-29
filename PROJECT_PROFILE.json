@@ -1,6 +1,7 @@
 {
   "project_id": "financial-management",
   "project_name": "Financial Management",
+  "clean_source_baseline_sha256": "sha256:e40b213d289e80a89f8fecc516c426a007df1dc9e8491583b29ef89605206eb3",
   "authoritative_sources": {
     "use_case_specification": {
       "type": "Google Sheets",

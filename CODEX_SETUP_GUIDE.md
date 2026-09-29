@@ -30,6 +30,7 @@ docker info
 Expected repository invariants:
 
 - `PROJECT_PROFILE.json` identifies the active project's UC, API and Figma sources without embedding per-UC ranges or counts.
+- `PROJECT_PROFILE.json` pins the active project's clean source baseline ZIP with `clean_source_baseline_sha256`; the restore skill contains no project-specific checksum.
 - The complete active UC inventory is the set of frozen files matching `docs/01-inception/use-cases/uc-*.md`.
 - Each UC contains functional specification, UML Model and Business Rules.
 - `docs/01-inception/use-cases/OCL-UTILITY-DEFINITIONS.md` exists when the project's UC source supplies shared OCL utilities.
