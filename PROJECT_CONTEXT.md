@@ -28,17 +28,13 @@ The [workflow contract](docs/00-context/workflow/WORKFLOW-CONTRACT.md) defines f
 
 ### Functional and business specification
 
-- Spreadsheet ID: `1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM`
-- URL: https://docs.google.com/spreadsheets/d/1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM/edit?gid=0#gid=0
-- Tab/range authority: `Use cases`, columns A-B
-- OCL utility definitions: `Use cases!A2:B2`
-- Each UC section supplies functional fields, UML PlantUML, Business Rules, related UI/API IDs and notes.
+The active project's source identity is defined once in `PROJECT_PROFILE.json`. Its `authoritative_sources.use_case_specification` object supplies the Google Sheets URL and tab. Exact ranges and retrieval provenance remain inside the frozen project inputs because they differ by UC.
 
-The 16 files under `docs/01-inception/use-cases/` are frozen projections of this source. UC-08.1 is a UI-level variant inside UC-08 and is not a seventeenth experiment unit.
+Files matching `docs/01-inception/use-cases/uc-*.md` are the complete frozen UC inventory for the active project. Each projection supplies functional fields, UML PlantUML, Business Rules, related UI/API IDs, notes and exact source provenance. `docs/01-inception/use-cases/OCL-UTILITY-DEFINITIONS.md` is the frozen project-level OCL utility projection when applicable; it is not a UC.
 
 ### API contracts
 
-Files under `docs/01-inception/api-contracts/` are frozen API specification inputs. For each UC, the Confirmed configuration records the complete ordered API ID/path/SHA-256 inventory resolved from the frozen UC's `Related API IDs`. Configuration validation checks each API's Frozen identity and bytes; Prompt and Source preflight also require the configured order to match the frozen UC before START.
+`PROJECT_PROFILE.json` identifies the authoritative API source. Files under `docs/01-inception/api-contracts/` are its frozen API specification inputs. For each UC, the Confirmed configuration records the complete ordered API ID/path/SHA-256 inventory resolved from the frozen UC's `Related API IDs`. Configuration validation checks each API's Frozen identity and bytes; Prompt and Source preflight also require the configured order to match the frozen UC before START.
 
 ### Prompt template
 
@@ -83,7 +79,7 @@ The fifth input is the researcher-prepared MySQL database and `docs/00-context/e
 - API prefix: `/api`.
 - Success envelope: `{ success: true, message, data }`.
 - Error envelope: `{ success: false, statusCode, message, timestamp, path }`.
-- Domain: users own accounts, bills and goals; accounts own transactions; categories classify transactions and goals.
+- Project-specific domain behavior is supplied only by the active frozen UC/API/Figma/database inputs, not by this shared context file.
 
 The [shared operational constitution](AGENTS.md#shared-operational-constitution) governs every skill, including testing, database mutations, secrets and destructive operations.
 
@@ -93,7 +89,6 @@ Implementation controls such as authentication, hashing, ownership, validation, 
 
 ```text
 .codex/skills/                         two-phase workflow and implementation skills
-docs/00-context/business-rules/        OCL utilities and business-method guidance
 docs/01-inception/use-cases/           frozen Sheet-derived UC/UML/BR specifications
 docs/02-construction/coding-prompts/   approved coding-prompt artifacts
 docs/02-construction/implementation/   BR baseline, schema, run and repair records

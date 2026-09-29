@@ -13,7 +13,7 @@ Read the [shared execution timing protocol](../measure-uc-workflow/references/ph
 
 1. Read `docs/00-context/FIGMA-LINK-REVIEW.md` before any Figma call. Treat its `Replacement URL` column as the sole capture authority.
 2. Ignore all Figma URLs and file keys inside `docs/01-inception/use-cases/uc-*.md`; they are provenance-only and may point to inaccessible files.
-3. Validate that the review contains one approved replacement or `NOT_APPLICABLE` for all 16 UCs. Stop if any placeholder, conflict or missing mapping remains.
+3. Validate that the review contains one approved replacement or `NOT_APPLICABLE` for every file in the active project's frozen UC inventory. Stop if any placeholder, conflict or missing mapping remains.
 4. Deduplicate by exact file key plus node ID, then capture each unique node once through the installed Figma plugin.
 5. Require every artifact in `resource/figma-design-dataset/CAPTURE-SPEC.md`. Within a new unfrozen dataset, deduplicate identical assets to one checksum-addressed canonical file referenced from asset maps. Never mutate an already frozen version.
 6. Create a new immutable dataset version. Never revive or infer a deleted version and never overwrite a version used by an experiment.

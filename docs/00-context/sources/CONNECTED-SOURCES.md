@@ -2,13 +2,12 @@
 
 ## Canonical functional and Business Rule source
 
-- Google Sheet ID: `1b6nG8slHLf2CtXZwVHHsNrogvhHNg3lceK6f3B7mKIM`
-- Tab: `Use cases`
-- Authorized source range: columns `A:B`
-- OCL utilities: `A2:B2`
-- Use cases: 16 primary UCs; UC-08.1 is a UI variant within UC-08.
+- Source type, URL and tab: `PROJECT_PROFILE.json` -> `authoritative_sources.use_case_specification`
+- Authorized ranges and retrieval timestamps: recorded in each frozen UC projection
+- Frozen UC inventory: every file matching `docs/01-inception/use-cases/uc-*.md`
+- Frozen OCL utilities, when applicable: `docs/01-inception/use-cases/OCL-UTILITY-DEFINITIONS.md`
 
-Use the connected Google Drive/Sheets interface. Never scrape, reconstruct or guess cell contents. Store spreadsheet ID, tab, exact range and retrieval time in derived artifacts. Read only the named spreadsheet/tab/range or columns authorized by the parent prompt. Stop when access fails or when duplicate/conflicting rows make a business requirement ambiguous.
+Use the connected Google Drive/Sheets interface. Never scrape, reconstruct or guess cell contents. Store source identity, tab, exact range and retrieval time in derived artifacts. Read only the source/tab/range authorized by the active project profile and parent prompt. Stop when access fails or when duplicate/conflicting rows make a business requirement ambiguous.
 
 ## Prompt template
 
@@ -18,7 +17,7 @@ Use the connected Google Drive/Sheets interface. Never scrape, reconstruct or gu
 
 ## Figma and API sources
 
-Use them only where the Sheet references them. API contracts are explicitly defined as markdown files in `docs/01-inception/api-contracts/`. Figma mappings come only from `docs/00-context/FIGMA-LINK-REVIEW.md`; a frozen dataset is required before use.
+Use them only where the frozen UC references them. `PROJECT_PROFILE.json` identifies the authoritative API source and Figma root file(s). API contracts are explicitly defined as markdown files in `docs/01-inception/api-contracts/`. Detailed per-UC Figma mappings come only from `docs/00-context/FIGMA-LINK-REVIEW.md`; a frozen dataset is required before use.
 
 - Treat API contracts as frozen, read-only inputs. For each UC, copy every ID from its frozen `Related API IDs` into the Confirmed configuration in source order, together with the exact repository path and raw-byte SHA-256. Do not scan for substitutes or select an API by filename similarity.
 - Configuration validation requires every pinned API file to exist under `docs/01-inception/api-contracts/` with `artifact_type: api-contract`, `status: Frozen`, the configured `api_id` and the configured checksum. Prompt and Source preflight additionally require the configured ordered IDs to equal the frozen UC references.

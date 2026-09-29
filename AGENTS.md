@@ -1,16 +1,16 @@
 # Business vibe coding agent contract
 
-Work only inside this repository unless the researcher expands scope. On setup or review requests, read `CODEX_SETUP_GUIDE.md`. Before planning or editing, read `PROJECT_CONTEXT.md` and `docs/00-context/sources/CONNECTED-SOURCES.md`. For each feature, follow `docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md` and `docs/00-context/workflow/gates/EXPERIMENT-CONFIGURATION-GATE.md`.
+Work only inside this repository unless the researcher expands scope. On setup or review requests, read `CODEX_SETUP_GUIDE.md`. Before planning or editing, read `PROJECT_PROFILE.json`, `PROJECT_CONTEXT.md` and `docs/00-context/sources/CONNECTED-SOURCES.md`. For each feature, follow `docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md` and `docs/00-context/workflow/gates/EXPERIMENT-CONFIGURATION-GATE.md`.
 
 Use the canonical terminology from `PROJECT_CONTEXT.md`: this repository is a research product, the human operator/approver is the researcher, and actors inside use cases are application users.
 
 ## Authoritative inputs
 
-The canonical functional and business specification is the Google Sheet identified in `PROJECT_CONTEXT.md`, tab `Use cases`, columns A-B. Files under `docs/01-inception/use-cases/uc-*.md` are frozen, read-only projections of that source. They contain the functional specification, UML model, OCL business rules, natural-language constraints, UI/API mappings and source provenance.
+`PROJECT_PROFILE.json` identifies the active project's authoritative UC, API and Figma sources. Files under `docs/01-inception/use-cases/uc-*.md` are frozen, read-only projections of the configured UC source. They contain the functional specification, UML model, OCL business rules, natural-language constraints, UI/API mappings and source provenance. The frozen OCL utility projection, when supplied by the project, is `docs/01-inception/use-cases/OCL-UTILITY-DEFINITIONS.md`.
 
 API contracts under `docs/01-inception/api-contracts/` are frozen, read-only specification inputs. Each configured UC pins the complete ordered API ID/path/SHA-256 inventory resolved from its frozen `Related API IDs`. Prompt and Source preflight reject a missing, changed, reordered or identity-mismatched API contract before START. Do not edit an API contract within a configured run.
 
-Never edit a frozen UC to repair a source issue. Report the exact spreadsheet cell/range and stop for the researcher when ambiguity changes behavior, rule meaning, API, schema or evaluation. Refreshing the frozen UC set requires an explicit researcher request and a new source retrieval record.
+Never edit a frozen UC to repair a source issue. Report the exact source location and stop for the researcher when ambiguity changes behavior, rule meaning, API, schema or evaluation. Refreshing the frozen UC set requires an explicit researcher request and a new source retrieval record.
 
 When a UC contains a Figma reference, resolve it through `resolve-figma-design-dataset`. Use `docs/00-context/FIGMA-LINK-REVIEW.md` as the sole mapping authority when creating or refreshing a dataset.
 
@@ -31,7 +31,7 @@ Before Phase 2 source mutation, validate the pinned configuration, approved prom
 
 Follow the command sequence in `docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md`: generate prompt; close prompt; generate source; close source; audit BR/flows; repair when needed; finalize (which closes/skips Repair and finalizes telemetry atomically); optionally export. Each researcher command authorizes that step without an additional confirmation gate. Closing prompt also approves and pins the Draft. Invoking `$bug-fixing-sub-prompt` authorizes and begins evidenced repair in the same turn. Initial audit and follow-up measurement never automatically start repair.
 
-Require four prepared research JSON inputs (Confirmed configuration with per-UC frozen API pins, frozen BR baseline, frozen flow baseline and Draft Canonical Run JSON) plus the fifth database input: configured DBML and the existing MySQL schema. Validate them read-only using the existing preflight; no extra user turn. Never initialize or repair missing inputs during prompt/source generation, require root `.env`, or ask for configuration reconfirmation. Keep existing `gates` fields/receipts only as internal command bookkeeping; preserve recorded evidence.
+Require four prepared research JSON inputs (Confirmed configuration with the configured UC's frozen API pins, frozen BR baseline, frozen flow baseline and Draft Canonical Run JSON) plus the fifth database input: configured DBML and the existing MySQL schema. Validate them read-only using the existing preflight; no extra user turn. Never initialize or repair missing inputs during prompt/source generation, require root `.env`, or ask for configuration reconfirmation. Keep existing `gates` fields/receipts only as internal command bookkeeping; preserve recorded evidence.
 
 Save partial flow results immediately. Offer researcher-supplied verdicts or bounded LLM measurement. Save either path with attribution, acknowledge the update and wait for the subsequent repair command if defects remain. Remaining unknown accepted flow verdicts block new repair authorization; pending evidence is not a defect. Use `accepted-audit-results-v1`, retaining conclusive results across repairs and later inconclusive audits. Do not fabricate runtime proof for researcher verdicts or reset accepted results to null.
 

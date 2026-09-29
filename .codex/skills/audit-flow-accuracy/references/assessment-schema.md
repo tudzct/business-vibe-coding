@@ -12,13 +12,13 @@
   "uc_id": "<UC-ID>",
   "use_case_path": "docs/01-inception/use-cases/<uc-file>.md",
   "use_case_sha256": "sha256:<64-hex>",
-  "spreadsheet_source": "Use cases!<range>",
+  "spreadsheet_source": "<UC-SOURCE-LOCATION>",
   "ordered_flow_ids": ["<FLOW-ID>"],
   "frozen_at": "<ISO-8601>"
 }
 ```
 
-The ordered IDs are the complete audit inventory and denominator. `BF-n`, `AF-n` and `EF-n` identify Basic/Main, Alternative and Exception Flows in source order. Explicit nested variants may use `UC-08.1/BF-1`; referenced “identical” flows are not copied. The checksum-pinned frozen UC supplies each listed flow's requirements.
+The ordered IDs are the complete audit inventory and denominator. `BF-n`, `AF-n` and `EF-n` identify Basic/Main, Alternative and Exception Flows in source order. Explicit nested variants may use `<UC-VARIANT-ID>/BF-1`; referenced “identical” flows are not copied. The checksum-pinned frozen UC supplies each listed flow's requirements.
 
 ## Assessment input
 

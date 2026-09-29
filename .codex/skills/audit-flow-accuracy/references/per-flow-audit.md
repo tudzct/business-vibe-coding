@@ -55,11 +55,11 @@ After saving, show canonical accepted experiment accuracy, coverage, known defec
 
 Before authorized repair work ends, its automatic audit creates a fresh assessment, revision/deployment check and observations for every flow under the original rubric. New observation IDs/timestamps and assessment-local evidence prevent fabricated initial-to-final copies. An inaccessible final flow is recorded as unknown. If repair is skipped and the source hash is unchanged, reuse the initial assessment as terminal evidence with its original ID/stage/time; no new observation or independent final-audit gate is required. Audit returns defects to the repair caller within its authorization, or to Repair Decision Gate during first-pass work.
 
-## UC-01 illustrations (not assessments or test cases)
+## Generic application pattern (not an assessment or test case)
 
-Read the frozen UC-01 specification, provenance `Use cases!A5:B25`, and its frozen baseline for the ordered IDs. Resolve criticality from the frozen UC. These illustrations do not rescore any existing run or add behavior:
+Read the active frozen UC and its frozen flow baseline, then resolve every listed flow and its criticality from that UC. Apply the evidence rules above without importing behavior from an example project:
 
-- Basic: operate `/register`, submit through the form, observe `POST /api/auth/register`, correlate persistence and response to that submission, then observe authenticated session establishment and navigation to `/`. If the API succeeds and creates the account but the frontend demonstrably fails to establish the required session, the terminal outcome is `unmet` and the flow is `incorrect`. If session behavior cannot be observed, that clause remains `not_evaluable`.
-- AF-1: traverse the form prefix to preliminary validation, observe field errors and the scoped absence of the registration request. A screenshot of errors alone does not establish absence of API activity.
-- AF-2: reach the conflict branch through the UI with an authorized existing-data prerequisite; correlate backend rejection with the returned message rendered by the frontend. A standalone API rejection does not prove the UI branch completes.
-- EF-1: observe an actual unexpected request failure within authorized scope, followed by failure notification and remaining on the registration form. If the condition cannot be produced without unapproved infrastructure changes, retain source findings but record the unobserved branch as `not_evaluable`.
+- For a Basic/Main Flow, begin at the specified entry point, preserve one connected attempt and prove every completion-critical step plus the terminal outcome with the evidence kinds required by the frozen UC.
+- For an Alternative Flow, traverse the required main-flow prefix, observe the stated branch condition and prove its specified terminal outcome. When the requirement includes absence of an action, use scoped evidence that covers the relevant observation window.
+- For an Exception Flow, observe the actual failure condition and its required handling. If producing the condition would exceed authorized scope, retain source findings and record the unobserved behavior as `not_evaluable`.
+- Evidence for one layer does not establish required behavior in another layer. A partial outcome remains `not_evaluable` or `unmet` according to the observed evidence and the precedence rules above.

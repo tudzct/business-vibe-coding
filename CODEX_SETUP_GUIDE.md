@@ -5,10 +5,11 @@ Setup Review verifies that the research repository and mandatory runtime are ava
 ## Required read order
 
 1. `AGENTS.md`
-2. `PROJECT_CONTEXT.md`
-3. `CODEX_SETUP_GUIDE.md`
-4. `docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md`
-5. `docs/00-context/sources/CONNECTED-SOURCES.md`
+2. `PROJECT_PROFILE.json`
+3. `PROJECT_CONTEXT.md`
+4. `CODEX_SETUP_GUIDE.md`
+5. `docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md`
+6. `docs/00-context/sources/CONNECTED-SOURCES.md`
 
 ## Read-only setup checklist
 
@@ -28,10 +29,10 @@ docker info
 
 Expected repository invariants:
 
-- 16 primary frozen UC files sourced from the canonical Sheet.
-- UC-01 is Register an Account and UC-02 is Log In.
+- `PROJECT_PROFILE.json` identifies the active project's UC, API and Figma sources without embedding per-UC ranges or counts.
+- The complete active UC inventory is the set of frozen files matching `docs/01-inception/use-cases/uc-*.md`.
 - Each UC contains functional specification, UML Model and Business Rules.
-- `docs/00-context/business-rules/OCL-UTILITY-DEFINITIONS.md` exists.
+- `docs/01-inception/use-cases/OCL-UTILITY-DEFINITIONS.md` exists when the project's UC source supplies shared OCL utilities.
 - Only the two-phase Business Rule workflow and its implementation/audit skills are installed.
 - The two-phase commands are `$gen-coding-prompt` and `$gen-source-code`.
 - Docker Compose v2 is available; native host Node.js/MySQL is unsupported.
@@ -53,7 +54,7 @@ The whole-stack command above is researcher setup outside active runs and execut
 
 ## Connected sources
 
-The Google Sheet is required when explicitly refreshing UC/business-rule inputs. Ordinary Phase 1 uses the frozen repository projection and recorded provenance.
+The UC source identified in `PROJECT_PROFILE.json` is required when explicitly refreshing UC/business-rule inputs. Ordinary Phase 1 uses the frozen repository projection and recorded provenance.
 
 Figma is required only to create/refresh an offline design dataset. Resolve targets through `docs/00-context/FIGMA-LINK-REVIEW.md`.
 
