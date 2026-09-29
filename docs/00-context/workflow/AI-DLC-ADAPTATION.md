@@ -8,8 +8,7 @@ Inputs: frozen UC/UML, ordered checksum-pinned API contracts, applicable frozen 
 2. Resolve the configured coding-prompt template and its permitted generation inputs.
 3. Validate the existing BR/flow baselines and Canonical Run JSON prepared by the researcher's chosen tool before invocation. Missing or invalid inputs stop generation; no creation skill is mandatory and preflight never creates them.
 4. The AI analyzes the validated inputs and authors the complete Draft prompt following the configured coding-prompt template.
-5. Stop for researcher resolution if an ambiguity changes rule semantics, public API, ownership, schema or destructive behavior.
-6. The prompt-close command approves and pins the prompt, without another gate.
+5. The prompt-close command approves and pins the prompt, without another gate.
 
 ## Phase 2 — Generate Source Code
 
