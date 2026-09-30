@@ -15,7 +15,7 @@
     "schema_fingerprint_sha256": "sha256:<64 hex>"
   },
   "figma_dataset": {
-    "dataset_version": "<activated version>",
+    "dataset_version": "<selected immutable version>",
     "manifest_path": "resource/figma-design-dataset/<version>/manifest.json",
     "manifest_sha256": "sha256:<64 hex>"
   },

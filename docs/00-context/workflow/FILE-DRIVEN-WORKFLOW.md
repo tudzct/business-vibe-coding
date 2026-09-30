@@ -6,7 +6,7 @@ Reference: [researcher command sequence](https://docs.google.com/document/d/1R9Z
 
 ## Prepare four JSON files and the database input before generation
 
-1. `docs/04-experiments/configurations/CFG-<UC-ID>-<MODEL>-<VARIANT>-<DATE>.json`: complete, Confirmed configuration, including the ordered frozen API ID/path/SHA-256 entries for the UC.
+1. `docs/04-experiments/configurations/CFG-<UC-ID>-<MODEL>-<VARIANT>.json`: complete, Confirmed configuration, including the ordered frozen API ID/path/SHA-256 entries for the UC.
 2. `docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json`: the complete ordered BR ID inventory and checksum-pinned frozen UC.
 3. `docs/02-construction/implementation/<UC-ID>/flow-baseline.json`: the complete ordered Main/Basic, Alternative and Exception Flow ID inventory and checksum-pinned frozen UC.
 4. `docs/04-experiments/<UC-ID>/canonical-run-<UC-ID>-<MODEL>-<VARIANT>.json`: Draft Canonical Run JSON with pinned configuration and baseline identities.
@@ -14,6 +14,8 @@ Reference: [researcher command sequence](https://docs.google.com/document/d/1R9Z
 5. Database input: `docs/00-context/engineering/schema.dbml` and MySQL tables prepared by researcher-managed TypeORM migrations. Configuration pins migration head, DBML hash and runtime fingerprint. Follow [database policy](../engineering/DATABASE-SCHEMA.md).
 
 The researcher chooses the preparation tool. Validate the four JSON files, database pins and frozen UC/API/Figma dependencies read-only; API validation checks the configured order against the UC and each pinned file's path, Frozen identity and SHA-256. Never initialize, repair or fill missing inputs during generation. Resolve one exact UC/run, never the newest file. Root `.env` is optional; initialized Docker MySQL and `finalsource/.env` are required for the database preflight. `run-activation.json` is an optional run receipt, not an additional prepared input; validate it when present. Requested model, replicate and run order come from the pinned configuration.
+
+For optional deterministic preparation, run `experiment-input-helpers/calculate_input_values.py` with one frozen UC path, each frozen API contract path in the UC's `Related API IDs` order, and one explicit Figma dataset version. Repeat `--api-contract` for a multi-API UC; use `--require-empty` only at initial pipeline setup. The helper prints paths, identities and checksums—including the three database baseline pins—without writing files. After manually completing and reviewing the configuration, run `experiment-input-helpers/calculate_configuration_checksum.py --configuration <configuration-path>` and copy the printed checksum into the Draft Canonical Run JSON. Generation still performs its existing read-only configuration/API/Figma/database preflight.
 
 ## Command sequence
 

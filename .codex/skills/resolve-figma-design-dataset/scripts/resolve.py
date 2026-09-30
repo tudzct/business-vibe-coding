@@ -5,7 +5,6 @@ import json
 import re
 import sys
 from pathlib import Path
-from typing import Optional
 
 
 def repo_root() -> Path:
@@ -20,26 +19,13 @@ ROOT = repo_root()
 DATASET_ROOT = ROOT / "resource/figma-design-dataset"
 
 
-def select_dataset(version: Optional[str]) -> Path:
-    if not version:
-        activation_path = DATASET_ROOT / "active-dataset.json"
-        if not activation_path.is_file():
-            raise FileNotFoundError("No active Figma dataset; researcher confirmation is required")
-        activation = json.loads(activation_path.read_text(encoding="utf-8"))
-        if activation.get("status") != "Confirmed":
-            raise FileNotFoundError("Figma dataset activation is not Confirmed")
-        version = activation.get("dataset_version")
-        manifest = ROOT / activation.get("manifest_path", "")
-        if not isinstance(version, str) or not version or not manifest.is_file():
-            raise FileNotFoundError("Figma dataset activation is incomplete")
-        if activation.get("manifest_sha256") != "sha256:" + digest(manifest):
-            raise FileNotFoundError("Figma dataset activation checksum mismatch")
-    if version:
-        candidate = DATASET_ROOT / version
-        if not (candidate / "manifest.json").is_file():
-            raise FileNotFoundError(f"Dataset version does not exist or is missing a manifest: {version}")
-        return candidate
-    raise FileNotFoundError("The activated dataset must be specified with --dataset-version; do not automatically select the latest version")
+def select_dataset(version: str) -> Path:
+    if version in {".", ".."} or not re.fullmatch(r"[A-Za-z0-9._-]+", version):
+        raise FileNotFoundError("Dataset version must be a safe directory name")
+    candidate = (DATASET_ROOT / version).resolve()
+    if not candidate.is_relative_to(DATASET_ROOT.resolve()) or not (candidate / "manifest.json").is_file():
+        raise FileNotFoundError(f"Dataset version does not exist or is missing a manifest: {version}")
+    return candidate
 
 
 def normalize_uc(value: str) -> str:
@@ -99,7 +85,8 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Resolve immutable UC to frozen Figma dataset")
     parser.add_argument("target", nargs="?", help="UC ID or UC file path")
     parser.add_argument("--validate-all", action="store_true")
-    parser.add_argument("--dataset-version", help="Name of the immutable dataset directory to use")
+    parser.add_argument("--dataset-version", required=True,
+                        help="Exact immutable dataset directory name to use")
     args = parser.parse_args()
     try:
         dataset = select_dataset(args.dataset_version)

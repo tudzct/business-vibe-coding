@@ -7,7 +7,7 @@ A comparison group uses a researcher-prepared Confirmed configuration before pro
 - generation and audit model assignments;
 - replicate indexes and unique run order;
 - audit protocol and timing method.
-- the activated Figma dataset version and manifest checksum;
+- the selected immutable Figma dataset version and manifest checksum;
 - the configured UC's frozen BR and flow baseline paths;
 - the configured UC's complete ordered frozen API contract entries, each with API ID, repository path and raw-byte SHA-256;
 - `database_baseline`: TypeORM migration head, DBML hash and runtime MySQL schema fingerprint, governed by the configuration's existing status.

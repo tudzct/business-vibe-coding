@@ -25,7 +25,7 @@ Use them only where the frozen UC references them. `PROJECT_PROFILE.json` identi
 - When creating or refreshing a dataset, read every file key, node ID and URL only from `docs/00-context/FIGMA-LINK-REVIEW.md`. The links inside immutable UC files are provenance-only and may be inaccessible; do not call Figma with them.
 - Use `resolve-figma-design-dataset` whenever a prompt or UC contains a Figma URL, file key, frame name, node ID or selection ID.
 - If no dataset exists, that is not permission to fall back to UC links. Start capture from the review mapping or stop if that mapping is incomplete.
-- Use `resource/figma-design-dataset/active-dataset.json` only before configuration. Configurations copy its exact version and manifest checksum; configured runs never follow a moving newest directory.
+- Select one immutable Figma dataset version explicitly before configuration. Copy that exact version and manifest checksum into the configuration; never scan directories or follow a moving newest/default dataset.
 - Use the checksum-valid frozen snapshot as reproducible generation input. The researcher may inspect UI manually. UI scoring is never an automatic audit or experiment prerequisite; missing UI results do not block the workflow.
 - Use the installed Figma plugin only to create a new dataset version or complete entries explicitly marked pending. Never overwrite a dataset version already used by an experiment.
 - Stop when the resolver reports `pending-rate-limit`, a checksum mismatch, a missing target or ambiguity. Do not substitute a different frame or infer hidden screens.
