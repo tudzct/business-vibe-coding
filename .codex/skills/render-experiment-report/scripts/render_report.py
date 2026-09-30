@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow" / "scripts"))
-from metrics_contract import metrics_markdown, atomic_write
+from metrics_contract import atomic_write, context, metrics_markdown
 
 
 def optional_ui_lines(data):
@@ -57,6 +57,7 @@ def main():
     parser.add_argument("input", type=Path)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
+    context(args.input)
     raw = args.input.read_bytes()
     data = json.loads(raw)
     business = data.get("business_rules", {})

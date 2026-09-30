@@ -9,7 +9,7 @@ Reference: [researcher command sequence](https://docs.google.com/document/d/1R9Z
 1. `docs/04-experiments/configurations/CFG-<UC-ID>-<MODEL>-<VARIANT>-<DATE>.json`: complete, Confirmed configuration, including the ordered frozen API ID/path/SHA-256 entries for the UC.
 2. `docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json`: the complete ordered BR ID inventory and checksum-pinned frozen UC.
 3. `docs/02-construction/implementation/<UC-ID>/flow-baseline.json`: the complete ordered Main/Basic, Alternative and Exception Flow ID inventory and checksum-pinned frozen UC.
-4. `docs/04-experiments/<UC-ID>/<UC-ID>-<MODEL>-<VARIANT>.json`: Draft Canonical Run JSON with pinned configuration and baseline identities.
+4. `docs/04-experiments/<UC-ID>/canonical-run-<UC-ID>-<MODEL>-<VARIANT>.json`: Draft Canonical Run JSON with pinned configuration and baseline identities.
 
 5. Database input: `docs/00-context/engineering/schema.dbml` and MySQL tables prepared by researcher-managed TypeORM migrations. Configuration pins migration head, DBML hash and runtime fingerprint. Follow [database policy](../engineering/DATABASE-SCHEMA.md).
 

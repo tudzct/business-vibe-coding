@@ -9,7 +9,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow/scripts"))
-from metrics_contract import ROOT, atomic_write, digest, read_json, require, validate_metrics, writable
+from metrics_contract import (ROOT, atomic_write, digest, read_json, require,
+                              validate_canonical_path, validate_metrics, writable)
 
 IDENTITY = {"uc_id", "run_id", "prompt_variant", "replicate_index", "run_order", "generation_model.requested_model_id"}
 
@@ -89,6 +90,7 @@ def prepare(mapping):
     sources, errors, seen_sources = [], [], set()
     for source in mapping["sources"]:
         path = writable(ROOT / source)
+        candidate_run_id = path.stem.removeprefix("canonical-run-")
         require(path not in seen_sources, "duplicate source path")
         seen_sources.add(path)
         require(path.is_relative_to(ROOT / "docs/04-experiments") and path.parent.parent == ROOT / "docs/04-experiments"
@@ -97,8 +99,9 @@ def prepare(mapping):
         try:
             raw = path.read_bytes()
             record = json.loads(raw.decode("utf-8-sig"))
-            require(isinstance(record, dict) and record.get("uc_id") == path.parent.name and record.get("run_id") == path.stem,
+            require(isinstance(record, dict) and record.get("uc_id") == path.parent.name,
                     "canonical path/identity mismatch")
+            validate_canonical_path(path, record)
             metrics = record.get("metrics")
             require(isinstance(metrics, dict), "canonical run has no measured metrics")
             validate_metrics(metrics)
@@ -109,7 +112,8 @@ def prepare(mapping):
                     "metrics/run identity mismatch")
             sources.append((str(path), digest(raw), record))
         except (OSError, ValueError, TypeError, KeyError, IndexError, AttributeError, ArithmeticError) as error:
-            errors.append({"path": str(path), "uc_id": path.parent.name, "run_id": path.stem, "reason": str(error)})
+            errors.append({"path": str(path), "uc_id": path.parent.name,
+                           "run_id": candidate_run_id, "reason": str(error)})
     updates, seen = [], set()
     require(isinstance(mapping.get("cells"), list) and mapping["cells"], "no writable result cells identified; report unresolved destinations without exporting")
     for cell in mapping["cells"]:

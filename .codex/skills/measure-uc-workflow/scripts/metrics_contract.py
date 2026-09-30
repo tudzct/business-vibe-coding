@@ -40,6 +40,15 @@ def writable(path):
     return path
 
 
+def validate_canonical_path(path, run):
+    path = writable(path)
+    expected_parent = writable(ROOT / "docs/04-experiments" / run["uc_id"])
+    expected_name = f"canonical-run-{run['run_id']}.json"
+    require(path.parent == expected_parent and path.name == expected_name,
+            f"canonical run must be stored at docs/04-experiments/{run['uc_id']}/{expected_name}")
+    return path
+
+
 def atomic_write(path, value, raw=False):
     path = writable(path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -64,6 +73,7 @@ def context(run_path):
         require(isinstance(value, str) and value and
                 all(c.isalnum() or c in "-_." for c in value) and value not in (".", ".."),
                 f"invalid {key}")
+    validate_canonical_path(path, run)
     folder = writable(ROOT / "docs/02-construction/implementation" /
                       run["uc_id"] / "runs" / run["run_id"])
     return path, run, folder

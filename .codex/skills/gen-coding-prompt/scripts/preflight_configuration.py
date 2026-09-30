@@ -8,7 +8,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow/scripts"))
-from metrics_contract import ROOT, digest, epoch, require, writable, validate_metrics
+from metrics_contract import ROOT, digest, epoch, require, validate_canonical_path, writable, validate_metrics
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from validate_experiment_configuration import read_configuration_json as read_json, validate
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-flow-accuracy/scripts"))
@@ -28,7 +28,7 @@ def check_reference(reference, path, config, checksum):
 
 def check_pinned_evidence(path, config, checksum):
     relative = path.relative_to(ROOT).as_posix()
-    for evidence_path in (ROOT / "docs/04-experiments").glob("*/*.json"):
+    for evidence_path in (ROOT / "docs/04-experiments").glob("*/canonical-run-*.json"):
         if evidence_path.parent.name == "configurations":
             continue
         evidence = read_json(evidence_path)
@@ -124,12 +124,15 @@ def select_canonical(uc_id, run_id=None, variant=None, configuration=None, run_j
     if run_json is not None:
         path = writable(run_json)
         require(path.is_file(), f"missing Canonical Run JSON: {path}")
-        return path, read_json(path)
+        candidate = read_json(path)
+        validate_canonical_path(path, candidate)
+        return path, candidate
     matches = []
-    for path in (ROOT / "docs/04-experiments" / uc_id).glob("*.json"):
+    for path in (ROOT / "docs/04-experiments" / uc_id).glob("canonical-run-*.json"):
         candidate = read_json(path)
         if candidate.get("uc_id") != uc_id or "experiment_configuration" not in candidate:
             continue
+        validate_canonical_path(path, candidate)
         if run_id is not None and candidate.get("run_id") != run_id:
             continue
         if variant is not None and candidate.get("prompt_variant") != variant:
