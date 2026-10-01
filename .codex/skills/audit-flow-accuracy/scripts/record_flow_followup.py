@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Persist flow progress or researcher/LLM results without altering source or telemetry."""
+"""Persist accepted BR/Flow follow-up results without altering source or telemetry."""
 
 import argparse
 import copy
@@ -15,13 +15,26 @@ from flow_summary import RESULT_POLICY, current_assessment, fingerprint, refresh
 def prepare(run, folder, payload=None):
     # Audit validation is read-only here, including the prior immutable assessments.
     sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-generation-metrics/scripts"))
-    from calculate_metrics import validate_flow
+    from calculate_metrics import accepted_br_summary, apply_br_followup, validate_flow
     from score_flow_accuracy import calculate
     validate_flow(run, folder)
     updated = copy.deepcopy(run)
     updated["flow_accuracy"]["selection_policy"] = RESULT_POLICY
-    if payload is not None:
-        record = copy.deepcopy(payload)
+    combined = isinstance(payload, dict) and ("flow" in payload or "business_rules" in payload)
+    if combined:
+        require(set(payload) <= {"flow", "business_rules"}, "combined audit follow-up has unknown fields")
+        flow_record = payload.get("flow")
+        br_record = payload.get("business_rules")
+        require(isinstance(flow_record, dict) or isinstance(br_record, dict),
+                "combined audit follow-up requires BR or flow results")
+        if isinstance(flow_record, dict) and isinstance(br_record, dict):
+            require(flow_record.get("followup_id") == br_record.get("followup_id"),
+                    "combined BR/flow results must share one follow-up ID")
+    else:
+        flow_record, br_record = payload, None
+    if flow_record is not None:
+        require(isinstance(flow_record, dict), "flow follow-up must be an object")
+        record = copy.deepcopy(flow_record)
         if record.get("mode") == "llm_measurement":
             record["runtime_result"] = calculate(record.pop("runtime_assessment"))
         history = updated["flow_accuracy"].setdefault("followups", [])
@@ -38,9 +51,11 @@ def prepare(run, folder, payload=None):
                     "current source record differs from the flow assessment; do not mix runtime revisions")
         if previous is None:
             history.append(record)
+    br_summary = apply_br_followup(updated, br_record) if br_record is not None else accepted_br_summary(updated)
     summary = refresh_summary(updated, folder)
     validate_flow(updated, folder)
-    return updated, summary
+    result = {"business_rules": br_summary, "flow_accuracy": summary} if combined else summary
+    return updated, result
 
 
 def persist(path, run, folder, summary):
@@ -52,7 +67,7 @@ def persist(path, run, folder, summary):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-json", required=True, type=Path)
-    parser.add_argument("--input", help="Follow-up JSON path, or '-' for stdin without a payload file; omit to refresh results")
+    parser.add_argument("--input", help="Audit follow-up JSON path, or '-' for stdin; omit to refresh results")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     path, run, folder = context(args.run_json)

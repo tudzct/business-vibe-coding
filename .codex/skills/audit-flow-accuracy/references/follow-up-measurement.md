@@ -1,6 +1,8 @@
-# Partial flow results and follow-up measurement
+# Audit results and follow-up measurement
 
-Follow [the command sequence](../../../../docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md). Save researcher or LLM follow-ups without source, BR, telemetry, UI or gate changes inside the scorer. Acknowledge the save and wait for the subsequent repair command if defects remain. Unknown accepted flow verdicts block new repair. The coordinator only records all-passing skip or reports the next command; it never automatically repairs after either follow-up path.
+Follow [the command sequence](../../../../docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md). Save researcher or LLM follow-ups without source, telemetry, UI or gate changes inside the scorer. One natural-language researcher response may resolve or challenge BR results, Flow results or both. Unmentioned results retain the audit verdict. Acknowledge the save and wait for the subsequent repair command if defects remain. Unknown accepted BR or Flow verdicts block new repair. The coordinator only records all-passing skip or reports the next command; it never automatically repairs after either follow-up path.
+
+BR and Flow share this one follow-up operation. The original BR snapshot and Flow assessments remain immutable. A direct researcher verdict is stored with researcher attribution and no fabricated implementation/runtime proof. A request to check again causes a bounded evidence-backed LLM re-audit. If the researcher invokes the next workflow skill without challenging the audit, the saved audit verdicts remain accepted as-is.
 
 ## Accepted experiment result
 
@@ -12,11 +14,11 @@ Projection schema 2 uses `result_scope: experiment_accepted_audit`, `stage: expe
 
 ## Save and offer both paths
 
-The scorer saves `flow_accuracy.current_summary` in canonical JSON. Use `record_flow_followup.py --run-json <run.json>` (dry-run first) to refresh the accepted-result projection from saved evidence. The canonical JSON is authoritative.
+The scorer saves `flow_accuracy.current_summary` and, when supplied, the append-only BR follow-up in the same atomic Canonical Run update. Use `record_flow_followup.py --run-json <run.json>` (dry-run first) to refresh or save the accepted-result projection. The canonical JSON is authoritative.
 
 Immediately report accepted correct/incorrect/pending counts, evaluated-only accuracy/error, coverage, whole-baseline accuracy/error (null until every flow has an accepted verdict), and bounds from canonical current_summary. List pending targets and attempts. Show later audit limitations separately when an earlier conclusive result is retained. State the updated canonical file and result source. Do not wait for every flow before saving results.
 
-Always offer both choices together in plain language:
+When a verdict is unknown or challenged, offer both choices together in plain language:
 
 1. Researcher measures manually and supplies per-flow results; the LLM writes JSON and recalculates percentages.
 2. LLM continues bounded measurement of the pending flows and automatically writes validated results.
@@ -43,7 +45,9 @@ Prepare a fresh full assessment input with ID equal to `followup_id`, matching t
 
 ## Internal payload and commands
 
-The LLM passes this payload through stdin (`--input -`) without creating an input JSON in flow-accuracy. Use actual identities/timestamps and schema 2 for follow-ups, including corrections to already scored flows:
+The LLM passes the internal payload through stdin (`--input -`) without creating an input JSON in flow-accuracy. The researcher never has to write JSON. A Flow-only follow-up keeps the existing schema below. A combined response wraps the existing Flow record and/or one BR record under `flow` and `business_rules`; both parts use the same `followup_id`, and the helper validates and writes them atomically.
+
+Use actual identities/timestamps and schema 2 for Flow follow-ups, including corrections to already scored flows:
 
 ```json
 {
@@ -66,6 +70,8 @@ The LLM passes this payload through stdin (`--input -`) without creating an inpu
 ```
 
 `assessment_sha256` uses `flow_summary.fingerprint(parent)`: SHA-256 of UTF-8 JSON with sorted keys and separators `(',', ':')`, matching the existing gate object-hash convention. For `mode: llm_measurement`, replace `researcher_result` with `runtime_assessment` containing the full new assessment input. The helper calculates and persists `runtime_result` itself.
+
+The BR part is tied to the immutable initial BR snapshot and source revision. It uses schema 1, `parent_stage: "initial"`, `snapshot_sha256`, the same UC/run/request identity, `source_unchanged: true`, and nonempty `results`. For a direct verdict, use `mode: "researcher_result"`, preserve the researcher's text, and include only `br_id` and `status` in each result. For a requested LLM check, use `mode: "llm_reaudit"` and include inspectable evidence and rationale for each result. The latest conclusive `met` or `unmet` result is accepted; a later `not_evaluable` attempt does not erase it.
 
 ```text
 python -B .codex/skills/audit-flow-accuracy/scripts/record_flow_followup.py --run-json <canonical.json> --input - --dry-run

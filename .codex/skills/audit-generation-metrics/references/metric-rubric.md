@@ -10,6 +10,8 @@ The frozen ordered BR list is the denominator. Each BR receives one terminal sta
 
 Prompt prose alone is not evidence. Cite source/configuration/build/bounded-runtime locations. Initial and final snapshots must contain exactly the baseline BR IDs in order and their totals must match.
 
+Accepted BR reporting follows `accepted-br-audit-results-v1`. Researcher verdicts and evidence-backed LLM re-audits are append-only follow-ups tied to the immutable parent snapshot and source revision. The latest conclusive result per BR in the active stage is selected; a later `not_evaluable` result does not erase an earlier `met` or `unmet`. Researcher verdicts retain attribution and are never presented as independent runtime evidence.
+
 ## Supporting metrics
 
 - First-pass audit and automatic verification within authorized repair run `audit-flow-accuracy` against the frozen Basic/Main, Alternative and Exception Flow denominator. Each flow has equal weight; steps only determine whether their parent flow can complete. No separate final-audit gate is required.

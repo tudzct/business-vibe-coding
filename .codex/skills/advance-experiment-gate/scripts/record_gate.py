@@ -14,11 +14,12 @@ from metrics_contract import ROOT, atomic_write, context, digest, read_json, req
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "gen-coding-prompt/scripts"))
 from validate_prompt_contract import validate_prompt, normalize_variant, validate_configuration
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-generation-metrics/scripts"))
-from calculate_metrics import terminal_assessment_stage, validate_flow, validate_snapshot
+from calculate_metrics import (accepted_br_summary, br_summary_snapshot,
+                               terminal_assessment_stage, validate_flow, validate_snapshot)
 from flow_summary import accepted_summary
 
-AUTO_REPAIR_POLICY = "flow-followup-auto-repair-v1"
-AUTO_REPAIR_REFERENCE = "docs/00-context/workflow/gates/FLOW-FOLLOWUP-AUTO-REPAIR.md"
+AUDIT_FOLLOWUP_POLICY = "audit-followup-continuation-v1"
+AUDIT_FOLLOWUP_REFERENCE = "docs/00-context/workflow/gates/AUDIT-FOLLOWUP-CONTINUATION.md"
 
 NEXT = {
     "prompt": {"confirmed": "source"},
@@ -114,29 +115,36 @@ def automatic_context(run, folder, followup_id, source_revision):
     require(source_revision == evidence["source_revision"]
             == run["business_rules"].get("source_revision"),
             "current source differs from initial audit; inspect drift before repair")
-    followups = run["flow_accuracy"].get("followups", [])
-    require(followups and followups[-1]["followup_id"] == followup_id,
-            "automatic continuation requires the latest saved follow-up")
-    followup = followups[-1]
-    require(followup.get("results"), "a summary refresh is not an automatic repair trigger")
+    flow_followups = run["flow_accuracy"].get("followups", [])
+    br_followups = run["business_rules"].get("followups", [])
+    parts = {}
+    if flow_followups and flow_followups[-1].get("followup_id") == followup_id:
+        parts["flow"] = flow_followups[-1]
+    if br_followups and br_followups[-1].get("followup_id") == followup_id:
+        parts["business_rules"] = br_followups[-1]
+    require(parts and all(record.get("results") for record in parts.values()),
+            "automatic continuation requires the latest saved BR/flow follow-up")
     summary = validate_flow(run, folder)
     require(summary.get("selection_policy") == "accepted-audit-results-v1",
             "automatic continuation requires accepted flow results")
     require(all(f["source_revision"] == source_revision for f in summary["flows"]
                 if f["status"] != "not_evaluable"),
             "accepted results belong to older source; inspect current defects first")
-    business = run["business_rules"]["initial"]
+    business = accepted_br_summary(run)
     br_ids = [r["br_id"] for r in business["requirements"] if r["status"] == "unmet"]
     flow_ids = [r["flow_id"] for r in summary["flows"] if r["status"] == "incorrect"]
     outcome = "authorized" if br_ids or flow_ids else (
-        "skipped" if business["met"] == business["total"]
+        "skipped" if business["counts"]["met"] == business["counts"]["total"]
         and summary["counts"]["correct"] == summary["counts"]["total"] else None)
-    if summary["counts"].get("not_evaluable", 0):
+    if summary["counts"].get("not_evaluable", 0) or business["counts"].get("not_evaluable", 0):
         outcome = None
-    context = {"policy_id": AUTO_REPAIR_POLICY, "policy_artifact": AUTO_REPAIR_REFERENCE,
-               "policy_sha256": digest((ROOT / AUTO_REPAIR_REFERENCE).read_bytes()),
-               "followup_id": followup_id, "followup_sha256": snapshot_hash(followup),
+    context = {"policy_id": AUDIT_FOLLOWUP_POLICY, "policy_artifact": AUDIT_FOLLOWUP_REFERENCE,
+               "policy_sha256": digest((ROOT / AUDIT_FOLLOWUP_REFERENCE).read_bytes()),
+               "followup_id": followup_id,
+               "followup_sha256": snapshot_hash(parts["flow"] if set(parts) == {"flow"} else parts),
                "source_revision": source_revision, "defect_br_ids": br_ids, "defect_flow_ids": flow_ids}
+    if set(parts) != {"flow"}:
+        context["followup_parts"] = sorted(parts)
     return outcome, context
 
 
@@ -213,11 +221,14 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
                     "gate-pinned flow progress changed")
     if gate == "repair_decision":
         initial_evidence = audit_evidence(run, folder, "initial")
+        br_summary = accepted_br_summary(run)
         if outcome == "authorized":
             summary = validate_flow(run, folder)
             require(summary["counts"].get("not_evaluable", 0) == 0,
                     "repair requires conclusive accepted results for every frozen flow; save missing researcher results or complete measurement first")
-            require(any(r["status"] == "unmet" for r in run["business_rules"]["initial"]["requirements"])
+            require(br_summary["counts"].get("not_evaluable", 0) == 0,
+                    "repair requires conclusive accepted results for every frozen BR; save a researcher result or complete re-audit first")
+            require(any(r["status"] == "unmet" for r in br_summary["requirements"])
                     or summary["counts"]["incorrect"] > 0, "repair requires an evidenced defect")
         if automatic is not None:
             evidence = initial_evidence
@@ -229,13 +240,16 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
             initial_evidence = audit_evidence(run, folder, "initial")
             require(run["business_rules"].get("source_revision") == initial_evidence["source_revision"],
                     "no-repair decision requires the unchanged audited source hash")
-            require(run["business_rules"].get("final") == run["business_rules"]["initial"],
-                    "no-repair decision requires unchanged BR results")
+            accepted_snapshot = br_summary_snapshot(br_summary)
+            if run["business_rules"].get("final") is None:
+                run["business_rules"]["final"] = accepted_snapshot
+            require(run["business_rules"].get("final") == accepted_snapshot,
+                    "no-repair decision requires the accepted BR results")
             evidence = initial_evidence
             if run.get("run_status") not in {"blocked", "stopped", "repair_declined"}:
-                initial = run["business_rules"]["initial"]
                 flow = validate_flow(run, folder)["counts"]
-                verified = (initial["met"] == initial["total"] and flow["correct"] == flow["total"])
+                verified = (br_summary["counts"]["met"] == br_summary["counts"]["total"]
+                            and flow["correct"] == flow["total"])
                 run["run_status"] = "complete" if verified else "repair_declined"
         run["repair_authorization"] = {"approved": outcome == "authorized", "turn_id": turn_id}
         if automatic is not None:
