@@ -122,7 +122,9 @@ def validate(path):
         raise ValueError("configuration must be Confirmed")
     for field in ("configuration_id", "comparison_group_id", "researcher_id", "decided_at", "sheet_revision"):
         text(data.get(field), field)
-    identifier(data["configuration_id"], "configuration_id")
+    configuration_id = identifier(data["configuration_id"], "configuration_id")
+    if path.name != f"{configuration_id}.json":
+        raise ValueError("configuration filename must equal <configuration_id>.json")
     decided = datetime.fromisoformat(data["decided_at"].replace("Z", "+00:00"))
     if decided.tzinfo is None:
         raise ValueError("decided_at must include a timezone")
@@ -179,14 +181,16 @@ def validate(path):
         raise ValueError("use_case.api_contracts contains duplicate IDs or paths")
 
     runs = data.get("runs")
-    if not isinstance(runs, list) or not runs:
-        raise ValueError("runs must be non-empty")
+    if not isinstance(runs, list) or len(runs) != 1:
+        raise ValueError("runs must contain exactly one run assignment")
     run_ids, orders, assignments = set(), set(), set()
     for index, run in enumerate(runs):
         prefix = f"runs[{index}]"
         if not isinstance(run, dict):
             raise ValueError(f"{prefix} must be an object")
         run_id = identifier(run.get("run_id"), prefix + ".run_id")
+        if configuration_id != f"CFG-{run_id}":
+            raise ValueError("configuration_id must equal CFG-<run_id>")
         run_uc_id = identifier(run.get("uc_id"), prefix + ".uc_id")
         if run_id in run_ids or run_uc_id != configured_uc_id:
             raise ValueError(f"{prefix} has duplicate run ID or does not belong to the configured UC")
@@ -200,6 +204,11 @@ def validate(path):
         variant = identifier(run.get("prompt_variant"), prefix + ".prompt_variant")
         if run["prompt_variant"] != variant:
             raise ValueError(f"{prefix}.prompt_variant must be a canonical identifier")
+        model_label = identifier(run.get("requested_label"), prefix + ".requested_label")
+        if run["requested_label"] != model_label:
+            raise ValueError(f"{prefix}.requested_label must be a canonical identifier")
+        if run_id != f"{run_uc_id}-{model_label}-{variant}":
+            raise ValueError(f"{prefix}.run_id must equal <UC-ID>-<MODEL>-<VARIANT> using requested_label as MODEL")
         key = (run_uc_id, variant, run["requested_model_id"], run["requested_reasoning_effort"], run["requested_reasoning_mode"], replicate)
         if key in assignments:
             raise ValueError(f"duplicate UC/variant/model/replicate assignment: {key}")

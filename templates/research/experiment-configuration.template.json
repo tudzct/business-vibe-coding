@@ -2,7 +2,7 @@
   "schema_version": "2.4",
   "artifact_type": "experiment-configuration",
   "status": "Confirmed",
-  "configuration_id": "<CONFIG-ID>",
+  "configuration_id": "CFG-<UC-ID>-<MODEL>-<VARIANT>",
   "comparison_group_id": "<COMPARISON-GROUP-ID>",
   "researcher_id": "<stable identifier>",
   "decided_at": "<ISO-8601>",
@@ -34,10 +34,10 @@
     }]
   },
   "runs": [{
-    "run_id": "<unique RUN-ID>",
+    "run_id": "<UC-ID>-<MODEL>-<VARIANT>",
     "uc_id": "<UC-ID>",
-    "prompt_variant": "<configured-variant>",
-    "requested_label": "<model label>",
+    "prompt_variant": "<VARIANT>",
+    "requested_label": "<MODEL>",
     "requested_model_id": "<exact model ID>",
     "requested_reasoning_effort": "none | low | medium | high | xhigh | max",
     "requested_reasoning_mode": "standard | pro",

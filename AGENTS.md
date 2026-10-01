@@ -49,6 +49,14 @@ Every frozen BR receives exactly one evidence-based result: `met`, `unmet` or `n
 
 These rules apply to every skill.
 
+Execute a top-level workflow step only when the researcher explicitly invokes that step in the current turn. The invocation authorizes the active skill and only the subordinate skills that its contract explicitly requires to complete that same step. It does not authorize opening or preloading a later step's `SKILL.md`, references or scripts, or executing or preparing that later top-level step, even when its name and short description are already visible in the installed skill catalog or documented workflow.
+
+During a run-scoped workflow step, read only the active skill, its explicitly required references, the current application codebase and the exact active-run artifacts resolved from the pinned configuration and Canonical Run. Do not browse experiment or implementation directories to discover alternatives. An explicitly requested reporting, export, baseline-restoration or repository-review operation may inspect the additional artifacts its active contract requires, but that exception does not authorize later-step execution or use of prior results as generation, audit or repair context.
+
+During generation, audit or repair for an active run, do not open, inspect, summarize, compare or use configurations, Canonical Runs, audit results, repair records, reports or other experiment artifacts belonging to another UC, run, model or variant. If such an artifact is encountered incidentally, disregard it and do not use it as generation, evaluation or repair context.
+
+`finalsource` is the permitted cumulative application codebase and is not treated as a prior experiment-result artifact. Deterministic validators may read the exact active-run files supplied by the active skill and may inspect artifact identities and checksums solely for deterministic selection and integrity validation. They must not expose unrelated artifact contents to the AI context.
+
 Any path containing `<UC-ID>` or its URL-encoded form `%3CUC-ID%3E` is a generic path pattern, not a literal file. During execution, substitute the actual active use-case ID before opening, validating or writing the referenced artifact; never treat the placeholder itself as an existing file.
 
 During source generation, generate source only and modify only files required by the active use case. Do not introduce unapproved public API, ownership, dependency or destructive-data changes.

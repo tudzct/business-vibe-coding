@@ -36,12 +36,6 @@ Files matching `docs/01-inception/use-cases/uc-*.md` are the complete frozen UC 
 
 `PROJECT_PROFILE.json` identifies the authoritative API source. Files under `docs/01-inception/api-contracts/` are its frozen API specification inputs. For each UC, the Confirmed configuration records the complete ordered API ID/path/SHA-256 inventory resolved from the frozen UC's `Related API IDs`. Configuration validation checks each API's Frozen identity and bytes; Prompt and Source preflight also require the configured order to match the frozen UC before START.
 
-### Prompt template
-
-- Document ID: `1-cQWpOig7A5HrSHkRvzdw6DsbYRI1-6W7b8BGurT7GY`
-- Tab: `New coding prompt template`
-- URL: https://docs.google.com/document/d/1-cQWpOig7A5HrSHkRvzdw6DsbYRI1-6W7b8BGurT7GY/edit?tab=t.ae82d3zcwy8f
-
 ### Method reference
 
 `resource/TrucDTT_21020414-4889_baoveee.pdf` and the researcher-supplied thesis PDF describe the original two-phase method.

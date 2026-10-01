@@ -11,8 +11,6 @@ Use the connected Google Drive/Sheets interface. Never scrape, reconstruct or gu
 
 ## Prompt template
 
-- Google Doc ID: `1-cQWpOig7A5HrSHkRvzdw6DsbYRI1-6W7b8BGurT7GY`
-- Tab: `New coding prompt template` (`t.ae82d3zcwy8f`)
 - [The configured coding-prompt template](../../../templates/construction/coding-prompt.template.md) defines all prompt structure and section responsibilities.
 
 ## Figma and API sources

@@ -1,6 +1,6 @@
 # Automatic experiment configuration preflight
 
-A comparison group uses a researcher-prepared Confirmed configuration before prompt generation. The researcher prepares the JSON outside the generation workflow and sets `status: Confirmed`; this is the configuration authorization. There is no Configuration Gate summary or additional confirmation turn. The JSON is canonical; root `.env` is optional preparation convenience only and its absence never blocks a valid configuration. The configuration fixes:
+A comparison group uses researcher-prepared Confirmed configurations before prompt generation. Each configuration contains exactly one run assignment for one UC/model/variant, uses `configuration_id: CFG-<run_id>` and is stored as `<configuration_id>.json`. The researcher prepares the JSON outside the generation workflow and sets `status: Confirmed`; this is the configuration authorization. There is no Configuration Gate summary or additional confirmation turn. The JSON is canonical; root `.env` is optional preparation convenience only and its absence never blocks a valid configuration. The configuration fixes:
 
 - configuration/comparison-group/researcher identifiers;
 - the single configured UC ID;

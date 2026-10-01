@@ -15,6 +15,8 @@ Reference: [researcher command sequence](https://docs.google.com/document/d/1R9Z
 
 The researcher chooses the preparation tool. Validate the four JSON files, database pins and frozen UC/API/Figma dependencies read-only; API validation checks the configured order against the UC and each pinned file's path, Frozen identity and SHA-256. Never initialize, repair or fill missing inputs during generation. Resolve one exact UC/run, never the newest file. Root `.env` is optional; initialized Docker MySQL and `finalsource/.env` are required for the database preflight. `run-activation.json` is an optional run receipt, not an additional prepared input; validate it when present. Requested model, replicate and run order come from the pinned configuration.
 
+For these file names, `run_id` is `<UC-ID>-<MODEL>-<VARIANT>`: `MODEL` is the configuration's path-safe `requested_label`, and `VARIANT` is its `prompt_variant`. The configuration ID is `CFG-<run_id>`.
+
 For optional deterministic preparation, run `experiment-input-helpers/calculate_input_values.py` with one frozen UC path, each frozen API contract path in the UC's `Related API IDs` order, and one explicit Figma dataset version. Repeat `--api-contract` for a multi-API UC; use `--require-empty` only at initial pipeline setup. The helper prints paths, identities and checksums—including the three database baseline pins—without writing files. After manually completing and reviewing the configuration, run `experiment-input-helpers/calculate_configuration_checksum.py --configuration <configuration-path>` and copy the printed checksum into the Draft Canonical Run JSON. Generation still performs its existing read-only configuration/API/Figma/database preflight.
 
 ## Command sequence

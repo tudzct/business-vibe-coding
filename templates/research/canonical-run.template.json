@@ -1,14 +1,14 @@
 {
-  "run_id": "<run-id>",
-  "prompt_variant": "<value from pinned configuration>",
+  "run_id": "<UC-ID>-<MODEL>-<VARIANT>",
+  "prompt_variant": "<VARIANT>",
   "coding_prompt": null,
   "experiment_configuration": {
-    "configuration_id": "<CONFIG-ID>",
+    "configuration_id": "CFG-<UC-ID>-<MODEL>-<VARIANT>",
     "comparison_group_id": "<COMPARISON-GROUP-ID>",
     "researcher_id": "<researcher identifier>",
-    "artifact": "docs/04-experiments/configurations/<CONFIG-ID>.json",
+    "artifact": "docs/04-experiments/configurations/CFG-<UC-ID>-<MODEL>-<VARIANT>.json",
     "checksum": "sha256:<checksum>",
-    "run_activation": "docs/02-construction/implementation/<UC-ID>/runs/<run-id>/run-activation.json"
+    "run_activation": "docs/02-construction/implementation/<UC-ID>/runs/<UC-ID>-<MODEL>-<VARIANT>/run-activation.json"
   },
   "uc_id": "<UC-ID>",
   "uc_name": "<Use case name>",

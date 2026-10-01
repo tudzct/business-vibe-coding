@@ -17,6 +17,6 @@ Persistence follows [DATABASE-SCHEMA.md](DATABASE-SCHEMA.md): read the configure
 
 Version rule: use the versions declared in the target `package.json` and lockfile. Do not introduce a separate security requirement or evaluation dimension.
 
-Current FE baseline pins Vite 8 and React Router 7 because the Vite 5/Router 6 versions in the reference code have unresolved registry advisories.
+The current FE baseline uses the Vite and React Router versions pinned by its manifest and lockfile. Preserve those exact resolved versions unless an approved requirement authorizes a dependency change.
 
 Lint/type/build rule: do not create or run tests/test cases, but run permitted ESLint, TypeScript compilation and production build commands. Do not suppress diagnostics to obtain a green result.

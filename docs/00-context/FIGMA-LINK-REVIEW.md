@@ -6,7 +6,7 @@ This file is the authoritative downstream mapping used to capture the frozen off
 
 The current frozen UC projections contain no Figma URL occurrences. Every URL below is therefore an external mapping confirmed by the researcher and verified through the Figma connector. Capture tools must use only the `Replacement URL` column; URLs or file keys found in immutable UC provenance are not capture authority.
 
-On 2026-08-29, connector inspection of the approved `Design` canvas (`66:4728`) and grouped account frames corrected the stale UC names, paths, and numbering previously recorded in this file. The connector also verified dedicated frames in the researcher-supplied `VibeTesting - Copy` file for UC-004, UC-006, UC-007, UC-008, and UC-015.
+Connector inspection on 2026-08-29 establishes the approved `Design` canvas (`66:4728`), grouped account frames and the UC names, paths and numbering recorded below. It also verifies dedicated frames in the researcher-supplied `VibeTesting - Copy` file for UC-004, UC-006, UC-007, UC-008, and UC-015.
 
 ## Summary list
 
