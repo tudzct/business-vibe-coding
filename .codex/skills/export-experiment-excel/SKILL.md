@@ -22,7 +22,7 @@ Use paired double quotes around a path or tab containing spaces. Quoting groups 
 ```text
 $export-experiment-excel uc-01 results.xlsx Results
 $export-experiment-excel uc-01 "C:\Research Data\results.xlsx" "Summary Results"
-$export-experiment-excel uc-01 https://docs.google.com/spreadsheets/d/1bxVKta6-jkRyN1FN4rknT8ACP9ruVhn4gLBo-g6xThY/edit Results
+$export-experiment-excel uc-01 <GOOGLE-SHEETS-URL> Results
 ```
 
 Parse immediately and work from these three arguments and the inspected target/source data alone. Do not request a run ID, mapping, explanatory prose or confirmation. Missing/extra arguments or unmatched quotes produce a short usage error and no writes; do not reinterpret additional prose. If access, source identity or target safety cannot be resolved, use the non-interactive failure rules below, never guess or repeatedly ask questions. Work without conversational back-and-forth; return only the output link and brief filled/N/A/skipped counts, or a concise blocking error. Required tool notices and permission controls still apply.

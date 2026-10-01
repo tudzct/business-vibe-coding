@@ -14,8 +14,6 @@ Configuration confirmation is supplied by the researcher's externally prepared J
 
 This project studies automated source-code generation from use-case specifications enriched with explicit Business Rules. Rules are expressed as OCL invariants, preconditions or postconditions when representable; remaining constraints stay in authoritative natural language.
 
-The configured method extends the two-phase method described by Dang Thi Thanh Truc:
-
 [The configured coding-prompt template](templates/construction/coding-prompt.template.md) defines all prompt structure and section responsibilities.
 
 The method has two phases:
@@ -35,10 +33,6 @@ Files matching `docs/01-inception/use-cases/uc-*.md` are the complete frozen UC 
 ### API contracts
 
 `PROJECT_PROFILE.json` identifies the authoritative API source. Files under `docs/01-inception/api-contracts/` are its frozen API specification inputs. For each UC, the Confirmed configuration records the complete ordered API ID/path/SHA-256 inventory resolved from the frozen UC's `Related API IDs`. Configuration validation checks each API's Frozen identity and bytes; Prompt and Source preflight also require the configured order to match the frozen UC before START.
-
-### Method reference
-
-`resource/TrucDTT_21020414-4889_baoveee.pdf` and the researcher-supplied thesis PDF describe the original two-phase method.
 
 ## Business-rule baseline
 
