@@ -73,7 +73,7 @@ Discover bundled Python/Node executables rather than assuming PATH. These are in
 
 ```text
 <node> <scratch>/fill_workbook.mjs inspect --repo-root <repo> --workbook <xlsx> --sheet <exact-tab> --range <bounded-range>
-<python> .codex/skills/export-experiment-excel/scripts/prepare_excel_updates.py --mapping <mapping.json> --output <updates.json>
+<python> -B .codex/skills/export-experiment-excel/scripts/prepare_excel_updates.py --mapping <mapping.json> --output <updates.json>
 <node> <scratch>/fill_workbook.mjs fill --repo-root <repo> --updates <updates.json> --output <new.xlsx>
 ```
 

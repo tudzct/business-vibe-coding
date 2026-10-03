@@ -63,7 +63,7 @@ Replace the example name with the actual change. To generate from reviewed entit
 After reviewing DBML and the migrated database, obtain the three database pins as part of the combined researcher-side input calculation:
 
 ```text
-<python-executable> experiment-input-helpers/calculate_input_values.py --use-case <frozen-uc.md> --api-contract <frozen-api.md> --figma-dataset-version <version> --require-empty
+<python-executable> -B experiment-input-helpers/calculate_input_values.py --use-case <frozen-uc.md> --api-contract <frozen-api.md> --figma-dataset-version <version> --require-empty
 ```
 
 Repeat `--api-contract` in the UC's declared order when it references multiple APIs. This prints the three database configuration fields together with the other objective input values, without writing files or invoking an LLM. `--require-empty` checks application tables only; migration history must contain records. Omit this option between cumulative UCs. The helper never starts containers, runs migrations or resets data. Root `.env` is unused. Copy reviewed pins into a new configuration and pin that configuration in its Canonical Run JSON.
@@ -75,7 +75,7 @@ The START capture helper also revalidates preflight. Preserve existing token lab
 Audit/Repair verify before observation/correction and after integrated verification:
 
 ```text
-<python-executable> .codex/skills/gen-coding-prompt/scripts/database_baseline.py --configuration <pinned-configuration.json>
+<python-executable> -B .codex/skills/gen-coding-prompt/scripts/database_baseline.py --configuration <pinned-configuration.json>
 ```
 
 For application rebuilds within a pinned run, after successful preflight use:
