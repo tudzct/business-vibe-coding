@@ -1,29 +1,51 @@
-# Connected sources
+# Connected sources — 100ms
 
-## Canonical functional and Business Rule source
+The researcher selected the local Markdown package as the authoritative functional/API source and authorized replacing the copy-file Figma provenance with the standard file.
 
-- Source type, URL and tab: `PROJECT_PROFILE.json` -> `authoritative_sources.use_case_specification`
-- Authorized ranges and retrieval timestamps: recorded in each frozen UC projection
-- Frozen UC inventory: every file matching `docs/01-inception/use-cases/uc-*.md`
-- Frozen OCL utilities, when applicable: `docs/01-inception/use-cases/OCL-UTILITY-DEFINITIONS.md`
+- Source identity: `PROJECT_PROFILE.json` → `authoritative_sources`.
+- Original package: `D:/figma_spec/100ms Video Conferencing and Live Streaming` (read-only).
+- Byte-exact snapshot: `resource/specification-sources/100ms-2026-10-01-001/`.
+- Original source retrieval paths, checksums and actual retrieval time: [100ms-source-retrieval.json](100ms-source-retrieval.json).
+- Active UC projection receipt: [100ms-local-uml-retrieval.json](100ms-local-uml-retrieval.json). This researcher-authorized refresh derives each local UML from that UC's unchanged BRs using the checksum-verified existing snapshot; it does not claim a new external retrieval.
+- Frozen UC inventory: every `docs/01-inception/use-cases/uc-*.md`, 18 files.
+- Frozen OCL utility semantics: `docs/01-inception/use-cases/OCL-UTILITY-DEFINITIONS.md`. UML classifiers, accessed members, required operation signatures and helpers are declared locally in each UC; there is no active shared UML model.
+- Frozen assumptions/domain scope: `docs/01-inception/ASSUMPTIONS.md`, `CONTEXT.md`.
+- Frozen API inventory: 15 `api-*.md` in `docs/01-inception/api-contracts/`, plus `common-contract.md`. Source README count of 14 is historical and does not remove any endpoint.
 
-Use the connected Google Drive/Sheets interface. Never scrape, reconstruct or guess cell contents. Store source identity, tab, exact range and retrieval time in derived artifacts. Read only the source/tab/range authorized by the active project profile and parent prompt. Stop when access fails or when duplicate/conflicting rows make a business requirement ambiguous.
+Read only configured source inputs. Never invent spreadsheet IDs, tabs or ranges for this local package. Source snapshots remain byte-exact; downstream projections record allowed structural/provenance changes separately. Changes to Frozen behavior require researcher source revision and a new retrieval record.
 
-## Prompt template
+## Figma
 
-- [The configured coding-prompt template](../../../templates/construction/coding-prompt.template.md) defines all prompt structure and section responsibilities.
+- Standard file: `lCvn1rB7IdRchqAuEatJJp`.
+- All 69 pages were enumerated with figma-use and inspected one page per call; [page inventory](100ms-figma-page-inventory.json) includes roots, node types, dimensions and empty pages.
+- The provided `4732:52930` is a PAGE. Profile URLs use verified root frames only.
+- [FIGMA-LINK-REVIEW.md](../FIGMA-LINK-REVIEW.md) is the sole capture authority, including approved supplementary/descendant targets.
+- Selected dataset: **100ms-2026-10-02-001**, desktop only, explicitly authorized on 2026-10-02. [Frozen manifest](../../../resource/figma-design-dataset/100ms-2026-10-02-001/manifest.json); manifest pin sha256:ead5b6aa248f3c132950dc533b5b3392052cfdcfec6efc029c3fb01e6845c298. All 74 required nodes across 8 pages and 18 UC mappings are complete. Use resolver primary and supplementary snapshot directories and [coverage](../../../resource/figma-design-dataset/100ms-2026-10-02-001/uc-design-coverage.json). Frozen mobile references remain outside this design scope.
+- UC Figma references are provenance-only. Do not use archived Finebank evidence or auto-select a newest version.
+- Never retain temporary asset URLs or credentials in frozen artifacts. Sparse context and truncated assets require further capture, never guessed completion.
 
-## Figma and API sources
+## API and generation boundaries
 
-Use them only where the frozen UC references them. `PROJECT_PROFILE.json` identifies the authoritative API source and Figma root file(s). API contracts are explicitly defined as markdown files in `docs/01-inception/api-contracts/`. Detailed per-UC Figma mappings come only from `docs/00-context/FIGMA-LINK-REVIEW.md`; a frozen dataset is required before use.
+Desktop validation receipt: [100ms-desktop-dataset-validation.json](100ms-desktop-dataset-validation.json), with 1,929 checksum files and all 18 required UC inventories validated against the exact selected version.
 
-- Treat API contracts as frozen, read-only inputs. For each UC, copy every ID from its frozen `Related API IDs` into the Confirmed configuration in source order, together with the exact repository path and raw-byte SHA-256. Do not scan for substitutes or select an API by filename similarity.
-- Configuration validation requires every pinned API file to exist under `docs/01-inception/api-contracts/` with `artifact_type: api-contract`, `status: Frozen`, the configured `api_id` and the configured checksum. Prompt and Source preflight additionally require the configured ordered IDs to equal the frozen UC references.
+For each UC, pin every frozen Related API ID in its original order with repository path and raw-byte SHA-256. Resolve the common contract and assumption/utility dependencies from the configured receipt; UML is resolved solely from the active UC's local block. Do not select substitutes by filename similarity. UC-01 has no server API according to its frozen source.
 
-- When creating or refreshing a dataset, read every file key, node ID and URL only from `docs/00-context/FIGMA-LINK-REVIEW.md`. The links inside immutable UC files are provenance-only and may be inaccessible; do not call Figma with them.
-- Use `resolve-figma-design-dataset` whenever a prompt or UC contains a Figma URL, file key, frame name, node ID or selection ID.
-- If no dataset exists, that is not permission to fall back to UC links. Start capture from the review mapping or stop if that mapping is incomplete.
-- Select one immutable Figma dataset version explicitly before configuration. Copy that exact version and manifest checksum into the configuration; never scan directories or follow a moving newest/default dataset.
-- Use the checksum-valid frozen snapshot as reproducible generation input. The researcher may inspect UI manually. UI scoring is never an automatic audit or experiment prerequisite; missing UI results do not block the workflow.
-- Use the installed Figma plugin only to create a new dataset version or complete entries explicitly marked pending. Never overwrite a dataset version already used by an experiment.
-- Stop when the resolver reports `pending-rate-limit`, a checksum mismatch, a missing target or ambiguity. Do not substitute a different frame or infer hidden screens.
+## Local UML refresh
+
+Contract: `br-local-uml-v1`. Every active UC has exactly one PlantUML block containing the vocabulary used by its own BRs and the type dependencies needed to interpret those rules. Unused class members and service operations are omitted. Full enum domains preserve the meaning of typed values and comparisons. Extent-only classifiers explicitly expose the standard OCL `allInstances()` operation; opaque signature types declare that these BRs access no structural members.
+
+The original Markdown snapshot remains byte-exact. Previous UC projections and the retired shared model are archived under `resource/specification-transformations/100ms-local-uml/before/` and are historical evidence only. The refresh receipt pins source and projection hashes and records member-to-BR references. Functional sections, BR IDs and OCL, API contracts and schema inputs are unchanged. Existing configuration/baseline UC checksums must be prepared against the refreshed files before a new run; old pins are never rewritten automatically.
+
+The configured prompt structure remains [coding-prompt.template.md](../../../templates/construction/coding-prompt.template.md). Preparation is separate from generation. No experiment configuration/model/run assignment is invented in this setup.
+
+## Prepared database
+
+Researcher authorized setup on 2026-10-02 with repository database requirements taking priority. Active [DBML](../engineering/schema.dbml), [adaptation](../engineering/100MS-DATABASE-ADAPTATION.md), [source receipt](100ms-database-adaptation.json) and [prepared baseline pins](100ms-database-baseline.json) are now available. MySQL 8.4 with unchanged mysql84-tables-v1, 16 application tables, no routines/triggers, one applied TypeORM migration; the source snapshot and frozen UC/API remain unchanged. Aggregate guards and full-key idempotency semantics are later application responsibilities. Preflight remains mandatory; no experiment configuration/run was created.
+
+Current capture policy: retain primary reference code and complete native subtrees with verified local assets. The historical 604-target inventory is discovery only; unused and previously captured mobile nodes are historical evidence excluded from desktop resolution. [Database proposal](../engineering/100MS-DATABASE-RESOLUTION-PROPOSAL.md) is retained as historical analysis; the subsequent [repository-priority adaptation](../engineering/100MS-DATABASE-ADAPTATION.md) and explicit researcher setup request now govern the prepared database.
+
+Database setup instructions: [Google Docs retrieval](100ms-database-setup-guide.json). Runtime: [setup operation](../../03-audit/docker-deployment/operations/20261002-100ms-database-setup.json). Current [clean source baseline](100ms-source-baseline.json) includes the applied migration and DB connection infrastructure; the previous ZIP/receipt are preserved under resource/source-baselines/100ms-pre-database-2026-10-02-001/.
+
+## Specification header refresh
+
+Researcher requested four-field headers for all 15 endpoint API contracts and 18 UC specifications. [Frontmatter refresh receipt](100ms-frontmatter-refresh.json) preserves previous metadata and pins before/after projection hashes. Specification bodies and source snapshots are unchanged. Shared APIs retain `related_uc_ids`; UC headers retain `artifact_type`, `status`, `uc_id` and `uc_name`. Earlier retrieval receipts remain historical evidence; this receipt records the current projection hashes. Existing experiment pins are not rewritten; future configurations must use the refreshed bytes.

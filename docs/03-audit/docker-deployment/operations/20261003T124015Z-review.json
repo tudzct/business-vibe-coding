@@ -1,0 +1,84 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "mode": "review",
+  "observed_at": "2026-10-03T12:40:15.853982+00:00",
+  "repository_revision": "59ff52918f38cce5f4d9fac4bb8ab6ed8efaa8c9 (dirty working tree)",
+  "source_hash": "sha256:10c38d1c9ed2b5462361b7e6ffd7994a17d53c586fc274bbe537569505b4d0b6",
+  "source_hash_scope": "Ordered path/sha256 JSON for 12 baseline source files; not a finalized run hash",
+  "commands": [
+    {
+      "command_id": "docker-version",
+      "exit_code": 0
+    },
+    {
+      "command_id": "docker-compose-version",
+      "exit_code": 0
+    },
+    {
+      "command_id": "docker-info",
+      "exit_code": 0
+    },
+    {
+      "command_id": "compose-ps-all",
+      "exit_code": 0
+    },
+    {
+      "command_id": "compose-config-quiet",
+      "exit_code": 0
+    }
+  ],
+  "services": {
+    "database": {
+      "state": "running",
+      "health": "healthy"
+    },
+    "backend": {
+      "state": "running",
+      "health": "healthy"
+    },
+    "frontend": {
+      "state": "running",
+      "health": "healthy"
+    },
+    "migration": {
+      "state": "exited",
+      "exit_code": 0
+    }
+  },
+  "reachability": [
+    {
+      "url": "http://localhost:18080/",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:13000/api/health",
+      "status": 200,
+      "database": "connected"
+    },
+    {
+      "url": "http://localhost:18080/api/health",
+      "status": 200,
+      "database": "connected"
+    },
+    {
+      "url": "http://localhost:13000/docs-json",
+      "status": 404
+    }
+  ],
+  "runtime_provenance": {
+    "container_compose_file": "D:/100ms-codebase/finalsource/compose.yaml",
+    "current_workspace_compose_file": "D:/business-vibe-coding/finalsource/compose.yaml",
+    "current_source_image_match": "not verified"
+  },
+  "resolved": "Docker daemon available; existing frontend/backend/database healthy and UI/API reachable",
+  "remaining_blockers": [
+    "Clean source baseline ZIP checksum mismatch",
+    "Four research JSON inputs absent"
+  ],
+  "limitations": [
+    "Live schema fingerprint and migration history not revalidated without run configuration",
+    "Existing images not verified against current workspace",
+    "No build, startup, migration, application edit or test performed"
+  ],
+  "outcome": "Runtime reachable; experiment NOT_READY"
+}

@@ -1,0 +1,66 @@
+{
+  "artifact_type": "docker-deployment-operation",
+  "mode": "review",
+  "observed_at": "2026-10-03T12:29:59.894193+00:00",
+  "repository_revision": "59ff52918f38cce5f4d9fac4bb8ab6ed8efaa8c9 (dirty working tree)",
+  "source_hash": "sha256:10c38d1c9ed2b5462361b7e6ffd7994a17d53c586fc274bbe537569505b4d0b6",
+  "source_hash_scope": "SHA256 of compact sorted-key JSON ordered path/sha256 inventory for the 12 current source files pinned in 100ms-source-baseline.json; not a finalized run hash",
+  "commands": [
+    {
+      "command_id": "docker-version",
+      "exit_code": 0
+    },
+    {
+      "command_id": "docker-compose-version",
+      "exit_code": 0
+    },
+    {
+      "command_id": "docker-info",
+      "exit_code": 1,
+      "error_excerpt": "dockerDesktopLinuxEngine named pipe unavailable"
+    },
+    {
+      "command_id": "compose-ps-all",
+      "exit_code": 1,
+      "error_excerpt": "dockerDesktopLinuxEngine named pipe unavailable"
+    },
+    {
+      "command_id": "compose-config-quiet",
+      "exit_code": 0
+    },
+    {
+      "command_id": "git-check-ignore-env",
+      "exit_code": 0
+    },
+    {
+      "command_id": "git-ls-files-env",
+      "exit_code": 1,
+      "interpretation": "Expected: secret-bearing env is not tracked"
+    },
+    {
+      "command_id": "figma-validate-all-100ms-2026-10-02-001",
+      "exit_code": 0,
+      "integrity_ok": true
+    }
+  ],
+  "findings": {
+    "experiment_inputs": "No JSON files present under docs/04-experiments or docs/02-construction/implementation",
+    "source_files_match_receipt": 12,
+    "specification_files_match_refresh_receipt": 33,
+    "frozen_uc_count": 18,
+    "dbml_matches_prepared_receipt": true,
+    "live_database_checked": false,
+    "baseline_zip_expected": "sha256:f9ea38ec331cb0b09ddc737a0cb01232f76a4b513968a5bb6a4767ef847f8259",
+    "baseline_zip_actual": "sha256:e40b213d289e80a89f8fecc516c426a007df1dc9e8491583b29ef89605206eb3",
+    "baseline_zip_problem": "Contains old account/bill/goal modules; missing current 100ms migration and other pinned entries",
+    "broken_reference": "PROJECT_CONTEXT.md:54 refers to absent docs/00-context/workflow/gates/AUDIT-FOLLOWUP-CONTINUATION.md",
+    "host_free_memory_gib_at_check": 1.21,
+    "git_summary_before_review_records": {
+      "modified": 24,
+      "deleted": 1182,
+      "untracked_entries": 60
+    }
+  },
+  "outcome": "NOT_READY",
+  "boundaries": "Review only. No application/specification edits, container startup, build, migrations, tests, experiment input creation or repair."
+}

@@ -1,0 +1,64 @@
+{
+  "artifact_type": "docker-environment-current",
+  "observed_at": "2026-10-03T12:40:15.853982+00:00",
+  "repository_revision": "59ff52918f38cce5f4d9fac4bb8ab6ed8efaa8c9 (dirty working tree)",
+  "docker": {
+    "cli": "29.2.1",
+    "compose": "5.0.2 (Compose v2-compatible CLI)",
+    "daemon": "29.2.1; reachable"
+  },
+  "configuration": {
+    "env_present": true,
+    "env_ignored": true,
+    "env_tracked": false,
+    "env_valid": true,
+    "compose_valid": true,
+    "validation_scope": "Required database password nonempty/nonplaceholder; JWT nonplaceholder and at least 32 characters; Compose interpolation valid. Values not retained."
+  },
+  "services": {
+    "database": {
+      "state": "running",
+      "health": "healthy"
+    },
+    "backend": {
+      "state": "running",
+      "health": "healthy"
+    },
+    "frontend": {
+      "state": "running",
+      "health": "healthy"
+    },
+    "migration": {
+      "state": "exited",
+      "exit_code": 0
+    }
+  },
+  "runtime_status": "PASS for existing stack health and UI/API reachability; current workspace build provenance unverified",
+  "status": "WARN",
+  "next_action": "Resolve baseline ZIP mismatch and prepare four research JSON inputs. Verify runtime provenance before an experiment; container labels reference D:/100ms-codebase/finalsource/compose.yaml.",
+  "runtime_provenance": {
+    "container_compose_file": "D:/100ms-codebase/finalsource/compose.yaml",
+    "current_workspace_compose_file": "D:/business-vibe-coding/finalsource/compose.yaml",
+    "current_source_image_match": "not verified"
+  },
+  "reachability": [
+    {
+      "url": "http://localhost:18080/",
+      "status": 200
+    },
+    {
+      "url": "http://localhost:13000/api/health",
+      "status": 200,
+      "database": "connected"
+    },
+    {
+      "url": "http://localhost:18080/api/health",
+      "status": 200,
+      "database": "connected"
+    },
+    {
+      "url": "http://localhost:13000/docs-json",
+      "status": 404
+    }
+  ]
+}

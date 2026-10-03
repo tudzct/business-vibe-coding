@@ -1,0 +1,744 @@
+{
+  "artifact_type": "specification-frontmatter-refresh",
+  "project_id": "100ms-video-conferencing",
+  "recorded_at": "2026-10-03T12:20:10.642554+00:00",
+  "authorization": "Researcher requested API headers reduced to template fields and UC headers reduced to the first four fields.",
+  "source_retrieval": "Existing repository projections only; no external source retrieval or source snapshot mutation.",
+  "previous_receipts": [
+    "docs/00-context/sources/100ms-source-retrieval.json",
+    "docs/00-context/sources/100ms-local-uml-retrieval.json"
+  ],
+  "transformation": "Retain the first four frontmatter fields verbatim; preserve plural related_uc_ids for shared APIs. Specification bodies remain byte-exact.",
+  "configuration_policy": "Existing experiment pins and evidence are not rewritten. Future configurations must pin the refreshed projection bytes.",
+  "files": [
+    {
+      "path": "docs/01-inception/api-contracts/api-background-list.md",
+      "before_sha256": "sha256:ec449d76091d78362ae9b905f19b94888d901db1e16b69fd634678ca603bc11b",
+      "after_sha256": "sha256:151895f9391b1902695e8e1b5fe06388f9316e39cb8dddc40f56a6063acbaf43",
+      "body_sha256": "sha256:0edcae07933682e8ac82a13f2b0dbf1853c7ca513fcea48fd75189049de98d21",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "api_id",
+        "related_uc_id"
+      ],
+      "previous_frontmatter": "artifact_type: api-contract\nstatus: Frozen\napi_id: API-BACKGROUND-LIST\nrelated_uc_id: UC-13\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\api\\\\api-background-list.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/api/api-background-list.md\nsource_sha256: sha256:5dfe34b32b2d2b67c8780280521878086b82f1a10adf10722cc73c778a546460\nsource_range: \"Markdown: complete document\"\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/api-contracts/api-chat-message-create.md",
+      "before_sha256": "sha256:db3b31c94e56d3344e41105a1eb89d66cbb79c8260cf8265ca08fdade53b2069",
+      "after_sha256": "sha256:8aff3256a71a2cedcc615333d008710dc057ff8ef8b38d9c62f81071c5ca0ff0",
+      "body_sha256": "sha256:fdec4cd6f1cc302ae655a37bb76590618e9697759f84e14ae97a7885b853191d",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "api_id",
+        "related_uc_id"
+      ],
+      "previous_frontmatter": "artifact_type: api-contract\nstatus: Frozen\napi_id: API-CHAT-MESSAGE-CREATE\nrelated_uc_id: UC-09\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\api\\\\api-chat-message-create.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/api/api-chat-message-create.md\nsource_sha256: sha256:833ca24c12a02a53e009cccf0800528d042c20654739f620d4a876536f95df88\nsource_range: \"Markdown: complete document\"\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/api-contracts/api-chat-message-list.md",
+      "before_sha256": "sha256:fcc80945506fe87af8b719c3820390190dd169e500c84838b2906e951cce105a",
+      "after_sha256": "sha256:b3b59e519c6f1eee55742a822112ddce25717691f19b5dcb20bb5aa1c078d6a8",
+      "body_sha256": "sha256:a224b7b3d8e43a817c1f7cdd71815682a2f454e8e890c6e8cd859c4bc1f82986",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "api_id",
+        "related_uc_id"
+      ],
+      "previous_frontmatter": "artifact_type: api-contract\nstatus: Frozen\napi_id: API-CHAT-MESSAGE-LIST\nrelated_uc_id: UC-09\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\api\\\\api-chat-message-list.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/api/api-chat-message-list.md\nsource_sha256: sha256:7c0a9b2f5b707ff0a4a392cc68a43ac19acefaa6f146048f2ddb0d5bd72422ad\nsource_range: \"Markdown: complete document\"\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/api-contracts/api-content-share-control.md",
+      "before_sha256": "sha256:6bc68dc8986009db1c726476363a9b973337f6f4d28834bd37bbca9f82bde138",
+      "after_sha256": "sha256:bad8c3ace4a73d61a8f384a35e0157b1709ad7b4c750fc9d38f970077cbe784e",
+      "body_sha256": "sha256:2464daa1be1f14d901fad6f4d2d24fbb70960011c005abe9a982dc119d5d4c30",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "api_id",
+        "related_uc_id"
+      ],
+      "previous_frontmatter": "artifact_type: api-contract\nstatus: Frozen\napi_id: API-CONTENT-SHARE-CONTROL\nrelated_uc_id: UC-11\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\api\\\\api-content-share-control.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/api/api-content-share-control.md\nsource_sha256: sha256:8d1b97d2e6991a08701c9ea748a511c158de255499b866be8f3965c47f1f87d8\nsource_range: \"Markdown: complete document\"\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/api-contracts/api-live-stream-control.md",
+      "before_sha256": "sha256:a79d0714b9497f6e075137f6e7e3ea376296b7f99aa178ce6ebcb5a4304ef21b",
+      "after_sha256": "sha256:651f6031c79aa10bd87bfa02e53565f5438b65d712c3225c5841d3636c8553d2",
+      "body_sha256": "sha256:dd0b4e3cbbddd655df6de5173d0a3f14b8fede4e5d8900e7e79868753e07b2d1",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "api_id",
+        "related_uc_ids"
+      ],
+      "previous_frontmatter": "artifact_type: api-contract\nstatus: Frozen\napi_id: API-LIVE-STREAM-CONTROL\nrelated_uc_ids: [\"UC-03\", \"UC-04\"]\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\api\\\\api-live-stream-control.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/api/api-live-stream-control.md\nsource_sha256: sha256:64dfa4b726883243c66ceb380ee769f37d7a2c4ccfc5d788a9003061cf18d9e3\nsource_range: \"Markdown: complete document\"\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/api-contracts/api-live-stream-view.md",
+      "before_sha256": "sha256:9d69babd772ff879cc0d8a25b423dbf4e59a3ba57d49aa98e7fd0c857089dbb4",
+      "after_sha256": "sha256:38321d4479fb7718cb26b15971e640da7dd9460de302fbea0dfaf67a5765167e",
+      "body_sha256": "sha256:27207249e3fb0df5dc82bb47075a2157e50a03f154599ae392a525a42504a6f7",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "api_id",
+        "related_uc_id"
+      ],
+      "previous_frontmatter": "artifact_type: api-contract\nstatus: Frozen\napi_id: API-LIVE-STREAM-VIEW\nrelated_uc_id: UC-05\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\api\\\\api-live-stream-view.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/api/api-live-stream-view.md\nsource_sha256: sha256:7c96606daebf644dd7fbc82030d6fb0bbd0b7cfd3aa5045d47c40e107675f1b7\nsource_range: \"Markdown: complete document\"\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/api-contracts/api-participant-list.md",
+      "before_sha256": "sha256:ae1b190dba966e8ea5ca36d9233063408604df099043940a13c1cd4b4a84df77",
+      "after_sha256": "sha256:b3f2f56594a8dbc778a0e73d7986eb7ccb7275bacf7d6f9df891c2266f6ef57b",
+      "body_sha256": "sha256:7037c29502acd410e46589d093c0379c4c2af5dba6b64ae60ea699ff07932756",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "api_id",
+        "related_uc_ids"
+      ],
+      "previous_frontmatter": "artifact_type: api-contract\nstatus: Frozen\napi_id: API-PARTICIPANT-LIST\nrelated_uc_ids: [\"UC-08\", \"UC-15\"]\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\api\\\\api-participant-list.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/api/api-participant-list.md\nsource_sha256: sha256:bb6d52203fa458d0b4e33af5736fd2a04e7fcf0a1398747d43a46a0b91995fc8\nsource_range: \"Markdown: complete document\"\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/api-contracts/api-preferences-update.md",
+      "before_sha256": "sha256:ceea091ed7a77b5e2e0f9686c94da66c51dfbfad87c068c08976e09af748f4be",
+      "after_sha256": "sha256:c4e9e883f67257482c5526bcc8c8de68370e565dbd13016b2b82dd0687220302",
+      "body_sha256": "sha256:94a680dc09296cd339640ce8bc618e2e286a0c00194d5a893608c4f7b8dbdfb4",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "api_id",
+        "related_uc_ids"
+      ],
+      "previous_frontmatter": "artifact_type: api-contract\nstatus: Frozen\napi_id: API-PREFERENCES-UPDATE\nrelated_uc_ids: [\"UC-12\", \"UC-13\", \"UC-14\", \"UC-15\"]\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\api\\\\api-preferences-update.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/api/api-preferences-update.md\nsource_sha256: sha256:8a6261c3ef1a6d7b5e35259b5314d500897bb283c47df3a29d777cceb0006d73\nsource_range: \"Markdown: complete document\"\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/api-contracts/api-reaction-create.md",
+      "before_sha256": "sha256:1ec6e24e697e673724dfc682aed1a665936409dcfd132d8e4f9f1df3b70281c1",
+      "after_sha256": "sha256:e3b18e311422a07a67d838a4d89bcc63c65d5b4140bf55ce3f579f128a99e2e4",
+      "body_sha256": "sha256:d5f013534d3d8a198291fefc156f1464b9730cdcba9b08c9196227f3961c6320",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "api_id",
+        "related_uc_id"
+      ],
+      "previous_frontmatter": "artifact_type: api-contract\nstatus: Frozen\napi_id: API-REACTION-CREATE\nrelated_uc_id: UC-10\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\api\\\\api-reaction-create.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/api/api-reaction-create.md\nsource_sha256: sha256:cd7bbc2feb93dd709e0324999d1f58ed4f8b24f4c645805968ef820c30f7b0f6\nsource_range: \"Markdown: complete document\"\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/api-contracts/api-recording-control.md",
+      "before_sha256": "sha256:d23b99e7d14c837404f198fa4f73bfb06571a9526d64d43f16309cb29c804bcd",
+      "after_sha256": "sha256:9fa073360c55452fcc8c6853895df2914545e7b048ac5ef6b1456e181b273ea7",
+      "body_sha256": "sha256:e559486abc4c3bb3bc2848de25ce3971b4afbd8b4f2ac19dfc57fc4a4b0dc428",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "api_id",
+        "related_uc_id"
+      ],
+      "previous_frontmatter": "artifact_type: api-contract\nstatus: Frozen\napi_id: API-RECORDING-CONTROL\nrelated_uc_id: UC-16\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\api\\\\api-recording-control.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/api/api-recording-control.md\nsource_sha256: sha256:8ebd72b6b65d98b55aa38b6673e9cea647f235e1e03cd8655c056e4fa7d3ecac\nsource_range: \"Markdown: complete document\"\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/api-contracts/api-session-departure.md",
+      "before_sha256": "sha256:7d7f1ebfeac5cb63f5b047c98e51cad2687e25a711b9ef96336b92d873de0115",
+      "after_sha256": "sha256:cd530ff83b6f77cb3dfd978cb88f35f90f5f524eb31e1b7bdf0b64057b2598bc",
+      "body_sha256": "sha256:f689fe8d01a6ba9405ff5c39caac38b7af354424dcf24e516a633a0442ba13b5",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "api_id",
+        "related_uc_ids"
+      ],
+      "previous_frontmatter": "artifact_type: api-contract\nstatus: Frozen\napi_id: API-SESSION-DEPARTURE\nrelated_uc_ids: [\"UC-17\", \"UC-18\"]\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\api\\\\api-session-departure.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/api/api-session-departure.md\nsource_sha256: sha256:f943b37d542577760bb3368dc58842a63525f08b962a278e08e440e7920059a6\nsource_range: \"Markdown: complete document\"\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/api-contracts/api-session-join.md",
+      "before_sha256": "sha256:4b912941d208e583a004166675799c91094738f8ca79c05eb4f0abfa54f00ff7",
+      "after_sha256": "sha256:a09a069af65b6ae6e23d8024b82c277ede3082ea48228654c8ffa7a44dd06b3d",
+      "body_sha256": "sha256:16f659d7a583b9bd9d63c1442ec0a3440bdb654ef5402034fbb9701ec3d3f33c",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "api_id",
+        "related_uc_ids"
+      ],
+      "previous_frontmatter": "artifact_type: api-contract\nstatus: Frozen\napi_id: API-SESSION-JOIN\nrelated_uc_ids: [\"UC-02\", \"UC-12\", \"UC-13\"]\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\api\\\\api-session-join.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/api/api-session-join.md\nsource_sha256: sha256:b20ee3abd23b7a9ce9a5a9ceed60075473ee3ea7937156b5c7b1774183ecd38b\nsource_range: \"Markdown: complete document\"\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/api-contracts/api-session-state.md",
+      "before_sha256": "sha256:d9463d4d0b2933f32db5f56a7d96f3d532ac8f6d2dddc10b4c5faf0d588a8e54",
+      "after_sha256": "sha256:7c048d8728379f1ff0bf7317b1c9a512872db632fc311886dcb4d09075313abd",
+      "body_sha256": "sha256:160f78190c222d6a3e5c566013e74425f965f8b1fce4b16c7209b97fcb3d9f9d",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "api_id",
+        "related_uc_ids"
+      ],
+      "previous_frontmatter": "artifact_type: api-contract\nstatus: Frozen\napi_id: API-SESSION-STATE\nrelated_uc_ids: [\"UC-02\", \"UC-03\", \"UC-04\", \"UC-05\", \"UC-06\", \"UC-07\", \"UC-08\", \"UC-10\", \"UC-11\", \"UC-12\", \"UC-13\", \"UC-14\", \"UC-15\", \"UC-16\", \"UC-17\", \"UC-18\"]\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\api\\\\api-session-state.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/api/api-session-state.md\nsource_sha256: sha256:a904d785bdff34cd3615abe6b2d58c3887e9d784a967f944d9b7db138e7c73c4\nsource_range: \"Markdown: complete document\"\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/api-contracts/api-spotlight-update.md",
+      "before_sha256": "sha256:a76d1d5cbd2cb428568efde5a363c68860e80d14b6ffa21291b6c1d9ec3bcb98",
+      "after_sha256": "sha256:4036a7fc78fa6bfeb32eace38451b5852983cc1515c4d852715ac9aab1f67839",
+      "body_sha256": "sha256:5a62904a3feab3a5b8521a985cec7610b928095508f918df2df90b664c5e2843",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "api_id",
+        "related_uc_id"
+      ],
+      "previous_frontmatter": "artifact_type: api-contract\nstatus: Frozen\napi_id: API-SPOTLIGHT-UPDATE\nrelated_uc_id: UC-15\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\api\\\\api-spotlight-update.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/api/api-spotlight-update.md\nsource_sha256: sha256:857e2aa9d2e00f29d81206040509f9bcc48c429b421e003cd8d6b3e3d883f16d\nsource_range: \"Markdown: complete document\"\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/api-contracts/api-stage-request-create.md",
+      "before_sha256": "sha256:f107e10246e8057022a79d77eb21a55e3e77ad945c4059e932d5bdef60be55ec",
+      "after_sha256": "sha256:1753ffcaf246b4507307ae12ae010ad827d291ab2583c47396242b387065bf07",
+      "body_sha256": "sha256:c1d607fc7951531e8e2915ead6bdbd2d03e181c162561764b6117da997696ebc",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "api_id",
+        "related_uc_ids"
+      ],
+      "previous_frontmatter": "artifact_type: api-contract\nstatus: Frozen\napi_id: API-STAGE-REQUEST-CREATE\nrelated_uc_ids: [\"UC-06\", \"UC-07\"]\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\api\\\\api-stage-request-create.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/api/api-stage-request-create.md\nsource_sha256: sha256:33d846e371c3604f8c90a54b67f1a91ba3dbd4194d1bc513d9de663f90e0219b\nsource_range: \"Markdown: complete document\"\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/use-cases/uc-01-review-join-preview-and-permissions.md",
+      "before_sha256": "sha256:ce64fcaa4b52edc17610030069528f62117dd81d63920691a9a83d8cb0f76004",
+      "after_sha256": "sha256:9370cff923485529b5b99ae0a1e41159e1ce96c92f6405f36fe07131543bed79",
+      "body_sha256": "sha256:dc4a57aeb2965cbd46235e9aa364fec38099b23d7212016406f040ee7eb1724b",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "uc_id",
+        "uc_name"
+      ],
+      "previous_frontmatter": "artifact_type: business-use-case-specification\nstatus: Frozen\nuc_id: UC-01\nuc_name: \"Review Join Preview and Permissions\"\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\uc\\\\uc-01-review-join-preview-and-permissions.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/uc/uc-01-review-join-preview-and-permissions.md\nsource_sha256: sha256:c10e126e551627f6b640771e26ca55bca04292c105fc11cb902051a74905b71c\nsource_range: \"Markdown: complete document\"\numl_projection_contract: br-local-uml-v1\numl_projection_receipt: docs/00-context/sources/100ms-local-uml-retrieval.json\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "uml_projection_contract",
+        "uml_projection_receipt",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/use-cases/uc-02-join-a-session.md",
+      "before_sha256": "sha256:6997ccc88da2d6c892c75db195f9151214b8acd81bc4d8aa9282f37753b64cad",
+      "after_sha256": "sha256:c22a1b4c99f879c6ebbab643b8d6be94e7a7435f6dae490ea36ef1ea80000f74",
+      "body_sha256": "sha256:122c57da20c11edf52b719dc450a8c7fa140f8a58fc67b936a752aadebbae8e8",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "uc_id",
+        "uc_name"
+      ],
+      "previous_frontmatter": "artifact_type: business-use-case-specification\nstatus: Frozen\nuc_id: UC-02\nuc_name: \"Join a Session\"\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\uc\\\\uc-02-join-a-session.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/uc/uc-02-join-a-session.md\nsource_sha256: sha256:dff5f05749a28da4c06afb89527a40513d7b482901bb50db05892b2291341286\nsource_range: \"Markdown: complete document\"\numl_projection_contract: br-local-uml-v1\numl_projection_receipt: docs/00-context/sources/100ms-local-uml-retrieval.json\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "uml_projection_contract",
+        "uml_projection_receipt",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/use-cases/uc-03-start-a-live-stream.md",
+      "before_sha256": "sha256:1c463f53daaefdc2e3862ef15119d081130abe1558eb59f8caecdc70f39ca736",
+      "after_sha256": "sha256:7b93faea2e2621b998f6a8b8f216441cbac453a752daf460af3f95ac6c86b3b5",
+      "body_sha256": "sha256:5f2383e991a89a0fe21585abd38ef66f6b69821a66dc1c536f7e0afc5b8b45b0",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "uc_id",
+        "uc_name"
+      ],
+      "previous_frontmatter": "artifact_type: business-use-case-specification\nstatus: Frozen\nuc_id: UC-03\nuc_name: \"Start a Live Stream\"\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\uc\\\\uc-03-start-a-live-stream.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/uc/uc-03-start-a-live-stream.md\nsource_sha256: sha256:f51628d3c5c1ffb618eaadd689785984a59031a10e8c18bf0bfa5c411c81c56e\nsource_range: \"Markdown: complete document\"\numl_projection_contract: br-local-uml-v1\numl_projection_receipt: docs/00-context/sources/100ms-local-uml-retrieval.json\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "uml_projection_contract",
+        "uml_projection_receipt",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/use-cases/uc-04-stop-a-live-stream.md",
+      "before_sha256": "sha256:c63926b621236357a6787f61f72959a0f6c2b32cf338175e228d9e7233bdaa33",
+      "after_sha256": "sha256:ba8b9245ecc1325c60114b1196e8e94e7dc787ccf83a80e6c8438e4c7177649a",
+      "body_sha256": "sha256:8cf6709d9751f8dd01e0f854fe74f9bf68bcd94b170507246b6cea1cbff9b3d2",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "uc_id",
+        "uc_name"
+      ],
+      "previous_frontmatter": "artifact_type: business-use-case-specification\nstatus: Frozen\nuc_id: UC-04\nuc_name: \"Stop a Live Stream\"\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\uc\\\\uc-04-stop-a-live-stream.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/uc/uc-04-stop-a-live-stream.md\nsource_sha256: sha256:0a7bb9f148af3e6e22cceb338e908b6eab282219a5ac1e5a65041c8f3e984ae7\nsource_range: \"Markdown: complete document\"\numl_projection_contract: br-local-uml-v1\numl_projection_receipt: docs/00-context/sources/100ms-local-uml-retrieval.json\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "uml_projection_contract",
+        "uml_projection_receipt",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/use-cases/uc-05-watch-a-live-stream.md",
+      "before_sha256": "sha256:f7db2d083f783640c1011231ab10d58408624f6f8eb7ed18beb05fd8d485a605",
+      "after_sha256": "sha256:99efc10ae58264829d78a15886d25c15120b9e525b48690a5047f43b2e1271df",
+      "body_sha256": "sha256:443dc141658b244cbcbf9b292e017861eb7e015ffbc4117aa3622f807cc16294",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "uc_id",
+        "uc_name"
+      ],
+      "previous_frontmatter": "artifact_type: business-use-case-specification\nstatus: Frozen\nuc_id: UC-05\nuc_name: \"Watch a Live Stream\"\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\uc\\\\uc-05-watch-a-live-stream.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/uc/uc-05-watch-a-live-stream.md\nsource_sha256: sha256:fdf2cc6ce6e9affab20e61c434d316c7b7177b50adb43603edae06ce9c666730\nsource_range: \"Markdown: complete document\"\numl_projection_contract: br-local-uml-v1\numl_projection_receipt: docs/00-context/sources/100ms-local-uml-retrieval.json\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "uml_projection_contract",
+        "uml_projection_receipt",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/use-cases/uc-06-request-stage-access.md",
+      "before_sha256": "sha256:112576264bbf9974870b923b6d697e44f3170a5582abe9dac43573bf6de952ae",
+      "after_sha256": "sha256:7ea2dd63358d41cac77a08a30624fd018afa02d0a53403c0f13404866275cca3",
+      "body_sha256": "sha256:ecc84d0b4a72f89f3518283c066081f54a6973c05dc5cad80e22300798218640",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "uc_id",
+        "uc_name"
+      ],
+      "previous_frontmatter": "artifact_type: business-use-case-specification\nstatus: Frozen\nuc_id: UC-06\nuc_name: \"Request Stage Access\"\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\uc\\\\uc-06-request-stage-access.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/uc/uc-06-request-stage-access.md\nsource_sha256: sha256:7d4a6dd8938a0e1633ab7bff27da5999cb9d13762dbac001e98d0d9f13df9934\nsource_range: \"Markdown: complete document\"\numl_projection_contract: br-local-uml-v1\numl_projection_receipt: docs/00-context/sources/100ms-local-uml-retrieval.json\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "uml_projection_contract",
+        "uml_projection_receipt",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/use-cases/uc-07-respond-to-a-stage-request.md",
+      "before_sha256": "sha256:4802285d85848e2a7c3c0ccfd57c5ef355bee340536870dcbe8f7abc71f69c68",
+      "after_sha256": "sha256:626ff120d5b836a0c936786f7447445a1a7331d5db2b54e8290e8f58f174f719",
+      "body_sha256": "sha256:210b7a5af2cfda6f5d3859617b815470693ddf2864a338c3090df62f53af0bcd",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "uc_id",
+        "uc_name"
+      ],
+      "previous_frontmatter": "artifact_type: business-use-case-specification\nstatus: Frozen\nuc_id: UC-07\nuc_name: \"Respond to a Stage Request\"\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\uc\\\\uc-07-respond-to-a-stage-request.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/uc/uc-07-respond-to-a-stage-request.md\nsource_sha256: sha256:662ab50b65776c89369058cc6968c310be58b759caa88c40d73ae448422ac2b3\nsource_range: \"Markdown: complete document\"\numl_projection_contract: br-local-uml-v1\numl_projection_receipt: docs/00-context/sources/100ms-local-uml-retrieval.json\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "uml_projection_contract",
+        "uml_projection_receipt",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/use-cases/uc-08-view-session-participants.md",
+      "before_sha256": "sha256:2b2acf269a815903e83ebba5fff7c033c282e97c57173abaf0a35f6ff1954a1a",
+      "after_sha256": "sha256:58dab0f5b8dc3b1401edeb1af1283227c2c76df37fa585683b16f62461a5a007",
+      "body_sha256": "sha256:e5e7143115196058dacf960ede6d3b0f4c28dcfc46dfe4cfa322659b9df04498",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "uc_id",
+        "uc_name"
+      ],
+      "previous_frontmatter": "artifact_type: business-use-case-specification\nstatus: Frozen\nuc_id: UC-08\nuc_name: \"View Session Participants\"\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\uc\\\\uc-08-view-session-participants.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/uc/uc-08-view-session-participants.md\nsource_sha256: sha256:7b1863372b737395f08dc3affabd94e2cc28da07679959557ad0fda018022c54\nsource_range: \"Markdown: complete document\"\numl_projection_contract: br-local-uml-v1\numl_projection_receipt: docs/00-context/sources/100ms-local-uml-retrieval.json\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "uml_projection_contract",
+        "uml_projection_receipt",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/use-cases/uc-09-send-a-chat-message.md",
+      "before_sha256": "sha256:68a376cf91584556c676b8527f963ae1dedb06a29f1330c6406572b59c582cd3",
+      "after_sha256": "sha256:2020b040354cbbf89b4c08082a6d1de773ffcb6c6a49f98173c9cd5ceac68f76",
+      "body_sha256": "sha256:144ee96838830712dd9e305fc11b4c3ac9238bc1d32d6b4095c599f6b2713be0",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "uc_id",
+        "uc_name"
+      ],
+      "previous_frontmatter": "artifact_type: business-use-case-specification\nstatus: Frozen\nuc_id: UC-09\nuc_name: \"Send a Chat Message\"\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\uc\\\\uc-09-send-a-chat-message.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/uc/uc-09-send-a-chat-message.md\nsource_sha256: sha256:d9ca8d13a96fbe12c1fcf0f96e7e668d3a46d41136e0e8878f3f78b5f5bb868b\nsource_range: \"Markdown: complete document\"\numl_projection_contract: br-local-uml-v1\numl_projection_receipt: docs/00-context/sources/100ms-local-uml-retrieval.json\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "uml_projection_contract",
+        "uml_projection_receipt",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/use-cases/uc-10-send-an-emoji-reaction.md",
+      "before_sha256": "sha256:0d5c9c02f603db3971444cde26667573aef1a3199a7731a378d8dddb234b3c1f",
+      "after_sha256": "sha256:b8fa33c5e72d2119eb31424b7a06b39ea329e3c0d9e8bcff502c39fd9d22b83e",
+      "body_sha256": "sha256:881070806417929a171de3f8eac96b629844b8dcbee3b301751f6d3dfbb9dd62",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "uc_id",
+        "uc_name"
+      ],
+      "previous_frontmatter": "artifact_type: business-use-case-specification\nstatus: Frozen\nuc_id: UC-10\nuc_name: \"Send an Emoji Reaction\"\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\uc\\\\uc-10-send-an-emoji-reaction.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/uc/uc-10-send-an-emoji-reaction.md\nsource_sha256: sha256:196e541fd4a78959fd2c784ded2def2eed2a2bdb84b1cdfa2d8f32ede678cbd8\nsource_range: \"Markdown: complete document\"\numl_projection_contract: br-local-uml-v1\numl_projection_receipt: docs/00-context/sources/100ms-local-uml-retrieval.json\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "uml_projection_contract",
+        "uml_projection_receipt",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/use-cases/uc-11-share-presentation-content.md",
+      "before_sha256": "sha256:72c4e55ef45f5e88f5ec9a16851776f5762603019b32757d08e04de4ad43cce5",
+      "after_sha256": "sha256:9870df7d848eddac0341638d9e7e344979891a1d3e93c3668ce938b2a1f27149",
+      "body_sha256": "sha256:00999461b0aca32e284c8063172c8be72b14bfabdc6358c512550cc7bd0e2354",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "uc_id",
+        "uc_name"
+      ],
+      "previous_frontmatter": "artifact_type: business-use-case-specification\nstatus: Frozen\nuc_id: UC-11\nuc_name: \"Share Presentation Content\"\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\uc\\\\uc-11-share-presentation-content.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/uc/uc-11-share-presentation-content.md\nsource_sha256: sha256:07449a4a8b71ca8ea8ae3262148245fb5d78114978f80dd50b52e00147978b71\nsource_range: \"Markdown: complete document\"\numl_projection_contract: br-local-uml-v1\numl_projection_receipt: docs/00-context/sources/100ms-local-uml-retrieval.json\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "uml_projection_contract",
+        "uml_projection_receipt",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/use-cases/uc-12-configure-audio-and-video-devices.md",
+      "before_sha256": "sha256:91dbc3ef818ebf1537161d6bbd32b3755e24fc8518cc3334b5984c6ec7daabbe",
+      "after_sha256": "sha256:ac83b4623d5ea6d1f4551e6e23b727eabdc8664830326e48ac49cf32ebd483ae",
+      "body_sha256": "sha256:c7ba4ffd639e463502feebe0985829c8f8e2dd9e24b5e5f4ab2ff1b783629069",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "uc_id",
+        "uc_name"
+      ],
+      "previous_frontmatter": "artifact_type: business-use-case-specification\nstatus: Frozen\nuc_id: UC-12\nuc_name: \"Configure Audio and Video Devices\"\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\uc\\\\uc-12-configure-audio-and-video-devices.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/uc/uc-12-configure-audio-and-video-devices.md\nsource_sha256: sha256:c4d57472414e077ca1d44c44fee751eed13ba2b5ee1e127c2d4a314ec4740bf7\nsource_range: \"Markdown: complete document\"\numl_projection_contract: br-local-uml-v1\numl_projection_receipt: docs/00-context/sources/100ms-local-uml-retrieval.json\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "uml_projection_contract",
+        "uml_projection_receipt",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/use-cases/uc-13-select-a-virtual-background.md",
+      "before_sha256": "sha256:33a50243a2d082e5f9a2e1ae00ed8552670fb1fcd4055aa8c9babbae35a427ce",
+      "after_sha256": "sha256:1a268c3b3f280bccf57ab101d3c5ba25f50c07fe0704029be967dc6198b5b5cc",
+      "body_sha256": "sha256:8c380b6b29cba31cae2fe82ff7b798ae16f19b151f8e56acaad49c4b0cba4e7d",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "uc_id",
+        "uc_name"
+      ],
+      "previous_frontmatter": "artifact_type: business-use-case-specification\nstatus: Frozen\nuc_id: UC-13\nuc_name: \"Select a Virtual Background\"\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\uc\\\\uc-13-select-a-virtual-background.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/uc/uc-13-select-a-virtual-background.md\nsource_sha256: sha256:369a69b8ed11b07e804acc652d0f608a69b8cddb9c6da102a63caf1b54ce1669\nsource_range: \"Markdown: complete document\"\numl_projection_contract: br-local-uml-v1\numl_projection_receipt: docs/00-context/sources/100ms-local-uml-retrieval.json\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "uml_projection_contract",
+        "uml_projection_receipt",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/use-cases/uc-14-change-session-layout.md",
+      "before_sha256": "sha256:9fa9200ec77f1b8d671c9ed10f244fc4dcc26d5106c641b2fb68597229bc5561",
+      "after_sha256": "sha256:ac5353ed72f87e0dcbeac6cac01d352a84870fa3d67c5247b3f1d67029d0f006",
+      "body_sha256": "sha256:f8c8e9a3b9dd4207f472c72c311b1b7f8d3d66cd18294d519425135722a98c02",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "uc_id",
+        "uc_name"
+      ],
+      "previous_frontmatter": "artifact_type: business-use-case-specification\nstatus: Frozen\nuc_id: UC-14\nuc_name: \"Change Session Layout\"\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\uc\\\\uc-14-change-session-layout.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/uc/uc-14-change-session-layout.md\nsource_sha256: sha256:403457daaf0adf6366ea8f38e9d9e3315dd958801096fc1d52405caa7aaa6f47\nsource_range: \"Markdown: complete document\"\numl_projection_contract: br-local-uml-v1\numl_projection_receipt: docs/00-context/sources/100ms-local-uml-retrieval.json\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "uml_projection_contract",
+        "uml_projection_receipt",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/use-cases/uc-15-pin-or-spotlight-a-participant.md",
+      "before_sha256": "sha256:42a7649d3dc7eca17942ab25621f93ebd3a87fa5fdb539784dd6e68f8a3cabae",
+      "after_sha256": "sha256:3ee7ecd08feba3e798af8540cf4323790ac85e42dda0ef35be031e83b3217436",
+      "body_sha256": "sha256:bbcbfebbdb80385ef0b04ac3e7a5c7d90c02def6fb58645ed1a7794cbd3bd8e0",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "uc_id",
+        "uc_name"
+      ],
+      "previous_frontmatter": "artifact_type: business-use-case-specification\nstatus: Frozen\nuc_id: UC-15\nuc_name: \"Pin or Spotlight a Participant\"\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\uc\\\\uc-15-pin-or-spotlight-a-participant.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/uc/uc-15-pin-or-spotlight-a-participant.md\nsource_sha256: sha256:159f7498b67501f6749f7b668e68dcd3b68d1fb0ecf12ebe4b29c432d1c284f9\nsource_range: \"Markdown: complete document\"\numl_projection_contract: br-local-uml-v1\numl_projection_receipt: docs/00-context/sources/100ms-local-uml-retrieval.json\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "uml_projection_contract",
+        "uml_projection_receipt",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/use-cases/uc-16-control-session-recording.md",
+      "before_sha256": "sha256:8b24eeb6ee48f4e0c1bfd64acff3aeab26e59641d9f0034176b08edffcfd48c6",
+      "after_sha256": "sha256:b29db1d5c559891fc8c26f5b0aeafcda0f2948067b94a47da07261e828b12e15",
+      "body_sha256": "sha256:23772bdfa86163c84425697397706a768f09b05e97599852c673a9b97f4e7b07",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "uc_id",
+        "uc_name"
+      ],
+      "previous_frontmatter": "artifact_type: business-use-case-specification\nstatus: Frozen\nuc_id: UC-16\nuc_name: \"Control Session Recording\"\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\uc\\\\uc-16-control-session-recording.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/uc/uc-16-control-session-recording.md\nsource_sha256: sha256:18d576faaa53ae7f472a5021baaa94371f5620200fbdc2b1a4c67fcda49ff54f\nsource_range: \"Markdown: complete document\"\numl_projection_contract: br-local-uml-v1\numl_projection_receipt: docs/00-context/sources/100ms-local-uml-retrieval.json\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "uml_projection_contract",
+        "uml_projection_receipt",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/use-cases/uc-17-leave-a-session.md",
+      "before_sha256": "sha256:0a44aec9f45c4680c1c4dfaa2f22d04b30815d863977f9b2b9f36bf658fe1e82",
+      "after_sha256": "sha256:5a2e226664447fa5b9170fb6d5a77b3dc7a8742368a47146c6fa828c07f6b217",
+      "body_sha256": "sha256:7d8f43c7a74a19b85e47b9341c3e6b089573d90ae6b994d03fa02a90cfe58411",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "uc_id",
+        "uc_name"
+      ],
+      "previous_frontmatter": "artifact_type: business-use-case-specification\nstatus: Frozen\nuc_id: UC-17\nuc_name: \"Leave a Session\"\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\uc\\\\uc-17-leave-a-session.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/uc/uc-17-leave-a-session.md\nsource_sha256: sha256:cad50b6340bd0cf07c04d2dee7671cdd1a6d4391ca0b94282b9e52cf184482e7\nsource_range: \"Markdown: complete document\"\numl_projection_contract: br-local-uml-v1\numl_projection_receipt: docs/00-context/sources/100ms-local-uml-retrieval.json\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "uml_projection_contract",
+        "uml_projection_receipt",
+        "retrieved_at"
+      ]
+    },
+    {
+      "path": "docs/01-inception/use-cases/uc-18-end-a-session-for-everyone.md",
+      "before_sha256": "sha256:99aaf4db99916e3bdc30ef3facfc0c2191c6993132dad085fbd51402ddf9cd65",
+      "after_sha256": "sha256:31985607656189bcfbfce5d7e541bc3a8621f57f34c04a3e79b5d700c109a293",
+      "body_sha256": "sha256:df282dfaf173e638fbe030e0ad35a70a17ce1db8e175fbd6d70f7032a9499d9e",
+      "retained_fields": [
+        "artifact_type",
+        "status",
+        "uc_id",
+        "uc_name"
+      ],
+      "previous_frontmatter": "artifact_type: business-use-case-specification\nstatus: Frozen\nuc_id: UC-18\nuc_name: \"End a Session for Everyone\"\nsource_type: local-markdown\nsource_path: \"D:\\\\figma_spec\\\\100ms Video Conferencing and Live Streaming\\\\01-inception\\\\uc\\\\uc-18-end-a-session-for-everyone.md\"\nsource_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/01-inception/uc/uc-18-end-a-session-for-everyone.md\nsource_sha256: sha256:a323d71932eed52ebff4c3b87c20b9cbc36cc6bae27fe49f1aec88dbb8ead414\nsource_range: \"Markdown: complete document\"\numl_projection_contract: br-local-uml-v1\numl_projection_receipt: docs/00-context/sources/100ms-local-uml-retrieval.json\nretrieved_at: 2026-10-01T09:29:46.379459Z\n",
+      "removed_fields": [
+        "source_type",
+        "source_path",
+        "source_snapshot_path",
+        "source_sha256",
+        "source_range",
+        "uml_projection_contract",
+        "uml_projection_receipt",
+        "retrieved_at"
+      ]
+    }
+  ]
+}

@@ -1,25 +1,17 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get, ServiceUnavailableException } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 
-@Controller()
+@Controller('health')
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly database: DataSource) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
-
-  @Get('api/health')
-  getHealth(): {
-    success: true;
-    message: string;
-    data: { status: 'ok' };
-  } {
-    return {
-      success: true,
-      message: 'Backend is healthy',
-      data: { status: 'ok' },
-    };
+  async health(): Promise<{ success: true; message: string; data: { status: string; database: string } }> {
+    try {
+      await this.database.query('SELECT 1');
+    } catch {
+      throw new ServiceUnavailableException('Database unavailable');
+    }
+    return { success: true, message: 'Backend is healthy', data: { status: 'ok', database: 'connected' } };
   }
 }
