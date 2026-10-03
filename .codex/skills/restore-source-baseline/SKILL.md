@@ -18,20 +18,20 @@ The bundled `assets/source-baseline.zip` is the researcher-designated clean sour
 - Preserve `be/src/database/migrations/`, `be/src/database/migration-data-source.ts` and `be/src/config/database.config.ts` byte-for-byte. These are researcher-prepared database infrastructure. The checker overlays them onto its temporary baseline before computing the expected hash; the bundled archive is unchanged. Missing infrastructure blocks restore.
 - Never delete Docker volumes or modify files outside `finalsource/{be,fe}/src`.
 - Before applying, confirm previous run evidence is finalized, run the read-only check, report the changed-tree summary and obtain explicit researcher approval.
-- The apply command creates a recoverable source-only backup under `.tmp/source-baseline-backups/` and rolls back automatically if restoration fails.
+- The apply command creates a recoverable source-only backup under `.tmp/source-baseline-backups/` and rolls back automatically if restoration fails. This backup location is the sole persistent repository-local temporary exception in the shared operational constitution: retain and report it, and never use it for cache, staging, rendering or unrelated scratch data.
 
 ## Commands
 
 Read-only inspection:
 
 ```bash
-python3 .codex/skills/restore-source-baseline/scripts/restore_source_baseline.py --check
+python3 -B .codex/skills/restore-source-baseline/scripts/restore_source_baseline.py --check
 ```
 
 After explicit approval:
 
 ```bash
-python3 .codex/skills/restore-source-baseline/scripts/restore_source_baseline.py \
+python3 -B .codex/skills/restore-source-baseline/scripts/restore_source_baseline.py \
   --apply \
   --confirm RESET_FINALSOURCE_TO_PROVIDED_BASELINE
 ```

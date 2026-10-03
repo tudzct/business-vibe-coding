@@ -20,7 +20,7 @@ Read the [shared execution timing protocol](../measure-uc-workflow/references/ph
 
 ## Resolve
 
-1. Run `python3 .codex/skills/resolve-figma-design-dataset/scripts/resolve.py <UC-ID-or-path> --dataset-version <version>` from the repository root. Use the exact researcher-selected version before configuration and the pinned version afterward.
+1. Run `python3 -B .codex/skills/resolve-figma-design-dataset/scripts/resolve.py <UC-ID-or-path> --dataset-version <version>` from the repository root. Use the exact researcher-selected version before configuration and the pinned version afterward.
 2. If status is `complete`, use only the returned local snapshot directory, require valid checksums, and verify `resource/figma-design-dataset/CAPTURE-SPEC.md` before implementation or audit.
 3. If status is `no-design`, record that no design is applicable; do not invent a mapping.
 4. If status is `partial-content` or `pending-rate-limit`, stop design-dependent generation and report the exact missing capture state. Refresh through the installed Figma plugin using the approved review mapping; do not fall back to a UC link.
@@ -28,4 +28,4 @@ Read the [shared execution timing protocol](../measure-uc-workflow/references/ph
 
 ## Integrity and refresh
 
-Run `python3 .codex/skills/resolve-figma-design-dataset/scripts/resolve.py --validate-all --dataset-version <version>` after capture or before a research run. A refresh creates a new dataset version; do not overwrite evidence already used by an experiment. Never commit short-lived Figma asset URLs, credentials, or guessed metadata.
+Run `python3 -B .codex/skills/resolve-figma-design-dataset/scripts/resolve.py --validate-all --dataset-version <version>` after capture or before a research run. A refresh creates a new dataset version; do not overwrite evidence already used by an experiment. Never commit short-lived Figma asset URLs, credentials, or guessed metadata.

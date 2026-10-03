@@ -12,11 +12,11 @@ This capture protocol governs `duration_seconds` (Duration seconds). Measure als
 
 Never start a generation timer merely because a request arrived or a phase remains open. Configuration, approvals, missing-input/Figma resolution, standalone audit/runtime, finalization and reporting are outside execution intervals. For an unexpected blocker during execution, end the segment before resolution or researcher waiting; start a fresh segment only when generation resumes. Retain time already spent on actual failed execution; never exclude attempts merely for failing.
 
-Resolve an available Python executable first; do not assume python/python3 is on PATH. Substitute it for <python-executable> (PowerShell: & '<absolute-python-path>' ...).
+Resolve an available Python executable first; do not assume python/python3 is on PATH. Substitute it for <python-executable> and pass `-B` (PowerShell: & '<absolute-python-path>' -B ...).
 
 ```text
-<python-executable> .codex/skills/measure-uc-workflow/scripts/capture_timestamp.py --run-json <canonical.json> --session <rollout.jsonl> --turn-id <current-id> --phase prompt_generation --event start --segment-id prompt-001 --source-revision sha256:<actual-64-hex>
-<python-executable> .codex/skills/measure-uc-workflow/scripts/capture_timestamp.py --run-json <canonical.json> --session <rollout.jsonl> --turn-id <current-id> --phase prompt_generation --event end --segment-id prompt-001 --source-revision sha256:<actual-64-hex>
+<python-executable> -B .codex/skills/measure-uc-workflow/scripts/capture_timestamp.py --run-json <canonical.json> --session <rollout.jsonl> --turn-id <current-id> --phase prompt_generation --event start --segment-id prompt-001 --source-revision sha256:<actual-64-hex>
+<python-executable> -B .codex/skills/measure-uc-workflow/scripts/capture_timestamp.py --run-json <canonical.json> --session <rollout.jsonl> --turn-id <current-id> --phase prompt_generation --event end --segment-id prompt-001 --source-revision sha256:<actual-64-hex>
 ```
 
 For `--phase repair`, pass `--repair-id <canonical-repair-id>` on both endpoints and abandonment. Each repair has its own pair and ID matching `run.repairs[].repair_id`; resumed segments may share that repair ID but require unique segment IDs. Preserve failed/blocked repair records. Never reuse an interval for several repairs or invent per-repair token splits.

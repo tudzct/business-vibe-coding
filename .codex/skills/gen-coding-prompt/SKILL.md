@@ -20,7 +20,7 @@ The researcher may prepare these files manually, with another model, external Py
 Resolve an available Python executable and run this read-only command, supplying explicit selection arguments when available:
 
 ```text
-<python-executable> .codex/skills/gen-coding-prompt/scripts/preflight_configuration.py --uc-id <UC-ID> --run-json <canonical.json> --use-case <use-case.md>
+<python-executable> -B .codex/skills/gen-coding-prompt/scripts/preflight_configuration.py --uc-id <UC-ID> --run-json <canonical.json> --use-case <use-case.md>
 ```
 
 Both baselines and the Canonical Run JSON are mandatory on every invocation, with all required fields. Missing, malformed, ambiguous or conflicting inputs stop the turn immediately with the exact file/field/checksum error. Do not create, fill, normalize, repair, replace or initialize any of the four inputs during preflight or prompt generation. Do not invoke baseline generation or activation creation to fill a gap.
