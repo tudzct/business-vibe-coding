@@ -1,1 +1,1 @@
-<!-- Hãy thay thế file này bằng OCL Utility Definitions thật của dự án. -->
+<!-- Replace this file with the project's actual OCL Utility Definitions. -->
