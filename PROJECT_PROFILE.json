@@ -5,13 +5,13 @@
   "authoritative_sources": {
     "use_case_specification": {
       "type": "Local Markdown",
-      "path": "D:/figma_spec/100ms Video Conferencing and Live Streaming/01-inception/uc",
+      "path": "docs/01-inception/use-cases",
       "snapshot_path": "resource/specification-sources/100ms-2026-10-01-001/01-inception/uc",
       "retrieval_receipt": "docs/00-context/sources/100ms-local-uml-retrieval.json"
     },
     "api_specification": {
       "type": "Local Markdown",
-      "path": "D:/figma_spec/100ms Video Conferencing and Live Streaming/01-inception/api",
+      "path": "docs/01-inception/api-contracts",
       "snapshot_path": "resource/specification-sources/100ms-2026-10-01-001/01-inception/api",
       "retrieval_receipt": "docs/00-context/sources/100ms-source-retrieval.json"
     },
