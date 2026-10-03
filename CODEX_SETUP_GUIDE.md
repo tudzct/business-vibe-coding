@@ -29,7 +29,7 @@ docker info
 
 Expected repository invariants:
 
-- `PROJECT_PROFILE.json` identifies the active project's UC, API and Figma sources without embedding per-UC ranges or counts.
+- `PROJECT_PROFILE.json` identifies the active project, clean source baseline and Figma roots without embedding per-UC ranges or counts.
 - `PROJECT_PROFILE.json` pins the active project's clean source baseline ZIP with `clean_source_baseline_sha256`; the restore skill contains no project-specific checksum.
 - The complete active UC inventory is the set of frozen files matching `docs/01-inception/use-cases/uc-*.md`.
 - Each UC contains functional specification, UML Model and Business Rules.
@@ -55,7 +55,7 @@ The whole-stack command above is researcher setup outside active runs and execut
 
 ## Connected sources
 
-The UC source identified in `PROJECT_PROFILE.json` is required when explicitly refreshing UC/business-rule inputs. Ordinary Phase 1 uses the frozen repository projection and recorded provenance.
+UC and API specifications are authoritative frozen Markdown inputs under `docs/01-inception/`. Ordinary Phase 1 uses those repository files directly.
 
 Figma is required only to create/refresh an offline design dataset. Resolve targets through `docs/00-context/FIGMA-LINK-REVIEW.md`.
 

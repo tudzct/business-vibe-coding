@@ -6,11 +6,11 @@ Use the canonical terminology from `PROJECT_CONTEXT.md`: this repository is a re
 
 ## Authoritative inputs
 
-`PROJECT_PROFILE.json` identifies the active project's authoritative UC, API and Figma sources. Files under `docs/01-inception/use-cases/uc-*.md` are frozen, read-only projections of the configured UC source. They contain the functional specification, UML model, OCL business rules, natural-language constraints, UI/API mappings and source provenance. The frozen OCL utility projection, when supplied by the project, is `docs/01-inception/use-cases/OCL-UTILITY-DEFINITIONS.md`.
+`PROJECT_PROFILE.json` identifies the active project, clean source baseline and authoritative Figma roots. Files under `docs/01-inception/use-cases/uc-*.md` are the authoritative frozen, read-only UC specifications. They contain the functional specification, UML model, OCL business rules, natural-language constraints and UI/API mappings. The frozen OCL utility input, when supplied by the project, is `docs/01-inception/use-cases/OCL-UTILITY-DEFINITIONS.md`.
 
 API contracts under `docs/01-inception/api-contracts/` are frozen, read-only specification inputs. Each configured UC pins the complete ordered API ID/path/SHA-256 inventory resolved from its frozen `Related API IDs`. Prompt and Source preflight reject a missing, changed, reordered or identity-mismatched API contract before START. Do not edit an API contract within a configured run.
 
-Never edit a frozen UC to repair a source issue. Report the exact source location and stop for the researcher when ambiguity changes behavior, rule meaning, API, schema or evaluation. Refreshing the frozen UC set requires an explicit researcher request and a new source retrieval record.
+Never edit a frozen UC to repair a source issue. Report the exact source location and stop for the researcher when ambiguity changes behavior, rule meaning, API, schema or evaluation. Updating the frozen UC set requires an explicit researcher request and refreshed checksums, baselines and run configuration before another run.
 
 When a UC contains a Figma reference, resolve it through `resolve-figma-design-dataset`. Use `docs/00-context/FIGMA-LINK-REVIEW.md` as the sole mapping authority when creating or refreshing a dataset.
 

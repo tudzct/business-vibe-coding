@@ -2,8 +2,6 @@
 
 The researcher invokes the following commands in separate turns. Each command authorizes its own operation; never add a confirmation question, gate approval turn, activation requirement or automatic repair after audit/follow-up. End each response with the next command. The method still has exactly two phases: prompt generation and source generation, including audit/repair.
 
-Reference: [researcher command sequence](https://docs.google.com/document/d/1R9Z4LQ_FEbEop_TmGMTyCPnM3HdNau9JvLBV4uB8ZMg/edit?tab=t.0).
-
 ## Prepare four JSON files and the database input before generation
 
 1. `docs/04-experiments/configurations/CFG-<UC-ID>-<MODEL>-<VARIANT>.json`: complete, Confirmed configuration, including the ordered frozen API ID/path/SHA-256 entries for the UC.

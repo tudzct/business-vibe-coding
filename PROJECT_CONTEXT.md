@@ -26,13 +26,11 @@ The [workflow contract](docs/00-context/workflow/WORKFLOW-CONTRACT.md) defines f
 
 ### Functional and business specification
 
-The active project's source identity is defined once in `PROJECT_PROFILE.json`. Its `authoritative_sources.use_case_specification` object supplies the Google Sheets URL and tab. Exact ranges and retrieval provenance remain inside the frozen project inputs because they differ by UC.
-
-Files matching `docs/01-inception/use-cases/uc-*.md` are the complete frozen UC inventory for the active project. Each projection supplies functional fields, UML PlantUML, Business Rules, related UI/API IDs, notes and exact source provenance. `docs/01-inception/use-cases/OCL-UTILITY-DEFINITIONS.md` is the frozen project-level OCL utility projection when applicable; it is not a UC.
+Files matching `docs/01-inception/use-cases/uc-*.md` are the complete authoritative frozen UC inventory for the active project. Each file supplies functional fields, UML PlantUML, Business Rules, related UI/API IDs and notes. `docs/01-inception/use-cases/OCL-UTILITY-DEFINITIONS.md` is the frozen project-level OCL utility input when applicable; it is not a UC.
 
 ### API contracts
 
-`PROJECT_PROFILE.json` identifies the authoritative API source. Files under `docs/01-inception/api-contracts/` are its frozen API specification inputs. For each UC, the Confirmed configuration records the complete ordered API ID/path/SHA-256 inventory resolved from the frozen UC's `Related API IDs`. Configuration validation checks each API's Frozen identity and bytes; Prompt and Source preflight also require the configured order to match the frozen UC before START.
+Files under `docs/01-inception/api-contracts/` are the authoritative frozen API specification inputs. For each UC, the Confirmed configuration records the complete ordered API ID/path/SHA-256 inventory resolved from the frozen UC's `Related API IDs`. Configuration validation checks each API's Frozen identity and bytes; Prompt and Source preflight also require the configured order to match the frozen UC before START.
 
 ## Business-rule baseline
 
@@ -41,7 +39,6 @@ Follow the researcher command sequence in [FILE-DRIVEN-WORKFLOW.md](docs/00-cont
 The evaluation baseline identifies all BRs supplied for the active UC. There is no rule-selection mode. Before invoking prompt generation, preparation by the researcher's chosen tool records:
 
 - frozen UC path and SHA-256;
-- spreadsheet source range;
 - exact ordered BR IDs;
 - baseline status and freeze time.
 
@@ -80,7 +77,7 @@ Implementation controls such as authentication, hashing, ownership, validation, 
 
 ```text
 .codex/skills/                         two-phase workflow and implementation skills
-docs/01-inception/use-cases/           frozen Sheet-derived UC/UML/BR specifications
+docs/01-inception/use-cases/           authoritative frozen UC/UML/BR specifications
 docs/02-construction/coding-prompts/   approved coding-prompt artifacts
 docs/02-construction/implementation/   BR baseline, schema, run and repair records
 docs/04-experiments/                   canonical run JSON and rendered views

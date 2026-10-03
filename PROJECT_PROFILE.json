@@ -3,16 +3,6 @@
   "project_name": "<PROJECT-NAME>",
   "clean_source_baseline_sha256": "sha256:<64-hex>",
   "authoritative_sources": {
-    "use_case_specification": {
-      "type": "Google Sheets",
-      "url": "<USE-CASE-SOURCE-URL>",
-      "tab": "<USE-CASE-TAB-NAME>"
-    },
-    "api_specification": {
-      "type": "Google Sheets",
-      "url": "<API-SOURCE-URL>",
-      "tab": "<API-TAB-NAME>"
-    },
     "figma": {
       "type": "Figma",
       "root_node_urls": [

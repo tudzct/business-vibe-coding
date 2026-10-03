@@ -15,6 +15,11 @@ SCHEMA_VERSION = "2.4"
 TIMING_METHOD = "system_timestamp_delta"
 RUNTIME_FLOW_RUBRIC = "completion-critical-flow-runtime-v2"
 ROOT = Path(__file__).resolve().parents[2]
+CONFIGURATION_FIELDS = {
+    "schema_version", "artifact_type", "status", "configuration_id", "comparison_group_id",
+    "researcher_id", "decided_at", "timing_method", "flow_audit_rubric", "database_baseline",
+    "figma_dataset", "audit_design", "use_case", "runs",
+}
 
 
 def unique_object(pairs):
@@ -114,13 +119,15 @@ def validate(path):
     if not path.is_relative_to(ROOT / "docs/04-experiments/configurations"):
         raise ValueError("configuration must be stored under docs/04-experiments/configurations")
     data = read_configuration_json(path)
+    if set(data) != CONFIGURATION_FIELDS:
+        raise ValueError("configuration fields do not match the current schema")
     schema_version = data.get("schema_version")
     if schema_version != SCHEMA_VERSION:
         raise ValueError(f"schema_version must be {SCHEMA_VERSION}")
     rubric = flow_rubric(data)
     if data.get("artifact_type") != "experiment-configuration" or data.get("status") != "Confirmed":
         raise ValueError("configuration must be Confirmed")
-    for field in ("configuration_id", "comparison_group_id", "researcher_id", "decided_at", "sheet_revision"):
+    for field in ("configuration_id", "comparison_group_id", "researcher_id", "decided_at"):
         text(data.get(field), field)
     configuration_id = identifier(data["configuration_id"], "configuration_id")
     if path.name != f"{configuration_id}.json":

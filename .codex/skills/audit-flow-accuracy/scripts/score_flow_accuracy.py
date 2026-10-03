@@ -72,11 +72,10 @@ def flow_type(flow_id):
 
 def validate_baseline(data):
     expected_fields = {"schema_version", "artifact_type", "status", "uc_id", "use_case_path",
-                       "use_case_sha256", "spreadsheet_source", "ordered_flow_ids", "frozen_at"}
+                       "use_case_sha256", "ordered_flow_ids", "frozen_at"}
     require(set(data) == expected_fields, "invalid flow baseline fields")
     require(data.get("schema_version") == 1 and data.get("artifact_type") == "flow-baseline", "invalid baseline schema")
     require(data.get("status") == "Frozen" and nonempty(data.get("uc_id")), "baseline must be Frozen")
-    require(nonempty(data.get("spreadsheet_source")), "flow baseline spreadsheet source missing")
     uc_path = writable(ROOT / data.get("use_case_path", ""))
     require(uc_path.is_file(), "baseline UC path missing")
     raw = uc_path.read_bytes()

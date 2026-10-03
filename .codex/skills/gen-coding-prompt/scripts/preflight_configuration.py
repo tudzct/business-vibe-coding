@@ -88,11 +88,9 @@ def check_baselines(uc):
                 and data.get("uc_id") == uc["uc_id"], f"invalid {field} identity/status")
         if field == "business_rule_baseline":
             expected_fields = {"schema_version", "artifact_type", "status", "uc_id", "use_case_path",
-                               "use_case_sha256", "spreadsheet_source", "ordered_br_ids", "frozen_at"}
+                               "use_case_sha256", "ordered_br_ids", "frozen_at"}
             require(set(data) == expected_fields, "invalid BR baseline fields")
             require(data.get("schema_version") == 1, "invalid BR baseline schema")
-            require(isinstance(data.get("spreadsheet_source"), str) and data["spreadsheet_source"].strip(),
-                    "BR baseline spreadsheet source missing")
             epoch(data.get("frozen_at"))
             source = writable(ROOT / data.get("use_case_path", ""))
             require(source.is_file(), "BR baseline UC source missing")

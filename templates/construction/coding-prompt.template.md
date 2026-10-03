@@ -161,7 +161,7 @@ One implementation control may enforce multiple rules when appropriate.
 
 - **Name:** `[rule name]`
 - **Representation:** `OCL invariant | OCL precondition | OCL postcondition | natural language`
-- **Expression / authoritative text:** `[verbatim Sheet-derived content]`
+- **Expression / authoritative text:** `[verbatim content from the frozen UC]`
 - **Context:** `[OCL context/class/operation or business scope]`
 - **Enforcement layer:** `[frontend | backend | database | multiple]`
 - **Failure behavior:** `[source-backed status/message/state, or unresolved]`

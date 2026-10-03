@@ -2,7 +2,7 @@
 
 Retain separately:
 
-- immutable Sheet-derived UC/UML/BR projections;
+- immutable authoritative UC/UML/BR Markdown inputs;
 - a source-checksum normalization receipt only when raw checkout bytes differ solely by line endings;
 - frozen BR and flow baseline receipts;
 - [approved configured prompt artifact](../../../docs/02-construction/coding-prompts/%3CUC-ID%3E-business-coding-prompt.md);

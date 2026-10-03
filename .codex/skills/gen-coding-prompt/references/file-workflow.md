@@ -1,6 +1,6 @@
 # File-driven prompt workflow
 
-Input: one frozen Sheet-derived use-case Markdown file.
+Input: one frozen use-case Markdown file.
 
 Pre-existing BR/flow baselines and applicable Figma evidence are validated inputs, not outputs of prompt generation.
 
