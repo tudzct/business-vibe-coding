@@ -1,1 +1,3 @@
-<!-- Replace this file with the project's actual Figma mapping. -->
+# Figma Link Review
+
+<!-- Add the project's Figma root node URL(s) and per-UC capture mapping here. -->

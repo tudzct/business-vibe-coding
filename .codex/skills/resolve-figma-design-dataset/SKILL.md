@@ -11,7 +11,7 @@ Read the [shared execution timing protocol](../measure-uc-workflow/references/ph
 
 ## Create or refresh
 
-1. Read `docs/00-context/FIGMA-LINK-REVIEW.md` before any Figma call. Treat its `Replacement URL` column as the sole capture authority.
+1. Read `docs/00-context/FIGMA-LINK-REVIEW.md` before any Figma call. Treat its researcher-approved root URLs and per-UC replacement mappings as the sole capture authority.
 2. Ignore all Figma URLs and file keys inside `docs/01-inception/use-cases/uc-*.md`; they are provenance-only and may point to inaccessible files.
 3. Validate that the review contains one approved replacement or `NOT_APPLICABLE` for every file in the active project's frozen UC inventory. Stop if any placeholder, conflict or missing mapping remains.
 4. Deduplicate by exact file key plus node ID, then capture each unique node once through the installed Figma plugin.

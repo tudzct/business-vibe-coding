@@ -1,12 +1,12 @@
 # Business vibe coding agent contract
 
-Work only inside this repository unless the researcher expands scope. On setup or review requests, read `CODEX_SETUP_GUIDE.md`. Before planning or editing, read `PROJECT_PROFILE.json`, `PROJECT_CONTEXT.md` and `docs/00-context/sources/CONNECTED-SOURCES.md`. For each feature, follow `docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md` and `docs/00-context/workflow/gates/EXPERIMENT-CONFIGURATION-GATE.md`.
+Work only inside this repository unless the researcher expands scope. On setup or review requests, read `CODEX_SETUP_GUIDE.md`. Before planning or editing, read `PROJECT_CONTEXT.md` and `docs/00-context/sources/CONNECTED-SOURCES.md`. For each feature, follow `docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md` and `docs/00-context/workflow/gates/EXPERIMENT-CONFIGURATION-GATE.md`.
 
 Use the canonical terminology from `PROJECT_CONTEXT.md`: this repository is a research product, the human operator/approver is the researcher, and actors inside use cases are application users.
 
 ## Authoritative inputs
 
-`PROJECT_PROFILE.json` identifies the active project, clean source baseline and authoritative Figma roots. Files under `docs/01-inception/use-cases/uc-*.md` are the authoritative frozen, read-only UC specifications. They contain the functional specification, UML model, OCL business rules, natural-language constraints and UI/API mappings. The frozen OCL utility input, when supplied by the project, is `docs/01-inception/use-cases/OCL-UTILITY-DEFINITIONS.md`.
+Files under `docs/01-inception/use-cases/uc-*.md` are the authoritative frozen, read-only UC specifications. They contain the functional specification, UML model, OCL business rules, natural-language constraints and UI/API mappings. The frozen OCL utility input, when supplied by the project, is `docs/01-inception/use-cases/OCL-UTILITY-DEFINITIONS.md`. `docs/00-context/FIGMA-LINK-REVIEW.md` is the sole authority for approved Figma roots and per-UC capture mappings. The researcher-provided clean source archive is integrity-pinned by the adjacent `.codex/skills/restore-source-baseline/assets/source-baseline.sha256` file.
 
 API contracts under `docs/01-inception/api-contracts/` are frozen, read-only specification inputs. Each configured UC pins the complete ordered API ID/path/SHA-256 inventory resolved from its frozen `Related API IDs`. Prompt and Source preflight reject a missing, changed, reordered or identity-mismatched API contract before START. Do not edit an API contract within a configured run.
 

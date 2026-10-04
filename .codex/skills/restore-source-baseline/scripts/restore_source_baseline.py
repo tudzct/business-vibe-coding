@@ -46,26 +46,22 @@ def tree_digest(root: Path) -> tuple[str | None, int]:
     return digest.hexdigest(), count
 
 
-def profile_asset_sha256(repo: Path) -> str:
-    profile_path = repo / "PROJECT_PROFILE.json"
-    if not profile_path.is_file():
-        fail("PROJECT_PROFILE.json is missing")
-    try:
-        profile = json.loads(profile_path.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as error:
-        fail(f"PROJECT_PROFILE.json is invalid JSON: {error}")
-    value = profile.get("clean_source_baseline_sha256") if isinstance(profile, dict) else None
+def sidecar_asset_sha256(archive: Path) -> str:
+    checksum_path = archive.with_suffix(".sha256")
+    if not checksum_path.is_file():
+        fail("baseline asset checksum file is missing")
+    value = checksum_path.read_text(encoding="utf-8").strip()
     if not isinstance(value, str) or not value.startswith("sha256:"):
-        fail("PROJECT_PROFILE.json clean_source_baseline_sha256 must use sha256:<64 lowercase hex>")
+        fail("baseline asset checksum must use sha256:<64 lowercase hex>")
     checksum = value.removeprefix("sha256:")
     if len(checksum) != 64 or any(character not in "0123456789abcdef" for character in checksum):
-        fail("PROJECT_PROFILE.json clean_source_baseline_sha256 must use sha256:<64 lowercase hex>")
+        fail("baseline asset checksum must use sha256:<64 lowercase hex>")
     return checksum
 
 
 def validate_archive(archive: Path, expected_sha256: str) -> None:
     if sha256_file(archive) != expected_sha256:
-        fail("baseline asset checksum does not match PROJECT_PROFILE.json")
+        fail("baseline asset checksum does not match source-baseline.zip")
     with zipfile.ZipFile(archive) as bundle:
         files = []
         for entry in bundle.infolist():
@@ -175,7 +171,7 @@ def main() -> int:
     archive = skill / "assets" / "source-baseline.zip"
     if not archive.is_file():
         fail("baseline asset is missing")
-    expected_asset_sha256 = profile_asset_sha256(repo)
+    expected_asset_sha256 = sidecar_asset_sha256(archive)
 
     targets = {
         "be": repo / "finalsource" / "be" / "src",

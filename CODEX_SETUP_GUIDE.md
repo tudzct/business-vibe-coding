@@ -5,11 +5,10 @@ Setup Review verifies that the research repository and mandatory runtime are ava
 ## Required read order
 
 1. `AGENTS.md`
-2. `PROJECT_PROFILE.json`
-3. `PROJECT_CONTEXT.md`
-4. `CODEX_SETUP_GUIDE.md`
-5. `docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md`
-6. `docs/00-context/sources/CONNECTED-SOURCES.md`
+2. `PROJECT_CONTEXT.md`
+3. `CODEX_SETUP_GUIDE.md`
+4. `docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md`
+5. `docs/00-context/sources/CONNECTED-SOURCES.md`
 
 ## Read-only setup checklist
 
@@ -29,8 +28,8 @@ docker info
 
 Expected repository invariants:
 
-- `PROJECT_PROFILE.json` identifies the active project, clean source baseline and Figma roots without embedding per-UC ranges or counts.
-- `PROJECT_PROFILE.json` pins the active project's clean source baseline ZIP with `clean_source_baseline_sha256`; the restore skill contains no project-specific checksum.
+- `docs/00-context/FIGMA-LINK-REVIEW.md` is the sole authority for the active project's approved Figma roots and per-UC capture mappings.
+- `.codex/skills/restore-source-baseline/assets/source-baseline.sha256` pins the adjacent project-specific clean source baseline ZIP; the restore script contains no project-specific checksum.
 - The complete active UC inventory is the set of frozen files matching `docs/01-inception/use-cases/uc-*.md`.
 - Each UC contains functional specification, UML Model and Business Rules.
 - `docs/01-inception/use-cases/OCL-UTILITY-DEFINITIONS.md` exists when the project's UC source supplies shared OCL utilities.
