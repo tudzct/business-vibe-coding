@@ -54,15 +54,15 @@ POST-2: The host interface displays the returned stage-request item.
 
 AF-1:
 
-1. The viewer withdraws the displayed request.
-2. The client submits the cancellation and removes the pending presentation.
+4a. The viewer withdraws the displayed request.
+4b. The client submits the cancellation and removes the pending presentation.
 
 ### Exception Flow
 
 EF-1:
 
-1. The stage service cannot complete the request.
-2. The client displays the returned failure state and keeps playback available.
+3a. The stage service cannot complete the request.
+3b. The client displays the returned failure state and keeps playback available.
 
 ### Related UI
 
@@ -83,7 +83,7 @@ The shared model defines trusted context, persistence mapping, and query helpers
 
 Local projection of exactly the vocabulary needed by the Business Rules below, including signature and helper types. Enum domains are retained in full to preserve their value semantics.
 
-```plantuml
+~~~plantuml
 @startuml
 hide empty members
 enum SessionKind {
@@ -181,11 +181,11 @@ Principal and session are decoded from the authenticated session access token.
 participantId resolves the principal's membership.
 end note
 @enduml
-```
+~~~
 
 ## Business Rules
 
-~~~ocl
+~~~text
 -- BR-UC-06-01
 -- Source: Assumption
 -- Assumption: A-19
@@ -196,45 +196,35 @@ pre BR_UC_06_01_AuthenticatedMembership:
   Participant.allInstances()->exists(p | p.id = command.actorParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
     p.status = ParticipantStatus::JOINED)
-~~~
 
-~~~ocl
 -- BR-UC-06-02
 -- Source: Assumption
 -- Assumption: A-19
 context StageService::submitRequest(command: StageCommand, session: Session, stream: LiveStream): StageRequest
 pre BR_UC_06_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
-~~~
 
-~~~ocl
 -- BR-UC-06-03
 -- Source: Assumption
 -- Assumption: A-20
 context StageService::submitRequest(command: StageCommand, session: Session, stream: LiveStream): StageRequest
 pre BR_UC_06_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
-~~~
 
-~~~ocl
 -- BR-UC-06-04
 -- Source: Assumption
 -- Assumption: A-06
 context StageService::submitRequest(command: StageCommand, session: Session, stream: LiveStream): StageRequest
 pre BR_UC_06_04_StreamBinding:
   stream.sessionId = session.id and session.kind = SessionKind::LIVE_STREAM and stream.status = StreamStatus::LIVE
-~~~
 
-~~~ocl
 -- BR-UC-06-05
 -- Source: Assumption
 -- Assumption: A-06
 context StageService::submitRequest(command: StageCommand, session: Session, stream: LiveStream): StageRequest
 pre BR_UC_06_05_RequestActions:
   command.action = StageRequestAction::CREATE or command.action = StageRequestAction::CANCEL
-~~~
 
-~~~ocl
 -- BR-UC-06-06
 -- Source: Assumption
 -- Assumption: A-06
@@ -244,9 +234,7 @@ pre BR_UC_06_06_CreateViewer:
   command.requestId = null and command.expectedVersion = null and
   Participant.allInstances()->exists(p | p.id = command.actorParticipantId and p.role = ParticipantRole::VIEWER) and
   not StageRequest.allInstances()->exists(r | r.sessionId = session.id and r.participantId = command.actorParticipantId and r.status = StageRequestStatus::PENDING)
-~~~
 
-~~~ocl
 -- BR-UC-06-07
 -- Source: Assumption
 -- Assumption: A-06
@@ -255,9 +243,7 @@ pre BR_UC_06_07_CancelOwnedPending:
   command.action = StageRequestAction::CANCEL implies StageRequest.allInstances()->one(r |
     r.id = command.requestId and r.sessionId = session.id and r.participantId = command.actorParticipantId and
     r.status = StageRequestStatus::PENDING and r.version = command.expectedVersion)
-~~~
 
-~~~ocl
 -- BR-UC-06-08
 -- Source: Assumption
 -- Assumption: A-06
@@ -268,9 +254,7 @@ post BR_UC_06_08_RequestOutcome:
     result.version = 1 and result.createdAt <> null and result.decidedAt = null and result.decidedByParticipantId = null
   else result.id = command.requestId and not result.oclIsNew() and result.status = StageRequestStatus::CANCELLED and
     result.version = command.expectedVersion + 1 and result.decidedAt <> null and result.decidedByParticipantId = null endif
-~~~
 
-~~~ocl
 -- BR-UC-06-09
 -- Source: Assumption
 -- Assumption: A-22

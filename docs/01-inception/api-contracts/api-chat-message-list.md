@@ -43,19 +43,15 @@ Required.
 
 ## Request Header(s)
 
-### Authorization
+### headers.Authorization
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Description: Bearer session access token.
 Example: `Bearer <session-access-token>`
 
-### Accept
+### headers.Accept
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Allowed values: `application/json`
 Description: HTTP media-type header.
 Example: `application/json`
@@ -64,9 +60,7 @@ Example: `application/json`
 
 ### sessionId
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Description: UUID identifier.
 Example: `11111111-1111-4111-8111-111111111111`
 
@@ -74,18 +68,14 @@ Example: `11111111-1111-4111-8111-111111111111`
 
 ### cursor
 
-Type: string
-Required: No
-Nullable: No
+Type: string; Required: No; Nullable: No
 Validation: Must be a JSON string.
 Description: URI-encoded opaque continuation token.
 Example: `cursor-reference`
 
 ### pageSize
 
-Type: integer
-Required: No
-Nullable: No
+Type: integer; Required: No; Nullable: No
 Default: 50
 Validation: Must be a JSON integer.
 Description: pageSize value.
@@ -101,22 +91,21 @@ Inherits the success envelope and named object definitions in [Common Contract](
 
 ### data.items
 
-Type: array (Message)
-Required: Yes
-Nullable: No
+Type: array (Message); Required: Yes; Nullable: No
 Description: Array of representations defined in the common contract.
 Example: `[]`
 
 ### data.nextCursor
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Description: Opaque continuation token, including for an empty page.
 
 ## Error Response — HTTP 400
 
 - Code: `INVALID_REQUEST`
+
+### message
+
 Trigger: The request cannot be decoded or does not match the declared wire schema.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -124,6 +113,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 401
 
 - Code: `AUTHENTICATION_REJECTED`
+
+### message
+
 Trigger: The authentication context is rejected.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -131,6 +123,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 403
 
 - Code: `ACCESS_REJECTED`
+
+### message
+
 Trigger: The operation is rejected for the supplied access context.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -138,6 +133,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 404
 
 - Code: `RESOURCE_UNAVAILABLE`
+
+### message
+
 Trigger: The requested resource is unavailable.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -145,6 +143,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 503
 
 - Code: `SERVICE_UNAVAILABLE`
+
+### message
+
 Trigger: A required service is temporarily unavailable.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`

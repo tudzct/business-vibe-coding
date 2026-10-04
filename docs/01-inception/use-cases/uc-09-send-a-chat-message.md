@@ -54,15 +54,15 @@ POST-1: The client displays the message returned by the system.
 
 AF-1:
 
-1. The participant closes chat without sending.
-2. The client restores the session layout.
+3a. The participant closes chat without sending.
+3b. The client restores the session layout.
 
 ### Exception Flow
 
 EF-1:
 
-1. The collaboration service cannot create the message.
-2. The client displays a failure notice and preserves the entered text.
+5a. The collaboration service cannot create the message.
+5b. The client displays a failure notice and preserves the entered text.
 
 ### Related UI
 
@@ -84,7 +84,7 @@ The shared model defines trusted context, persistence mapping, and query helpers
 
 Local projection of exactly the vocabulary needed by the Business Rules below, including signature and helper types. Enum domains are retained in full to preserve their value semantics.
 
-```plantuml
+~~~plantuml
 @startuml
 hide empty members
 enum SessionStatus {
@@ -167,11 +167,11 @@ Principal and session are decoded from the authenticated session access token.
 participantId resolves the principal's membership.
 end note
 @enduml
-```
+~~~
 
 ## Business Rules
 
-~~~ocl
+~~~text
 -- BR-UC-09-01
 -- Source: Assumption
 -- Assumption: A-19
@@ -182,54 +182,42 @@ pre BR_UC_09_01_AuthenticatedMembership:
   Participant.allInstances()->exists(p | p.id = command.senderParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
     p.status = ParticipantStatus::JOINED)
-~~~
 
-~~~ocl
 -- BR-UC-09-02
 -- Source: Assumption
 -- Assumption: A-19
 context CollaborationService::sendMessage(command: ChatCommand, session: Session): ChatMessage
 pre BR_UC_09_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
-~~~
 
-~~~ocl
 -- BR-UC-09-03
 -- Source: Assumption
 -- Assumption: A-20
 context CollaborationService::sendMessage(command: ChatCommand, session: Session): ChatMessage
 pre BR_UC_09_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
-~~~
 
-~~~ocl
 -- BR-UC-09-04
 -- Source: Assumption
 -- Assumption: A-09
 context CollaborationService::sendMessage(command: ChatCommand, session: Session): ChatMessage
 pre BR_UC_09_04_MessageBody:
   command.body <> null and command.body.trim().size() > 0 and command.body.trim().size() <= 1000
-~~~
 
-~~~ocl
 -- BR-UC-09-05
 -- Source: Assumption
 -- Assumption: A-09
 context CollaborationService::sendMessage(command: ChatCommand, session: Session): ChatMessage
 post BR_UC_09_05_CreatedIdentity:
   result.oclIsNew() and result.id <> null and result.sessionId = command.sessionId and result.senderParticipantId = command.senderParticipantId
-~~~
 
-~~~ocl
 -- BR-UC-09-06
 -- Source: Assumption
 -- Assumption: A-09
 context CollaborationService::sendMessage(command: ChatCommand, session: Session): ChatMessage
 post BR_UC_09_06_MessageValue:
   result.body = command.body.trim() and result.sentAt <> null and result.sequence = session.version@pre + 1
-~~~
 
-~~~ocl
 -- BR-UC-09-07
 -- Source: Assumption
 -- Assumption: A-19
@@ -240,9 +228,7 @@ pre BR_UC_09_07_AuthenticatedMembership:
   Participant.allInstances()->exists(p | p.id = query.requesterParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = query.sessionId and
     p.status = ParticipantStatus::JOINED)
-~~~
 
-~~~ocl
 -- BR-UC-09-08
 -- Source: Assumption
 -- Assumption: A-23
@@ -250,9 +236,7 @@ context CollaborationService::listMessages(query: MessageQuery, session: Session
 pre BR_UC_09_08_MessagePageInput:
   query.sessionId = session.id and session.status <> SessionStatus::ENDED and query.pageSize > 0 and query.pageSize <= 50 and
   Paging::validCursor(session.id, query.cursor, 'messages')
-~~~
 
-~~~ocl
 -- BR-UC-09-09
 -- Source: Assumption
 -- Assumption: A-23

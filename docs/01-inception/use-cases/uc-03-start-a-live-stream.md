@@ -54,15 +54,15 @@ POST-2: Viewer-facing playback reflects the returned broadcast outcome.
 
 AF-1:
 
-1. The host opens the session menu before starting.
-2. The client displays the available broadcaster actions.
+1a. The host opens the session menu before starting.
+1b. The client displays the available broadcaster actions.
 
 ### Exception Flow
 
 EF-1:
 
-1. The system cannot complete the start request.
-2. The client displays a technical-failure state and keeps the broadcaster interface available.
+3a. The system cannot complete the start request.
+3b. The client displays a technical-failure state and keeps the broadcaster interface available.
 
 ### Related UI
 
@@ -84,7 +84,7 @@ The shared model defines trusted context, persistence mapping, and query helpers
 
 Local projection of exactly the vocabulary needed by the Business Rules below, including signature and helper types. Enum domains are retained in full to preserve their value semantics.
 
-```plantuml
+~~~plantuml
 @startuml
 hide empty members
 enum SessionKind {
@@ -182,11 +182,11 @@ Provider callbacks use a separate authenticated adapter.
 end note
 note right of TransactionContext: Describes the database transaction for the current operation.
 @enduml
-```
+~~~
 
 ## Business Rules
 
-~~~ocl
+~~~text
 -- BR-UC-03-01
 -- Source: Assumption
 -- Assumption: A-19
@@ -197,27 +197,21 @@ pre BR_UC_03_01_AuthenticatedMembership:
   Participant.allInstances()->exists(p | p.id = command.actorParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
     p.status = ParticipantStatus::JOINED and p.role = ParticipantRole::HOST)
-~~~
 
-~~~ocl
 -- BR-UC-03-02
 -- Source: Assumption
 -- Assumption: A-19
 context LiveStreamService::start(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 pre BR_UC_03_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
-~~~
 
-~~~ocl
 -- BR-UC-03-03
 -- Source: Assumption
 -- Assumption: A-20
 context LiveStreamService::start(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 pre BR_UC_03_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
-~~~
 
-~~~ocl
 -- BR-UC-03-04
 -- Source: Assumption
 -- Assumption: A-03
@@ -225,36 +219,28 @@ context LiveStreamService::start(command: StreamControlCommand, stream: LiveStre
 pre BR_UC_03_04_StreamTargetAndVersion:
   command.action = StreamAction::START and session.kind = SessionKind::LIVE_STREAM and
   session.status = SessionStatus::LIVE and stream.sessionId = session.id and command.expectedVersion = stream.version
-~~~
 
-~~~ocl
 -- BR-UC-03-05
 -- Source: Assumption
 -- Assumption: A-03
 context LiveStreamService::start(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 post BR_UC_03_05_SameStreamVersion:
   result = stream and stream.version = stream.version@pre + 1
-~~~
 
-~~~ocl
 -- BR-UC-03-06
 -- Source: Assumption
 -- Assumption: A-03
 context LiveStreamService::start(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 pre BR_UC_03_06_ReadyOnly:
   stream.status = StreamStatus::READY
-~~~
 
-~~~ocl
 -- BR-UC-03-07
 -- Source: Assumption
 -- Assumption: A-03
 context LiveStreamService::start(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 post BR_UC_03_07_Starting:
   stream.status = StreamStatus::STARTING and stream.endedAt = null
-~~~
 
-~~~ocl
 -- BR-UC-03-08
 -- Source: Assumption
 -- Assumption: A-03
@@ -263,9 +249,7 @@ pre BR_UC_03_08_ProviderCompletionTarget:
   RequestContext::providerAuthenticated and command.sessionId = session.id and stream.sessionId = session.id and
   command.resourceId = stream.id and command.expectedVersion = stream.version and stream.status = StreamStatus::STARTING and
   session.status = SessionStatus::LIVE and TransactionContext::lockedSessionId = session.id and TransactionContext::atomicCommit
-~~~
 
-~~~ocl
 -- BR-UC-03-09
 -- Source: Assumption
 -- Assumption: A-03

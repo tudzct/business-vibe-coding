@@ -54,15 +54,15 @@ POST-2: The client displays the returned permission outcome when permission is r
 
 AF-1:
 
-1. The prospective participant turns the microphone or camera off.
-2. The client renders the corresponding muted preview state.
+3a. The prospective participant turns the microphone or camera off.
+3b. The client renders the corresponding muted preview state.
 
 ### Exception Flow
 
 EF-1:
 
-1. Access is not granted.
-2. The client displays the permission-denied dialog and its visible recovery action.
+4a. Access is not granted.
+4b. The client displays the permission-denied dialog and its visible recovery action.
 
 ### Related UI
 
@@ -82,7 +82,7 @@ Preview preparation is client-local. Its participantKey identifies local draft s
 
 Local projection of exactly the vocabulary needed by the Business Rules below, including signature and helper types. Enum domains are retained in full to preserve their value semantics.
 
-```plantuml
+~~~plantuml
 @startuml
 hide empty members
 enum ParticipantRole {
@@ -133,11 +133,11 @@ note right of String
 Removes leading and trailing whitespace; internal whitespace is unchanged.
 end note
 @enduml
-```
+~~~
 
 ## Business Rules
 
-~~~ocl
+~~~text
 -- BR-UC-01-01
 -- Source: Assumption
 -- Assumption: A-01
@@ -145,54 +145,42 @@ context PreviewService::prepare(command: PreviewCommand): PreviewState
 post BR_UC_01_01_PermissionAndHardware:
   (result.cameraEnabled implies result.cameraPermission = PermissionStatus::GRANTED and result.cameraAvailable and command.requestCamera) and
   (result.microphoneEnabled implies result.microphonePermission = PermissionStatus::GRANTED and result.microphoneAvailable and command.requestMicrophone)
-~~~
 
-~~~ocl
 -- BR-UC-01-02
 -- Source: Assumption
 -- Assumption: A-01
 context PreviewService::prepare(command: PreviewCommand): PreviewState
 post BR_UC_01_02_ViewerPreviewMuted:
   command.role = ParticipantRole::VIEWER implies not result.cameraEnabled and not result.microphoneEnabled
-~~~
 
-~~~ocl
 -- BR-UC-01-03
 -- Source: Assumption
 -- Assumption: A-01
 context PreviewService::prepare(command: PreviewCommand): PreviewState
 post BR_UC_01_03_NameReadiness:
   result.isReadyToJoin = (command.displayName <> null and command.displayName.trim().size() > 0 and command.displayName.trim().size() <= 50)
-~~~
 
-~~~ocl
 -- BR-UC-01-04
 -- Source: Assumption
 -- Assumption: A-01
 context PreviewService::prepare(command: PreviewCommand): PreviewState
 post BR_UC_01_04_PreviewKey:
   result.participantKey = command.participantKey
-~~~
 
-~~~ocl
 -- BR-UC-01-05
 -- Source: Assumption
 -- Assumption: A-01
 context PreviewService::prepare(command: PreviewCommand): PreviewState
 post BR_UC_01_05_CameraDeniedState:
   result.cameraPermission <> PermissionStatus::GRANTED implies not result.cameraEnabled
-~~~
 
-~~~ocl
 -- BR-UC-01-06
 -- Source: Assumption
 -- Assumption: A-01
 context PreviewService::prepare(command: PreviewCommand): PreviewState
 post BR_UC_01_06_MicrophoneDeniedState:
   result.microphonePermission <> PermissionStatus::GRANTED implies not result.microphoneEnabled
-~~~
 
-~~~ocl
 -- BR-UC-01-07
 -- Source: Assumption
 -- Assumption: A-01

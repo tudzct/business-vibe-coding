@@ -54,15 +54,15 @@ POST-1: The client displays the returned background preference in the preview.
 
 AF-1:
 
-1. The participant selects the no-background choice.
-2. The client removes the background treatment from the preview.
+3a. The participant selects the no-background choice.
+3b. The client removes the background treatment from the preview.
 
 ### Exception Flow
 
 EF-1:
 
-1. The preference cannot be applied.
-2. The client displays the returned failure state and retains the previous preview.
+4a. The preference cannot be applied.
+4b. The client displays the returned failure state and retains the previous preview.
 
 ### Related UI
 
@@ -85,7 +85,7 @@ UC-12 through UC-14 and the personal-pin rules in UC-15 constrain one atomic Pre
 
 Local projection of exactly the vocabulary needed by the Business Rules below, including signature and helper types. Enum domains are retained in full to preserve their value semantics.
 
-```plantuml
+~~~plantuml
 @startuml
 hide empty members
 class String {
@@ -133,11 +133,11 @@ Request-local trusted adapter data; not a process-global singleton.
 Principal and session are decoded from the authenticated session access token.
 end note
 @enduml
-```
+~~~
 
 ## Business Rules
 
-~~~ocl
+~~~text
 -- BR-UC-13-01
 -- Source: Assumption
 -- Assumption: A-13
@@ -145,27 +145,21 @@ context PreferenceService::update(command: PreferencePatch, media: MediaPreferen
 pre BR_UC_13_01_AvailableBackground:
   command.hasVirtualBackgroundId implies (command.virtualBackgroundId = null or
     VirtualBackground.allInstances()->exists(b | b.id = command.virtualBackgroundId and b.active))
-~~~
 
-~~~ocl
 -- BR-UC-13-02
 -- Source: Assumption
 -- Assumption: A-13
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 post BR_UC_13_02_BackgroundPatch:
   media.virtualBackgroundId = if command.hasVirtualBackgroundId then command.virtualBackgroundId else media.virtualBackgroundId@pre endif
-~~~
 
-~~~ocl
 -- BR-UC-13-03
 -- Source: Assumption
 -- Assumption: A-13
 context ClientPreferenceService::selectBackground(draft: PreviewDraft, backgroundId: String): PreviewDraft
 pre BR_UC_13_03_LocalBackground:
   backgroundId = null or VirtualBackground.allInstances()->exists(b | b.id = backgroundId and b.active)
-~~~
 
-~~~ocl
 -- BR-UC-13-04
 -- Source: Assumption
 -- Assumption: A-13
@@ -173,27 +167,21 @@ context ClientPreferenceService::selectBackground(draft: PreviewDraft, backgroun
 post BR_UC_13_04_LocalBackgroundDraft:
   result = draft and draft.virtualBackgroundId = backgroundId and
   draft.microphoneDeviceId = draft.microphoneDeviceId@pre and draft.cameraDeviceId = draft.cameraDeviceId@pre and draft.speakerDeviceId = draft.speakerDeviceId@pre
-~~~
 
-~~~ocl
 -- BR-UC-13-05
 -- Source: Assumption
 -- Assumption: A-19
 context PreferenceService::listBackgrounds(): Set(VirtualBackground)
 pre BR_UC_13_05_CatalogReader:
   RequestContext::authenticated
-~~~
 
-~~~ocl
 -- BR-UC-13-06
 -- Source: Assumption
 -- Assumption: A-13
 context PreferenceService::listBackgrounds(): Set(VirtualBackground)
 post BR_UC_13_06_CatalogResult:
   result = VirtualBackground.allInstances()->select(b | b.active)
-~~~
 
-~~~ocl
 -- BR-UC-13-07
 -- Source: Assumption
 -- Assumption: A-13

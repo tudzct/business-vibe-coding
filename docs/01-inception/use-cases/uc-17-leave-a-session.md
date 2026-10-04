@@ -55,15 +55,15 @@ POST-2: The interface no longer presents the participant as joined.
 
 AF-1:
 
-1. The participant cancels the confirmation.
-2. The client closes the dialog and restores the session interface.
+3a. The participant cancels the confirmation.
+3b. The client closes the dialog and restores the session interface.
 
 ### Exception Flow
 
 EF-1:
 
-1. The session service cannot complete the action.
-2. The client displays the returned failure state and keeps the session interface available.
+5a. The session service cannot complete the action.
+5b. The client displays the returned failure state and keeps the session interface available.
 
 ### Related UI
 
@@ -85,7 +85,7 @@ The shared model defines trusted context, persistence mapping, and query helpers
 
 Local projection of exactly the vocabulary needed by the Business Rules below, including signature and helper types. Enum domains are retained in full to preserve their value semantics.
 
-```plantuml
+~~~plantuml
 @startuml
 hide empty members
 enum SessionStatus {
@@ -185,11 +185,11 @@ Principal and session are decoded from the authenticated session access token.
 participantId resolves the principal's membership.
 end note
 @enduml
-```
+~~~
 
 ## Business Rules
 
-~~~ocl
+~~~text
 -- BR-UC-17-01
 -- Source: Assumption
 -- Assumption: A-19
@@ -200,54 +200,42 @@ pre BR_UC_17_01_AuthenticatedMembership:
   Participant.allInstances()->exists(p | p.id = command.actorParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
     p.status = ParticipantStatus::JOINED)
-~~~
 
-~~~ocl
 -- BR-UC-17-02
 -- Source: Assumption
 -- Assumption: A-19
 context SessionService::leave(command: DepartureCommand, session: Session): Departure
 pre BR_UC_17_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
-~~~
 
-~~~ocl
 -- BR-UC-17-03
 -- Source: Assumption
 -- Assumption: A-20
 context SessionService::leave(command: DepartureCommand, session: Session): Departure
 pre BR_UC_17_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
-~~~
 
-~~~ocl
 -- BR-UC-17-04
 -- Source: Assumption
 -- Assumption: A-17
 context SessionService::leave(command: DepartureCommand, session: Session): Departure
 pre BR_UC_17_04_DepartureAction:
   command.kind = DepartureKind::LEAVE and command.expectedVersion = session.version
-~~~
 
-~~~ocl
 -- BR-UC-17-05
 -- Source: Assumption
 -- Assumption: A-17
 context SessionService::leave(command: DepartureCommand, session: Session): Departure
 post BR_UC_17_05_CreatedIdentity:
   result.oclIsNew() and result.id <> null and result.sessionId = command.sessionId and result.participantId = command.actorParticipantId and result.kind = DepartureKind::LEAVE and result.createdAt <> null
-~~~
 
-~~~ocl
 -- BR-UC-17-06
 -- Source: Assumption
 -- Assumption: A-17
 context SessionService::leave(command: DepartureCommand, session: Session): Departure
 pre BR_UC_17_06_HostUsesEnd:
   Participant.allInstances()->any(p | p.id = command.actorParticipantId).role <> ParticipantRole::HOST
-~~~
 
-~~~ocl
 -- BR-UC-17-07
 -- Source: Assumption
 -- Assumption: A-17
@@ -256,9 +244,7 @@ post BR_UC_17_07_LeftParticipant:
   let p : Participant = Participant.allInstances()->any(p | p.id = command.actorParticipantId) in
   p.status = ParticipantStatus::LEFT and p.leftAt <> null and p.version = p.version@pre + 1 and
   not p.microphoneEnabled and not p.cameraEnabled and session.status = session.status@pre
-~~~
 
-~~~ocl
 -- BR-UC-17-08
 -- Source: Assumption
 -- Assumption: A-21
@@ -266,9 +252,7 @@ context SessionService::leave(command: DepartureCommand, session: Session): Depa
 post BR_UC_17_08_DemoteFormerStageParticipants:
   Participant.allInstances()@pre->select(p | p.sessionId = command.sessionId and p.id = command.actorParticipantId and p.role@pre = ParticipantRole::STAGE_PARTICIPANT)->forAll(p |
     p.role = ParticipantRole::VIEWER and not p.microphoneEnabled and not p.cameraEnabled)
-~~~
 
-~~~ocl
 -- BR-UC-17-09
 -- Source: Assumption
 -- Assumption: A-21
@@ -276,9 +260,7 @@ context SessionService::leave(command: DepartureCommand, session: Session): Depa
 post BR_UC_17_09_StopContentShares:
   ContentShare.allInstances()@pre->select(cs | cs.sessionId = command.sessionId and cs.ownerParticipantId = command.actorParticipantId and cs.status@pre = ShareStatus::ACTIVE)->forAll(cs |
     cs.status = ShareStatus::STOPPED and cs.stoppedAt <> null and cs.version = cs.version@pre + 1)
-~~~
 
-~~~ocl
 -- BR-UC-17-10
 -- Source: Assumption
 -- Assumption: A-21

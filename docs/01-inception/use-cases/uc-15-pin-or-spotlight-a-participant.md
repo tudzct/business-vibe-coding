@@ -54,28 +54,28 @@ POST-1: The client renders a pinned tile in the caller's view or a spotlighted t
 
 AF-1:
 
-1. The participant removes the personal pin.
-2. The client submits the update and restores the returned general layout.
+3a. The participant removes the personal pin.
+3b. The client submits the update and restores the returned general layout.
 
 AF-2:
 
-1. The participant chooses the session spotlight action.
-2. The client submits the session control update.
-3. The system returns the updated shared session representation.
-4. Session clients render the selected tile with shared prominence.
+3a. The participant chooses the session spotlight action.
+3b. The client submits the session control update.
+3c. The system returns the updated shared session representation.
+3d. Session clients render the selected tile with shared prominence.
 
 AF-3:
 
-1. The participant removes the session spotlight.
-2. The client submits the session control update.
-3. Session clients restore the shared layout returned by the system.
+3a. The participant removes the session spotlight.
+3b. The client submits the session control update.
+3c. Session clients restore the shared layout returned by the system.
 
 ### Exception Flow
 
 EF-1:
 
-1. The preference update cannot be completed.
-2. The client displays the returned failure state and retains the prior focus.
+5a. The preference update cannot be completed.
+5b. The client displays the returned failure state and retains the prior focus.
 
 ### Related UI
 
@@ -100,7 +100,7 @@ BR-UC-15-01 through BR-UC-15-03 constrain the personal pin stored by PreferenceS
 
 Local projection of exactly the vocabulary needed by the Business Rules below, including signature and helper types. Enum domains are retained in full to preserve their value semantics.
 
-```plantuml
+~~~plantuml
 @startuml
 hide empty members
 enum SessionStatus {
@@ -190,11 +190,11 @@ Principal and session are decoded from the authenticated session access token.
 participantId resolves the principal's membership.
 end note
 @enduml
-```
+~~~
 
 ## Business Rules
 
-~~~ocl
+~~~text
 -- BR-UC-15-01
 -- Source: Assumption
 -- Assumption: A-15
@@ -202,18 +202,14 @@ context PreferenceService::update(command: PreferencePatch, media: MediaPreferen
 pre BR_UC_15_01_FocusTarget:
   (command.hasFocusedParticipantId and command.focusedParticipantId <> null) implies
   Participant.allInstances()->exists(p | p.id = command.focusedParticipantId and p.sessionId = command.sessionId and p.status = ParticipantStatus::JOINED)
-~~~
 
-~~~ocl
 -- BR-UC-15-02
 -- Source: Assumption
 -- Assumption: A-15
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 post BR_UC_15_02_PinPatch:
   view.focusedParticipantId = if command.hasFocusedParticipantId then command.focusedParticipantId else view.focusedParticipantId@pre endif
-~~~
 
-~~~ocl
 -- BR-UC-15-03
 -- Source: Assumption
 -- Assumption: A-15
@@ -223,9 +219,7 @@ post BR_UC_15_03_PinIsPersonal:
   ViewPreference.allInstances()@pre->select(v | v.participantId <> command.participantId)->forAll(v |
     v.layout = v.layout@pre and v.focusedParticipantId = v.focusedParticipantId@pre and
     v.sidePanel = v.sidePanel@pre and v.pictureInPicture = v.pictureInPicture@pre and v.updatedAt = v.updatedAt@pre)
-~~~
 
-~~~ocl
 -- BR-UC-15-04
 -- Source: Assumption
 -- Assumption: A-19
@@ -236,18 +230,14 @@ pre BR_UC_15_04_AuthenticatedMembership:
   Participant.allInstances()->exists(p | p.id = command.actorParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
     p.status = ParticipantStatus::JOINED)
-~~~
 
-~~~ocl
 -- BR-UC-15-05
 -- Source: Assumption
 -- Assumption: A-20
 context SpotlightService::update(command: SpotlightCommand, session: Session): Session
 pre BR_UC_15_05_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
-~~~
 
-~~~ocl
 -- BR-UC-15-06
 -- Source: Assumption
 -- Assumption: A-15
@@ -255,9 +245,7 @@ context SpotlightService::update(command: SpotlightCommand, session: Session): S
 pre BR_UC_15_06_SpotlightTarget:
   command.targetParticipantId = null or Participant.allInstances()->exists(p |
     p.id = command.targetParticipantId and p.sessionId = command.sessionId and p.status = ParticipantStatus::JOINED)
-~~~
 
-~~~ocl
 -- BR-UC-15-07
 -- Source: Assumption
 -- Assumption: A-15
@@ -265,18 +253,14 @@ context SpotlightService::update(command: SpotlightCommand, session: Session): S
 pre BR_UC_15_07_SpotlightActor:
   Participant.allInstances()->exists(p | p.id = command.actorParticipantId and
     (p.role = ParticipantRole::HOST or p.role = ParticipantRole::BROADCASTER or p.role = ParticipantRole::STAGE_PARTICIPANT))
-~~~
 
-~~~ocl
 -- BR-UC-15-08
 -- Source: Assumption
 -- Assumption: A-15
 context SpotlightService::update(command: SpotlightCommand, session: Session): Session
 pre BR_UC_15_08_SessionVersion:
   command.sessionId = session.id and session.status = SessionStatus::LIVE and command.expectedVersion = session.version
-~~~
 
-~~~ocl
 -- BR-UC-15-09
 -- Source: Assumption
 -- Assumption: A-15
@@ -284,9 +268,7 @@ context SpotlightService::update(command: SpotlightCommand, session: Session): S
 post BR_UC_15_09_SharedSpotlight:
   result.id = session.id and result.spotlightedParticipantId = command.targetParticipantId and
   result.version = session.version@pre + 1
-~~~
 
-~~~ocl
 -- BR-UC-15-10
 -- Source: Assumption
 -- Assumption: A-15

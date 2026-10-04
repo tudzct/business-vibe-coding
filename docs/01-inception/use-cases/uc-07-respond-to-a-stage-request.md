@@ -55,15 +55,15 @@ POST-1: The host and viewer interfaces display the returned decision outcome.
 
 AF-1:
 
-1. The host chooses Reject.
-2. The client submits the response and displays the returned rejected outcome.
+3a. The host chooses Reject.
+3b. The client submits the response and displays the returned rejected outcome.
 
 ### Exception Flow
 
 EF-1:
 
-1. The stage service cannot complete the response.
-2. The client displays the returned failure state and retains the request item.
+5a. The stage service cannot complete the response.
+5b. The client displays the returned failure state and retains the request item.
 
 ### Related UI
 
@@ -83,7 +83,7 @@ The shared model defines trusted context, persistence mapping, and query helpers
 
 Local projection of exactly the vocabulary needed by the Business Rules below, including signature and helper types. Enum domains are retained in full to preserve their value semantics.
 
-```plantuml
+~~~plantuml
 @startuml
 hide empty members
 enum SessionKind {
@@ -182,11 +182,11 @@ Principal and session are decoded from the authenticated session access token.
 participantId resolves the principal's membership.
 end note
 @enduml
-```
+~~~
 
 ## Business Rules
 
-~~~ocl
+~~~text
 -- BR-UC-07-01
 -- Source: Assumption
 -- Assumption: A-19
@@ -197,36 +197,28 @@ pre BR_UC_07_01_AuthenticatedMembership:
   Participant.allInstances()->exists(p | p.id = command.actorParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
     p.status = ParticipantStatus::JOINED and p.role = ParticipantRole::HOST)
-~~~
 
-~~~ocl
 -- BR-UC-07-02
 -- Source: Assumption
 -- Assumption: A-19
 context StageService::decide(command: StageCommand, session: Session, stream: LiveStream, request: StageRequest): StageRequest
 pre BR_UC_07_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
-~~~
 
-~~~ocl
 -- BR-UC-07-03
 -- Source: Assumption
 -- Assumption: A-20
 context StageService::decide(command: StageCommand, session: Session, stream: LiveStream, request: StageRequest): StageRequest
 pre BR_UC_07_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
-~~~
 
-~~~ocl
 -- BR-UC-07-04
 -- Source: Assumption
 -- Assumption: A-07
 context StageService::decide(command: StageCommand, session: Session, stream: LiveStream, request: StageRequest): StageRequest
 pre BR_UC_07_04_StreamBinding:
   stream.sessionId = session.id and session.kind = SessionKind::LIVE_STREAM and stream.status = StreamStatus::LIVE
-~~~
 
-~~~ocl
 -- BR-UC-07-05
 -- Source: Assumption
 -- Assumption: A-07
@@ -236,9 +228,7 @@ pre BR_UC_07_05_PendingRequestTarget:
   request.id = command.requestId and request.sessionId = session.id and request.status = StageRequestStatus::PENDING and
   request.version = command.expectedVersion and Participant.allInstances()->exists(p | p.id = request.participantId and
     p.sessionId = session.id and p.status = ParticipantStatus::JOINED and p.role = ParticipantRole::VIEWER)
-~~~
 
-~~~ocl
 -- BR-UC-07-06
 -- Source: Assumption
 -- Assumption: A-07
@@ -246,9 +236,7 @@ context StageService::decide(command: StageCommand, session: Session, stream: Li
 pre BR_UC_07_06_StageCapacity:
   command.action = StageRequestAction::ACCEPT implies session.participants->select(p |
     p.status = ParticipantStatus::JOINED and p.role <> ParticipantRole::VIEWER)->size() < 10
-~~~
 
-~~~ocl
 -- BR-UC-07-07
 -- Source: Assumption
 -- Assumption: A-07
@@ -257,9 +245,7 @@ post BR_UC_07_07_Decision:
   result = request and request.version = request.version@pre + 1 and request.decidedAt <> null and
   request.decidedByParticipantId = command.actorParticipantId and
   request.status = if command.action = StageRequestAction::ACCEPT then StageRequestStatus::ACCEPTED else StageRequestStatus::REJECTED endif
-~~~
 
-~~~ocl
 -- BR-UC-07-08
 -- Source: Assumption
 -- Assumption: A-07

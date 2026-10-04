@@ -54,15 +54,15 @@ POST-1: The client displays the recording state returned by the system.
 
 AF-1:
 
-1. The host chooses to stop the active recording.
-2. The client submits the stop action and displays the returned stopped state.
+6a. The host chooses to stop the active recording.
+6b. The client submits the stop action and displays the returned stopped state.
 
 ### Exception Flow
 
 EF-1:
 
-1. The recording service cannot complete the action.
-2. The client displays the returned recording failure state.
+5a. The recording service cannot complete the action.
+5b. The client displays the returned recording failure state.
 
 ### Related UI
 
@@ -83,7 +83,7 @@ The shared model defines trusted context, persistence mapping, and query helpers
 
 Local projection of exactly the vocabulary needed by the Business Rules below, including signature and helper types. Enum domains are retained in full to preserve their value semantics.
 
-```plantuml
+~~~plantuml
 @startuml
 hide empty members
 enum SessionStatus {
@@ -179,11 +179,11 @@ Provider callbacks use a separate authenticated adapter.
 end note
 note right of TransactionContext: Describes the database transaction for the current operation.
 @enduml
-```
+~~~
 
 ## Business Rules
 
-~~~ocl
+~~~text
 -- BR-UC-16-01
 -- Source: Assumption
 -- Assumption: A-19
@@ -194,27 +194,21 @@ pre BR_UC_16_01_AuthenticatedMembership:
   Participant.allInstances()->exists(p | p.id = command.actorParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
     p.status = ParticipantStatus::JOINED and p.role = ParticipantRole::HOST)
-~~~
 
-~~~ocl
 -- BR-UC-16-02
 -- Source: Assumption
 -- Assumption: A-19
 context RecordingService::control(command: RecordingCommand, session: Session): Recording
 pre BR_UC_16_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
-~~~
 
-~~~ocl
 -- BR-UC-16-03
 -- Source: Assumption
 -- Assumption: A-20
 context RecordingService::control(command: RecordingCommand, session: Session): Recording
 pre BR_UC_16_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
-~~~
 
-~~~ocl
 -- BR-UC-16-04
 -- Source: Assumption
 -- Assumption: A-16
@@ -222,9 +216,7 @@ context RecordingService::control(command: RecordingCommand, session: Session): 
 pre BR_UC_16_04_StartRecording:
   command.action = RecordingAction::START implies command.expectedVersion = null and session.status = SessionStatus::LIVE and
   not Recording.allInstances()->exists(r | r.sessionId = session.id and (r.status = RecordingStatus::STARTING or r.status = RecordingStatus::RECORDING))
-~~~
 
-~~~ocl
 -- BR-UC-16-05
 -- Source: Assumption
 -- Assumption: A-16
@@ -232,9 +224,7 @@ context RecordingService::control(command: RecordingCommand, session: Session): 
 pre BR_UC_16_05_StopRecording:
   command.action = RecordingAction::STOP implies Recording.allInstances()->one(r | r.sessionId = session.id and
     (r.status = RecordingStatus::STARTING or r.status = RecordingStatus::RECORDING) and r.version = command.expectedVersion)
-~~~
 
-~~~ocl
 -- BR-UC-16-06
 -- Source: Assumption
 -- Assumption: A-16
@@ -246,9 +236,7 @@ post BR_UC_16_06_RecordingEffect:
   else result = Recording.allInstances()@pre->any(r | r.sessionId = session.id and
       (r.status@pre = RecordingStatus::STARTING or r.status@pre = RecordingStatus::RECORDING)) and
     result.status = RecordingStatus::STOPPED and result.version = command.expectedVersion + 1 and result.stoppedAt <> null endif
-~~~
 
-~~~ocl
 -- BR-UC-16-07
 -- Source: Assumption
 -- Assumption: A-16
@@ -257,9 +245,7 @@ pre BR_UC_16_07_RecordingCallback:
   RequestContext::providerAuthenticated and command.sessionId = session.id and recording.sessionId = session.id and
   command.resourceId = recording.id and command.expectedVersion = recording.version and recording.status = RecordingStatus::STARTING and
   session.status = SessionStatus::LIVE and TransactionContext::lockedSessionId = session.id and TransactionContext::atomicCommit
-~~~
 
-~~~ocl
 -- BR-UC-16-08
 -- Source: Assumption
 -- Assumption: A-16
@@ -268,9 +254,7 @@ post BR_UC_16_08_RecordingCallbackEffect:
   result = recording and recording.version = recording.version@pre + 1 and session.version = session.version@pre + 1 and
   if command.succeeded then recording.status = RecordingStatus::RECORDING and recording.startedAt <> null
   else recording.status = RecordingStatus::FAILED and recording.stoppedAt <> null endif
-~~~
 
-~~~ocl
 -- BR-UC-16-09
 -- Source: Assumption
 -- Assumption: A-22

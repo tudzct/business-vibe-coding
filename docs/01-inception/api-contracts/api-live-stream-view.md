@@ -43,19 +43,15 @@ Required.
 
 ## Request Header(s)
 
-### Authorization
+### headers.Authorization
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Description: Bearer session access token.
 Example: `Bearer <session-access-token>`
 
-### Accept
+### headers.Accept
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Allowed values: `application/json`
 Description: HTTP media-type header.
 Example: `application/json`
@@ -64,9 +60,7 @@ Example: `application/json`
 
 ### sessionId
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Description: UUID identifier.
 Example: `11111111-1111-4111-8111-111111111111`
 
@@ -84,81 +78,66 @@ Inherits the success envelope and named object definitions in [Common Contract](
 
 ### data.sessionId
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Description: UUID identifier.
 Example: `11111111-1111-4111-8111-111111111111`
 
 ### data.participantId
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Description: UUID identifier.
 Example: `11111111-1111-4111-8111-111111111111`
 
 ### data.viewerRole
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Allowed values: `VIEWER`, `STAGE_PARTICIPANT`
 Description: viewerRole value.
 Example: `VIEWER`
 
 ### data.streamStatus
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Allowed values: `READY`, `STARTING`, `LIVE`, `ENDED`
 Description: streamStatus value.
 Example: `READY`
 
 ### data.streamVersion
 
-Type: integer
-Required: Yes
-Nullable: No
+Type: integer; Required: Yes; Nullable: No
 Description: streamVersion value.
 Example: `1`
 
 ### data.sessionVersion
 
-Type: integer
-Required: Yes
-Nullable: No
+Type: integer; Required: Yes; Nullable: No
 Description: sessionVersion value.
 Example: `1`
 
 ### data.canPlayMedia
 
-Type: boolean
-Required: Yes
-Nullable: No
+Type: boolean; Required: Yes; Nullable: No
 Description: canPlayMedia value.
 Example: `false`
 
 ### data.canPublishMedia
 
-Type: boolean
-Required: Yes
-Nullable: No
+Type: boolean; Required: Yes; Nullable: No
 Description: canPublishMedia value.
 Example: `false`
 
 ### data.initialAudioMuted
 
-Type: boolean
-Required: Yes
-Nullable: No
+Type: boolean; Required: Yes; Nullable: No
 Description: initialAudioMuted value.
 Example: `false`
 
 ## Error Response — HTTP 400
 
 - Code: `INVALID_REQUEST`
+
+### message
+
 Trigger: The request cannot be decoded or does not match the declared wire schema.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -166,6 +145,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 401
 
 - Code: `AUTHENTICATION_REJECTED`
+
+### message
+
 Trigger: The authentication context is rejected.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -173,6 +155,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 403
 
 - Code: `ACCESS_REJECTED`
+
+### message
+
 Trigger: The operation is rejected for the supplied access context.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -180,6 +165,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 404
 
 - Code: `RESOURCE_UNAVAILABLE`
+
+### message
+
 Trigger: The requested resource is unavailable.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -187,6 +175,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 503
 
 - Code: `SERVICE_UNAVAILABLE`
+
+### message
+
 Trigger: A required service is temporarily unavailable.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`

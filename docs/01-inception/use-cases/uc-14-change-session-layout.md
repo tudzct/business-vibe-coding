@@ -54,20 +54,20 @@ POST-1: The client renders the returned view preference.
 
 AF-1:
 
-1. The participant enables picture-in-picture.
-2. The client renders the returned picture-in-picture view.
+3a. The participant enables picture-in-picture.
+3b. The client renders the returned picture-in-picture view.
 
 AF-2:
 
-1. The participant opens or closes a side panel.
-2. The client adjusts the returned session layout.
+3a. The participant opens or closes a side panel.
+3b. The client adjusts the returned session layout.
 
 ### Exception Flow
 
 EF-1:
 
-1. The preference update cannot be completed.
-2. The client displays the returned failure state and retains the previous layout.
+5a. The preference update cannot be completed.
+5b. The client displays the returned failure state and retains the previous layout.
 
 ### Related UI
 
@@ -91,7 +91,7 @@ UC-12 through UC-14 and the personal-pin rules in UC-15 constrain one atomic Pre
 
 Local projection of exactly the vocabulary needed by the Business Rules below, including signature and helper types. Enum domains are retained in full to preserve their value semantics.
 
-```plantuml
+~~~plantuml
 @startuml
 hide empty members
 enum ShareStatus {
@@ -134,20 +134,18 @@ class PreferenceService {
   update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 }
 @enduml
-```
+~~~
 
 ## Business Rules
 
-~~~ocl
+~~~text
 -- BR-UC-14-01
 -- Source: Assumption
 -- Assumption: A-14
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 pre BR_UC_14_01_NonNullLayoutAndPiP:
   (command.hasLayout implies command.layout <> null) and (command.hasPictureInPicture implies command.pictureInPicture <> null)
-~~~
 
-~~~ocl
 -- BR-UC-14-02
 -- Source: Assumption
 -- Assumption: A-14
@@ -155,45 +153,35 @@ context PreferenceService::update(command: PreferencePatch, media: MediaPreferen
 pre BR_UC_14_02_PresenterLayout:
   (command.hasLayout and command.layout = LayoutMode::PRESENTER) implies
   ContentShare.allInstances()->exists(s | s.sessionId = command.sessionId and s.status = ShareStatus::ACTIVE)
-~~~
 
-~~~ocl
 -- BR-UC-14-03
 -- Source: Assumption
 -- Assumption: A-14
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 pre BR_UC_14_03_PanelValues:
   command.hasSidePanel implies (command.sidePanel = null or command.sidePanel = 'CHAT' or command.sidePanel = 'PARTICIPANTS' or command.sidePanel = 'SETTINGS')
-~~~
 
-~~~ocl
 -- BR-UC-14-04
 -- Source: Assumption
 -- Assumption: A-14
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 post BR_UC_14_04_LayoutPatch:
   view.layout = if command.hasLayout then command.layout else view.layout@pre endif
-~~~
 
-~~~ocl
 -- BR-UC-14-05
 -- Source: Assumption
 -- Assumption: A-14
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 post BR_UC_14_05_PiPPatch:
   view.pictureInPicture = if command.hasPictureInPicture then command.pictureInPicture else view.pictureInPicture@pre endif
-~~~
 
-~~~ocl
 -- BR-UC-14-06
 -- Source: Assumption
 -- Assumption: A-14
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 post BR_UC_14_06_PiPClearsPanel:
   view.pictureInPicture implies view.sidePanel = null
-~~~
 
-~~~ocl
 -- BR-UC-14-07
 -- Source: Assumption
 -- Assumption: A-14

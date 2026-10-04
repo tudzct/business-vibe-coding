@@ -16,76 +16,60 @@ Base path: `/api/v1`. JSON requests and responses use `application/json`. Identi
 
 ## Authentication Header
 
-### `Authorization`
+### headers.Authorization
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: HTTP Authorization header: Bearer followed by a session access token. Both registered and guest tokens use this scheme.
-- Example: `Bearer <session-access-token>`
+Type: string; Required: Yes; Nullable: No
+Description: HTTP Authorization header: Bearer followed by a session access token. Both registered and guest tokens use this scheme.
+Example: `Bearer <session-access-token>`
 
 
 ## Success Envelope
 
-### `success`
+### success
 
-- Type: boolean
-- Required: Yes
-- Nullable: No
-- Description: success value.
-- Example: `true`
+Type: boolean; Required: Yes; Nullable: No
+Description: success value.
+Example: `true`
 
-### `message`
+### message
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: message value.
-- Example: `Request completed.`
+Type: string; Required: Yes; Nullable: No
+Description: message value.
+Example: `Request completed.`
 
-### `data`
+### data
 
-- Type: object
-- Required: Yes
-- Nullable: No
-- Description: Endpoint-specific data object.
+Type: object; Required: Yes; Nullable: No
+Description: Endpoint-specific data object.
 
 
 The success value is `true`. Endpoint success sections define the children of `data`; all three envelope fields are required and non-null.
 
 ## Error Envelope
 
-### `success`
+### success
 
-- Type: boolean
-- Required: Yes
-- Nullable: No
-- Description: success value.
-- Example: `false`
+Type: boolean; Required: Yes; Nullable: No
+Description: success value.
+Example: `false`
 
-### `code`
+### code
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: code value.
-- Example: `OPERATION_CONFLICT`
+Type: string; Required: Yes; Nullable: No
+Description: code value.
+Example: `OPERATION_CONFLICT`
 
-### `message`
+### message
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: message value.
-- Example: `The operation could not be completed.`
+Type: string; Required: Yes; Nullable: No
+Description: message value.
+Example: `The operation could not be completed.`
 
-### `requestId`
+### requestId
 
-- Type: string
-- Required: No
-- Nullable: No
-- Description: requestId value.
-- Example: `trace-reference`
+Type: string; Required: No; Nullable: No
+Description: requestId value.
+Example: `trace-reference`
 
 
 The error success value is `false`. Error responses contain no `data` member. Each endpoint declares its public HTTP outcomes; each uses this error envelope. Error messages are public summaries.
@@ -100,677 +84,517 @@ The following named object definitions are referenced by endpoint field types. T
 
 ## Participant
 
-### `participantId`
+### participantId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `sessionId`
+### sessionId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `displayName`
+### displayName
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: displayName value.
-- Example: `Alex Morgan`
+Type: string; Required: Yes; Nullable: No
+Description: displayName value.
+Example: `Alex Morgan`
 
-### `role`
+### role
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Allowed values: `HOST`, `BROADCASTER`, `VIEWER`, `STAGE_PARTICIPANT`
-- Description: role value.
-- Example: `HOST`
+Type: string; Required: Yes; Nullable: No
+Allowed values: `HOST`, `BROADCASTER`, `VIEWER`, `STAGE_PARTICIPANT`
+Description: role value.
+Example: `HOST`
 
-### `status`
+### status
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Allowed values: `JOINED`, `LEFT`
-- Description: status value.
-- Example: `JOINED`
+Type: string; Required: Yes; Nullable: No
+Allowed values: `JOINED`, `LEFT`
+Description: status value.
+Example: `JOINED`
 
-### `microphoneEnabled`
+### microphoneEnabled
 
-- Type: boolean
-- Required: Yes
-- Nullable: No
-- Description: microphoneEnabled value.
-- Example: `false`
+Type: boolean; Required: Yes; Nullable: No
+Description: microphoneEnabled value.
+Example: `false`
 
-### `cameraEnabled`
+### cameraEnabled
 
-- Type: boolean
-- Required: Yes
-- Nullable: No
-- Description: cameraEnabled value.
-- Example: `false`
+Type: boolean; Required: Yes; Nullable: No
+Description: cameraEnabled value.
+Example: `false`
 
-### `version`
+### version
 
-- Type: integer
-- Required: Yes
-- Nullable: No
-- Description: version value.
-- Example: `1`
+Type: integer; Required: Yes; Nullable: No
+Description: version value.
+Example: `1`
 
-### `joinedAt`
+### joinedAt
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UTC timestamp in ISO 8601 date-time syntax.
-- Example: `2026-09-22T09:00:00Z`
+Type: string; Required: Yes; Nullable: No
+Description: UTC timestamp in ISO 8601 date-time syntax.
+Example: `2026-09-22T09:00:00Z`
 
-### `leftAt`
+### leftAt
 
-- Type: string
-- Required: Yes
-- Nullable: Yes
-- Description: UTC timestamp in ISO 8601 date-time syntax.
-- Example: `2026-09-22T09:00:00Z`
+Type: string; Required: Yes; Nullable: Yes
+Description: UTC timestamp in ISO 8601 date-time syntax.
+Example: `2026-09-22T09:00:00Z`
 
 ## SessionSummary
 
-### `sessionId`
+### sessionId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `kind`
+### kind
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Allowed values: `LIVE_STREAM`, `VIDEO_CONFERENCE`
-- Description: kind value.
-- Example: `LIVE_STREAM`
+Type: string; Required: Yes; Nullable: No
+Allowed values: `LIVE_STREAM`, `VIDEO_CONFERENCE`
+Description: kind value.
+Example: `LIVE_STREAM`
 
-### `status`
+### status
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Allowed values: `LOBBY`, `LIVE`, `ENDED`
-- Description: status value.
-- Example: `LOBBY`
+Type: string; Required: Yes; Nullable: No
+Allowed values: `LOBBY`, `LIVE`, `ENDED`
+Description: status value.
+Example: `LOBBY`
 
-### `version`
+### version
 
-- Type: integer
-- Required: Yes
-- Nullable: No
-- Description: version value.
-- Example: `1`
+Type: integer; Required: Yes; Nullable: No
+Description: version value.
+Example: `1`
 
-### `hostParticipantId`
+### hostParticipantId
 
-- Type: string
-- Required: Yes
-- Nullable: Yes
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: Yes
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `spotlightedParticipantId`
+### spotlightedParticipantId
 
-- Type: string
-- Required: Yes
-- Nullable: Yes
-- Description: UUID identifier of the tile spotlighted for everyone, or null when no shared spotlight is active.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: Yes
+Description: UUID identifier of the tile spotlighted for everyone, or null when no shared spotlight is active.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `endedAt`
+### endedAt
 
-- Type: string
-- Required: Yes
-- Nullable: Yes
-- Description: UTC timestamp in ISO 8601 date-time syntax.
-- Example: `2026-09-22T09:00:00Z`
+Type: string; Required: Yes; Nullable: Yes
+Description: UTC timestamp in ISO 8601 date-time syntax.
+Example: `2026-09-22T09:00:00Z`
 
 ## Stream
 
-### `streamId`
+### streamId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `sessionId`
+### sessionId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `status`
+### status
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Allowed values: `READY`, `STARTING`, `LIVE`, `ENDED`
-- Description: status value.
-- Example: `READY`
+Type: string; Required: Yes; Nullable: No
+Allowed values: `READY`, `STARTING`, `LIVE`, `ENDED`
+Description: status value.
+Example: `READY`
 
-### `version`
+### version
 
-- Type: integer
-- Required: Yes
-- Nullable: No
-- Description: version value.
-- Example: `1`
+Type: integer; Required: Yes; Nullable: No
+Description: version value.
+Example: `1`
 
-### `startedAt`
+### startedAt
 
-- Type: string
-- Required: Yes
-- Nullable: Yes
-- Description: UTC timestamp in ISO 8601 date-time syntax.
-- Example: `2026-09-22T09:00:00Z`
+Type: string; Required: Yes; Nullable: Yes
+Description: UTC timestamp in ISO 8601 date-time syntax.
+Example: `2026-09-22T09:00:00Z`
 
-### `endedAt`
+### endedAt
 
-- Type: string
-- Required: Yes
-- Nullable: Yes
-- Description: UTC timestamp in ISO 8601 date-time syntax.
-- Example: `2026-09-22T09:00:00Z`
+Type: string; Required: Yes; Nullable: Yes
+Description: UTC timestamp in ISO 8601 date-time syntax.
+Example: `2026-09-22T09:00:00Z`
 
 ## StageRequest
 
-### `requestId`
+### requestId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `sessionId`
+### sessionId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `participantId`
+### participantId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `status`
+### status
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Allowed values: `PENDING`, `ACCEPTED`, `REJECTED`, `CANCELLED`
-- Description: status value.
-- Example: `PENDING`
+Type: string; Required: Yes; Nullable: No
+Allowed values: `PENDING`, `ACCEPTED`, `REJECTED`, `CANCELLED`
+Description: status value.
+Example: `PENDING`
 
-### `version`
+### version
 
-- Type: integer
-- Required: Yes
-- Nullable: No
-- Description: version value.
-- Example: `1`
+Type: integer; Required: Yes; Nullable: No
+Description: version value.
+Example: `1`
 
-### `decidedByParticipantId`
+### decidedByParticipantId
 
-- Type: string
-- Required: Yes
-- Nullable: Yes
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: Yes
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `createdAt`
+### createdAt
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UTC timestamp in ISO 8601 date-time syntax.
-- Example: `2026-09-22T09:00:00Z`
+Type: string; Required: Yes; Nullable: No
+Description: UTC timestamp in ISO 8601 date-time syntax.
+Example: `2026-09-22T09:00:00Z`
 
-### `decidedAt`
+### decidedAt
 
-- Type: string
-- Required: Yes
-- Nullable: Yes
-- Description: UTC timestamp in ISO 8601 date-time syntax.
-- Example: `2026-09-22T09:00:00Z`
+Type: string; Required: Yes; Nullable: Yes
+Description: UTC timestamp in ISO 8601 date-time syntax.
+Example: `2026-09-22T09:00:00Z`
 
 ## Share
 
-### `shareId`
+### shareId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `sessionId`
+### sessionId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `ownerParticipantId`
+### ownerParticipantId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `kind`
+### kind
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Allowed values: `SCREEN`, `PDF`
-- Description: kind value.
-- Example: `SCREEN`
+Type: string; Required: Yes; Nullable: No
+Allowed values: `SCREEN`, `PDF`
+Description: kind value.
+Example: `SCREEN`
 
-### `status`
+### status
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Allowed values: `ACTIVE`, `STOPPED`
-- Description: status value.
-- Example: `ACTIVE`
+Type: string; Required: Yes; Nullable: No
+Allowed values: `ACTIVE`, `STOPPED`
+Description: status value.
+Example: `ACTIVE`
 
-### `sourceReference`
+### sourceReference
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: sourceReference value.
-- Example: `source-opaque-reference`
+Type: string; Required: Yes; Nullable: No
+Description: sourceReference value.
+Example: `source-opaque-reference`
 
-### `version`
+### version
 
-- Type: integer
-- Required: Yes
-- Nullable: No
-- Description: version value.
-- Example: `1`
+Type: integer; Required: Yes; Nullable: No
+Description: version value.
+Example: `1`
 
-### `startedAt`
+### startedAt
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UTC timestamp in ISO 8601 date-time syntax.
-- Example: `2026-09-22T09:00:00Z`
+Type: string; Required: Yes; Nullable: No
+Description: UTC timestamp in ISO 8601 date-time syntax.
+Example: `2026-09-22T09:00:00Z`
 
-### `stoppedAt`
+### stoppedAt
 
-- Type: string
-- Required: Yes
-- Nullable: Yes
-- Description: UTC timestamp in ISO 8601 date-time syntax.
-- Example: `2026-09-22T09:00:00Z`
+Type: string; Required: Yes; Nullable: Yes
+Description: UTC timestamp in ISO 8601 date-time syntax.
+Example: `2026-09-22T09:00:00Z`
 
 ## Recording
 
-### `createdAt`
+### createdAt
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UTC creation timestamp in ISO 8601 date-time syntax.
-- Example: `2026-09-22T09:00:00Z`
+Type: string; Required: Yes; Nullable: No
+Description: UTC creation timestamp in ISO 8601 date-time syntax.
+Example: `2026-09-22T09:00:00Z`
 
-### `recordingId`
+### recordingId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `sessionId`
+### sessionId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `startedByParticipantId`
+### startedByParticipantId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `status`
+### status
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Allowed values: `IDLE`, `STARTING`, `RECORDING`, `STOPPED`, `FAILED`
-- Description: status value.
-- Example: `IDLE`
+Type: string; Required: Yes; Nullable: No
+Allowed values: `IDLE`, `STARTING`, `RECORDING`, `STOPPED`, `FAILED`
+Description: status value.
+Example: `IDLE`
 
-### `version`
+### version
 
-- Type: integer
-- Required: Yes
-- Nullable: No
-- Description: version value.
-- Example: `1`
+Type: integer; Required: Yes; Nullable: No
+Description: version value.
+Example: `1`
 
-### `startedAt`
+### startedAt
 
-- Type: string
-- Required: Yes
-- Nullable: Yes
-- Description: UTC timestamp in ISO 8601 date-time syntax.
-- Example: `2026-09-22T09:00:00Z`
+Type: string; Required: Yes; Nullable: Yes
+Description: UTC timestamp in ISO 8601 date-time syntax.
+Example: `2026-09-22T09:00:00Z`
 
-### `stoppedAt`
+### stoppedAt
 
-- Type: string
-- Required: Yes
-- Nullable: Yes
-- Description: UTC timestamp in ISO 8601 date-time syntax.
-- Example: `2026-09-22T09:00:00Z`
+Type: string; Required: Yes; Nullable: Yes
+Description: UTC timestamp in ISO 8601 date-time syntax.
+Example: `2026-09-22T09:00:00Z`
 
 ## Message
 
-### `messageId`
+### messageId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `sessionId`
+### sessionId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `senderParticipantId`
+### senderParticipantId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `body`
+### body
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: body value.
-- Example: `Hello everyone!`
+Type: string; Required: Yes; Nullable: No
+Description: body value.
+Example: `Hello everyone!`
 
-### `sentAt`
+### sentAt
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UTC timestamp in ISO 8601 date-time syntax.
-- Example: `2026-09-22T09:00:00Z`
+Type: string; Required: Yes; Nullable: No
+Description: UTC timestamp in ISO 8601 date-time syntax.
+Example: `2026-09-22T09:00:00Z`
 
-### `sequence`
+### sequence
 
-- Type: integer
-- Required: Yes
-- Nullable: No
-- Description: sequence value.
-- Example: `1`
+Type: integer; Required: Yes; Nullable: No
+Description: sequence value.
+Example: `1`
 
 ## Reaction
 
-### `reactionId`
+### reactionId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `sessionId`
+### sessionId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `participantId`
+### participantId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `reaction`
+### reaction
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Allowed values: `LIKE`, `CLAP`, `HEART`, `CELEBRATE`, `HAND`, `SURPRISE`
-- Description: reaction value.
-- Example: `LIKE`
+Type: string; Required: Yes; Nullable: No
+Allowed values: `LIKE`, `CLAP`, `HEART`, `CELEBRATE`, `HAND`, `SURPRISE`
+Description: reaction value.
+Example: `LIKE`
 
-### `createdAt`
+### createdAt
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UTC timestamp in ISO 8601 date-time syntax.
-- Example: `2026-09-22T09:00:00Z`
+Type: string; Required: Yes; Nullable: No
+Description: UTC timestamp in ISO 8601 date-time syntax.
+Example: `2026-09-22T09:00:00Z`
 
-### `sequence`
+### sequence
 
-- Type: integer
-- Required: Yes
-- Nullable: No
-- Description: sequence value.
-- Example: `1`
+Type: integer; Required: Yes; Nullable: No
+Description: sequence value.
+Example: `1`
 
 ## MediaPreference
 
-### `participantId`
+### participantId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `microphoneDeviceId`
+### microphoneDeviceId
 
-- Type: string
-- Required: Yes
-- Nullable: Yes
-- Description: microphoneDeviceId value.
-- Example: `device-reference`
+Type: string; Required: Yes; Nullable: Yes
+Description: microphoneDeviceId value.
+Example: `device-reference`
 
-### `cameraDeviceId`
+### cameraDeviceId
 
-- Type: string
-- Required: Yes
-- Nullable: Yes
-- Description: cameraDeviceId value.
-- Example: `device-reference`
+Type: string; Required: Yes; Nullable: Yes
+Description: cameraDeviceId value.
+Example: `device-reference`
 
-### `speakerDeviceId`
+### speakerDeviceId
 
-- Type: string
-- Required: Yes
-- Nullable: Yes
-- Description: speakerDeviceId value.
-- Example: `device-reference`
+Type: string; Required: Yes; Nullable: Yes
+Description: speakerDeviceId value.
+Example: `device-reference`
 
-### `virtualBackgroundId`
+### virtualBackgroundId
 
-- Type: string
-- Required: Yes
-- Nullable: Yes
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: Yes
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `updatedAt`
+### updatedAt
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UTC timestamp in ISO 8601 date-time syntax.
-- Example: `2026-09-22T09:00:00Z`
+Type: string; Required: Yes; Nullable: No
+Description: UTC timestamp in ISO 8601 date-time syntax.
+Example: `2026-09-22T09:00:00Z`
 
 ## ViewPreference
 
-### `participantId`
+### participantId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `layout`
+### layout
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Allowed values: `EQUAL_PROMINENCE`, `SIDEBAR`, `PRESENTER`
-- Description: layout value.
-- Example: `EQUAL_PROMINENCE`
+Type: string; Required: Yes; Nullable: No
+Allowed values: `EQUAL_PROMINENCE`, `SIDEBAR`, `PRESENTER`
+Description: layout value.
+Example: `EQUAL_PROMINENCE`
 
-### `focusedParticipantId`
+### focusedParticipantId
 
-- Type: string
-- Required: Yes
-- Nullable: Yes
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: Yes
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `sidePanel`
+### sidePanel
 
-- Type: string
-- Required: Yes
-- Nullable: Yes
-- Allowed values: `CHAT`, `PARTICIPANTS`, `SETTINGS`
-- Description: sidePanel value.
-- Example: `CHAT`
+Type: string; Required: Yes; Nullable: Yes
+Allowed values: `CHAT`, `PARTICIPANTS`, `SETTINGS`
+Description: sidePanel value.
+Example: `CHAT`
 
-### `pictureInPicture`
+### pictureInPicture
 
-- Type: boolean
-- Required: Yes
-- Nullable: No
-- Description: pictureInPicture value.
-- Example: `false`
+Type: boolean; Required: Yes; Nullable: No
+Description: pictureInPicture value.
+Example: `false`
 
-### `updatedAt`
+### updatedAt
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UTC timestamp in ISO 8601 date-time syntax.
-- Example: `2026-09-22T09:00:00Z`
+Type: string; Required: Yes; Nullable: No
+Description: UTC timestamp in ISO 8601 date-time syntax.
+Example: `2026-09-22T09:00:00Z`
 
 ## Background
 
-### `backgroundId`
+### backgroundId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `name`
+### name
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: name value.
-- Example: `Office`
+Type: string; Required: Yes; Nullable: No
+Description: name value.
+Example: `Office`
 
-### `assetReference`
+### assetReference
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: assetReference value.
-- Example: `background-asset-reference`
+Type: string; Required: Yes; Nullable: No
+Description: assetReference value.
+Example: `background-asset-reference`
 
 ## Departure
 
-### `departureId`
+### departureId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `sessionId`
+### sessionId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `participantId`
+### participantId
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UUID identifier.
-- Example: `11111111-1111-4111-8111-111111111111`
+Type: string; Required: Yes; Nullable: No
+Description: UUID identifier.
+Example: `11111111-1111-4111-8111-111111111111`
 
-### `kind`
+### kind
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Allowed values: `LEAVE`, `END`
-- Description: kind value.
-- Example: `LEAVE`
+Type: string; Required: Yes; Nullable: No
+Allowed values: `LEAVE`, `END`
+Description: kind value.
+Example: `LEAVE`
 
-### `createdAt`
+### createdAt
 
-- Type: string
-- Required: Yes
-- Nullable: No
-- Description: UTC timestamp in ISO 8601 date-time syntax.
-- Example: `2026-09-22T09:00:00Z`
+Type: string; Required: Yes; Nullable: No
+Description: UTC timestamp in ISO 8601 date-time syntax.
+Example: `2026-09-22T09:00:00Z`

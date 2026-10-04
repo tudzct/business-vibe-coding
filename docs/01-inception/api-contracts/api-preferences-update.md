@@ -46,28 +46,22 @@ Required.
 
 ## Request Header(s)
 
-### Authorization
+### headers.Authorization
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Description: Bearer session access token.
 Example: `Bearer <session-access-token>`
 
-### Content-Type
+### headers.Content-Type
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Allowed values: `application/json`
 Description: HTTP media-type header.
 Example: `application/json`
 
-### Idempotency-Key
+### headers.Idempotency-Key
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Description: Opaque HTTP command token.
 Example: `command-22-01`
 
@@ -75,17 +69,13 @@ Example: `command-22-01`
 
 ### sessionId
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Description: UUID identifier.
 Example: `11111111-1111-4111-8111-111111111111`
 
 ### participantId
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Description: UUID identifier.
 Example: `11111111-1111-4111-8111-111111111111`
 
@@ -97,67 +87,51 @@ None.
 
 ### microphoneDeviceId
 
-Type: string
-Required: No
-Nullable: Yes
+Type: string; Required: No; Nullable: Yes
 Validation: Must be null or a JSON string.
 Description: microphoneDeviceId value.
 
 ### cameraDeviceId
 
-Type: string
-Required: No
-Nullable: Yes
+Type: string; Required: No; Nullable: Yes
 Validation: Must be null or a JSON string.
 Description: cameraDeviceId value.
 
 ### speakerDeviceId
 
-Type: string
-Required: No
-Nullable: Yes
+Type: string; Required: No; Nullable: Yes
 Validation: Must be null or a JSON string.
 Description: speakerDeviceId value.
 
 ### virtualBackgroundId
 
-Type: string
-Required: No
-Nullable: Yes
+Type: string; Required: No; Nullable: Yes
 Validation: Must be null or a JSON string.
 Description: virtualBackgroundId value.
 
 ### layout
 
-Type: string
-Required: No
-Nullable: No
+Type: string; Required: No; Nullable: No
 Allowed values: `EQUAL_PROMINENCE`, `SIDEBAR`, `PRESENTER`
 Validation: Must be a JSON string. String values must belong to the declared enum.
 Description: layout value.
 
 ### focusedParticipantId
 
-Type: string
-Required: No
-Nullable: Yes
+Type: string; Required: No; Nullable: Yes
 Validation: Must be null or a JSON string.
 Description: focusedParticipantId value.
 
 ### sidePanel
 
-Type: string
-Required: No
-Nullable: Yes
+Type: string; Required: No; Nullable: Yes
 Allowed values: `CHAT`, `PARTICIPANTS`, `SETTINGS`
 Validation: Must be null or a JSON string. String values must belong to the declared enum.
 Description: sidePanel value.
 
 ### pictureInPicture
 
-Type: boolean
-Required: No
-Nullable: No
+Type: boolean; Required: No; Nullable: No
 Validation: Must be a JSON boolean.
 Description: pictureInPicture value.
 
@@ -167,29 +141,26 @@ Inherits the success envelope and named object definitions in [Common Contract](
 
 ### data.media
 
-Type: object (MediaPreference)
-Required: Yes
-Nullable: No
+Type: object (MediaPreference); Required: Yes; Nullable: No
 Description: Representation defined in the common contract.
 
 ### data.view
 
-Type: object (ViewPreference)
-Required: Yes
-Nullable: No
+Type: object (ViewPreference); Required: Yes; Nullable: No
 Description: Representation defined in the common contract.
 
 ### data.sessionVersion
 
-Type: integer
-Required: Yes
-Nullable: No
+Type: integer; Required: Yes; Nullable: No
 Description: sessionVersion value.
 Example: `1`
 
 ## Error Response — HTTP 400
 
 - Code: `INVALID_REQUEST`
+
+### message
+
 Trigger: The request cannot be decoded or does not match the declared wire schema.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -197,6 +168,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 401
 
 - Code: `AUTHENTICATION_REJECTED`
+
+### message
+
 Trigger: The authentication context is rejected.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -204,6 +178,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 403
 
 - Code: `ACCESS_REJECTED`
+
+### message
+
 Trigger: The operation is rejected for the supplied access context.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -211,6 +188,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 404
 
 - Code: `RESOURCE_UNAVAILABLE`
+
+### message
+
 Trigger: The requested resource is unavailable.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -218,6 +198,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 409
 
 - Code: `OPERATION_CONFLICT`
+
+### message
+
 Trigger: The operation conflicts with the current resource response.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -225,6 +208,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 422
 
 - Code: `COMMAND_REJECTED`
+
+### message
+
 Trigger: The submitted command is rejected.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -232,6 +218,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 503
 
 - Code: `SERVICE_UNAVAILABLE`
+
+### message
+
 Trigger: A required service is temporarily unavailable.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`

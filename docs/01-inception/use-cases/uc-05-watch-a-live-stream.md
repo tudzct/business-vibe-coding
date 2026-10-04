@@ -52,15 +52,15 @@ POST-1: The client displays live playback and the viewer controls returned by th
 
 AF-1:
 
-1. The viewer opens the session menu.
-2. The client displays the viewer actions shown by the design.
+4a. The viewer opens the session menu.
+4b. The client displays the viewer actions shown by the design.
 
 ### Exception Flow
 
 EF-1:
 
-1. The live-session representation cannot be returned.
-2. The client displays the visible loading or unavailable state.
+3a. The live-session representation cannot be returned.
+3b. The client displays the visible loading or unavailable state.
 
 ### Related UI
 
@@ -80,7 +80,7 @@ The shared model defines trusted context, persistence mapping, and query helpers
 
 Local projection of exactly the vocabulary needed by the Business Rules below, including signature and helper types. Enum domains are retained in full to preserve their value semantics.
 
-```plantuml
+~~~plantuml
 @startuml
 hide empty members
 enum SessionKind {
@@ -155,11 +155,11 @@ Principal and session are decoded from the authenticated session access token.
 participantId resolves the principal's membership.
 end note
 @enduml
-```
+~~~
 
 ## Business Rules
 
-~~~ocl
+~~~text
 -- BR-UC-05-01
 -- Source: Assumption
 -- Assumption: A-19
@@ -170,9 +170,7 @@ pre BR_UC_05_01_AuthenticatedMembership:
   Participant.allInstances()->exists(p | p.id = participantId and
     p.principalId = RequestContext::principalId and p.sessionId = sessionId and
     p.status = ParticipantStatus::JOINED)
-~~~
 
-~~~ocl
 -- BR-UC-05-02
 -- Source: Assumption
 -- Assumption: A-05
@@ -181,9 +179,7 @@ pre BR_UC_05_02_ViewerTarget:
   session.id = sessionId and stream.sessionId = sessionId and session.kind = SessionKind::LIVE_STREAM and
   session.status <> SessionStatus::ENDED and Participant.allInstances()->exists(p | p.id = participantId and
     (p.role = ParticipantRole::VIEWER or p.role = ParticipantRole::STAGE_PARTICIPANT))
-~~~
 
-~~~ocl
 -- BR-UC-05-03
 -- Source: Assumption
 -- Assumption: A-05
@@ -191,36 +187,28 @@ context LiveStreamService::view(sessionId: String, participantId: String, sessio
 post BR_UC_05_03_ViewerRepresentation:
   result.sessionId = session.id and result.participantId = participantId and
   result.role = Participant.allInstances()->any(p | p.id = participantId).role
-~~~
 
-~~~ocl
 -- BR-UC-05-04
 -- Source: Assumption
 -- Assumption: A-05
 context LiveStreamService::view(sessionId: String, participantId: String, session: Session, stream: LiveStream): ViewerSession
 post BR_UC_05_04_StreamSnapshot:
   result.streamStatus = stream.status and result.streamVersion = stream.version and result.sessionVersion = session.version
-~~~
 
-~~~ocl
 -- BR-UC-05-05
 -- Source: Assumption
 -- Assumption: A-05
 context LiveStreamService::view(sessionId: String, participantId: String, session: Session, stream: LiveStream): ViewerSession
 post BR_UC_05_05_PlaybackAvailability:
   result.canPlayMedia = (stream.status = StreamStatus::LIVE)
-~~~
 
-~~~ocl
 -- BR-UC-05-06
 -- Source: Assumption
 -- Assumption: A-05
 context LiveStreamService::view(sessionId: String, participantId: String, session: Session, stream: LiveStream): ViewerSession
 post BR_UC_05_06_PublishingAvailability:
   result.canPublishMedia = (stream.status = StreamStatus::LIVE and result.role = ParticipantRole::STAGE_PARTICIPANT)
-~~~
 
-~~~ocl
 -- BR-UC-05-07
 -- Source: Assumption
 -- Assumption: A-05

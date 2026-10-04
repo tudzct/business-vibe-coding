@@ -54,15 +54,15 @@ POST-1: The client renders the reaction event returned by the system.
 
 AF-1:
 
-1. The participant closes the reaction controls without selecting an item.
-2. The client restores the session controls.
+3a. The participant closes the reaction controls without selecting an item.
+3b. The client restores the session controls.
 
 ### Exception Flow
 
 EF-1:
 
-1. The reaction cannot be created.
-2. The client displays the returned failure notice without closing the session.
+5a. The reaction cannot be created.
+5b. The client displays the returned failure notice without closing the session.
 
 ### Related UI
 
@@ -82,7 +82,7 @@ The shared model defines trusted context, persistence mapping, and query helpers
 
 Local projection of exactly the vocabulary needed by the Business Rules below, including signature and helper types. Enum domains are retained in full to preserve their value semantics.
 
-```plantuml
+~~~plantuml
 @startuml
 hide empty members
 enum SessionStatus {
@@ -155,11 +155,11 @@ Principal and session are decoded from the authenticated session access token.
 participantId resolves the principal's membership.
 end note
 @enduml
-```
+~~~
 
 ## Business Rules
 
-~~~ocl
+~~~text
 -- BR-UC-10-01
 -- Source: Assumption
 -- Assumption: A-19
@@ -170,54 +170,42 @@ pre BR_UC_10_01_AuthenticatedMembership:
   Participant.allInstances()->exists(p | p.id = command.participantId and
     p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
     p.status = ParticipantStatus::JOINED)
-~~~
 
-~~~ocl
 -- BR-UC-10-02
 -- Source: Assumption
 -- Assumption: A-19
 context CollaborationService::sendReaction(command: ReactionCommand, session: Session): ReactionEvent
 pre BR_UC_10_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
-~~~
 
-~~~ocl
 -- BR-UC-10-03
 -- Source: Assumption
 -- Assumption: A-20
 context CollaborationService::sendReaction(command: ReactionCommand, session: Session): ReactionEvent
 pre BR_UC_10_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
-~~~
 
-~~~ocl
 -- BR-UC-10-04
 -- Source: Assumption
 -- Assumption: A-10
 context CollaborationService::sendReaction(command: ReactionCommand, session: Session): ReactionEvent
 post BR_UC_10_04_CreatedIdentity:
   result.oclIsNew() and result.id <> null and result.sessionId = command.sessionId and result.participantId = command.participantId
-~~~
 
-~~~ocl
 -- BR-UC-10-05
 -- Source: Assumption
 -- Assumption: A-10
 context CollaborationService::sendReaction(command: ReactionCommand, session: Session): ReactionEvent
 post BR_UC_10_05_ReactionValue:
   result.reaction = command.reaction and result.createdAt <> null and result.sequence = session.version@pre + 1
-~~~
 
-~~~ocl
 -- BR-UC-10-06
 -- Source: Assumption
 -- Assumption: A-10
 context CollaborationService::sendReaction(command: ReactionCommand, session: Session): ReactionEvent
 post BR_UC_10_06_ParticipationUnaffected:
   Participant.allInstances() = Participant.allInstances()@pre
-~~~
 
-~~~ocl
 -- BR-UC-10-07
 -- Source: Assumption
 -- Assumption: A-10

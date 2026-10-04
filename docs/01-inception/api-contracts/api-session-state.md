@@ -58,19 +58,15 @@ Required.
 
 ## Request Header(s)
 
-### Authorization
+### headers.Authorization
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Description: Bearer session access token.
 Example: `Bearer <session-access-token>`
 
-### Accept
+### headers.Accept
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Allowed values: `application/json`
 Description: HTTP media-type header.
 Example: `application/json`
@@ -79,9 +75,7 @@ Example: `application/json`
 
 ### sessionId
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Description: UUID identifier.
 Example: `11111111-1111-4111-8111-111111111111`
 
@@ -89,9 +83,7 @@ Example: `11111111-1111-4111-8111-111111111111`
 
 ### reactionCursor
 
-Type: string
-Required: No
-Nullable: No
+Type: string; Required: No; Nullable: No
 Validation: Must be a JSON string.
 Description: URI-encoded opaque reaction continuation token.
 
@@ -105,79 +97,62 @@ Inherits the success envelope and named object definitions in [Common Contract](
 
 ### data.session
 
-Type: object (SessionSummary)
-Required: Yes
-Nullable: No
+Type: object (SessionSummary); Required: Yes; Nullable: No
 Description: Representation defined in the common contract.
 
 ### data.selfParticipant
 
-Type: object (Participant)
-Required: Yes
-Nullable: No
+Type: object (Participant); Required: Yes; Nullable: No
 Description: Representation defined in the common contract.
 
 ### data.stream
 
-Type: object (Stream)
-Required: Yes
-Nullable: Yes
+Type: object (Stream); Required: Yes; Nullable: Yes
 Description: Representation defined in the common contract.
 
 ### data.recording
 
-Type: object (Recording)
-Required: Yes
-Nullable: Yes
+Type: object (Recording); Required: Yes; Nullable: Yes
 Description: Representation defined in the common contract.
 
 ### data.share
 
-Type: object (Share)
-Required: Yes
-Nullable: Yes
+Type: object (Share); Required: Yes; Nullable: Yes
 Description: Representation defined in the common contract.
 
 ### data.media
 
-Type: object (MediaPreference)
-Required: Yes
-Nullable: No
+Type: object (MediaPreference); Required: Yes; Nullable: No
 Description: Representation defined in the common contract.
 
 ### data.view
 
-Type: object (ViewPreference)
-Required: Yes
-Nullable: No
+Type: object (ViewPreference); Required: Yes; Nullable: No
 Description: Representation defined in the common contract.
 
 ### data.stageRequests
 
-Type: array (StageRequest)
-Required: Yes
-Nullable: No
+Type: array (StageRequest); Required: Yes; Nullable: No
 Description: Array of representations defined in the common contract.
 Example: `[]`
 
 ### data.reactions
 
-Type: array (Reaction)
-Required: Yes
-Nullable: No
+Type: array (Reaction); Required: Yes; Nullable: No
 Description: Array of representations defined in the common contract.
 Example: `[]`
 
 ### data.nextReactionCursor
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Description: Opaque continuation token, including for an empty event page.
 
 ## Error Response — HTTP 400
 
 - Code: `INVALID_REQUEST`
+
+### message
+
 Trigger: The request cannot be decoded or does not match the declared wire schema.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -185,6 +160,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 401
 
 - Code: `AUTHENTICATION_REJECTED`
+
+### message
+
 Trigger: The authentication context is rejected.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -192,6 +170,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 403
 
 - Code: `ACCESS_REJECTED`
+
+### message
+
 Trigger: The operation is rejected for the supplied access context.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -199,6 +180,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 404
 
 - Code: `RESOURCE_UNAVAILABLE`
+
+### message
+
 Trigger: The requested resource is unavailable.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -206,6 +190,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 503
 
 - Code: `SERVICE_UNAVAILABLE`
+
+### message
+
 Trigger: A required service is temporarily unavailable.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`

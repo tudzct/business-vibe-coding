@@ -54,20 +54,20 @@ POST-1: The client displays the returned content-share representation.
 
 AF-1:
 
-1. The participant chooses PDF instead of screen content.
-2. The client presents the selected PDF in the share layout.
+3a. The participant chooses PDF instead of screen content.
+3b. The client presents the selected PDF in the share layout.
 
 AF-2:
 
-1. The participant chooses to stop the active share.
-2. The client submits the stop action and restores the returned session layout.
+6a. The participant chooses to stop the active share.
+6b. The client submits the stop action and restores the returned session layout.
 
 ### Exception Flow
 
 EF-1:
 
-1. The system cannot complete the share action.
-2. The client displays the returned failure state and retains the session view.
+5a. The system cannot complete the share action.
+5b. The client displays the returned failure state and retains the session view.
 
 ### Related UI
 
@@ -89,7 +89,7 @@ The shared model defines trusted context, persistence mapping, and query helpers
 
 Local projection of exactly the vocabulary needed by the Business Rules below, including signature and helper types. Enum domains are retained in full to preserve their value semantics.
 
-```plantuml
+~~~plantuml
 @startuml
 hide empty members
 enum SessionKind {
@@ -178,11 +178,11 @@ Principal and session are decoded from the authenticated session access token.
 participantId resolves the principal's membership.
 end note
 @enduml
-```
+~~~
 
 ## Business Rules
 
-~~~ocl
+~~~text
 -- BR-UC-11-01
 -- Source: Assumption
 -- Assumption: A-19
@@ -193,27 +193,21 @@ pre BR_UC_11_01_AuthenticatedMembership:
   Participant.allInstances()->exists(p | p.id = command.ownerParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
     p.status = ParticipantStatus::JOINED)
-~~~
 
-~~~ocl
 -- BR-UC-11-02
 -- Source: Assumption
 -- Assumption: A-19
 context ContentShareService::control(command: ContentShareCommand, session: Session): ContentShare
 pre BR_UC_11_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
-~~~
 
-~~~ocl
 -- BR-UC-11-03
 -- Source: Assumption
 -- Assumption: A-20
 context ContentShareService::control(command: ContentShareCommand, session: Session): ContentShare
 pre BR_UC_11_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
-~~~
 
-~~~ocl
 -- BR-UC-11-04
 -- Source: Assumption
 -- Assumption: A-11
@@ -223,9 +217,7 @@ pre BR_UC_11_04_StartShare:
   command.kind <> null and command.sourceReference <> null and command.sourceReference.trim().size() > 0 and
   not ContentShare.allInstances()->exists(s | s.sessionId = session.id and s.status = ShareStatus::ACTIVE) and
   (session.kind <> SessionKind::LIVE_STREAM or Participant.allInstances()->exists(p | p.id = command.ownerParticipantId and p.role <> ParticipantRole::VIEWER))
-~~~
 
-~~~ocl
 -- BR-UC-11-05
 -- Source: Assumption
 -- Assumption: A-11
@@ -234,9 +226,7 @@ pre BR_UC_11_05_StopShare:
   command.action = ShareAction::STOP implies ContentShare.allInstances()->one(s |
     s.sessionId = session.id and s.status = ShareStatus::ACTIVE and s.version = command.expectedVersion and
     (s.ownerParticipantId = command.ownerParticipantId or Participant.allInstances()->exists(p | p.id = command.ownerParticipantId and p.role = ParticipantRole::HOST)))
-~~~
 
-~~~ocl
 -- BR-UC-11-06
 -- Source: Assumption
 -- Assumption: A-11
@@ -248,9 +238,7 @@ post BR_UC_11_06_ShareEffect:
     result.version = 1 and result.startedAt <> null and result.stoppedAt = null
   else result = ContentShare.allInstances()@pre->any(s | s.sessionId = session.id and s.status@pre = ShareStatus::ACTIVE) and
     result.status = ShareStatus::STOPPED and result.version = command.expectedVersion + 1 and result.stoppedAt <> null endif
-~~~
 
-~~~ocl
 -- BR-UC-11-07
 -- Source: Assumption
 -- Assumption: A-22

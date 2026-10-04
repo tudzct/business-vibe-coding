@@ -55,15 +55,15 @@ POST-2: The viewer interface displays the returned post-stream outcome.
 
 AF-1:
 
-1. The host cancels the confirmation.
-2. The client closes the dialog and restores the live session interface.
+3a. The host cancels the confirmation.
+3b. The client closes the dialog and restores the live session interface.
 
 ### Exception Flow
 
 EF-1:
 
-1. The system cannot complete the stop request.
-2. The client displays the returned failure state and preserves the current session view.
+5a. The system cannot complete the stop request.
+5b. The client displays the returned failure state and preserves the current session view.
 
 ### Related UI
 
@@ -83,7 +83,7 @@ The shared model defines trusted context, persistence mapping, and query helpers
 
 Local projection of exactly the vocabulary needed by the Business Rules below, including signature and helper types. Enum domains are retained in full to preserve their value semantics.
 
-```plantuml
+~~~plantuml
 @startuml
 hide empty members
 enum SessionKind {
@@ -201,11 +201,11 @@ Principal and session are decoded from the authenticated session access token.
 participantId resolves the principal's membership.
 end note
 @enduml
-```
+~~~
 
 ## Business Rules
 
-~~~ocl
+~~~text
 -- BR-UC-04-01
 -- Source: Assumption
 -- Assumption: A-19
@@ -216,27 +216,21 @@ pre BR_UC_04_01_AuthenticatedMembership:
   Participant.allInstances()->exists(p | p.id = command.actorParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
     p.status = ParticipantStatus::JOINED and p.role = ParticipantRole::HOST)
-~~~
 
-~~~ocl
 -- BR-UC-04-02
 -- Source: Assumption
 -- Assumption: A-19
 context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 pre BR_UC_04_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
-~~~
 
-~~~ocl
 -- BR-UC-04-03
 -- Source: Assumption
 -- Assumption: A-20
 context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 pre BR_UC_04_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
-~~~
 
-~~~ocl
 -- BR-UC-04-04
 -- Source: Assumption
 -- Assumption: A-04
@@ -244,36 +238,28 @@ context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStrea
 pre BR_UC_04_04_StreamTargetAndVersion:
   command.action = StreamAction::STOP and session.kind = SessionKind::LIVE_STREAM and
   session.status = SessionStatus::LIVE and stream.sessionId = session.id and command.expectedVersion = stream.version
-~~~
 
-~~~ocl
 -- BR-UC-04-05
 -- Source: Assumption
 -- Assumption: A-04
 context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 post BR_UC_04_05_SameStreamVersion:
   result = stream and stream.version = stream.version@pre + 1
-~~~
 
-~~~ocl
 -- BR-UC-04-06
 -- Source: Assumption
 -- Assumption: A-04
 context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 pre BR_UC_04_06_RunningOnly:
   stream.status = StreamStatus::LIVE or stream.status = StreamStatus::STARTING
-~~~
 
-~~~ocl
 -- BR-UC-04-07
 -- Source: Assumption
 -- Assumption: A-04
 context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 post BR_UC_04_07_EndedStream:
   stream.status = StreamStatus::ENDED and stream.endedAt <> null and session.status = session.status@pre
-~~~
 
-~~~ocl
 -- BR-UC-04-08
 -- Source: Assumption
 -- Assumption: A-21
@@ -281,9 +267,7 @@ context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStrea
 post BR_UC_04_08_DemoteFormerStageParticipants:
   Participant.allInstances()@pre->select(p | p.sessionId = command.sessionId and p.role@pre = ParticipantRole::STAGE_PARTICIPANT)->forAll(p |
     p.role = ParticipantRole::VIEWER and not p.microphoneEnabled and not p.cameraEnabled)
-~~~
 
-~~~ocl
 -- BR-UC-04-09
 -- Source: Assumption
 -- Assumption: A-21
@@ -291,9 +275,7 @@ context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStrea
 post BR_UC_04_09_StopContentShares:
   ContentShare.allInstances()@pre->select(cs | cs.sessionId = command.sessionId and cs.status@pre = ShareStatus::ACTIVE)->forAll(cs |
     cs.status = ShareStatus::STOPPED and cs.stoppedAt <> null and cs.version = cs.version@pre + 1)
-~~~
 
-~~~ocl
 -- BR-UC-04-10
 -- Source: Assumption
 -- Assumption: A-21
@@ -301,9 +283,7 @@ context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStrea
 post BR_UC_04_10_CancelPendingRequests:
   StageRequest.allInstances()@pre->select(r | r.sessionId = command.sessionId and r.status@pre = StageRequestStatus::PENDING)->forAll(r |
     r.status = StageRequestStatus::CANCELLED and r.decidedAt <> null and r.version = r.version@pre + 1)
-~~~
 
-~~~ocl
 -- BR-UC-04-11
 -- Source: Assumption
 -- Assumption: A-21

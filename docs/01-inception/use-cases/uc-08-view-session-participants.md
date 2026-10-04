@@ -52,15 +52,15 @@ POST-1: The client displays the returned participant list and visible participan
 
 AF-1:
 
-1. The participant closes the panel.
-2. The client restores the session layout.
+4a. The participant closes the panel.
+4b. The client restores the session layout.
 
 ### Exception Flow
 
 EF-1:
 
-1. The participant list cannot be returned.
-2. The client displays the returned unavailable state without closing the session.
+3a. The participant list cannot be returned.
+3b. The client displays the returned unavailable state without closing the session.
 
 ### Related UI
 
@@ -82,7 +82,7 @@ The shared model defines trusted context, persistence mapping, and query helpers
 
 Local projection of exactly the vocabulary needed by the Business Rules below, including signature and helper types. Enum domains are retained in full to preserve their value semantics.
 
-```plantuml
+~~~plantuml
 @startuml
 hide empty members
 enum SessionStatus {
@@ -212,11 +212,11 @@ Principal and session are decoded from the authenticated session access token.
 participantId resolves the principal's membership.
 end note
 @enduml
-```
+~~~
 
 ## Business Rules
 
-~~~ocl
+~~~text
 -- BR-UC-08-01
 -- Source: Assumption
 -- Assumption: A-19
@@ -227,9 +227,7 @@ pre BR_UC_08_01_AuthenticatedMembership:
   Participant.allInstances()->exists(p | p.id = query.requesterParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = query.sessionId and
     p.status = ParticipantStatus::JOINED)
-~~~
 
-~~~ocl
 -- BR-UC-08-02
 -- Source: Assumption
 -- Assumption: A-08
@@ -237,9 +235,7 @@ context CollaborationService::listParticipants(query: ParticipantListQuery, sess
 pre BR_UC_08_02_PageInput:
   query.sessionId = session.id and session.status <> SessionStatus::ENDED and
   query.pageSize > 0 and query.pageSize <= 50 and Paging::validCursor(session.id, query.cursor, 'participants')
-~~~
 
-~~~ocl
 -- BR-UC-08-03
 -- Source: Assumption
 -- Assumption: A-08
@@ -247,9 +243,7 @@ context CollaborationService::listParticipants(query: ParticipantListQuery, sess
 post BR_UC_08_03_ParticipantPage:
   result = Paging::participants(session.id, query.pageSize, query.cursor) and result.items->size() <= query.pageSize and
   result.items->forAll(p | p.sessionId = session.id and p.status = ParticipantStatus::JOINED)
-~~~
 
-~~~ocl
 -- BR-UC-08-04
 -- Source: Assumption
 -- Assumption: A-23
@@ -259,9 +253,7 @@ pre BR_UC_08_04_StateReader:
   participant.id = RequestContext::participantId and participant.principalId = RequestContext::principalId and participant.sessionId = session.id and
   (participant.status = ParticipantStatus::JOINED or session.status = SessionStatus::ENDED) and
   Paging::validCursor(session.id, reactionCursor, 'reactions')
-~~~
 
-~~~ocl
 -- BR-UC-08-05
 -- Source: Assumption
 -- Assumption: A-23
@@ -273,9 +265,7 @@ post BR_UC_08_05_StateSnapshot:
   result.share = if ContentShare.allInstances()->exists(s | s.sessionId = session.id and s.status = ShareStatus::ACTIVE) then ContentShare.allInstances()->any(s | s.sessionId = session.id and s.status = ShareStatus::ACTIVE) else null endif and
   result.media = MediaPreference.allInstances()->any(m | m.participantId = participant.id) and
   result.view = ViewPreference.allInstances()->any(v | v.participantId = participant.id)
-~~~
 
-~~~ocl
 -- BR-UC-08-06
 -- Source: Assumption
 -- Assumption: A-23
@@ -285,9 +275,7 @@ post BR_UC_08_06_StateAudience:
     (participant.role = ParticipantRole::HOST or r.participantId = participant.id)) and
   result.reactions = Paging::reactions(session.id, reactionCursor) and result.reactions->size() <= 50 and
   result.nextReactionCursor = Paging::nextReactionCursor(session.id, reactionCursor)
-~~~
 
-~~~ocl
 -- BR-UC-08-07
 -- Source: Assumption
 -- Assumption: A-08

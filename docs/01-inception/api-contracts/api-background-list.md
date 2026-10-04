@@ -43,19 +43,15 @@ Required.
 
 ## Request Header(s)
 
-### Authorization
+### headers.Authorization
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Description: Bearer session access token.
 Example: `Bearer <session-access-token>`
 
-### Accept
+### headers.Accept
 
-Type: string
-Required: Yes
-Nullable: No
+Type: string; Required: Yes; Nullable: No
 Allowed values: `application/json`
 Description: HTTP media-type header.
 Example: `application/json`
@@ -78,15 +74,16 @@ Inherits the success envelope and named object definitions in [Common Contract](
 
 ### data.items
 
-Type: array (Background)
-Required: Yes
-Nullable: No
+Type: array (Background); Required: Yes; Nullable: No
 Description: Array of representations defined in the common contract.
 Example: `[]`
 
 ## Error Response — HTTP 400
 
 - Code: `INVALID_REQUEST`
+
+### message
+
 Trigger: The request cannot be decoded or does not match the declared wire schema.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -94,6 +91,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 401
 
 - Code: `AUTHENTICATION_REJECTED`
+
+### message
+
 Trigger: The authentication context is rejected.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -101,6 +101,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 403
 
 - Code: `ACCESS_REJECTED`
+
+### message
+
 Trigger: The operation is rejected for the supplied access context.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -108,6 +111,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 404
 
 - Code: `RESOURCE_UNAVAILABLE`
+
+### message
+
 Trigger: The requested resource is unavailable.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
@@ -115,6 +121,9 @@ Description: Uses the common error envelope.
 ## Error Response — HTTP 503
 
 - Code: `SERVICE_UNAVAILABLE`
+
+### message
+
 Trigger: A required service is temporarily unavailable.
 Description: Uses the common error envelope.
 - Example message: `The request could not be completed.`
