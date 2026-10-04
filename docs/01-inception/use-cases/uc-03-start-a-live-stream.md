@@ -66,15 +66,15 @@ EF-1:
 
 ### Related UI
 
-- Broadcaster Preview `6007:51245`.
-- Live Session `6007:51075`.
-- Live Streaming Desktop Features `6007:86770`.
-- Live Streaming Mobile Features `6012:90506`.
+- Broadcaster Preview 6007:51245.
+- Live Session 6007:51075.
+- Live Streaming Desktop Features 6007:86770.
+- Live Streaming Mobile Features 6012:90506.
 
 ### Related API IDs
 
-`API-LIVE-STREAM-CONTROL`.
-`API-SESSION-STATE`.
+API-LIVE-STREAM-CONTROL.
+API-SESSION-STATE.
 
 ### Notes
 

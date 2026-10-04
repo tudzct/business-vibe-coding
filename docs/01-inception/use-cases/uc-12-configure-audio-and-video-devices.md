@@ -66,15 +66,15 @@ EF-1:
 
 ### Related UI
 
-- Settings `6007:51132`.
-- Video Conferencing Desktop Preview `6066:89727`.
-- Video Conferencing Mobile Preview `6066:89005`.
+- Settings 6007:51132.
+- Video Conferencing Desktop Preview 6066:89727.
+- Video Conferencing Mobile Preview 6066:89005.
 
 ### Related API IDs
 
-`API-PREFERENCES-UPDATE`.
-`API-SESSION-JOIN`.
-`API-SESSION-STATE`.
+API-PREFERENCES-UPDATE.
+API-SESSION-JOIN.
+API-SESSION-STATE.
 
 ### Notes
 

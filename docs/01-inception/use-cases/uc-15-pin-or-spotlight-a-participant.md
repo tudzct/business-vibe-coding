@@ -79,16 +79,16 @@ EF-1:
 
 ### Related UI
 
-- Video Conferencing Desktop Features `6007:55138`.
-- Video Conferencing Mobile Layouts `6012:78022`.
-- Component evidence: Panel/Tile Menu `6073:15912`, including `Pin Tile for Myself` and `Spotlight Tile for Everyone`.
+- Video Conferencing Desktop Features 6007:55138.
+- Video Conferencing Mobile Layouts 6012:78022.
+- Component evidence: Panel/Tile Menu 6073:15912, including Pin Tile for Myself and Spotlight Tile for Everyone.
 
 ### Related API IDs
 
-`API-PREFERENCES-UPDATE`.
-`API-SPOTLIGHT-UPDATE`.
-`API-PARTICIPANT-LIST`.
-`API-SESSION-STATE`.
+API-PREFERENCES-UPDATE.
+API-SPOTLIGHT-UPDATE.
+API-PARTICIPANT-LIST.
+API-SESSION-STATE.
 
 ### Notes
 

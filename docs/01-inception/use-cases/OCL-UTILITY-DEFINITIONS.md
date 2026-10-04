@@ -1,12 +1,6 @@
 ---
 artifact_type: ocl-utility-definitions
 status: Frozen
-source_type: local-markdown
-source_path: "D:\\figma_spec\\100ms Video Conferencing and Live Streaming\\OCL-UTILITY-DEFINITIONS.md"
-source_snapshot_path: resource/specification-sources/100ms-2026-10-01-001/OCL-UTILITY-DEFINITIONS.md
-source_sha256: sha256:31e70cefced5e785c2400715249b11beeb60b08c5362842cab139f89b66b9d8e
-source_range: "Markdown: complete document"
-retrieved_at: 2026-10-01T09:29:46.379459Z
 ---
 
 # OCL Utility Definitions
@@ -55,7 +49,7 @@ Paging::nextReactionCursor(sessionId: String, cursor: String): String
 - Returns the cursor for the next reaction read, retaining a high-water mark even when a page is empty.
 ```
 
-The paging cursors are authenticated opaque values. Domain permissions and page limits remain in the BRs. Service operations such as `SessionJoinService::join` and `ClientPreferenceService::selectDevices` are BR contexts rather than utility helpers.
+The paging cursors are authenticated opaque values. Domain permissions and page limits remain in the BRs. Service operations such as SessionJoinService::join and ClientPreferenceService::selectDevices are BR contexts rather than utility helpers.
 
 ## Utility Classes
 

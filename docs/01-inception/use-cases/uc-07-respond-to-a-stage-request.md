@@ -67,13 +67,13 @@ EF-1:
 
 ### Related UI
 
-- Live Streaming Desktop Features `6007:86770`.
-- Live Streaming Mobile Features `6012:90506`.
+- Live Streaming Desktop Features 6007:86770.
+- Live Streaming Mobile Features 6012:90506.
 
 ### Related API IDs
 
-`API-STAGE-REQUEST-CREATE`.
-`API-SESSION-STATE`.
+API-STAGE-REQUEST-CREATE.
+API-SESSION-STATE.
 
 ### Notes
 

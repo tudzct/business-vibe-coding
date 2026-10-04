@@ -11,7 +11,7 @@ related_uc_id: UC-15
 
 ### API ID
 
-`API-SPOTLIGHT-UPDATE`
+API-SPOTLIGHT-UPDATE
 
 ### API Name
 
@@ -19,15 +19,15 @@ Update Session Spotlight
 
 ### Related Use Case IDs
 
-- `UC-15`
+- UC-15
 
 ### Method
 
-`PATCH`
+PATCH
 
 ### Path
 
-`/api/v1/sessions/{sessionId}/spotlight`
+/api/v1/sessions/{sessionId}/spotlight
 
 ### Description
 
@@ -35,7 +35,7 @@ Returns the session representation after setting or clearing the tile spotlighte
 
 ### Authentication
 
-Bearer session access token, using the registered or guest form described in the common contract.
+Bearer session access token, using the registered or guest form.
 
 ### Authorization
 
@@ -47,20 +47,20 @@ Required.
 
 Type: string; Required: Yes; Nullable: No
 Description: Bearer session access token.
-Example: `Bearer <session-access-token>`
+Example: Bearer \<session-access-token\>
 
 ### headers.Content-Type
 
 Type: string; Required: Yes; Nullable: No
-Allowed values: `application/json`
+Allowed values: application/json
 Description: HTTP media-type header.
-Example: `application/json`
+Example: application/json
 
 ### headers.Idempotency-Key
 
 Type: string; Required: Yes; Nullable: No
 Description: Opaque HTTP command token.
-Example: `command-15-01`
+Example: command-15-01
 
 ## Path Parameter(s)
 
@@ -68,7 +68,7 @@ Example: `command-15-01`
 
 Type: string; Required: Yes; Nullable: No
 Description: UUID identifier.
-Example: `11111111-1111-4111-8111-111111111111`
+Example: 11111111-1111-4111-8111-111111111111
 
 ## Query Parameter(s)
 
@@ -87,87 +87,63 @@ Description: Participant identifier to spotlight, or null to clear the shared sp
 Type: integer; Required: Yes; Nullable: No
 Validation: Must be a JSON integer.
 Description: Session version observed by the client.
-Example: `1`
+Example: 1
 
 ## Success Response — HTTP 200
-
-Inherits the success envelope and named object definitions in [Common Contract](common-contract.md).
 
 ### data.session
 
 Type: object (SessionSummary); Required: Yes; Nullable: No
-Description: Representation defined in the common contract.
 
 ## Error Response — HTTP 400
-
-- Code: `INVALID_REQUEST`
 
 ### message
 
 Trigger: The request cannot be decoded or does not match the declared wire schema.
-Description: Uses the common error envelope.
-- Example message: `The request could not be completed.`
+- Example message: The request could not be completed.
 
 ## Error Response — HTTP 401
-
-- Code: `AUTHENTICATION_REJECTED`
 
 ### message
 
 Trigger: The authentication context is rejected.
-Description: Uses the common error envelope.
-- Example message: `The request could not be completed.`
+- Example message: The request could not be completed.
 
 ## Error Response — HTTP 403
-
-- Code: `ACCESS_REJECTED`
 
 ### message
 
 Trigger: The operation is rejected for the supplied access context.
-Description: Uses the common error envelope.
-- Example message: `The request could not be completed.`
+- Example message: The request could not be completed.
 
 ## Error Response — HTTP 404
-
-- Code: `RESOURCE_UNAVAILABLE`
 
 ### message
 
 Trigger: The requested resource is unavailable.
-Description: Uses the common error envelope.
-- Example message: `The request could not be completed.`
+- Example message: The request could not be completed.
 
 ## Error Response — HTTP 409
-
-- Code: `OPERATION_CONFLICT`
 
 ### message
 
 Trigger: The operation conflicts with the current resource response.
-Description: Uses the common error envelope.
-- Example message: `The request could not be completed.`
+- Example message: The request could not be completed.
 
 ## Error Response — HTTP 422
-
-- Code: `COMMAND_REJECTED`
 
 ### message
 
 Trigger: The submitted command is rejected.
-Description: Uses the common error envelope.
-- Example message: `The request could not be completed.`
+- Example message: The request could not be completed.
 
 ## Error Response — HTTP 503
-
-- Code: `SERVICE_UNAVAILABLE`
 
 ### message
 
 Trigger: A required service is temporarily unavailable.
-Description: Uses the common error envelope.
-- Example message: `The request could not be completed.`
+- Example message: The request could not be completed.
 
 ## Notes
 
-This endpoint inherits [Common Contract](common-contract.md). Personal pinning remains part of API-PREFERENCES-UPDATE.
+Personal pinning remains part of API-PREFERENCES-UPDATE.

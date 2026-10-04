@@ -66,15 +66,15 @@ EF-1:
 
 ### Related UI
 
-- Live Streaming Desktop Features `6007:86770`.
-- Video Conferencing Desktop Features `6007:55138`.
-- Live Streaming Mobile Features `6012:90506`.
-- Video Conferencing Mobile Features `6012:52233`.
+- Live Streaming Desktop Features 6007:86770.
+- Video Conferencing Desktop Features 6007:55138.
+- Live Streaming Mobile Features 6012:90506.
+- Video Conferencing Mobile Features 6012:52233.
 
 ### Related API IDs
 
-`API-CHAT-MESSAGE-CREATE`.
-`API-CHAT-MESSAGE-LIST`.
+API-CHAT-MESSAGE-CREATE.
+API-CHAT-MESSAGE-LIST.
 
 ### Notes
 

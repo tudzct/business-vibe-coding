@@ -11,7 +11,7 @@ related_uc_ids: ["UC-02", "UC-03", "UC-04", "UC-05", "UC-06", "UC-07", "UC-08", 
 
 ### API ID
 
-`API-SESSION-STATE`
+API-SESSION-STATE
 
 ### API Name
 
@@ -19,30 +19,30 @@ Read Session State
 
 ### Related Use Case IDs
 
-- `UC-02`
-- `UC-03`
-- `UC-04`
-- `UC-05`
-- `UC-06`
-- `UC-07`
-- `UC-08`
-- `UC-10`
-- `UC-11`
-- `UC-12`
-- `UC-13`
-- `UC-14`
-- `UC-15`
-- `UC-16`
-- `UC-17`
-- `UC-18`
+- UC-02
+- UC-03
+- UC-04
+- UC-05
+- UC-06
+- UC-07
+- UC-08
+- UC-10
+- UC-11
+- UC-12
+- UC-13
+- UC-14
+- UC-15
+- UC-16
+- UC-17
+- UC-18
 
 ### Method
 
-`GET`
+GET
 
 ### Path
 
-`/api/v1/sessions/{sessionId}/state`
+/api/v1/sessions/{sessionId}/state
 
 ### Description
 
@@ -50,7 +50,7 @@ Returns the current session and caller representations, stage requests, and a pa
 
 ### Authentication
 
-Bearer session access token, using the registered or guest form described in the common contract.
+Bearer session access token, using the registered or guest form.
 
 ### Authorization
 
@@ -62,14 +62,14 @@ Required.
 
 Type: string; Required: Yes; Nullable: No
 Description: Bearer session access token.
-Example: `Bearer <session-access-token>`
+Example: Bearer \<session-access-token\>
 
 ### headers.Accept
 
 Type: string; Required: Yes; Nullable: No
-Allowed values: `application/json`
+Allowed values: application/json
 Description: HTTP media-type header.
-Example: `application/json`
+Example: application/json
 
 ## Path Parameter(s)
 
@@ -77,7 +77,7 @@ Example: `application/json`
 
 Type: string; Required: Yes; Nullable: No
 Description: UUID identifier.
-Example: `11111111-1111-4111-8111-111111111111`
+Example: 11111111-1111-4111-8111-111111111111
 
 ## Query Parameter(s)
 
@@ -93,54 +93,43 @@ None.
 
 ## Success Response — HTTP 200
 
-Inherits the success envelope and named object definitions in [Common Contract](common-contract.md).
-
 ### data.session
 
 Type: object (SessionSummary); Required: Yes; Nullable: No
-Description: Representation defined in the common contract.
 
 ### data.selfParticipant
 
 Type: object (Participant); Required: Yes; Nullable: No
-Description: Representation defined in the common contract.
 
 ### data.stream
 
 Type: object (Stream); Required: Yes; Nullable: Yes
-Description: Representation defined in the common contract.
 
 ### data.recording
 
 Type: object (Recording); Required: Yes; Nullable: Yes
-Description: Representation defined in the common contract.
 
 ### data.share
 
 Type: object (Share); Required: Yes; Nullable: Yes
-Description: Representation defined in the common contract.
 
 ### data.media
 
 Type: object (MediaPreference); Required: Yes; Nullable: No
-Description: Representation defined in the common contract.
 
 ### data.view
 
 Type: object (ViewPreference); Required: Yes; Nullable: No
-Description: Representation defined in the common contract.
 
 ### data.stageRequests
 
 Type: array (StageRequest); Required: Yes; Nullable: No
-Description: Array of representations defined in the common contract.
-Example: `[]`
+Example: []
 
 ### data.reactions
 
 Type: array (Reaction); Required: Yes; Nullable: No
-Description: Array of representations defined in the common contract.
-Example: `[]`
+Example: []
 
 ### data.nextReactionCursor
 
@@ -149,54 +138,39 @@ Description: Opaque continuation token, including for an empty event page.
 
 ## Error Response — HTTP 400
 
-- Code: `INVALID_REQUEST`
-
 ### message
 
 Trigger: The request cannot be decoded or does not match the declared wire schema.
-Description: Uses the common error envelope.
-- Example message: `The request could not be completed.`
+- Example message: The request could not be completed.
 
 ## Error Response — HTTP 401
-
-- Code: `AUTHENTICATION_REJECTED`
 
 ### message
 
 Trigger: The authentication context is rejected.
-Description: Uses the common error envelope.
-- Example message: `The request could not be completed.`
+- Example message: The request could not be completed.
 
 ## Error Response — HTTP 403
-
-- Code: `ACCESS_REJECTED`
 
 ### message
 
 Trigger: The operation is rejected for the supplied access context.
-Description: Uses the common error envelope.
-- Example message: `The request could not be completed.`
+- Example message: The request could not be completed.
 
 ## Error Response — HTTP 404
-
-- Code: `RESOURCE_UNAVAILABLE`
 
 ### message
 
 Trigger: The requested resource is unavailable.
-Description: Uses the common error envelope.
-- Example message: `The request could not be completed.`
+- Example message: The request could not be completed.
 
 ## Error Response — HTTP 503
-
-- Code: `SERVICE_UNAVAILABLE`
 
 ### message
 
 Trigger: A required service is temporarily unavailable.
-Description: Uses the common error envelope.
-- Example message: `The request could not be completed.`
+- Example message: The request could not be completed.
 
 ## Notes
 
-This endpoint inherits [Common Contract](common-contract.md). The client can repeat this request to refresh its representation. Chat and participant collections have separate list endpoints.
+The client can repeat this request to refresh its representation. Chat and participant collections have separate list endpoints.

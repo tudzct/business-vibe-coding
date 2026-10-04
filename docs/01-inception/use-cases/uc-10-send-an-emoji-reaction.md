@@ -66,13 +66,13 @@ EF-1:
 
 ### Related UI
 
-- Video Conferencing Desktop Features `6007:55138`.
+- Video Conferencing Desktop Features 6007:55138.
 - Component evidence: Modal/Emoji Reactions.
 
 ### Related API IDs
 
-`API-REACTION-CREATE`.
-`API-SESSION-STATE`.
+API-REACTION-CREATE.
+API-SESSION-STATE.
 
 ### Notes
 

@@ -66,9 +66,9 @@ EF-1:
 
 ### Related UI
 
-- Broadcaster Preview `6007:51245`.
-- Video Conferencing Desktop Preview `6066:89727`.
-- Video Conferencing Mobile Preview `6066:89005`.
+- Broadcaster Preview 6007:51245.
+- Video Conferencing Desktop Preview 6066:89727.
+- Video Conferencing Mobile Preview 6066:89005.
 
 ### Related API IDs
 

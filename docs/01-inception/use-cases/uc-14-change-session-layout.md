@@ -71,15 +71,15 @@ EF-1:
 
 ### Related UI
 
-- Live Streaming Desktop Layouts `6007:96234`.
-- Live Streaming Mobile Layouts `6012:102740`.
-- Video Conferencing Desktop Layouts `6007:77656`.
-- Video Conferencing Mobile Layouts `6012:78022`.
+- Live Streaming Desktop Layouts 6007:96234.
+- Live Streaming Mobile Layouts 6012:102740.
+- Video Conferencing Desktop Layouts 6007:77656.
+- Video Conferencing Mobile Layouts 6012:78022.
 
 ### Related API IDs
 
-`API-PREFERENCES-UPDATE`.
-`API-SESSION-STATE`.
+API-PREFERENCES-UPDATE.
+API-SESSION-STATE.
 
 ### Notes
 

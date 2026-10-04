@@ -64,13 +64,13 @@ EF-1:
 
 ### Related UI
 
-- Live Streaming Viewer `6007:51397`.
-- Live Streaming Mobile Preview `6012:44409`.
+- Live Streaming Viewer 6007:51397.
+- Live Streaming Mobile Preview 6012:44409.
 
 ### Related API IDs
 
-`API-LIVE-STREAM-VIEW`.
-`API-SESSION-STATE`.
+API-LIVE-STREAM-VIEW.
+API-SESSION-STATE.
 
 ### Notes
 

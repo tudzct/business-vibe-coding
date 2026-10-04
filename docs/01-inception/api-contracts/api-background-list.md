@@ -11,7 +11,7 @@ related_uc_id: UC-13
 
 ### API ID
 
-`API-BACKGROUND-LIST`
+API-BACKGROUND-LIST
 
 ### API Name
 
@@ -19,15 +19,15 @@ List Virtual Backgrounds
 
 ### Related Use Case IDs
 
-- `UC-13`
+- UC-13
 
 ### Method
 
-`GET`
+GET
 
 ### Path
 
-`/api/v1/virtual-backgrounds`
+/api/v1/virtual-backgrounds
 
 ### Description
 
@@ -35,7 +35,7 @@ Returns the virtual-background catalog.
 
 ### Authentication
 
-Bearer session access token, using the registered or guest form described in the common contract.
+Bearer session access token, using the registered or guest form.
 
 ### Authorization
 
@@ -47,14 +47,14 @@ Required.
 
 Type: string; Required: Yes; Nullable: No
 Description: Bearer session access token.
-Example: `Bearer <session-access-token>`
+Example: Bearer \<session-access-token\>
 
 ### headers.Accept
 
 Type: string; Required: Yes; Nullable: No
-Allowed values: `application/json`
+Allowed values: application/json
 Description: HTTP media-type header.
-Example: `application/json`
+Example: application/json
 
 ## Path Parameter(s)
 
@@ -70,64 +70,42 @@ None.
 
 ## Success Response — HTTP 200
 
-Inherits the success envelope and named object definitions in [Common Contract](common-contract.md).
-
 ### data.items
 
 Type: array (Background); Required: Yes; Nullable: No
-Description: Array of representations defined in the common contract.
-Example: `[]`
+Example: []
 
 ## Error Response — HTTP 400
-
-- Code: `INVALID_REQUEST`
 
 ### message
 
 Trigger: The request cannot be decoded or does not match the declared wire schema.
-Description: Uses the common error envelope.
-- Example message: `The request could not be completed.`
+- Example message: The request could not be completed.
 
 ## Error Response — HTTP 401
-
-- Code: `AUTHENTICATION_REJECTED`
 
 ### message
 
 Trigger: The authentication context is rejected.
-Description: Uses the common error envelope.
-- Example message: `The request could not be completed.`
+- Example message: The request could not be completed.
 
 ## Error Response — HTTP 403
-
-- Code: `ACCESS_REJECTED`
 
 ### message
 
 Trigger: The operation is rejected for the supplied access context.
-Description: Uses the common error envelope.
-- Example message: `The request could not be completed.`
+- Example message: The request could not be completed.
 
 ## Error Response — HTTP 404
-
-- Code: `RESOURCE_UNAVAILABLE`
 
 ### message
 
 Trigger: The requested resource is unavailable.
-Description: Uses the common error envelope.
-- Example message: `The request could not be completed.`
+- Example message: The request could not be completed.
 
 ## Error Response — HTTP 503
-
-- Code: `SERVICE_UNAVAILABLE`
 
 ### message
 
 Trigger: A required service is temporarily unavailable.
-Description: Uses the common error envelope.
-- Example message: `The request could not be completed.`
-
-## Notes
-
-This endpoint inherits [Common Contract](common-contract.md).
+- Example message: The request could not be completed.

@@ -71,15 +71,15 @@ EF-1:
 
 ### Related UI
 
-- Live Streaming Desktop Features `6007:86770`.
-- Video Conferencing Desktop Features `6007:55138`.
-- Video Conferencing Desktop Layouts `6007:77656`.
-- Video Conferencing Mobile Features `6012:52233`.
+- Live Streaming Desktop Features 6007:86770.
+- Video Conferencing Desktop Features 6007:55138.
+- Video Conferencing Desktop Layouts 6007:77656.
+- Video Conferencing Mobile Features 6012:52233.
 
 ### Related API IDs
 
-`API-CONTENT-SHARE-CONTROL`.
-`API-SESSION-STATE`.
+API-CONTENT-SHARE-CONTROL.
+API-SESSION-STATE.
 
 ### Notes
 
