@@ -185,8 +185,6 @@ note right of TransactionContext: Describes the database transaction for the cur
 
 ~~~text
 -- BR-UC-16-01
--- Source: Assumption
--- Assumption: A-19
 context RecordingService::control(command: RecordingCommand, session: Session): Recording
 pre BR_UC_16_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
@@ -196,38 +194,28 @@ pre BR_UC_16_01_AuthenticatedMembership:
     p.status = ParticipantStatus::JOINED and p.role = ParticipantRole::HOST)
 
 -- BR-UC-16-02
--- Source: Assumption
--- Assumption: A-19
 context RecordingService::control(command: RecordingCommand, session: Session): Recording
 pre BR_UC_16_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
 
 -- BR-UC-16-03
--- Source: Assumption
--- Assumption: A-20
 context RecordingService::control(command: RecordingCommand, session: Session): Recording
 pre BR_UC_16_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
 -- BR-UC-16-04
--- Source: Assumption
--- Assumption: A-16
 context RecordingService::control(command: RecordingCommand, session: Session): Recording
 pre BR_UC_16_04_StartRecording:
   command.action = RecordingAction::START implies command.expectedVersion = null and session.status = SessionStatus::LIVE and
   not Recording.allInstances()->exists(r | r.sessionId = session.id and (r.status = RecordingStatus::STARTING or r.status = RecordingStatus::RECORDING))
 
 -- BR-UC-16-05
--- Source: Assumption
--- Assumption: A-16
 context RecordingService::control(command: RecordingCommand, session: Session): Recording
 pre BR_UC_16_05_StopRecording:
   command.action = RecordingAction::STOP implies Recording.allInstances()->one(r | r.sessionId = session.id and
     (r.status = RecordingStatus::STARTING or r.status = RecordingStatus::RECORDING) and r.version = command.expectedVersion)
 
 -- BR-UC-16-06
--- Source: Assumption
--- Assumption: A-16
 context RecordingService::control(command: RecordingCommand, session: Session): Recording
 post BR_UC_16_06_RecordingEffect:
   result.sessionId = session.id and
@@ -238,8 +226,6 @@ post BR_UC_16_06_RecordingEffect:
     result.status = RecordingStatus::STOPPED and result.version = command.expectedVersion + 1 and result.stoppedAt <> null endif
 
 -- BR-UC-16-07
--- Source: Assumption
--- Assumption: A-16
 context RecordingService::complete(command: ProviderCompletion, recording: Recording, session: Session): Recording
 pre BR_UC_16_07_RecordingCallback:
   RequestContext::providerAuthenticated and command.sessionId = session.id and recording.sessionId = session.id and
@@ -247,8 +233,6 @@ pre BR_UC_16_07_RecordingCallback:
   session.status = SessionStatus::LIVE and TransactionContext::lockedSessionId = session.id and TransactionContext::atomicCommit
 
 -- BR-UC-16-08
--- Source: Assumption
--- Assumption: A-16
 context RecordingService::complete(command: ProviderCompletion, recording: Recording, session: Session): Recording
 post BR_UC_16_08_RecordingCallbackEffect:
   result = recording and recording.version = recording.version@pre + 1 and session.version = session.version@pre + 1 and
@@ -256,8 +240,6 @@ post BR_UC_16_08_RecordingCallbackEffect:
   else recording.status = RecordingStatus::FAILED and recording.stoppedAt <> null endif
 
 -- BR-UC-16-09
--- Source: Assumption
--- Assumption: A-22
 context Recording
 inv BR_UC_16_09_OneActiveRecording:
   Recording.allInstances()->select(r | r.sessionId = self.sessionId and (r.status = RecordingStatus::STARTING or r.status = RecordingStatus::RECORDING))->size() <= 1

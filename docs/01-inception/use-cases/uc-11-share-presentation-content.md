@@ -184,8 +184,6 @@ end note
 
 ~~~text
 -- BR-UC-11-01
--- Source: Assumption
--- Assumption: A-19
 context ContentShareService::control(command: ContentShareCommand, session: Session): ContentShare
 pre BR_UC_11_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
@@ -195,22 +193,16 @@ pre BR_UC_11_01_AuthenticatedMembership:
     p.status = ParticipantStatus::JOINED)
 
 -- BR-UC-11-02
--- Source: Assumption
--- Assumption: A-19
 context ContentShareService::control(command: ContentShareCommand, session: Session): ContentShare
 pre BR_UC_11_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
 
 -- BR-UC-11-03
--- Source: Assumption
--- Assumption: A-20
 context ContentShareService::control(command: ContentShareCommand, session: Session): ContentShare
 pre BR_UC_11_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
 -- BR-UC-11-04
--- Source: Assumption
--- Assumption: A-11
 context ContentShareService::control(command: ContentShareCommand, session: Session): ContentShare
 pre BR_UC_11_04_StartShare:
   command.action = ShareAction::START implies session.status = SessionStatus::LIVE and command.expectedVersion = null and
@@ -219,8 +211,6 @@ pre BR_UC_11_04_StartShare:
   (session.kind <> SessionKind::LIVE_STREAM or Participant.allInstances()->exists(p | p.id = command.ownerParticipantId and p.role <> ParticipantRole::VIEWER))
 
 -- BR-UC-11-05
--- Source: Assumption
--- Assumption: A-11
 context ContentShareService::control(command: ContentShareCommand, session: Session): ContentShare
 pre BR_UC_11_05_StopShare:
   command.action = ShareAction::STOP implies ContentShare.allInstances()->one(s |
@@ -228,8 +218,6 @@ pre BR_UC_11_05_StopShare:
     (s.ownerParticipantId = command.ownerParticipantId or Participant.allInstances()->exists(p | p.id = command.ownerParticipantId and p.role = ParticipantRole::HOST)))
 
 -- BR-UC-11-06
--- Source: Assumption
--- Assumption: A-11
 context ContentShareService::control(command: ContentShareCommand, session: Session): ContentShare
 post BR_UC_11_06_ShareEffect:
   result.sessionId = session.id and
@@ -240,8 +228,6 @@ post BR_UC_11_06_ShareEffect:
     result.status = ShareStatus::STOPPED and result.version = command.expectedVersion + 1 and result.stoppedAt <> null endif
 
 -- BR-UC-11-07
--- Source: Assumption
--- Assumption: A-22
 context ContentShare
 inv BR_UC_11_07_OneActiveShare:
   ContentShare.allInstances()->select(s | s.sessionId = self.sessionId and s.status = ShareStatus::ACTIVE)->size() <= 1

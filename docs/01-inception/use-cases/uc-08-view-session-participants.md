@@ -218,8 +218,6 @@ end note
 
 ~~~text
 -- BR-UC-08-01
--- Source: Assumption
--- Assumption: A-19
 context CollaborationService::listParticipants(query: ParticipantListQuery, session: Session): ParticipantPage
 pre BR_UC_08_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = query.sessionId and
@@ -229,24 +227,18 @@ pre BR_UC_08_01_AuthenticatedMembership:
     p.status = ParticipantStatus::JOINED)
 
 -- BR-UC-08-02
--- Source: Assumption
--- Assumption: A-08
 context CollaborationService::listParticipants(query: ParticipantListQuery, session: Session): ParticipantPage
 pre BR_UC_08_02_PageInput:
   query.sessionId = session.id and session.status <> SessionStatus::ENDED and
   query.pageSize > 0 and query.pageSize <= 50 and Paging::validCursor(session.id, query.cursor, 'participants')
 
 -- BR-UC-08-03
--- Source: Assumption
--- Assumption: A-08
 context CollaborationService::listParticipants(query: ParticipantListQuery, session: Session): ParticipantPage
 post BR_UC_08_03_ParticipantPage:
   result = Paging::participants(session.id, query.pageSize, query.cursor) and result.items->size() <= query.pageSize and
   result.items->forAll(p | p.sessionId = session.id and p.status = ParticipantStatus::JOINED)
 
 -- BR-UC-08-04
--- Source: Assumption
--- Assumption: A-23
 context SessionService::readState(session: Session, participant: Participant, reactionCursor: String): SessionState
 pre BR_UC_08_04_StateReader:
   RequestContext::authenticated and RequestContext::sessionId = session.id and
@@ -255,8 +247,6 @@ pre BR_UC_08_04_StateReader:
   Paging::validCursor(session.id, reactionCursor, 'reactions')
 
 -- BR-UC-08-05
--- Source: Assumption
--- Assumption: A-23
 context SessionService::readState(session: Session, participant: Participant, reactionCursor: String): SessionState
 post BR_UC_08_05_StateSnapshot:
   result.session = session and result.selfParticipant = participant and
@@ -267,8 +257,6 @@ post BR_UC_08_05_StateSnapshot:
   result.view = ViewPreference.allInstances()->any(v | v.participantId = participant.id)
 
 -- BR-UC-08-06
--- Source: Assumption
--- Assumption: A-23
 context SessionService::readState(session: Session, participant: Participant, reactionCursor: String): SessionState
 post BR_UC_08_06_StateAudience:
   result.stageRequests = StageRequest.allInstances()->select(r | r.sessionId = session.id and
@@ -277,8 +265,6 @@ post BR_UC_08_06_StateAudience:
   result.nextReactionCursor = Paging::nextReactionCursor(session.id, reactionCursor)
 
 -- BR-UC-08-07
--- Source: Assumption
--- Assumption: A-08
 context CollaborationService::listParticipants(query: ParticipantListQuery, session: Session): ParticipantPage
 post BR_UC_08_07_UniqueRosterEntries:
   result.items->isUnique(id)

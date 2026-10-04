@@ -182,8 +182,6 @@ end note
 
 ~~~text
 -- BR-UC-12-01
--- Source: Assumption
--- Assumption: A-19
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 pre BR_UC_12_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
@@ -193,72 +191,52 @@ pre BR_UC_12_01_AuthenticatedMembership:
     p.status = ParticipantStatus::JOINED)
 
 -- BR-UC-12-02
--- Source: Assumption
--- Assumption: A-20
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 pre BR_UC_12_02_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
 -- BR-UC-12-03
--- Source: Assumption
--- Assumption: A-12
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 pre BR_UC_12_03_PreferenceTarget:
   media.participantId = command.participantId and view.participantId = command.participantId and
   Session.allInstances()->exists(s | s.id = command.sessionId and s.status <> SessionStatus::ENDED)
 
 -- BR-UC-12-04
--- Source: Assumption
--- Assumption: A-12
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 post BR_UC_12_04_PreferenceIdentity:
   result.media = media and result.view = view and media.updatedAt <> null and view.updatedAt <> null
 
 -- BR-UC-12-05
--- Source: Assumption
--- Assumption: A-12
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 pre BR_UC_12_05_microphoneDeviceIdSyntax:
   command.hasMicrophoneDeviceId implies (command.microphoneDeviceId = null or command.microphoneDeviceId.trim().size() > 0)
 
 -- BR-UC-12-06
--- Source: Assumption
--- Assumption: A-12
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 post BR_UC_12_06_microphoneDeviceIdPatch:
   media.microphoneDeviceId = if command.hasMicrophoneDeviceId then command.microphoneDeviceId else media.microphoneDeviceId@pre endif
 
 -- BR-UC-12-07
--- Source: Assumption
--- Assumption: A-12
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 pre BR_UC_12_07_cameraDeviceIdSyntax:
   command.hasCameraDeviceId implies (command.cameraDeviceId = null or command.cameraDeviceId.trim().size() > 0)
 
 -- BR-UC-12-08
--- Source: Assumption
--- Assumption: A-12
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 post BR_UC_12_08_cameraDeviceIdPatch:
   media.cameraDeviceId = if command.hasCameraDeviceId then command.cameraDeviceId else media.cameraDeviceId@pre endif
 
 -- BR-UC-12-09
--- Source: Assumption
--- Assumption: A-12
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 pre BR_UC_12_09_speakerDeviceIdSyntax:
   command.hasSpeakerDeviceId implies (command.speakerDeviceId = null or command.speakerDeviceId.trim().size() > 0)
 
 -- BR-UC-12-10
--- Source: Assumption
--- Assumption: A-12
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 post BR_UC_12_10_speakerDeviceIdPatch:
   media.speakerDeviceId = if command.hasSpeakerDeviceId then command.speakerDeviceId else media.speakerDeviceId@pre endif
 
 -- BR-UC-12-11
--- Source: Assumption
--- Assumption: A-12
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 post BR_UC_12_11_OtherMediaUnchanged:
   MediaPreference.allInstances() = MediaPreference.allInstances()@pre and
@@ -267,8 +245,6 @@ post BR_UC_12_11_OtherMediaUnchanged:
     m.speakerDeviceId = m.speakerDeviceId@pre and m.virtualBackgroundId = m.virtualBackgroundId@pre and m.updatedAt = m.updatedAt@pre)
 
 -- BR-UC-12-12
--- Source: Assumption
--- Assumption: A-12
 context ClientPreferenceService::selectDevices(draft: PreviewDraft, microphone: String, camera: String, speaker: String): PreviewDraft
 pre BR_UC_12_12_LocalDeviceAvailability:
   (microphone = null or DeviceCatalog::isAvailable(draft.participantKey, microphone)) and
@@ -276,8 +252,6 @@ pre BR_UC_12_12_LocalDeviceAvailability:
   (speaker = null or DeviceCatalog::isAvailable(draft.participantKey, speaker))
 
 -- BR-UC-12-13
--- Source: Assumption
--- Assumption: A-12
 context ClientPreferenceService::selectDevices(draft: PreviewDraft, microphone: String, camera: String, speaker: String): PreviewDraft
 post BR_UC_12_13_LocalDeviceDraft:
   result = draft and draft.microphoneDeviceId = microphone and draft.cameraDeviceId = camera and

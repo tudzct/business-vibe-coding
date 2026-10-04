@@ -139,51 +139,37 @@ end note
 
 ~~~text
 -- BR-UC-01-01
--- Source: Assumption
--- Assumption: A-01
 context PreviewService::prepare(command: PreviewCommand): PreviewState
 post BR_UC_01_01_PermissionAndHardware:
   (result.cameraEnabled implies result.cameraPermission = PermissionStatus::GRANTED and result.cameraAvailable and command.requestCamera) and
   (result.microphoneEnabled implies result.microphonePermission = PermissionStatus::GRANTED and result.microphoneAvailable and command.requestMicrophone)
 
 -- BR-UC-01-02
--- Source: Assumption
--- Assumption: A-01
 context PreviewService::prepare(command: PreviewCommand): PreviewState
 post BR_UC_01_02_ViewerPreviewMuted:
   command.role = ParticipantRole::VIEWER implies not result.cameraEnabled and not result.microphoneEnabled
 
 -- BR-UC-01-03
--- Source: Assumption
--- Assumption: A-01
 context PreviewService::prepare(command: PreviewCommand): PreviewState
 post BR_UC_01_03_NameReadiness:
   result.isReadyToJoin = (command.displayName <> null and command.displayName.trim().size() > 0 and command.displayName.trim().size() <= 50)
 
 -- BR-UC-01-04
--- Source: Assumption
--- Assumption: A-01
 context PreviewService::prepare(command: PreviewCommand): PreviewState
 post BR_UC_01_04_PreviewKey:
   result.participantKey = command.participantKey
 
 -- BR-UC-01-05
--- Source: Assumption
--- Assumption: A-01
 context PreviewService::prepare(command: PreviewCommand): PreviewState
 post BR_UC_01_05_CameraDeniedState:
   result.cameraPermission <> PermissionStatus::GRANTED implies not result.cameraEnabled
 
 -- BR-UC-01-06
--- Source: Assumption
--- Assumption: A-01
 context PreviewService::prepare(command: PreviewCommand): PreviewState
 post BR_UC_01_06_MicrophoneDeniedState:
   result.microphonePermission <> PermissionStatus::GRANTED implies not result.microphoneEnabled
 
 -- BR-UC-01-07
--- Source: Assumption
--- Assumption: A-01
 context PreviewService::prepare(command: PreviewCommand): PreviewState
 post BR_UC_01_07_ClientLocalPreview:
   Participant.allInstances() = Participant.allInstances()@pre and

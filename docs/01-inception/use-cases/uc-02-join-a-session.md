@@ -255,8 +255,6 @@ note right of TransactionContext: Describes the database transaction for the cur
 
 ~~~text
 -- BR-UC-02-01
--- Source: Assumption
--- Assumption: A-19
 context SessionJoinService::join(command: JoinCommand, session: Session): Participant
 pre BR_UC_02_01_TrustedJoinPrincipal:
   RequestContext::authenticated and command.sessionId = RequestContext::sessionId and
@@ -264,36 +262,26 @@ pre BR_UC_02_01_TrustedJoinPrincipal:
   Principal.allInstances()->exists(p | p.id = command.principalId and p.userId = command.userId)
 
 -- BR-UC-02-02
--- Source: Assumption
--- Assumption: A-19
 context SessionJoinService::join(command: JoinCommand, session: Session): Participant
 pre BR_UC_02_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
 
 -- BR-UC-02-03
--- Source: Assumption
--- Assumption: A-20
 context SessionJoinService::join(command: JoinCommand, session: Session): Participant
 pre BR_UC_02_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
 -- BR-UC-02-04
--- Source: Assumption
--- Assumption: A-01
 context SessionJoinService::join(command: JoinCommand, session: Session): Participant
 pre BR_UC_02_04_Name:
   command.displayName <> null and command.displayName.trim().size() > 0 and command.displayName.trim().size() <= 50
 
 -- BR-UC-02-05
--- Source: Assumption
--- Assumption: A-02
 context SessionJoinService::join(command: JoinCommand, session: Session): Participant
 pre BR_UC_02_05_NoDuplicateMembership:
   not session.participants->exists(p | p.principalId = command.principalId and p.status = ParticipantStatus::JOINED)
 
 -- BR-UC-02-06
--- Source: Assumption
--- Assumption: A-02
 context SessionJoinService::join(command: JoinCommand, session: Session): Participant
 pre BR_UC_02_06_Capacity:
   let count : Integer = session.participants->select(p | p.status = ParticipantStatus::JOINED)->size() in
@@ -301,15 +289,11 @@ pre BR_UC_02_06_Capacity:
   (session.kind = SessionKind::LIVE_STREAM implies count < 1000)
 
 -- BR-UC-02-07
--- Source: Assumption
--- Assumption: A-02
 context SessionJoinService::join(command: JoinCommand, session: Session): Participant
 post BR_UC_02_07_CreatedIdentity:
   result.oclIsNew() and result.id <> null and result.sessionId = command.sessionId and result.principalId = command.principalId and result.userId = command.userId
 
 -- BR-UC-02-08
--- Source: Assumption
--- Assumption: A-02
 context SessionJoinService::join(command: JoinCommand, session: Session): Participant
 post BR_UC_02_08_JoinedParticipant:
   result.status = ParticipantStatus::JOINED and result.displayName = command.displayName.trim() and
@@ -317,8 +301,6 @@ post BR_UC_02_08_JoinedParticipant:
   session.participants = session.participants@pre->including(result)
 
 -- BR-UC-02-09
--- Source: Assumption
--- Assumption: A-02
 context SessionJoinService::join(command: JoinCommand, session: Session): Participant
 post BR_UC_02_09_ExclusiveRole:
   result.role = if command.principalId = session.designatedHostPrincipalId
@@ -327,16 +309,12 @@ post BR_UC_02_09_ExclusiveRole:
       else ParticipantRole::BROADCASTER endif endif
 
 -- BR-UC-02-10
--- Source: Assumption
--- Assumption: A-02
 context SessionJoinService::join(command: JoinCommand, session: Session): Participant
 post BR_UC_02_10_EffectiveMedia:
   result.microphoneEnabled = (result.role <> ParticipantRole::VIEWER and command.microphoneEnabled) and
   result.cameraEnabled = (result.role <> ParticipantRole::VIEWER and command.cameraEnabled)
 
 -- BR-UC-02-11
--- Source: Assumption
--- Assumption: A-02
 context SessionJoinService::join(command: JoinCommand, session: Session): Participant
 post BR_UC_02_11_HostOpensSession:
   if result.role = ParticipantRole::HOST then
@@ -344,15 +322,11 @@ post BR_UC_02_11_HostOpensSession:
   else session.hostParticipantId = session.hostParticipantId@pre and session.status = session.status@pre endif
 
 -- BR-UC-02-12
--- Source: Assumption
--- Assumption: A-13
 context SessionJoinService::join(command: JoinCommand, session: Session): Participant
 pre BR_UC_02_12_DraftBackground:
   command.virtualBackgroundId = null or VirtualBackground.allInstances()->exists(b | b.id = command.virtualBackgroundId and b.active)
 
 -- BR-UC-02-13
--- Source: Assumption
--- Assumption: A-12
 context SessionJoinService::join(command: JoinCommand, session: Session): Participant
 post BR_UC_02_13_InitializePreferences:
   MediaPreference.allInstances()->one(m | m.participantId = result.id and m.oclIsNew() and
@@ -363,8 +337,6 @@ post BR_UC_02_13_InitializePreferences:
     not v.pictureInPicture and v.updatedAt <> null)
 
 -- BR-UC-02-14
--- Source: Assumption
--- Assumption: A-20
 context MutationGateway::execute(command: MutationEnvelope, session: Session): MutationReceipt
 pre BR_UC_02_14_GatewayIdentityAndTransaction:
   RequestContext::authenticated and command.principalId = RequestContext::principalId and
@@ -373,8 +345,6 @@ pre BR_UC_02_14_GatewayIdentityAndTransaction:
   TransactionContext::atomicCommit and command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
 -- BR-UC-02-15
--- Source: Assumption
--- Assumption: A-20
 context MutationGateway::execute(command: MutationEnvelope, session: Session): MutationReceipt
 post BR_UC_02_15_ReplayOrDispatch:
   let previous : Set(IdempotencyRecord) = IdempotencyRecord.allInstances()@pre->select(r |
@@ -392,8 +362,6 @@ post BR_UC_02_15_ReplayOrDispatch:
   endif
 
 -- BR-UC-02-16
--- Source: Assumption
--- Assumption: A-20
 context MutationGateway::execute(command: MutationEnvelope, session: Session): MutationReceipt
 post BR_UC_02_16_PersistReceipt:
   (result.dispatchCount = 1 and result.outcome = MutationOutcome::COMPLETED) implies
@@ -403,16 +371,12 @@ post BR_UC_02_16_PersistReceipt:
     r.completedAt = result.completedAt and r.expiresAt = DateTime::addHours(r.completedAt, 24))
 
 -- BR-UC-02-17
--- Source: Assumption
--- Assumption: A-20
 context MutationGateway::execute(command: MutationEnvelope, session: Session): MutationReceipt
 post BR_UC_02_17_NoEffectsOnReplayOrRejection:
   (result.dispatchCount = 0 or result.outcome = MutationOutcome::REJECTED) implies
   DomainState::snapshot(session.id) = DomainState::snapshot@pre(session.id)
 
 -- BR-UC-02-18
--- Source: Assumption
--- Assumption: A-22
 context Session
 inv BR_UC_02_18_SessionParticipantBindings:
   self.participants = Participant.allInstances()->select(p | p.sessionId = self.id) and
@@ -420,8 +384,6 @@ inv BR_UC_02_18_SessionParticipantBindings:
   self.participants->select(p | p.status = ParticipantStatus::JOINED and p.role = ParticipantRole::HOST)->size() <= 1
 
 -- BR-UC-02-19
--- Source: Assumption
--- Assumption: A-22
 context Session
 inv BR_UC_02_19_SessionCapacityInvariant:
   let joined : Set(Participant) = self.participants->select(p | p.status = ParticipantStatus::JOINED) in

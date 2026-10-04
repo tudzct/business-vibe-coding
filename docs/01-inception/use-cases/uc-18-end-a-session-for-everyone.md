@@ -214,8 +214,6 @@ end note
 
 ~~~text
 -- BR-UC-18-01
--- Source: Assumption
--- Assumption: A-19
 context SessionService::end(command: DepartureCommand, session: Session): Departure
 pre BR_UC_18_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
@@ -225,75 +223,55 @@ pre BR_UC_18_01_AuthenticatedMembership:
     p.status = ParticipantStatus::JOINED and p.role = ParticipantRole::HOST)
 
 -- BR-UC-18-02
--- Source: Assumption
--- Assumption: A-19
 context SessionService::end(command: DepartureCommand, session: Session): Departure
 pre BR_UC_18_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
 
 -- BR-UC-18-03
--- Source: Assumption
--- Assumption: A-20
 context SessionService::end(command: DepartureCommand, session: Session): Departure
 pre BR_UC_18_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
 -- BR-UC-18-04
--- Source: Assumption
--- Assumption: A-18
 context SessionService::end(command: DepartureCommand, session: Session): Departure
 pre BR_UC_18_04_DepartureAction:
   command.kind = DepartureKind::END and command.expectedVersion = session.version
 
 -- BR-UC-18-05
--- Source: Assumption
--- Assumption: A-18
 context SessionService::end(command: DepartureCommand, session: Session): Departure
 post BR_UC_18_05_CreatedIdentity:
   result.oclIsNew() and result.id <> null and result.sessionId = command.sessionId and result.participantId = command.actorParticipantId and result.kind = DepartureKind::END and result.createdAt <> null
 
 -- BR-UC-18-06
--- Source: Assumption
--- Assumption: A-18
 context SessionService::end(command: DepartureCommand, session: Session): Departure
 post BR_UC_18_06_SessionEnded:
   session.status = SessionStatus::ENDED and session.endedAt <> null and session.version = session.version@pre + 1
 
 -- BR-UC-18-07
--- Source: Assumption
--- Assumption: A-18
 context SessionService::end(command: DepartureCommand, session: Session): Departure
 post BR_UC_18_07_AllParticipantsLeave:
   Participant.allInstances()@pre->select(p | p.sessionId = session.id and p.status@pre = ParticipantStatus::JOINED)->forAll(p |
     p.status = ParticipantStatus::LEFT and p.leftAt <> null and p.version = p.version@pre + 1 and not p.microphoneEnabled and not p.cameraEnabled)
 
 -- BR-UC-18-08
--- Source: Assumption
--- Assumption: A-18
 context SessionService::end(command: DepartureCommand, session: Session): Departure
 post BR_UC_18_08_StreamTerminated:
   LiveStream.allInstances()@pre->select(s | s.sessionId = session.id and s.status@pre <> StreamStatus::ENDED)->forAll(s |
     s.status = StreamStatus::ENDED and s.endedAt <> null and s.version = s.version@pre + 1)
 
 -- BR-UC-18-09
--- Source: Assumption
--- Assumption: A-21
 context SessionService::end(command: DepartureCommand, session: Session): Departure
 post BR_UC_18_09_StopContentShares:
   ContentShare.allInstances()@pre->select(cs | cs.sessionId = command.sessionId and cs.status@pre = ShareStatus::ACTIVE)->forAll(cs |
     cs.status = ShareStatus::STOPPED and cs.stoppedAt <> null and cs.version = cs.version@pre + 1)
 
 -- BR-UC-18-10
--- Source: Assumption
--- Assumption: A-21
 context SessionService::end(command: DepartureCommand, session: Session): Departure
 post BR_UC_18_10_CancelPendingRequests:
   StageRequest.allInstances()@pre->select(r | r.sessionId = command.sessionId and r.status@pre = StageRequestStatus::PENDING)->forAll(r |
     r.status = StageRequestStatus::CANCELLED and r.decidedAt <> null and r.version = r.version@pre + 1)
 
 -- BR-UC-18-11
--- Source: Assumption
--- Assumption: A-21
 context SessionService::end(command: DepartureCommand, session: Session): Departure
 post BR_UC_18_11_StopRecordings:
   Recording.allInstances()@pre->select(r | r.sessionId = command.sessionId and

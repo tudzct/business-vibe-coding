@@ -139,52 +139,38 @@ end note
 
 ~~~text
 -- BR-UC-13-01
--- Source: Assumption
--- Assumption: A-13
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 pre BR_UC_13_01_AvailableBackground:
   command.hasVirtualBackgroundId implies (command.virtualBackgroundId = null or
     VirtualBackground.allInstances()->exists(b | b.id = command.virtualBackgroundId and b.active))
 
 -- BR-UC-13-02
--- Source: Assumption
--- Assumption: A-13
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 post BR_UC_13_02_BackgroundPatch:
   media.virtualBackgroundId = if command.hasVirtualBackgroundId then command.virtualBackgroundId else media.virtualBackgroundId@pre endif
 
 -- BR-UC-13-03
--- Source: Assumption
--- Assumption: A-13
 context ClientPreferenceService::selectBackground(draft: PreviewDraft, backgroundId: String): PreviewDraft
 pre BR_UC_13_03_LocalBackground:
   backgroundId = null or VirtualBackground.allInstances()->exists(b | b.id = backgroundId and b.active)
 
 -- BR-UC-13-04
--- Source: Assumption
--- Assumption: A-13
 context ClientPreferenceService::selectBackground(draft: PreviewDraft, backgroundId: String): PreviewDraft
 post BR_UC_13_04_LocalBackgroundDraft:
   result = draft and draft.virtualBackgroundId = backgroundId and
   draft.microphoneDeviceId = draft.microphoneDeviceId@pre and draft.cameraDeviceId = draft.cameraDeviceId@pre and draft.speakerDeviceId = draft.speakerDeviceId@pre
 
 -- BR-UC-13-05
--- Source: Assumption
--- Assumption: A-19
 context PreferenceService::listBackgrounds(): Set(VirtualBackground)
 pre BR_UC_13_05_CatalogReader:
   RequestContext::authenticated
 
 -- BR-UC-13-06
--- Source: Assumption
--- Assumption: A-13
 context PreferenceService::listBackgrounds(): Set(VirtualBackground)
 post BR_UC_13_06_CatalogResult:
   result = VirtualBackground.allInstances()->select(b | b.active)
 
 -- BR-UC-13-07
--- Source: Assumption
--- Assumption: A-13
 context PreferenceService::listBackgrounds(): Set(VirtualBackground)
 post BR_UC_13_07_CatalogIdentity:
   result->isUnique(id) and result->forAll(b | b.assetReference <> null and b.assetReference.trim().size() > 0)

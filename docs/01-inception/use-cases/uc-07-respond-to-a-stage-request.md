@@ -188,8 +188,6 @@ end note
 
 ~~~text
 -- BR-UC-07-01
--- Source: Assumption
--- Assumption: A-19
 context StageService::decide(command: StageCommand, session: Session, stream: LiveStream, request: StageRequest): StageRequest
 pre BR_UC_07_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
@@ -199,29 +197,21 @@ pre BR_UC_07_01_AuthenticatedMembership:
     p.status = ParticipantStatus::JOINED and p.role = ParticipantRole::HOST)
 
 -- BR-UC-07-02
--- Source: Assumption
--- Assumption: A-19
 context StageService::decide(command: StageCommand, session: Session, stream: LiveStream, request: StageRequest): StageRequest
 pre BR_UC_07_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
 
 -- BR-UC-07-03
--- Source: Assumption
--- Assumption: A-20
 context StageService::decide(command: StageCommand, session: Session, stream: LiveStream, request: StageRequest): StageRequest
 pre BR_UC_07_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
 -- BR-UC-07-04
--- Source: Assumption
--- Assumption: A-07
 context StageService::decide(command: StageCommand, session: Session, stream: LiveStream, request: StageRequest): StageRequest
 pre BR_UC_07_04_StreamBinding:
   stream.sessionId = session.id and session.kind = SessionKind::LIVE_STREAM and stream.status = StreamStatus::LIVE
 
 -- BR-UC-07-05
--- Source: Assumption
--- Assumption: A-07
 context StageService::decide(command: StageCommand, session: Session, stream: LiveStream, request: StageRequest): StageRequest
 pre BR_UC_07_05_PendingRequestTarget:
   (command.action = StageRequestAction::ACCEPT or command.action = StageRequestAction::REJECT) and
@@ -230,16 +220,12 @@ pre BR_UC_07_05_PendingRequestTarget:
     p.sessionId = session.id and p.status = ParticipantStatus::JOINED and p.role = ParticipantRole::VIEWER)
 
 -- BR-UC-07-06
--- Source: Assumption
--- Assumption: A-07
 context StageService::decide(command: StageCommand, session: Session, stream: LiveStream, request: StageRequest): StageRequest
 pre BR_UC_07_06_StageCapacity:
   command.action = StageRequestAction::ACCEPT implies session.participants->select(p |
     p.status = ParticipantStatus::JOINED and p.role <> ParticipantRole::VIEWER)->size() < 10
 
 -- BR-UC-07-07
--- Source: Assumption
--- Assumption: A-07
 context StageService::decide(command: StageCommand, session: Session, stream: LiveStream, request: StageRequest): StageRequest
 post BR_UC_07_07_Decision:
   result = request and request.version = request.version@pre + 1 and request.decidedAt <> null and
@@ -247,8 +233,6 @@ post BR_UC_07_07_Decision:
   request.status = if command.action = StageRequestAction::ACCEPT then StageRequestStatus::ACCEPTED else StageRequestStatus::REJECTED endif
 
 -- BR-UC-07-08
--- Source: Assumption
--- Assumption: A-07
 context StageService::decide(command: StageCommand, session: Session, stream: LiveStream, request: StageRequest): StageRequest
 post BR_UC_07_08_StageAdmission:
   let p : Participant = Participant.allInstances()->any(p | p.id = request.participantId) in

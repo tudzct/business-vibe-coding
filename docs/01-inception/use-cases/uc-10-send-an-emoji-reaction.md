@@ -161,8 +161,6 @@ end note
 
 ~~~text
 -- BR-UC-10-01
--- Source: Assumption
--- Assumption: A-19
 context CollaborationService::sendReaction(command: ReactionCommand, session: Session): ReactionEvent
 pre BR_UC_10_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
@@ -172,43 +170,31 @@ pre BR_UC_10_01_AuthenticatedMembership:
     p.status = ParticipantStatus::JOINED)
 
 -- BR-UC-10-02
--- Source: Assumption
--- Assumption: A-19
 context CollaborationService::sendReaction(command: ReactionCommand, session: Session): ReactionEvent
 pre BR_UC_10_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
 
 -- BR-UC-10-03
--- Source: Assumption
--- Assumption: A-20
 context CollaborationService::sendReaction(command: ReactionCommand, session: Session): ReactionEvent
 pre BR_UC_10_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
 -- BR-UC-10-04
--- Source: Assumption
--- Assumption: A-10
 context CollaborationService::sendReaction(command: ReactionCommand, session: Session): ReactionEvent
 post BR_UC_10_04_CreatedIdentity:
   result.oclIsNew() and result.id <> null and result.sessionId = command.sessionId and result.participantId = command.participantId
 
 -- BR-UC-10-05
--- Source: Assumption
--- Assumption: A-10
 context CollaborationService::sendReaction(command: ReactionCommand, session: Session): ReactionEvent
 post BR_UC_10_05_ReactionValue:
   result.reaction = command.reaction and result.createdAt <> null and result.sequence = session.version@pre + 1
 
 -- BR-UC-10-06
--- Source: Assumption
--- Assumption: A-10
 context CollaborationService::sendReaction(command: ReactionCommand, session: Session): ReactionEvent
 post BR_UC_10_06_ParticipationUnaffected:
   Participant.allInstances() = Participant.allInstances()@pre
 
 -- BR-UC-10-07
--- Source: Assumption
--- Assumption: A-10
 context CollaborationService::sendReaction(command: ReactionCommand, session: Session): ReactionEvent
 post BR_UC_10_07_NoImplicitStageRequest:
   StageRequest.allInstances() = StageRequest.allInstances()@pre

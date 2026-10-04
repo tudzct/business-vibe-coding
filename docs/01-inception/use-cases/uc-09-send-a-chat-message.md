@@ -173,8 +173,6 @@ end note
 
 ~~~text
 -- BR-UC-09-01
--- Source: Assumption
--- Assumption: A-19
 context CollaborationService::sendMessage(command: ChatCommand, session: Session): ChatMessage
 pre BR_UC_09_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
@@ -184,43 +182,31 @@ pre BR_UC_09_01_AuthenticatedMembership:
     p.status = ParticipantStatus::JOINED)
 
 -- BR-UC-09-02
--- Source: Assumption
--- Assumption: A-19
 context CollaborationService::sendMessage(command: ChatCommand, session: Session): ChatMessage
 pre BR_UC_09_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
 
 -- BR-UC-09-03
--- Source: Assumption
--- Assumption: A-20
 context CollaborationService::sendMessage(command: ChatCommand, session: Session): ChatMessage
 pre BR_UC_09_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
 -- BR-UC-09-04
--- Source: Assumption
--- Assumption: A-09
 context CollaborationService::sendMessage(command: ChatCommand, session: Session): ChatMessage
 pre BR_UC_09_04_MessageBody:
   command.body <> null and command.body.trim().size() > 0 and command.body.trim().size() <= 1000
 
 -- BR-UC-09-05
--- Source: Assumption
--- Assumption: A-09
 context CollaborationService::sendMessage(command: ChatCommand, session: Session): ChatMessage
 post BR_UC_09_05_CreatedIdentity:
   result.oclIsNew() and result.id <> null and result.sessionId = command.sessionId and result.senderParticipantId = command.senderParticipantId
 
 -- BR-UC-09-06
--- Source: Assumption
--- Assumption: A-09
 context CollaborationService::sendMessage(command: ChatCommand, session: Session): ChatMessage
 post BR_UC_09_06_MessageValue:
   result.body = command.body.trim() and result.sentAt <> null and result.sequence = session.version@pre + 1
 
 -- BR-UC-09-07
--- Source: Assumption
--- Assumption: A-19
 context CollaborationService::listMessages(query: MessageQuery, session: Session): MessagePage
 pre BR_UC_09_07_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = query.sessionId and
@@ -230,16 +216,12 @@ pre BR_UC_09_07_AuthenticatedMembership:
     p.status = ParticipantStatus::JOINED)
 
 -- BR-UC-09-08
--- Source: Assumption
--- Assumption: A-23
 context CollaborationService::listMessages(query: MessageQuery, session: Session): MessagePage
 pre BR_UC_09_08_MessagePageInput:
   query.sessionId = session.id and session.status <> SessionStatus::ENDED and query.pageSize > 0 and query.pageSize <= 50 and
   Paging::validCursor(session.id, query.cursor, 'messages')
 
 -- BR-UC-09-09
--- Source: Assumption
--- Assumption: A-23
 context CollaborationService::listMessages(query: MessageQuery, session: Session): MessagePage
 post BR_UC_09_09_MessageHistory:
   result = Paging::messages(session.id, query.pageSize, query.cursor) and result.items->forAll(m | m.sessionId = session.id)

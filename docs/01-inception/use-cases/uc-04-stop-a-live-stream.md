@@ -207,8 +207,6 @@ end note
 
 ~~~text
 -- BR-UC-04-01
--- Source: Assumption
--- Assumption: A-19
 context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 pre BR_UC_04_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
@@ -218,75 +216,55 @@ pre BR_UC_04_01_AuthenticatedMembership:
     p.status = ParticipantStatus::JOINED and p.role = ParticipantRole::HOST)
 
 -- BR-UC-04-02
--- Source: Assumption
--- Assumption: A-19
 context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 pre BR_UC_04_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
 
 -- BR-UC-04-03
--- Source: Assumption
--- Assumption: A-20
 context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 pre BR_UC_04_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
 -- BR-UC-04-04
--- Source: Assumption
--- Assumption: A-04
 context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 pre BR_UC_04_04_StreamTargetAndVersion:
   command.action = StreamAction::STOP and session.kind = SessionKind::LIVE_STREAM and
   session.status = SessionStatus::LIVE and stream.sessionId = session.id and command.expectedVersion = stream.version
 
 -- BR-UC-04-05
--- Source: Assumption
--- Assumption: A-04
 context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 post BR_UC_04_05_SameStreamVersion:
   result = stream and stream.version = stream.version@pre + 1
 
 -- BR-UC-04-06
--- Source: Assumption
--- Assumption: A-04
 context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 pre BR_UC_04_06_RunningOnly:
   stream.status = StreamStatus::LIVE or stream.status = StreamStatus::STARTING
 
 -- BR-UC-04-07
--- Source: Assumption
--- Assumption: A-04
 context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 post BR_UC_04_07_EndedStream:
   stream.status = StreamStatus::ENDED and stream.endedAt <> null and session.status = session.status@pre
 
 -- BR-UC-04-08
--- Source: Assumption
--- Assumption: A-21
 context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 post BR_UC_04_08_DemoteFormerStageParticipants:
   Participant.allInstances()@pre->select(p | p.sessionId = command.sessionId and p.role@pre = ParticipantRole::STAGE_PARTICIPANT)->forAll(p |
     p.role = ParticipantRole::VIEWER and not p.microphoneEnabled and not p.cameraEnabled)
 
 -- BR-UC-04-09
--- Source: Assumption
--- Assumption: A-21
 context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 post BR_UC_04_09_StopContentShares:
   ContentShare.allInstances()@pre->select(cs | cs.sessionId = command.sessionId and cs.status@pre = ShareStatus::ACTIVE)->forAll(cs |
     cs.status = ShareStatus::STOPPED and cs.stoppedAt <> null and cs.version = cs.version@pre + 1)
 
 -- BR-UC-04-10
--- Source: Assumption
--- Assumption: A-21
 context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 post BR_UC_04_10_CancelPendingRequests:
   StageRequest.allInstances()@pre->select(r | r.sessionId = command.sessionId and r.status@pre = StageRequestStatus::PENDING)->forAll(r |
     r.status = StageRequestStatus::CANCELLED and r.decidedAt <> null and r.version = r.version@pre + 1)
 
 -- BR-UC-04-11
--- Source: Assumption
--- Assumption: A-21
 context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 post BR_UC_04_11_StopRecordings:
   Recording.allInstances()@pre->select(r | r.sessionId = command.sessionId and

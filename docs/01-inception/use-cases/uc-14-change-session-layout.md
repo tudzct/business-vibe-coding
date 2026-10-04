@@ -140,51 +140,37 @@ class PreferenceService {
 
 ~~~text
 -- BR-UC-14-01
--- Source: Assumption
--- Assumption: A-14
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 pre BR_UC_14_01_NonNullLayoutAndPiP:
   (command.hasLayout implies command.layout <> null) and (command.hasPictureInPicture implies command.pictureInPicture <> null)
 
 -- BR-UC-14-02
--- Source: Assumption
--- Assumption: A-14
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 pre BR_UC_14_02_PresenterLayout:
   (command.hasLayout and command.layout = LayoutMode::PRESENTER) implies
   ContentShare.allInstances()->exists(s | s.sessionId = command.sessionId and s.status = ShareStatus::ACTIVE)
 
 -- BR-UC-14-03
--- Source: Assumption
--- Assumption: A-14
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 pre BR_UC_14_03_PanelValues:
   command.hasSidePanel implies (command.sidePanel = null or command.sidePanel = 'CHAT' or command.sidePanel = 'PARTICIPANTS' or command.sidePanel = 'SETTINGS')
 
 -- BR-UC-14-04
--- Source: Assumption
--- Assumption: A-14
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 post BR_UC_14_04_LayoutPatch:
   view.layout = if command.hasLayout then command.layout else view.layout@pre endif
 
 -- BR-UC-14-05
--- Source: Assumption
--- Assumption: A-14
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 post BR_UC_14_05_PiPPatch:
   view.pictureInPicture = if command.hasPictureInPicture then command.pictureInPicture else view.pictureInPicture@pre endif
 
 -- BR-UC-14-06
--- Source: Assumption
--- Assumption: A-14
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 post BR_UC_14_06_PiPClearsPanel:
   view.pictureInPicture implies view.sidePanel = null
 
 -- BR-UC-14-07
--- Source: Assumption
--- Assumption: A-14
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 post BR_UC_14_07_PanelPatch:
   not view.pictureInPicture implies

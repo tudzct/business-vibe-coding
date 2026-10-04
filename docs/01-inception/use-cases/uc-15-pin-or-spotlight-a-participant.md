@@ -196,23 +196,17 @@ end note
 
 ~~~text
 -- BR-UC-15-01
--- Source: Assumption
--- Assumption: A-15
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 pre BR_UC_15_01_FocusTarget:
   (command.hasFocusedParticipantId and command.focusedParticipantId <> null) implies
   Participant.allInstances()->exists(p | p.id = command.focusedParticipantId and p.sessionId = command.sessionId and p.status = ParticipantStatus::JOINED)
 
 -- BR-UC-15-02
--- Source: Assumption
--- Assumption: A-15
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 post BR_UC_15_02_PinPatch:
   view.focusedParticipantId = if command.hasFocusedParticipantId then command.focusedParticipantId else view.focusedParticipantId@pre endif
 
 -- BR-UC-15-03
--- Source: Assumption
--- Assumption: A-15
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 post BR_UC_15_03_PinIsPersonal:
   ViewPreference.allInstances() = ViewPreference.allInstances()@pre and
@@ -221,8 +215,6 @@ post BR_UC_15_03_PinIsPersonal:
     v.sidePanel = v.sidePanel@pre and v.pictureInPicture = v.pictureInPicture@pre and v.updatedAt = v.updatedAt@pre)
 
 -- BR-UC-15-04
--- Source: Assumption
--- Assumption: A-19
 context SpotlightService::update(command: SpotlightCommand, session: Session): Session
 pre BR_UC_15_04_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
@@ -232,46 +224,34 @@ pre BR_UC_15_04_AuthenticatedMembership:
     p.status = ParticipantStatus::JOINED)
 
 -- BR-UC-15-05
--- Source: Assumption
--- Assumption: A-20
 context SpotlightService::update(command: SpotlightCommand, session: Session): Session
 pre BR_UC_15_05_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
 -- BR-UC-15-06
--- Source: Assumption
--- Assumption: A-15
 context SpotlightService::update(command: SpotlightCommand, session: Session): Session
 pre BR_UC_15_06_SpotlightTarget:
   command.targetParticipantId = null or Participant.allInstances()->exists(p |
     p.id = command.targetParticipantId and p.sessionId = command.sessionId and p.status = ParticipantStatus::JOINED)
 
 -- BR-UC-15-07
--- Source: Assumption
--- Assumption: A-15
 context SpotlightService::update(command: SpotlightCommand, session: Session): Session
 pre BR_UC_15_07_SpotlightActor:
   Participant.allInstances()->exists(p | p.id = command.actorParticipantId and
     (p.role = ParticipantRole::HOST or p.role = ParticipantRole::BROADCASTER or p.role = ParticipantRole::STAGE_PARTICIPANT))
 
 -- BR-UC-15-08
--- Source: Assumption
--- Assumption: A-15
 context SpotlightService::update(command: SpotlightCommand, session: Session): Session
 pre BR_UC_15_08_SessionVersion:
   command.sessionId = session.id and session.status = SessionStatus::LIVE and command.expectedVersion = session.version
 
 -- BR-UC-15-09
--- Source: Assumption
--- Assumption: A-15
 context SpotlightService::update(command: SpotlightCommand, session: Session): Session
 post BR_UC_15_09_SharedSpotlight:
   result.id = session.id and result.spotlightedParticipantId = command.targetParticipantId and
   result.version = session.version@pre + 1
 
 -- BR-UC-15-10
--- Source: Assumption
--- Assumption: A-15
 context SpotlightService::update(command: SpotlightCommand, session: Session): Session
 post BR_UC_15_10_PersonalPinsUnaffected:
   ViewPreference.allInstances() = ViewPreference.allInstances()@pre

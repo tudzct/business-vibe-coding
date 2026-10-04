@@ -188,8 +188,6 @@ note right of TransactionContext: Describes the database transaction for the cur
 
 ~~~text
 -- BR-UC-03-01
--- Source: Assumption
--- Assumption: A-19
 context LiveStreamService::start(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 pre BR_UC_03_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
@@ -199,51 +197,37 @@ pre BR_UC_03_01_AuthenticatedMembership:
     p.status = ParticipantStatus::JOINED and p.role = ParticipantRole::HOST)
 
 -- BR-UC-03-02
--- Source: Assumption
--- Assumption: A-19
 context LiveStreamService::start(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 pre BR_UC_03_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
 
 -- BR-UC-03-03
--- Source: Assumption
--- Assumption: A-20
 context LiveStreamService::start(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 pre BR_UC_03_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
 -- BR-UC-03-04
--- Source: Assumption
--- Assumption: A-03
 context LiveStreamService::start(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 pre BR_UC_03_04_StreamTargetAndVersion:
   command.action = StreamAction::START and session.kind = SessionKind::LIVE_STREAM and
   session.status = SessionStatus::LIVE and stream.sessionId = session.id and command.expectedVersion = stream.version
 
 -- BR-UC-03-05
--- Source: Assumption
--- Assumption: A-03
 context LiveStreamService::start(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 post BR_UC_03_05_SameStreamVersion:
   result = stream and stream.version = stream.version@pre + 1
 
 -- BR-UC-03-06
--- Source: Assumption
--- Assumption: A-03
 context LiveStreamService::start(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 pre BR_UC_03_06_ReadyOnly:
   stream.status = StreamStatus::READY
 
 -- BR-UC-03-07
--- Source: Assumption
--- Assumption: A-03
 context LiveStreamService::start(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 post BR_UC_03_07_Starting:
   stream.status = StreamStatus::STARTING and stream.endedAt = null
 
 -- BR-UC-03-08
--- Source: Assumption
--- Assumption: A-03
 context LiveStreamService::complete(command: ProviderCompletion, stream: LiveStream, session: Session): LiveStream
 pre BR_UC_03_08_ProviderCompletionTarget:
   RequestContext::providerAuthenticated and command.sessionId = session.id and stream.sessionId = session.id and
@@ -251,8 +235,6 @@ pre BR_UC_03_08_ProviderCompletionTarget:
   session.status = SessionStatus::LIVE and TransactionContext::lockedSessionId = session.id and TransactionContext::atomicCommit
 
 -- BR-UC-03-09
--- Source: Assumption
--- Assumption: A-03
 context LiveStreamService::complete(command: ProviderCompletion, stream: LiveStream, session: Session): LiveStream
 post BR_UC_03_09_ProviderCompletionState:
   result = stream and stream.version = stream.version@pre + 1 and session.version = session.version@pre + 1 and

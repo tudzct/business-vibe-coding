@@ -187,8 +187,6 @@ end note
 
 ~~~text
 -- BR-UC-06-01
--- Source: Assumption
--- Assumption: A-19
 context StageService::submitRequest(command: StageCommand, session: Session, stream: LiveStream): StageRequest
 pre BR_UC_06_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
@@ -198,36 +196,26 @@ pre BR_UC_06_01_AuthenticatedMembership:
     p.status = ParticipantStatus::JOINED)
 
 -- BR-UC-06-02
--- Source: Assumption
--- Assumption: A-19
 context StageService::submitRequest(command: StageCommand, session: Session, stream: LiveStream): StageRequest
 pre BR_UC_06_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
 
 -- BR-UC-06-03
--- Source: Assumption
--- Assumption: A-20
 context StageService::submitRequest(command: StageCommand, session: Session, stream: LiveStream): StageRequest
 pre BR_UC_06_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
 -- BR-UC-06-04
--- Source: Assumption
--- Assumption: A-06
 context StageService::submitRequest(command: StageCommand, session: Session, stream: LiveStream): StageRequest
 pre BR_UC_06_04_StreamBinding:
   stream.sessionId = session.id and session.kind = SessionKind::LIVE_STREAM and stream.status = StreamStatus::LIVE
 
 -- BR-UC-06-05
--- Source: Assumption
--- Assumption: A-06
 context StageService::submitRequest(command: StageCommand, session: Session, stream: LiveStream): StageRequest
 pre BR_UC_06_05_RequestActions:
   command.action = StageRequestAction::CREATE or command.action = StageRequestAction::CANCEL
 
 -- BR-UC-06-06
--- Source: Assumption
--- Assumption: A-06
 context StageService::submitRequest(command: StageCommand, session: Session, stream: LiveStream): StageRequest
 pre BR_UC_06_06_CreateViewer:
   command.action = StageRequestAction::CREATE implies
@@ -236,8 +224,6 @@ pre BR_UC_06_06_CreateViewer:
   not StageRequest.allInstances()->exists(r | r.sessionId = session.id and r.participantId = command.actorParticipantId and r.status = StageRequestStatus::PENDING)
 
 -- BR-UC-06-07
--- Source: Assumption
--- Assumption: A-06
 context StageService::submitRequest(command: StageCommand, session: Session, stream: LiveStream): StageRequest
 pre BR_UC_06_07_CancelOwnedPending:
   command.action = StageRequestAction::CANCEL implies StageRequest.allInstances()->one(r |
@@ -245,8 +231,6 @@ pre BR_UC_06_07_CancelOwnedPending:
     r.status = StageRequestStatus::PENDING and r.version = command.expectedVersion)
 
 -- BR-UC-06-08
--- Source: Assumption
--- Assumption: A-06
 context StageService::submitRequest(command: StageCommand, session: Session, stream: LiveStream): StageRequest
 post BR_UC_06_08_RequestOutcome:
   result.sessionId = session.id and result.participantId = command.actorParticipantId and
@@ -256,8 +240,6 @@ post BR_UC_06_08_RequestOutcome:
     result.version = command.expectedVersion + 1 and result.decidedAt <> null and result.decidedByParticipantId = null endif
 
 -- BR-UC-06-09
--- Source: Assumption
--- Assumption: A-22
 context StageRequest
 inv BR_UC_06_09_OnePendingRequest:
   StageRequest.allInstances()->select(r | r.sessionId = self.sessionId and r.participantId = self.participantId and r.status = StageRequestStatus::PENDING)->size() <= 1

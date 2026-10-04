@@ -161,8 +161,6 @@ end note
 
 ~~~text
 -- BR-UC-05-01
--- Source: Assumption
--- Assumption: A-19
 context LiveStreamService::view(sessionId: String, participantId: String, session: Session, stream: LiveStream): ViewerSession
 pre BR_UC_05_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = sessionId and
@@ -172,8 +170,6 @@ pre BR_UC_05_01_AuthenticatedMembership:
     p.status = ParticipantStatus::JOINED)
 
 -- BR-UC-05-02
--- Source: Assumption
--- Assumption: A-05
 context LiveStreamService::view(sessionId: String, participantId: String, session: Session, stream: LiveStream): ViewerSession
 pre BR_UC_05_02_ViewerTarget:
   session.id = sessionId and stream.sessionId = sessionId and session.kind = SessionKind::LIVE_STREAM and
@@ -181,37 +177,27 @@ pre BR_UC_05_02_ViewerTarget:
     (p.role = ParticipantRole::VIEWER or p.role = ParticipantRole::STAGE_PARTICIPANT))
 
 -- BR-UC-05-03
--- Source: Assumption
--- Assumption: A-05
 context LiveStreamService::view(sessionId: String, participantId: String, session: Session, stream: LiveStream): ViewerSession
 post BR_UC_05_03_ViewerRepresentation:
   result.sessionId = session.id and result.participantId = participantId and
   result.role = Participant.allInstances()->any(p | p.id = participantId).role
 
 -- BR-UC-05-04
--- Source: Assumption
--- Assumption: A-05
 context LiveStreamService::view(sessionId: String, participantId: String, session: Session, stream: LiveStream): ViewerSession
 post BR_UC_05_04_StreamSnapshot:
   result.streamStatus = stream.status and result.streamVersion = stream.version and result.sessionVersion = session.version
 
 -- BR-UC-05-05
--- Source: Assumption
--- Assumption: A-05
 context LiveStreamService::view(sessionId: String, participantId: String, session: Session, stream: LiveStream): ViewerSession
 post BR_UC_05_05_PlaybackAvailability:
   result.canPlayMedia = (stream.status = StreamStatus::LIVE)
 
 -- BR-UC-05-06
--- Source: Assumption
--- Assumption: A-05
 context LiveStreamService::view(sessionId: String, participantId: String, session: Session, stream: LiveStream): ViewerSession
 post BR_UC_05_06_PublishingAvailability:
   result.canPublishMedia = (stream.status = StreamStatus::LIVE and result.role = ParticipantRole::STAGE_PARTICIPANT)
 
 -- BR-UC-05-07
--- Source: Assumption
--- Assumption: A-05
 context LiveStreamService::view(sessionId: String, participantId: String, session: Session, stream: LiveStream): ViewerSession
 post BR_UC_05_07_MutedPlaybackStart:
   result.initialAudioMuted
