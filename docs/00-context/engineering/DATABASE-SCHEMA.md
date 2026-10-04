@@ -8,7 +8,7 @@ Experiment Configurations require exactly:
 
 ```json
 "database_baseline": {
-  "migration_head": "InitialSchema1790000000000",
+  "migration_head": "<TypeORM migration class name including its 13-digit timestamp>",
   "dbml_sha256": "sha256:<64 lowercase hex characters>",
   "schema_fingerprint_sha256": "sha256:<64 lowercase hex characters>"
 }
