@@ -1,4 +1,4 @@
-# Figma Link Review for 18 Use Cases
+# Figma Link Review
 
 ## Purpose and usage
 
