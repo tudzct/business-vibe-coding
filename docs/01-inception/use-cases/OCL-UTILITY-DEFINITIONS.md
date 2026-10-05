@@ -5,8 +5,6 @@ status: Frozen
 
 # OCL Utility Definitions
 
-> Frozen projection of the researcher-provided 100ms Markdown utility document. The Financial spreadsheet reference in the source header describes its historical format; current authoritative provenance is the local source and checksum above.
-
 ```text
 String.trim(): String
 - Removes leading and trailing whitespace; internal whitespace is unchanged.
