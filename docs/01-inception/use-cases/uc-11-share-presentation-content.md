@@ -27,7 +27,7 @@ Participant; Content Share Service.
 
 ### Priority
 
-P1.
+High
 
 ### Trigger
 
@@ -52,22 +52,22 @@ POST-1: The client displays the returned content-share representation.
 
 ### Alternative Flow
 
-AF-1:
+AF-1: Share PDF content
 
-3a. The participant chooses PDF instead of screen content.
-3b. The client presents the selected PDF in the share layout.
+3a : The participant chooses PDF instead of screen content.
+3b : The client presents the selected PDF in the share layout.
 
-AF-2:
+AF-2: Stop the active share
 
-6a. The participant chooses to stop the active share.
-6b. The client submits the stop action and restores the returned session layout.
+6a : The participant chooses to stop the active share.
+6b : The client submits the stop action and restores the returned session layout.
 
 ### Exception Flow
 
-EF-1:
+EF-1: Content sharing fails
 
-5a. The system cannot complete the share action.
-5b. The client displays the returned failure state and retains the session view.
+5a : The system cannot complete the share action.
+5b : The client displays the returned failure state and retains the session view.
 
 ### Related UI
 
@@ -183,43 +183,43 @@ end note
 ## Business Rules
 
 ~~~text
--- BR-UC-11-01
+BR-SPC-01 - Authenticated Membership
 context ContentShareService::control(command: ContentShareCommand, session: Session): ContentShare
-pre BR_UC_11_01_AuthenticatedMembership:
+pre BR_SPC_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
   command.ownerParticipantId = RequestContext::participantId and
   Participant.allInstances()->exists(p | p.id = command.ownerParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
     p.status = ParticipantStatus::JOINED)
 
--- BR-UC-11-02
+BR-SPC-02 - Target Session
 context ContentShareService::control(command: ContentShareCommand, session: Session): ContentShare
-pre BR_UC_11_02_TargetSession:
+pre BR_SPC_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
 
--- BR-UC-11-03
+BR-SPC-03 - Command Key
 context ContentShareService::control(command: ContentShareCommand, session: Session): ContentShare
-pre BR_UC_11_03_CommandKey:
+pre BR_SPC_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
--- BR-UC-11-04
+BR-SPC-04 - Start Share
 context ContentShareService::control(command: ContentShareCommand, session: Session): ContentShare
-pre BR_UC_11_04_StartShare:
+pre BR_SPC_04_StartShare:
   command.action = ShareAction::START implies session.status = SessionStatus::LIVE and command.expectedVersion = null and
   command.kind <> null and command.sourceReference <> null and command.sourceReference.trim().size() > 0 and
   not ContentShare.allInstances()->exists(s | s.sessionId = session.id and s.status = ShareStatus::ACTIVE) and
   (session.kind <> SessionKind::LIVE_STREAM or Participant.allInstances()->exists(p | p.id = command.ownerParticipantId and p.role <> ParticipantRole::VIEWER))
 
--- BR-UC-11-05
+BR-SPC-05 - Stop Share
 context ContentShareService::control(command: ContentShareCommand, session: Session): ContentShare
-pre BR_UC_11_05_StopShare:
+pre BR_SPC_05_StopShare:
   command.action = ShareAction::STOP implies ContentShare.allInstances()->one(s |
     s.sessionId = session.id and s.status = ShareStatus::ACTIVE and s.version = command.expectedVersion and
     (s.ownerParticipantId = command.ownerParticipantId or Participant.allInstances()->exists(p | p.id = command.ownerParticipantId and p.role = ParticipantRole::HOST)))
 
--- BR-UC-11-06
+BR-SPC-06 - Share Effect
 context ContentShareService::control(command: ContentShareCommand, session: Session): ContentShare
-post BR_UC_11_06_ShareEffect:
+post BR_SPC_06_ShareEffect:
   result.sessionId = session.id and
   if command.action = ShareAction::START then result.oclIsNew() and result.status = ShareStatus::ACTIVE and
     result.ownerParticipantId = command.ownerParticipantId and result.kind = command.kind and result.sourceReference = command.sourceReference and
@@ -227,8 +227,8 @@ post BR_UC_11_06_ShareEffect:
   else result = ContentShare.allInstances()@pre->any(s | s.sessionId = session.id and s.status@pre = ShareStatus::ACTIVE) and
     result.status = ShareStatus::STOPPED and result.version = command.expectedVersion + 1 and result.stoppedAt <> null endif
 
--- BR-UC-11-07
+BR-SPC-07 - One Active Share
 context ContentShare
-inv BR_UC_11_07_OneActiveShare:
+inv BR_SPC_07_OneActiveShare:
   ContentShare.allInstances()->select(s | s.sessionId = self.sessionId and s.status = ShareStatus::ACTIVE)->size() <= 1
 ~~~

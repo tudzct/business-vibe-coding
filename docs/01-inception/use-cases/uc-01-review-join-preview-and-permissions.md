@@ -27,7 +27,7 @@ Prospective Participant; Preview Service.
 
 ### Priority
 
-P0.
+High
 
 ### Trigger
 
@@ -52,17 +52,17 @@ POST-2: The client displays the returned permission outcome when permission is r
 
 ### Alternative Flow
 
-AF-1:
+AF-1: Turn off microphone or camera
 
-3a. The prospective participant turns the microphone or camera off.
-3b. The client renders the corresponding muted preview state.
+3a : The prospective participant turns the microphone or camera off.
+3b : The client renders the corresponding muted preview state.
 
 ### Exception Flow
 
-EF-1:
+EF-1: Permission denied
 
-4a. Access is not granted.
-4b. The client displays the permission-denied dialog and its visible recovery action.
+4a : Access is not granted.
+4b : The client displays the permission-denied dialog and its visible recovery action.
 
 ### Related UI
 
@@ -138,40 +138,40 @@ end note
 ## Business Rules
 
 ~~~text
--- BR-UC-01-01
+BR-RJPP-01 - Permission And Hardware
 context PreviewService::prepare(command: PreviewCommand): PreviewState
-post BR_UC_01_01_PermissionAndHardware:
+post BR_RJPP_01_PermissionAndHardware:
   (result.cameraEnabled implies result.cameraPermission = PermissionStatus::GRANTED and result.cameraAvailable and command.requestCamera) and
   (result.microphoneEnabled implies result.microphonePermission = PermissionStatus::GRANTED and result.microphoneAvailable and command.requestMicrophone)
 
--- BR-UC-01-02
+BR-RJPP-02 - Viewer Preview Muted
 context PreviewService::prepare(command: PreviewCommand): PreviewState
-post BR_UC_01_02_ViewerPreviewMuted:
+post BR_RJPP_02_ViewerPreviewMuted:
   command.role = ParticipantRole::VIEWER implies not result.cameraEnabled and not result.microphoneEnabled
 
--- BR-UC-01-03
+BR-RJPP-03 - Name Readiness
 context PreviewService::prepare(command: PreviewCommand): PreviewState
-post BR_UC_01_03_NameReadiness:
+post BR_RJPP_03_NameReadiness:
   result.isReadyToJoin = (command.displayName <> null and command.displayName.trim().size() > 0 and command.displayName.trim().size() <= 50)
 
--- BR-UC-01-04
+BR-RJPP-04 - Preview Key
 context PreviewService::prepare(command: PreviewCommand): PreviewState
-post BR_UC_01_04_PreviewKey:
+post BR_RJPP_04_PreviewKey:
   result.participantKey = command.participantKey
 
--- BR-UC-01-05
+BR-RJPP-05 - Camera Denied State
 context PreviewService::prepare(command: PreviewCommand): PreviewState
-post BR_UC_01_05_CameraDeniedState:
+post BR_RJPP_05_CameraDeniedState:
   result.cameraPermission <> PermissionStatus::GRANTED implies not result.cameraEnabled
 
--- BR-UC-01-06
+BR-RJPP-06 - Microphone Denied State
 context PreviewService::prepare(command: PreviewCommand): PreviewState
-post BR_UC_01_06_MicrophoneDeniedState:
+post BR_RJPP_06_MicrophoneDeniedState:
   result.microphonePermission <> PermissionStatus::GRANTED implies not result.microphoneEnabled
 
--- BR-UC-01-07
+BR-RJPP-07 - Client Local Preview
 context PreviewService::prepare(command: PreviewCommand): PreviewState
-post BR_UC_01_07_ClientLocalPreview:
+post BR_RJPP_07_ClientLocalPreview:
   Participant.allInstances() = Participant.allInstances()@pre and
   MediaPreference.allInstances() = MediaPreference.allInstances()@pre and
   ViewPreference.allInstances() = ViewPreference.allInstances()@pre

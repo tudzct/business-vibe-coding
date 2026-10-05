@@ -27,7 +27,7 @@ Participant; Preference Service.
 
 ### Priority
 
-P2.
+Low
 
 ### Trigger
 
@@ -52,22 +52,22 @@ POST-1: The client renders the returned view preference.
 
 ### Alternative Flow
 
-AF-1:
+AF-1: Enable picture-in-picture
 
-3a. The participant enables picture-in-picture.
-3b. The client renders the returned picture-in-picture view.
+3a : The participant enables picture-in-picture.
+3b : The client renders the returned picture-in-picture view.
 
-AF-2:
+AF-2: Open or close a side panel
 
-3a. The participant opens or closes a side panel.
-3b. The client adjusts the returned session layout.
+3a : The participant opens or closes a side panel.
+3b : The client adjusts the returned session layout.
 
 ### Exception Flow
 
-EF-1:
+EF-1: Layout preference update fails
 
-5a. The preference update cannot be completed.
-5b. The client displays the returned failure state and retains the previous layout.
+5a : The preference update cannot be completed.
+5b : The client displays the returned failure state and retains the previous layout.
 
 ### Related UI
 
@@ -139,40 +139,40 @@ class PreferenceService {
 ## Business Rules
 
 ~~~text
--- BR-UC-14-01
+BR-CSL-01 - Non Null Layout And Pi P
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-pre BR_UC_14_01_NonNullLayoutAndPiP:
+pre BR_CSL_01_NonNullLayoutAndPiP:
   (command.hasLayout implies command.layout <> null) and (command.hasPictureInPicture implies command.pictureInPicture <> null)
 
--- BR-UC-14-02
+BR-CSL-02 - Presenter Layout
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-pre BR_UC_14_02_PresenterLayout:
+pre BR_CSL_02_PresenterLayout:
   (command.hasLayout and command.layout = LayoutMode::PRESENTER) implies
   ContentShare.allInstances()->exists(s | s.sessionId = command.sessionId and s.status = ShareStatus::ACTIVE)
 
--- BR-UC-14-03
+BR-CSL-03 - Panel Values
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-pre BR_UC_14_03_PanelValues:
+pre BR_CSL_03_PanelValues:
   command.hasSidePanel implies (command.sidePanel = null or command.sidePanel = 'CHAT' or command.sidePanel = 'PARTICIPANTS' or command.sidePanel = 'SETTINGS')
 
--- BR-UC-14-04
+BR-CSL-04 - Layout Patch
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-post BR_UC_14_04_LayoutPatch:
+post BR_CSL_04_LayoutPatch:
   view.layout = if command.hasLayout then command.layout else view.layout@pre endif
 
--- BR-UC-14-05
+BR-CSL-05 - Pi P Patch
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-post BR_UC_14_05_PiPPatch:
+post BR_CSL_05_PiPPatch:
   view.pictureInPicture = if command.hasPictureInPicture then command.pictureInPicture else view.pictureInPicture@pre endif
 
--- BR-UC-14-06
+BR-CSL-06 - Pi P Clears Panel
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-post BR_UC_14_06_PiPClearsPanel:
+post BR_CSL_06_PiPClearsPanel:
   view.pictureInPicture implies view.sidePanel = null
 
--- BR-UC-14-07
+BR-CSL-07 - Panel Patch
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-post BR_UC_14_07_PanelPatch:
+post BR_CSL_07_PanelPatch:
   not view.pictureInPicture implies
     view.sidePanel = if command.hasSidePanel then command.sidePanel else view.sidePanel@pre endif
 ~~~

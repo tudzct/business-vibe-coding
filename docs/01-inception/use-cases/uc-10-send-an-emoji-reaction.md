@@ -27,7 +27,7 @@ Participant; Collaboration Service.
 
 ### Priority
 
-P2.
+Low
 
 ### Trigger
 
@@ -52,17 +52,17 @@ POST-1: The client renders the reaction event returned by the system.
 
 ### Alternative Flow
 
-AF-1:
+AF-1: Close reaction controls without selecting
 
-3a. The participant closes the reaction controls without selecting an item.
-3b. The client restores the session controls.
+3a : The participant closes the reaction controls without selecting an item.
+3b : The client restores the session controls.
 
 ### Exception Flow
 
-EF-1:
+EF-1: Reaction creation fails
 
-5a. The reaction cannot be created.
-5b. The client displays the returned failure notice without closing the session.
+5a : The reaction cannot be created.
+5b : The client displays the returned failure notice without closing the session.
 
 ### Related UI
 
@@ -160,42 +160,42 @@ end note
 ## Business Rules
 
 ~~~text
--- BR-UC-10-01
+BR-SER-01 - Authenticated Membership
 context CollaborationService::sendReaction(command: ReactionCommand, session: Session): ReactionEvent
-pre BR_UC_10_01_AuthenticatedMembership:
+pre BR_SER_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
   command.participantId = RequestContext::participantId and
   Participant.allInstances()->exists(p | p.id = command.participantId and
     p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
     p.status = ParticipantStatus::JOINED)
 
--- BR-UC-10-02
+BR-SER-02 - Target Session
 context CollaborationService::sendReaction(command: ReactionCommand, session: Session): ReactionEvent
-pre BR_UC_10_02_TargetSession:
+pre BR_SER_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
 
--- BR-UC-10-03
+BR-SER-03 - Command Key
 context CollaborationService::sendReaction(command: ReactionCommand, session: Session): ReactionEvent
-pre BR_UC_10_03_CommandKey:
+pre BR_SER_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
--- BR-UC-10-04
+BR-SER-04 - Created Identity
 context CollaborationService::sendReaction(command: ReactionCommand, session: Session): ReactionEvent
-post BR_UC_10_04_CreatedIdentity:
+post BR_SER_04_CreatedIdentity:
   result.oclIsNew() and result.id <> null and result.sessionId = command.sessionId and result.participantId = command.participantId
 
--- BR-UC-10-05
+BR-SER-05 - Reaction Value
 context CollaborationService::sendReaction(command: ReactionCommand, session: Session): ReactionEvent
-post BR_UC_10_05_ReactionValue:
+post BR_SER_05_ReactionValue:
   result.reaction = command.reaction and result.createdAt <> null and result.sequence = session.version@pre + 1
 
--- BR-UC-10-06
+BR-SER-06 - Participation Unaffected
 context CollaborationService::sendReaction(command: ReactionCommand, session: Session): ReactionEvent
-post BR_UC_10_06_ParticipationUnaffected:
+post BR_SER_06_ParticipationUnaffected:
   Participant.allInstances() = Participant.allInstances()@pre
 
--- BR-UC-10-07
+BR-SER-07 - No Implicit Stage Request
 context CollaborationService::sendReaction(command: ReactionCommand, session: Session): ReactionEvent
-post BR_UC_10_07_NoImplicitStageRequest:
+post BR_SER_07_NoImplicitStageRequest:
   StageRequest.allInstances() = StageRequest.allInstances()@pre
 ~~~

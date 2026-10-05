@@ -27,7 +27,7 @@ Participant; Preference Service.
 
 ### Priority
 
-P1.
+High
 
 ### Trigger
 
@@ -52,17 +52,17 @@ POST-1: The client displays and applies the returned device preferences.
 
 ### Alternative Flow
 
-AF-1:
+AF-1: Close settings without confirming
 
-3a. The participant closes settings without confirming.
-3b. The client restores the previous preview or session state.
+3a : The participant closes settings without confirming.
+3b : The client restores the previous preview or session state.
 
 ### Exception Flow
 
-EF-1:
+EF-1: Device preference cannot be applied
 
-4a. The selected preference cannot be applied.
-4b. The client displays the returned failure state and keeps the previous visible selection.
+4a : The selected preference cannot be applied.
+4b : The client displays the returned failure state and keeps the previous visible selection.
 
 ### Related UI
 
@@ -181,79 +181,79 @@ end note
 ## Business Rules
 
 ~~~text
--- BR-UC-12-01
+BR-CAVD-01 - Authenticated Membership
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-pre BR_UC_12_01_AuthenticatedMembership:
+pre BR_CAVD_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
   command.participantId = RequestContext::participantId and
   Participant.allInstances()->exists(p | p.id = command.participantId and
     p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
     p.status = ParticipantStatus::JOINED)
 
--- BR-UC-12-02
+BR-CAVD-02 - Command Key
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-pre BR_UC_12_02_CommandKey:
+pre BR_CAVD_02_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
--- BR-UC-12-03
+BR-CAVD-03 - Preference Target
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-pre BR_UC_12_03_PreferenceTarget:
+pre BR_CAVD_03_PreferenceTarget:
   media.participantId = command.participantId and view.participantId = command.participantId and
   Session.allInstances()->exists(s | s.id = command.sessionId and s.status <> SessionStatus::ENDED)
 
--- BR-UC-12-04
+BR-CAVD-04 - Preference Identity
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-post BR_UC_12_04_PreferenceIdentity:
+post BR_CAVD_04_PreferenceIdentity:
   result.media = media and result.view = view and media.updatedAt <> null and view.updatedAt <> null
 
--- BR-UC-12-05
+BR-CAVD-05 - microphone Device Id Syntax
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-pre BR_UC_12_05_microphoneDeviceIdSyntax:
+pre BR_CAVD_05_microphoneDeviceIdSyntax:
   command.hasMicrophoneDeviceId implies (command.microphoneDeviceId = null or command.microphoneDeviceId.trim().size() > 0)
 
--- BR-UC-12-06
+BR-CAVD-06 - microphone Device Id Patch
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-post BR_UC_12_06_microphoneDeviceIdPatch:
+post BR_CAVD_06_microphoneDeviceIdPatch:
   media.microphoneDeviceId = if command.hasMicrophoneDeviceId then command.microphoneDeviceId else media.microphoneDeviceId@pre endif
 
--- BR-UC-12-07
+BR-CAVD-07 - camera Device Id Syntax
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-pre BR_UC_12_07_cameraDeviceIdSyntax:
+pre BR_CAVD_07_cameraDeviceIdSyntax:
   command.hasCameraDeviceId implies (command.cameraDeviceId = null or command.cameraDeviceId.trim().size() > 0)
 
--- BR-UC-12-08
+BR-CAVD-08 - camera Device Id Patch
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-post BR_UC_12_08_cameraDeviceIdPatch:
+post BR_CAVD_08_cameraDeviceIdPatch:
   media.cameraDeviceId = if command.hasCameraDeviceId then command.cameraDeviceId else media.cameraDeviceId@pre endif
 
--- BR-UC-12-09
+BR-CAVD-09 - speaker Device Id Syntax
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-pre BR_UC_12_09_speakerDeviceIdSyntax:
+pre BR_CAVD_09_speakerDeviceIdSyntax:
   command.hasSpeakerDeviceId implies (command.speakerDeviceId = null or command.speakerDeviceId.trim().size() > 0)
 
--- BR-UC-12-10
+BR-CAVD-10 - speaker Device Id Patch
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-post BR_UC_12_10_speakerDeviceIdPatch:
+post BR_CAVD_10_speakerDeviceIdPatch:
   media.speakerDeviceId = if command.hasSpeakerDeviceId then command.speakerDeviceId else media.speakerDeviceId@pre endif
 
--- BR-UC-12-11
+BR-CAVD-11 - Other Media Unchanged
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-post BR_UC_12_11_OtherMediaUnchanged:
+post BR_CAVD_11_OtherMediaUnchanged:
   MediaPreference.allInstances() = MediaPreference.allInstances()@pre and
   MediaPreference.allInstances()@pre->select(m | m.participantId <> command.participantId)->forAll(m |
     m.microphoneDeviceId = m.microphoneDeviceId@pre and m.cameraDeviceId = m.cameraDeviceId@pre and
     m.speakerDeviceId = m.speakerDeviceId@pre and m.virtualBackgroundId = m.virtualBackgroundId@pre and m.updatedAt = m.updatedAt@pre)
 
--- BR-UC-12-12
+BR-CAVD-12 - Local Device Availability
 context ClientPreferenceService::selectDevices(draft: PreviewDraft, microphone: String, camera: String, speaker: String): PreviewDraft
-pre BR_UC_12_12_LocalDeviceAvailability:
+pre BR_CAVD_12_LocalDeviceAvailability:
   (microphone = null or DeviceCatalog::isAvailable(draft.participantKey, microphone)) and
   (camera = null or DeviceCatalog::isAvailable(draft.participantKey, camera)) and
   (speaker = null or DeviceCatalog::isAvailable(draft.participantKey, speaker))
 
--- BR-UC-12-13
+BR-CAVD-13 - Local Device Draft
 context ClientPreferenceService::selectDevices(draft: PreviewDraft, microphone: String, camera: String, speaker: String): PreviewDraft
-post BR_UC_12_13_LocalDeviceDraft:
+post BR_CAVD_13_LocalDeviceDraft:
   result = draft and draft.microphoneDeviceId = microphone and draft.cameraDeviceId = camera and
   draft.speakerDeviceId = speaker and draft.virtualBackgroundId = draft.virtualBackgroundId@pre
 ~~~

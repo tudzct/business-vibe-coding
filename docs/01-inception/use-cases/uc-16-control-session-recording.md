@@ -27,7 +27,7 @@ Host; Recording Service.
 
 ### Priority
 
-P1.
+High
 
 ### Trigger
 
@@ -52,17 +52,17 @@ POST-1: The client displays the recording state returned by the system.
 
 ### Alternative Flow
 
-AF-1:
+AF-1: Stop the active recording
 
-6a. The host chooses to stop the active recording.
-6b. The client submits the stop action and displays the returned stopped state.
+6a : The host chooses to stop the active recording.
+6b : The client submits the stop action and displays the returned stopped state.
 
 ### Exception Flow
 
-EF-1:
+EF-1: Recording control fails
 
-5a. The recording service cannot complete the action.
-5b. The client displays the returned recording failure state.
+5a : The recording service cannot complete the action.
+5b : The client displays the returned recording failure state.
 
 ### Related UI
 
@@ -184,40 +184,40 @@ note right of TransactionContext: Describes the database transaction for the cur
 ## Business Rules
 
 ~~~text
--- BR-UC-16-01
+BR-CSR-01 - Authenticated Membership
 context RecordingService::control(command: RecordingCommand, session: Session): Recording
-pre BR_UC_16_01_AuthenticatedMembership:
+pre BR_CSR_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
   command.actorParticipantId = RequestContext::participantId and
   Participant.allInstances()->exists(p | p.id = command.actorParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
     p.status = ParticipantStatus::JOINED and p.role = ParticipantRole::HOST)
 
--- BR-UC-16-02
+BR-CSR-02 - Target Session
 context RecordingService::control(command: RecordingCommand, session: Session): Recording
-pre BR_UC_16_02_TargetSession:
+pre BR_CSR_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
 
--- BR-UC-16-03
+BR-CSR-03 - Command Key
 context RecordingService::control(command: RecordingCommand, session: Session): Recording
-pre BR_UC_16_03_CommandKey:
+pre BR_CSR_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
--- BR-UC-16-04
+BR-CSR-04 - Start Recording
 context RecordingService::control(command: RecordingCommand, session: Session): Recording
-pre BR_UC_16_04_StartRecording:
+pre BR_CSR_04_StartRecording:
   command.action = RecordingAction::START implies command.expectedVersion = null and session.status = SessionStatus::LIVE and
   not Recording.allInstances()->exists(r | r.sessionId = session.id and (r.status = RecordingStatus::STARTING or r.status = RecordingStatus::RECORDING))
 
--- BR-UC-16-05
+BR-CSR-05 - Stop Recording
 context RecordingService::control(command: RecordingCommand, session: Session): Recording
-pre BR_UC_16_05_StopRecording:
+pre BR_CSR_05_StopRecording:
   command.action = RecordingAction::STOP implies Recording.allInstances()->one(r | r.sessionId = session.id and
     (r.status = RecordingStatus::STARTING or r.status = RecordingStatus::RECORDING) and r.version = command.expectedVersion)
 
--- BR-UC-16-06
+BR-CSR-06 - Recording Effect
 context RecordingService::control(command: RecordingCommand, session: Session): Recording
-post BR_UC_16_06_RecordingEffect:
+post BR_CSR_06_RecordingEffect:
   result.sessionId = session.id and
   if command.action = RecordingAction::START then result.oclIsNew() and result.status = RecordingStatus::STARTING and
     result.startedByParticipantId = command.actorParticipantId and result.createdAt <> null and result.startedAt = null and result.version = 1 and result.stoppedAt = null
@@ -225,22 +225,22 @@ post BR_UC_16_06_RecordingEffect:
       (r.status@pre = RecordingStatus::STARTING or r.status@pre = RecordingStatus::RECORDING)) and
     result.status = RecordingStatus::STOPPED and result.version = command.expectedVersion + 1 and result.stoppedAt <> null endif
 
--- BR-UC-16-07
+BR-CSR-07 - Recording Callback
 context RecordingService::complete(command: ProviderCompletion, recording: Recording, session: Session): Recording
-pre BR_UC_16_07_RecordingCallback:
+pre BR_CSR_07_RecordingCallback:
   RequestContext::providerAuthenticated and command.sessionId = session.id and recording.sessionId = session.id and
   command.resourceId = recording.id and command.expectedVersion = recording.version and recording.status = RecordingStatus::STARTING and
   session.status = SessionStatus::LIVE and TransactionContext::lockedSessionId = session.id and TransactionContext::atomicCommit
 
--- BR-UC-16-08
+BR-CSR-08 - Recording Callback Effect
 context RecordingService::complete(command: ProviderCompletion, recording: Recording, session: Session): Recording
-post BR_UC_16_08_RecordingCallbackEffect:
+post BR_CSR_08_RecordingCallbackEffect:
   result = recording and recording.version = recording.version@pre + 1 and session.version = session.version@pre + 1 and
   if command.succeeded then recording.status = RecordingStatus::RECORDING and recording.startedAt <> null
   else recording.status = RecordingStatus::FAILED and recording.stoppedAt <> null endif
 
--- BR-UC-16-09
+BR-CSR-09 - One Active Recording
 context Recording
-inv BR_UC_16_09_OneActiveRecording:
+inv BR_CSR_09_OneActiveRecording:
   Recording.allInstances()->select(r | r.sessionId = self.sessionId and (r.status = RecordingStatus::STARTING or r.status = RecordingStatus::RECORDING))->size() <= 1
 ~~~

@@ -27,7 +27,7 @@ Participant; Preference Service; Spotlight Service.
 
 ### Priority
 
-P2.
+Low
 
 ### Trigger
 
@@ -52,30 +52,30 @@ POST-1: The client renders a pinned tile in the caller's view or a spotlighted t
 
 ### Alternative Flow
 
-AF-1:
+AF-1: Remove the personal pin
 
-3a. The participant removes the personal pin.
-3b. The client submits the update and restores the returned general layout.
+3a : The participant removes the personal pin.
+3b : The client submits the update and restores the returned general layout.
 
-AF-2:
+AF-2: Spotlight a participant
 
-3a. The participant chooses the session spotlight action.
-3b. The client submits the session control update.
-3c. The system returns the updated shared session representation.
-3d. Session clients render the selected tile with shared prominence.
+3a : The participant chooses the session spotlight action.
+3b : The client submits the session control update.
+3c : The system returns the updated shared session representation.
+3d : Session clients render the selected tile with shared prominence.
 
-AF-3:
+AF-3: Remove the session spotlight
 
-3a. The participant removes the session spotlight.
-3b. The client submits the session control update.
-3c. Session clients restore the shared layout returned by the system.
+3a : The participant removes the session spotlight.
+3b : The client submits the session control update.
+3c : Session clients restore the shared layout returned by the system.
 
 ### Exception Flow
 
-EF-1:
+EF-1: Focus preference update fails
 
-5a. The preference update cannot be completed.
-5b. The client displays the returned failure state and retains the prior focus.
+5a : The preference update cannot be completed.
+5b : The client displays the returned failure state and retains the prior focus.
 
 ### Related UI
 
@@ -94,7 +94,7 @@ API-SESSION-STATE.
 
 The shared model defines trusted context, persistence mapping, and query helpers. Server mutation execution uses MutationGateway and its common OCL constraints in UC-02. API command dispatch selects the named operation; it does not combine the preconditions of different operations. Read operations have no domain writes.
 
-BR-UC-15-01 through BR-UC-15-03 constrain the personal pin stored by PreferenceService.update. BR-UC-15-04 through BR-UC-15-10 constrain the shared session spotlight stored by SpotlightService.update. Client-local preview operations do not call either server operation.
+BR-PSP-01 through BR-PSP-03 constrain the personal pin stored by PreferenceService.update. BR-PSP-04 through BR-PSP-10 constrain the shared session spotlight stored by SpotlightService.update. Client-local preview operations do not call either server operation.
 
 ## UML Model
 
@@ -195,64 +195,64 @@ end note
 ## Business Rules
 
 ~~~text
--- BR-UC-15-01
+BR-PSP-01 - Focus Target
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-pre BR_UC_15_01_FocusTarget:
+pre BR_PSP_01_FocusTarget:
   (command.hasFocusedParticipantId and command.focusedParticipantId <> null) implies
   Participant.allInstances()->exists(p | p.id = command.focusedParticipantId and p.sessionId = command.sessionId and p.status = ParticipantStatus::JOINED)
 
--- BR-UC-15-02
+BR-PSP-02 - Pin Patch
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-post BR_UC_15_02_PinPatch:
+post BR_PSP_02_PinPatch:
   view.focusedParticipantId = if command.hasFocusedParticipantId then command.focusedParticipantId else view.focusedParticipantId@pre endif
 
--- BR-UC-15-03
+BR-PSP-03 - Pin Is Personal
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-post BR_UC_15_03_PinIsPersonal:
+post BR_PSP_03_PinIsPersonal:
   ViewPreference.allInstances() = ViewPreference.allInstances()@pre and
   ViewPreference.allInstances()@pre->select(v | v.participantId <> command.participantId)->forAll(v |
     v.layout = v.layout@pre and v.focusedParticipantId = v.focusedParticipantId@pre and
     v.sidePanel = v.sidePanel@pre and v.pictureInPicture = v.pictureInPicture@pre and v.updatedAt = v.updatedAt@pre)
 
--- BR-UC-15-04
+BR-PSP-04 - Authenticated Membership
 context SpotlightService::update(command: SpotlightCommand, session: Session): Session
-pre BR_UC_15_04_AuthenticatedMembership:
+pre BR_PSP_04_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
   command.actorParticipantId = RequestContext::participantId and
   Participant.allInstances()->exists(p | p.id = command.actorParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
     p.status = ParticipantStatus::JOINED)
 
--- BR-UC-15-05
+BR-PSP-05 - Command Key
 context SpotlightService::update(command: SpotlightCommand, session: Session): Session
-pre BR_UC_15_05_CommandKey:
+pre BR_PSP_05_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
--- BR-UC-15-06
+BR-PSP-06 - Spotlight Target
 context SpotlightService::update(command: SpotlightCommand, session: Session): Session
-pre BR_UC_15_06_SpotlightTarget:
+pre BR_PSP_06_SpotlightTarget:
   command.targetParticipantId = null or Participant.allInstances()->exists(p |
     p.id = command.targetParticipantId and p.sessionId = command.sessionId and p.status = ParticipantStatus::JOINED)
 
--- BR-UC-15-07
+BR-PSP-07 - Spotlight Actor
 context SpotlightService::update(command: SpotlightCommand, session: Session): Session
-pre BR_UC_15_07_SpotlightActor:
+pre BR_PSP_07_SpotlightActor:
   Participant.allInstances()->exists(p | p.id = command.actorParticipantId and
     (p.role = ParticipantRole::HOST or p.role = ParticipantRole::BROADCASTER or p.role = ParticipantRole::STAGE_PARTICIPANT))
 
--- BR-UC-15-08
+BR-PSP-08 - Session Version
 context SpotlightService::update(command: SpotlightCommand, session: Session): Session
-pre BR_UC_15_08_SessionVersion:
+pre BR_PSP_08_SessionVersion:
   command.sessionId = session.id and session.status = SessionStatus::LIVE and command.expectedVersion = session.version
 
--- BR-UC-15-09
+BR-PSP-09 - Shared Spotlight
 context SpotlightService::update(command: SpotlightCommand, session: Session): Session
-post BR_UC_15_09_SharedSpotlight:
+post BR_PSP_09_SharedSpotlight:
   result.id = session.id and result.spotlightedParticipantId = command.targetParticipantId and
   result.version = session.version@pre + 1
 
--- BR-UC-15-10
+BR-PSP-10 - Personal Pins Unaffected
 context SpotlightService::update(command: SpotlightCommand, session: Session): Session
-post BR_UC_15_10_PersonalPinsUnaffected:
+post BR_PSP_10_PersonalPinsUnaffected:
   ViewPreference.allInstances() = ViewPreference.allInstances()@pre
 ~~~

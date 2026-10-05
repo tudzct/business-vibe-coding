@@ -27,7 +27,7 @@ Participant; Preference Service.
 
 ### Priority
 
-P2.
+Low
 
 ### Trigger
 
@@ -52,17 +52,17 @@ POST-1: The client displays the returned background preference in the preview.
 
 ### Alternative Flow
 
-AF-1:
+AF-1: Select no background
 
-3a. The participant selects the no-background choice.
-3b. The client removes the background treatment from the preview.
+3a : The participant selects the no-background choice.
+3b : The client removes the background treatment from the preview.
 
 ### Exception Flow
 
-EF-1:
+EF-1: Background preference cannot be applied
 
-4a. The preference cannot be applied.
-4b. The client displays the returned failure state and retains the previous preview.
+4a : The preference cannot be applied.
+4b : The client displays the returned failure state and retains the previous preview.
 
 ### Related UI
 
@@ -138,40 +138,40 @@ end note
 ## Business Rules
 
 ~~~text
--- BR-UC-13-01
+BR-SVB-01 - Available Background
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-pre BR_UC_13_01_AvailableBackground:
+pre BR_SVB_01_AvailableBackground:
   command.hasVirtualBackgroundId implies (command.virtualBackgroundId = null or
     VirtualBackground.allInstances()->exists(b | b.id = command.virtualBackgroundId and b.active))
 
--- BR-UC-13-02
+BR-SVB-02 - Background Patch
 context PreferenceService::update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
-post BR_UC_13_02_BackgroundPatch:
+post BR_SVB_02_BackgroundPatch:
   media.virtualBackgroundId = if command.hasVirtualBackgroundId then command.virtualBackgroundId else media.virtualBackgroundId@pre endif
 
--- BR-UC-13-03
+BR-SVB-03 - Local Background
 context ClientPreferenceService::selectBackground(draft: PreviewDraft, backgroundId: String): PreviewDraft
-pre BR_UC_13_03_LocalBackground:
+pre BR_SVB_03_LocalBackground:
   backgroundId = null or VirtualBackground.allInstances()->exists(b | b.id = backgroundId and b.active)
 
--- BR-UC-13-04
+BR-SVB-04 - Local Background Draft
 context ClientPreferenceService::selectBackground(draft: PreviewDraft, backgroundId: String): PreviewDraft
-post BR_UC_13_04_LocalBackgroundDraft:
+post BR_SVB_04_LocalBackgroundDraft:
   result = draft and draft.virtualBackgroundId = backgroundId and
   draft.microphoneDeviceId = draft.microphoneDeviceId@pre and draft.cameraDeviceId = draft.cameraDeviceId@pre and draft.speakerDeviceId = draft.speakerDeviceId@pre
 
--- BR-UC-13-05
+BR-SVB-05 - Catalog Reader
 context PreferenceService::listBackgrounds(): Set(VirtualBackground)
-pre BR_UC_13_05_CatalogReader:
+pre BR_SVB_05_CatalogReader:
   RequestContext::authenticated
 
--- BR-UC-13-06
+BR-SVB-06 - Catalog Result
 context PreferenceService::listBackgrounds(): Set(VirtualBackground)
-post BR_UC_13_06_CatalogResult:
+post BR_SVB_06_CatalogResult:
   result = VirtualBackground.allInstances()->select(b | b.active)
 
--- BR-UC-13-07
+BR-SVB-07 - Catalog Identity
 context PreferenceService::listBackgrounds(): Set(VirtualBackground)
-post BR_UC_13_07_CatalogIdentity:
+post BR_SVB_07_CatalogIdentity:
   result->isUnique(id) and result->forAll(b | b.assetReference <> null and b.assetReference.trim().size() > 0)
 ~~~

@@ -27,7 +27,7 @@ Host; Session Service.
 
 ### Priority
 
-P0.
+High
 
 ### Trigger
 
@@ -52,17 +52,17 @@ POST-1: Each client displays the returned ended-session state.
 
 ### Alternative Flow
 
-AF-1:
+AF-1: Cancel end-session confirmation
 
-3a. The host cancels the confirmation.
-3b. The client closes the dialog and restores the session interface.
+3a : The host cancels the confirmation.
+3b : The client closes the dialog and restores the session interface.
 
 ### Exception Flow
 
-EF-1:
+EF-1: Session termination fails
 
-5a. The session service cannot complete the action.
-5b. The client displays the returned failure state and keeps the session interface available.
+5a : The session service cannot complete the action.
+5b : The client displays the returned failure state and keeps the session interface available.
 
 ### Related UI
 
@@ -213,67 +213,67 @@ end note
 ## Business Rules
 
 ~~~text
--- BR-UC-18-01
+BR-ESE-01 - Authenticated Membership
 context SessionService::end(command: DepartureCommand, session: Session): Departure
-pre BR_UC_18_01_AuthenticatedMembership:
+pre BR_ESE_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
   command.actorParticipantId = RequestContext::participantId and
   Participant.allInstances()->exists(p | p.id = command.actorParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
     p.status = ParticipantStatus::JOINED and p.role = ParticipantRole::HOST)
 
--- BR-UC-18-02
+BR-ESE-02 - Target Session
 context SessionService::end(command: DepartureCommand, session: Session): Departure
-pre BR_UC_18_02_TargetSession:
+pre BR_ESE_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
 
--- BR-UC-18-03
+BR-ESE-03 - Command Key
 context SessionService::end(command: DepartureCommand, session: Session): Departure
-pre BR_UC_18_03_CommandKey:
+pre BR_ESE_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
--- BR-UC-18-04
+BR-ESE-04 - Departure Action
 context SessionService::end(command: DepartureCommand, session: Session): Departure
-pre BR_UC_18_04_DepartureAction:
+pre BR_ESE_04_DepartureAction:
   command.kind = DepartureKind::END and command.expectedVersion = session.version
 
--- BR-UC-18-05
+BR-ESE-05 - Created Identity
 context SessionService::end(command: DepartureCommand, session: Session): Departure
-post BR_UC_18_05_CreatedIdentity:
+post BR_ESE_05_CreatedIdentity:
   result.oclIsNew() and result.id <> null and result.sessionId = command.sessionId and result.participantId = command.actorParticipantId and result.kind = DepartureKind::END and result.createdAt <> null
 
--- BR-UC-18-06
+BR-ESE-06 - Session Ended
 context SessionService::end(command: DepartureCommand, session: Session): Departure
-post BR_UC_18_06_SessionEnded:
+post BR_ESE_06_SessionEnded:
   session.status = SessionStatus::ENDED and session.endedAt <> null and session.version = session.version@pre + 1
 
--- BR-UC-18-07
+BR-ESE-07 - All Participants Leave
 context SessionService::end(command: DepartureCommand, session: Session): Departure
-post BR_UC_18_07_AllParticipantsLeave:
+post BR_ESE_07_AllParticipantsLeave:
   Participant.allInstances()@pre->select(p | p.sessionId = session.id and p.status@pre = ParticipantStatus::JOINED)->forAll(p |
     p.status = ParticipantStatus::LEFT and p.leftAt <> null and p.version = p.version@pre + 1 and not p.microphoneEnabled and not p.cameraEnabled)
 
--- BR-UC-18-08
+BR-ESE-08 - Stream Terminated
 context SessionService::end(command: DepartureCommand, session: Session): Departure
-post BR_UC_18_08_StreamTerminated:
+post BR_ESE_08_StreamTerminated:
   LiveStream.allInstances()@pre->select(s | s.sessionId = session.id and s.status@pre <> StreamStatus::ENDED)->forAll(s |
     s.status = StreamStatus::ENDED and s.endedAt <> null and s.version = s.version@pre + 1)
 
--- BR-UC-18-09
+BR-ESE-09 - Stop Content Shares
 context SessionService::end(command: DepartureCommand, session: Session): Departure
-post BR_UC_18_09_StopContentShares:
+post BR_ESE_09_StopContentShares:
   ContentShare.allInstances()@pre->select(cs | cs.sessionId = command.sessionId and cs.status@pre = ShareStatus::ACTIVE)->forAll(cs |
     cs.status = ShareStatus::STOPPED and cs.stoppedAt <> null and cs.version = cs.version@pre + 1)
 
--- BR-UC-18-10
+BR-ESE-10 - Cancel Pending Requests
 context SessionService::end(command: DepartureCommand, session: Session): Departure
-post BR_UC_18_10_CancelPendingRequests:
+post BR_ESE_10_CancelPendingRequests:
   StageRequest.allInstances()@pre->select(r | r.sessionId = command.sessionId and r.status@pre = StageRequestStatus::PENDING)->forAll(r |
     r.status = StageRequestStatus::CANCELLED and r.decidedAt <> null and r.version = r.version@pre + 1)
 
--- BR-UC-18-11
+BR-ESE-11 - Stop Recordings
 context SessionService::end(command: DepartureCommand, session: Session): Departure
-post BR_UC_18_11_StopRecordings:
+post BR_ESE_11_StopRecordings:
   Recording.allInstances()@pre->select(r | r.sessionId = command.sessionId and
     (r.status@pre = RecordingStatus::STARTING or r.status@pre = RecordingStatus::RECORDING))->forAll(r |
     r.status = RecordingStatus::STOPPED and r.stoppedAt <> null and r.version = r.version@pre + 1)

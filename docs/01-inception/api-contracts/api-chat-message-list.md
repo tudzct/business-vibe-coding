@@ -45,41 +45,46 @@ Required.
 
 ### headers.Authorization
 
-Type: string; Required: Yes; Nullable: No
+Type: string; Format: Bearer token; Required: Yes; Nullable: No
+Trigger: Included in every request.
 Description: Bearer session access token.
 Example: Bearer \<session-access-token\>
+Note: Not specified.
 
 ### headers.Accept
 
-Type: string; Required: Yes; Nullable: No
-Allowed values: application/json
+Type: string; Format: Media type; Required: Yes; Nullable: No
+Trigger: Included in every request.
 Description: HTTP media-type header.
 Example: application/json
+Note: Allowed values: application/json
 
 ## Path Parameter(s)
 
-### sessionId
+### path.sessionId
 
 Type: string; Required: Yes; Nullable: No
+Trigger: Included in the request path.
 Description: UUID identifier.
 Example: 11111111-1111-4111-8111-111111111111
 
 ## Query Parameter(s)
 
-### cursor
+### query.cursor
 
 Type: string; Required: No; Nullable: No
-Validation: Must be a JSON string.
+Trigger: When supplied in the request.
 Description: URI-encoded opaque continuation token.
 Example: cursor-reference
+Note: Validation: Must be a JSON string.
 
-### pageSize
+### query.pageSize
 
 Type: integer; Required: No; Nullable: No
-Default: 50
-Validation: Must be a JSON integer.
+Trigger: When supplied in the request.
 Description: pageSize value.
 Example: 50
+Note: Validation: Must be a JSON integer. Default: 50
 
 ## Request Body
 
@@ -90,44 +95,63 @@ None.
 ### data.items
 
 Type: array (Message); Required: Yes; Nullable: No
+Trigger: Returned with the HTTP 200 success response.
+Description: Collection of Message representations.
 Example: []
 
 ### data.nextCursor
 
 Type: string; Required: Yes; Nullable: No
+Trigger: Returned with the HTTP 200 success response.
 Description: Opaque continuation token, including for an empty page.
+Example: Not specified.
 
 ## Error Response — HTTP 400
 
 ### message
 
+Type: Not specified; Required: Not specified; Nullable: Not specified
 Trigger: The request cannot be decoded or does not match the declared wire schema.
-- Example message: The request could not be completed.
+Description: Error message returned with HTTP 400.
+Example: The request could not be completed.
+Note: The source contract does not specify the type, requiredness or nullability of this field.
 
 ## Error Response — HTTP 401
 
 ### message
 
+Type: Not specified; Required: Not specified; Nullable: Not specified
 Trigger: The authentication context is rejected.
-- Example message: The request could not be completed.
+Description: Error message returned with HTTP 401.
+Example: The request could not be completed.
+Note: The source contract does not specify the type, requiredness or nullability of this field.
 
 ## Error Response — HTTP 403
 
 ### message
 
+Type: Not specified; Required: Not specified; Nullable: Not specified
 Trigger: The operation is rejected for the supplied access context.
-- Example message: The request could not be completed.
+Description: Error message returned with HTTP 403.
+Example: The request could not be completed.
+Note: The source contract does not specify the type, requiredness or nullability of this field.
 
 ## Error Response — HTTP 404
 
 ### message
 
+Type: Not specified; Required: Not specified; Nullable: Not specified
 Trigger: The requested resource is unavailable.
-- Example message: The request could not be completed.
+Description: Error message returned with HTTP 404.
+Example: The request could not be completed.
+Note: The source contract does not specify the type, requiredness or nullability of this field.
 
 ## Error Response — HTTP 503
 
 ### message
 
+Type: Not specified; Required: Not specified; Nullable: Not specified
 Trigger: A required service is temporarily unavailable.
-- Example message: The request could not be completed.
+Description: Error message returned with HTTP 503.
+Example: The request could not be completed.
+Note: The source contract does not specify the type, requiredness or nullability of this field.

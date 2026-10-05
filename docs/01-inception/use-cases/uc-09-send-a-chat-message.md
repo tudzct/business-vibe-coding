@@ -27,7 +27,7 @@ Participant; Collaboration Service.
 
 ### Priority
 
-P1.
+High
 
 ### Trigger
 
@@ -52,17 +52,17 @@ POST-1: The client displays the message returned by the system.
 
 ### Alternative Flow
 
-AF-1:
+AF-1: Close chat without sending
 
-3a. The participant closes chat without sending.
-3b. The client restores the session layout.
+3a : The participant closes chat without sending.
+3b : The client restores the session layout.
 
 ### Exception Flow
 
-EF-1:
+EF-1: Message creation fails
 
-5a. The collaboration service cannot create the message.
-5b. The client displays a failure notice and preserves the entered text.
+5a : The collaboration service cannot create the message.
+5b : The client displays a failure notice and preserves the entered text.
 
 ### Related UI
 
@@ -172,57 +172,57 @@ end note
 ## Business Rules
 
 ~~~text
--- BR-UC-09-01
+BR-SCM-01 - Authenticated Membership
 context CollaborationService::sendMessage(command: ChatCommand, session: Session): ChatMessage
-pre BR_UC_09_01_AuthenticatedMembership:
+pre BR_SCM_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
   command.senderParticipantId = RequestContext::participantId and
   Participant.allInstances()->exists(p | p.id = command.senderParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
     p.status = ParticipantStatus::JOINED)
 
--- BR-UC-09-02
+BR-SCM-02 - Target Session
 context CollaborationService::sendMessage(command: ChatCommand, session: Session): ChatMessage
-pre BR_UC_09_02_TargetSession:
+pre BR_SCM_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
 
--- BR-UC-09-03
+BR-SCM-03 - Command Key
 context CollaborationService::sendMessage(command: ChatCommand, session: Session): ChatMessage
-pre BR_UC_09_03_CommandKey:
+pre BR_SCM_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
--- BR-UC-09-04
+BR-SCM-04 - Message Body
 context CollaborationService::sendMessage(command: ChatCommand, session: Session): ChatMessage
-pre BR_UC_09_04_MessageBody:
+pre BR_SCM_04_MessageBody:
   command.body <> null and command.body.trim().size() > 0 and command.body.trim().size() <= 1000
 
--- BR-UC-09-05
+BR-SCM-05 - Created Identity
 context CollaborationService::sendMessage(command: ChatCommand, session: Session): ChatMessage
-post BR_UC_09_05_CreatedIdentity:
+post BR_SCM_05_CreatedIdentity:
   result.oclIsNew() and result.id <> null and result.sessionId = command.sessionId and result.senderParticipantId = command.senderParticipantId
 
--- BR-UC-09-06
+BR-SCM-06 - Message Value
 context CollaborationService::sendMessage(command: ChatCommand, session: Session): ChatMessage
-post BR_UC_09_06_MessageValue:
+post BR_SCM_06_MessageValue:
   result.body = command.body.trim() and result.sentAt <> null and result.sequence = session.version@pre + 1
 
--- BR-UC-09-07
+BR-SCM-07 - Authenticated Membership
 context CollaborationService::listMessages(query: MessageQuery, session: Session): MessagePage
-pre BR_UC_09_07_AuthenticatedMembership:
+pre BR_SCM_07_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = query.sessionId and
   query.requesterParticipantId = RequestContext::participantId and
   Participant.allInstances()->exists(p | p.id = query.requesterParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = query.sessionId and
     p.status = ParticipantStatus::JOINED)
 
--- BR-UC-09-08
+BR-SCM-08 - Message Page Input
 context CollaborationService::listMessages(query: MessageQuery, session: Session): MessagePage
-pre BR_UC_09_08_MessagePageInput:
+pre BR_SCM_08_MessagePageInput:
   query.sessionId = session.id and session.status <> SessionStatus::ENDED and query.pageSize > 0 and query.pageSize <= 50 and
   Paging::validCursor(session.id, query.cursor, 'messages')
 
--- BR-UC-09-09
+BR-SCM-09 - Message History
 context CollaborationService::listMessages(query: MessageQuery, session: Session): MessagePage
-post BR_UC_09_09_MessageHistory:
+post BR_SCM_09_MessageHistory:
   result = Paging::messages(session.id, query.pageSize, query.cursor) and result.items->forAll(m | m.sessionId = session.id)
 ~~~

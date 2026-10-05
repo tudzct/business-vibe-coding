@@ -27,7 +27,7 @@ Participant; Collaboration Service.
 
 ### Priority
 
-P1.
+High
 
 ### Trigger
 
@@ -50,17 +50,17 @@ POST-1: The client displays the returned participant list and visible participan
 
 ### Alternative Flow
 
-AF-1:
+AF-1: Close the participant panel
 
-4a. The participant closes the panel.
-4b. The client restores the session layout.
+4a : The participant closes the panel.
+4b : The client restores the session layout.
 
 ### Exception Flow
 
-EF-1:
+EF-1: Participant list unavailable
 
-3a. The participant list cannot be returned.
-3b. The client displays the returned unavailable state without closing the session.
+3a : The participant list cannot be returned.
+3b : The client displays the returned unavailable state without closing the session.
 
 ### Related UI
 
@@ -217,38 +217,38 @@ end note
 ## Business Rules
 
 ~~~text
--- BR-UC-08-01
+BR-VSP-01 - Authenticated Membership
 context CollaborationService::listParticipants(query: ParticipantListQuery, session: Session): ParticipantPage
-pre BR_UC_08_01_AuthenticatedMembership:
+pre BR_VSP_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = query.sessionId and
   query.requesterParticipantId = RequestContext::participantId and
   Participant.allInstances()->exists(p | p.id = query.requesterParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = query.sessionId and
     p.status = ParticipantStatus::JOINED)
 
--- BR-UC-08-02
+BR-VSP-02 - Page Input
 context CollaborationService::listParticipants(query: ParticipantListQuery, session: Session): ParticipantPage
-pre BR_UC_08_02_PageInput:
+pre BR_VSP_02_PageInput:
   query.sessionId = session.id and session.status <> SessionStatus::ENDED and
   query.pageSize > 0 and query.pageSize <= 50 and Paging::validCursor(session.id, query.cursor, 'participants')
 
--- BR-UC-08-03
+BR-VSP-03 - Participant Page
 context CollaborationService::listParticipants(query: ParticipantListQuery, session: Session): ParticipantPage
-post BR_UC_08_03_ParticipantPage:
+post BR_VSP_03_ParticipantPage:
   result = Paging::participants(session.id, query.pageSize, query.cursor) and result.items->size() <= query.pageSize and
   result.items->forAll(p | p.sessionId = session.id and p.status = ParticipantStatus::JOINED)
 
--- BR-UC-08-04
+BR-VSP-04 - State Reader
 context SessionService::readState(session: Session, participant: Participant, reactionCursor: String): SessionState
-pre BR_UC_08_04_StateReader:
+pre BR_VSP_04_StateReader:
   RequestContext::authenticated and RequestContext::sessionId = session.id and
   participant.id = RequestContext::participantId and participant.principalId = RequestContext::principalId and participant.sessionId = session.id and
   (participant.status = ParticipantStatus::JOINED or session.status = SessionStatus::ENDED) and
   Paging::validCursor(session.id, reactionCursor, 'reactions')
 
--- BR-UC-08-05
+BR-VSP-05 - State Snapshot
 context SessionService::readState(session: Session, participant: Participant, reactionCursor: String): SessionState
-post BR_UC_08_05_StateSnapshot:
+post BR_VSP_05_StateSnapshot:
   result.session = session and result.selfParticipant = participant and
   result.stream = if LiveStream.allInstances()->exists(s | s.sessionId = session.id) then LiveStream.allInstances()->any(s | s.sessionId = session.id) else null endif and
   result.recording = Paging::latestRecording(session.id) and
@@ -256,16 +256,16 @@ post BR_UC_08_05_StateSnapshot:
   result.media = MediaPreference.allInstances()->any(m | m.participantId = participant.id) and
   result.view = ViewPreference.allInstances()->any(v | v.participantId = participant.id)
 
--- BR-UC-08-06
+BR-VSP-06 - State Audience
 context SessionService::readState(session: Session, participant: Participant, reactionCursor: String): SessionState
-post BR_UC_08_06_StateAudience:
+post BR_VSP_06_StateAudience:
   result.stageRequests = StageRequest.allInstances()->select(r | r.sessionId = session.id and
     (participant.role = ParticipantRole::HOST or r.participantId = participant.id)) and
   result.reactions = Paging::reactions(session.id, reactionCursor) and result.reactions->size() <= 50 and
   result.nextReactionCursor = Paging::nextReactionCursor(session.id, reactionCursor)
 
--- BR-UC-08-07
+BR-VSP-07 - Unique Roster Entries
 context CollaborationService::listParticipants(query: ParticipantListQuery, session: Session): ParticipantPage
-post BR_UC_08_07_UniqueRosterEntries:
+post BR_VSP_07_UniqueRosterEntries:
   result.items->isUnique(id)
 ~~~

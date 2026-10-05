@@ -27,7 +27,7 @@ Viewer; Live Stream Service.
 
 ### Priority
 
-P0.
+High
 
 ### Trigger
 
@@ -50,17 +50,17 @@ POST-1: The client displays live playback and the viewer controls returned by th
 
 ### Alternative Flow
 
-AF-1:
+AF-1: Open the viewer session menu
 
-4a. The viewer opens the session menu.
-4b. The client displays the viewer actions shown by the design.
+4a : The viewer opens the session menu.
+4b : The client displays the viewer actions shown by the design.
 
 ### Exception Flow
 
-EF-1:
+EF-1: Live-session representation unavailable
 
-3a. The live-session representation cannot be returned.
-3b. The client displays the visible loading or unavailable state.
+3a : The live-session representation cannot be returned.
+3b : The client displays the visible loading or unavailable state.
 
 ### Related UI
 
@@ -160,45 +160,45 @@ end note
 ## Business Rules
 
 ~~~text
--- BR-UC-05-01
+BR-WLS-01 - Authenticated Membership
 context LiveStreamService::view(sessionId: String, participantId: String, session: Session, stream: LiveStream): ViewerSession
-pre BR_UC_05_01_AuthenticatedMembership:
+pre BR_WLS_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = sessionId and
   participantId = RequestContext::participantId and
   Participant.allInstances()->exists(p | p.id = participantId and
     p.principalId = RequestContext::principalId and p.sessionId = sessionId and
     p.status = ParticipantStatus::JOINED)
 
--- BR-UC-05-02
+BR-WLS-02 - Viewer Target
 context LiveStreamService::view(sessionId: String, participantId: String, session: Session, stream: LiveStream): ViewerSession
-pre BR_UC_05_02_ViewerTarget:
+pre BR_WLS_02_ViewerTarget:
   session.id = sessionId and stream.sessionId = sessionId and session.kind = SessionKind::LIVE_STREAM and
   session.status <> SessionStatus::ENDED and Participant.allInstances()->exists(p | p.id = participantId and
     (p.role = ParticipantRole::VIEWER or p.role = ParticipantRole::STAGE_PARTICIPANT))
 
--- BR-UC-05-03
+BR-WLS-03 - Viewer Representation
 context LiveStreamService::view(sessionId: String, participantId: String, session: Session, stream: LiveStream): ViewerSession
-post BR_UC_05_03_ViewerRepresentation:
+post BR_WLS_03_ViewerRepresentation:
   result.sessionId = session.id and result.participantId = participantId and
   result.role = Participant.allInstances()->any(p | p.id = participantId).role
 
--- BR-UC-05-04
+BR-WLS-04 - Stream Snapshot
 context LiveStreamService::view(sessionId: String, participantId: String, session: Session, stream: LiveStream): ViewerSession
-post BR_UC_05_04_StreamSnapshot:
+post BR_WLS_04_StreamSnapshot:
   result.streamStatus = stream.status and result.streamVersion = stream.version and result.sessionVersion = session.version
 
--- BR-UC-05-05
+BR-WLS-05 - Playback Availability
 context LiveStreamService::view(sessionId: String, participantId: String, session: Session, stream: LiveStream): ViewerSession
-post BR_UC_05_05_PlaybackAvailability:
+post BR_WLS_05_PlaybackAvailability:
   result.canPlayMedia = (stream.status = StreamStatus::LIVE)
 
--- BR-UC-05-06
+BR-WLS-06 - Publishing Availability
 context LiveStreamService::view(sessionId: String, participantId: String, session: Session, stream: LiveStream): ViewerSession
-post BR_UC_05_06_PublishingAvailability:
+post BR_WLS_06_PublishingAvailability:
   result.canPublishMedia = (stream.status = StreamStatus::LIVE and result.role = ParticipantRole::STAGE_PARTICIPANT)
 
--- BR-UC-05-07
+BR-WLS-07 - Muted Playback Start
 context LiveStreamService::view(sessionId: String, participantId: String, session: Session, stream: LiveStream): ViewerSession
-post BR_UC_05_07_MutedPlaybackStart:
+post BR_WLS_07_MutedPlaybackStart:
   result.initialAudioMuted
 ~~~

@@ -27,7 +27,7 @@ Host; Live Stream Service.
 
 ### Priority
 
-P0.
+High
 
 ### Trigger
 
@@ -52,17 +52,17 @@ POST-2: Viewer-facing playback reflects the returned broadcast outcome.
 
 ### Alternative Flow
 
-AF-1:
+AF-1: Open the broadcaster session menu
 
-1a. The host opens the session menu before starting.
-1b. The client displays the available broadcaster actions.
+1a : The host opens the session menu before starting.
+1b : The client displays the available broadcaster actions.
 
 ### Exception Flow
 
-EF-1:
+EF-1: Stream start fails
 
-3a. The system cannot complete the start request.
-3b. The client displays a technical-failure state and keeps the broadcaster interface available.
+3a : The system cannot complete the start request.
+3b : The client displays a technical-failure state and keeps the broadcaster interface available.
 
 ### Related UI
 
@@ -187,56 +187,56 @@ note right of TransactionContext: Describes the database transaction for the cur
 ## Business Rules
 
 ~~~text
--- BR-UC-03-01
+BR-SLS-01 - Authenticated Membership
 context LiveStreamService::start(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
-pre BR_UC_03_01_AuthenticatedMembership:
+pre BR_SLS_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
   command.actorParticipantId = RequestContext::participantId and
   Participant.allInstances()->exists(p | p.id = command.actorParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
     p.status = ParticipantStatus::JOINED and p.role = ParticipantRole::HOST)
 
--- BR-UC-03-02
+BR-SLS-02 - Target Session
 context LiveStreamService::start(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
-pre BR_UC_03_02_TargetSession:
+pre BR_SLS_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
 
--- BR-UC-03-03
+BR-SLS-03 - Command Key
 context LiveStreamService::start(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
-pre BR_UC_03_03_CommandKey:
+pre BR_SLS_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
--- BR-UC-03-04
+BR-SLS-04 - Stream Target And Version
 context LiveStreamService::start(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
-pre BR_UC_03_04_StreamTargetAndVersion:
+pre BR_SLS_04_StreamTargetAndVersion:
   command.action = StreamAction::START and session.kind = SessionKind::LIVE_STREAM and
   session.status = SessionStatus::LIVE and stream.sessionId = session.id and command.expectedVersion = stream.version
 
--- BR-UC-03-05
+BR-SLS-05 - Same Stream Version
 context LiveStreamService::start(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
-post BR_UC_03_05_SameStreamVersion:
+post BR_SLS_05_SameStreamVersion:
   result = stream and stream.version = stream.version@pre + 1
 
--- BR-UC-03-06
+BR-SLS-06 - Ready Only
 context LiveStreamService::start(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
-pre BR_UC_03_06_ReadyOnly:
+pre BR_SLS_06_ReadyOnly:
   stream.status = StreamStatus::READY
 
--- BR-UC-03-07
+BR-SLS-07 - Starting
 context LiveStreamService::start(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
-post BR_UC_03_07_Starting:
+post BR_SLS_07_Starting:
   stream.status = StreamStatus::STARTING and stream.endedAt = null
 
--- BR-UC-03-08
+BR-SLS-08 - Provider Completion Target
 context LiveStreamService::complete(command: ProviderCompletion, stream: LiveStream, session: Session): LiveStream
-pre BR_UC_03_08_ProviderCompletionTarget:
+pre BR_SLS_08_ProviderCompletionTarget:
   RequestContext::providerAuthenticated and command.sessionId = session.id and stream.sessionId = session.id and
   command.resourceId = stream.id and command.expectedVersion = stream.version and stream.status = StreamStatus::STARTING and
   session.status = SessionStatus::LIVE and TransactionContext::lockedSessionId = session.id and TransactionContext::atomicCommit
 
--- BR-UC-03-09
+BR-SLS-09 - Provider Completion State
 context LiveStreamService::complete(command: ProviderCompletion, stream: LiveStream, session: Session): LiveStream
-post BR_UC_03_09_ProviderCompletionState:
+post BR_SLS_09_ProviderCompletionState:
   result = stream and stream.version = stream.version@pre + 1 and session.version = session.version@pre + 1 and
   if command.succeeded then stream.status = StreamStatus::LIVE and stream.startedAt <> null
   else stream.status = StreamStatus::READY endif

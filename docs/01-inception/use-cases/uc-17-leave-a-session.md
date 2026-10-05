@@ -27,7 +27,7 @@ Participant; Session Service.
 
 ### Priority
 
-P0.
+High
 
 ### Trigger
 
@@ -53,17 +53,17 @@ POST-2: The interface no longer presents the participant as joined.
 
 ### Alternative Flow
 
-AF-1:
+AF-1: Cancel leave confirmation
 
-3a. The participant cancels the confirmation.
-3b. The client closes the dialog and restores the session interface.
+3a : The participant cancels the confirmation.
+3b : The client closes the dialog and restores the session interface.
 
 ### Exception Flow
 
-EF-1:
+EF-1: Session departure fails
 
-5a. The session service cannot complete the action.
-5b. The client displays the returned failure state and keeps the session interface available.
+5a : The session service cannot complete the action.
+5b : The client displays the returned failure state and keeps the session interface available.
 
 ### Related UI
 
@@ -190,62 +190,62 @@ end note
 ## Business Rules
 
 ~~~text
--- BR-UC-17-01
+BR-LS-01 - Authenticated Membership
 context SessionService::leave(command: DepartureCommand, session: Session): Departure
-pre BR_UC_17_01_AuthenticatedMembership:
+pre BR_LS_01_AuthenticatedMembership:
   RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
   command.actorParticipantId = RequestContext::participantId and
   Participant.allInstances()->exists(p | p.id = command.actorParticipantId and
     p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
     p.status = ParticipantStatus::JOINED)
 
--- BR-UC-17-02
+BR-LS-02 - Target Session
 context SessionService::leave(command: DepartureCommand, session: Session): Departure
-pre BR_UC_17_02_TargetSession:
+pre BR_LS_02_TargetSession:
   command.sessionId = session.id and session.status <> SessionStatus::ENDED
 
--- BR-UC-17-03
+BR-LS-03 - Command Key
 context SessionService::leave(command: DepartureCommand, session: Session): Departure
-pre BR_UC_17_03_CommandKey:
+pre BR_LS_03_CommandKey:
   command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
 
--- BR-UC-17-04
+BR-LS-04 - Departure Action
 context SessionService::leave(command: DepartureCommand, session: Session): Departure
-pre BR_UC_17_04_DepartureAction:
+pre BR_LS_04_DepartureAction:
   command.kind = DepartureKind::LEAVE and command.expectedVersion = session.version
 
--- BR-UC-17-05
+BR-LS-05 - Created Identity
 context SessionService::leave(command: DepartureCommand, session: Session): Departure
-post BR_UC_17_05_CreatedIdentity:
+post BR_LS_05_CreatedIdentity:
   result.oclIsNew() and result.id <> null and result.sessionId = command.sessionId and result.participantId = command.actorParticipantId and result.kind = DepartureKind::LEAVE and result.createdAt <> null
 
--- BR-UC-17-06
+BR-LS-06 - Host Uses End
 context SessionService::leave(command: DepartureCommand, session: Session): Departure
-pre BR_UC_17_06_HostUsesEnd:
+pre BR_LS_06_HostUsesEnd:
   Participant.allInstances()->any(p | p.id = command.actorParticipantId).role <> ParticipantRole::HOST
 
--- BR-UC-17-07
+BR-LS-07 - Left Participant
 context SessionService::leave(command: DepartureCommand, session: Session): Departure
-post BR_UC_17_07_LeftParticipant:
+post BR_LS_07_LeftParticipant:
   let p : Participant = Participant.allInstances()->any(p | p.id = command.actorParticipantId) in
   p.status = ParticipantStatus::LEFT and p.leftAt <> null and p.version = p.version@pre + 1 and
   not p.microphoneEnabled and not p.cameraEnabled and session.status = session.status@pre
 
--- BR-UC-17-08
+BR-LS-08 - Demote Former Stage Participants
 context SessionService::leave(command: DepartureCommand, session: Session): Departure
-post BR_UC_17_08_DemoteFormerStageParticipants:
+post BR_LS_08_DemoteFormerStageParticipants:
   Participant.allInstances()@pre->select(p | p.sessionId = command.sessionId and p.id = command.actorParticipantId and p.role@pre = ParticipantRole::STAGE_PARTICIPANT)->forAll(p |
     p.role = ParticipantRole::VIEWER and not p.microphoneEnabled and not p.cameraEnabled)
 
--- BR-UC-17-09
+BR-LS-09 - Stop Content Shares
 context SessionService::leave(command: DepartureCommand, session: Session): Departure
-post BR_UC_17_09_StopContentShares:
+post BR_LS_09_StopContentShares:
   ContentShare.allInstances()@pre->select(cs | cs.sessionId = command.sessionId and cs.ownerParticipantId = command.actorParticipantId and cs.status@pre = ShareStatus::ACTIVE)->forAll(cs |
     cs.status = ShareStatus::STOPPED and cs.stoppedAt <> null and cs.version = cs.version@pre + 1)
 
--- BR-UC-17-10
+BR-LS-10 - Cancel Pending Requests
 context SessionService::leave(command: DepartureCommand, session: Session): Departure
-post BR_UC_17_10_CancelPendingRequests:
+post BR_LS_10_CancelPendingRequests:
   StageRequest.allInstances()@pre->select(r | r.sessionId = command.sessionId and r.participantId = command.actorParticipantId and r.status@pre = StageRequestStatus::PENDING)->forAll(r |
     r.status = StageRequestStatus::CANCELLED and r.decidedAt <> null and r.version = r.version@pre + 1)
 ~~~
