@@ -114,6 +114,49 @@ def frozen_api_contract(entry, field):
     return {"api_id": api_id, "path": path_value, "sha256": expected}
 
 
+def frozen_uc_api_ids(raw):
+    """Return the ordered API IDs, or [] for the canonical `None.` marker."""
+    content = raw.decode("utf-8-sig")
+    headings = list(re.finditer(r"(?m)^### Related API IDs[ \t]*\r?$", content))
+    if len(headings) != 1:
+        raise ValueError("frozen UC Related API IDs section missing or ambiguous")
+    section = content[headings[0].end():]
+    following_heading = re.search(r"(?m)^###? [^\r\n]+", section)
+    if following_heading:
+        section = section[:following_heading.start()]
+    section = section.strip()
+    if section == "None.":
+        return []
+    if re.search(r"(?m)^\s*None\.\s*$", section):
+        raise ValueError("frozen UC Related API IDs cannot mix None. with API IDs or other content")
+    ids = []
+    for api_id in re.findall(r"\bAPI-[A-Z0-9]+(?:-[A-Z0-9]+)*\b", section):
+        if api_id not in ids:
+            ids.append(api_id)
+    if not ids:
+        raise ValueError("frozen UC Related API IDs must list API IDs or contain exactly None.")
+    return ids
+
+
+def configured_uc_api_ids(uc, configured_uc_id):
+    """Resolve the exact frozen UC through the configured BR baseline."""
+    baseline_value = text(uc.get("business_rule_baseline"), "use_case.business_rule_baseline").replace("\\", "/")
+    baseline_path = (ROOT / baseline_value).resolve()
+    implementation_root = (ROOT / "docs/02-construction/implementation" / configured_uc_id).resolve()
+    if not baseline_path.is_relative_to(implementation_root) or not baseline_path.is_file():
+        raise ValueError("use_case.business_rule_baseline is missing or belongs to another UC")
+    baseline = read_configuration_json(baseline_path)
+    if (baseline.get("artifact_type") != "business-rule-baseline"
+            or baseline.get("status") != "Frozen" or baseline.get("uc_id") != configured_uc_id):
+        raise ValueError("use_case.business_rule_baseline identity/status mismatch")
+    source_value = text(baseline.get("use_case_path"), "business_rule_baseline.use_case_path").replace("\\", "/")
+    source_path = (ROOT / source_value).resolve()
+    uc_root = (ROOT / "docs/01-inception/use-cases").resolve()
+    if not source_path.is_relative_to(uc_root) or not source_path.is_file():
+        raise ValueError("business_rule_baseline.use_case_path must identify a frozen UC Markdown file")
+    return frozen_uc_api_ids(source_path.read_bytes())
+
+
 def validate(path):
     path = path.resolve()
     if not path.is_relative_to(ROOT / "docs/04-experiments/configurations"):
@@ -178,14 +221,16 @@ def validate(path):
     text(uc.get("business_rule_baseline"), "use_case.business_rule_baseline")
     text(uc.get("flow_baseline"), "use_case.flow_baseline")
     contracts = uc.get("api_contracts")
-    if not isinstance(contracts, list) or not contracts:
-        raise ValueError("use_case.api_contracts must be a non-empty array")
+    if not isinstance(contracts, list):
+        raise ValueError("use_case.api_contracts must be an array")
     frozen = [frozen_api_contract(entry, f"use_case.api_contracts[{api_index}]")
               for api_index, entry in enumerate(contracts)]
     api_ids = [entry["api_id"] for entry in frozen]
     api_paths = [entry["path"] for entry in frozen]
     if len(api_ids) != len(set(api_ids)) or len(api_paths) != len(set(api_paths)):
         raise ValueError("use_case.api_contracts contains duplicate IDs or paths")
+    if api_ids != configured_uc_api_ids(uc, configured_uc_id):
+        raise ValueError("use_case.api_contracts does not match the frozen UC Related API IDs order")
 
     runs = data.get("runs")
     if not isinstance(runs, list) or len(runs) != 1:

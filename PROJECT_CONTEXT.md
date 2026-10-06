@@ -30,7 +30,7 @@ Files matching `docs/01-inception/use-cases/uc-*.md` are the complete authoritat
 
 ### API contracts
 
-Files under `docs/01-inception/api-contracts/` are the authoritative frozen API specification inputs. For each UC, the Confirmed configuration records the complete ordered API ID/path/SHA-256 inventory resolved from the frozen UC's `Related API IDs`. Configuration validation checks each API's Frozen identity and bytes; Prompt and Source preflight also require the configured order to match the frozen UC before START.
+Files under `docs/01-inception/api-contracts/` are the authoritative frozen API specification inputs. For each UC, the Confirmed configuration records the complete ordered API ID/path/SHA-256 inventory resolved from the frozen UC's required `Related API IDs` section. Exact content `None.` resolves to the empty array `[]`; otherwise configuration validation checks each API's Frozen identity and bytes, and Prompt/Source preflight require the configured order to match before START.
 
 ## Business-rule baseline
 

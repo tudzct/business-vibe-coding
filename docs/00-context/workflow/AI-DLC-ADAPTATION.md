@@ -2,7 +2,7 @@
 
 ## Phase 1 — Generate Business Coding Prompt
 
-Inputs: frozen UC/UML, ordered checksum-pinned API contracts, applicable frozen Figma sources, existing project context, prepared artifacts and [the configured template](../../../templates/construction/coding-prompt.template.md) under the workflow input boundaries.
+Inputs: frozen UC/UML, ordered checksum-pinned API contracts when declared by the UC, applicable frozen Figma sources, existing project context, prepared artifacts and [the configured template](../../../templates/construction/coding-prompt.template.md) under the workflow input boundaries.
 
 1. Verify provenance and checksum of the UC projection and the configured Frozen identity/path/SHA-256 of every referenced API contract.
 2. Resolve the configured coding-prompt template and its permitted generation inputs.

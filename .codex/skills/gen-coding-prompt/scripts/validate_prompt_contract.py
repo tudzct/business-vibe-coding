@@ -63,8 +63,8 @@ def configured_headings():
 
 def configured_api_metadata(uc):
     contracts = uc.get("api_contracts")
-    require(isinstance(contracts, list) and contracts, "configured API contracts missing")
-    return ";".join(entry["path"] for entry in contracts)
+    require(isinstance(contracts, list), "configured API contracts must be an array")
+    return ";".join(entry["path"] for entry in contracts) if contracts else "None."
 
 
 def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow_draft=False):
