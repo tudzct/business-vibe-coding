@@ -4,7 +4,7 @@ The researcher invokes the following commands in separate turns. Each command au
 
 ## Prepare four JSON files and the database input before generation
 
-1. `docs/04-experiments/configurations/CFG-<UC-ID>-<MODEL>-<VARIANT>.json`: complete, Confirmed configuration, including the ordered frozen API ID/path/SHA-256 entries for the UC.
+1. `docs/04-experiments/configurations/CFG-<UC-ID>-<MODEL>-<VARIANT>.json`: complete, Confirmed configuration, including the ordered frozen API ID/path/SHA-256 entries for the UC, or `api_contracts: []` when its required `Related API IDs` section contains exactly `None.`.
 2. `docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json`: the complete ordered BR ID inventory and checksum-pinned frozen UC.
 3. `docs/02-construction/implementation/<UC-ID>/flow-baseline.json`: the complete ordered Main/Basic, Alternative and Exception Flow ID inventory and checksum-pinned frozen UC.
 4. `docs/04-experiments/<UC-ID>/canonical-run-<UC-ID>-<MODEL>-<VARIANT>.json`: Draft Canonical Run JSON with pinned configuration and baseline identities.
@@ -15,7 +15,7 @@ The researcher chooses the preparation tool. Validate the four JSON files, datab
 
 For these file names, `run_id` is `<UC-ID>-<MODEL>-<VARIANT>`: `MODEL` is the configuration's path-safe `requested_label`, and `VARIANT` is its `prompt_variant`. The configuration ID is `CFG-<run_id>`.
 
-For optional deterministic preparation, run `experiment-input-helpers/calculate_input_values.py` with one frozen UC path, each frozen API contract path in the UC's `Related API IDs` order, and one explicit Figma dataset version. Repeat `--api-contract` for a multi-API UC; use `--require-empty` only at initial pipeline setup. The helper prints paths, identities and checksums—including the three database baseline pins—without writing files. After manually completing and reviewing the configuration, run `experiment-input-helpers/calculate_configuration_checksum.py --configuration <configuration-path>` and copy the printed checksum into the Draft Canonical Run JSON. Generation still performs its existing read-only configuration/API/Figma/database preflight.
+For optional deterministic preparation, run `experiment-input-helpers/calculate_input_values.py` with one frozen UC path and one explicit Figma dataset version. Supply each frozen API contract path in the UC's `Related API IDs` order, repeating `--api-contract` for multiple APIs. Omit `--api-contract` when that section contains exactly `None.`; the helper then prints `api_contracts: []`. Use `--require-empty` only at initial pipeline setup. The helper prints paths, identities and checksums—including the three database baseline pins—without writing files. After manually completing and reviewing the configuration, run `experiment-input-helpers/calculate_configuration_checksum.py --configuration <configuration-path>` and copy the printed checksum into the Draft Canonical Run JSON. Generation still performs its existing read-only configuration/API/Figma/database preflight.
 
 ## Command sequence
 

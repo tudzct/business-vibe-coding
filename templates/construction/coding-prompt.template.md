@@ -5,7 +5,7 @@ status: Draft | Approved
 uc_id: <UC-ID>
 uc_name: <Use case name>
 source_use_case: docs/01-inception/use-cases/<use-case-file>.md
-source_api_contracts: docs/01-inception/api-contracts/<API-ID>.md
+source_api_contracts: <semicolon-separated ordered configured API paths, or None.>
 business_rule_baseline: docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json
 generated_at: <ISO-8601 timestamp>
 ---

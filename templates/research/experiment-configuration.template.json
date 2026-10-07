@@ -26,11 +26,7 @@
     "uc_id": "<UC-ID>",
     "business_rule_baseline": "docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json",
     "flow_baseline": "docs/02-construction/implementation/<UC-ID>/flow-baseline.json",
-    "api_contracts": [{
-      "api_id": "<API-ID>",
-      "path": "docs/01-inception/api-contracts/<API-ID>.md",
-      "sha256": "sha256:<64-hex>"
-    }]
+    "api_contracts": []
   },
   "runs": [{
     "run_id": "<UC-ID>-<MODEL>-<VARIANT>",

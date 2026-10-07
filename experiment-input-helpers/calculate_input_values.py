@@ -22,6 +22,8 @@ BASELINE_ARCHIVE = ".codex/skills/restore-source-baseline/assets/source-baseline
 sys.path.insert(0, str(ROOT / ".codex/skills/gen-coding-prompt/scripts"))
 from database_baseline import capture as capture_database  # noqa: E402
 from database_baseline import dbml_file  # noqa: E402
+sys.path.insert(0, str(ROOT / ".codex/scripts"))
+from validate_experiment_configuration import frozen_uc_api_ids  # noqa: E402
 
 
 def require(condition, message):
@@ -67,23 +69,6 @@ def frontmatter(content, label):
     return metadata
 
 
-def source_api_ids(raw):
-    content = raw.decode("utf-8-sig")
-    headings = list(re.finditer(r"(?m)^### Related API IDs[ \t]*\r?$", content))
-    require(headings, "frozen UC Related API IDs section missing")
-    ids = []
-    for heading in headings:
-        section = content[heading.end():]
-        following_heading = re.search(r"(?m)^###? [^\r\n]+", section)
-        if following_heading:
-            section = section[:following_heading.start()]
-        for api_id in re.findall(r"\bAPI-[A-Z0-9]+(?:-[A-Z0-9]+)*\b", section):
-            if api_id not in ids:
-                ids.append(api_id)
-    require(ids, "frozen UC Related API IDs are missing")
-    return ids
-
-
 def inspect_use_case(value):
     path = repository_file(value, UC_ROOT, ".md", "use case")
     raw = path.read_bytes()
@@ -94,7 +79,7 @@ def inspect_use_case(value):
     uc_id = metadata.get("uc_id")
     require(isinstance(uc_id, str) and re.fullmatch(r"UC-[A-Za-z0-9_-]+", uc_id),
             "use case uc_id is missing or invalid")
-    return path, raw, uc_id, source_api_ids(raw)
+    return path, raw, uc_id, frozen_uc_api_ids(raw)
 
 
 def inspect_api_contract(value, expected_id):
@@ -129,8 +114,8 @@ def inspect_figma_dataset(version):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--use-case", required=True, help="Frozen repository UC Markdown path")
-    parser.add_argument("--api-contract", action="append", required=True,
-                        help="Frozen API Markdown path; repeat in the UC's Related API IDs order")
+    parser.add_argument("--api-contract", action="append",
+                        help="Frozen API Markdown path; repeat in the UC's Related API IDs order; omit when it is None.")
     parser.add_argument("--figma-dataset-version", required=True,
                         help="Exact immutable Figma dataset directory name")
     parser.add_argument("--require-empty", action="store_true",
@@ -138,13 +123,15 @@ def main():
     args = parser.parse_args()
 
     uc_path, uc_raw, uc_id, expected_api_ids = inspect_use_case(args.use_case)
-    require(len(args.api_contract) == len(expected_api_ids),
-            f"expected {len(expected_api_ids)} --api-contract argument(s) in this order: {', '.join(expected_api_ids)}")
+    supplied_api_contracts = args.api_contract or []
+    expected_description = ", ".join(expected_api_ids) if expected_api_ids else "None."
+    require(len(supplied_api_contracts) == len(expected_api_ids),
+            f"expected {len(expected_api_ids)} --api-contract argument(s) in this order: {expected_description}")
 
     api_contracts = []
     api_snapshots = []
     seen_paths = set()
-    for supplied, expected_id in zip(args.api_contract, expected_api_ids):
+    for supplied, expected_id in zip(supplied_api_contracts, expected_api_ids):
         entry, path, raw = inspect_api_contract(supplied, expected_id)
         require(entry["path"] not in seen_paths, f"duplicate API contract path: {entry['path']}")
         seen_paths.add(entry["path"])

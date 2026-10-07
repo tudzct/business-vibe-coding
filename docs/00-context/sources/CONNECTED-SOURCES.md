@@ -15,7 +15,7 @@ These repository Markdown files are the sole authoritative UC and Business Rule 
 
 Use them only where the frozen UC references them. API contracts are authoritative frozen Markdown inputs under `docs/01-inception/api-contracts/`. Approved Figma roots and detailed per-UC capture mappings come only from `docs/00-context/FIGMA-LINK-REVIEW.md`; a frozen dataset is required before use.
 
-- Treat API contracts as frozen, read-only inputs. For each UC, copy every ID from its frozen `Related API IDs` into the Confirmed configuration in source order, together with the exact repository path and raw-byte SHA-256. Do not scan for substitutes or select an API by filename similarity.
+- Treat API contracts as frozen, read-only inputs. Every UC must contain one `Related API IDs` section. If it contains exactly `None.`, use `api_contracts: []` and do not discover or infer an API. Otherwise copy every declared ID into the Confirmed configuration in source order, together with the exact repository path and raw-byte SHA-256. Do not scan for substitutes or select an API by filename similarity.
 - Configuration validation requires every pinned API file to exist under `docs/01-inception/api-contracts/` with `artifact_type: api-contract`, `status: Frozen`, the configured `api_id` and the configured checksum. Prompt and Source preflight additionally require the configured ordered IDs to equal the frozen UC references.
 
 - When creating or refreshing a dataset, read every file key, node ID and URL only from `docs/00-context/FIGMA-LINK-REVIEW.md`. The links inside immutable UC files are provenance-only and may be inaccessible; do not call Figma with them.

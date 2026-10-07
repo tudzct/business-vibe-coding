@@ -10,7 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow/scripts"))
 from metrics_contract import ROOT, digest, epoch, require, validate_canonical_path, writable, validate_metrics
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
-from validate_experiment_configuration import read_configuration_json as read_json, validate
+from validate_experiment_configuration import frozen_uc_api_ids, read_configuration_json as read_json, validate
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-flow-accuracy/scripts"))
 from score_flow_accuracy import validate_baseline as validate_flow_baseline
 from database_baseline import validate_input as validate_database_input, verify_database
@@ -57,23 +57,6 @@ def source_br_ids(raw):
     return ids
 
 
-def source_api_ids(raw):
-    content = raw.decode("utf-8-sig")
-    headings = list(re.finditer(r"(?m)^### Related API IDs[ \t]*\r?$", content))
-    require(headings, "frozen UC Related API IDs section missing")
-    ids = []
-    for heading in headings:
-        section = content[heading.end():]
-        following_heading = re.search(r"(?m)^###? [^\r\n]+", section)
-        if following_heading:
-            section = section[:following_heading.start()]
-        for api_id in re.findall(r"\bAPI-[A-Z0-9]+(?:-[A-Z0-9]+)*\b", section):
-            if api_id not in ids:
-                ids.append(api_id)
-    require(ids, "frozen UC Related API IDs are missing")
-    return ids
-
-
 def check_baselines(uc):
     result, baselines, source_raw = {}, [], None
     for field, kind in (("business_rule_baseline", "business-rule-baseline"), ("flow_baseline", "flow-baseline")):
@@ -111,9 +94,9 @@ def check_baselines(uc):
     if len(baselines) == 2:
         require(baselines[0]["use_case_path"] == baselines[1]["use_case_path"], "BR/flow baseline UC source conflict")
     contracts = uc.get("api_contracts")
-    require(isinstance(contracts, list) and contracts, "configured API contracts missing")
+    require(isinstance(contracts, list), "configured API contracts must be an array")
     configured_ids = [entry.get("api_id") for entry in contracts]
-    require(configured_ids == source_api_ids(source_raw), "configuration/frozen UC API contract order mismatch")
+    require(configured_ids == frozen_uc_api_ids(source_raw), "configuration/frozen UC API contract order mismatch")
     result["api_contracts"] = contracts
     return result
 
