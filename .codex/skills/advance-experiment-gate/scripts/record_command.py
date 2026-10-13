@@ -72,7 +72,9 @@ def prepare(run, folder, action, turn_id):
     if action == "audit":
         business = updated["business_rules"]["initial"]
         counts = validate_flow(updated, folder)["counts"]
-        if business["met"] == business["total"] and counts["correct"] == counts["total"]:
+        evidence = audit_evidence(updated, folder, "initial")
+        if (business["met"] == business["total"] and counts["correct"] == counts["total"]
+                and not evidence["defect_ids"]):
             updated["business_rules"]["final"] = copy.deepcopy(business)
             receipts.append(prepare_transition(updated, folder, "repair_decision", "skipped", turn_id,
                                                 "All frozen BRs and flows pass; repair unnecessary."))

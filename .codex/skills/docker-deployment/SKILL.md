@@ -1,6 +1,6 @@
 ---
 name: docker-deployment
-description: Review whether a research environment can install and run Docker, initialize local FE/BE/MySQL configuration, run Compose when explicitly authorized, diagnose deployment failures, and persist sanitized environment history. Use for setup review, Docker installation, project startup, health checks, deployment troubleshooting, or resuming a failed deployment; do not use to generate features.
+description: Review, initialize, run or diagnose the local FE/BE/MySQL Docker Compose environment when explicitly authorized.
 ---
 
 # Guide Docker Deployment

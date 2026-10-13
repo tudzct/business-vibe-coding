@@ -4,7 +4,7 @@ Canonical runs start at `gates.current: prompt` with empty history after automat
 
 ## Supplementary flow, optional UI and Excel output
 
-`audit-generation-metrics` automatically invokes `audit-flow-accuracy` during the requested first-pass audit and within authorized repair work, before repair completion. The denominator is frozen before source generation from every explicit Basic/Main, Alternative and Exception Flow. Each flow has equal weight. A completion-critical failed step or unmet terminal outcome makes the whole flow incorrect. `flow_error_percent = incorrect / total * 100`; `flow_accuracy_percent = (total - incorrect) / total * 100`. Unknown evidence keeps both exact percentages null and reports coverage plus accuracy bounds.
+`audit-generation-metrics` automatically invokes `audit-flow-accuracy` during the requested first-pass audit and within authorized repair work, before repair completion. The denominator is frozen before source generation from every explicit Basic/Main, Alternative and Exception Flow. Each flow has equal weight. Actual integrated-runtime evidence of a completion-critical failed step or unmet terminal outcome makes the whole flow incorrect. `flow_error_percent = incorrect / total * 100`; `flow_accuracy_percent = (total - incorrect) / total * 100`. Normal unknown evidence keeps both exact percentages null and reports coverage plus accuracy bounds. An evidenced generated-source defect that prevents the complete integrated system from running marks every frozen Flow and BR `execution_blocked`; exact percentages/bounds are null and evaluated coverage is zero.
 
 Configuration freezes `flow_audit_rubric: completion-critical-flow-runtime-v2` independently of auditor assignment. Its assessment and canonical `flow_accuracy` block use integer schema 2 and the same `rubric_id`. Critical/outcome `met` requires target-specific evidence linked to a verified integrated-runtime observation; `correct` additionally requires a connected completed attempt. Input retains runtime/deployment linkage, ordered observation actions, sanitized checksummed artifacts, separate source findings and categorized limitations. See [flow assessment schema](../../.codex/skills/audit-flow-accuracy/references/assessment-schema.md) and [per-flow procedure](../../.codex/skills/audit-flow-accuracy/references/per-flow-audit.md).
 
@@ -18,7 +18,7 @@ Reports render available UI data without recomputing it; absent data may be omit
 
 ## Canonical record
 
-Flow results are persisted in `flow_accuracy.current_summary`, independent of the immutable assessment schema. Projection schema 2 uses `flow_accuracy.selection_policy: accepted-audit-results-v1`: the latest conclusive accepted verdict per frozen flow across all audit stages is reported. Repair/source changes and later `not_evaluable` attempts never erase accepted verdicts. New conclusive results replace earlier ones per flow. `result_scope: experiment_accepted_audit`, `stage: experiment`, and null aggregate `source_revision` prevent attributing all results to one revision. Each row retains its actual evidence assessment, record, stage and source revision. Latest assessment ID/source/status/counts and `retained_from_prior_source_count` expose limitations independently.
+Flow results are persisted in `flow_accuracy.current_summary`, independent of the immutable assessment schema. Projection schema 2 uses `flow_accuracy.selection_policy: accepted-audit-results-v1`: the latest conclusive accepted verdict per frozen flow across all audit stages is reported. Repair/source changes and later `not_evaluable` or `execution_blocked` attempts never erase an earlier conclusive verdict; the latest assessment status/counts still expose those limitations. New conclusive results replace earlier ones per flow. `result_scope: experiment_accepted_audit`, `stage: experiment`, and null aggregate `source_revision` prevent attributing all results to one revision. Each row retains its actual evidence assessment, record, stage and source revision. Latest assessment ID/source/status/counts and `retained_from_prior_source_count` expose limitations independently.
 
 The summary records evaluated-only accuracy/error, coverage, bounds, per-flow source, pending details, measurement_status and has_incorrect_flows. Top-level flow fields match the accepted summary: whole-baseline percentages remain null only while accepted rows are unknown; evaluated-only rates are null when none are evaluated. Original assessments keep their status, scores and hashes. Final-source evidence validation still uses the current immutable assessment, not the aggregate report's null source.
 
@@ -31,7 +31,8 @@ The canonical run JSON records:
 - configuration, UC, configured prompt variant, model, replicate, order, wall-clock time and token use;
 - frozen final-source checksum;
 - initial and final assessment for every frozen BR;
-- each BR status: `met`, `unmet` or `not_evaluable`, with evidence and rationale;
+- each BR status: `met`, `unmet`, `not_evaluable` or `execution_blocked`, with evidence and rationale;
+- one canonical `defects` entry per root cause/source stage, categorized as `business_rule`, `flow` or `technical`, with affected IDs, execution-blocking flag, source revision and checksummed evidence;
 - repair count/time/tokens and affected BR IDs;
 - optional researcher estimates, UI/flow accuracy and structural complexity.
 
@@ -41,7 +42,8 @@ Required consistency:
 - each BR occurs once per assessment snapshot;
 - overall totals equal status counts;
 - repairs never mutate the immutable initial snapshot;
-- claims require inspectable source, configuration, build or bounded runtime evidence;
+- normal conclusive BR/Flow claims produced by AI audit or LLM re-audit require bounded integrated-runtime evidence; direct researcher verdicts remain explicitly attributed and never fabricate runtime proof; static source/configuration/build findings diagnose defects but do not replace runtime verdict evidence;
+- every AI-audited BR `unmet` and Flow `incorrect` is covered by the affected IDs of a defect; a direct researcher correction does not manufacture a defect; one root cause remains one defect even when it affects several BRs/Flows, while `not_evaluable` is not itself a defect;
 - prompt text alone is not evidence.
 
 No test metrics or generated test cases are part of this schema.

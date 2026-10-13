@@ -202,6 +202,18 @@ def validate_runtime(data, definitions, validate_evidence):
                         "target evidence missing from action sequence")
             else:
                 require(ref.get("observation_id") is None, "static evidence cannot claim runtime observation")
+        if item["status"] in {"met", "unmet"}:
+            oid = item.get("observation_id")
+            require(oid in by_id and by_id[oid]["flow_id"] == flow_id,
+                    "conclusive target verdict needs a matching runtime observation")
+            require(runtime["status"] == "ready" and deployment["verified"],
+                    "conclusive target verdict needs verified runtime")
+            runtime_refs = [ref for ref in item["evidence"]
+                            if ref.get("observation_id") == oid and ref.get("kind") in RUNTIME_KINDS]
+            require(runtime_refs, "conclusive target verdict cannot rely on static evidence alone")
+            require(any(target in action["target_ids"] and any(ref in action["evidence"] for ref in runtime_refs)
+                        for action in by_id[oid]["actions"]),
+                    "conclusive target runtime evidence is not linked to the action sequence")
         findings = item.get("source_findings")
         require(isinstance(findings, list), "separate source_findings array required")
         for finding in findings:

@@ -1,6 +1,6 @@
 ---
 name: build-react-frontend
-description: Build or review React 18, TypeScript, Vite and Tailwind frontend code from the approved prompt using frozen Figma evidence.
+description: Implement or review authorized React 18, TypeScript, Vite and Tailwind frontend changes.
 ---
 
 # Build React Frontend

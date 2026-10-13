@@ -2,12 +2,17 @@
 
 Retain separately:
 
-- immutable authoritative UC/UML/BR Markdown inputs;
-- a source-checksum normalization receipt only when raw checkout bytes differ solely by line endings;
-- frozen BR and flow baseline receipts;
-- [approved configured prompt artifact](../../../docs/02-construction/coding-prompts/%3CUC-ID%3E-business-coding-prompt.md);
-- optional run activation, model/time/token metadata and immutable first-pass assessment;
-- each repair sub-prompt and reassessment;
-- final per-BR assessment and final-source checksum.
+- immutable project inputs and their checksums;
+- active-run configuration and baseline references;
+- operation-owned prompt artifacts;
+- source revisions and provenance receipts;
+- immutable observations and evidence;
+- operation-owned correction artifacts;
+- telemetry and state receipts;
+- final source checksum.
 
-Never overwrite first-pass results with repaired results. Derived artifacts may reference source paths and hashes but must not append decisions to immutable UC files. Keep prompts and reports free of secrets and unrelated payloads.
+Never overwrite an earlier observation with a later result. Derived artifacts may reference source paths and hashes but must not append decisions to immutable project inputs.
+
+Artifact retention does not grant context access. Read an artifact only when the active operation's handoff contract requires it. Do not read the producer skill's private instructions, template or references.
+
+Keep prompts, evidence and reports free of secrets and unrelated payloads.

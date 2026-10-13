@@ -37,6 +37,7 @@
     "initial": null,
     "final": null
   },
+  "defects": [],
   "repairs": [],
   "manual_estimates_minutes": [],
   "ui_accuracy_percent": null,

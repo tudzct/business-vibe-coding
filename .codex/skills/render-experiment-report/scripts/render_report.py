@@ -79,7 +79,9 @@ def main():
         evidence = "; ".join(row.get("evidence", [])).replace("|", "\\|")
         lines.append(f"| {row.get('br_id', '')} | {row.get('status', '')} | {evidence} |")
     lines.extend(["", (f"BR counts: {final.get('met', 0)} met, {final.get('unmet', 0)} unmet, "
-                        f"{final.get('not_evaluable', 0)} not evaluable, {final.get('total', 0)} total"), ""])
+                        f"{final.get('not_evaluable', 0)} not evaluable, "
+                        f"{final.get('execution_blocked', 0)} execution blocked, "
+                        f"{final.get('total', 0)} total"), ""])
     flow = data.get("flow_accuracy")
     if flow:
         current = next((item for item in flow.get("assessments", [])
@@ -92,7 +94,8 @@ def main():
                       f"Rubric: `{flow['rubric_id']}`; compare only runs with the same rubric.",
                       f"Status: {current['status']}",
                       f"Flows: {counts.get('correct', 0)} correct, {counts.get('incorrect', 0)} incorrect, "
-                      f"{counts.get('not_evaluable', 0)} not evaluable, {counts.get('total', 0)} total",
+                      f"{counts.get('not_evaluable', 0)} not evaluable, "
+                      f"{counts.get('execution_blocked', 0)} execution blocked, {counts.get('total', 0)} total",
                       f"Flow error (%): {current.get('flow_error_percent') if current.get('flow_error_percent') is not None else 'N/A'}",
                       f"Flow accuracy (%): {current.get('flow_accuracy_percent') if current.get('flow_accuracy_percent') is not None else 'N/A'}",
                       f"Evaluated coverage (%): {current.get('evaluated_coverage_percent')}",
@@ -119,6 +122,14 @@ def main():
             if current["pending_flows"]:
                 lines.extend(["", "Researcher chooses: supply per-flow results for the LLM to record, or ask the LLM to continue measurement.",
                               "Flow evaluation never changes application source. Existing metrics remain saved.", ""])
+    defects = data.get("defects", [])
+    if defects:
+        categories = {name: sum(row.get("category") == name for row in defects)
+                      for name in ("business_rule", "flow", "technical")}
+        lines.extend(["## Defects", "",
+                      f"Total: {len(defects)}; open: {sum(row.get('status') == 'open' for row in defects)}; "
+                      f"execution blocking: {sum(row.get('status') == 'open' and row.get('blocks_execution') is True for row in defects)}.",
+                      "By category: " + json.dumps(categories, ensure_ascii=False), ""])
     lines.extend(optional_ui_lines(data))
     if data.get("metrics") is not None:
         lines.append(metrics_markdown(data["metrics"]))

@@ -4,7 +4,7 @@
 ## Establish the subject and bounds
 
 1. Resolve UC/run/stage, activation and its configuration checksum. Check `flow_audit_rubric`, baseline path/checksum, frozen UC checksum and source revision against the stage's preserved source evidence. Initial uses first-pass source; final uses final source. Do not use a moving worktree as the sole initial source reference.
-2. Read `ordered_flow_ids` from the flow baseline as the complete ordered denominator. For each ID, read the corresponding frozen UC flow in order: entry, preconditions, necessary shared main steps, branch condition, all steps and terminal outcome. Preserve the UC-derived text/order/criticality/branch points in the assessment. A multi-clause step may have several evidence checks within one observation; never split the baseline or change the denominator. Record precise Sheet provenance/cell if ambiguous behavior affects evaluation and stop for researcher resolution; never repair the frozen UC.
+2. Read `ordered_flow_ids` from the flow baseline as the complete ordered denominator. For each ID, read the corresponding frozen UC flow in order: entry, preconditions, necessary shared main steps, branch condition, all steps and terminal outcome. Preserve the UC-derived text/order/criticality/branch points in the assessment. A multi-clause step may have several evidence checks within one observation; never split the baseline or change the denominator. Record the precise frozen-UC source anchor if ambiguous behavior affects evaluation and stop for researcher resolution; never repair the frozen UC.
 3. Trace UI -> event handler -> API client -> controller/service -> storage -> response -> UI consumption. Save source findings separately with original path/lines, claim, limits and a sanitized immutable snapshot/excerpt checksum. A handler's existence does not show invocation; a `catch` does not show exception handling occurred.
 4. Before operating, declare each attempt's scope, allowed data/actions, `planned_at` and time limit. Use only authorized runtime operations. Choose the limit from the flow's expected latency and available observation tools, then stop at completion, blocker or the limit. Preserve every attempt, including failures; explain divergent results rather than selecting only a lucky success.
 
@@ -14,13 +14,14 @@ Record Compose v2 project, relevant FE/BE/MySQL service/container/image IDs and 
 
 | Situation | Evidence and decision |
 |---|---|
-| Daemon unavailable | `runtime.status: BLOCKED`; record blocker, leave unobserved behavior `not_evaluable`; no native Node/MySQL fallback. |
+| Daemon unavailable, researcher setup failure or ambiguous external cause | `runtime.status: BLOCKED`; record the limitation, leave unobserved behavior `not_evaluable`; no native Node/MySQL fallback and no generated-source defect attribution. |
+| Evidenced generated-source defect prevents the integrated system from running | Record one canonical defect with `blocks_execution: true`, reference it in `execution_blocker_defect_ids`, and mark every frozen BR/Flow `execution_blocked`. |
 | Source/image/container mapping unverified | `unverified`; retain diagnostic observations but no runtime `met`/`unmet` claims for that revision. |
 | FE wrong route, envelope parsing or integration setting owned by run | Record application/integration failure when evidence identifies it; a critical failure makes the flow `incorrect`. |
 | Data prerequisites or observation tool missing | Record affected targets, specific missing capability and impact; use `not_evaluable`. |
 | Application versus environment cause unclear | Record `ambiguous_cause`; do not invent an application defect. |
 
-Source may establish a clear missing implementation as static `unmet` even when runtime is blocked. Label it as static evidence, never as an observed runtime failure.
+Source/build/configuration evidence may diagnose and classify a defect, but it cannot establish BR `met`/`unmet` or Flow `correct`/`incorrect` without actual runtime observation.
 
 ## Execute one connected attempt
 
@@ -45,7 +46,7 @@ Do not change source, install mocks or add audit-only endpoints to force a branc
 
 ## Decide and preserve
 
-For every step and terminal outcome record evidence, rationale, separate source findings and a decision: `met` for proved behavior; `unmet` for evidenced failure; `not_evaluable` for insufficient/unreached observation. Every critical/outcome `met` references a verified runtime attempt and target-specific evidence. Unsupported `met` is invalid input, not an automatic fallback.
+For every step and terminal outcome record evidence, rationale, separate source findings and a decision: `met` for runtime-proved behavior; `unmet` for runtime-evidenced failure; `not_evaluable` for insufficient/unreached observation. Every conclusive decision references a verified runtime attempt and target-specific evidence. Unsupported `met` or `unmet` is invalid input, not an automatic fallback.
 
 Apply precedence: critical/outcome `unmet` -> `incorrect`; otherwise missing critical/outcome proof or a complete connected attempt -> `not_evaluable`; otherwise `correct`. Noncritical deviations remain visible without failing the flow. If an early critical step fails, later unreached steps remain `not_evaluable`, while the flow is `incorrect`. All critical/outcome completion claims for `correct` must resolve to the same completed `completion_observation_id`.
 
@@ -53,7 +54,7 @@ Save artifacts under `runs/<RUN-ID>/flow-accuracy/evidence/<assessment-id>/<obse
 
 After saving, show canonical accepted experiment accuracy, coverage, known defects and pending targets. A later inconclusive attempt does not erase accepted verdicts; show its limitations separately. For missing accepted results, follow [follow-up measurement](follow-up-measurement.md): offer researcher results and continued LLM measurement, then save the selected path directly to canonical JSON in the same response turn. Never modify source or repair during evaluation. Researcher verdicts retain attribution and do not rewrite this procedure's original runtime assessment.
 
-Before authorized repair work ends, its automatic audit creates a fresh assessment, revision/deployment check and observations for every flow under the original rubric. New observation IDs/timestamps and assessment-local evidence prevent fabricated initial-to-final copies. An inaccessible final flow is recorded as unknown. If repair is skipped and the source hash is unchanged, reuse the initial assessment as terminal evidence with its original ID/stage/time; no new observation or independent final-audit gate is required. Audit returns defects to the repair caller within its authorization, or to Repair Decision Gate during first-pass work.
+For an explicitly authorized final-stage verification, create a fresh assessment, revision/deployment check and observations for every flow under the original rubric. New observation IDs/timestamps and assessment-local evidence prevent fabricated initial-to-final copies. An inaccessible final flow is `not_evaluable` unless an evidenced generated-source defect blocks the entire system, in which case every frozen Flow is `execution_blocked`. If the source hash is unchanged and no correction occurred, reuse the initial assessment as terminal evidence with its original ID/stage/time; no fabricated observation is allowed. Return validated defects and results to the caller.
 
 ## Generic application pattern (not an assessment or test case)
 

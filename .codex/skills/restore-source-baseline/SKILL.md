@@ -1,6 +1,6 @@
 ---
 name: restore-source-baseline
-description: Restore finalsource backend/frontend application source to the researcher-provided clean baseline before a new system pipeline, replicate, or model condition. Do not use between cumulative UCs or to reset Docker data.
+description: Inspect or restore finalsource from the explicitly supplied clean source baseline without changing Docker data.
 ---
 
 # Restore Source Baseline

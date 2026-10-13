@@ -15,7 +15,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "gen-coding-prompt/
 from validate_prompt_contract import validate_prompt, normalize_variant, validate_configuration
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-generation-metrics/scripts"))
 from calculate_metrics import (accepted_br_summary, br_summary_snapshot,
-                               terminal_assessment_stage, validate_flow, validate_snapshot)
+                               terminal_assessment_stage, validate_flow, validate_snapshot,
+                               validate_br_runtime, validate_defects)
 from flow_summary import accepted_summary
 
 AUDIT_FOLLOWUP_POLICY = "audit-followup-continuation-v1"
@@ -78,8 +79,13 @@ def audit_evidence(run, folder, stage):
     require(isinstance(source, str) and re.fullmatch(r"sha256:[0-9a-f]{64}", source), "audited source hash required")
     if stage == "final":
         require(source == business.get("source_revision"), "final BR/flow source hash mismatch")
+    flow_ids = [row["flow_id"] for row in current["flows"]]
+    defects = validate_defects(run, stage, source, flow_ids)
+    validate_br_runtime(snapshot, current, defects, f"business_rules.{stage}")
     evidence = {"business_rules_sha256": snapshot_hash(snapshot), "flow_assessment_id": summary["assessment_id"],
-                "flow_assessment_sha256": snapshot_hash(current), "source_revision": source}
+                "flow_assessment_sha256": snapshot_hash(current), "source_revision": source,
+                "defect_ids": [row["defect_id"] for row in defects],
+                "defects_sha256": snapshot_hash(defects)}
     if block.get("current_summary") is not None:
         evidence["flow_progress_sha256"] = snapshot_hash(block["current_summary"])
         evidence["flow_followup_ids"] = summary["followup_ids"]
@@ -100,6 +106,16 @@ def validate_repair_authorization(run):
     require(approval.get("mode", "researcher") == "researcher", "repair requires an explicit researcher command")
     require(decision.get("automatic_decision") is None, "repair requires an explicit researcher command")
     return approval
+
+
+def actionable_defects(defects, defect_br_ids, defect_flow_ids):
+    """Project immutable findings through accepted audit corrections without rewriting history."""
+    br_ids, flow_ids = set(defect_br_ids), set(defect_flow_ids)
+    return [row for row in defects if row["status"] == "open" and (
+        row["blocks_execution"] or row["category"] == "technical"
+        or bool(set(row["affected_br_ids"]) & br_ids)
+        or bool(set(row["affected_flow_ids"]) & flow_ids)
+    )]
 
 
 def automatic_context(run, folder, followup_id, source_revision):
@@ -133,7 +149,12 @@ def automatic_context(run, folder, followup_id, source_revision):
     business = accepted_br_summary(run)
     br_ids = [r["br_id"] for r in business["requirements"] if r["status"] == "unmet"]
     flow_ids = [r["flow_id"] for r in summary["flows"] if r["status"] == "incorrect"]
-    outcome = "authorized" if br_ids or flow_ids else (
+    current = next(row for row in run["flow_accuracy"]["assessments"]
+                   if row["assessment_id"] == run["flow_accuracy"]["current_assessment_id"])
+    defects = actionable_defects(
+        validate_defects(run, "initial", source_revision,
+                         [flow["flow_id"] for flow in current["flows"]]), br_ids, flow_ids)
+    outcome = "authorized" if br_ids or flow_ids or defects else (
         "skipped" if business["counts"]["met"] == business["counts"]["total"]
         and summary["counts"]["correct"] == summary["counts"]["total"] else None)
     if summary["counts"].get("not_evaluable", 0) or business["counts"].get("not_evaluable", 0):
@@ -142,7 +163,8 @@ def automatic_context(run, folder, followup_id, source_revision):
                "policy_sha256": digest((ROOT / AUDIT_FOLLOWUP_REFERENCE).read_bytes()),
                "followup_id": followup_id,
                "followup_sha256": snapshot_hash(parts["flow"] if set(parts) == {"flow"} else parts),
-               "source_revision": source_revision, "defect_br_ids": br_ids, "defect_flow_ids": flow_ids}
+               "source_revision": source_revision, "defect_br_ids": br_ids, "defect_flow_ids": flow_ids,
+               "defect_ids": [row["defect_id"] for row in defects]}
     if set(parts) != {"flow"}:
         context["followup_parts"] = sorted(parts)
     return outcome, context
@@ -199,6 +221,11 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
         require(recorded.get("business_rules_sha256") == snapshot_hash(run["business_rules"]["initial"]), "initial BR evidence changed")
         initial = next((r for r in run["flow_accuracy"]["assessments"] if r["assessment_id"] == recorded.get("flow_assessment_id")), None)
         require(initial is not None and snapshot_hash(initial) == recorded.get("flow_assessment_sha256"), "initial flow evidence changed")
+        initial_defects = validate_defects(run, "initial", recorded.get("source_revision"),
+                                           [row["flow_id"] for row in initial["flows"]])
+        require([row["defect_id"] for row in initial_defects] == recorded.get("defect_ids")
+                and snapshot_hash(initial_defects) == recorded.get("defects_sha256"),
+                "initial defect evidence changed")
         for prior_receipt in history:
             pinned = prior_receipt.get("evidence") or {}
             if "flow_progress_sha256" not in pinned:
@@ -228,13 +255,32 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
                     "repair requires conclusive accepted results for every frozen flow; save missing researcher results or complete measurement first")
             require(br_summary["counts"].get("not_evaluable", 0) == 0,
                     "repair requires conclusive accepted results for every frozen BR; save a researcher result or complete re-audit first")
+            current = next(row for row in run["flow_accuracy"]["assessments"]
+                           if row["assessment_id"] == run["flow_accuracy"]["current_assessment_id"])
+            defect_br_ids = [row["br_id"] for row in br_summary["requirements"] if row["status"] == "unmet"]
+            defect_flow_ids = [row["flow_id"] for row in summary["flows"] if row["status"] == "incorrect"]
+            open_defects = actionable_defects(
+                validate_defects(run, "initial", initial_evidence["source_revision"],
+                                 [flow["flow_id"] for flow in current["flows"]]),
+                defect_br_ids, defect_flow_ids)
             require(any(r["status"] == "unmet" for r in br_summary["requirements"])
-                    or summary["counts"]["incorrect"] > 0, "repair requires an evidenced defect")
+                    or summary["counts"]["incorrect"] > 0 or open_defects,
+                    "repair requires an evidenced defect")
         if automatic is not None:
             evidence = initial_evidence
         if outcome == "skipped":
             require(isinstance(reason, str) and reason.strip(), "skip requires the actual decision reason")
             require(not run.get("repairs"), "cannot skip already executed repair")
+            current = next(row for row in run["flow_accuracy"]["assessments"]
+                           if row["assessment_id"] == run["flow_accuracy"]["current_assessment_id"])
+            defect_br_ids = [row["br_id"] for row in br_summary["requirements"] if row["status"] == "unmet"]
+            flow_summary = validate_flow(run, folder)
+            defect_flow_ids = [row["flow_id"] for row in flow_summary["flows"] if row["status"] == "incorrect"]
+            require(not actionable_defects(
+                validate_defects(run, "initial", initial_evidence["source_revision"],
+                                 [flow["flow_id"] for flow in current["flows"]]),
+                defect_br_ids, defect_flow_ids),
+                "cannot skip repair while an evidenced defect remains open")
             run["repair_skip_reason"] = reason
             # Final values are the same observation, not a fabricated second audit.
             initial_evidence = audit_evidence(run, folder, "initial")

@@ -8,7 +8,7 @@ This capture protocol governs `duration_seconds` (Duration seconds). Measure als
 |---|---|---|
 | Prompt | After all required inputs, configuration, frozen resources and Figma resolution are ready; immediately before generating the Draft | Immediately after the complete Draft is persisted, before researcher review/approval |
 | First-pass Source | After read-only preflight and prompt-close approval, immediately before the first source mutation | Immediately after complete first-pass source generation, before build, audit, runtime verification or repair |
-| Each Repair | After defect selection, sub-prompt planning, required resolution and authorization; immediately before executing the correction | After correction, integrated BR/flow/runtime verification and final evidence/hash/status persistence, before responding or waiting for the researcher |
+| Each Repair | At the recorded Repair START endpoint | At the recorded Repair END endpoint after required verification and evidence persistence |
 
 Never start a generation timer merely because a request arrived or a phase remains open. Configuration, approvals, missing-input/Figma resolution, standalone audit/runtime, finalization and reporting are outside execution intervals. For an unexpected blocker during execution, end the segment before resolution or researcher waiting; start a fresh segment only when generation resumes. Retain time already spent on actual failed execution; never exclude attempts merely for failing.
 

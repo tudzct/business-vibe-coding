@@ -15,6 +15,8 @@ from flow_summary import refresh_report, refresh_summary
 OBSERVATION_STATUSES = {"met", "unmet", "not_evaluable"}
 FLOW_TYPES = ("main", "alternative", "exception")
 FLOW_PREFIX_TYPES = {"BF": "main", "AF": "alternative", "EF": "exception"}
+DEFECT_CATEGORIES = {"business_rule", "flow", "technical"}
+DEFECT_STATUSES = {"open", "resolved"}
 
 
 def nonempty(value):
@@ -27,6 +29,63 @@ def validate_evidence(item):
     require(path.is_file(), f"missing evidence: {item['path']}")
     require(item.get("sha256") == digest(path.read_bytes()), f"changed evidence: {item['path']}")
     return path
+
+
+def validate_defects(run, stage=None, source_revision=None, ordered_flow_ids=None):
+    """Validate the canonical, append-only defect inventory and select one audit stage."""
+    defects = run.get("defects")
+    require(isinstance(defects, list), "canonical defects must be an array")
+    ordered_br_ids = (run.get("business_rules") or {}).get("ordered_br_ids", [])
+    require(isinstance(ordered_br_ids, list), "ordered BR IDs required for defect validation")
+    known_br_ids = set(ordered_br_ids)
+    known_flow_ids = set(ordered_flow_ids or [])
+    ids, fingerprints, selected = set(), set(), []
+    for index, defect in enumerate(defects):
+        label = f"defects[{index}]"
+        require(isinstance(defect, dict), f"{label} must be an object")
+        defect_id = defect.get("defect_id")
+        require(isinstance(defect_id, str) and
+                re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", defect_id), f"{label} has unsafe defect_id")
+        require(defect_id not in ids, "duplicate defect_id")
+        ids.add(defect_id)
+        fingerprint = defect.get("fingerprint")
+        require(isinstance(fingerprint, str) and
+                re.fullmatch(r"sha256:[0-9a-f]{64}", fingerprint), f"{label} has invalid fingerprint")
+        identity = (defect.get("stage"), defect.get("source_revision"), fingerprint)
+        require(identity not in fingerprints, "one root cause must be recorded as one defect per source stage")
+        fingerprints.add(identity)
+        require(defect.get("stage") in {"initial", "final"}, f"{label} has invalid stage")
+        revision = defect.get("source_revision")
+        require(isinstance(revision, str) and
+                re.fullmatch(r"sha256:[0-9a-f]{64}", revision), f"{label} has invalid source_revision")
+        require(defect.get("category") in DEFECT_CATEGORIES, f"{label} has invalid category")
+        require(nonempty(defect.get("trigger")) and nonempty(defect.get("description")),
+                f"{label} needs trigger and description")
+        require(defect.get("status") in DEFECT_STATUSES, f"{label} has invalid status")
+        if defect["stage"] == "initial":
+            require(defect["status"] == "open", "initial defects are immutable first-pass findings")
+        require(type(defect.get("blocks_execution")) is bool, f"{label} needs blocks_execution")
+        affected_br_ids = defect.get("affected_br_ids")
+        affected_flow_ids = defect.get("affected_flow_ids")
+        require(isinstance(affected_br_ids, list) and len(affected_br_ids) == len(set(affected_br_ids))
+                and set(affected_br_ids) <= known_br_ids, f"{label} has invalid affected_br_ids")
+        require(isinstance(affected_flow_ids, list) and len(affected_flow_ids) == len(set(affected_flow_ids)),
+                f"{label} has invalid affected_flow_ids")
+        if ordered_flow_ids is not None:
+            require(set(affected_flow_ids) <= known_flow_ids, f"{label} has unknown affected_flow_ids")
+        require(defect["category"] != "business_rule" or affected_br_ids,
+                f"{label} business_rule defect needs an affected BR")
+        require(defect["category"] != "flow" or affected_flow_ids,
+                f"{label} flow defect needs an affected Flow")
+        evidence = defect.get("evidence")
+        require(isinstance(evidence, list) and evidence, f"{label} needs evidence")
+        for ref in evidence:
+            validate_evidence(ref)
+            require(ref.get("source_revision") == revision, f"{label} evidence source revision mismatch")
+        if (stage is None or defect["stage"] == stage) and (
+                source_revision is None or revision == source_revision):
+            selected.append(defect)
+    return selected
 
 
 def validate_observation(item, label):
@@ -139,6 +198,36 @@ def calculate(data):
     definitions = assessment_definitions(supplied, ordered_ids)
     attempts, validate_target = validate_runtime(data, definitions, validate_evidence)
 
+    blocker_ids = data.get("execution_blocker_defect_ids", [])
+    require(isinstance(blocker_ids, list) and len(blocker_ids) == len(set(blocker_ids))
+            and all(nonempty(value) for value in blocker_ids), "invalid execution blocker defect IDs")
+    if blocker_ids:
+        require(data["runtime"].get("status") == "BLOCKED",
+                "execution-blocked assessment requires a blocked runtime")
+        results = [{
+            "flow_id": definition["flow_id"], "type": definition["type"],
+            "status": "execution_blocked", "noncritical_deviations": 0,
+            "execution_blocker_defect_ids": list(blocker_ids),
+            "terminal_outcome": {
+                "text": definition["terminal_outcome"], "status": "execution_blocked",
+                "blocking_defect_ids": list(blocker_ids),
+            },
+            "steps": [{**step, "status": "execution_blocked",
+                       "blocking_defect_ids": list(blocker_ids)} for step in definition["steps"]],
+        } for definition in definitions]
+        return {
+            "schema_version": version, "rubric_id": rubric,
+            "assessment_id": data["assessment_id"], "stage": data["stage"],
+            "input_sha256": digest(json.dumps(data, sort_keys=True, separators=(",", ":")).encode()),
+            "status": "execution_blocked",
+            "counts": {**type_counts, "correct": 0, "incorrect": 0, "not_evaluable": 0,
+                       "execution_blocked": len(results)},
+            "flow_error_percent": None, "flow_accuracy_percent": None,
+            "evaluated_coverage_percent": 0.0,
+            "accuracy_lower_bound_percent": None, "accuracy_upper_bound_percent": None,
+            "flows": results, "input": data,
+        }
+
     results = []
     for definition, assessed in zip(definitions, supplied):
         outcome = assessed.get("terminal_outcome")
@@ -181,7 +270,8 @@ def calculate(data):
         "stage": data["stage"],
         "input_sha256": digest(json.dumps(data, sort_keys=True, separators=(",", ":")).encode()),
         "status": "not_evaluable" if unknown else ("repair_required" if incorrect else "scored"),
-        "counts": {**type_counts, "correct": correct, "incorrect": incorrect, "not_evaluable": unknown},
+        "counts": {**type_counts, "correct": correct, "incorrect": incorrect,
+                   "not_evaluable": unknown, "execution_blocked": 0},
         "flow_error_percent": round(100 * incorrect / total, 6) if exact else None,
         "flow_accuracy_percent": round(100 * (total - incorrect) / total, 6) if exact else None,
         "evaluated_coverage_percent": round(100 * (total - unknown) / total, 6),
@@ -196,15 +286,18 @@ def markdown(result):
     counts = result["counts"]
     accuracy = result["flow_accuracy_percent"]
     error = result["flow_error_percent"]
+    shown = lambda value: "N/A" if value is None else f"{value}%"
     lines = [f"# Flow accuracy: {result['assessment_id']}", "", f"Status: {result['status']}",
              f"Rubric: {method(result['input'])[1]}",
              f"Source revision: {result['input']['source_revision']}",
-             f"Flow accuracy: {str(accuracy) + '%' if accuracy is not None else 'N/A'}",
-             f"Flow error: {str(error) + '%' if error is not None else 'N/A'}",
+             f"Flow accuracy: {shown(accuracy)}",
+             f"Flow error: {shown(error)}",
              f"Evaluated coverage: {result['evaluated_coverage_percent']}%",
-             f"Accuracy bounds: {result['accuracy_lower_bound_percent']}%–{result['accuracy_upper_bound_percent']}%", "",
+             f"Accuracy bounds: {shown(result['accuracy_lower_bound_percent'])} to "
+             f"{shown(result['accuracy_upper_bound_percent'])}", "",
              f"Flows: {counts['correct']} correct, {counts['incorrect']} incorrect, "
-             f"{counts['not_evaluable']} not evaluable, {counts['total']} total", "",
+             f"{counts['not_evaluable']} not evaluable, {counts.get('execution_blocked', 0)} execution blocked, "
+             f"{counts['total']} total", "",
              "| Flow | Type | Status | Noncritical deviations |", "|---|---|---|---:|"]
     for flow in result["flows"]:
         lines.append(f"| {flow['flow_id']} | {flow['type']} | {flow['status']} | {flow['noncritical_deviations']} |")
@@ -230,6 +323,28 @@ def validate_run_result(run, folder, result):
     version, rubric = method(result["input"])
     require(configured_rubric(run, folder, validate_evidence, result["input"]["baseline"]) == rubric,
             "assessment differs from frozen configuration rubric")
+    flow_ids = [flow["flow_id"] for flow in result["flows"]]
+    stage_defects = validate_defects(run, result["stage"], result["input"]["source_revision"], flow_ids)
+    open_defects = {item["defect_id"]: item for item in stage_defects if item["status"] == "open"}
+    open_blocker_ids = {identity for identity, item in open_defects.items() if item["blocks_execution"]}
+    blocker_ids = result["input"].get("execution_blocker_defect_ids", [])
+    blocked = result["status"] == "execution_blocked"
+    if blocked:
+        require(blocker_ids and set(blocker_ids) == open_blocker_ids,
+                "execution blocker IDs must identify every open system blocker for this source stage")
+        require(result["counts"].get("execution_blocked") == result["counts"]["total"]
+                and all(flow["status"] == "execution_blocked" for flow in result["flows"]),
+                "system execution blocking must cover the complete frozen flow inventory")
+    else:
+        require(not blocker_ids and result["counts"].get("execution_blocked", 0) == 0,
+                "non-blocked assessments cannot carry execution blockers")
+        require(not open_blocker_ids,
+                "an open system-blocking defect requires a complete execution-blocked assessment")
+        for flow in result["flows"]:
+            if flow["status"] == "incorrect":
+                require(any(flow["flow_id"] in defect["affected_flow_ids"]
+                            for defect in open_defects.values()),
+                        f"incorrect Flow lacks a canonical affected defect: {flow['flow_id']}")
     destination = folder / "flow-accuracy" / result["assessment_id"]
     json_path = destination.with_name(destination.name + ".json")
     md_path = destination.with_name(destination.name + ".md")
