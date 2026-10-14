@@ -14,9 +14,9 @@ from score_flow_accuracy import (calculate as calculate_flow, validate_run_resul
 from runtime_contract import method, configured_rubric
 from flow_summary import validate_followups
 
-STATUSES = {"met", "unmet", "not_evaluable", "execution_blocked"}
+STATUSES = {"met", "unmet", "not_evaluable"}
 FOLLOWUP_STATUSES = {"met", "unmet", "not_evaluable"}
-FLOW_STATUSES = {"scored", "repair_required", "not_evaluable", "partial", "execution_blocked"}
+FLOW_STATUSES = {"scored", "repair_required", "not_evaluable", "partial"}
 BR_RESULT_POLICY = "accepted-br-audit-results-v1"
 
 
@@ -38,8 +38,10 @@ def validate_snapshot(snapshot, ordered, field):
             raise ValueError(f"{field}.requirements[{index}] needs inspectable evidence")
         if not isinstance(row.get("rationale"), str) or not row["rationale"].strip():
             raise ValueError(f"{field}.requirements[{index}] needs rationale")
-        if row["status"] == "execution_blocked":
-            blockers = row.get("blocking_defect_ids")
+        blockers = row.get("blocking_defect_ids")
+        if blockers not in (None, []):
+            if row["status"] != "unmet":
+                raise ValueError(f"{field}.requirements[{index}] execution blocker must produce unmet")
             if (not isinstance(blockers, list) or not blockers or len(blockers) != len(set(blockers))
                     or any(not isinstance(value, str) or not value.strip() for value in blockers)):
                 raise ValueError(f"{field}.requirements[{index}] needs blocking defect IDs")
@@ -71,16 +73,16 @@ def validate_br_runtime(snapshot, assessment, defects, field, researcher_result_
     blocker_ids = set(assessment.get("input", {}).get("execution_blocker_defect_ids", []))
     researcher_result_ids = set(researcher_result_ids)
     if blocker_ids:
-        if assessment.get("status") != "execution_blocked" or not blocker_ids <= set(open_defects):
+        if assessment.get("status") != "repair_required" or not blocker_ids <= set(open_defects):
             raise ValueError(f"{field} execution blockers do not match the runtime assessment")
         if any(not open_defects[value]["blocks_execution"] for value in blocker_ids):
             raise ValueError(f"{field} references a non-blocking defect as an execution blocker")
-        if any(row["status"] != "execution_blocked" for row in snapshot["requirements"]):
-            raise ValueError(f"{field} must mark every frozen BR execution_blocked")
-    elif any(row["status"] == "execution_blocked" for row in snapshot["requirements"]):
-        raise ValueError(f"{field} cannot be execution_blocked without an evidenced system blocker")
+        if any(row["status"] != "unmet" for row in snapshot["requirements"]):
+            raise ValueError(f"{field} must mark every frozen BR unmet when execution is blocked")
+    elif any(row.get("blocking_defect_ids") not in (None, []) for row in snapshot["requirements"]):
+        raise ValueError(f"{field} cannot reference execution blockers without an evidenced system blocker")
     for row in snapshot["requirements"]:
-        if row["status"] == "execution_blocked":
+        if row.get("blocking_defect_ids") not in (None, []):
             if set(row["blocking_defect_ids"]) != blocker_ids:
                 raise ValueError(f"{field}.{row['br_id']} must reference every system execution blocker")
             continue
@@ -148,7 +150,7 @@ def accepted_br_summary(data):
             "result_source": "assessment", "record_id": "business_rules.initial",
             "evidence": list(row["evidence"]), "rationale": row["rationale"],
             **({"blocking_defect_ids": list(row["blocking_defect_ids"])}
-               if row["status"] == "execution_blocked" else
+               if row.get("blocking_defect_ids") not in (None, []) else
                {"runtime_observation_ids": list(row["runtime_observation_ids"])}),
         }
         for row in initial["requirements"]
@@ -192,9 +194,9 @@ def accepted_br_summary(data):
         if any(row.get("status") not in FOLLOWUP_STATUSES for row in results):
             raise ValueError("invalid BR follow-up status")
         blocked_ids = {row["br_id"] for row in initial["requirements"]
-                       if row["status"] == "execution_blocked"}
+                       if row.get("blocking_defect_ids") not in (None, [])}
         if set(ids) & blocked_ids:
-            raise ValueError("audit follow-up cannot overwrite execution_blocked BRs")
+            raise ValueError("audit follow-up cannot overwrite blocker-derived BR verdicts")
         if mode == "researcher_result":
             text = record.get("researcher_result")
             if not isinstance(text, str) or not text.strip():
@@ -270,13 +272,12 @@ def br_summary_snapshot(summary):
     rows = [{"br_id": row["br_id"], "status": row["status"],
              "evidence": list(row["evidence"]), "rationale": row["rationale"],
              **({"blocking_defect_ids": list(row["blocking_defect_ids"])}
-                if row["status"] == "execution_blocked" else
+                if row.get("blocking_defect_ids") not in (None, []) else
                 {"runtime_observation_ids": list(row["runtime_observation_ids"])})}
             for row in summary["requirements"]]
     counts = summary["counts"]
     return {"requirements": rows, "total": counts["total"], "met": counts["met"],
-            "unmet": counts["unmet"], "not_evaluable": counts["not_evaluable"],
-            "execution_blocked": counts["execution_blocked"]}
+            "unmet": counts["unmet"], "not_evaluable": counts["not_evaluable"]}
 
 
 def validate_flow(data, folder):
@@ -327,7 +328,7 @@ def validate_flow(data, folder):
     counts = effective.get("counts")
     if (not isinstance(counts, dict) or counts.get("total") !=
             counts.get("correct", 0) + counts.get("incorrect", 0)
-            + counts.get("not_evaluable", 0) + counts.get("execution_blocked", 0)):
+            + counts.get("not_evaluable", 0)):
         raise ValueError("flow_accuracy counts do not reconcile")
     if data.get("flow_accuracy_percent") != effective.get("flow_accuracy_percent") or data.get("flow_error_percent") != effective.get("flow_error_percent"):
         raise ValueError("flow percentage mismatch")

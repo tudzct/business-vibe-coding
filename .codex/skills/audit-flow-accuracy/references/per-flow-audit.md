@@ -15,7 +15,7 @@ Record Compose v2 project, relevant FE/BE/MySQL service/container/image IDs and 
 | Situation | Evidence and decision |
 |---|---|
 | Daemon unavailable, researcher setup failure or ambiguous external cause | `runtime.status: BLOCKED`; record the limitation, leave unobserved behavior `not_evaluable`; no native Node/MySQL fallback and no generated-source defect attribution. |
-| Evidenced generated-source defect prevents the integrated system from running | Record one canonical defect with `blocks_execution: true`, reference it in `execution_blocker_defect_ids`, and mark every frozen BR/Flow `execution_blocked`. |
+| Evidenced generated-source defect prevents the integrated system from running | Record one canonical defect with `blocks_execution: true`, reference it in `execution_blocker_defect_ids`, mark every frozen BR `unmet` and every frozen Flow `incorrect`, and report execution blocking separately. |
 | Source/image/container mapping unverified | `unverified`; retain diagnostic observations but no runtime `met`/`unmet` claims for that revision. |
 | FE wrong route, envelope parsing or integration setting owned by run | Record application/integration failure when evidence identifies it; a critical failure makes the flow `incorrect`. |
 | Data prerequisites or observation tool missing | Record affected targets, specific missing capability and impact; use `not_evaluable`. |
@@ -54,7 +54,7 @@ Save artifacts under `runs/<RUN-ID>/flow-accuracy/evidence/<assessment-id>/<obse
 
 After saving, show canonical accepted experiment accuracy, coverage, known defects and pending targets. A later inconclusive attempt does not erase accepted verdicts; show its limitations separately. For missing accepted results, follow [follow-up measurement](follow-up-measurement.md): offer researcher results and continued LLM measurement, then save the selected path directly to canonical JSON in the same response turn. Never modify source or repair during evaluation. Researcher verdicts retain attribution and do not rewrite this procedure's original runtime assessment.
 
-For an explicitly authorized final-stage verification, create a fresh assessment, revision/deployment check and observations for every flow under the original rubric. New observation IDs/timestamps and assessment-local evidence prevent fabricated initial-to-final copies. An inaccessible final flow is `not_evaluable` unless an evidenced generated-source defect blocks the entire system, in which case every frozen Flow is `execution_blocked`. If the source hash is unchanged and no correction occurred, reuse the initial assessment as terminal evidence with its original ID/stage/time; no fabricated observation is allowed. Return validated defects and results to the caller.
+For an explicitly authorized final-stage verification, create a fresh assessment, revision/deployment check and observations for every flow under the original rubric. New observation IDs/timestamps and assessment-local evidence prevent fabricated initial-to-final copies. An inaccessible final flow is `not_evaluable` unless an evidenced generated-source defect blocks the entire system, in which case every frozen Flow is `incorrect` and carries the blocking defect IDs. If the source hash is unchanged and no correction occurred, reuse the initial assessment as terminal evidence with its original ID/stage/time; no fabricated observation is allowed. Return validated defects and results to the caller.
 
 ## Generic application pattern (not an assessment or test case)
 

@@ -21,12 +21,13 @@ Explicit close/finalize commands supply canonical `metrics` through the telemetr
 
 | BR ID | Initial | Final | Evidence |
 |---|---|---|---|
-| `<BR-ID>` | `met/unmet/not_evaluable/execution_blocked` | `met/unmet/not_evaluable/execution_blocked` | `<runtime observations or blocking defects>` |
+| `<BR-ID>` | `met/unmet/not_evaluable` | `met/unmet/not_evaluable` | `<runtime observations or blocking defects>` |
 
 ## Flow accuracy
 
-- Status: `scored | repair_required | partial | not_evaluable | execution_blocked`
-- Correct/incorrect/not evaluable/execution blocked: `<counts>`
+- Status: `scored | repair_required | partial | not_evaluable`
+- Correct/incorrect/not evaluable: `<counts>`
+- Execution blocked: `<yes/no; blocking defect IDs when yes>`
 - Flow error/accuracy: `<percent or N/A>`
 - Evaluated coverage and bounds: `<values>`
 - Evaluated-only accuracy/error: `<percent or N/A; denominator = correct + incorrect>`

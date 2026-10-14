@@ -206,25 +206,26 @@ def calculate(data):
                 "execution-blocked assessment requires a blocked runtime")
         results = [{
             "flow_id": definition["flow_id"], "type": definition["type"],
-            "status": "execution_blocked", "noncritical_deviations": 0,
+            "status": "incorrect", "noncritical_deviations": 0,
             "execution_blocker_defect_ids": list(blocker_ids),
             "terminal_outcome": {
-                "text": definition["terminal_outcome"], "status": "execution_blocked",
+                "text": definition["terminal_outcome"], "status": "unmet",
                 "blocking_defect_ids": list(blocker_ids),
             },
-            "steps": [{**step, "status": "execution_blocked",
+            "steps": [{**step, "status": "not_evaluable",
                        "blocking_defect_ids": list(blocker_ids)} for step in definition["steps"]],
         } for definition in definitions]
         return {
             "schema_version": version, "rubric_id": rubric,
             "assessment_id": data["assessment_id"], "stage": data["stage"],
             "input_sha256": digest(json.dumps(data, sort_keys=True, separators=(",", ":")).encode()),
-            "status": "execution_blocked",
-            "counts": {**type_counts, "correct": 0, "incorrect": 0, "not_evaluable": 0,
-                       "execution_blocked": len(results)},
-            "flow_error_percent": None, "flow_accuracy_percent": None,
-            "evaluated_coverage_percent": 0.0,
-            "accuracy_lower_bound_percent": None, "accuracy_upper_bound_percent": None,
+            "status": "repair_required",
+            "execution_blocked": True,
+            "execution_blocker_defect_ids": list(blocker_ids),
+            "counts": {**type_counts, "correct": 0, "incorrect": len(results), "not_evaluable": 0},
+            "flow_error_percent": 100.0, "flow_accuracy_percent": 0.0,
+            "evaluated_coverage_percent": 100.0,
+            "accuracy_lower_bound_percent": 0.0, "accuracy_upper_bound_percent": 0.0,
             "flows": results, "input": data,
         }
 
@@ -270,8 +271,10 @@ def calculate(data):
         "stage": data["stage"],
         "input_sha256": digest(json.dumps(data, sort_keys=True, separators=(",", ":")).encode()),
         "status": "not_evaluable" if unknown else ("repair_required" if incorrect else "scored"),
+        "execution_blocked": False,
+        "execution_blocker_defect_ids": [],
         "counts": {**type_counts, "correct": correct, "incorrect": incorrect,
-                   "not_evaluable": unknown, "execution_blocked": 0},
+                   "not_evaluable": unknown},
         "flow_error_percent": round(100 * incorrect / total, 6) if exact else None,
         "flow_accuracy_percent": round(100 * (total - incorrect) / total, 6) if exact else None,
         "evaluated_coverage_percent": round(100 * (total - unknown) / total, 6),
@@ -293,10 +296,12 @@ def markdown(result):
              f"Flow accuracy: {shown(accuracy)}",
              f"Flow error: {shown(error)}",
              f"Evaluated coverage: {result['evaluated_coverage_percent']}%",
+             f"Execution blocked: {'yes' if result.get('execution_blocked') else 'no'}",
+             f"Execution blocker defects: {', '.join(result.get('execution_blocker_defect_ids', [])) or 'none'}",
              f"Accuracy bounds: {shown(result['accuracy_lower_bound_percent'])} to "
              f"{shown(result['accuracy_upper_bound_percent'])}", "",
              f"Flows: {counts['correct']} correct, {counts['incorrect']} incorrect, "
-             f"{counts['not_evaluable']} not evaluable, {counts.get('execution_blocked', 0)} execution blocked, "
+             f"{counts['not_evaluable']} not evaluable, "
              f"{counts['total']} total", "",
              "| Flow | Type | Status | Noncritical deviations |", "|---|---|---|---:|"]
     for flow in result["flows"]:
@@ -328,15 +333,26 @@ def validate_run_result(run, folder, result):
     open_defects = {item["defect_id"]: item for item in stage_defects if item["status"] == "open"}
     open_blocker_ids = {identity for identity, item in open_defects.items() if item["blocks_execution"]}
     blocker_ids = result["input"].get("execution_blocker_defect_ids", [])
-    blocked = result["status"] == "execution_blocked"
+    blocked = bool(blocker_ids)
     if blocked:
         require(blocker_ids and set(blocker_ids) == open_blocker_ids,
                 "execution blocker IDs must identify every open system blocker for this source stage")
-        require(result["counts"].get("execution_blocked") == result["counts"]["total"]
-                and all(flow["status"] == "execution_blocked" for flow in result["flows"]),
-                "system execution blocking must cover the complete frozen flow inventory")
+        require(result.get("execution_blocked") is True
+                and result.get("execution_blocker_defect_ids") == blocker_ids
+                and result["counts"]["incorrect"] == result["counts"]["total"]
+                and all(flow["status"] == "incorrect" for flow in result["flows"]),
+                "system execution blocking must make the complete frozen flow inventory incorrect")
+        require(result["flow_accuracy_percent"] == 0.0 and result["flow_error_percent"] == 100.0,
+                "system execution blocking must score zero accuracy")
+        all_br_ids = set((run.get("business_rules") or {}).get("ordered_br_ids", []))
+        all_flow_ids = set(flow_ids)
+        affected_br_ids = {value for identity in blocker_ids for value in open_defects[identity]["affected_br_ids"]}
+        affected_flow_ids = {value for identity in blocker_ids for value in open_defects[identity]["affected_flow_ids"]}
+        require(affected_br_ids == all_br_ids and affected_flow_ids == all_flow_ids,
+                "execution blockers must cover the complete frozen BR and Flow inventories")
     else:
-        require(not blocker_ids and result["counts"].get("execution_blocked", 0) == 0,
+        require(not blocker_ids and result.get("execution_blocked") is False
+                and result.get("execution_blocker_defect_ids") == [],
                 "non-blocked assessments cannot carry execution blockers")
         require(not open_blocker_ids,
                 "an open system-blocking defect requires a complete execution-blocked assessment")

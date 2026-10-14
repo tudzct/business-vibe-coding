@@ -79,7 +79,6 @@ def main():
         lines.append(f"| {row.get('br_id', '')} | {row.get('status', '')} | {evidence} |")
     lines.extend(["", (f"BR counts: {final.get('met', 0)} met, {final.get('unmet', 0)} unmet, "
                         f"{final.get('not_evaluable', 0)} not evaluable, "
-                        f"{final.get('execution_blocked', 0)} execution blocked, "
                         f"{final.get('total', 0)} total"), ""])
     flow = data.get("flow_accuracy")
     if flow:
@@ -94,7 +93,9 @@ def main():
                       f"Status: {current['status']}",
                       f"Flows: {counts.get('correct', 0)} correct, {counts.get('incorrect', 0)} incorrect, "
                       f"{counts.get('not_evaluable', 0)} not evaluable, "
-                      f"{counts.get('execution_blocked', 0)} execution blocked, {counts.get('total', 0)} total",
+                      f"{counts.get('total', 0)} total",
+                      f"Execution blocked: {'yes' if current.get('execution_blocked') else 'no'}",
+                      f"Execution blocker defects: {', '.join(current.get('execution_blocker_defect_ids', [])) or 'none'}",
                       f"Flow error (%): {current.get('flow_error_percent') if current.get('flow_error_percent') is not None else 'N/A'}",
                       f"Flow accuracy (%): {current.get('flow_accuracy_percent') if current.get('flow_accuracy_percent') is not None else 'N/A'}",
                       f"Evaluated coverage (%): {current.get('evaluated_coverage_percent')}",
