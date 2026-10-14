@@ -6,11 +6,11 @@ This contract defines shared integrity and handoff boundaries. It does not defin
 
 The active configuration pins one UC/run identity, project dependencies and database baseline. Consumers validate exact paths, identities and raw-byte checksums. An empty API inventory is valid only when the frozen use case explicitly declares no related API.
 
-The configured DBML, migration history and live database fingerprint form one immutable run input. Active operations map to existing structure and may perform authorized business DML. They do not execute migrations, DDL or schema synchronization.
+The configured DBML, migration history and live database fingerprint form one immutable run input. Active operations map to existing structure and may perform authorized DML. They do not execute migrations, DDL or schema synchronization.
 
 ## Prompt identity
 
-A coding-prompt artifact is selected by exact active-run identity, path and checksum. Variant metadata is an opaque identity. Validation checks configured identity and artifact structure without interpreting a variant name as behavioral instruction.
+A coding-prompt artifact is selected by exact active-run identity, path and checksum. Validation checks configured identity and artifact structure.
 
 The coding-prompt template is private to its owning operation. Shared context must not restate its sections or responsibilities.
 
@@ -29,7 +29,7 @@ Do not add inferred fields, rewrite prior evidence or use artifacts from another
 
 ## Source provenance
 
-Before source mutation, record the active configuration reference, prompt reference, model tuple, replicate/order, current input source hash and expected predecessor or clean-baseline hash. Do not silently restore between cumulative units or inherit another condition's source.
+Before source mutation, record the active configuration reference, prompt reference, model tuple, replicate/order, current input source hash and expected predecessor or clean-baseline hash. Do not silently restore between cumulative units or inherit another run's source.
 
 An unresolved source identity is a blocker. Preserve current source and evidence while the operator resolves provenance.
 

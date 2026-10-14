@@ -73,8 +73,8 @@ def inspect_use_case(value):
     path = repository_file(value, UC_ROOT, ".md", "use case")
     raw = path.read_bytes()
     metadata = frontmatter(raw.decode("utf-8-sig"), "use case")
-    require(metadata.get("artifact_type") == "business-use-case-specification",
-            "use case artifact_type must be business-use-case-specification")
+    require(metadata.get("artifact_type") == "use-case-specification",
+            "use case artifact_type must be use-case-specification")
     require(metadata.get("status") == "Frozen", "use case status must be Frozen")
     uc_id = metadata.get("uc_id")
     require(isinstance(uc_id, str) and re.fullmatch(r"UC-[A-Za-z0-9_-]+", uc_id),

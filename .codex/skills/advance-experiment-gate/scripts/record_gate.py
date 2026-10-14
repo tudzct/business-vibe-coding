@@ -12,7 +12,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow/scripts"))
 from metrics_contract import ROOT, atomic_write, context, digest, read_json, require, run_lock, validate_metrics, writable
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "gen-coding-prompt/scripts"))
-from validate_prompt_contract import validate_prompt, normalize_variant, validate_configuration
+from validate_prompt_contract import validate_prompt, validate_configuration
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-generation-metrics/scripts"))
 from calculate_metrics import (accepted_br_summary, br_summary_snapshot,
                                terminal_assessment_stage, validate_flow, validate_snapshot,
@@ -189,23 +189,19 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
     config = validate_configuration(config_path)
     assignments = [r for r in config["runs"] if r.get("uc_id") == run["uc_id"] and r.get("run_id") == run["run_id"]]
     require(len(assignments) == 1, "gate needs configured UC/run")
-    variant = normalize_variant(assignments[0].get("prompt_variant"))
-    require(normalize_variant(run.get("prompt_variant")) == variant, "canonical run/configuration variant mismatch")
     if gate != "prompt" and (folder / "run-activation.json").is_file():
         activation = read_json(folder / "run-activation.json")
         require(activation.get("uc_id") == run["uc_id"] and activation.get("run_id") == run["run_id"]
                 and activation.get("status") == "Confirmed", "gate activation mismatch")
         require(activation.get("configuration_artifact") == config_ref["artifact"]
                 and activation.get("configuration_checksum") == config_ref["checksum"], "activation/configuration mismatch")
-        require(normalize_variant(activation.get("prompt_variant")) == variant, "gate activation variant mismatch")
     evidence = {}
     if gate in {"prompt", "source"}:
         reference = run.get("coding_prompt") or {}
         prompt = writable(ROOT / reference.get("path", ""))
         require(prompt.is_file() and digest(prompt.read_bytes()) == reference.get("sha256"), "approved coding_prompt reference required")
-        result = validate_prompt(config_path, run["uc_id"], run["run_id"], prompt,
-                                 folder / "run-activation.json" if gate == "source" and (folder / "run-activation.json").is_file() else None)
-        require(normalize_variant(run.get("prompt_variant")) == result["prompt_variant"], "run/prompt variant mismatch")
+        validate_prompt(config_path, run["uc_id"], run["run_id"], prompt,
+                        folder / "run-activation.json" if gate == "source" and (folder / "run-activation.json").is_file() else None)
         closed_phase(run, "prompt_generation" if gate == "prompt" else "source_generation")
         evidence["coding_prompt"] = reference
     if gate in {"first_pass_audit", "repair_decision", "repair", "final_metrics"}:

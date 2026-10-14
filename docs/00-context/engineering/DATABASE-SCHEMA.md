@@ -95,7 +95,7 @@ Preserve partial source and evidence and record the blocked outcome using the ow
 ## Source and data boundaries
 
 - An authorized operation may read DBML/migrations and map entities/queries to exact existing tables, keys and types. It must not edit migration files, CLI schema infrastructure, DBML or live schema.
-- Allow authorized business SELECT/INSERT/UPDATE/DELETE and transactions. Never seed, truncate, reset or erase data just to force a desired result.
+- Allow authorized SELECT/INSERT/UPDATE/DELETE and transactions. Never seed, truncate, reset or erase data just to force a desired result.
 - Keep `synchronize: false` and application `migrationsRun: false`. Docker migration execution belongs only to operator setup outside runs.
 - A later UC may retain the same migration head if no schema change is needed. Runs compared against one another use matching migration history, DBML hash, schema fingerprint and starting-data protocol on independent runtime state.
 - Reset a volume only on explicit operator instruction. Source baseline restoration preserves database infrastructure and never resets MySQL.
@@ -105,6 +105,6 @@ Preserve partial source and evidence and record the blocked outcome using the ow
 
 Keep the same normalized metadata algorithm for capture and verification. Container-root metadata access avoids incomplete application-account visibility; credentials never appear in output. Backend and migration Compose settings must target the inspected database, and the running backend is checked when present.
 
-Include schema name/default charset/collation, case policy, base table options, columns/order/types/defaults/nullability/generated expressions/SRID, ordered indexes, PK/unique/FK/CHECK constraints, FK actions and partitions. The migration table's structure is included; its records are checked separately. Exclude business records, physical sizes, cardinality, timestamps, auto-increment counters, comments and MySQL patch version. Require MySQL 8.4. Views, triggers, routines and events remain unsupported and block validation. Equivalent database instances intentionally share a fingerprint. Emptiness is verified separately.
+Include schema name/default charset/collation, case policy, base table options, columns/order/types/defaults/nullability/generated expressions/SRID, ordered indexes, PK/unique/FK/CHECK constraints, FK actions and partitions. The migration table's structure is included; its records are checked separately. Exclude application records, physical sizes, cardinality, timestamps, auto-increment counters, comments and MySQL patch version. Require MySQL 8.4. Views, triggers, routines and events remain unsupported and block validation. Equivalent database instances intentionally share a fingerprint. Emptiness is verified separately.
 
 References: https://typeorm.io/docs/advanced-topics/migrations/ and https://dev.mysql.com/doc/refman/8.4/en/information-schema.html . The helper accepts the Compose v2-compatible CLI (major 2 or 5).

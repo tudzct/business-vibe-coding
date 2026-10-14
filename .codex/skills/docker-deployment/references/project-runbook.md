@@ -1,4 +1,4 @@
-# Business Vibe Coding Docker runbook
+# Docker runbook
 
 - Compose root: `finalsource/compose.yaml`
 - Configuration: `finalsource/.env` created from the committed example after researcher authorization.

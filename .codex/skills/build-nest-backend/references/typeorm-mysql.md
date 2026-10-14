@@ -11,9 +11,9 @@
 
 ## Transactions and concurrency
 
-- Use a transaction when one business operation performs multiple dependent writes or state changes.
+- Use a transaction when one operation performs multiple dependent writes or state changes.
 - Inside a TypeORM transaction use only the provided transactional entity manager/repositories, never the global manager/repository.
-- Choose isolation, locking and idempotency only from explicit UC/Business Rule requirements. Handle duplicate/deadlock outcomes without exposing database errors.
+- Do not invent isolation, locking or idempotency behavior. Handle duplicate/deadlock outcomes without exposing database errors.
 - Use `synchronize: false` and application `migrationsRun: false` under the [shared operational constitution](../../../../AGENTS.md#shared-operational-constitution). Entity edits map existing tables.
 
 ## MySQL

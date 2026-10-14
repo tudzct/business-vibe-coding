@@ -101,7 +101,7 @@ def check_baselines(uc):
     return result
 
 
-def select_canonical(uc_id, run_id=None, variant=None, configuration=None, run_json=None):
+def select_canonical(uc_id, run_id=None, configuration=None, run_json=None):
     if run_json is not None:
         path = writable(run_json)
         require(path.is_file(), f"missing Canonical Run JSON: {path}")
@@ -115,8 +115,6 @@ def select_canonical(uc_id, run_id=None, variant=None, configuration=None, run_j
             continue
         validate_canonical_path(path, candidate)
         if run_id is not None and candidate.get("run_id") != run_id:
-            continue
-        if variant is not None and candidate.get("prompt_variant") != variant:
             continue
         reference = candidate.get("experiment_configuration") or {}
         if configuration is not None and writable(ROOT / reference.get("artifact", "")) != writable(configuration):
@@ -177,12 +175,12 @@ def check_canonical(run, config, assignment, uc, stage):
         require(run.get("run_status") not in {"complete", "stopped", "repair_declined"}, "run is terminal")
 
 
-def preflight(uc_id, configuration=None, run_id=None, variant=None, run_json=None,
+def preflight(uc_id, configuration=None, run_id=None, run_json=None,
               expected_checksum=None, stage="prompt", use_case=None):
     require(stage in {"prompt", "activation", "source"}, "invalid preflight stage")
     require(isinstance(uc_id, str) and uc_id and all(c.isalnum() or c in "-_." for c in uc_id)
             and uc_id not in {".", ".."}, "invalid UC ID")
-    canonical_path, canonical = select_canonical(uc_id, run_id, variant, configuration, run_json)
+    canonical_path, canonical = select_canonical(uc_id, run_id, configuration, run_json)
     canonical_checksum = digest(canonical_path.read_bytes())
     if canonical is not None:
         require(canonical.get("uc_id") == uc_id, "canonical UC mismatch")
@@ -205,14 +203,12 @@ def preflight(uc_id, configuration=None, run_id=None, variant=None, run_json=Non
         require(digest(path.read_bytes()) == original_checksum, "configuration changed during validation")
         for assignment in data["runs"]:
             if assignment["uc_id"] == uc_id and (run_id is None or assignment["run_id"] == run_id):
-                if variant is None or assignment.get("prompt_variant") == variant:
-                    matches.append((path, data, assignment, original_checksum))
+                matches.append((path, data, assignment, original_checksum))
     require(len(matches) == 1, "configuration/UC/run selection is missing, conflicting or ambiguous; provide exact --configuration and --run-id")
     path, data, assignment, checksum = matches[0]
     require(expected_checksum is None or checksum == expected_checksum, "configuration changed since preflight")
     if canonical is not None:
         check_reference(canonical.get("experiment_configuration"), path, data, checksum)
-        require(canonical.get("prompt_variant") == assignment.get("prompt_variant"), "canonical variant mismatch")
     check_pinned_evidence(path, data, checksum)
     uc = data["use_case"]
     baselines = check_baselines(uc)
@@ -239,7 +235,6 @@ def preflight(uc_id, configuration=None, run_id=None, variant=None, run_json=Non
     require(digest(path.read_bytes()) == checksum, "configuration changed during preflight")
     require(digest(canonical_path.read_bytes()) == canonical_checksum, "Canonical Run JSON changed during preflight")
     return {"status": "valid", "uc_id": uc_id, "run_id": assignment["run_id"],
-            "prompt_variant": assignment.get("prompt_variant"),
             "experiment_configuration": {"artifact": path.relative_to(ROOT).as_posix(),
                                          "configuration_id": data["configuration_id"], "checksum": checksum,
                                          "comparison_group_id": data["comparison_group_id"],
@@ -254,7 +249,6 @@ def main():
     parser.add_argument("--uc-id", required=True)
     parser.add_argument("--configuration", type=Path)
     parser.add_argument("--run-id")
-    parser.add_argument("--variant")
     parser.add_argument("--run-json", type=Path)
     parser.add_argument("--use-case", type=Path)
     parser.add_argument("--stage", choices=("prompt", "activation", "source"), default="prompt")

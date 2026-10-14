@@ -30,7 +30,9 @@ Operations exchange information only through their validated handoff artifacts. 
 
 Project inputs differ from skill instructions. An active skill may inspect project inputs that its own contract permits. Do not add a global prohibition against autonomous discovery of permitted project inputs, and do not use shared documentation to direct attention toward particular requirement categories or evaluation criteria.
 
-During run-scoped work, do not open, compare or use configurations, results, reports or other artifacts belonging to another UC, run, model or variant. If encountered incidentally, disregard them. `finalsource` is the permitted cumulative application codebase and is not treated as a prior result artifact.
+During run-scoped work, do not open, compare or use configurations, results, reports or other artifacts belonging to another UC, run or model. If encountered incidentally, disregard them. `finalsource` is the permitted cumulative application codebase and is not treated as a prior result artifact.
+
+Use only the current working tree and current `HEAD` during run-scoped work. Do not enumerate, open, compare or infer context from other branches, tags, remote refs, reflog, commit messages or repository history unless the operator explicitly requests a repository review outside the run.
 
 Any path containing `<UC-ID>` or its URL-encoded form `%3CUC-ID%3E` is a generic pattern. Substitute the active ID before using it; never treat the placeholder as a literal file.
 
@@ -38,7 +40,7 @@ When a material ambiguity, contradiction or missing decision appears, do not inv
 
 ## Technical environment
 
-Database handling follows `docs/00-context/engineering/DATABASE-SCHEMA.md`. The configured DBML, migration history and database fingerprint are immutable within a run. Authorized operations may perform business DML, but never DDL, schema synchronization, migration execution or migration/DBML edits. Database baseline changes require operator setup and a new compatible configuration.
+Database handling follows `docs/00-context/engineering/DATABASE-SCHEMA.md`. The configured DBML, migration history and database fingerprint are immutable within a run. Authorized operations may perform DML, but never DDL, schema synchronization, migration execution or migration/DBML edits. Database baseline changes require operator setup and a new compatible configuration.
 
 Docker Compose v2 is the supported FE/BE/MySQL runtime. Do not fall back to native host services. Do not reset volumes, execute setup migrations or perform destructive cleanup unless the operator explicitly requests that action outside an active run.
 

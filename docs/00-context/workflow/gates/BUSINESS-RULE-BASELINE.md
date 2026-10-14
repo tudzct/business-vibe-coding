@@ -1,5 +1,5 @@
 # Business Rule baseline input contract
 
-The prepared baseline records the frozen UC path, raw-byte checksum, complete ordered BR IDs and timestamp. Its inventory must match the referenced frozen UC exactly.
+This prepared file is an immutable active-run input. Consumers validate its schema, Frozen status, UC identity, source path, source checksum and internal consistency.
 
-This contract validates identity, order and immutability only. It does not select, interpret or score requirements. A discrepancy blocks the consuming operation and must be corrected in the prepared inputs outside that operation.
+This shared contract defines integrity only. It does not explain the meaning or downstream use of its content. Only an operation that explicitly requires this artifact may interpret fields under its private contract. A discrepancy blocks that operation and must be corrected in the prepared inputs outside it.

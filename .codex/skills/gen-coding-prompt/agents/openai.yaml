@@ -1,4 +1,4 @@
 interface:
-  display_name: "Generate Business Coding Prompt"
+  display_name: "Generate Coding Prompt"
   short_description: "Generate the configured coding prompt from a UC"
-  default_prompt: "Use $gen-coding-prompt with my frozen use-case Markdown path and generate its Business Coding Prompt."
+  default_prompt: "Use $gen-coding-prompt with my frozen use-case Markdown path and generate its Coding Prompt."

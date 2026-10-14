@@ -5,7 +5,7 @@
 - Preserve `strict` behavior. Model nullable/optional states explicitly and narrow `unknown` before use.
 - Do not use `any`, boxed primitives (`String`, `Number`, `Boolean`, `Object`), non-null assertions or unsafe casts without a documented boundary reason.
 - Define domain/API types near the API layer; keep component props specific and readonly where practical.
-- Use discriminated unions for multi-state flows and exhaustive switches for business-sensitive variants.
+- Use discriminated unions for multi-state flows and exhaustive switches for behavior-sensitive states.
 - Prefer inference for local obvious values; annotate exported contracts, function boundaries and ambiguous return types.
 - Avoid TypeScript `enum` when the codebase uses string unions; follow the existing convention consistently.
 

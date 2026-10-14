@@ -1,6 +1,5 @@
 ---
-artifact_type: business-coding-prompt
-prompt_variant: <value from pinned configuration>
+artifact_type: coding-prompt
 status: Draft | Approved
 uc_id: <UC-ID>
 uc_name: <Use case name>
@@ -10,13 +9,13 @@ business_rule_baseline: docs/02-construction/implementation/<UC-ID>/business-rul
 generated_at: <ISO-8601 timestamp>
 ---
 
-# <UC-ID> Business Coding Prompt - <Use case name>
+# <UC-ID> Coding Prompt - <Use case name>
 
 Both backend and frontend together must cover every specified Basic/Main, Alternative and Exception Flow and its terminal outcome; distribute these behaviors across Prompts A-D without changing the frozen functional scope.
 
 ## Prompt A: Backend API
 
-### Objective: Build the API endpoint, business logic, validation, and server-side error handling.
+### Objective: Build the API endpoint, logic, validation, and server-side error handling.
 
 Create the `[HTTP METHOD] [API PATH]` endpoint in `[BACKEND ENTRY POINT]`.
 
@@ -26,7 +25,7 @@ This endpoint MUST be `[PUBLIC / PROTECTED]`. If protected, use `[AUTHENTICATION
 
 `[REQUEST BODY / QUERY PARAMS / PATH PARAMS]`
 
-Implement the main logic in `[BUSINESS LOGIC LOCATION]`.
+Implement the main logic in `[LOGIC LOCATION]`.
 
 ### Logic
 
@@ -48,7 +47,7 @@ Preserve the source status and message through `{ "success": false, "statusCode"
 
 Follow the existing project architecture. Do not introduce new architectural layers or dependencies.
 
-Handle relevant ownership, transaction, concurrency, idempotency, date/timezone, and data-precision rules. Read the configured checksum-pinned DBML as the database contract. Map entities/queries to existing tables and exact column/key definitions. Allow authorized business DML only; never change schema/DBML/migration files, generate/run migrations or enable synchronization. Missing required structure is an input blocker.
+Handle relevant ownership, transaction, concurrency, idempotency, date/timezone, and data-precision rules. Read the configured checksum-pinned DBML as the database contract. Map entities/queries to existing tables and exact column/key definitions. Allow authorized DML only; never change schema/DBML/migration files, generate/run migrations or enable synchronization. Missing required structure is an input blocker.
 
 ## Prompt B: Frontend UI
 
@@ -162,7 +161,7 @@ One implementation control may enforce multiple rules when appropriate.
 - **Name:** `[rule name]`
 - **Representation:** `OCL invariant | OCL precondition | OCL postcondition | natural language`
 - **Expression / authoritative text:** `[verbatim content from the frozen UC]`
-- **Context:** `[OCL context/class/operation or business scope]`
+- **Context:** `[OCL context/class/operation or scope]`
 - **Enforcement layer:** `[frontend | backend | database | multiple]`
 - **Failure behavior:** `[source-backed status/message/state, or unresolved]`
 - **Traceability:** `[UC step/API/UI/source range]`

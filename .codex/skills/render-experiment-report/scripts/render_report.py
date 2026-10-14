@@ -68,7 +68,6 @@ def main():
     lines = [
         f"# Experiment run {data.get('run_id', '')}", "",
         f"- UC: `{data.get('uc_id', '')}`",
-        f"- Prompt variant: `{data['prompt_variant']}`",
         f"- Run status: `{data.get('run_status')}`",
         f"- Canonical input: `{args.input}`",
         f"- Input SHA-256: `{hashlib.sha256(raw).hexdigest()}`", "",

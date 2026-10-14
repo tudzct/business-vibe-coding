@@ -6,15 +6,15 @@ This file defines shared file and integrity conventions only. It intentionally d
 
 Before an operation that requires them, the operator prepares:
 
-1. `docs/04-experiments/configurations/CFG-<UC-ID>-<MODEL>-<VARIANT>.json`
+1. `docs/04-experiments/configurations/CFG-<UC-ID>-<MODEL>.json`
 2. `docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json`
 3. `docs/02-construction/implementation/<UC-ID>/flow-baseline.json`
-4. `docs/04-experiments/<UC-ID>/canonical-run-<UC-ID>-<MODEL>-<VARIANT>.json`
+4. `docs/04-experiments/<UC-ID>/canonical-run-<UC-ID>-<MODEL>.json`
 5. `docs/00-context/engineering/schema.dbml` and the configured live database
 
 The operator chooses how to prepare these files. Consumers validate required fields, identity, path and checksum read-only. They never create, fill, normalize or repair a missing prepared input unless the currently invoked operation explicitly owns that output.
 
-Resolve one exact UC/run. Never choose the newest file or infer a match from filename similarity. A run ID uses `<UC-ID>-<MODEL>-<VARIANT>`; its configuration ID is `CFG-<run_id>`. Variant values are opaque identities, not instructions.
+Resolve one exact UC/run. Never choose the newest file or infer a match from filename similarity. A run ID uses `<UC-ID>-<MODEL>`; its configuration ID is `CFG-<run_id>`.
 
 ## Optional deterministic preparation
 
@@ -32,6 +32,6 @@ Operation-owned prompts, rubrics, assessments and correction templates are not s
 
 ## Technical environment
 
-Database structure is immutable within a run. Operator-managed setup may update it between runs. Active operations use authorized business DML only and never edit DBML, migrations or schema.
+Database structure is immutable within a run. Operator-managed setup may update it between runs. Active operations use authorized DML only and never edit DBML, migrations or schema.
 
 Within a run, Docker rebuilds target application services without executing the setup migration service. Docker Compose v2 is the supported runtime. Do not create or run tests/test cases or store secrets in evidence.

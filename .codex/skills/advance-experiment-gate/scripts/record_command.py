@@ -40,7 +40,6 @@ def approve_prompt(run, path, prompt, dry_run):
         validate_prompt(config, run["uc_id"], run["run_id"], snapshot)
         prompt.write_bytes(approved)
         run["coding_prompt"] = {"path": snapshot.relative_to(ROOT).as_posix(), "sha256": digest(approved)}
-        run["prompt_variant"] = result["prompt_variant"]
         atomic_write(path, run)
     return {"action": "approve_prompt", "prompt": prompt.relative_to(ROOT).as_posix()}
 
@@ -101,7 +100,7 @@ def prompt_activation(run, folder, turn_id):
         return path, None  # Existing valid receipts remain byte-for-byte unchanged.
     return path, {
         "artifact_type": "run-activation", "gate_version": 5,
-        "uc_id": run["uc_id"], "run_id": run["run_id"], "prompt_variant": result["prompt_variant"],
+        "uc_id": run["uc_id"], "run_id": run["run_id"],
         "configuration_artifact": config_ref["artifact"], "configuration_checksum": config_ref["checksum"],
         "activated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "status": "Confirmed", "approved_prompt": result["prompt"],

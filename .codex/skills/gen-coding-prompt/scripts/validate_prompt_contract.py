@@ -10,13 +10,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow/scripts"))
 from metrics_contract import ROOT, digest, read_json, require, writable, epoch
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
-from validate_experiment_configuration import validate as validate_configuration, identifier
-
-
-def normalize_variant(value):
-    normalized = identifier(value, "prompt_variant")
-    require(value == normalized, "prompt_variant must be a canonical identifier")
-    return normalized
+from validate_experiment_configuration import validate as validate_configuration
 
 
 def prompt_metadata(path):
@@ -72,14 +66,11 @@ def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow
     config = validate_configuration(configuration)
     assignments = [r for r in config["runs"] if r.get("uc_id") == uc_id and r.get("run_id") == run_id]
     require(len(assignments) == 1, "prompt needs unique configured UC/run")
-    variant = normalize_variant(assignments[0].get("prompt_variant"))
     meta, body, headings = prompt_metadata(prompt)
-    require(meta.get("artifact_type") == "business-coding-prompt" and meta.get("uc_id") == uc_id, "prompt UC/type mismatch")
+    require(meta.get("artifact_type") == "coding-prompt" and meta.get("uc_id") == uc_id, "prompt UC/type mismatch")
     require(meta.get("status") in ({"Draft", "Approved"} if allow_draft else {"Approved"}), "prompt approval status mismatch")
-    actual = normalize_variant(meta.get("prompt_variant"))
-    require(actual == variant, "configuration/prompt variant mismatch")
     require(headings == configured_headings(), "prompt sections must match configured template exactly")
-    require(prompt.name.endswith("-business-coding-prompt.md"), "prompt filename/variant mismatch")
+    require(prompt.name.endswith("-coding-prompt.md"), "prompt filename mismatch")
     uc = config["use_case"]
     require(uc.get("uc_id") == uc_id, "configuration/prompt UC mismatch")
     baseline = read_json(writable(ROOT / uc["business_rule_baseline"]))
@@ -95,11 +86,10 @@ def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow
         require(type(receipt.get("gate_version")) is int and receipt["gate_version"] == 5, "invalid activation gate version")
         epoch(receipt.get("activated_at"))
         require(receipt.get("uc_id") == uc_id and receipt.get("run_id") == run_id, "activation UC/run mismatch")
-        require(normalize_variant(receipt.get("prompt_variant")) == variant, "activation/prompt variant mismatch")
         require(receipt.get("configuration_artifact") == configuration.relative_to(ROOT).as_posix()
                 and receipt.get("configuration_checksum") == digest(configuration.read_bytes()), "activation configuration mismatch")
         require(receipt.get("approved_prompt") == reference, "activated prompt is immutable")
-    return {"status": "valid", "uc_id": uc_id, "run_id": run_id, "prompt_variant": variant, "prompt": reference}
+    return {"status": "valid", "uc_id": uc_id, "run_id": run_id, "prompt": reference}
 
 
 def main():

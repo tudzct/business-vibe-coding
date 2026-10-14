@@ -6,7 +6,7 @@ Pre-existing BR/flow baselines and applicable Figma evidence are validated input
 
 Outputs:
 
-- `docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md` as the Draft;
+- `docs/02-construction/coding-prompts/<UC-ID>-coding-prompt.md` as the Draft;
 - live prompt timing evidence under the active run.
 
 Every output carries enough provenance and checksums for Phase 2 without relying on chat history.

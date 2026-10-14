@@ -1,6 +1,6 @@
 # Explicit post-turn selection
 
-Use one task/session per UC/run. All commands are run from the Business repository. Resolve a real canonical run path and explicit rollout path, not the latest file. The canonical JSON must exist with `uc_id` and `run_id` before opening prompt metrics; use the configured run identity. This Draft bookkeeping does not activate source generation.
+Use one task/session per UC/run. All commands are run from the repository. Resolve a real canonical run path and explicit rollout path, not the latest file. The canonical JSON must exist with `uc_id` and `run_id` before opening prompt metrics; use the configured run identity. This Draft bookkeeping does not activate source generation.
 
 Prepare a private temporary selection JSON (absolute rollout paths must not be copied into public results):
 
