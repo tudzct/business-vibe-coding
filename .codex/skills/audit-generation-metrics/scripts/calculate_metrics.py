@@ -428,7 +428,6 @@ def calculate(path_string):
     print(json.dumps({"run_id": data.get("run_id"), "business_rules": business["final"],
                       "flow_accuracy": flow_summary,
                       "defects": {"total": len(all_defects), "by_category": defect_counts,
-                                  "open": sum(row["status"] == "open" for row in all_defects),
                                   "execution_blocking": sum(row["status"] == "open" and row["blocks_execution"]
                                                             for row in all_defects)},
                       "repairs": len(repairs)}, ensure_ascii=False, indent=2))

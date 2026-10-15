@@ -1,4 +1,0 @@
-interface:
-  display_name: "Bug-fixing Sub-prompt"
-  short_description: "Run an authorized source correction"
-  default_prompt: "Use $bug-fixing-sub-prompt for the active run and follow only that skill's private contract."
