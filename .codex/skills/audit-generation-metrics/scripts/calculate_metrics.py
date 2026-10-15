@@ -10,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflo
 from metrics_contract import atomic_write, validate_metrics, context, run_lock, epoch, digest
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-flow-accuracy" / "scripts"))
 from score_flow_accuracy import (calculate as calculate_flow, validate_run_result,
-                                 validate_evidence, validate_defects)
+                                 validate_evidence, validate_defects, verification_defects)
 from runtime_contract import method, configured_rubric
 from flow_summary import validate_followups
 
@@ -408,7 +408,8 @@ def calculate(path_string):
         final_defects = initial_defects
     else:
         researcher_result_ids = set()
-        final_defects = validate_defects(data, "final", final_assessment["input"]["source_revision"], flow_ids)
+        final_defects = verification_defects(
+            data, "final", final_assessment["input"]["source_revision"], flow_ids)
     validate_br_runtime(business["final"], final_assessment, final_defects, "business_rules.final",
                         researcher_result_ids)
     revision = business.get("source_revision")
@@ -421,15 +422,30 @@ def calculate(path_string):
         ids = repair.get("affected_br_ids", []) if isinstance(repair, dict) else None
         if not isinstance(ids, list) or any(value not in ordered for value in ids):
             raise ValueError(f"repairs[{index}].affected_br_ids is invalid")
-    data["all_sub_prompt_count"] = len(repairs)
+    prompt_directory = data.get("repair_prompt_directory")
+    if prompt_directory is None:
+        data["all_sub_prompt_count"] = 0
+    else:
+        if not isinstance(prompt_directory, str) or not prompt_directory.strip():
+            raise ValueError("repair_prompt_directory must be null or a repository-relative path")
+        data["all_sub_prompt_count"] = len(initial_defects)
     atomic_write(path, data)
-    defect_counts = {category: sum(row["category"] == category for row in all_defects)
+    reported_defects = all_defects
+    if repairs:
+        attempts = repairs[-1].get("defect_attempts", []) if isinstance(repairs[-1], dict) else []
+        unresolved_ids = {row.get("defect_id") for row in attempts
+                          if isinstance(row, dict) and row.get("status") == "unresolved"}
+        initial_by_id = {row["defect_id"]: row for row in initial_defects}
+        if not unresolved_ids <= set(initial_by_id):
+            raise ValueError("latest Repair round references a defect outside the initial inventory")
+        reported_defects = [row for row in initial_defects if row["defect_id"] in unresolved_ids]
+    defect_counts = {category: sum(row["category"] == category for row in reported_defects)
                      for category in ("business_rule", "flow", "technical")}
     print(json.dumps({"run_id": data.get("run_id"), "business_rules": business["final"],
                       "flow_accuracy": flow_summary,
-                      "defects": {"total": len(all_defects), "by_category": defect_counts,
-                                  "execution_blocking": sum(row["status"] == "open" and row["blocks_execution"]
-                                                            for row in all_defects)},
+                      "defects": {"total": len(reported_defects), "by_category": defect_counts,
+                                  "execution_blocking": sum(row["blocks_execution"]
+                                                            for row in reported_defects)},
                       "repairs": len(repairs)}, ensure_ascii=False, indent=2))
 
 

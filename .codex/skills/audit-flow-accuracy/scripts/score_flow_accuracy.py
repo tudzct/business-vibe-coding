@@ -88,6 +88,29 @@ def validate_defects(run, stage=None, source_revision=None, ordered_flow_ids=Non
     return selected
 
 
+def verification_defects(run, stage, source_revision, ordered_flow_ids):
+    """Use immutable initial targets for Repair's final-stage verifier."""
+    selected = validate_defects(run, stage, source_revision, ordered_flow_ids)
+    if stage != "final" or not run.get("repairs"):
+        return selected
+    require(not selected, "Repair verification must not append final-stage defects")
+    latest = run["repairs"][-1]
+    require(isinstance(latest, dict), "latest Repair round must be an object")
+    require(latest.get("source_revision_after") == source_revision,
+            "Repair verifier source revision differs from the latest round")
+    attempts = latest.get("defect_attempts")
+    require(isinstance(attempts, list), "latest Repair round needs defect_attempts")
+    unresolved_ids = [item.get("defect_id") for item in attempts
+                      if isinstance(item, dict) and item.get("status") == "unresolved"]
+    require(len(unresolved_ids) == len(set(unresolved_ids)),
+            "latest Repair round has duplicate unresolved defect IDs")
+    initial = validate_defects(run, "initial", ordered_flow_ids=ordered_flow_ids)
+    by_id = {item["defect_id"]: item for item in initial}
+    require(set(unresolved_ids) <= set(by_id),
+            "Repair verifier references a defect outside the immutable initial inventory")
+    return [by_id[identity] for identity in unresolved_ids]
+
+
 def validate_observation(item, label):
     require(isinstance(item, dict) and item.get("status") in OBSERVATION_STATUSES, f"invalid {label} status")
     require(nonempty(item.get("rationale")), f"{label} rationale required")
@@ -329,7 +352,8 @@ def validate_run_result(run, folder, result):
     require(configured_rubric(run, folder, validate_evidence, result["input"]["baseline"]) == rubric,
             "assessment differs from frozen configuration rubric")
     flow_ids = [flow["flow_id"] for flow in result["flows"]]
-    stage_defects = validate_defects(run, result["stage"], result["input"]["source_revision"], flow_ids)
+    stage_defects = verification_defects(
+        run, result["stage"], result["input"]["source_revision"], flow_ids)
     open_defects = {item["defect_id"]: item for item in stage_defects if item["status"] == "open"}
     open_blocker_ids = {identity for identity, item in open_defects.items() if item["blocks_execution"]}
     blocker_ids = result["input"].get("execution_blocker_defect_ids", [])

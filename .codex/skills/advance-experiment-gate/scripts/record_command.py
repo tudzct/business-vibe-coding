@@ -67,6 +67,21 @@ def prepare(run, folder, action, turn_id):
         if action == "repair":
             validate_repair_authorization(updated)
         return updated, {"action": action, "status": "already_recorded", "receipts": []}
+    if action == "repair":
+        initial_defects = [row for row in updated.get("defects", [])
+                           if isinstance(row, dict) and row.get("stage") == "initial"
+                           and row.get("status") == "open"]
+        require(initial_defects, "repair requires an immutable initial defect inventory")
+        require(isinstance(updated.get("repair_prompt_directory"), str)
+                and updated["repair_prompt_directory"].strip(),
+                "repair requires a validated complete prompt-set handoff")
+        require(updated.get("all_sub_prompt_count") == len(initial_defects),
+                "repair prompt count must match the initial defect inventory")
+        require(updated.get("repair_round_limit") == 10
+                and updated.get("repair_rounds_completed") == 0
+                and updated.get("repair_status") == "not_started"
+                and updated.get("repairs") == [],
+                "repair must begin from the validated bounded-loop initial state")
     receipts.append(prepare_transition(updated, folder, gate, outcome, turn_id))
     if action == "audit":
         business = updated["business_rules"]["initial"]

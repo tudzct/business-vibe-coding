@@ -16,7 +16,7 @@ from validate_prompt_contract import validate_prompt, validate_configuration
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-generation-metrics/scripts"))
 from calculate_metrics import (accepted_br_summary, br_summary_snapshot,
                                terminal_assessment_stage, validate_flow, validate_snapshot,
-                               validate_br_runtime, validate_defects)
+                               validate_br_runtime, validate_defects, verification_defects)
 from flow_summary import accepted_summary
 
 AUDIT_FOLLOWUP_POLICY = "audit-followup-continuation-v1"
@@ -80,7 +80,7 @@ def audit_evidence(run, folder, stage):
     if stage == "final":
         require(source == business.get("source_revision"), "final BR/flow source hash mismatch")
     flow_ids = [row["flow_id"] for row in current["flows"]]
-    defects = validate_defects(run, stage, source, flow_ids)
+    defects = verification_defects(run, stage, source, flow_ids)
     validate_br_runtime(snapshot, current, defects, f"business_rules.{stage}")
     evidence = {"business_rules_sha256": snapshot_hash(snapshot), "flow_assessment_id": summary["assessment_id"],
                 "flow_assessment_sha256": snapshot_hash(current), "source_revision": source,

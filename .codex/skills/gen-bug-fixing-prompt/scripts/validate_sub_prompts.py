@@ -4,7 +4,14 @@
 import argparse
 import json
 import re
+import sys
 from pathlib import Path
+
+
+MEASURE_SCRIPTS = Path(__file__).resolve().parents[2] / "measure-uc-workflow" / "scripts"
+sys.path.insert(0, str(MEASURE_SCRIPTS))
+
+from metrics_contract import ROOT, atomic_write, context, read_json, run_lock, writable
 
 
 REQUIRED_SCALARS = (
@@ -105,12 +112,20 @@ def validate(run_path, prompt_dir):
     require(isinstance(run, dict), "canonical run must be an object")
     uc_id = run.get("uc_id")
     run_id = run.get("run_id")
-    require(isinstance(uc_id, str) and uc_id, "canonical uc_id required")
-    require(isinstance(run_id, str) and run_id, "canonical run_id required")
+    require(isinstance(uc_id, str) and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", uc_id),
+            "canonical uc_id must be a safe identifier")
+    require(isinstance(run_id, str) and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", run_id),
+            "canonical run_id must be a safe identifier")
+    expected_prompt_dir = (ROOT / "docs/02-construction/implementation" / uc_id /
+                           "runs" / run_id / "repairs").resolve()
+    require(prompt_dir.resolve() == expected_prompt_dir,
+            "repair prompts must use the active run's canonical repairs directory")
     require(run.get("repairs") == [], "prompt set must be generated before repair execution")
 
     defects = run.get("defects")
     require(isinstance(defects, list), "canonical defects must be an array")
+    require(all(isinstance(item, dict) and item.get("stage") == "initial" for item in defects),
+            "prompt generation requires the immutable initial defect inventory only")
     selected = [item for item in defects if isinstance(item, dict)
                 and item.get("stage") == "initial" and item.get("status") == "open"]
     require(selected, "no evidenced open initial defect to prompt")
@@ -159,12 +174,37 @@ def validate(run_path, prompt_dir):
     return {"run_id": run_id, "prompt_count": len(files), "prompt_paths": [str(path) for path in files]}
 
 
+def validate_and_record_handoff(run_path, prompt_dir):
+    run_path, _, folder = context(run_path)
+    prompt_dir = writable(prompt_dir)
+    with run_lock(folder):
+        result = validate(run_path, prompt_dir)
+        run = read_json(run_path)
+        relative_prompt_dir = prompt_dir.relative_to(ROOT).as_posix()
+        existing = run.get("repair_prompt_directory")
+        require(existing in (None, relative_prompt_dir),
+                "canonical run already points to a different repair prompt directory")
+        run["repair_prompt_directory"] = relative_prompt_dir
+        run["all_sub_prompt_count"] = result["prompt_count"]
+        run["repair_round_limit"] = 10
+        run["repair_rounds_completed"] = 0
+        run["repair_status"] = "not_started"
+        atomic_write(run_path, run)
+    result["repair_prompt_directory"] = relative_prompt_dir
+    result["handoff_recorded"] = True
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--run-json", required=True, type=Path)
     parser.add_argument("--prompt-dir", required=True, type=Path)
+    parser.add_argument("--record-handoff", action="store_true")
     args = parser.parse_args()
-    result = validate(args.run_json.resolve(), args.prompt_dir.resolve())
+    if args.record_handoff:
+        result = validate_and_record_handoff(args.run_json.resolve(), args.prompt_dir.resolve())
+    else:
+        result = validate(args.run_json.resolve(), args.prompt_dir.resolve())
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
 

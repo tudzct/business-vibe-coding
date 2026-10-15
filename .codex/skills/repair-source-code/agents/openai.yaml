@@ -1,4 +1,4 @@
 interface:
   display_name: "Repair Source Code"
-  short_description: "Execute one validated repair prompt"
-  default_prompt: "Use $repair-source-code with my generated bug-fixing sub-prompt path and repair that one defect."
+  short_description: "Repair the complete validated defect set"
+  default_prompt: "Use $repair-source-code with my generated repair-prompt directory and repair the complete fixed defect set."
