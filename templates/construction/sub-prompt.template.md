@@ -22,7 +22,7 @@ affected_flow_ids: ["<FLOW-ID>"]
 
 `<bounded correction instruction derived from the canonical defect and evidence>`
 
-Follow this completed sub-prompt closely as the primary correction instruction. Use the canonical evidence, validated project inputs and current source as facts and technical constraints; they do not replace this instruction with another correction strategy. Preserve the approved coding prompt and unrelated behavior. If this instruction conflicts with a pinned input or immutable technical boundary, report the exact conflict and stop instead of silently deviating.
+Read this completed sub-prompt in full and perform its required correction. Use the canonical evidence, validated project inputs and current source as facts and technical constraints. Preserve the approved coding prompt and unrelated behavior. If this instruction conflicts with a pinned input or immutable technical boundary, report the exact conflict and stop instead of silently deviating.
 
 ## Scope
 
