@@ -1,8 +1,6 @@
 # File-driven prompt workflow
 
-Input: one frozen use-case Markdown file.
-
-Pre-existing BR/flow baselines and applicable Figma evidence are validated inputs, not outputs of prompt generation.
+Invocation input: one frozen use-case Markdown path. Additional project inputs are resolved from the validated active-run configuration.
 
 Outputs:
 
