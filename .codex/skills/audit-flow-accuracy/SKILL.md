@@ -5,7 +5,7 @@ description: Perform authorized flow assessment and persist validated results.
 
 # Audit Flow Accuracy
 
-Run only as a directly requested audit or an explicitly authorized subordinate verification. For partial or challenged results, use the follow-up operation described in [follow-up measurement](references/follow-up-measurement.md); one operator response may carry Flow results, BR results or both.
+Run only as a directly requested audit or an explicitly authorized subordinate verification. A direct initial audit requires closed source telemetry and an independent evaluation context; if the active conversation contains source-generation execution for this exact run, stop before loading assessment inputs or writing results. An explicitly authorized subordinate verification is exempt from this context requirement. For partial or challenged results, use the follow-up operation described in [follow-up measurement](references/follow-up-measurement.md); one operator response may carry Flow results, BR results or both.
 
 Save either attributed operator verdicts or validated bounded LLM observations directly in canonical JSON. The scorer never edits source, authorizes another top-level operation, closes telemetry or changes gates. Activation is optional; rubric comes from the pinned configuration.
 

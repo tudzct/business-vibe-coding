@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 
 CORE = ("prompt_generation", "source_generation", "repair")
-AUX = ("configuration_and_approval", "dataset_resolution", "audit",
+AUX = ("configuration_and_approval", "dataset_resolution",
        "runtime_verification", "finalization", "uc_setup")
 USAGE = ("input_tokens", "cached_input_tokens", "output_tokens",
          "reasoning_output_tokens", "total_tokens")

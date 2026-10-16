@@ -1,6 +1,6 @@
 # Explicit post-turn selection
 
-Use one task/session per UC/run. All commands are run from the repository. Resolve a real canonical run path and explicit rollout path, not the latest file. The canonical JSON must exist with `uc_id` and `run_id` before opening prompt metrics; use the configured run identity. This Draft bookkeeping does not activate source generation.
+Use one measured workflow task/session per UC/run. An independent initial-audit context is outside this selection. All commands are run from the repository. Resolve a real canonical run path and explicit rollout path, not the latest file. The canonical JSON must exist with `uc_id` and `run_id` before opening prompt metrics; use the configured run identity. This Draft bookkeeping does not activate source generation.
 
 Prepare a private temporary selection JSON (absolute rollout paths must not be copied into public results):
 
@@ -24,7 +24,7 @@ Prepare a private temporary selection JSON (absolute rollout paths must not be c
 
 Each later selection retains previously selected rows/reasons and adds new work. Every completed turn in the session before the current measurement turn must be selected or explicitly excluded, including turns before the selected workflow start. Inspect these earlier turns so UC-specific configuration/setup is not silently omitted. Intermediate Measure turns must be excluded with reason `measurement/report turn`. The current measurement turn is supplied separately by `--measurement-turn-id` and automatically excluded. Start/terminal text markers must match the actual user messages; start must identify the UC. Do not save message contents in results.
 
-Core token labels: `prompt_generation`, `source_generation`, `repair`. Auxiliary workflow-only token labels: `configuration_and_approval`, `dataset_resolution`, `audit`, `runtime_verification`, `finalization`, `uc_setup`. Assign by the turn's actual primary work, not the currently open timing bucket or the skill named in the request.
+Core token labels: `prompt_generation`, `source_generation`, `repair`. Auxiliary workflow-only token labels: `configuration_and_approval`, `dataset_resolution`, `runtime_verification`, `finalization`, `uc_setup`. Assign by the turn's actual primary work, not the currently open timing bucket or the skill named in the request. A standalone initial-audit turn belongs to its independent evaluation context and must not be selected into workflow telemetry. If such a turn is encountered in the measured session, list it under `excluded_turns` with reason `independent initial audit`.
 
 | Actual primary work | Token label |
 |---|---|
@@ -34,7 +34,7 @@ Core token labels: `prompt_generation`, `source_generation`, `repair`. Auxiliary
 | Execute a source correction and its integrated BR/flow/runtime verification | `repair` |
 | Only prepare/confirm configuration, activate a run, approve an artifact or resolve an approval gate | `configuration_and_approval` |
 | Only resolve Figma/dataset inputs, including a missing-dataset blocker | `dataset_resolution` |
-| Assess implementation, observe runtime, finalize evidence, or prepare UC-specific environment | `audit`, `runtime_verification`, `finalization`, or `uc_setup` |
+| Perform runtime verification outside an integrated Repair audit, finalize evidence, or prepare UC-specific environment | `runtime_verification`, `finalization`, or `uc_setup` |
 
 All selected labels contribute to workflow tokens. Only a matching core label contributes to that core's tokens. A failed generation/repair attempt still counts under its actual work; failure alone never moves it to auxiliary or excludes it. A request to generate code that only receives an approval blocker is auxiliary. Under `generation_execution_with_repair_audit_v2`, a turn with core execution segments must use that same core token label, even when END is missing. An integrated repair audit therefore stays `repair`, never auxiliary `audit`. If approval and generation happen in one turn with core capture, retain the whole turn under that captured core label. Without core capture, classify from full work evidence; genuine generation with missing timing must retain its core label and an unavailable-time reason. Never split tokens between activities or classify solely by keywords. Explain ambiguous/mixed classifications in `reason`; surface unresolved uncertainty to the researcher before committing. Common setup before the UC and other UC work are excluded with reasons.
 
