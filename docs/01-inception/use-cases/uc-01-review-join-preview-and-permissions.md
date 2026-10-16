@@ -1,0 +1,187 @@
+---
+artifact_type: business-use-case-specification
+status: Frozen
+uc_id: UC-01
+uc_name: "Review Join Preview and Permissions"
+---
+
+# UC-01: Review Join Preview and Permissions
+
+## Functional Use-Case Specification
+
+### Use Case ID
+
+UC-01
+
+### Use Case Name
+
+Review Join Preview and Permissions
+
+### Description
+
+As a prospective participant, I want to review my camera and microphone preview so that I understand how I will appear before joining.
+
+### Actor(s)
+
+Prospective Participant; Preview Service.
+
+### Priority
+
+High
+
+### Trigger
+
+The prospective participant opens a session preview.
+
+### Pre-Condition(s)
+
+PRE-1: The client displays the pre-join interface.
+
+### Post-Condition(s)
+
+POST-1: The client displays the selected camera and microphone state.
+POST-2: The client displays the returned permission outcome when permission is requested.
+
+### Basic Flow
+
+1. The prospective participant opens the pre-join interface.
+2. The client presents the camera, microphone, name, and permission controls shown by the design.
+3. The prospective participant chooses the displayed permission action.
+4. The client requests access and receives an outcome.
+5. The client renders the media preview and current control states.
+
+### Alternative Flow
+
+AF-1: Turn off microphone or camera
+
+3a : The prospective participant turns the microphone or camera off.
+3b : The client renders the corresponding muted preview state.
+
+### Exception Flow
+
+EF-1: Permission denied
+
+4a : Access is not granted.
+4b : The client displays the permission-denied dialog and its visible recovery action.
+
+### Related UI
+
+- Broadcaster Preview 6007:51245.
+- Video Conferencing Desktop Preview 6066:89727.
+- Video Conferencing Mobile Preview 6066:89005.
+
+### Related API IDs
+
+None. This interaction is client-local.
+
+### Notes
+
+Preview preparation is client-local. Its participantKey identifies local draft state, not persisted session membership.
+
+## UML Model
+
+Local projection of exactly the vocabulary needed by the Business Rules below, including signature and helper types. Enum domains are retained in full to preserve their value semantics.
+
+~~~plantuml
+@startuml
+hide empty members
+enum ParticipantRole {
+  HOST
+  BROADCASTER
+  VIEWER
+  STAGE_PARTICIPANT
+}
+enum PermissionStatus {
+  UNKNOWN
+  GRANTED
+  DENIED
+}
+class String {
+  trim(): String
+}
+class Participant <<extent>> {
+  {static} allInstances(): Set(Participant)
+}
+class MediaPreference <<extent>> {
+  {static} allInstances(): Set(MediaPreference)
+}
+class ViewPreference <<extent>> {
+  {static} allInstances(): Set(ViewPreference)
+}
+class PreviewCommand {
+  participantKey: String
+  role: ParticipantRole
+  displayName: String
+  requestCamera: Boolean
+  requestMicrophone: Boolean
+}
+class PreviewState {
+  participantKey: String
+  cameraPermission: PermissionStatus
+  microphonePermission: PermissionStatus
+  cameraAvailable: Boolean
+  microphoneAvailable: Boolean
+  cameraEnabled: Boolean
+  microphoneEnabled: Boolean
+  isReadyToJoin: Boolean
+}
+class PreviewService {
+  prepare(command: PreviewCommand): PreviewState
+}
+note "allInstances() is the standard OCL classifier extent.\nAn extent-only classifier has no structural properties in this UC projection." as ExtentSemantics
+note right of String
+Removes leading and trailing whitespace; internal whitespace is unchanged.
+end note
+@enduml
+~~~
+
+## Business Rules
+
+### OCL Utility Definitions
+
+```text
+String.trim(): String
+- Removes leading and trailing whitespace; internal whitespace is unchanged.
+```
+
+### Rule Definitions
+
+~~~text
+BR-RJPP-01 - Permission And Hardware
+context PreviewService::prepare(command: PreviewCommand): PreviewState
+post BR_RJPP_01_PermissionAndHardware:
+  (result.cameraEnabled implies result.cameraPermission = PermissionStatus::GRANTED and result.cameraAvailable and command.requestCamera) and
+  (result.microphoneEnabled implies result.microphonePermission = PermissionStatus::GRANTED and result.microphoneAvailable and command.requestMicrophone)
+
+BR-RJPP-02 - Viewer Preview Muted
+context PreviewService::prepare(command: PreviewCommand): PreviewState
+post BR_RJPP_02_ViewerPreviewMuted:
+  command.role = ParticipantRole::VIEWER implies not result.cameraEnabled and not result.microphoneEnabled
+
+BR-RJPP-03 - Name Readiness
+context PreviewService::prepare(command: PreviewCommand): PreviewState
+post BR_RJPP_03_NameReadiness:
+  result.isReadyToJoin = (command.displayName <> null and command.displayName.trim().size() > 0 and command.displayName.trim().size() <= 50)
+
+BR-RJPP-04 - Preview Key
+context PreviewService::prepare(command: PreviewCommand): PreviewState
+post BR_RJPP_04_PreviewKey:
+  result.participantKey = command.participantKey
+
+BR-RJPP-05 - Camera Denied State
+context PreviewService::prepare(command: PreviewCommand): PreviewState
+post BR_RJPP_05_CameraDeniedState:
+  result.cameraPermission <> PermissionStatus::GRANTED implies not result.cameraEnabled
+
+BR-RJPP-06 - Microphone Denied State
+context PreviewService::prepare(command: PreviewCommand): PreviewState
+post BR_RJPP_06_MicrophoneDeniedState:
+  result.microphonePermission <> PermissionStatus::GRANTED implies not result.microphoneEnabled
+
+BR-RJPP-07 - Client Local Preview
+context PreviewService::prepare(command: PreviewCommand): PreviewState
+post BR_RJPP_07_ClientLocalPreview:
+  Participant.allInstances() = Participant.allInstances()@pre and
+  MediaPreference.allInstances() = MediaPreference.allInstances()@pre and
+  ViewPreference.allInstances() = ViewPreference.allInstances()@pre
+~~~

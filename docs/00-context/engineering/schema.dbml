@@ -1,1 +1,304 @@
-// Replace this file with the project's actual DBML schema.
+Project video_conferencing {
+  database_type: 'MySQL'
+  Note: 'Consolidated schema at migration head InitialSchema1792195200000.'
+}
+
+Enum session_kind {
+  LIVE_STREAM
+  VIDEO_CONFERENCE
+}
+
+Enum session_status {
+  LOBBY
+  LIVE
+  ENDED
+}
+
+Enum participant_role {
+  HOST
+  BROADCASTER
+  VIEWER
+  STAGE_PARTICIPANT
+}
+
+Enum participant_status {
+  JOINED
+  LEFT
+}
+
+Enum layout_mode {
+  EQUAL_PROMINENCE
+  SIDEBAR
+  PRESENTER
+}
+
+Enum stream_status {
+  READY
+  STARTING
+  LIVE
+  ENDED
+}
+
+Enum stage_request_status {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+}
+
+Enum reaction_code {
+  LIKE
+  CLAP
+  HEART
+  CELEBRATE
+  HAND
+  SURPRISE
+}
+
+Enum share_kind {
+  SCREEN
+  PDF
+}
+
+Enum share_status {
+  ACTIVE
+  STOPPED
+}
+
+Enum recording_status {
+  IDLE
+  STARTING
+  RECORDING
+  STOPPED
+  FAILED
+}
+
+Enum departure_kind {
+  LEAVE
+  END
+}
+
+Table principals {
+  id char(36) [pk]
+  user_id varchar(191) [not null, unique]
+  created_at datetime(3) [not null, default: `CURRENT_TIMESTAMP(3)`]
+}
+
+Table virtual_backgrounds {
+  id char(36) [pk]
+  asset_reference varchar(2048) [not null]
+  active boolean [not null, default: true]
+  created_at datetime(3) [not null, default: `CURRENT_TIMESTAMP(3)`]
+  updated_at datetime(3) [not null, default: `CURRENT_TIMESTAMP(3)`, note: 'Updated automatically on row change.']
+}
+
+Table sessions {
+  id char(36) [pk]
+  kind session_kind [not null]
+  status session_status [not null, default: 'LOBBY']
+  designated_host_principal_id char(36) [not null]
+  host_participant_id char(36)
+  spotlighted_participant_id char(36)
+  version int [not null, default: 0]
+  ended_at datetime(3)
+  created_at datetime(3) [not null, default: `CURRENT_TIMESTAMP(3)`]
+  updated_at datetime(3) [not null, default: `CURRENT_TIMESTAMP(3)`, note: 'Updated automatically on row change.']
+
+  indexes {
+    designated_host_principal_id [name: 'idx_sessions_designated_host']
+    host_participant_id [name: 'idx_sessions_host_participant']
+    spotlighted_participant_id [name: 'idx_sessions_spotlighted_participant']
+  }
+}
+
+Table participants {
+  id char(36) [pk]
+  session_id char(36) [not null]
+  principal_id char(36) [not null]
+  user_id varchar(191) [not null]
+  display_name varchar(50) [not null]
+  role participant_role [not null]
+  status participant_status [not null, default: 'JOINED']
+  joined_at datetime(3) [not null, default: `CURRENT_TIMESTAMP(3)`]
+  left_at datetime(3)
+  microphone_enabled boolean [not null, default: false]
+  camera_enabled boolean [not null, default: false]
+  version int [not null, default: 1]
+  active_principal_id char(36) [note: 'Generated as principal_id only while status is JOINED.']
+  active_host_session_id char(36) [note: 'Generated as session_id only for the joined HOST.']
+
+  indexes {
+    (session_id, joined_at, id) [name: 'idx_participants_session_joined']
+    (session_id, active_principal_id) [unique, name: 'uq_participants_active_principal']
+    active_host_session_id [unique, name: 'uq_participants_active_host']
+  }
+}
+
+Table media_preferences {
+  participant_id char(36) [pk]
+  microphone_device_id varchar(255)
+  camera_device_id varchar(255)
+  speaker_device_id varchar(255)
+  virtual_background_id char(36)
+  updated_at datetime(3) [not null, default: `CURRENT_TIMESTAMP(3)`, note: 'Updated automatically on row change.']
+}
+
+Table view_preferences {
+  participant_id char(36) [pk]
+  layout layout_mode [not null, default: 'EQUAL_PROMINENCE']
+  focused_participant_id char(36)
+  side_panel varchar(64)
+  picture_in_picture boolean [not null, default: false]
+  updated_at datetime(3) [not null, default: `CURRENT_TIMESTAMP(3)`, note: 'Updated automatically on row change.']
+}
+
+Table live_streams {
+  id char(36) [pk]
+  session_id char(36) [not null, unique]
+  status stream_status [not null, default: 'READY']
+  version int [not null, default: 0]
+  started_at datetime(3)
+  ended_at datetime(3)
+  created_at datetime(3) [not null, default: `CURRENT_TIMESTAMP(3)`]
+}
+
+Table stage_requests {
+  id char(36) [pk]
+  session_id char(36) [not null]
+  participant_id char(36) [not null]
+  status stage_request_status [not null, default: 'PENDING']
+  decided_by_participant_id char(36)
+  created_at datetime(3) [not null, default: `CURRENT_TIMESTAMP(3)`]
+  decided_at datetime(3)
+  version int [not null, default: 1]
+  pending_participant_id char(36) [note: 'Generated as participant_id only while status is PENDING.']
+
+  indexes {
+    (session_id, created_at, id) [name: 'idx_stage_requests_session_created']
+    (session_id, pending_participant_id) [unique, name: 'uq_stage_requests_pending_participant']
+  }
+}
+
+Table chat_messages {
+  id char(36) [pk]
+  session_id char(36) [not null]
+  sender_participant_id char(36) [not null]
+  body varchar(1000) [not null]
+  sent_at datetime(3) [not null, default: `CURRENT_TIMESTAMP(3)`]
+  sequence bigint [not null]
+
+  indexes {
+    (session_id, sequence) [unique, name: 'uq_chat_messages_session_sequence']
+  }
+}
+
+Table reaction_events {
+  id char(36) [pk]
+  session_id char(36) [not null]
+  participant_id char(36) [not null]
+  reaction reaction_code [not null]
+  created_at datetime(3) [not null, default: `CURRENT_TIMESTAMP(3)`]
+  sequence bigint [not null]
+
+  indexes {
+    (session_id, sequence) [unique, name: 'uq_reactions_session_sequence']
+  }
+}
+
+Table content_shares {
+  id char(36) [pk]
+  session_id char(36) [not null]
+  owner_participant_id char(36) [not null]
+  kind share_kind [not null]
+  status share_status [not null]
+  source_reference varchar(2048) [not null]
+  version int [not null, default: 1]
+  started_at datetime(3) [not null, default: `CURRENT_TIMESTAMP(3)`]
+  stopped_at datetime(3)
+  active_session_id char(36) [note: 'Generated as session_id only while status is ACTIVE.']
+
+  indexes {
+    active_session_id [unique, name: 'uq_content_shares_active_session']
+    (session_id, started_at, id) [name: 'idx_content_shares_session_started']
+  }
+}
+
+Table recordings {
+  id char(36) [pk]
+  session_id char(36) [not null]
+  started_by_participant_id char(36) [not null]
+  status recording_status [not null]
+  version int [not null, default: 1]
+  created_at datetime(3) [not null, default: `CURRENT_TIMESTAMP(3)`]
+  started_at datetime(3)
+  stopped_at datetime(3)
+  active_session_id char(36) [note: 'Generated as session_id while status is STARTING or RECORDING.']
+
+  indexes {
+    active_session_id [unique, name: 'uq_recordings_active_session']
+    (session_id, created_at, id) [name: 'idx_recordings_session_created']
+  }
+}
+
+Table departures {
+  id char(36) [pk]
+  session_id char(36) [not null]
+  participant_id char(36) [not null]
+  kind departure_kind [not null]
+  created_at datetime(3) [not null, default: `CURRENT_TIMESTAMP(3)`]
+
+  indexes {
+    (session_id, created_at, id) [name: 'idx_departures_session_created']
+  }
+}
+
+Table idempotency_responses {
+  id char(36) [pk]
+  status_code int [not null]
+  response_body json [not null]
+  created_at datetime(3) [not null, default: `CURRENT_TIMESTAMP(3)`]
+}
+
+Table idempotency_records {
+  id bigint [pk, increment]
+  principal_id char(36) [not null]
+  session_id char(36) [not null]
+  operation varchar(100) [not null]
+  idempotency_key varchar(191) [not null]
+  payload_hash char(64) [not null]
+  response_reference char(36) [not null]
+  completed_at datetime(3) [not null]
+  expires_at datetime(3) [not null]
+
+  indexes {
+    (principal_id, session_id, operation, idempotency_key) [unique, name: 'uq_idempotency_command']
+    expires_at [name: 'idx_idempotency_expires_at']
+  }
+}
+
+Ref: sessions.designated_host_principal_id > principals.id [delete: restrict, update: cascade]
+Ref: sessions.host_participant_id > participants.id [delete: set null, update: cascade]
+Ref: sessions.spotlighted_participant_id > participants.id [delete: set null, update: cascade]
+Ref: participants.session_id > sessions.id [delete: cascade, update: cascade]
+Ref: participants.principal_id > principals.id [delete: restrict, update: cascade]
+Ref: media_preferences.participant_id > participants.id [delete: cascade, update: cascade]
+Ref: media_preferences.virtual_background_id > virtual_backgrounds.id [delete: set null, update: cascade]
+Ref: view_preferences.participant_id > participants.id [delete: cascade, update: cascade]
+Ref: view_preferences.focused_participant_id > participants.id [delete: set null, update: cascade]
+Ref: live_streams.session_id > sessions.id [delete: cascade, update: cascade]
+Ref: stage_requests.session_id > sessions.id [delete: cascade, update: cascade]
+Ref: stage_requests.participant_id > participants.id [delete: cascade, update: cascade]
+Ref: stage_requests.decided_by_participant_id > participants.id [delete: set null, update: cascade]
+Ref: chat_messages.session_id > sessions.id [delete: cascade, update: cascade]
+Ref: chat_messages.sender_participant_id > participants.id [delete: restrict, update: cascade]
+Ref: reaction_events.session_id > sessions.id [delete: cascade, update: cascade]
+Ref: reaction_events.participant_id > participants.id [delete: restrict, update: cascade]
+Ref: content_shares.session_id > sessions.id [delete: cascade, update: cascade]
+Ref: content_shares.owner_participant_id > participants.id [delete: restrict, update: cascade]
+Ref: recordings.session_id > sessions.id [delete: cascade, update: cascade]
+Ref: recordings.started_by_participant_id > participants.id [delete: restrict, update: cascade]
+Ref: departures.session_id > sessions.id [delete: cascade, update: cascade]
+Ref: departures.participant_id > participants.id [delete: restrict, update: cascade]
+Ref: idempotency_records.principal_id > principals.id [delete: restrict, update: cascade]
+Ref: idempotency_records.session_id > sessions.id [delete: cascade, update: cascade]
+Ref: idempotency_records.response_reference > idempotency_responses.id [delete: restrict, update: cascade]
