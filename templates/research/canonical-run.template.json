@@ -12,7 +12,7 @@
   "uc_id": "<UC-ID>",
   "uc_name": "<Use case name>",
   "replicate_index": 1,
-  "run_order": 1,
+  "run_order": "<RUN-ORDER>",
   "audit_protocol": "fixed | matched | cross",
   "generation_model": {
     "requested_model_id": "<exact ID>",
