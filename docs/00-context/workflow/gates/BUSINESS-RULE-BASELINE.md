@@ -1,7 +1,5 @@
-# Business Rule baseline
+# Business Rule baseline input contract
 
-Before generation, freeze a receipt containing the UC path/checksum, Sheet provenance, ordered BR IDs and timestamp.
+This prepared file is an immutable active-run input. Consumers validate its schema, Frozen status, UC identity, source path, source checksum and internal consistency.
 
-All Sheet-supplied BRs for the UC are included. This gate does not select or score rules; it prevents the evaluated rule set from changing after generation begins.
-
-If the UC projection and Sheet differ, stop and ask the researcher before freezing. A documented source typo may be carried as an unresolved discrepancy without changing its business meaning.
+This shared contract defines integrity only. It does not explain the meaning or downstream use of its content. Only an operation that explicitly requires this artifact may interpret fields under its private contract. A discrepancy blocks that operation and must be corrected in the prepared inputs outside it.

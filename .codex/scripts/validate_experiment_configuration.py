@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate a confirmed Business Rule experiment configuration."""
+"""Validate a confirmed run configuration."""
 
 import hashlib
 import json
@@ -240,6 +240,13 @@ def validate(path):
         prefix = f"runs[{index}]"
         if not isinstance(run, dict):
             raise ValueError(f"{prefix} must be an object")
+        expected_run_fields = {
+            "run_id", "uc_id", "requested_label", "requested_model_id",
+            "requested_reasoning_effort", "requested_reasoning_mode",
+            "replicate_index", "run_order", "auditor_assignment",
+        }
+        if set(run) != expected_run_fields:
+            raise ValueError(f"{prefix} fields do not match the current schema")
         run_id = identifier(run.get("run_id"), prefix + ".run_id")
         if configuration_id != f"CFG-{run_id}":
             raise ValueError("configuration_id must equal CFG-<run_id>")
@@ -253,17 +260,14 @@ def validate(path):
         orders.add(order)
         replicate = positive(run.get("replicate_index"), prefix + ".replicate_index")
         validate_model(run, prefix)
-        variant = identifier(run.get("prompt_variant"), prefix + ".prompt_variant")
-        if run["prompt_variant"] != variant:
-            raise ValueError(f"{prefix}.prompt_variant must be a canonical identifier")
         model_label = identifier(run.get("requested_label"), prefix + ".requested_label")
         if run["requested_label"] != model_label:
             raise ValueError(f"{prefix}.requested_label must be a canonical identifier")
-        if run_id != f"{run_uc_id}-{model_label}-{variant}":
-            raise ValueError(f"{prefix}.run_id must equal <UC-ID>-<MODEL>-<VARIANT> using requested_label as MODEL")
-        key = (run_uc_id, variant, run["requested_model_id"], run["requested_reasoning_effort"], run["requested_reasoning_mode"], replicate)
+        if run_id != f"{run_uc_id}-{model_label}":
+            raise ValueError(f"{prefix}.run_id must equal <UC-ID>-<MODEL> using requested_label as MODEL")
+        key = (run_uc_id, run["requested_model_id"], run["requested_reasoning_effort"], run["requested_reasoning_mode"], replicate)
         if key in assignments:
-            raise ValueError(f"duplicate UC/variant/model/replicate assignment: {key}")
+            raise ValueError(f"duplicate UC/model/replicate assignment: {key}")
         assignments.add(key)
         text(run.get("auditor_assignment"), prefix + ".auditor_assignment")
         if "flow_audit_rubric" in run and run["flow_audit_rubric"] != rubric:

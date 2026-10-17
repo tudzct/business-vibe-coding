@@ -1,4 +1,4 @@
 interface:
   display_name: "Generate Source Code"
-  short_description: "Implement an approved Business Coding Prompt"
-  default_prompt: "Use $gen-source-code with my approved Business Coding Prompt path and implement it into finalsource."
+  short_description: "Implement an approved Coding Prompt"
+  default_prompt: "Use $gen-source-code with my approved Coding Prompt path and implement it into finalsource."

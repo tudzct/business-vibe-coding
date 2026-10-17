@@ -1,27 +1,32 @@
-# Connected sources
+# Project source locations
 
-## Canonical functional and Business Rule source
+This file records technical source locations only. It does not interpret their contents or direct an operation toward particular requirement categories.
 
-- Frozen UC inventory: every file matching `docs/01-inception/use-cases/uc-*.md`
-- Frozen OCL utilities, when applicable: `docs/01-inception/use-cases/OCL-UTILITY-DEFINITIONS.md`
+## Local specifications
 
-These repository Markdown files are the sole authoritative UC and Business Rule inputs. Preserve their exact paths and bytes through the frozen baseline checksums. Stop when duplicate or conflicting specification content makes a business requirement ambiguous.
+- Use cases: `docs/01-inception/use-cases/uc-*.md`
+- API contracts: `docs/01-inception/api-contracts/*.md`
 
-## Prompt template
+These files are frozen, read-only project inputs. Select them only through explicit active-run references and validate required identity/path/checksum fields.
 
-- [The configured coding-prompt template](../../../templates/construction/coding-prompt.template.md) defines all prompt structure and section responsibilities.
+## Design input
 
-## Figma and API sources
+- Approved capture mapping: `docs/00-context/FIGMA-LINK-REVIEW.md`
+- Immutable datasets: `resource/figma-design-dataset/<version>/`
 
-Use them only where the frozen UC references them. API contracts are authoritative frozen Markdown inputs under `docs/01-inception/api-contracts/`. Approved Figma roots and detailed per-UC capture mappings come only from `docs/00-context/FIGMA-LINK-REVIEW.md`; a frozen dataset is required before use.
+Use one explicitly selected dataset version. Never choose the newest directory automatically or overwrite a version already referenced by a run.
 
-- Treat API contracts as frozen, read-only inputs. Every UC must contain one `Related API IDs` section. If it contains exactly `None.`, use `api_contracts: []` and do not discover or infer an API. Otherwise copy every declared ID into the Confirmed configuration in source order, together with the exact repository path and raw-byte SHA-256. Do not scan for substitutes or select an API by filename similarity.
-- Configuration validation requires every pinned API file to exist under `docs/01-inception/api-contracts/` with `artifact_type: api-contract`, `status: Frozen`, the configured `api_id` and the configured checksum. Prompt and Source preflight additionally require the configured ordered IDs to equal the frozen UC references.
+## Database input
 
-- When creating or refreshing a dataset, read every file key, node ID and URL only from `docs/00-context/FIGMA-LINK-REVIEW.md`. The links inside immutable UC files are provenance-only and may be inaccessible; do not call Figma with them.
-- Use `resolve-figma-design-dataset` whenever a prompt or UC contains a Figma URL, file key, frame name, node ID or selection ID.
-- If no dataset exists, that is not permission to fall back to UC links. Start capture from the review mapping or stop if that mapping is incomplete.
-- Select one immutable Figma dataset version explicitly before configuration. Copy that exact version and manifest checksum into the configuration; never scan directories or follow a moving newest/default dataset.
-- Use the checksum-valid frozen snapshot as reproducible generation input. The researcher may inspect UI manually. UI scoring is never an automatic audit or experiment prerequisite; missing UI results do not block the workflow.
-- Use the installed Figma plugin only to create a new dataset version or complete entries explicitly marked pending. Never overwrite a dataset version already used by an experiment.
-- Stop when the resolver reports `pending-rate-limit`, a checksum mismatch, a missing target or ambiguity. Do not substitute a different frame or infer hidden screens.
+- DBML: `docs/00-context/engineering/schema.dbml`
+- Migration source: `finalsource/be/src/database/migrations/`
+- Runtime: configured Docker Compose MySQL service
+
+The active configuration pins the expected migration head, DBML bytes and live schema fingerprint.
+
+## Source baseline
+
+- Archive: `.codex/skills/restore-source-baseline/assets/source-baseline.zip`
+- Checksum: `.codex/skills/restore-source-baseline/assets/source-baseline.sha256`
+
+Do not substitute a different path or infer a missing input. Report missing, ambiguous or mismatched sources without modifying them.

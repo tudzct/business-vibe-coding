@@ -1,6 +1,6 @@
 ---
 name: render-experiment-report
-description: Render a researcher-readable Markdown view from finalized canonical Business Rule experiment-run JSON without changing evidence.
+description: Render a read-only Markdown view from a validated finalized canonical run artifact.
 ---
 
 # Render Experiment Report

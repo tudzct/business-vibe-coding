@@ -16,13 +16,13 @@ while (args.length) {
   requireValue(key?.startsWith('--') && args.length, 'Expected --option value');
   options[key.slice(2)] = args.shift();
 }
-requireValue(['inspect', 'fill'].includes(mode) && options['repo-root'], 'Use inspect|fill --repo-root <Business repo>');
+requireValue(['inspect', 'fill'].includes(mode) && options['repo-root'], 'Use inspect|fill --repo-root <repository>');
 const root = await fs.realpath(options['repo-root']);
 const within = (parent, child) => { const rel = path.relative(parent, child); return !rel.startsWith('..') && !path.isAbsolute(rel); };
 async function safeOutput(file) {
   const absolute = path.resolve(root, file);
   const relativeParts = path.relative(root, absolute).split(path.sep);
-  requireValue(within(root, absolute) && !relativeParts[0]?.toLowerCase().endsWith('-master'), 'Output outside Business scope');
+  requireValue(within(root, absolute) && !relativeParts[0]?.toLowerCase().endsWith('-master'), 'Output outside repository scope');
   // Resolve existing ancestors before mkdir to reject junction/symlink escapes.
   let ancestor = path.dirname(absolute);
   while (true) {
@@ -30,7 +30,7 @@ async function safeOutput(file) {
     catch (e) { if (e.code !== 'ENOENT') throw e; ancestor = path.dirname(ancestor); }
   }
   const ancestorParts = path.relative(root, ancestor).split(path.sep);
-  requireValue(within(root, ancestor) && !ancestorParts[0]?.toLowerCase().endsWith('-master'), 'Output parent escapes Business scope');
+  requireValue(within(root, ancestor) && !ancestorParts[0]?.toLowerCase().endsWith('-master'), 'Output parent escapes repository scope');
   await fs.mkdir(path.dirname(absolute), {recursive: true});
   return absolute;
 }

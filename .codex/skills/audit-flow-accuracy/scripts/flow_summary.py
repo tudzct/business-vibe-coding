@@ -39,24 +39,33 @@ def pending_details(flow, assessment):
 def summary_from_rows(assessment, flows, pending_inputs, applied):
     total = len(flows)
     require(total > 0 and assessment["counts"]["total"] == total, "flow inventory/count mismatch")
-    require(all(f["status"] in {"correct", "incorrect", "not_evaluable"} for f in flows), "invalid flow status")
+    require(all(f["status"] in {"correct", "incorrect", "not_evaluable"}
+                for f in flows), "invalid flow status")
     correct = sum(f["status"] == "correct" for f in flows)
     incorrect = sum(f["status"] == "incorrect" for f in flows)
+    unknown = sum(f["status"] == "not_evaluable" for f in flows)
+    require(correct + incorrect + unknown == total, "flow result counts do not reconcile")
     evaluated = correct + incorrect
-    unknown = total - evaluated
-    manual = sum(f["result_source"] == "researcher_result" and f["status"] != "not_evaluable" for f in flows)
+    manual = sum(f["result_source"] == "researcher_result"
+                 and f["status"] != "not_evaluable" for f in flows)
     pending = [pending_details(*pending_inputs[f["flow_id"]]) for f in flows if f["status"] == "not_evaluable"]
+    blocker_ids = list(assessment["input"].get("execution_blocker_defect_ids", []))
+    execution_blocked = bool(blocker_ids)
     return {"schema_version": 2, "assessment_id": assessment["assessment_id"], "stage": assessment["stage"],
             "source_revision": assessment["input"]["source_revision"],
             "rubric_id": assessment["input"]["rubric_id"],
-            "followup_ids": applied, "status": "partial" if unknown and evaluated else
-            ("not_evaluable" if unknown else ("repair_required" if incorrect else "scored")),
-            "measurement_status": "partial" if unknown and evaluated else ("not_evaluable" if unknown else "complete"),
+            "followup_ids": applied, "status": ("partial" if unknown and evaluated else
+             ("not_evaluable" if unknown else ("repair_required" if incorrect else "scored"))),
+            "measurement_status": ("partial" if unknown and evaluated else
+                                   ("not_evaluable" if unknown else "complete")),
+            "execution_blocked": execution_blocked,
+            "execution_blocker_defect_ids": blocker_ids,
             "has_incorrect_flows": bool(incorrect),
             "result_basis": "includes_researcher_results" if manual else "rubric_evidence",
             "researcher_result_count": manual,
             "counts": {**{k: assessment["counts"][k] for k in ("main", "alternative", "exception", "total")},
-                       "correct": correct, "incorrect": incorrect, "not_evaluable": unknown, "evaluated": evaluated},
+                       "correct": correct, "incorrect": incorrect, "not_evaluable": unknown,
+                       "evaluated": evaluated},
             "flow_accuracy_percent": round(100 * correct / total, 6) if not unknown else None,
             "flow_error_percent": round(100 * incorrect / total, 6) if not unknown else None,
             "evaluated_accuracy_percent": round(100 * correct / evaluated, 6) if evaluated else None,
@@ -95,7 +104,8 @@ def accepted_summary(run):
         for result in results:
             flow_id = result["flow_id"]
             previous = selected.get(flow_id)
-            if result["status"] == "not_evaluable" and previous and previous["status"] != "not_evaluable":
+            if (result["status"] == "not_evaluable" and previous
+                    and previous["status"] in {"correct", "incorrect"}):
                 continue
             original = next(f for f in evidence["flows"] if f["flow_id"] == flow_id)
             selected[flow_id] = {"flow_id": flow_id, "type": original["type"], "status": result["status"],
@@ -105,12 +115,20 @@ def accepted_summary(run):
             pending_inputs[flow_id] = (original, evidence)
     rows = [selected[flow_id] for flow_id, _ in inventory]
     summary = summary_from_rows(current, rows, pending_inputs, applied)
+    researcher_blockers = []
+    for record in block.get("followups", []):
+        if record.get("mode") == "researcher_result" and record.get("execution_blocker_defect_ids"):
+            researcher_blockers = list(record["execution_blocker_defect_ids"])
+    if researcher_blockers:
+        summary["execution_blocked"] = True
+        summary["execution_blocker_defect_ids"] = researcher_blockers
     summary.update(schema_version=2, selection_policy=RESULT_POLICY,
                    result_scope="experiment_accepted_audit", stage="experiment", source_revision=None,
                    current_source_revision=current["input"]["source_revision"],
                    latest_assessment_status=current["status"], latest_assessment_counts=current["counts"],
                    retained_from_prior_source_count=sum(r["source_revision"] != current["input"]["source_revision"]
-                                                        and r["status"] != "not_evaluable" for r in rows))
+                                                        and r["status"] != "not_evaluable"
+                                                        for r in rows))
     return summary
 
 
@@ -159,7 +177,8 @@ def validate_followups(run, folder):
                 record["mode"] == "researcher_result"):
             require(recorded <= epoch(block["assessments"][parent_index + 1]["input"]["captured_at"]),
                     "follow-up cannot revise a superseded source stage")
-        pending = {f["flow_id"] for f in parent["flows"]}
+        pending = {f["flow_id"] for f in parent["flows"]
+                   if not f.get("execution_blocker_defect_ids")}
         results = record.get("results")
         require(isinstance(results, list) and results, "nonempty per-flow results required")
         target_ids = [r.get("flow_id") for r in results]
@@ -168,6 +187,15 @@ def validate_followups(run, folder):
         if record["mode"] == "researcher_result":
             require(isinstance(record.get("researcher_result"), str) and record["researcher_result"].strip(), "researcher result text required")
             require("runtime_result" not in record, "researcher result must not fabricate runtime evidence")
+            blocker_ids = record.get("execution_blocker_defect_ids", [])
+            require(isinstance(blocker_ids, list) and len(blocker_ids) == len(set(blocker_ids)),
+                    "researcher execution blocker IDs must be a unique array")
+            known_defects = {row.get("defect_id"): row for row in run.get("defects", [])
+                             if isinstance(row, dict)}
+            require(all(value in known_defects and known_defects[value].get("blocks_execution") is True
+                        and known_defects[value].get("researcher_followup_id") == identity
+                        for value in blocker_ids),
+                    "researcher execution blocker IDs must identify attributed blocking defects")
         else:
             measured = record.get("runtime_result")
             require(isinstance(measured, dict) and isinstance(measured.get("input"), dict), "LLM assessment required")
@@ -207,11 +235,14 @@ def markdown(summary):
     lines = ["# Flow measurement progress", "", f"Assessment: {summary['assessment_id']} ({summary['stage']})",
              f"Source revision: {summary['source_revision']}", f"Status: {summary['status']}",
              f"Result basis: {summary['result_basis']}", f"Known incorrect flows: {summary['counts']['incorrect']}",
+             f"Execution blocked: {'yes' if summary.get('execution_blocked') else 'no'}",
+             f"Execution blocker defects: {', '.join(summary.get('execution_blocker_defect_ids', [])) or 'none'}",
              f"Whole-baseline accuracy (%): {shown('flow_accuracy_percent')}",
              f"Evaluated-only accuracy (%): {shown('evaluated_accuracy_percent')}",
              f"Evaluated-only error (%): {shown('evaluated_error_percent')}",
              f"Evaluated coverage (%): {shown('evaluated_coverage_percent')}",
-             f"Accuracy bounds (%): {summary['accuracy_lower_bound_percent']}–{summary['accuracy_upper_bound_percent']}",
+             f"Accuracy bounds (%): {shown('accuracy_lower_bound_percent')} to "
+             f"{shown('accuracy_upper_bound_percent')}",
              "", "| Flow | Result | Source | Record |", "|---|---|---|---|"]
     for flow in summary["flows"]:
         lines.append(f"| {flow['flow_id']} | {flow['status']} | {flow['result_source']} | {flow['record_id']} |")

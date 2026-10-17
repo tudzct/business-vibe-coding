@@ -9,7 +9,7 @@ from datetime import datetime
 from pathlib import Path
 
 CORE = ("prompt_generation", "source_generation", "repair")
-AUX = ("configuration_and_approval", "dataset_resolution", "audit",
+AUX = ("configuration_and_approval", "dataset_resolution",
        "runtime_verification", "finalization", "uc_setup")
 USAGE = ("input_tokens", "cached_input_tokens", "output_tokens",
          "reasoning_output_tokens", "total_tokens")
@@ -33,7 +33,7 @@ def read_json(path):
 
 def writable(path):
     path = Path(path).resolve()
-    require(path.is_relative_to(ROOT), "output must stay inside Business repository")
+    require(path.is_relative_to(ROOT), "output must stay inside repository")
     relative = path.relative_to(ROOT)
     require(not relative.parts or not relative.parts[0].lower().endswith("-master"),
             "external reference projects are read-only")
@@ -153,6 +153,7 @@ def duration(segment):
     for key in ("uc_id", "run_id", "session_id", "turn_id", "phase", "segment_id"):
         require(start.get(key) == end.get(key), f"timestamp {key} mismatch")
     require(start.get("repair_id") == end.get("repair_id"), "timestamp repair identity mismatch")
+    require(start.get("repair_activity") == end.get("repair_activity"), "timestamp repair activity mismatch")
     require(start["event"] == "start" and end["event"] == "end", "invalid timestamp events")
     a, b = endpoint(start), endpoint(end)
     require(b >= a, "negative duration")
@@ -227,8 +228,11 @@ def execution_phase_aggregate(rows, phase, repairs):
     result = phase_aggregate(rows, phase)
     if phase == "repair":
         times = [v["duration_seconds"] for v in repairs.values()]
+        # phase_aggregate already includes both phase-level sub-prompt generation
+        # and every round segment exactly once. Per-round timing only proves that
+        # no canonical round is missing its own capture.
         missing = any(v is None for v in times) or result["duration_seconds"] is None
-        result["duration_seconds"] = None if missing else round(sum(times), 3)
+        result["duration_seconds"] = None if missing else result["duration_seconds"]
         result["timing_unavailable_reason"] = "Missing repair execution endpoints" if missing else None
     return result
 
@@ -288,8 +292,15 @@ def validate_metrics(metrics):
                 require(segment["end"].get("timing_protocol") == protocol, "end timing protocol mismatch")
                 duration(segment)
             if segment["start"]["phase"] == "repair":
-                require(segment["start"].get("repair_id") in metrics.get("repair_timing", {}),
-                        "repair segment missing canonical repair identity")
+                activity = segment["start"].get("repair_activity")
+                require(activity in {"sub_prompt_generation", "source_correction"},
+                        "repair segment needs a valid activity")
+                if activity == "sub_prompt_generation":
+                    require(segment["start"].get("repair_id") is None,
+                            "sub-prompt generation is phase-level")
+                else:
+                    require(segment["start"].get("repair_id") in metrics.get("repair_timing", {}),
+                            "source-correction segment missing canonical round identity")
         for segment in segments:
             require(all(segment["start"].get(k) == metrics[k] for k in ("uc_id", "run_id")),
                     "segment UC/run mismatch")
@@ -350,7 +361,7 @@ def metrics_markdown(metrics):
         lines.append(f"| {row['turn_id']} | {row['phase']} | {row['timing_phase']} | {core} | {row['wall_clock_seconds']} | {reason} |")
     lines.append("")
     lines += [f"Timing protocol: `{metrics['timing_protocol']}`.", "",
-              ("Repair seconds include integrated BR/flow/runtime verification and final evidence persistence. "
+              ("Repair seconds include sub-prompt generation, integrated BR/flow/runtime verification and final evidence persistence. "
                "A turn with core execution must retain that core token label."), "",
               "Workflow duration seconds = Prompt execution + first-pass Source execution + all Repair executions. "
               "Configuration, approvals, dataset resolution, separate audit/runtime and reporting are excluded from duration seconds. "

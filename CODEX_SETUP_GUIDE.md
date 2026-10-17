@@ -1,90 +1,46 @@
-# Codex setup guide - Business vibe coding
+# Repository setup guide
 
-Setup Review verifies that the research repository and mandatory runtime are available. It does not generate prompts/source, alter frozen UCs, start containers or create/run tests.
+Use this guide only for an explicit setup or repository-review request. It is not run-operation context.
 
-## Required read order
+## Read-only checks
 
-1. `AGENTS.md`
-2. `PROJECT_CONTEXT.md`
-3. `CODEX_SETUP_GUIDE.md`
-4. `docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md`
-5. `docs/00-context/sources/CONNECTED-SOURCES.md`
+Confirm:
 
-## Read-only setup checklist
+- repository root and active branch;
+- clean or intentionally modified working tree;
+- Docker Engine and Docker Compose v2 availability;
+- required project-input directories;
+- `finalsource/be`, `finalsource/fe` and `finalsource/compose.yaml`;
+- configured local environment files without printing secrets;
+- database and Figma inputs required by the project.
 
-Run:
+Do not enumerate or preload skill instructions during setup.
 
-```bash
-pwd
-git status --short
-git rev-parse --show-toplevel
-git log -1 --oneline
-find .codex/skills -mindepth 2 -maxdepth 2 -name SKILL.md -print | sort
-find docs/01-inception/use-cases -maxdepth 1 -name 'uc-*.md' -print | sort
-docker --version
-docker compose version
-docker info
-```
+## Project input locations
 
-Expected repository invariants:
+- Use cases: `docs/01-inception/use-cases/`
+- API contracts: `docs/01-inception/api-contracts/`
+- Figma mapping: `docs/00-context/FIGMA-LINK-REVIEW.md`
+- Figma datasets: `resource/figma-design-dataset/`
+- DBML: `docs/00-context/engineering/schema.dbml`
+- Application source: `finalsource/`
+- Clean source archive and checksum: `.codex/skills/restore-source-baseline/assets/`
 
-- `docs/00-context/FIGMA-LINK-REVIEW.md` is the sole authority for the active project's approved Figma roots and per-UC capture mappings.
-- `.codex/skills/restore-source-baseline/assets/source-baseline.sha256` pins the adjacent project-specific clean source baseline ZIP; the restore script contains no project-specific checksum.
-- The complete active UC inventory is the set of frozen files matching `docs/01-inception/use-cases/uc-*.md`.
-- Each UC contains functional specification, UML Model and Business Rules.
-- `docs/01-inception/use-cases/OCL-UTILITY-DEFINITIONS.md` exists when the project's UC source supplies shared OCL utilities.
-- Only the two-phase Business Rule workflow and its implementation/audit skills are installed.
-- The two-phase commands are `$gen-coding-prompt` and `$gen-source-code`.
-- Docker Compose v2 is available; native host Node.js/MySQL is unsupported.
+## Runtime preparation
 
-## Local configuration
+Runtime configuration belongs under `finalsource/`. Verify service names, ports, commands, volumes, build paths and database credentials against the active project. Keep secrets local and ignored.
 
-Read [FILE-DRIVEN-WORKFLOW.md](docs/00-context/workflow/FILE-DRIVEN-WORKFLOW.md) for the researcher command sequence. Prepare four research JSON files (Confirmed configuration with the UC's ordered frozen API ID/path/SHA-256 entries, or `api_contracts: []` when its required `Related API IDs` section is exactly `None.`, frozen BR/flow baselines and Draft Canonical Run JSON) and the fifth database input under [DATABASE-SCHEMA.md](docs/00-context/engineering/DATABASE-SCHEMA.md). Researcher setup initializes a complete schema through TypeORM migrations on a fresh database and adds migrations between runs only when needed; preserve data between UCs. Capture migration head, DBML hash and runtime fingerprint outside generation and store them in configuration. Generation preflight verifies any API pins and the database pins; it never creates schema or asks for schema approval. Generation validates them read-only without extra confirmation or initialization. Prompt close approves the Draft and pins its bytes; activation is optional. Root `.env` is optional preparation convenience. Runtime `finalsource/.env` remains ignored and is prepared only on a setup request, before database preflight; never print secrets.
-
-## Runtime authorization
-
-Do not build/start containers during Setup Review. After explicit researcher authorization:
-
-```bash
-docker compose --env-file finalsource/.env -f finalsource/compose.yaml up --build -d
-docker compose --env-file finalsource/.env -f finalsource/compose.yaml ps
-```
-
-The whole-stack command above is researcher setup outside active runs and executes the migration service. Within a pinned run, after database preflight, rebuild with `up -d --build --no-deps backend frontend`; never invoke setup migrations. Distinguish container state, health and UI/API reachability. Do not run `docker compose down -v` unless the researcher explicitly requests destructive database reset.
-
-## Connected sources
-
-UC and API specifications are authoritative frozen Markdown inputs under `docs/01-inception/`. Ordinary Phase 1 uses those repository files directly.
-
-Figma is required only to create/refresh an offline design dataset. Resolve targets through `docs/00-context/FIGMA-LINK-REVIEW.md`.
-
-If connector access fails, mark the source `BLOCKED`; do not scrape or guess.
+The database is initialized only during operator-managed setup. Active run operations must not execute migrations, reset volumes or change schema. Use Docker Compose v2; native host Node.js/MySQL execution is unsupported.
 
 ## Setup report
 
-```markdown
-# Setup Review
+Report only technical readiness:
 
 - Repository: PASS | WARN | BLOCKED
-- Required context: PASS | WARN | BLOCKED
-- Use-case/UML/BR inputs: PASS | WARN | BLOCKED
-- Repo-local skills: PASS | WARN | BLOCKED
+- Project inputs: PASS | WARN | BLOCKED
+- Source baseline: PASS | WARN | BLOCKED
 - Docker/Compose: PASS | WARN | BLOCKED
-- Local configuration: PASS | WARN | BLOCKED
-- Connected sources: PASS | NOT_APPLICABLE | BLOCKED
-- Runtime: NOT_RUN | PASS | BLOCKED
-- Git safety: PASS | WARN | BLOCKED
+- Database: PASS | WARN | BLOCKED
+- Figma dataset: PASS | NOT_APPLICABLE | WARN | BLOCKED
 
-Overall: READY | READY_WITH_WARNINGS | NOT_READY
-Next action: <one concrete action>
-```
-
-`READY` means the environment can execute the two-phase method; it does not mean generated source satisfies Business Rules.
-
-## Supplementary researcher output
-
-- `$export-experiment-excel <UC-ID> <LINK_OR_FILEPATH> <TAB_NAME>`: after workflow finalization, invoke separately with exactly three positional arguments (quote paths/tab names containing spaces). It dynamically maps every result heading against canonical JSON, including recorded BR/flow/repair and optional UI data, and saves a new filled copy plus provenance. Unavailable values become N/A; formulas and protected/manual content remain unchanged. No additional prose or clarification is required.
-
-Figma/UI accuracy may be inspected manually. All UI fields may be missing/null without blocking validation or reports. Excel export remains reporting-only.
-
-Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and [approved prompt](docs/02-construction/coding-prompts/%3CUC-ID%3E-business-coding-prompt.md), or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.
+List concrete blockers and one technical next action. Do not inspect operation-owned prompts, rubrics, results or repair instructions during setup.

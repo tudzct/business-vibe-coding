@@ -1,24 +1,28 @@
-# Two-phase Business Vibe Coding method
+# Technical execution boundaries
 
-## Phase 1 — Generate Business Coding Prompt
+This repository uses file-pinned inputs and operation-owned skills. This document contains no command roadmap.
 
-Inputs: frozen UC/UML, ordered checksum-pinned API contracts when declared by the UC, applicable frozen Figma sources, existing project context, prepared artifacts and [the configured template](../../../templates/construction/coding-prompt.template.md) under the workflow input boundaries.
+## Input handling
 
-1. Verify provenance and checksum of the UC projection and the configured Frozen identity/path/SHA-256 of every referenced API contract.
-2. Resolve the configured coding-prompt template and its permitted generation inputs.
-3. Validate the existing BR/flow baselines and Canonical Run JSON prepared by the researcher's chosen tool before invocation. Missing or invalid inputs stop generation; no creation skill is mandatory and preflight never creates them.
-4. The AI analyzes the validated inputs and authors the complete Draft prompt following the configured coding-prompt template.
-5. The prompt-close command approves and pins the prompt, without another gate.
+- Resolve one exact active run.
+- Validate required project inputs and checksums read-only.
+- Never create or repair prepared inputs as a side effect of another operation.
+- Preserve immutable source and evidence revisions.
 
-## Phase 2 — Generate Source Code
+## Source handling
 
-Inputs: [approved prompt](../../../docs/02-construction/coding-prompts/%3CUC-ID%3E-business-coding-prompt.md), existing codebase, configuration-pinned DBML and existing MySQL schema, and project rules. Database preflight verifies migration history and file/runtime pins. Schema is immutable within a run: no proposal/approval, migrations or DDL; allow only compatible mappings and authorized business DML. Researcher setup may add migrations between runs; a changed baseline requires a new configuration/run.
+- Mutate source only when the active operation explicitly authorizes it.
+- Keep changes within `finalsource/` and the declared scope.
+- Map persistence code to the existing configured database structure.
+- Preserve actual timing endpoints and source provenance.
 
-1. Validate the pinned configuration and approved prompt for exactly one run; activation is optional. Then capture model/time metadata.
-2. Generate only the source needed for the UC.
-3. Preserve first-pass evidence, stop, and close source telemetry in the subsequent command turn. The audit command then assesses every frozen BR/flow.
-4. On the subsequent repair command, create bounded sub-prompts for evidenced defects, apply corrections and automatically verify final BR/flow/runtime evidence.
-5. Complete permitted lint/typecheck/build and Docker runtime observations; do not create or run tests.
-6. Freeze the final source hash and finalize the run record.
+## Artifact handling
 
-This is a two-phase research workflow, not an enterprise AI-DLC process.
+- Write only artifacts owned by the active operation.
+- Consume another operation's output only through its validated handoff contract.
+- Never read the producer operation's private prompt, template or instructions merely because its artifact exists.
+- Never overwrite an earlier observation with a later one.
+
+## Runtime handling
+
+Use Docker Compose v2 and sanitized evidence. Do not execute schema setup inside an active run. Do not create or run tests unless the active skill explicitly authorizes them.

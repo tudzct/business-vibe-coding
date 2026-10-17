@@ -27,7 +27,7 @@ def prepare(run, folder, followup_id, turn_id, source_revision):
                          "reason": "Measurement remains incomplete; save conclusive results for pending BRs/flows before repair."}
     if outcome == "authorized":
         return updated, {"action": "await_repair_request", "current_gate": gate,
-                         "reason": "Accepted audit results contain a defect. Invoke $bug-fixing-sub-prompt to authorize and begin repair without another confirmation."}
+                         "reason": "Accepted audit results contain a defect. Invoke $gen-bug-fixing-prompt once to create the complete prompt set, then invoke $repair-source-code <repair-prompt-directory> once for the bounded Repair loop."}
     reason = "No evidenced defects remain after the saved audit follow-up; repair is unnecessary." if outcome == "skipped" else None
     receipt = prepare_transition(updated, folder, "repair_decision", outcome, turn_id, reason, automatic)
     return updated, {"action": "final_metrics",

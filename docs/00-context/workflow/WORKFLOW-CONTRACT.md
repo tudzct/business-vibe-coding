@@ -1,41 +1,40 @@
-# Workflow contract
+# Active-run contract
 
-The configured method uses [the configured prompt](../../../docs/02-construction/coding-prompts/%3CUC-ID%3E-business-coding-prompt.md). [The configured coding-prompt template](../../../templates/construction/coding-prompt.template.md) defines all prompt structure and section responsibilities. Preserve all functional Basic/Main, Alternative and Exception Flows, required technical controls, frozen BR/flow evaluation baseline, audit rubric, gate sequence and telemetry rules.
+This contract defines shared integrity and handoff boundaries. It does not define operation order or disclose operation-owned instructions.
 
 ## Input boundaries
 
-The current run receives the researcher-prepared per-run database baseline through configuration `database_baseline`. The same configuration pins the complete ordered API contract ID/path/SHA-256 inventory for each UC; this inventory is `[]` only when the required frozen `Related API IDs` section contains exactly `None.`. Prompt/Source preflight verifies the inventory against the frozen UC and verifies every configured API's Frozen identity and current bytes before START. DBML is technical input for prompt generation. Read the configured DBML; use existing structure and authorized business DML only. Prompt/Source preflight verifies migration history, DBML bytes and runtime fingerprint before START. In-run migrations and DDL are prohibited. Researcher setup may evolve schema between runs; matched UC comparisons use identical API inventories, migration history and hashes. See [database policy](../engineering/DATABASE-SCHEMA.md). Database data persists across cumulative UCs.
+The active configuration pins one UC/run identity, project dependencies and database baseline. Consumers validate exact paths, identities and raw-byte checksums. An empty API inventory is valid only when the frozen use case explicitly declares no related API.
 
-| Operation | Configured method |
-|---|---|
-| Evaluation preparation | Freeze all BRs and flows before generation |
-| Prompt generation | Functional/UML/UI/API sources, configured template and its permitted inputs |
-| First-pass source | Approved prompt from the configured template and its permitted inputs |
-| First-pass audit / automatic repair verification | Every frozen BR and flow, configured rubric |
-| Authorized repair | One evidenced defect per bounded sub-prompt |
+The configured DBML, migration history and live database fingerprint form one immutable run input. Active operations map to existing structure and may perform authorized DML. They do not execute migrations, DDL or schema synchronization.
 
-Map every frozen flow and terminal clause to the applicable sections defined by the configured template before approval. This is a traceability check, not a new flow denominator. Required JWT/hash/ownership/validation and other technical controls remain where the permitted functional/API/technical sources require them.
+## Prompt identity
 
-## Identity
+A coding-prompt artifact is selected by exact active-run identity, path and checksum. Validation checks configured identity and artifact structure.
 
-Prompt metadata requires `prompt_variant` to match the pinned configuration; the canonical run and activation use that same value. Validate the exact heading structure, filename and approved prompt checksum.
+The coding-prompt template is private to its owning operation. Shared context must not restate its sections or responsibilities.
 
-`gen-coding-prompt/scripts/validate_prompt_contract.py` validates the configured UC/run, approved status (or `--allow-draft`), source UC, exact configured API metadata, filename, the prompt headings defined by the configured template, BR reference boundaries and optional activation checksum. It is read-only. It does not prove semantic flow coverage.
+## Artifact handoff
 
-At `$measure-uc-workflow close-phase prompt_generation`, approve the Draft and pin canonical `coding_prompt: {path, sha256}` and configured variant. Keep a run-local approved snapshot if the common prompt path will be reused. Optional activation receipts remain immutable and are validated when present; no activation preparation or turn is mandatory.
+An operation may consume only the validated fields it requires from an active-run artifact. This permission does not extend to the producer skill's `SKILL.md`, references, scripts or private templates.
 
-## One command sequence
+Typical handoff data includes:
 
-The current run follows [FILE-DRIVEN-WORKFLOW.md](FILE-DRIVEN-WORKFLOW.md): prompt -> close prompt -> source -> close source -> audit -> requested repair if needed -> finalize (atomically close/skip Repair and finalize workflow) -> optional export. Each command supplies authorization without extra gate confirmations. Audit includes all frozen BRs/flows. Follow-ups save attributed results and wait for a repair command when defects remain; unknown accepted flow verdicts block new repair. All-passing unchanged-source audit records repair unnecessary and skips correction.
+- identity and checksum references;
+- source revision and immutable evidence;
+- validated result and defect records;
+- timestamps, turn identifiers and telemetry receipts.
 
-`record_command.py` preserves the internal `gates` history, with actual command turn/time and evidence hashes; it does not ask for confirmation. Audit evidence remains pinned and immutable. Repair records authorization within its work turn; final verification is automatic there. `finalize-workflow` closes or skips Repair, validates all aggregates and records Repair-close plus Final receipts before one canonical commit. Missing UI scores never block a command.
+Do not add inferred fields, rewrite prior evidence or use artifacts from another run.
 
-## Cumulative source provenance
+## Source provenance
 
-Allow cumulative UCs within the configured pipeline and source order. Before each source generation, record in the run's `source-input.json`: UC/run, configuration reference/checksum, prompt variant, model tuple, replicate, run order, input source SHA-256 and predecessor run/final hash (null at pipeline start), with references to the preserved source/hash evidence. Compare the observed input to that predecessor or the documented clean baseline before mutation.
+Before source mutation, record the active configuration reference, prompt reference, model tuple, replicate/order, current input source hash and expected predecessor or clean-baseline hash. Do not silently restore between cumulative units or inherit another run's source.
 
-Do not restore between cumulative UCs. A new pipeline/model/replicate condition uses its documented starting baseline; it cannot silently inherit another condition's generated source. An unresolved source identity is a preflight blocker, not permission to bypass comparison checks or reset files automatically. Restore only within the researcher's authorized scope. Preserve existing source and recorded evidence while resolving provenance.
+An unresolved source identity is a blocker. Preserve current source and evidence while the operator resolves provenance.
 
-Prompt/source/repair remain telemetry buckets in two phases. Audit, runtime, approval and finalization do not add generation execution seconds. No tests or test cases are created or run by this contract.
+## Operation isolation
 
-Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and approved prompt, or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.
+Each top-level command authorizes only its owning skill. Subordinate skills require explicit authorization in that skill's contract. Deterministic helpers may validate state transitions without exposing the whole state machine to the model.
+
+Shared context never supplies prompt semantics, evaluation rubrics or correction instructions.

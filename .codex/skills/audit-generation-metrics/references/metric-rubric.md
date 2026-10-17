@@ -4,11 +4,13 @@
 
 The frozen ordered BR list is the denominator. Each BR receives one terminal status:
 
-- `met`: inspectable implementation evidence satisfies the complete rule.
-- `unmet`: an applicable part is missing or contradictory.
-- `not_evaluable`: permitted evidence cannot support a defensible decision; state the exact limitation.
+- `met`: an integrated-runtime observation demonstrates the complete rule.
+- `unmet`: an integrated-runtime observation demonstrates that an applicable part fails or contradicts the rule.
+- `not_evaluable`: the system can be exercised, but runtime evidence still cannot support a defensible decision; state the exact limitation.
 
-Prompt prose alone is not evidence. Cite source/configuration/build/bounded-runtime locations. Initial and final snapshots must contain exactly the baseline BR IDs in order and their totals must match.
+Prompt prose alone is not evidence. Source/configuration/build findings diagnose defects but do not replace actual runtime evidence for `met` or `unmet`, except under the operational completion rule: an evidenced generated-source defect that prevents integrated execution makes every frozen BR `unmet` and every frozen Flow `incorrect`. Those rows reference the canonical blocking defect IDs instead of claiming successful runtime observations. Initial and final snapshots contain exactly the baseline BR IDs in order and their totals match.
+
+Canonical `defects` records one root cause once per source stage as `business_rule`, `flow` or `technical`. Every AI-audited `unmet` BR and `incorrect` Flow is covered by an affected ID in an open defect; one execution-blocking technical root cause may cover the complete BR/Flow inventory without being duplicated. A direct researcher correction to `unmet` or `incorrect` creates an attributed defect from the supplied repair facts without inventing runtime proof; a correction to `met` or `correct` creates no defect. Technical failures are retained even when no BR/Flow owns them. `not_evaluable` is not a defect. A generated-source defect with `blocks_execution: true` produces system-wide `unmet`/`incorrect` verdicts and a separate execution-blocked note; environment/researcher setup failure or ambiguous cause does not unless the researcher makes the final classification.
 
 Accepted BR reporting follows `accepted-br-audit-results-v1`. Researcher verdicts and evidence-backed LLM re-audits are append-only follow-ups tied to the immutable parent snapshot and source revision. The latest conclusive result per BR in the active stage is selected; a later `not_evaluable` result does not erase an earlier `met` or `unmet`. Researcher verdicts retain attribution and are never presented as independent runtime evidence.
 
@@ -21,5 +23,5 @@ Accepted BR reporting follows `accepted-br-audit-results-v1`. Researcher verdict
 - Explicit close/finalize commands invoke the measurement engine, which owns canonical `metrics`; Audit preserves it while validating BR/flow evidence.
 - Export input, cached input, output, reasoning output and total per prompt/source/repair and full workflow, plus captured seconds, selected turn count and observable tool-call count. Cached/reasoning are subsets, never added again. Do not publish fresh input, usage-update count, estimated call counts, money cost or a three-phase subtotal. Missing telemetry is null with a reason.
 - Workflow seconds = Prompt execution + first-pass Source execution + all Repair executions at the shared START/END boundaries. Configuration, approval, dataset resolution, separate audit/runtime/finalization and Measure/report work are excluded from time. Capture endpoints live; aggregate after completion. Never substitute UI duration, whole-chat elapsed time or missing endpoints.
-- Record generation, audit and each repair model independently. Start model variants from the same [approved prompt](../../../../docs/02-construction/coding-prompts/%3CUC-ID%3E-business-coding-prompt.md) and source baseline.
+- Record generation, audit and each repair model independently. Use the exact [approved prompt](../../../../docs/02-construction/coding-prompts/%3CUC-ID%3E-coding-prompt.md) and source baseline pinned to the active run.
 - The first-pass audit response and the repair response print BR and flow summaries. Researcher-managed UI and manual Excel fields remain untouched.

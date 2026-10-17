@@ -2,14 +2,14 @@
 
 ## Structure and naming
 
-- Keep source under `finalsource/be/src`. Organize business capabilities under `modules/<feature>/` with module, controller, service, DTOs and entity only when the feature owns persistence.
+- Keep source under `finalsource/be/src`. Organize capabilities under `modules/<feature>/` with module, controller, service, DTOs and entity only when the feature owns persistence.
 - Use PascalCase for classes/types, camelCase for methods/variables, kebab-case for folders, and suffixes `.controller.ts`, `.service.ts`, `.module.ts`, `.entity.ts`, `.dto.ts`.
 - Use explicit imports and constructor injection. Avoid circular dependencies; do not reach into another module's internal files when it can export a provider.
 
 ## Layer responsibilities
 
-- Controller: bind HTTP method/path, receive decorated parameters/DTOs, call a service and return the project response envelope. Keep business/persistence logic out.
-- Service/provider: own business rules, authorization/ownership decisions, orchestration and transaction boundaries.
+- Controller: bind HTTP method/path, receive decorated parameters/DTOs, call a service and return the project response envelope. Keep application/persistence logic out.
+- Service/provider: own specified rules, authorization/ownership decisions, orchestration and transaction boundaries.
 - Repository/TypeORM: own persistence expressions. Do not expose entities directly as public response contracts when fields differ.
 - DTO class: define runtime-validatable inbound structure. Do not use erased TypeScript interfaces for ValidationPipe inputs.
 - Module: import/export only required capabilities. Keep providers singleton/stateless unless a documented scope is required.

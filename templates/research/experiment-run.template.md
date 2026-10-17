@@ -21,18 +21,25 @@ Explicit close/finalize commands supply canonical `metrics` through the telemetr
 
 | BR ID | Initial | Final | Evidence |
 |---|---|---|---|
-| `<BR-ID>` | `met/unmet/not_evaluable` | `met/unmet/not_evaluable` | `<locations>` |
+| `<BR-ID>` | `met/unmet/not_evaluable` | `met/unmet/not_evaluable` | `<runtime observations or blocking defects>` |
 
 ## Flow accuracy
 
 - Status: `scored | repair_required | partial | not_evaluable`
 - Correct/incorrect/not evaluable: `<counts>`
+- Execution blocked: `<yes/no; blocking defect IDs when yes>`
 - Flow error/accuracy: `<percent or N/A>`
 - Evaluated coverage and bounds: `<values>`
 - Evaluated-only accuracy/error: `<percent or N/A; denominator = correct + incorrect>`
 - Result basis/researcher result count: `<rubric_evidence | includes_researcher_results>/<count>`
 - Pending flows, missing targets, reasons and attempts: `<stored details>`
 - Follow-up choices: researcher supplies results for LLM entry; or LLM continues measurement. Neither permits source changes.
+
+## Defects
+
+- Total/open/execution-blocking: `<counts>`
+- Categories: `business_rule | flow | technical`
+- Each root cause retains its fingerprint, trigger, affected BR/Flow IDs, source revision and checksummed evidence.
 
 ## Researcher-managed Figma/UI accuracy
 

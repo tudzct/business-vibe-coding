@@ -40,7 +40,6 @@ def approve_prompt(run, path, prompt, dry_run):
         validate_prompt(config, run["uc_id"], run["run_id"], snapshot)
         prompt.write_bytes(approved)
         run["coding_prompt"] = {"path": snapshot.relative_to(ROOT).as_posix(), "sha256": digest(approved)}
-        run["prompt_variant"] = result["prompt_variant"]
         atomic_write(path, run)
     return {"action": "approve_prompt", "prompt": prompt.relative_to(ROOT).as_posix()}
 
@@ -68,11 +67,28 @@ def prepare(run, folder, action, turn_id):
         if action == "repair":
             validate_repair_authorization(updated)
         return updated, {"action": action, "status": "already_recorded", "receipts": []}
+    if action == "repair":
+        initial_defects = [row for row in updated.get("defects", [])
+                           if isinstance(row, dict) and row.get("stage") == "initial"
+                           and row.get("status") == "open"]
+        require(initial_defects, "repair requires an immutable initial defect inventory")
+        require(isinstance(updated.get("repair_prompt_directory"), str)
+                and updated["repair_prompt_directory"].strip(),
+                "repair requires a validated complete prompt-set handoff")
+        require(updated.get("all_sub_prompt_count") == len(initial_defects),
+                "repair prompt count must match the initial defect inventory")
+        require(updated.get("repair_round_limit") == 10
+                and updated.get("repair_rounds_completed") == 0
+                and updated.get("repair_status") == "not_started"
+                and updated.get("repairs") == [],
+                "repair must begin from the validated bounded-loop initial state")
     receipts.append(prepare_transition(updated, folder, gate, outcome, turn_id))
     if action == "audit":
         business = updated["business_rules"]["initial"]
         counts = validate_flow(updated, folder)["counts"]
-        if business["met"] == business["total"] and counts["correct"] == counts["total"]:
+        evidence = audit_evidence(updated, folder, "initial")
+        if (business["met"] == business["total"] and counts["correct"] == counts["total"]
+                and not evidence["defect_ids"]):
             updated["business_rules"]["final"] = copy.deepcopy(business)
             receipts.append(prepare_transition(updated, folder, "repair_decision", "skipped", turn_id,
                                                 "All frozen BRs and flows pass; repair unnecessary."))
@@ -99,7 +115,7 @@ def prompt_activation(run, folder, turn_id):
         return path, None  # Existing valid receipts remain byte-for-byte unchanged.
     return path, {
         "artifact_type": "run-activation", "gate_version": 5,
-        "uc_id": run["uc_id"], "run_id": run["run_id"], "prompt_variant": result["prompt_variant"],
+        "uc_id": run["uc_id"], "run_id": run["run_id"],
         "configuration_artifact": config_ref["artifact"], "configuration_checksum": config_ref["checksum"],
         "activated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "status": "Confirmed", "approved_prompt": result["prompt"],

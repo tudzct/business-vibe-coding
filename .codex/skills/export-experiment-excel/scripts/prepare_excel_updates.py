@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflo
 from metrics_contract import (ROOT, atomic_write, digest, read_json, require,
                               validate_canonical_path, validate_metrics, writable)
 
-IDENTITY = {"uc_id", "run_id", "prompt_variant", "replicate_index", "run_order", "generation_model.requested_model_id"}
+IDENTITY = {"uc_id", "run_id", "replicate_index", "run_order", "generation_model.requested_model_id"}
 
 
 def path_parts(field):
@@ -82,7 +82,7 @@ def prepare(mapping):
     require(isinstance(requested_uc, str) and re.fullmatch(r"UC-[0-9]+(?:\.[0-9]+)?", requested_uc), "canonical requested_uc_id required")
     require(isinstance(target_sheet, str) and target_sheet.strip(), "exact target_sheet required")
     require(isinstance(mapping.get("header_coverage"), list) and mapping["header_coverage"], "header coverage required")
-    require(Path(mapping["repo_root"]).resolve() == ROOT, "repo_root must be the Business repository")
+    require(Path(mapping["repo_root"]).resolve() == ROOT, "repo_root must be the repository")
     workbook = (ROOT / mapping["workbook"]).resolve()
     require(workbook.is_file() and workbook.suffix.lower() == ".xlsx", "existing .xlsx workbook required")
     require(digest(workbook.read_bytes()) == mapping["workbook_sha256"], "workbook changed since inspection")

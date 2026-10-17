@@ -9,11 +9,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow" / "scripts"))
 from metrics_contract import atomic_write, validate_metrics, context, run_lock, epoch, digest
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-flow-accuracy" / "scripts"))
-from score_flow_accuracy import calculate as calculate_flow, validate_run_result, validate_evidence
+from score_flow_accuracy import (calculate as calculate_flow, validate_run_result,
+                                 validate_evidence, validate_defects, verification_defects)
 from runtime_contract import method, configured_rubric
 from flow_summary import validate_followups
 
 STATUSES = {"met", "unmet", "not_evaluable"}
+FOLLOWUP_STATUSES = {"met", "unmet", "not_evaluable"}
 FLOW_STATUSES = {"scored", "repair_required", "not_evaluable", "partial"}
 BR_RESULT_POLICY = "accepted-br-audit-results-v1"
 
@@ -36,6 +38,22 @@ def validate_snapshot(snapshot, ordered, field):
             raise ValueError(f"{field}.requirements[{index}] needs inspectable evidence")
         if not isinstance(row.get("rationale"), str) or not row["rationale"].strip():
             raise ValueError(f"{field}.requirements[{index}] needs rationale")
+        blockers = row.get("blocking_defect_ids")
+        if blockers not in (None, []):
+            if row["status"] != "unmet":
+                raise ValueError(f"{field}.requirements[{index}] execution blocker must produce unmet")
+            if (not isinstance(blockers, list) or not blockers or len(blockers) != len(set(blockers))
+                    or any(not isinstance(value, str) or not value.strip() for value in blockers)):
+                raise ValueError(f"{field}.requirements[{index}] needs blocking defect IDs")
+            if row.get("runtime_observation_ids") not in (None, []):
+                raise ValueError(f"{field}.requirements[{index}] cannot claim runtime observations while execution is blocked")
+        else:
+            observations = row.get("runtime_observation_ids")
+            if (not isinstance(observations, list) or len(observations) != len(set(observations))
+                    or any(not isinstance(value, str) or not value.strip() for value in observations)):
+                raise ValueError(f"{field}.requirements[{index}] needs runtime observation IDs")
+            if row.get("blocking_defect_ids") not in (None, []):
+                raise ValueError(f"{field}.requirements[{index}] cannot carry execution blockers")
         ids.append(row["br_id"])
         counts[row["status"]] += 1
     if ids != ordered:
@@ -43,6 +61,43 @@ def validate_snapshot(snapshot, ordered, field):
     snapshot["total"] = len(rows)
     for status, count in counts.items():
         snapshot[status] = count
+
+
+def validate_br_runtime(snapshot, assessment, defects, field, researcher_result_ids=()):
+    """Bind every BR verdict to this stage's actual runtime or its execution blocker."""
+    if not isinstance(assessment, dict):
+        raise ValueError(f"{field} requires its matching flow/runtime assessment")
+    observation_ids = {row.get("observation_id") for row in assessment.get("input", {}).get("observations", [])}
+    runtime = assessment.get("input", {}).get("runtime") or {}
+    open_defects = {row["defect_id"]: row for row in defects if row["status"] == "open"}
+    blocker_ids = set(assessment.get("input", {}).get("execution_blocker_defect_ids", []))
+    researcher_result_ids = set(researcher_result_ids)
+    if blocker_ids:
+        if assessment.get("status") != "repair_required" or not blocker_ids <= set(open_defects):
+            raise ValueError(f"{field} execution blockers do not match the runtime assessment")
+        if any(not open_defects[value]["blocks_execution"] for value in blocker_ids):
+            raise ValueError(f"{field} references a non-blocking defect as an execution blocker")
+        if any(row["status"] != "unmet" for row in snapshot["requirements"]):
+            raise ValueError(f"{field} must mark every frozen BR unmet when execution is blocked")
+    elif any(row.get("blocking_defect_ids") not in (None, []) for row in snapshot["requirements"]):
+        raise ValueError(f"{field} cannot reference execution blockers without an evidenced system blocker")
+    for row in snapshot["requirements"]:
+        if row.get("blocking_defect_ids") not in (None, []):
+            if set(row["blocking_defect_ids"]) != blocker_ids:
+                raise ValueError(f"{field}.{row['br_id']} must reference every system execution blocker")
+            continue
+        if not set(row["runtime_observation_ids"]) <= observation_ids:
+            raise ValueError(f"{field}.{row['br_id']} references an unknown runtime observation")
+        if (row["status"] in {"met", "unmet"} and not row["runtime_observation_ids"]
+                and row["br_id"] not in researcher_result_ids):
+            raise ValueError(f"{field}.{row['br_id']} conclusive audit verdict needs runtime observation IDs")
+        if row["status"] in {"met", "unmet"} and not (
+                runtime.get("status") == "ready" and (runtime.get("deployment") or {}).get("verified") is True):
+            raise ValueError(f"{field}.{row['br_id']} conclusive verdict needs verified integrated runtime")
+        if row["status"] == "unmet" and row["br_id"] not in researcher_result_ids and not any(
+                row["br_id"] in defect["affected_br_ids"]
+                for defect in open_defects.values()):
+            raise ValueError(f"{field}.{row['br_id']} unmet result lacks a canonical affected defect")
 
 
 def br_fingerprint(value):
@@ -73,11 +128,30 @@ def accepted_br_summary(data):
         raise ValueError("persist validated business_rules.initial counts before follow-up")
     parent = initial_br_parent(data)
     source_revision = parent["input"]["source_revision"]
+    runtime_observations = {}
+    runtime_results = list((data.get("flow_accuracy") or {}).get("assessments", []))
+    runtime_results.extend(
+        record["runtime_result"] for record in (data.get("flow_accuracy") or {}).get("followups", [])
+        if record.get("mode") == "llm_measurement" and isinstance(record.get("runtime_result"), dict)
+    )
+    for result in runtime_results:
+        runtime_input = result.get("input") or {}
+        if runtime_input.get("source_revision") != source_revision:
+            continue
+        runtime = runtime_input.get("runtime") or {}
+        ready = runtime.get("status") == "ready" and (runtime.get("deployment") or {}).get("verified") is True
+        for observation in runtime_input.get("observations", []):
+            identity = observation.get("observation_id")
+            if isinstance(identity, str) and identity:
+                runtime_observations[identity] = ready
     selected = {
         row["br_id"]: {
             "br_id": row["br_id"], "status": row["status"],
             "result_source": "assessment", "record_id": "business_rules.initial",
             "evidence": list(row["evidence"]), "rationale": row["rationale"],
+            **({"blocking_defect_ids": list(row["blocking_defect_ids"])}
+               if row.get("blocking_defect_ids") not in (None, []) else
+               {"runtime_observation_ids": list(row["runtime_observation_ids"])}),
         }
         for row in initial["requirements"]
     }
@@ -117,8 +191,12 @@ def accepted_br_summary(data):
         ids = [row.get("br_id") for row in results]
         if len(ids) != len(set(ids)) or not set(ids) <= set(ordered):
             raise ValueError("BR follow-up IDs must identify frozen rules exactly once")
-        if any(row.get("status") not in STATUSES for row in results):
+        if any(row.get("status") not in FOLLOWUP_STATUSES for row in results):
             raise ValueError("invalid BR follow-up status")
+        blocked_ids = {row["br_id"] for row in initial["requirements"]
+                       if row.get("blocking_defect_ids") not in (None, [])}
+        if set(ids) & blocked_ids:
+            raise ValueError("audit follow-up cannot overwrite blocker-derived BR verdicts")
         if mode == "researcher_result":
             text = record.get("researcher_result")
             if not isinstance(text, str) or not text.strip():
@@ -134,6 +212,15 @@ def accepted_br_summary(data):
                         or any(not isinstance(value, str) or not value.strip() for value in evidence)
                         or not isinstance(row.get("rationale"), str) or not row["rationale"].strip()):
                     raise ValueError("LLM BR re-audit requires evidence and rationale")
+                observations = row.get("runtime_observation_ids")
+                if (not isinstance(observations, list) or len(observations) != len(set(observations))
+                        or (row["status"] in {"met", "unmet"} and not observations)):
+                    raise ValueError("LLM BR re-audit requires runtime observation IDs")
+                if any(value not in runtime_observations for value in observations):
+                    raise ValueError("LLM BR re-audit references an unknown runtime observation")
+                if row["status"] in {"met", "unmet"} and any(
+                        not runtime_observations[value] for value in observations):
+                    raise ValueError("LLM BR re-audit conclusive verdict needs verified integrated runtime")
         applied.append(identity)
         for result in results:
             prior = selected[result["br_id"]]
@@ -149,6 +236,9 @@ def accepted_br_summary(data):
                 "br_id": result["br_id"], "status": result["status"],
                 "result_source": mode, "record_id": identity,
                 "evidence": evidence, "rationale": rationale,
+                "runtime_observation_ids": (list(prior["runtime_observation_ids"])
+                                            if mode == "researcher_result"
+                                            else list(result["runtime_observation_ids"])),
             }
     rows = [selected[br_id] for br_id in ordered]
     counts = {status: sum(row["status"] == status for row in rows) for status in STATUSES}
@@ -180,7 +270,10 @@ def apply_br_followup(data, record):
 
 def br_summary_snapshot(summary):
     rows = [{"br_id": row["br_id"], "status": row["status"],
-             "evidence": list(row["evidence"]), "rationale": row["rationale"]}
+             "evidence": list(row["evidence"]), "rationale": row["rationale"],
+             **({"blocking_defect_ids": list(row["blocking_defect_ids"])}
+                if row.get("blocking_defect_ids") not in (None, []) else
+                {"runtime_observation_ids": list(row["runtime_observation_ids"])})}
             for row in summary["requirements"]]
     counts = summary["counts"]
     return {"requirements": rows, "total": counts["total"], "met": counts["met"],
@@ -233,7 +326,9 @@ def validate_flow(data, folder):
     if status not in FLOW_STATUSES or data.get("flow_accuracy_status") != status:
         raise ValueError("flow_accuracy status mismatch")
     counts = effective.get("counts")
-    if not isinstance(counts, dict) or counts.get("total") != counts.get("correct", 0) + counts.get("incorrect", 0) + counts.get("not_evaluable", 0):
+    if (not isinstance(counts, dict) or counts.get("total") !=
+            counts.get("correct", 0) + counts.get("incorrect", 0)
+            + counts.get("not_evaluable", 0)):
         raise ValueError("flow_accuracy counts do not reconcile")
     if data.get("flow_accuracy_percent") != effective.get("flow_accuracy_percent") or data.get("flow_error_percent") != effective.get("flow_error_percent"):
         raise ValueError("flow percentage mismatch")
@@ -286,6 +381,37 @@ def calculate(path_string):
     validate_snapshot(business.get("final"), ordered, "business_rules.final")
     _, _, folder = context(path)
     flow_summary = validate_flow(data, folder)
+    assessments = (data.get("flow_accuracy") or {}).get("assessments", [])
+    current = next((row for row in assessments
+                    if row.get("assessment_id") == data["flow_accuracy"].get("current_assessment_id")), None)
+    flow_ids = [row["flow_id"] for row in current["flows"]] if current else []
+    all_defects = validate_defects(data, ordered_flow_ids=flow_ids)
+    by_stage = {row.get("stage"): row for row in assessments}
+    initial_assessment = by_stage.get("initial")
+    if initial_assessment is None:
+        raise ValueError("initial runtime assessment is required")
+    initial_defects = validate_defects(data, "initial", initial_assessment["input"]["source_revision"], flow_ids)
+    validate_br_runtime(business["initial"], initial_assessment, initial_defects, "business_rules.initial")
+    final_assessment = by_stage.get("final")
+    if final_assessment is None:
+        if data.get("repairs") or business["final"] != business["initial"]:
+            accepted = accepted_br_summary(data)
+            if data.get("repairs") or business["final"] != br_summary_snapshot(accepted):
+                raise ValueError("changed/repaired BR results require a final runtime assessment")
+            researcher_result_ids = {
+                row["br_id"] for row in accepted["requirements"]
+                if row["result_source"] == "researcher_result"
+            }
+        else:
+            researcher_result_ids = set()
+        final_assessment = initial_assessment
+        final_defects = initial_defects
+    else:
+        researcher_result_ids = set()
+        final_defects = verification_defects(
+            data, "final", final_assessment["input"]["source_revision"], flow_ids)
+    validate_br_runtime(business["final"], final_assessment, final_defects, "business_rules.final",
+                        researcher_result_ids)
     revision = business.get("source_revision")
     if data.get("run_status") == "complete" and (not isinstance(revision, str) or re.fullmatch(r"sha256:[0-9a-f]{64}", revision.lower()) is None):
         raise ValueError("complete runs need a full final-source SHA-256")
@@ -296,10 +422,31 @@ def calculate(path_string):
         ids = repair.get("affected_br_ids", []) if isinstance(repair, dict) else None
         if not isinstance(ids, list) or any(value not in ordered for value in ids):
             raise ValueError(f"repairs[{index}].affected_br_ids is invalid")
-    data["all_sub_prompt_count"] = len(repairs)
+    prompt_directory = data.get("repair_prompt_directory")
+    if prompt_directory is None:
+        data["all_sub_prompt_count"] = 0
+    else:
+        if not isinstance(prompt_directory, str) or not prompt_directory.strip():
+            raise ValueError("repair_prompt_directory must be null or a repository-relative path")
+        data["all_sub_prompt_count"] = len(initial_defects)
     atomic_write(path, data)
+    reported_defects = all_defects
+    if repairs:
+        attempts = repairs[-1].get("defect_attempts", []) if isinstance(repairs[-1], dict) else []
+        unresolved_ids = {row.get("defect_id") for row in attempts
+                          if isinstance(row, dict) and row.get("status") == "unresolved"}
+        initial_by_id = {row["defect_id"]: row for row in initial_defects}
+        if not unresolved_ids <= set(initial_by_id):
+            raise ValueError("latest Repair round references a defect outside the initial inventory")
+        reported_defects = [row for row in initial_defects if row["defect_id"] in unresolved_ids]
+    defect_counts = {category: sum(row["category"] == category for row in reported_defects)
+                     for category in ("business_rule", "flow", "technical")}
     print(json.dumps({"run_id": data.get("run_id"), "business_rules": business["final"],
-                      "flow_accuracy": flow_summary, "repairs": len(repairs)}, ensure_ascii=False, indent=2))
+                      "flow_accuracy": flow_summary,
+                      "defects": {"total": len(reported_defects), "by_category": defect_counts,
+                                  "execution_blocking": sum(row["blocks_execution"]
+                                                            for row in reported_defects)},
+                      "repairs": len(repairs)}, ensure_ascii=False, indent=2))
 
 
 def main(path_string):

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Generate Bug-fixing Prompts"
+  short_description: "Create one prompt per audited defect"
+  default_prompt: "Use $gen-bug-fixing-prompt for the validated active run and generate the complete bug-fixing prompt set."

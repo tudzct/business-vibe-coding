@@ -1,47 +1,37 @@
-# File-driven workflow
+# File-driven artifact rules
 
-The researcher invokes the following commands in separate turns. Each command authorizes its own operation; never add a confirmation question, gate approval turn, activation requirement or automatic repair after audit/follow-up. End each response with the next command. The method still has exactly two phases: prompt generation and source generation, including audit/repair.
+This file defines shared file and integrity conventions only. It intentionally does not list operation order, future commands or the internal behavior of any skill.
 
-## Prepare four JSON files and the database input before generation
+## Prepared active-run inputs
 
-1. `docs/04-experiments/configurations/CFG-<UC-ID>-<MODEL>-<VARIANT>.json`: complete, Confirmed configuration, including the ordered frozen API ID/path/SHA-256 entries for the UC, or `api_contracts: []` when its required `Related API IDs` section contains exactly `None.`.
-2. `docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json`: the complete ordered BR ID inventory and checksum-pinned frozen UC.
-3. `docs/02-construction/implementation/<UC-ID>/flow-baseline.json`: the complete ordered Main/Basic, Alternative and Exception Flow ID inventory and checksum-pinned frozen UC.
-4. `docs/04-experiments/<UC-ID>/canonical-run-<UC-ID>-<MODEL>-<VARIANT>.json`: Draft Canonical Run JSON with pinned configuration and baseline identities.
+Before an operation that requires them, the operator prepares:
 
-5. Database input: `docs/00-context/engineering/schema.dbml` and MySQL tables prepared by researcher-managed TypeORM migrations. Configuration pins migration head, DBML hash and runtime fingerprint. Follow [database policy](../engineering/DATABASE-SCHEMA.md).
+1. `docs/04-experiments/configurations/CFG-<UC-ID>-<MODEL>.json`
+2. `docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json`
+3. `docs/02-construction/implementation/<UC-ID>/flow-baseline.json`
+4. `docs/04-experiments/<UC-ID>/canonical-run-<UC-ID>-<MODEL>.json`
+5. `docs/00-context/engineering/schema.dbml` and the configured live database
 
-The researcher chooses the preparation tool. Validate the four JSON files, database pins and frozen UC/API/Figma dependencies read-only; API validation checks the configured order against the UC and each pinned file's path, Frozen identity and SHA-256. Never initialize, repair or fill missing inputs during generation. Resolve one exact UC/run, never the newest file. Root `.env` is optional; initialized Docker MySQL and `finalsource/.env` are required for the database preflight. `run-activation.json` is an optional run receipt, not an additional prepared input; validate it when present. Requested model, replicate and run order come from the pinned configuration.
+The operator chooses how to prepare these files. Consumers validate required fields, identity, path and checksum read-only. They never create, fill, normalize or repair a missing prepared input unless the currently invoked operation explicitly owns that output.
 
-For these file names, `run_id` is `<UC-ID>-<MODEL>-<VARIANT>`: `MODEL` is the configuration's path-safe `requested_label`, and `VARIANT` is its `prompt_variant`. The configuration ID is `CFG-<run_id>`.
+Resolve one exact UC/run. Never choose the newest file or infer a match from filename similarity. A run ID uses `<UC-ID>-<MODEL>`; its configuration ID is `CFG-<run_id>`.
 
-For optional deterministic preparation, run `experiment-input-helpers/calculate_input_values.py` with one frozen UC path and one explicit Figma dataset version. Supply each frozen API contract path in the UC's `Related API IDs` order, repeating `--api-contract` for multiple APIs. Omit `--api-contract` when that section contains exactly `None.`; the helper then prints `api_contracts: []`. Use `--require-empty` only at initial pipeline setup. The helper prints paths, identities and checksums—including the three database baseline pins—without writing files. After manually completing and reviewing the configuration, run `experiment-input-helpers/calculate_configuration_checksum.py --configuration <configuration-path>` and copy the printed checksum into the Draft Canonical Run JSON. Generation still performs its existing read-only configuration/API/Figma/database preflight.
+## Optional deterministic preparation
 
-## Command sequence
+`experiment-input-helpers/calculate_input_values.py` prints project paths, identities and checksums without writing configuration files. Supply one explicit use-case path, one explicit Figma dataset version and each declared API contract path in source order. Omit API arguments only when the frozen use case explicitly declares no related API. Use `--require-empty` only for initial empty-database setup.
 
-| Turn | Researcher command | Completion and next step |
-|---|---|---|
-| 1 | `$gen-coding-prompt docs/01-inception/use-cases/<UC-file>.md` | Validate prepared inputs; generate the Draft from [the configured coding-prompt template](../../../templates/construction/coding-prompt.template.md); preserve actual START/END. Next: Turn 2. |
-| 2 | `$measure-uc-workflow close-phase prompt_generation` | This invocation approves the Draft, pins approved bytes/checksum, closes prompt telemetry and creates/validates activation in the same turn. Next: Turn 3, without another approval or activation turn. |
-| 3 | `$gen-source-code docs/02-construction/coding-prompts/<UC-ID>-business-coding-prompt.md` | Generate first-pass source only; preserve source/hash/model/timing evidence; stop before audit/build/repair. Next: Turn 4. |
-| 4 | `$measure-uc-workflow close-phase source_generation` | Close source telemetry and record completion. Next: Turn 5. |
-| 5 | `$audit-generation-metrics` (includes `$audit-flow-accuracy`) | Run permitted checks and bounded Docker observations; persist every frozen BR/flow result and first-pass evidence. Do not ask to approve audit results. If all pass, record repair unnecessary and go to Turn 7. If defects exist, go to Turn 6. If results are unknown, save partial results and request missing verdicts or bounded LLM measurement. |
-| 6 | `$bug-fixing-sub-prompt` | Repair exactly one evidenced defect in this invocation. Record or retain repair authorization, apply one bounded correction and automatically verify BR/flow/runtime on the resulting source. If another evidenced defect remains and the run is nonterminal, repeat Turn 6 with a new invocation and repair record; otherwise freeze the terminal hash/status and continue to Turn 7. |
-| 7 | `$measure-uc-workflow finalize-workflow` | In one excluded measurement turn, close Repair (or persist a validated skipped bucket), compute and validate all phase/workflow metrics, record both internal transitions and finalize canonical telemetry. Failure before commit leaves the workflow unfinalized. No separate Repair-close, final-audit or Final Metrics confirmation. Next: optional Turn 8. |
-| 8 | `$export-experiment-excel <UC-ID> "<LINK_OR_FILEPATH>" "<TAB_NAME>"` | Separate reporting operation, excluded from workflow tokens/time. Current export produces a new filled `.xlsx` copy from the supplied workbook/link. |
+After manually completing and reviewing a configuration, `experiment-input-helpers/calculate_configuration_checksum.py --configuration <configuration-path>` prints its checksum for the matching active-run artifact.
 
-For unknown or challenged audit results, accept one attributed researcher response covering BRs, flows or both, or perform the requested bounded LLM re-audit. BR follow-ups may correct `met`, `unmet` or `not_evaluable`; flow follow-ups may correct `correct`, `incorrect` or `not_evaluable`. Preserve immutable assessments and result attribution. A later inconclusive attempt never erases an earlier conclusive verdict. Unmentioned results retain the audit verdict. Remaining unknown BRs or flows block new repair authorization; unknown evidence alone is not a defect. Use the existing [audit follow-up contract](gates/AUDIT-FOLLOWUP-CONTINUATION.md) for the combined continuation.
+These helpers do not authorize another operation and do not replace that operation's validators.
 
-Each Turn 6 invocation selects one defect fingerprint and creates one independently identified repair record. Do not combine unrelated defects into one invocation. Repeating Turn 6 reuses the recorded repair authorization while the run remains nonterminal; it does not create another confirmation gate.
+## Artifact integrity
 
-## Evidence
+Preserve immutable inputs, recorded source hashes, timestamps, receipts and evidence. Never rewrite a recorded artifact to make a later validation pass. A changed pinned input requires refreshed dependent artifacts and a compatible new run.
 
-The `gates` JSON field records internal command steps. `record_command.py` records commands with actual turn IDs, timestamps and evidence hashes. Measure records its step after telemetry succeeds. Audit records its step after evidence is persisted. Repair authorization is recorded within Turn 6. Do not rewrite frozen configurations, baselines, assessments, activations or gate receipts.
+Operation-owned prompts, rubrics, assessments and correction templates are not shared workflow context. They may be read only by the active skill that owns them or by an explicitly authorized consumer through a validated handoff artifact.
 
-Preserve frozen BR/flow evaluation for the current run. Resolve frozen Figma evidence through the dataset skill and review mapping. Optional UI scoring never blocks any command. See [workflow boundaries](WORKFLOW-CONTRACT.md).
+## Technical environment
 
-Capture only actual Prompt + first-pass Source + Repair execution intervals. Under `generation_execution_with_repair_audit_v2`, Repair includes its integrated BR/flow/runtime verification and final evidence/hash/status persistence before END. Standalone audit/runtime/follow-up observation contributes no generation execution seconds; close/report/export turns are excluded from workflow tokens. Each work turn has one semantic token label, matching any captured core execution; a repair's child audit remains `repair`. Keep phase-ledger/selection evidence and never fabricate missing counters/endpoints.
+Database structure is immutable within a run. Operator-managed setup may update it between runs. Active operations use authorized DML only and never edit DBML, migrations or schema.
 
-Preserve cumulative source provenance; do not reset between cumulative UCs. API envelopes and required application controls remain. Database structure is immutable within each run. Researcher setup may add migrations between runs when required. Read pinned DBML; perform authorized business DML only. No in-run DDL, migration or schema sync. A missing/conflicting schema element blocks work; close any open interval and preserve partial evidence. Changed baseline requires researcher setup and a new configuration/run. Within runs, Docker rebuilds use `--no-deps backend frontend` and never execute the migration service. Docker Compose v2 is the only runtime; missing daemon is BLOCKED. Never create or run tests/test cases or store secrets in evidence.
-
-Prompt telemetry close (Turn 2) automatically creates a missing `run-activation.json` from the pinned configuration and [approved prompt](../../../docs/02-construction/coding-prompts/%3CUC-ID%3E-business-coding-prompt.md), or validates an existing receipt without replacing it. The receipt records the actual prompt-close turn/time, before source generation. No standalone activation turn is required.
+Within a run, Docker rebuilds target application services without executing the setup migration service. Docker Compose v2 is the supported runtime. Do not create or run tests/test cases or store secrets in evidence.

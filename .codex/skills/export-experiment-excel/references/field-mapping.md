@@ -10,7 +10,7 @@ Keep these semantic distinctions:
 
 - Initial and final BR/flow/UI assessments are different measurements. Use the header's stage; absent or conflicting stage context yields N/A rather than selecting the better score. Resolve a current assessment from its recorded ID, not the last array element by assumption.
 - For current/final experiment flow results, use stored `flow_accuracy.current_summary` when present. Under `accepted-audit-results-v1`, do not replace accepted results with an inconclusive final-source assessment. Verify per-flow evidence provenance; summary stage `experiment` and null aggregate source are valid. Only headings explicitly requesting raw initial/final-source assessments map to immutable assessments. Evaluated-only rates use evaluated flows; whole-baseline rates stay N/A while accepted rows remain unknown. Preserve selection policy, coverage, pending counts, failures and researcher/LLM provenance. Follow-ups do not change telemetry and export never recalculates scores.
-- `met`, `unmet` and `not_evaluable` are distinct. Interpret a label such as `not_available` as `not_evaluable` only when its context unambiguously means unassessable rules; do not confuse an actual count with missing-data N/A.
+- `met`, `unmet`, `not_evaluable` and `execution_blocked` are distinct. Interpret a label such as `not_available` as `not_evaluable` only when its context unambiguously means unassessable rules; do not confuse an actual count with missing-data N/A. `execution_blocked` is a recorded audit result, not missing spreadsheet data.
 - Repair attempts/sub-prompts and unique defects are not interchangeable. Copy the already recorded count matching the heading; do not derive an error count from `len(repairs)` or count affected rules as errors.
 - Prompt/Source/Repair and Workflow counters stay separate. Input includes cached input; output includes reasoning. Never add those subsets again. Preserve recorded timing semantics; captured execution seconds are not UI Worked-for time. A validated Repair bucket with status `skipped` and a recorded no-repair decision exports its stored zero token/time/turn/tool values. Missing, pending or null values remain N/A, including unavailable model-call counts; never synthesize zeros. Require the canonical timing protocol; never combine incompatible totals.
 - Percent points (0..100) and Excel percent fractions (0..1), seconds/minutes and call counts/currency are different units. Apply only declared representation conversions supported by evidence. Ambiguity yields N/A.
@@ -22,7 +22,7 @@ Formula, protected, merged non-anchor, header/identity and unrelated/manual cell
 
 ## Mapping manifest
 
-Generate this from the current three-argument invocation and actual workbook inspection, never ask the researcher to supply JSON paths. Relative paths resolve from `repo_root`; outputs stay in the authorized Business workspace. For links, `workbook` is the faithful downloaded `.xlsx` snapshot and `target_reference` retains the exact supplied URL. For local input, retain the supplied path.
+Generate this from the current three-argument invocation and actual workbook inspection, never ask the researcher to supply JSON paths. Relative paths resolve from `repo_root`; outputs stay in the authorized workspace. For links, `workbook` is the faithful downloaded `.xlsx` snapshot and `target_reference` retains the exact supplied URL. For local input, retain the supplied path.
 
 ```json
 {
@@ -31,10 +31,10 @@ Generate this from the current three-argument invocation and actual workbook ins
   "requested_uc_id": "UC-01",
   "target_sheet": "Results",
   "target_reference": "results.xlsx",
-  "repo_root": "<absolute Business repository path>",
+  "repo_root": "<absolute repository path>",
   "workbook": "<local workbook snapshot path>",
   "workbook_sha256": "sha256:<hash>",
-  "sources": ["docs/04-experiments/UC-01/canonical-run-UC-01-model-variant.json"],
+  "sources": ["docs/04-experiments/UC-01/canonical-run-UC-01-model.json"],
   "header_coverage": [
     {"sheet": "Results", "column": "D", "header": "Final BR met", "status": "mapped", "cells": ["D5"]}
   ],
@@ -57,7 +57,7 @@ Generate this from the current three-argument invocation and actual workbook ins
 }
 ```
 
-Include every canonical run candidate under the requested UC, including unavailable/unfinished candidates, so ambiguity cannot be hidden. Identity keys may include `uc_id`, `run_id`, `prompt_variant`, `replicate_index`, `run_order` and `generation_model.requested_model_id`. Require exactly one match; no match/multiple matches yields N/A. An invalid candidate that cannot be ruled out by row UC/run identity makes that row unavailable. Never select by recency or desired value. An empty candidate list gives N/A to identifiable result cells. Valid records must have validated finalized metrics and matching path/UC/run identity; bad sources are logged, not used or silently substituted.
+Include every canonical run candidate under the requested UC, including unavailable/unfinished candidates, so ambiguity cannot be hidden. Identity keys may include `uc_id`, `run_id`, `replicate_index`, `run_order` and `generation_model.requested_model_id`. Require exactly one match; no match/multiple matches yields N/A. An invalid candidate that cannot be ruled out by row UC/run identity makes that row unavailable. Never select by recency or desired value. An empty candidate list gives N/A to identifiable result cells. Valid records must have validated finalized metrics and matching path/UC/run identity; bad sources are logged, not used or silently substituted.
 
 `field` accepts a dot path with numeric array indexes, e.g. `repairs.0.description`, or an RFC 6901 JSON pointer, e.g. `/future fields/score`. Pointer escapes `~1` and `~0` represent slash and tilde in keys. No expressions, wildcards, filters, eval or arbitrary code. The AI resolves current assessment IDs or item identities before choosing a specific indexed path. Only existing scalars may be copied; arrays/objects without an unambiguous stored scalar/summary yield N/A. `field: null` with `unresolved_reason` represents an unidentified/ambiguous metric, not an omitted column.
 

@@ -1,6 +1,6 @@
 ---
 name: resolve-figma-design-dataset
-description: Create, refresh, validate, or resolve the repository's frozen, checksum-verifiable Figma design dataset for immutable UCs. Use when asked to build a full offline Figma dataset, when no dataset exists, and before prompt generation, source generation, frontend implementation, review, or audit whenever a UC may depend on Figma. Always source capture mappings from FIGMA-LINK-REVIEW.md; never call Figma with URLs or file keys taken from immutable UC files.
+description: Create, refresh, validate or resolve the checksum-verifiable Figma dataset when this operation is explicitly requested.
 ---
 
 # Resolve Figma Design Dataset

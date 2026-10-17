@@ -1,14 +1,13 @@
 {
-  "run_id": "<UC-ID>-<MODEL>-<VARIANT>",
-  "prompt_variant": "<VARIANT>",
+  "run_id": "<UC-ID>-<MODEL>",
   "coding_prompt": null,
   "experiment_configuration": {
-    "configuration_id": "CFG-<UC-ID>-<MODEL>-<VARIANT>",
+    "configuration_id": "CFG-<UC-ID>-<MODEL>",
     "comparison_group_id": "<COMPARISON-GROUP-ID>",
     "researcher_id": "<researcher identifier>",
-    "artifact": "docs/04-experiments/configurations/CFG-<UC-ID>-<MODEL>-<VARIANT>.json",
+    "artifact": "docs/04-experiments/configurations/CFG-<UC-ID>-<MODEL>.json",
     "checksum": "sha256:<checksum>",
-    "run_activation": "docs/02-construction/implementation/<UC-ID>/runs/<UC-ID>-<MODEL>-<VARIANT>/run-activation.json"
+    "run_activation": "docs/02-construction/implementation/<UC-ID>/runs/<UC-ID>-<MODEL>/run-activation.json"
   },
   "uc_id": "<UC-ID>",
   "uc_name": "<Use case name>",
@@ -37,7 +36,13 @@
     "initial": null,
     "final": null
   },
+  "defects": [],
   "repairs": [],
+  "repair_round_limit": 10,
+  "repair_rounds_completed": 0,
+  "repair_status": "not_started",
+  "repair_prompt_directory": null,
+  "all_sub_prompt_count": 0,
   "manual_estimates_minutes": [],
   "ui_accuracy_percent": null,
   "ui_accuracy_status": "researcher_managed",
