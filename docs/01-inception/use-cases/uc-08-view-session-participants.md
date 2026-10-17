@@ -43,10 +43,12 @@ POST-1: The client displays the returned participant list and visible participan
 
 ### Basic Flow
 
-1. The participant opens the participants panel.
-2. The client requests the session participant list.
-3. The system returns public participant representations.
-4. The client displays the list and visible roles.
+Flow ID: BF-1
+
+BF-1.1: The participant opens the participants panel.
+BF-1.2: The client requests the session participant list.
+BF-1.3: The system returns public participant representations.
+BF-1.4: The client displays the list and visible roles.
 
 ### Alternative Flow
 

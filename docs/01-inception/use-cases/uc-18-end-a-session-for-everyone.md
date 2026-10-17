@@ -43,12 +43,14 @@ POST-1: Each client displays the returned ended-session state.
 
 ### Basic Flow
 
-1. The host opens the end-session control.
-2. The client presents the confirmation shown by the design.
-3. The host confirms End for everyone.
-4. The client submits the termination request.
-5. The system returns the ended-session representation.
-6. Each client requests session state and displays the post-session outcome.
+Flow ID: BF-1
+
+BF-1.1: The host opens the end-session control.
+BF-1.2: The client presents the confirmation shown by the design.
+BF-1.3: The host confirms End for everyone.
+BF-1.4: The client submits the termination request.
+BF-1.5: The system returns the ended-session representation.
+BF-1.6: Each client requests session state and displays the post-session outcome.
 
 ### Alternative Flow
 

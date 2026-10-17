@@ -44,12 +44,14 @@ POST-2: The viewer interface displays the returned post-stream outcome.
 
 ### Basic Flow
 
-1. The host opens the end-stream action.
-2. The client presents the confirmation shown by the design.
-3. The host confirms the action.
-4. The client submits the stop request.
-5. The system returns the ended stream representation.
-6. The client displays the post-stream state.
+Flow ID: BF-1
+
+BF-1.1: The host opens the end-stream action.
+BF-1.2: The client presents the confirmation shown by the design.
+BF-1.3: The host confirms the action.
+BF-1.4: The client submits the stop request.
+BF-1.5: The system returns the ended stream representation.
+BF-1.6: The client displays the post-stream state.
 
 ### Alternative Flow
 

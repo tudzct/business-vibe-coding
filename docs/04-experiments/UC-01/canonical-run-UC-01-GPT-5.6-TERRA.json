@@ -1,22 +1,21 @@
 {
-  "run_id": "UC-01-GPT-5.6-TERRA", // Điền thủ công, phải khớp Configuration. Ví dụ: UC-01-GPT-6.1-SOL
-  "coding_prompt": null,
+  "run_id": "UC-01-GPT-5.6-TERRA", 
   "experiment_configuration": {
     "configuration_id": "CFG-<UC-ID>-<MODEL>", // Điền theo hướng dẫn trong docs.
-    "comparison_group_id": "CG-100MS-01", // Điền thủ công giống Configuration; các run so sánh dùng cùng giá trị. Ví dụ: CG-100MS-01
-    "researcher_id": "researcher-khanh", // Điền thủ công giống Configuration. Ví dụ: researcher-khanh
+    "comparison_group_id": "CG-100MS-01", 
+    "researcher_id": "researcher-khanh", 
     "artifact": "docs/04-experiments/configurations/CFG-<UC-ID>-<MODEL>.json", // Điền theo hướng dẫn trong docs.
-    "checksum": "sha256:<checksum>", // Điền theo hướng dẫn trong docs.
+    "checksum": "sha256:<checksum>", 
     "run_activation": null
   },
-  "uc_id": "UC-01", // Điền thủ công, phải khớp cả bốn file. Ví dụ: UC-01
-  "uc_name": "Review Join Preview and Permissions", // Điền thủ công. Ví dụ: Register an account
+  "uc_id": "UC-01",
+  "uc_name": "Review Join Preview and Permissions", 
   "replicate_index": 1,
-  "run_order": 1, // Điền thủ công và bỏ dấu ngoặc kép. Ví dụ: "run_order": 2
-  "audit_protocol": "fixed", // Điền thủ công, chọn một giá trị và phải giống Configuration. Ví dụ: fixed
+  "run_order": 1,
+  "audit_protocol": "fixed", 
   "generation_model": {
-    "requested_model_id": "gpt-5.6-terra", // Điền thủ công, ID model chính xác và giống Configuration. Ví dụ: gpt-6.1-sol
-    "requested_reasoning_effort": "medium", // Điền thủ công giống Configuration. Ví dụ: medium
+    "requested_model_id": "gpt-5.6-terra", 
+    "requested_reasoning_effort": "medium", 
     "effective_model_id": null,
     "effective_snapshot": null,
     "codex_client_version": null
@@ -32,7 +31,7 @@
   "business_rules": {
     "baseline": "docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json", // Điền theo hướng dẫn trong docs.
     "source_revision": null,
-    "ordered_br_ids": ["BR-RJPP-01", "BR-RJPP-02", "BR-RJPP-03", "BR-RJPP-04", "BR-RJPP-05", "BR-RJPP-06", "BR-RJPP-07"], // Điền thủ công giống Business Rule Baseline. Ví dụ: ["BR-AUTH-001", "BR-AUTH-002"]
+    "ordered_br_ids": ["BR-RJPP-01", "BR-RJPP-02", "BR-RJPP-03", "BR-RJPP-04", "BR-RJPP-05", "BR-RJPP-06", "BR-RJPP-07"], 
     "initial": null,
     "final": null
   },

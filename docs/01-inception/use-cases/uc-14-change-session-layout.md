@@ -43,12 +43,14 @@ POST-1: The client renders the returned view preference.
 
 ### Basic Flow
 
-1. The participant opens the view controls.
-2. The client presents the layouts shown by the design.
-3. The participant selects a layout.
-4. The client submits the preference update.
-5. The system returns the updated view preference.
-6. The client renders the selected layout.
+Flow ID: BF-1
+
+BF-1.1: The participant opens the view controls.
+BF-1.2: The client presents the layouts shown by the design.
+BF-1.3: The participant selects a layout.
+BF-1.4: The client submits the preference update.
+BF-1.5: The system returns the updated view preference.
+BF-1.6: The client renders the selected layout.
 
 ### Alternative Flow
 

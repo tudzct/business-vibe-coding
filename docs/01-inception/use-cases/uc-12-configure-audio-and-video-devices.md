@@ -43,12 +43,14 @@ POST-1: The client displays and applies the returned device preferences.
 
 ### Basic Flow
 
-1. The participant opens device settings.
-2. The client presents the available microphone, camera, and audio-output choices.
-3. The participant selects the desired values and confirms.
-4. The client applies the selection locally in preview, or submits the preference update from the joined session.
-5. The client receives the local result or the returned device preferences.
-6. The client applies the returned settings to the preview or session.
+Flow ID: BF-1
+
+BF-1.1: The participant opens device settings.
+BF-1.2: The client presents the available microphone, camera, and audio-output choices.
+BF-1.3: The participant selects the desired values and confirms.
+BF-1.4: The client applies the selection locally in preview, or submits the preference update from the joined session.
+BF-1.5: The client receives the local result or the returned device preferences.
+BF-1.6: The client applies the returned settings to the preview or session.
 
 ### Alternative Flow
 

@@ -2,10 +2,10 @@
   "schema_version": "2.4",
   "artifact_type": "experiment-configuration",
   "status": "Confirmed",
-  "configuration_id": "CFG-UC-01-GPT-5.6-TERRA", // Điền thủ công, phải bằng CFG-<run_id>. Ví dụ: CFG-UC-01-GPT-6.1-SOL
-  "comparison_group_id": "CG-100MS-01", // Điền thủ công; các run so sánh trực tiếp dùng cùng giá trị. Ví dụ: CG-100MS-01
-  "researcher_id": "researcher-khanh", // Điền thủ công. Ví dụ: researcher-khanh
-  "decided_at": "2026-10-17T22:39:53+07:00", // Điền thủ công, ISO-8601 có múi giờ. Ví dụ: 2026-10-17T10:30:00+07:00
+  "configuration_id": "CFG-UC-01-GPT-5.6-TERRA", 
+  "comparison_group_id": "CG-100MS-01", 
+  "researcher_id": "researcher-khanh", 
+  "decided_at": "2026-10-17T22:39:53+07:00",
   "timing_method": "system_timestamp_delta",
   "flow_audit_rubric": "completion-critical-flow-runtime-v2",
   "database_baseline": {
@@ -19,33 +19,29 @@
     "manifest_sha256": "sha256:<64 hex>" // Điền theo hướng dẫn trong docs.
   },
   "audit_design": {
-    "protocol": "fixed", // Điền thủ công, chọn một giá trị và phải khớp Canonical Run. Ví dụ: fixed
+    "protocol": "fixed", 
     "fixed_auditor": {
       "requested_label": "GPT-5.6-TERRA",
       "requested_model_id": "gpt-5.6-terra",
       "requested_reasoning_effort": "medium",
       "requested_reasoning_mode": "standard"
-    } // Nếu protocol là fixed thì điền thủ công object auditor, ví dụ gồm requested_label, requested_model_id, requested_reasoning_effort và requested_reasoning_mode; nếu không thì giữ null.
+    } 
   },
   "use_case": {
-    "uc_id": "UC-01", // Điền thủ công, phải khớp cả bốn file. Ví dụ: UC-01
+    "uc_id": "UC-01",
     "business_rule_baseline": "docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json", // Điền theo hướng dẫn trong docs.
     "flow_baseline": "docs/02-construction/implementation/<UC-ID>/flow-baseline.json", // Điền theo hướng dẫn trong docs.
-    "api_contracts": [{
-      "api_id": "<API-ID>", // Điền theo hướng dẫn trong docs và giữ đúng thứ tự Related API IDs.
-      "path": "docs/01-inception/api-contracts/<API-FILE>.md", // Điền theo hướng dẫn trong docs.
-      "sha256": "sha256:<64-hex>" // Điền theo hướng dẫn trong docs; chỉ dùng [] khi UC ghi chính xác None.
-    }]
+    "api_contracts": []
   },
   "runs": [{
-    "run_id": "UC-01-GPT-5.6-TERRA", // Điền thủ công, phải khớp Configuration ID và Canonical Run. Ví dụ: UC-01-GPT-6.1-SOL
-    "uc_id": "UC-01", // Điền thủ công. Ví dụ: UC-01
-    "requested_label": "GPT-5.6-TERRA", // Điền thủ công; đây là nhãn model dùng trong run_id. Ví dụ: GPT-6.1-SOL
-    "requested_model_id": "gpt-5.6-terra", // Điền thủ công; đây là ID model chính xác. Ví dụ: gpt-6.1-sol
-    "requested_reasoning_effort": "medium", // Điền thủ công, chọn đúng một giá trị. Ví dụ: medium
+    "run_id": "UC-01-GPT-5.6-TERRA", 
+    "uc_id": "UC-01",
+    "requested_label": "GPT-5.6-TERRA", 
+    "requested_model_id": "gpt-5.6-terra",  
+    "requested_reasoning_effort": "medium", 
     "requested_reasoning_mode": "standard",
     "replicate_index": 1,
-    "run_order": 1, // Điền thủ công và bỏ dấu ngoặc kép. Ví dụ: "run_order": 2
-    "auditor_assignment": "fixed-auditor" // Điền thủ công, phải phù hợp Audit protocol. Ví dụ: fixed-auditor
+    "run_order": 1, 
+    "auditor_assignment": "fixed-auditor" 
   }]
 }

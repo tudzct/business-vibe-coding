@@ -43,10 +43,12 @@ POST-1: The client displays live playback and the viewer controls returned by th
 
 ### Basic Flow
 
-1. The viewer opens the live session.
-2. The client requests the current session representation.
-3. The system returns the viewer-facing stream state.
-4. The client renders playback and viewer controls.
+Flow ID: BF-1
+
+BF-1.1: The viewer opens the live session.
+BF-1.2: The client requests the current session representation.
+BF-1.3: The system returns the viewer-facing stream state.
+BF-1.4: The client renders playback and viewer controls.
 
 ### Alternative Flow
 

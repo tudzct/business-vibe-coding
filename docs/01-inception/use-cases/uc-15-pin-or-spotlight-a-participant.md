@@ -43,12 +43,14 @@ POST-1: The client renders a pinned tile in the caller's view or a spotlighted t
 
 ### Basic Flow
 
-1. The participant opens the controls for a participant tile.
-2. The client presents the visible pin or spotlight action.
-3. The participant chooses the personal pin action.
-4. The client submits the preference update.
-5. The system returns the caller's updated focused view.
-6. The client renders the selected tile with visual prominence.
+Flow ID: BF-1
+
+BF-1.1: The participant opens the controls for a participant tile.
+BF-1.2: The client presents the visible pin or spotlight action.
+BF-1.3: The participant chooses the personal pin action.
+BF-1.4: The client submits the preference update.
+BF-1.5: The system returns the caller's updated focused view.
+BF-1.6: The client renders the selected tile with visual prominence.
 
 ### Alternative Flow
 

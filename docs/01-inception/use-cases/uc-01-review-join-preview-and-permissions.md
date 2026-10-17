@@ -44,11 +44,13 @@ POST-2: The client displays the returned permission outcome when permission is r
 
 ### Basic Flow
 
-1. The prospective participant opens the pre-join interface.
-2. The client presents the camera, microphone, name, and permission controls shown by the design.
-3. The prospective participant chooses the displayed permission action.
-4. The client requests access and receives an outcome.
-5. The client renders the media preview and current control states.
+Flow ID: BF-1
+
+BF-1.1: The prospective participant opens the pre-join interface.
+BF-1.2: The client presents the camera, microphone, name, and permission controls shown by the design.
+BF-1.3: The prospective participant chooses the displayed permission action.
+BF-1.4: The client requests access and receives an outcome.
+BF-1.5: The client renders the media preview and current control states.
 
 ### Alternative Flow
 

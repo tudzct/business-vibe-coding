@@ -43,12 +43,14 @@ POST-1: The client displays the message returned by the system.
 
 ### Basic Flow
 
-1. The participant opens the chat panel.
-2. The client displays the returned message history.
-3. The participant enters a message and chooses Send.
-4. The client submits the message.
-5. The system returns the created message.
-6. The client appends it to the visible conversation.
+Flow ID: BF-1
+
+BF-1.1: The participant opens the chat panel.
+BF-1.2: The client displays the returned message history.
+BF-1.3: The participant enters a message and chooses Send.
+BF-1.4: The client submits the message.
+BF-1.5: The system returns the created message.
+BF-1.6: The client appends it to the visible conversation.
 
 ### Alternative Flow
 

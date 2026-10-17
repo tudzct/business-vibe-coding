@@ -43,13 +43,15 @@ POST-1: The host and viewer interfaces display the returned decision outcome.
 
 ### Basic Flow
 
-1. The host opens the displayed request.
-2. The client presents the available response actions.
-3. The host chooses Accept.
-4. The client submits the response.
-5. The system returns the updated stage request and participant representation.
-6. The host client renders the viewer on the stage.
-7. The viewer client requests session state and renders its returned participation state.
+Flow ID: BF-1
+
+BF-1.1: The host opens the displayed request.
+BF-1.2: The client presents the available response actions.
+BF-1.3: The host chooses Accept.
+BF-1.4: The client submits the response.
+BF-1.5: The system returns the updated stage request and participant representation.
+BF-1.6: The host client renders the viewer on the stage.
+BF-1.7: The viewer client requests session state and renders its returned participation state.
 
 ### Alternative Flow
 

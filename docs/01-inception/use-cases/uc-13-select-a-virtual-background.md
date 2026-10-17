@@ -43,12 +43,14 @@ POST-1: The client displays the returned background preference in the preview.
 
 ### Basic Flow
 
-1. The participant opens virtual-background choices.
-2. The client presents the available background previews.
-3. The participant selects a background.
-4. The client applies the selection locally in preview, or submits the preference update from the joined session.
-5. The client receives the local result or the returned media preference.
-6. The client renders the selected background in the preview.
+Flow ID: BF-1
+
+BF-1.1: The participant opens virtual-background choices.
+BF-1.2: The client presents the available background previews.
+BF-1.3: The participant selects a background.
+BF-1.4: The client applies the selection locally in preview, or submits the preference update from the joined session.
+BF-1.5: The client receives the local result or the returned media preference.
+BF-1.6: The client renders the selected background in the preview.
 
 ### Alternative Flow
 

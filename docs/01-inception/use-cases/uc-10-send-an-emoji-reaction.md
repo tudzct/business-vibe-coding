@@ -43,12 +43,14 @@ POST-1: The client renders the reaction event returned by the system.
 
 ### Basic Flow
 
-1. The participant opens the emoji reaction controls.
-2. The client presents the available reaction choices.
-3. The participant chooses a reaction.
-4. The client submits the reaction.
-5. The system returns the created event.
-6. The client renders the reaction in the session.
+Flow ID: BF-1
+
+BF-1.1: The participant opens the emoji reaction controls.
+BF-1.2: The client presents the available reaction choices.
+BF-1.3: The participant chooses a reaction.
+BF-1.4: The client submits the reaction.
+BF-1.5: The system returns the created event.
+BF-1.6: The client renders the reaction in the session.
 
 ### Alternative Flow
 

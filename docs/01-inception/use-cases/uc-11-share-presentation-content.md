@@ -43,12 +43,14 @@ POST-1: The client displays the returned content-share representation.
 
 ### Basic Flow
 
-1. The participant opens the share action.
-2. The client presents the screen and PDF choices shown by the design.
-3. The participant selects a source and confirms sharing.
-4. The client submits the content-share request.
-5. The system returns the content-share representation.
-6. The client renders the shared content and presenter view.
+Flow ID: BF-1
+
+BF-1.1: The participant opens the share action.
+BF-1.2: The client presents the screen and PDF choices shown by the design.
+BF-1.3: The participant selects a source and confirms sharing.
+BF-1.4: The client submits the content-share request.
+BF-1.5: The system returns the content-share representation.
+BF-1.6: The client renders the shared content and presenter view.
 
 ### Alternative Flow
 

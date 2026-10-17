@@ -43,12 +43,14 @@ POST-1: The client displays the recording state returned by the system.
 
 ### Basic Flow
 
-1. The host opens the recording control.
-2. The client presents the recording confirmation shown by the design.
-3. The host confirms the start action.
-4. The client submits the recording-control request.
-5. The system returns the recording representation.
-6. The client displays the returned recording indicator and refreshes it from session state.
+Flow ID: BF-1
+
+BF-1.1: The host opens the recording control.
+BF-1.2: The client presents the recording confirmation shown by the design.
+BF-1.3: The host confirms the start action.
+BF-1.4: The client submits the recording-control request.
+BF-1.5: The system returns the recording representation.
+BF-1.6: The client displays the returned recording indicator and refreshes it from session state.
 
 ### Alternative Flow
 

@@ -44,12 +44,14 @@ POST-2: The interface no longer presents the participant as joined.
 
 ### Basic Flow
 
-1. The participant opens the leave control.
-2. The client presents the confirmation shown by the design.
-3. The participant confirms Leave.
-4. The client submits the departure request.
-5. The system returns the departure representation.
-6. The client displays the post-leave message.
+Flow ID: BF-1
+
+BF-1.1: The participant opens the leave control.
+BF-1.2: The client presents the confirmation shown by the design.
+BF-1.3: The participant confirms Leave.
+BF-1.4: The client submits the departure request.
+BF-1.5: The system returns the departure representation.
+BF-1.6: The client displays the post-leave message.
 
 ### Alternative Flow
 

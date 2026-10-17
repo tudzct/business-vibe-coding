@@ -44,11 +44,13 @@ POST-2: The host interface displays the returned stage-request item.
 
 ### Basic Flow
 
-1. The viewer chooses to request stage access.
-2. The client submits the stage request.
-3. The system returns the request representation.
-4. The viewer client displays the returned request state.
-5. The host client requests session state and displays the request item.
+Flow ID: BF-1
+
+BF-1.1: The viewer chooses to request stage access.
+BF-1.2: The client submits the stage request.
+BF-1.3: The system returns the request representation.
+BF-1.4: The viewer client displays the returned request state.
+BF-1.5: The host client requests session state and displays the request item.
 
 ### Alternative Flow
 

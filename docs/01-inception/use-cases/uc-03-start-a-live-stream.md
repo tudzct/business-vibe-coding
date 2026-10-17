@@ -44,11 +44,13 @@ POST-2: Viewer-facing playback reflects the returned broadcast outcome.
 
 ### Basic Flow
 
-1. The host reviews the broadcaster preview and chooses Start.
-2. The client submits the stream-control request.
-3. The system returns the current stream representation.
-4. The client displays the starting state.
-5. The client renders the live session when the updated representation is returned by the session-state request.
+Flow ID: BF-1
+
+BF-1.1: The host reviews the broadcaster preview and chooses Start.
+BF-1.2: The client submits the stream-control request.
+BF-1.3: The system returns the current stream representation.
+BF-1.4: The client displays the starting state.
+BF-1.5: The client renders the live session when the updated representation is returned by the session-state request.
 
 ### Alternative Flow
 

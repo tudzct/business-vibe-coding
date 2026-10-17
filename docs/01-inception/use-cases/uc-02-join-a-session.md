@@ -44,10 +44,12 @@ POST-2: The participant tile reflects the returned identity and media state.
 
 ### Basic Flow
 
-1. The participant enters a display name and chooses Join.
-2. The client submits the join request.
-3. The system returns the joined participant and session summary.
-4. The client renders the active session and participant tile.
+Flow ID: BF-1
+
+BF-1.1: The participant enters a display name and chooses Join.
+BF-1.2: The client submits the join request.
+BF-1.3: The system returns the joined participant and session summary.
+BF-1.4: The client renders the active session and participant tile.
 
 ### Alternative Flow
 
