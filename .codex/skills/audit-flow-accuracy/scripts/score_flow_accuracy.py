@@ -77,6 +77,12 @@ def validate_defects(run, stage=None, source_revision=None, ordered_flow_ids=Non
                 f"{label} business_rule defect needs an affected BR")
         require(defect["category"] != "flow" or affected_flow_ids,
                 f"{label} flow defect needs an affected Flow")
+        if defect.get("reported_by") is not None or defect.get("researcher_followup_id") is not None:
+            require(defect.get("reported_by") == "researcher", f"{label} has invalid researcher attribution")
+            followup_id = defect.get("researcher_followup_id")
+            require(isinstance(followup_id, str) and
+                    re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", followup_id),
+                    f"{label} has invalid researcher follow-up ID")
         evidence = defect.get("evidence")
         require(isinstance(evidence, list) and evidence, f"{label} needs evidence")
         for ref in evidence:
