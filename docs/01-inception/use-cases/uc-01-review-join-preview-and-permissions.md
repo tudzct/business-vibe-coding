@@ -1,5 +1,5 @@
 ---
-artifact_type: business-use-case-specification
+artifact_type: use-case-specification
 status: Frozen
 uc_id: UC-01
 uc_name: "Review Join Preview and Permissions"

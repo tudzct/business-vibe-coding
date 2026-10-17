@@ -1,21 +1,22 @@
 {
-  "run_id": "UC-01-GPT-5.6-TERRA", 
+  "run_id": "UC-01-GPT-5.6-TERRA",
+  "coding_prompt": null,
   "experiment_configuration": {
-    "configuration_id": "CFG-<UC-ID>-<MODEL>", // Điền theo hướng dẫn trong docs.
-    "comparison_group_id": "CG-100MS-01", 
-    "researcher_id": "researcher-khanh", 
-    "artifact": "docs/04-experiments/configurations/CFG-<UC-ID>-<MODEL>.json", // Điền theo hướng dẫn trong docs.
-    "checksum": "sha256:<checksum>", 
+    "configuration_id": "CFG-UC-01-GPT-5.6-TERRA",
+    "comparison_group_id": "CG-100MS-01",
+    "researcher_id": "researcher-khanh",
+    "artifact": "docs/04-experiments/configurations/CFG-UC-01-GPT-5.6-TERRA.json",
+    "checksum": "sha256:d04a795fc0c0ad71b2e3887cbddea103771240eb8f0ee4210a532aedb4d5d746",
     "run_activation": null
   },
   "uc_id": "UC-01",
-  "uc_name": "Review Join Preview and Permissions", 
+  "uc_name": "Review Join Preview and Permissions",
   "replicate_index": 1,
   "run_order": 1,
-  "audit_protocol": "fixed", 
+  "audit_protocol": "fixed",
   "generation_model": {
-    "requested_model_id": "gpt-5.6-terra", 
-    "requested_reasoning_effort": "medium", 
+    "requested_model_id": "gpt-5.6-terra",
+    "requested_reasoning_effort": "medium",
     "effective_model_id": null,
     "effective_snapshot": null,
     "codex_client_version": null
@@ -27,11 +28,22 @@
   },
   "metrics_schema_version": 3,
   "metrics": null,
-  "repair_authorization": { "approved": false, "turn_id": null },
+  "repair_authorization": {
+    "approved": false,
+    "turn_id": null
+  },
   "business_rules": {
-    "baseline": "docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json", // Điền theo hướng dẫn trong docs.
+    "baseline": "docs/02-construction/implementation/UC-01/business-rule-baseline.json",
     "source_revision": null,
-    "ordered_br_ids": ["BR-RJPP-01", "BR-RJPP-02", "BR-RJPP-03", "BR-RJPP-04", "BR-RJPP-05", "BR-RJPP-06", "BR-RJPP-07"], 
+    "ordered_br_ids": [
+      "BR-RJPP-01",
+      "BR-RJPP-02",
+      "BR-RJPP-03",
+      "BR-RJPP-04",
+      "BR-RJPP-05",
+      "BR-RJPP-06",
+      "BR-RJPP-07"
+    ],
     "initial": null,
     "final": null
   },

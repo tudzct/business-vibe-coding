@@ -1,5 +1,5 @@
----
-artifact_type: business-use-case-specification
+﻿---
+artifact_type: use-case-specification
 status: Frozen
 uc_id: UC-04
 uc_name: "Stop a Live Stream"
