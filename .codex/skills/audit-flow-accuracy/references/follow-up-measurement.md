@@ -23,7 +23,7 @@ When a verdict is unknown or challenged, offer both choices together in plain la
 1. Researcher measures manually and supplies per-flow results; the LLM writes JSON and recalculates percentages.
 2. LLM continues bounded measurement of the pending flows and automatically writes validated results.
 
-Wait for the choice unless the request already selects a path. A supplied verdict selects path 1; a request to continue measuring selects path 2. Save without another confirmation. Return the validated result to the caller; completion of measurement is separate from correctness.
+Wait for the choice unless the request already selects a path. A supplied verdict selects path 1; a request to continue measuring selects path 2. A researcher verdict is final and is recorded without checking whether it is substantively correct. Save without another confirmation. Return the validated result to the caller; completion of measurement is separate from correctness.
 
 ## Absolute source boundary
 
@@ -33,9 +33,23 @@ Resolve the exact UC/run and evidence parent. For LLM runtime observation use th
 
 ## Researcher result path
 
-Accept normal results in conversation, e.g. `EF-1 đúng, AF-2 sai`. Map unambiguous whole-flow verdicts to `correct`, `incorrect`, or `not_evaluable`. A blocker-derived `incorrect` result is not researcher-overridable while its evidenced generated-source blocker remains open; preserve the blocker for an authorized correction consumer. The researcher only supplies normal results: do not ask for screenshots, logs, timestamps, checksums, runtime transcripts, a special command or JSON edits. The LLM resolves IDs from the active context, captures the actual request turn/time, prepares the internal payload and runs the helper. If a result's flow identity or meaning is genuinely ambiguous, ask only about that ambiguity. A bare overall percentage cannot identify which pending flows passed; do not invent individual outcomes from it.
+Accept every researcher correction or reported issue through this one external format, with one item per target or technical issue:
 
-Preserve sanitized text in `researcher_result`. Do not fabricate step outcomes, runtime evidence, observation times or independent verification. Accepted rows use `result_source: researcher_result`; the summary exposes `result_basis: includes_researcher_results` and `researcher_result_count`. The original rubric assessment remains unchanged. Compare results with their actual provenance.
+```text
+Audit follow-up:
+
+- Target: <BR-ID | Basic Flow: exact affected numbered step | AF-ID | EF-ID | Technical issue>
+  Result: <met | unmet | correct | incorrect | technical>
+  Execution blocked: <yes | no>
+  Description: <short description>
+  Evidence: <short observed evidence | N/A>
+```
+
+For a BR target, accept only `met` or `unmet`; for a Flow target, accept only `correct` or `incorrect`; for `Technical issue`, accept only `technical`. `Evidence: N/A` is permitted only for `met` or `correct`. A Basic Flow target copies the exact numbered step that failed from the frozen UC, for example `Basic Flow: 3. The system returns the viewer-facing stream state.` Resolve that step to its containing Basic/Main Flow and use the corresponding internal flow ID; never require the researcher to invent or supply a `BF-*` ID. Infer `business_rule`, `flow` or `technical` and the affected ID from `Target`; do not ask the researcher to repeat them as internal fields. The researcher is authoritative: do not re-audit or ask them to prove the supplied result. If `Execution blocked` is `yes`, require `Target: Technical issue`, create one blocking technical defect, and internally expand the same follow-up to every frozen BR as `unmet` and every frozen Flow as `incorrect`; the researcher does not list those rows. A non-blocking technical issue may be recorded without a BR or Flow result.
+
+A blocker-derived `incorrect` result is not researcher-overridable while its generated-source blocker remains open; preserve the blocker for an authorized correction consumer. Do not ask for timestamps, checksums, a special command or JSON edits. Preserve the sanitized item as a repository evidence artifact attributed to the researcher; the LLM resolves identities, paths, source revision, hashes and the internal payload. If a target or result is genuinely ambiguous, ask only about that ambiguity. A bare overall percentage cannot identify which targets failed; do not invent individual outcomes from it.
+
+Preserve sanitized text in `researcher_result`. Do not fabricate step outcomes, runtime evidence, observation times or independent verification. A negative researcher correction includes normalized canonical defects in the combined helper payload. Each added defect is `stage: initial`, `status: open`, `reported_by: researcher`, names the shared `researcher_followup_id`, uses the immutable parent source revision and references the attributed researcher-statement artifact. Create no defect for a correction to `met` or `correct`. Defect addition is allowed only before sub-prompt generation and Repair. Accepted rows use `result_source: researcher_result`; the summary exposes `result_basis: includes_researcher_results` and `researcher_result_count`. The original rubric assessment remains unchanged. Compare results with their actual provenance.
 
 ## LLM measurement path
 
@@ -45,7 +59,34 @@ Prepare a fresh full assessment input with ID equal to `followup_id`, matching t
 
 ## Internal payload and commands
 
-The LLM passes the internal payload through stdin (`--input -`) without creating an input JSON in flow-accuracy. The researcher never has to write JSON. A Flow-only follow-up keeps the existing schema below. A combined response wraps the existing Flow record and/or one BR record under `flow` and `business_rules`; both parts use the same `followup_id`, and the helper validates and writes them atomically.
+The LLM passes the internal payload through stdin (`--input -`) without creating an input JSON in flow-accuracy. The researcher never has to write JSON. A Flow-only follow-up keeps the existing schema below. A combined response wraps the existing Flow record and/or one BR record under `flow` and `business_rules`; both parts use the same `followup_id`. When a researcher changes a target to a negative verdict or reports a technical issue, include `defects`, containing the fully normalized attributed canonical defects. A non-blocking technical issue may use a defects-only internal payload. A blocking technical issue must include the internally expanded complete BR and Flow records. The helper validates and writes verdicts and defects atomically. If any negative result lacks defect coverage, the entire update fails.
+
+Each item in `defects` has the canonical defect fields below. Create the evidence file below the active run's audit evidence directory before dry-run; it contains the sanitized researcher statement and its attribution, not fabricated runtime proof. Use its repository-relative path, byte checksum and the immutable parent source revision. The researcher does not author these fields.
+
+```json
+{
+  "defect_id": "researcher-defect-unique-id",
+  "fingerprint": "sha256:<stable root-cause fingerprint>",
+  "stage": "initial",
+  "source_revision": "sha256:<parent source revision>",
+  "category": "business_rule | flow | technical",
+  "trigger": "<reported trigger>",
+  "description": "<reported cause>",
+  "status": "open",
+  "blocks_execution": false,
+  "affected_br_ids": ["<BR-ID>"],
+  "affected_flow_ids": ["<FLOW-ID>"],
+  "evidence": [{
+    "path": "<repository-relative researcher-statement artifact>",
+    "sha256": "sha256:<artifact checksum>",
+    "source_revision": "sha256:<parent source revision>"
+  }],
+  "reported_by": "researcher",
+  "researcher_followup_id": "<shared followup_id>"
+}
+```
+
+An added `business_rule` defect requires a nonempty `affected_br_ids`; an added `flow` defect requires a nonempty `affected_flow_ids`. A `technical` defect may leave both arrays empty unless the researcher identifies affected targets. One root cause remains one defect even when it affects multiple targets. If any added defect has `blocks_execution: true`, the same combined response must supply every frozen BR as `unmet` and every frozen Flow as `incorrect`; the helper records those defect IDs as the execution-blocked note.
 
 Use actual identities/timestamps and schema 2 for Flow follow-ups, including corrections to already scored flows:
 

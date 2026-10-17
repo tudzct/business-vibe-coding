@@ -2,41 +2,45 @@
   "schema_version": "2.4",
   "artifact_type": "experiment-configuration",
   "status": "Confirmed",
-  "configuration_id": "CFG-<UC-ID>-<MODEL>",
-  "comparison_group_id": "<COMPARISON-GROUP-ID>",
-  "researcher_id": "<stable identifier>",
-  "decided_at": "<ISO-8601>",
+  "configuration_id": "CFG-<UC-ID>-<MODEL>", // Điền thủ công, phải bằng CFG-<run_id>. Ví dụ: CFG-UC-01-GPT-6.1-SOL
+  "comparison_group_id": "<COMPARISON-GROUP-ID>", // Điền thủ công; các run so sánh trực tiếp dùng cùng giá trị. Ví dụ: CG-100MS-01
+  "researcher_id": "<stable identifier>", // Điền thủ công. Ví dụ: researcher-khanh
+  "decided_at": "<ISO-8601>", // Điền thủ công, ISO-8601 có múi giờ. Ví dụ: 2026-10-17T10:30:00+07:00
   "timing_method": "system_timestamp_delta",
   "flow_audit_rubric": "completion-critical-flow-runtime-v2",
   "database_baseline": {
-    "migration_head": "<TypeORM migration class name including its 13-digit timestamp>",
-    "dbml_sha256": "sha256:<64 hex>",
-    "schema_fingerprint_sha256": "sha256:<64 hex>"
+    "migration_head": "<TypeORM migration class name including its 13-digit timestamp>", // Điền theo hướng dẫn trong docs.
+    "dbml_sha256": "sha256:<64 hex>", // Điền theo hướng dẫn trong docs.
+    "schema_fingerprint_sha256": "sha256:<64 hex>" // Điền theo hướng dẫn trong docs.
   },
   "figma_dataset": {
-    "dataset_version": "<selected immutable version>",
-    "manifest_path": "resource/figma-design-dataset/<version>/manifest.json",
-    "manifest_sha256": "sha256:<64 hex>"
+    "dataset_version": "<selected immutable version>", // Điền theo hướng dẫn trong docs.
+    "manifest_path": "resource/figma-design-dataset/<version>/manifest.json", // Điền theo hướng dẫn trong docs.
+    "manifest_sha256": "sha256:<64 hex>" // Điền theo hướng dẫn trong docs.
   },
   "audit_design": {
-    "protocol": "fixed | matched | cross",
-    "fixed_auditor": null
+    "protocol": "fixed | matched | cross", // Điền thủ công, chọn một giá trị và phải khớp Canonical Run. Ví dụ: fixed
+    "fixed_auditor": null // Nếu protocol là fixed thì điền thủ công object auditor, ví dụ gồm requested_label, requested_model_id, requested_reasoning_effort và requested_reasoning_mode; nếu không thì giữ null.
   },
   "use_case": {
-    "uc_id": "<UC-ID>",
-    "business_rule_baseline": "docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json",
-    "flow_baseline": "docs/02-construction/implementation/<UC-ID>/flow-baseline.json",
-    "api_contracts": []
+    "uc_id": "<UC-ID>", // Điền thủ công, phải khớp cả bốn file. Ví dụ: UC-01
+    "business_rule_baseline": "docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json", // Điền theo hướng dẫn trong docs.
+    "flow_baseline": "docs/02-construction/implementation/<UC-ID>/flow-baseline.json", // Điền theo hướng dẫn trong docs.
+    "api_contracts": [{
+      "api_id": "<API-ID>", // Điền theo hướng dẫn trong docs và giữ đúng thứ tự Related API IDs.
+      "path": "docs/01-inception/api-contracts/<API-FILE>.md", // Điền theo hướng dẫn trong docs.
+      "sha256": "sha256:<64-hex>" // Điền theo hướng dẫn trong docs; chỉ dùng [] khi UC ghi chính xác None.
+    }]
   },
   "runs": [{
-    "run_id": "<UC-ID>-<MODEL>",
-    "uc_id": "<UC-ID>",
-    "requested_label": "<MODEL>",
-    "requested_model_id": "<exact model ID>",
-    "requested_reasoning_effort": "none | low | medium | high | xhigh | max",
-    "requested_reasoning_mode": "standard | pro",
+    "run_id": "<UC-ID>-<MODEL>", // Điền thủ công, phải khớp Configuration ID và Canonical Run. Ví dụ: UC-01-GPT-6.1-SOL
+    "uc_id": "<UC-ID>", // Điền thủ công. Ví dụ: UC-01
+    "requested_label": "<MODEL>", // Điền thủ công; đây là nhãn model dùng trong run_id. Ví dụ: GPT-6.1-SOL
+    "requested_model_id": "<exact model ID>", // Điền thủ công; đây là ID model chính xác. Ví dụ: gpt-6.1-sol
+    "requested_reasoning_effort": "none | low | medium | high | xhigh | max", // Điền thủ công, chọn đúng một giá trị. Ví dụ: medium
+    "requested_reasoning_mode": "standard",
     "replicate_index": 1,
-    "run_order": 1,
-    "auditor_assignment": "fixed-auditor | same-as-generation | <auditor ID>"
+    "run_order": "<RUN-ORDER>", // Điền thủ công và bỏ dấu ngoặc kép. Ví dụ: "run_order": 2
+    "auditor_assignment": "fixed-auditor | same-as-generation | <auditor ID>" // Điền thủ công, phải phù hợp Audit protocol. Ví dụ: fixed-auditor
   }]
 }

@@ -115,6 +115,13 @@ def accepted_summary(run):
             pending_inputs[flow_id] = (original, evidence)
     rows = [selected[flow_id] for flow_id, _ in inventory]
     summary = summary_from_rows(current, rows, pending_inputs, applied)
+    researcher_blockers = []
+    for record in block.get("followups", []):
+        if record.get("mode") == "researcher_result" and record.get("execution_blocker_defect_ids"):
+            researcher_blockers = list(record["execution_blocker_defect_ids"])
+    if researcher_blockers:
+        summary["execution_blocked"] = True
+        summary["execution_blocker_defect_ids"] = researcher_blockers
     summary.update(schema_version=2, selection_policy=RESULT_POLICY,
                    result_scope="experiment_accepted_audit", stage="experiment", source_revision=None,
                    current_source_revision=current["input"]["source_revision"],
@@ -180,6 +187,15 @@ def validate_followups(run, folder):
         if record["mode"] == "researcher_result":
             require(isinstance(record.get("researcher_result"), str) and record["researcher_result"].strip(), "researcher result text required")
             require("runtime_result" not in record, "researcher result must not fabricate runtime evidence")
+            blocker_ids = record.get("execution_blocker_defect_ids", [])
+            require(isinstance(blocker_ids, list) and len(blocker_ids) == len(set(blocker_ids)),
+                    "researcher execution blocker IDs must be a unique array")
+            known_defects = {row.get("defect_id"): row for row in run.get("defects", [])
+                             if isinstance(row, dict)}
+            require(all(value in known_defects and known_defects[value].get("blocks_execution") is True
+                        and known_defects[value].get("researcher_followup_id") == identity
+                        for value in blocker_ids),
+                    "researcher execution blocker IDs must identify attributed blocking defects")
         else:
             measured = record.get("runtime_result")
             require(isinstance(measured, dict) and isinstance(measured.get("input"), dict), "LLM assessment required")

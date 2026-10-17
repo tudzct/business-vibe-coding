@@ -13,6 +13,11 @@ sys.path.insert(0, str(MEASURE_SCRIPTS))
 
 from metrics_contract import ROOT, atomic_write, context, read_json, run_lock, writable
 
+AUDIT_METRICS_SCRIPTS = Path(__file__).resolve().parents[2] / "audit-generation-metrics" / "scripts"
+sys.path.insert(0, str(AUDIT_METRICS_SCRIPTS))
+from calculate_metrics import accepted_br_summary
+from flow_summary import accepted_summary as accepted_flow_summary
+
 
 REQUIRED_SCALARS = (
     "artifact_type",
@@ -107,6 +112,28 @@ def parse_prompt(path):
     return {key: scalar(value) for key, value in fields.items()}, arrays, sections
 
 
+def repairable_defects(run, defects):
+    """Project immutable findings through the accepted researcher verdicts."""
+    br_status = {row["br_id"]: row["status"]
+                 for row in accepted_br_summary(run)["requirements"]}
+    flow_status = {row["flow_id"]: row["status"]
+                   for row in accepted_flow_summary(run)["flows"]}
+    selected = []
+    for defect in defects:
+        if not (isinstance(defect, dict) and defect.get("stage") == "initial"
+                and defect.get("status") == "open"):
+            continue
+        category = defect.get("category")
+        if category == "business_rule" and not any(
+                br_status.get(value) == "unmet" for value in defect.get("affected_br_ids", [])):
+            continue
+        if category == "flow" and not any(
+                flow_status.get(value) == "incorrect" for value in defect.get("affected_flow_ids", [])):
+            continue
+        selected.append(defect)
+    return selected
+
+
 def validate(run_path, prompt_dir):
     run = json.loads(run_path.read_text(encoding="utf-8-sig"))
     require(isinstance(run, dict), "canonical run must be an object")
@@ -126,8 +153,7 @@ def validate(run_path, prompt_dir):
     require(isinstance(defects, list), "canonical defects must be an array")
     require(all(isinstance(item, dict) and item.get("stage") == "initial" for item in defects),
             "prompt generation requires the immutable initial defect inventory only")
-    selected = [item for item in defects if isinstance(item, dict)
-                and item.get("stage") == "initial" and item.get("status") == "open"]
+    selected = repairable_defects(run, defects)
     require(selected, "no evidenced open initial defect to prompt")
 
     defect_ids = [item.get("defect_id") for item in selected]
