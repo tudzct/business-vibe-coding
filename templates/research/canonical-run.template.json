@@ -1,22 +1,22 @@
 {
-  "run_id": "<UC-ID>-<MODEL>", // Điền thủ công, phải khớp Configuration. Ví dụ: UC-01-GPT-6.1-SOL
+  "run_id": "<UC-ID>-<MODEL>",
   "coding_prompt": null,
   "experiment_configuration": {
-    "configuration_id": "CFG-<UC-ID>-<MODEL>", // Điền theo hướng dẫn trong docs.
-    "comparison_group_id": "<COMPARISON-GROUP-ID>", // Điền thủ công giống Configuration; các run so sánh dùng cùng giá trị. Ví dụ: CG-100MS-01
-    "researcher_id": "<researcher identifier>", // Điền thủ công giống Configuration. Ví dụ: researcher-khanh
-    "artifact": "docs/04-experiments/configurations/CFG-<UC-ID>-<MODEL>.json", // Điền theo hướng dẫn trong docs.
-    "checksum": "sha256:<checksum>", // Điền theo hướng dẫn trong docs.
+    "configuration_id": "CFG-<UC-ID>-<MODEL>",
+    "comparison_group_id": "<COMPARISON-GROUP-ID>",
+    "researcher_id": "<researcher identifier>",
+    "artifact": "docs/04-experiments/configurations/CFG-<UC-ID>-<MODEL>.json",
+    "checksum": "sha256:<checksum>",
     "run_activation": null
   },
-  "uc_id": "<UC-ID>", // Điền thủ công, phải khớp cả bốn file. Ví dụ: UC-01
-  "uc_name": "<Use case name>", // Điền thủ công. Ví dụ: Register an account
+  "uc_id": "<UC-ID>",
+  "uc_name": "<Use case name>",
   "replicate_index": 1,
-  "run_order": "<RUN-ORDER>", // Điền thủ công và bỏ dấu ngoặc kép. Ví dụ: "run_order": 2
-  "audit_protocol": "fixed | matched | cross", // Điền thủ công, chọn một giá trị và phải giống Configuration. Ví dụ: fixed
+  "run_order": "<RUN-ORDER>",
+  "audit_protocol": "fixed | matched | cross",
   "generation_model": {
-    "requested_model_id": "<exact ID>", // Điền thủ công, ID model chính xác và giống Configuration. Ví dụ: gpt-6.1-sol
-    "requested_reasoning_effort": "<effort>", // Điền thủ công giống Configuration. Ví dụ: medium
+    "requested_model_id": "<exact ID>",
+    "requested_reasoning_effort": "<effort>",
     "effective_model_id": null,
     "effective_snapshot": null,
     "codex_client_version": null
@@ -30,9 +30,9 @@
   "metrics": null,
   "repair_authorization": { "approved": false, "turn_id": null },
   "business_rules": {
-    "baseline": "docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json", // Điền theo hướng dẫn trong docs.
+    "baseline": "docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json",
     "source_revision": null,
-    "ordered_br_ids": ["<BR-ID>"], // Điền thủ công giống Business Rule Baseline. Ví dụ: ["BR-AUTH-001", "BR-AUTH-002"]
+    "ordered_br_ids": ["<BR-ID>"],
     "initial": null,
     "final": null
   },

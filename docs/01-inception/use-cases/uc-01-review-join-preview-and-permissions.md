@@ -72,7 +72,7 @@ EF-1: Permission denied
 
 ### Related API IDs
 
-None. This interaction is client-local.
+None.
 
 ### Notes
 

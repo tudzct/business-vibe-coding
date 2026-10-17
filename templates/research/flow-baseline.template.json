@@ -2,9 +2,9 @@
   "schema_version": 1,
   "artifact_type": "flow-baseline",
   "status": "Frozen",
-  "uc_id": "<UC-ID>", // Điền thủ công, phải khớp cả bốn file. Ví dụ: UC-01
-  "use_case_path": "docs/01-inception/use-cases/<uc-file>.md", // Điền theo hướng dẫn trong docs.
-  "use_case_sha256": "sha256:<64-hex>", // Điền theo hướng dẫn trong docs.
-  "ordered_flow_ids": ["<FLOW-ID>"], // Điền thủ công, đủ và đúng thứ tự trong frozen UC. Ví dụ: ["BF-1", "AF-1", "EF-1"]
-  "frozen_at": "<ISO-8601>" // Điền thủ công, ISO-8601 có múi giờ. Ví dụ: 2026-10-17T10:30:00+07:00
+  "uc_id": "<UC-ID>",
+  "use_case_path": "docs/01-inception/use-cases/<uc-file>.md",
+  "use_case_sha256": "sha256:<64-hex>",
+  "ordered_flow_ids": ["<FLOW-ID>"],
+  "frozen_at": "<ISO-8601>"
 }
