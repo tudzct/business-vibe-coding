@@ -19,7 +19,10 @@ None.
 
 ### Basic Flow
 
-1. <Basic flow step>
+Flow ID: BF-1
+
+BF-1.1: <Basic flow step>
+BF-1.2: <Basic flow step>
 
 ### Alternative Flow
 

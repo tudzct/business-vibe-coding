@@ -38,14 +38,14 @@ Accept every researcher correction or reported issue through this one external f
 ```text
 Audit follow-up:
 
-- Target: <BR-ID | Basic Flow: exact affected numbered step | AF-ID | EF-ID | Technical issue>
+- Target: <BR-ID | BF-<flow>.<step> | AF-ID | EF-ID | Technical issue>
   Result: <met | unmet | correct | incorrect | technical>
   Execution blocked: <yes | no>
   Description: <short description>
   Evidence: <short observed evidence | N/A>
 ```
 
-For a BR target, accept only `met` or `unmet`; for a Flow target, accept only `correct` or `incorrect`; for `Technical issue`, accept only `technical`. `Evidence: N/A` is permitted only for `met` or `correct`. A Basic Flow target copies the exact numbered step that failed from the frozen UC, for example `Basic Flow: 3. The system returns the viewer-facing stream state.` Resolve that step to its containing Basic/Main Flow and use the corresponding internal flow ID; never require the researcher to invent or supply a `BF-*` ID. Infer `business_rule`, `flow` or `technical` and the affected ID from `Target`; do not ask the researcher to repeat them as internal fields. The researcher is authoritative: do not re-audit or ask them to prove the supplied result. If `Execution blocked` is `yes`, require `Target: Technical issue`, create one blocking technical defect, and internally expand the same follow-up to every frozen BR as `unmet` and every frozen Flow as `incorrect`; the researcher does not list those rows. A non-blocking technical issue may be recorded without a BR or Flow result.
+For a BR target, accept only `met` or `unmet`; for a Flow target, accept only `correct` or `incorrect`; for `Technical issue`, accept only `technical`. `Evidence: N/A` is permitted only for `met` or `correct`. A Basic Flow target uses the exact step ID declared in the frozen UC, for example `BF-1.3`. Resolve `BF-1.3` to its parent `BF-1`, require that parent in `ordered_flow_ids`, and record the Flow verdict/defect against `BF-1`; the step remains the precise affected location and is never added to the Flow denominator. Do not require the researcher to copy the step text. Infer `business_rule`, `flow` or `technical` and the affected ID from `Target`; do not ask the researcher to repeat them as internal fields. The researcher is authoritative: do not re-audit or ask them to prove the supplied result. If `Execution blocked` is `yes`, require `Target: Technical issue`, create one blocking technical defect, and internally expand the same follow-up to every frozen BR as `unmet` and every frozen Flow as `incorrect`; the researcher does not list those rows. A non-blocking technical issue may be recorded without a BR or Flow result.
 
 A blocker-derived `incorrect` result is not researcher-overridable while its generated-source blocker remains open; preserve the blocker for an authorized correction consumer. Do not ask for timestamps, checksums, a special command or JSON edits. Preserve the sanitized item as a repository evidence artifact attributed to the researcher; the LLM resolves identities, paths, source revision, hashes and the internal payload. If a target or result is genuinely ambiguous, ask only about that ambiguity. A bare overall percentage cannot identify which targets failed; do not invent individual outcomes from it.
 
