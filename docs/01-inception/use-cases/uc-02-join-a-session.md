@@ -117,14 +117,6 @@ enum MutationOutcome {
 enum IsolationLevel {
   SERIALIZABLE
 }
-class String {
-  trim(): String
-}
-class DateTime {
-  {static} isAfter(value: DateTime, other: DateTime): Boolean
-  {static} now(): DateTime
-  {static} addHours(value: DateTime, hours: Integer): DateTime
-}
 class RequestContext {
   {static} principalId: String
   {static} sessionId: String
@@ -134,9 +126,6 @@ class TransactionContext {
   {static} lockedSessionId: String
   {static} isolation: IsolationLevel
   {static} atomicCommit: Boolean
-}
-class DomainState {
-  {static} snapshot(sessionId: String): String
 }
 class Principal {
   id: String
@@ -227,22 +216,6 @@ class SessionJoinService {
 class MutationGateway {
   execute(command: MutationEnvelope, session: Session): MutationReceipt
 }
-note right of String
-Removes leading and trailing whitespace; internal whitespace is unchanged.
-end note
-note right of DateTime
-Returns the instant after the specified number of elapsed hours.
-end note
-note right of DateTime
-True when value is later than other as an instant.
-end note
-note right of DateTime
-Returns the transaction-clock instant.
-end note
-note right of DomainState
-Canonically serializes the session and all session-owned domain rows.
-Excludes the command journal and immutable response storage; equality checks detect domain effects on replay or rejection.
-end note
 note right of RequestContext
 Request-local trusted adapter data; not a process-global singleton.
 Principal and session are decoded from the authenticated session access token.

@@ -1,0 +1,66 @@
+{
+  "run_id": "<UC-ID>-<MODEL>", // Điền thủ công, phải khớp Configuration. Ví dụ: UC-01-GPT-6.1-SOL
+  "coding_prompt": null,
+  "experiment_configuration": {
+    "configuration_id": "CFG-<UC-ID>-<MODEL>", // Điền theo hướng dẫn trong docs.
+    "comparison_group_id": "<COMPARISON-GROUP-ID>", // Điền thủ công giống Configuration; các run so sánh dùng cùng giá trị. Ví dụ: CG-100MS-01
+    "researcher_id": "<researcher identifier>", // Điền thủ công giống Configuration. Ví dụ: researcher-khanh
+    "artifact": "docs/04-experiments/configurations/CFG-<UC-ID>-<MODEL>.json", // Điền theo hướng dẫn trong docs.
+    "checksum": "sha256:<checksum>", // Điền theo hướng dẫn trong docs.
+    "run_activation": null
+  },
+  "uc_id": "<UC-ID>", // Điền thủ công, phải khớp cả bốn file. Ví dụ: UC-01
+  "uc_name": "<Use case name>", // Điền thủ công. Ví dụ: Register an account
+  "replicate_index": 1,
+  "run_order": "<RUN-ORDER>", // Điền thủ công và bỏ dấu ngoặc kép. Ví dụ: "run_order": 2
+  "audit_protocol": "fixed | matched | cross", // Điền thủ công, chọn một giá trị và phải giống Configuration. Ví dụ: fixed
+  "generation_model": {
+    "requested_model_id": "<exact ID>", // Điền thủ công, ID model chính xác và giống Configuration. Ví dụ: gpt-6.1-sol
+    "requested_reasoning_effort": "<effort>", // Điền thủ công giống Configuration. Ví dụ: medium
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "codex_client_version": null
+  },
+  "run_status": "draft",
+  "gates": {
+    "current": "prompt",
+    "history": []
+  },
+  "metrics_schema_version": 3,
+  "metrics": null,
+  "repair_authorization": { "approved": false, "turn_id": null },
+  "business_rules": {
+    "baseline": "docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json", // Điền theo hướng dẫn trong docs.
+    "source_revision": null,
+    "ordered_br_ids": ["<BR-ID>"], // Điền thủ công giống Business Rule Baseline. Ví dụ: ["BR-AUTH-001", "BR-AUTH-002"]
+    "initial": null,
+    "final": null
+  },
+  "defects": [],
+  "repairs": [],
+  "repair_round_limit": 10,
+  "repair_rounds_completed": 0,
+  "repair_status": "not_started",
+  "repair_prompt_directory": null,
+  "all_sub_prompt_count": 0,
+  "manual_estimates_minutes": [],
+  "ui_accuracy_percent": null,
+  "ui_accuracy_status": "researcher_managed",
+  "ui_accuracy_source": "manual",
+  "ui_accuracy_evidence": null,
+  "ui_accuracy_recorded_by": null,
+  "ui_accuracy_recorded_at": null,
+  "flow_accuracy_percent": null,
+  "flow_error_percent": null,
+  "flow_accuracy_status": "not_evaluated",
+  "flow_accuracy": null,
+  "complexity": {
+    "actors": 0,
+    "main_flow_steps": 0,
+    "alternate_exception_flows": 0,
+    "data_entities": 0,
+    "integrations": 0,
+    "business_rules": 0,
+    "ui_states": 0
+  }
+}

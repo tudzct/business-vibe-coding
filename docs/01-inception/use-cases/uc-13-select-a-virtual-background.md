@@ -88,9 +88,6 @@ Local projection of exactly the vocabulary needed by the Business Rules below, i
 ~~~plantuml
 @startuml
 hide empty members
-class String {
-  trim(): String
-}
 class RequestContext {
   {static} authenticated: Boolean
 }
@@ -125,9 +122,6 @@ class PreferenceService {
 class ClientPreferenceService {
   selectBackground(draft: PreviewDraft, backgroundId: String): PreviewDraft
 }
-note right of String
-Removes leading and trailing whitespace; internal whitespace is unchanged.
-end note
 note right of RequestContext
 Request-local trusted adapter data; not a process-global singleton.
 Principal and session are decoded from the authenticated session access token.

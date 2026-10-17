@@ -102,9 +102,6 @@ enum ReactionCode {
   HAND
   SURPRISE
 }
-class String {
-  trim(): String
-}
 class DateTime <<datatype>> {
 }
 note right of DateTime: Used only as a type; no structural member is accessed by these BRs.
@@ -146,9 +143,6 @@ class CollaborationService {
   sendReaction(command: ReactionCommand, session: Session): ReactionEvent
 }
 note "allInstances() is the standard OCL classifier extent.\nAn extent-only classifier has no structural properties in this UC projection." as ExtentSemantics
-note right of String
-Removes leading and trailing whitespace; internal whitespace is unchanged.
-end note
 note right of RequestContext
 Request-local trusted adapter data; not a process-global singleton.
 Principal and session are decoded from the authenticated session access token.

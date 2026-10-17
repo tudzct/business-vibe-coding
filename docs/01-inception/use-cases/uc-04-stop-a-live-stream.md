@@ -132,9 +132,6 @@ enum RecordingStatus {
   STOPPED
   FAILED
 }
-class String {
-  trim(): String
-}
 class DateTime <<datatype>> {
 }
 note right of DateTime: Used only as a type; no structural member is accessed by these BRs.
@@ -192,9 +189,6 @@ class StreamControlCommand {
 class LiveStreamService {
   stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
 }
-note right of String
-Removes leading and trailing whitespace; internal whitespace is unchanged.
-end note
 note right of RequestContext
 Request-local trusted adapter data; not a process-global singleton.
 Principal and session are decoded from the authenticated session access token.

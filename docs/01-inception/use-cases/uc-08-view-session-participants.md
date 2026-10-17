@@ -176,36 +176,12 @@ class SessionState {
   reactions: Sequence(ReactionEvent)
   nextReactionCursor: String
 }
-class Paging {
-  {static} latestRecording(sessionId: String): Recording
-  {static} participants(sessionId: String, pageSize: Integer, cursor: String): ParticipantPage
-  {static} reactions(sessionId: String, cursor: String): Sequence(ReactionEvent)
-  {static} nextReactionCursor(sessionId: String, cursor: String): String
-  {static} validCursor(sessionId: String, cursor: String, collection: String): Boolean
-}
 class CollaborationService {
   listParticipants(query: ParticipantListQuery, session: Session): ParticipantPage
 }
 class SessionService {
   readState(session: Session, participant: Participant, reactionCursor: String): SessionState
 }
-note right of Paging
-Returns the record with the latest (createdAt, id) key, including terminal records, or null if none exists.
-end note
-note right of Paging
-Returns the cursor for the next reaction read, retaining a high-water mark even when a page is empty.
-end note
-note right of Paging
-Returns a live keyset page ordered by immutable (joinedAt, id) ascending.
-The cursor encodes session, collection, and last key; nextCursor is null when the scan is exhausted.
-end note
-note right of Paging
-Returns the next reaction-event page in ascending sequence.
-end note
-note right of Paging
-Validates cursor decoding, signature, collection, and session binding.
-An absent cursor starts before the first row.
-end note
 note right of RequestContext
 Request-local trusted adapter data; not a process-global singleton.
 Principal and session are decoded from the authenticated session access token.

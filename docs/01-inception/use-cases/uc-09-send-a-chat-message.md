@@ -96,9 +96,6 @@ enum ParticipantStatus {
   JOINED
   LEFT
 }
-class String {
-  trim(): String
-}
 class DateTime <<datatype>> {
 }
 note right of DateTime: Used only as a type; no structural member is accessed by these BRs.
@@ -143,24 +140,10 @@ class MessagePage {
   items: Sequence(ChatMessage)
   nextCursor: String
 }
-class Paging {
-  {static} messages(sessionId: String, pageSize: Integer, cursor: String): MessagePage
-  {static} validCursor(sessionId: String, cursor: String, collection: String): Boolean
-}
 class CollaborationService {
   sendMessage(command: ChatCommand, session: Session): ChatMessage
   listMessages(query: MessageQuery, session: Session): MessagePage
 }
-note right of String
-Removes leading and trailing whitespace; internal whitespace is unchanged.
-end note
-note right of Paging
-Returns messages ordered by sequence ascending, using a session-bound cursor.
-end note
-note right of Paging
-Validates cursor decoding, signature, collection, and session binding.
-An absent cursor starts before the first row.
-end note
 note right of RequestContext
 Request-local trusted adapter data; not a process-global singleton.
 Principal and session are decoded from the authenticated session access token.
