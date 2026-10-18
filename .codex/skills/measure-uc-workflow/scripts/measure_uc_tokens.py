@@ -2,7 +2,9 @@
 """Extract and persist post-turn UC telemetry from cumulative usage counters."""
 
 import argparse
+import hashlib
 import json
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -18,14 +20,32 @@ END = {"turn_complete", "turn_completed", "task_complete", "task_completed"}
 ABORT = {"turn_aborted", "task_aborted"}
 
 
+def resolve_current_rollout(_supplied_path=None):
+    """Resolve the active Codex rollout without trusting a model-supplied path."""
+    sessions_root = Path.home() / ".codex" / "sessions"
+    require(sessions_root.is_dir(), f"Codex sessions directory not found: {sessions_root}")
+    session_id = os.environ.get("CODEX_SESSION_ID") or os.environ.get("CODEX_THREAD_ID")
+    if session_id:
+        matches = list(sessions_root.rglob(f"*{session_id}*.jsonl"))
+        require(len(matches) == 1,
+                f"current Codex rollout not uniquely found for session {session_id}: {len(matches)} matches")
+        return matches[0], session_id
+    rollouts = list(sessions_root.rglob("rollout-*.jsonl"))
+    require(rollouts, f"no Codex rollout found in {sessions_root}")
+    return max(rollouts, key=lambda item: item.stat().st_mtime_ns), None
+
+
 def analyze_session(path):
+    path, expected_session_id = resolve_current_rollout(path)
     raw = Path(path).read_bytes()
     lines = raw.splitlines(keepends=True)
     turns, current, previous, session_id = [], None, None, None
     offset = 0
+    prefix_hasher = hashlib.sha256()
     diagnostics = {"token_updates": 0, "duplicate_updates": 0, "counter_resets": 0}
     for index, line in enumerate(lines):
         offset += len(line)
+        prefix_hasher.update(line)
         if not line.strip():
             continue
         try:
@@ -73,7 +93,8 @@ def analyze_session(path):
             require(not payload.get("turn_id") or payload["turn_id"] == current["turn_id"],
                     "completion turn identity mismatch")
             current.update(ended_at=at, completed=True, terminal_event=kind,
-                           prefix_bytes=offset, prefix_sha256=digest(raw[:offset]))
+                           prefix_bytes=offset,
+                           prefix_sha256="sha256:" + prefix_hasher.copy().hexdigest())
             turns.append(current)
             current = None
         if top != "event_msg" or kind != "token_count":
@@ -109,6 +130,8 @@ def analyze_session(path):
     if current:
         turns.append(current)
     require(session_id, "session_meta.id required; do not infer identity from latest file")
+    if expected_session_id:
+        require(session_id == expected_session_id, "resolved rollout session identity mismatch")
     require(all(t["turn_id"] for t in turns), "explicit turn IDs required")
     require(len({t["turn_id"] for t in turns}) == len(turns), "duplicate turn IDs")
     return {"session_id": session_id, "file_name": Path(path).name,

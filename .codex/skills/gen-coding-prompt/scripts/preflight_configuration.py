@@ -223,13 +223,15 @@ def preflight(uc_id, configuration=None, run_id=None, run_json=None,
     baseline = read_json(writable(ROOT / uc["business_rule_baseline"]))
     if use_case is not None:
         require(writable(use_case) == writable(ROOT / baseline["use_case_path"]), "requested UC path differs from frozen baseline")
+    activation_path = (ROOT / "docs/02-construction/implementation" / uc_id / "runs"
+                       / assignment["run_id"] / "run-activation.json")
+    activation_ref = activation_path.relative_to(ROOT).as_posix() if activation_path.is_file() else None
     if stage in {"activation", "source"}:
         from validate_prompt_contract import validate_prompt
         prompt_ref = canonical.get("coding_prompt") or {}
         prompt_path = writable(ROOT / prompt_ref.get("path", ""))
         require(prompt_path.is_file() and digest(prompt_path.read_bytes()) == prompt_ref.get("sha256"),
                 "canonical approved prompt path/checksum mismatch")
-        activation_path = ROOT / "docs/02-construction/implementation" / uc_id / "runs" / assignment["run_id"] / "run-activation.json"
         activation = activation_path if stage == "source" and activation_path.is_file() else None
         validate_prompt(path, uc_id, assignment["run_id"], prompt_path, activation=activation)
     require(digest(path.read_bytes()) == checksum, "configuration changed during preflight")
@@ -239,7 +241,7 @@ def preflight(uc_id, configuration=None, run_id=None, run_json=None,
                                          "configuration_id": data["configuration_id"], "checksum": checksum,
                                          "comparison_group_id": data["comparison_group_id"],
                                          "researcher_id": data["researcher_id"],
-                                         "run_activation": f"docs/02-construction/implementation/{uc_id}/runs/{assignment['run_id']}/run-activation.json"},
+                                         "run_activation": activation_ref},
             "canonical_run": {"path": canonical_path.relative_to(ROOT).as_posix(), "sha256": canonical_checksum},
             "stage": stage, "baselines": baselines}
 
