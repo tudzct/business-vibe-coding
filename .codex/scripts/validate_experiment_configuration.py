@@ -183,7 +183,6 @@ def validate(path):
         raise ValueError(f"schema {schema_version} timing_method must be {TIMING_METHOD}")
     # Offline database contract: migration_head, dbml_sha256, schema_fingerprint_sha256.
     # Runtime history/drift checks belong to generation/audit, never Measure.
-    sys.path.insert(0, str(ROOT / ".codex/skills/gen-coding-prompt/scripts"))
     from database_baseline import validate_input
     validate_input(data)
     figma = data.get("figma_dataset")

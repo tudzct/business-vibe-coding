@@ -7,7 +7,7 @@ description: Create, refresh, validate or resolve the checksum-verifiable Figma 
 
 Use the exact immutable dataset version supplied by the researcher or pinned by the active configuration/prompt. Always pass that version explicitly; never scan directories or auto-select a newest/default version. Copy the selected version and manifest checksum into every new configuration. Unreferenced versions are cold evidence.
 
-Read the [shared execution timing protocol](../measure-uc-workflow/references/phase-ledger-schema.md). Resolve required Figma inputs before generation START. For a new blocker during generation, end the active core segment before resolution; do not reuse it to time resolver work. Resume a fresh execution segment only when generation is ready. Dataset-resolution-only turns, including missing-dataset blockers, use workflow-only token label `dataset_resolution`; they contribute no generation/workflow execution seconds. Mixed turns keep one primary token label under selection-schema.md. Common dataset setup outside the UC is recorded separately. Do not run Measure here.
+Resolve required Figma inputs before generation START. If this subordinate operation encounters a new blocker during generation, the owning operation ends its active execution segment before waiting and opens a fresh segment only when generation resumes. Dataset-resolution-only work is not generation execution. Common dataset setup outside the UC is recorded separately. Do not run Measure here.
 
 ## Create or refresh
 

@@ -20,10 +20,12 @@ The operator may prepare these files manually, with another model, external Pyth
 Resolve an available Python executable and run this read-only command, supplying explicit selection arguments when available:
 
 ```text
-<python-executable> .codex/skills/gen-coding-prompt/scripts/preflight_configuration.py --uc-id <UC-ID> --run-json <canonical.json> --use-case <use-case.md>
+<python-executable> .codex/scripts/preflight_configuration.py --uc-id <UC-ID> --run-json <canonical.json> --use-case <use-case.md>
 ```
 
 Every input required by preflight must be present and schema-valid on every invocation. Missing, malformed, ambiguous or conflicting inputs stop the turn immediately with the exact file, field or checksum error. Do not create, fill, normalize, repair, replace or initialize prepared inputs during preflight or prompt generation. Do not invoke preparation or activation logic to fill a gap.
+
+At the START/END boundaries below, execute `.codex/scripts/capture_timestamp.py --run-json <canonical.json> --phase prompt_generation --event <start|end> --segment-id <one-unique-segment-id> --source-revision sha256:<actual-64-hex>`. The helper resolves the active rollout and turn internally; never supply or guess either path or ID.
 
 Referenced provenance, frozen UC, configured checksum-pinned API dependencies when present, Figma and template dependencies must also validate under their existing contracts; they are not silently generated as a workaround. A frozen UC whose required `Related API IDs` section contains exactly `None.` has an empty configured API inventory and requires no API artifact. If a checksum-normalization receipt is required by the existing UC contract, it must already exist.
 
@@ -36,7 +38,7 @@ The same preflight imports `database_baseline.py` internally to verify the order
 3. Use the read-only preflight result for prepared-input integrity and preserve those inputs unchanged.
 4. Once all input checks pass, immediately capture live prompt START. Analyze only the project inputs permitted above and populate the configured coding-prompt template. Do not add instructions sourced from shared environment documents.
 5. The AI must reason over the validated provided inputs and author the complete coding prompt itself, following `templates/construction/coding-prompt.template.md`. The configured template defines the prompt's sections, content and instructions, subject to the shared operational constitution and input contracts. Read-only preflight, timing and post-generation validation tools remain required; they do not generate prompt content.
-6. Persist the Draft at `docs/02-construction/coding-prompts/<UC-ID>-coding-prompt.md`, including `source_api_contracts` as the semicolon-separated ordered configured API paths, or exactly `None.` for an empty inventory. Immediately capture END, then run `scripts/validate_prompt_contract.py --configuration <config.json> --uc-id <UC-ID> --run-id <RUN-ID> --prompt <prompt.md> --allow-draft`. Recheck configuration with preflight `--expected-checksum <original checksum>`; review semantic flow coverage and provenance. Any unresolved anomaly prevents reporting success.
+6. Persist the Draft at `docs/02-construction/coding-prompts/<UC-ID>-coding-prompt.md`, including `source_api_contracts` as the semicolon-separated ordered configured API paths, or exactly `None.` for an empty inventory. Immediately capture END, then run `.codex/scripts/validate_prompt_contract.py --configuration <config.json> --uc-id <UC-ID> --run-id <RUN-ID> --prompt <prompt.md> --allow-draft`. Recheck configuration with preflight `--expected-checksum <original checksum>`; review semantic flow coverage and provenance. Any unresolved anomaly prevents reporting success.
 7. Present the saved Draft, its path and validation result, then stop. Do not inspect or prepare another operation.
 
 The existing timing helper appends actual timestamps to its runtime journal after successful input validation. This is measurement evidence, not initialization of the prepared inputs. Preflight must not mutate the Canonical Run JSON. Never invent a token deduction or promise zero measurement overhead.

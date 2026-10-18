@@ -8,31 +8,27 @@ from datetime import datetime
 from pathlib import Path
 
 from metrics_contract import (CORE, AUX, TIMING_PROTOCOL, context, journal, require, run_lock, save_journal)
-from measure_uc_tokens import analyze_session, classified_phase, find_turn
+from rollout_contract import analyze_session, classified_phase, find_turn
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-json", required=True)
-    parser.add_argument("--session", required=True)
-    parser.add_argument("--turn-id", help="Accepted for command compatibility; the active turn is resolved from rollout")
     parser.add_argument("--phase", choices=CORE + AUX, required=True)
     parser.add_argument("--event", choices=("start", "end", "abandon"), required=True)
     parser.add_argument("--segment-id", required=True)
     parser.add_argument("--source-revision", required=True)
-    parser.add_argument("--repair-id", help="Required for a source-correction round; omitted for sub-prompt generation")
     parser.add_argument("--repair-activity", choices=("sub_prompt_generation", "source_correction"),
-                        help="Required for Repair timing; sub-prompt generation is phase-level")
+                        help="Required for Repair timing; source correction covers the complete Repair invocation")
     parser.add_argument("--reason", help="Required for abandoning a missing endpoint after interruption")
     args = parser.parse_args()
     _, run, folder = context(args.run_json)
     if args.event == "start" and args.phase in ("prompt_generation", "source_generation"):
-        sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "gen-coding-prompt/scripts"))
         from preflight_configuration import preflight
         preflight(run["uc_id"], run_id=run["run_id"], run_json=args.run_json,
                   stage="prompt" if args.phase == "prompt_generation" else "source")
     require(re.fullmatch(r"sha256:[0-9a-fA-F]{64}", args.source_revision), "source revision needs full SHA-256")
-    session = analyze_session(args.session)
+    session = analyze_session()
     require(session["turns"], "rollout contains no turns")
     turn = session["turns"][-1]
     require(not turn["completed"], "current rollout has no active turn")
@@ -43,12 +39,13 @@ def main():
                 "unsupported timing protocol")
         if args.phase == "repair":
             require(args.repair_activity is not None, "repair timing requires --repair-activity")
-            require((args.repair_activity == "sub_prompt_generation" and not args.repair_id)
-                    or (args.repair_activity == "source_correction" and bool(args.repair_id)),
-                    "sub-prompt timing has no repair ID; source correction requires one")
+            if args.event == "start":
+                require(not any(segment["start"].get("phase") == "repair" and
+                                segment["start"].get("repair_activity") == args.repair_activity
+                                for segment in state["segments"]),
+                        "each Repair activity permits one execution segment per run")
         else:
-            require(args.repair_activity is None and args.repair_id is None,
-                    "repair identity/activity apply only to Repair timing")
+            require(args.repair_activity is None, "repair activity applies only to Repair timing")
         require(state["workflow_status"] == "open", "workflow is finalized")
         require(state["session_id"] in (None, session["session_id"]), "session identity mismatch")
         state["session_id"] = session["session_id"]
@@ -62,7 +59,6 @@ def main():
             require(original["completed"] and original["turn_id"] != turn_id,
                     "abandon is only for an earlier terminal turn with a missing endpoint")
             require(matches[0]["start"]["phase"] == args.phase, "abandon phase mismatch")
-            require(matches[0]["start"].get("repair_id") == args.repair_id, "abandon repair ID mismatch")
             require(matches[0]["start"].get("repair_activity") == args.repair_activity,
                     "abandon repair activity mismatch")
             matches[0]["timing_unavailable_reason"] = args.reason
@@ -97,7 +93,7 @@ def main():
                 require(current_gate == "repair_decision", "sub-prompt generation requires the Repair Decision gate")
                 require(not run.get("repairs"), "sub-prompt generation must precede correction rounds")
             else:
-                sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "advance-experiment-gate/scripts"))
+                sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "skills/advance-experiment-gate/scripts"))
                 from record_gate import validate_repair_authorization
                 approval = validate_repair_authorization(run)
                 require(current_gate == "repair", "source correction requires the Repair gate")
@@ -121,8 +117,6 @@ def main():
                  "segment_id": args.segment_id, "source_revision": args.source_revision}
         if args.phase == "repair":
             value["repair_activity"] = args.repair_activity
-            if args.repair_id:
-                value["repair_id"] = args.repair_id
         if args.event == "start":
             require(not matches, "segment ID already exists; timestamps are immutable")
             require(all("end" in s or s.get("timing_unavailable_reason") for s in segments),
@@ -132,7 +126,6 @@ def main():
             require(len(matches) == 1 and "end" not in matches[0], "missing/already ended segment")
             require(all(matches[0]["start"][k] == value[k] for k in ("turn_id", "phase", "session_id")),
                     "end must match start identity in the same turn")
-            require(matches[0]["start"].get("repair_id") == value.get("repair_id"), "repair ID differs from start")
             require(matches[0]["start"].get("repair_activity") == value.get("repair_activity"),
                     "repair activity differs from start")
             matches[0]["end"] = value
