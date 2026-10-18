@@ -14,7 +14,7 @@ import re
 import shutil
 import subprocess
 
-ROOT = Path(__file__).resolve().parents[4]
+ROOT = Path(__file__).resolve().parents[2]
 PROTOCOL = "mysql84-tables-v1"
 HASH = re.compile(r"sha256:[0-9a-f]{64}\Z")
 FIELDS = {"migration_head", "dbml_sha256", "schema_fingerprint_sha256"}

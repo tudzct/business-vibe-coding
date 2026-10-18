@@ -6,7 +6,7 @@ import re
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow" / "scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from metrics_contract import atomic_write, validate_metrics, context, run_lock, epoch, digest
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-flow-accuracy" / "scripts"))
 from score_flow_accuracy import (calculate as calculate_flow, validate_run_result,

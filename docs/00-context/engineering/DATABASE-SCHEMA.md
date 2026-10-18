@@ -75,7 +75,7 @@ Any deterministic helper that consumes this baseline revalidates its pins withou
 Operations requiring live database verification use:
 
 ```text
-<python-executable> .codex/skills/gen-coding-prompt/scripts/database_baseline.py --configuration <pinned-configuration.json>
+<python-executable> .codex/scripts/database_baseline.py --configuration <pinned-configuration.json>
 ```
 
 For application rebuilds within a pinned run, after successful preflight use:

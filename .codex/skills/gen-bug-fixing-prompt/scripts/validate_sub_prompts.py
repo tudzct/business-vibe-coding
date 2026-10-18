@@ -8,8 +8,7 @@ import sys
 from pathlib import Path
 
 
-MEASURE_SCRIPTS = Path(__file__).resolve().parents[2] / "measure-uc-workflow" / "scripts"
-sys.path.insert(0, str(MEASURE_SCRIPTS))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 
 from metrics_contract import ROOT, atomic_write, context, read_json, run_lock, writable
 
