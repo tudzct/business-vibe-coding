@@ -149,8 +149,16 @@ def docker_executable():
     if program_files:
         candidates.append(Path(program_files) / "Docker/Docker/resources/bin/docker.exe")
     for candidate in dict.fromkeys(candidates):
-        if candidate.is_file():
-            return str(candidate)
+        try:
+            if candidate.is_file():
+                return str(candidate)
+        except OSError as exc:
+            if isinstance(exc, PermissionError) or getattr(exc, "winerror", None) == 5:
+                raise ValueError(
+                    f"{DOCKER_ACCESS_REQUIRED}: Docker Desktop path is hidden by the current sandbox; "
+                    "rerun this same read-only validation with host approval"
+                ) from None
+            raise
     if os.name == "nt":
         raise ValueError(
             f"{DOCKER_ACCESS_REQUIRED}: Docker Desktop is not visible in the current sandbox; "
