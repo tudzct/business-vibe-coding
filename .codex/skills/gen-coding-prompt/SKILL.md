@@ -23,6 +23,8 @@ Resolve an available Python executable and run this read-only command, supplying
 <python-executable> .codex/scripts/preflight_configuration.py --uc-id <UC-ID> --run-json <canonical.json> --use-case <use-case.md>
 ```
 
+If and only if this command exits with `DOCKER_ACCESS_REQUIRED`, rerun the identical read-only command once with host approval. A denied approval or failed retry blocks the operation. Never elevate, retry or reinterpret any other validation error.
+
 Every input required by preflight must be present and schema-valid on every invocation. Missing, malformed, ambiguous or conflicting inputs stop the turn immediately with the exact file, field or checksum error. Do not create, fill, normalize, repair, replace or initialize prepared inputs during preflight or prompt generation. Do not invoke preparation or activation logic to fill a gap.
 
 At the START/END boundaries below, execute `.codex/scripts/capture_timestamp.py --run-json <canonical.json> --phase prompt_generation --event <start|end> --segment-id <one-unique-segment-id> --source-revision sha256:<actual-64-hex>`. The helper resolves the active rollout and turn internally; never supply or guess either path or ID.

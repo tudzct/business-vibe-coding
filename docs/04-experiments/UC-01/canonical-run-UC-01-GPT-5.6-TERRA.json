@@ -6,7 +6,7 @@
     "comparison_group_id": "CG-100MS-01",
     "researcher_id": "researcher-khanh",
     "artifact": "docs/04-experiments/configurations/CFG-UC-01-GPT-5.6-TERRA.json",
-    "checksum": "sha256:d04a795fc0c0ad71b2e3887cbddea103771240eb8f0ee4210a532aedb4d5d746",
+    "checksum": "sha256:c972b51c4d3ea1a70831ba336c54a3f2dbc0c627efcee38d653398e240c2fd46",
     "run_activation": null
   },
   "uc_id": "UC-01",
