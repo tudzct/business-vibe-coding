@@ -1,0 +1,13 @@
+{
+  "flow_id": "AF-1",
+  "action": "toggle_camera_off_and_mic_off",
+  "state": {
+    "cameraEnabled": false,
+    "microphoneEnabled": false,
+    "micBadge": "Mic muted",
+    "placeholderIcon": "\u25c9",
+    "cameraButton": "Camera off",
+    "micButton": "Mic off"
+  },
+  "captured_at": "2026-10-19T14:48:20+07:00"
+}

@@ -1,0 +1,32 @@
+{
+  "artifact_type": "source-output",
+  "uc_id": "UC-01",
+  "run_id": "UC-01-GPT-5.6-TERRA",
+  "prompt_checksum": "sha256:b7098448d81188c62874c44d99f4066d19c1948cfc3637705f9f9a0a90ba6a2a",
+  "input_source_hash": "sha256:6a3b31a2fbfe3480f73c5b7114c738c3b3430e19bb950411e5a885c95c153a93",
+  "output_source_hash": "sha256:c5ccf5963db2a8c5acf2c97e9d7d7ee2dc09cb081a904bf8ef11f5304e6adf93",
+  "changed_files": [
+    {
+      "path": "finalsource/fe/src/App.tsx",
+      "sha256": "sha256:395fc4b9bbba17eb9858384108d4976b90a8292dd338ce0826f879768230adc1"
+    },
+    {
+      "path": "finalsource/fe/src/index.css",
+      "sha256": "sha256:24e6416d20645dd0e52fa549931d33a98b2912b7fbeb9fcfc3d148c78b392ae9"
+    }
+  ],
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-terra",
+    "requested_reasoning_effort": "medium"
+  },
+  "timing": {
+    "phase": "source_generation",
+    "segment_id": "uc01-source-generation-20261019t000002",
+    "start_source_revision": "sha256:6a3b31a2fbfe3480f73c5b7114c738c3b3430e19bb950411e5a885c95c153a93",
+    "end_source_revision": "sha256:c5ccf5963db2a8c5acf2c97e9d7d7ee2dc09cb081a904bf8ef11f5304e6adf93"
+  },
+  "verification": {
+    "docker_frontend_build": "passed",
+    "local_lint_and_build": "not run: local frontend dependencies are not installed"
+  }
+}

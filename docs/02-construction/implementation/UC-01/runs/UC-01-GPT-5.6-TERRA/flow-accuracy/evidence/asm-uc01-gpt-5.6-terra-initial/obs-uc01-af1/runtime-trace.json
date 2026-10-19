@@ -1,0 +1,18 @@
+{
+  "flow_id": "AF-1",
+  "trace": [
+    {
+      "step": "AF-1.3a",
+      "action": "turn_off_mic_or_camera",
+      "target": "camera_mic_toggles",
+      "result": "camera_off_mic_off"
+    },
+    {
+      "step": "AF-1.3b",
+      "action": "render_muted_state",
+      "target": "muted_preview",
+      "result": "placeholder_and_mic_muted_rendered"
+    }
+  ],
+  "captured_at": "2026-10-19T14:48:22+07:00"
+}

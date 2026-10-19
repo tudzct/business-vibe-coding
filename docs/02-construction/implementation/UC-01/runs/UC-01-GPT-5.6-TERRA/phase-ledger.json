@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "uc_id": "UC-01",
+  "run_id": "UC-01-GPT-5.6-TERRA",
+  "session_id": "01a15247-2e0d-7b20-876c-3c30d44e8af7",
+  "phases": {
+    "prompt_generation": {
+      "status": "closed",
+      "first_turn_id": "01a15247-53d9-7e70-9ff1-1caaf1de3526",
+      "measurement_turn_id": "01a15253-b138-72b2-b68c-dd9645c2c110"
+    },
+    "source_generation": {
+      "status": "closed",
+      "first_turn_id": "01a1525d-33f5-77f2-96ae-c7d1b490a106",
+      "measurement_turn_id": "01a15266-0563-79e1-9cbc-dbb6729e9b06"
+    },
+    "repair": {
+      "status": "skipped",
+      "reason": "All frozen BRs and flows pass; repair unnecessary."
+    }
+  },
+  "segments": [
+    {
+      "start": {
+        "at": "2026-10-19T10:53:46.766+07:00",
+        "epoch_ms": 1792382026766,
+        "timing_protocol": "generation_execution_with_repair_audit_v2",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA",
+        "session_id": "01a15247-2e0d-7b20-876c-3c30d44e8af7",
+        "turn_id": "01a15247-53d9-7e70-9ff1-1caaf1de3526",
+        "phase": "prompt_generation",
+        "event": "start",
+        "segment_id": "uc01-prompt-generation-20261019t000001",
+        "source_revision": "sha256:6a3b31a2fbfe3480f73c5b7114c738c3b3430e19bb950411e5a885c95c153a93"
+      },
+      "end": {
+        "at": "2026-10-19T10:55:07.612+07:00",
+        "epoch_ms": 1792382107613,
+        "timing_protocol": "generation_execution_with_repair_audit_v2",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA",
+        "session_id": "01a15247-2e0d-7b20-876c-3c30d44e8af7",
+        "turn_id": "01a15247-53d9-7e70-9ff1-1caaf1de3526",
+        "phase": "prompt_generation",
+        "event": "end",
+        "segment_id": "uc01-prompt-generation-20261019t000001",
+        "source_revision": "sha256:6a3b31a2fbfe3480f73c5b7114c738c3b3430e19bb950411e5a885c95c153a93"
+      }
+    },
+    {
+      "start": {
+        "at": "2026-10-19T11:16:07.669+07:00",
+        "epoch_ms": 1792383367670,
+        "timing_protocol": "generation_execution_with_repair_audit_v2",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA",
+        "session_id": "01a15247-2e0d-7b20-876c-3c30d44e8af7",
+        "turn_id": "01a1525d-33f5-77f2-96ae-c7d1b490a106",
+        "phase": "source_generation",
+        "event": "start",
+        "segment_id": "uc01-source-generation-20261019t000002",
+        "source_revision": "sha256:6a3b31a2fbfe3480f73c5b7114c738c3b3430e19bb950411e5a885c95c153a93"
+      },
+      "end": {
+        "at": "2026-10-19T11:18:56.320+07:00",
+        "epoch_ms": 1792383536321,
+        "timing_protocol": "generation_execution_with_repair_audit_v2",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA",
+        "session_id": "01a15247-2e0d-7b20-876c-3c30d44e8af7",
+        "turn_id": "01a1525d-33f5-77f2-96ae-c7d1b490a106",
+        "phase": "source_generation",
+        "event": "end",
+        "segment_id": "uc01-source-generation-20261019t000002",
+        "source_revision": "sha256:c5ccf5963db2a8c5acf2c97e9d7d7ee2dc09cb081a904bf8ef11f5304e6adf93"
+      }
+    }
+  ],
+  "observations": [
+    {
+      "measurement_turn_id": "01a15253-b138-72b2-b68c-dd9645c2c110",
+      "action": "close-phase:prompt_generation",
+      "last_turn_id": "01a15247-53d9-7e70-9ff1-1caaf1de3526",
+      "evidence_sha256": "sha256:e1f92f737774fd01a2a6a79b2ef754a5172cb52743b162747f342f8960ee4f01"
+    },
+    {
+      "measurement_turn_id": "01a15266-0563-79e1-9cbc-dbb6729e9b06",
+      "action": "close-phase:source_generation",
+      "last_turn_id": "01a1525d-33f5-77f2-96ae-c7d1b490a106",
+      "evidence_sha256": "sha256:bf8a27cae5984ec0cc7babf4a8ffc08057c40a53665b0b07c6aacff4642fb3d0"
+    },
+    {
+      "measurement_turn_id": "01a1532c-a90c-7a90-ba04-f72de9e5a8dc",
+      "action": "finalize-workflow",
+      "last_turn_id": "01a1525d-33f5-77f2-96ae-c7d1b490a106",
+      "evidence_sha256": "sha256:bf8a27cae5984ec0cc7babf4a8ffc08057c40a53665b0b07c6aacff4642fb3d0"
+    }
+  ],
+  "workflow_status": "finalized",
+  "timing_protocol": "generation_execution_with_repair_audit_v2"
+}

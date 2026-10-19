@@ -1,0 +1,21 @@
+{
+  "artifact_type": "source-input",
+  "uc_id": "UC-01",
+  "run_id": "UC-01-GPT-5.6-TERRA",
+  "configuration": {
+    "path": "docs/04-experiments/configurations/CFG-UC-01-GPT-5.6-TERRA.json",
+    "checksum": "sha256:c972b51c4d3ea1a70831ba336c54a3f2dbc0c627efcee38d653398e240c2fd46"
+  },
+  "prompt": {
+    "path": "docs/02-construction/coding-prompts/UC-01-coding-prompt.md",
+    "checksum": "sha256:b7098448d81188c62874c44d99f4066d19c1948cfc3637705f9f9a0a90ba6a2a"
+  },
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-terra",
+    "requested_reasoning_effort": "medium"
+  },
+  "replicate_index": 1,
+  "run_order": 1,
+  "input_source_hash": "sha256:6a3b31a2fbfe3480f73c5b7114c738c3b3430e19bb950411e5a885c95c153a93",
+  "predecessor_source_hash": "sha256:6a3b31a2fbfe3480f73c5b7114c738c3b3430e19bb950411e5a885c95c153a93"
+}

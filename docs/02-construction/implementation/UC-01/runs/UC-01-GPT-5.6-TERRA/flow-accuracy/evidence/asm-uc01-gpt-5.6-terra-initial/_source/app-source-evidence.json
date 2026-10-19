@@ -1,0 +1,7 @@
+{
+  "path": "finalsource/fe/src/App.tsx",
+  "locator": "L1-L169",
+  "source_revision": "sha256:c5ccf5963db2a8c5acf2c97e9d7d7ee2dc09cb081a904bf8ef11f5304e6adf93",
+  "sanitized": true,
+  "description": "React pre-join preview implementation covering BF-1, AF-1, EF-1 and BR-RJPP-01 to 07."
+}

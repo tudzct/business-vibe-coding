@@ -1,0 +1,1664 @@
+{
+  "schema_version": 1,
+  "export_mode": "dynamic_semantic",
+  "requested_uc_id": "UC-01",
+  "target_sheet": "New",
+  "target_reference": "C:\\Users\\hongk\\Downloads\\abc-10192026.xlsx",
+  "repo_root": "C:\\Khanh Projects\\VibeTesting\\tool-vibe-coding\\business-vibe-coding",
+  "workbook": "C:\\Users\\hongk\\Downloads\\abc-10192026.xlsx",
+  "workbook_sha256": "sha256:98d24ba20176cca17da24b5f7503b5b9f902453a01348447a03af763d0c0cc96",
+  "sources": [
+    "docs/04-experiments/UC-01/canonical-run-UC-01-GPT-5.6-TERRA.json"
+  ],
+  "header_coverage": [
+    {
+      "sheet": "New",
+      "column": "A",
+      "header": "ID",
+      "status": "skipped",
+      "cells": [],
+      "reason": "Identifier column, preserved"
+    },
+    {
+      "sheet": "New",
+      "column": "B",
+      "header": "Use Case Name",
+      "status": "skipped",
+      "cells": [],
+      "reason": "Label column, preserved"
+    },
+    {
+      "sheet": "New",
+      "column": "C",
+      "header": "Number of Business Requirements",
+      "status": "mapped",
+      "cells": [
+        "C8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "D",
+      "header": "Coding Prompt / Cached Input Tokens",
+      "status": "mapped",
+      "cells": [
+        "D8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "E",
+      "header": "Coding Prompt / Input Tokens",
+      "status": "mapped",
+      "cells": [
+        "E8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "F",
+      "header": "Coding Prompt / Output Tokens",
+      "status": "mapped",
+      "cells": [
+        "F8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "G",
+      "header": "Coding Prompt / Total Tokens",
+      "status": "mapped",
+      "cells": [
+        "G8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "H",
+      "header": "Coding Prompt / DurationTime (in second)",
+      "status": "mapped",
+      "cells": [
+        "H8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "I",
+      "header": "Coding Prompt / Wall Clock Time(in second)",
+      "status": "mapped",
+      "cells": [
+        "I8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "J",
+      "header": "Coding Prompt / Workflow Turns",
+      "status": "mapped",
+      "cells": [
+        "J8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "K",
+      "header": "Coding Prompt / Tool Calls",
+      "status": "mapped",
+      "cells": [
+        "K8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "L",
+      "header": "First Gen Source Code / Cached Input Tokens",
+      "status": "mapped",
+      "cells": [
+        "L8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "M",
+      "header": "First Gen Source Code / Input Tokens",
+      "status": "mapped",
+      "cells": [
+        "M8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "N",
+      "header": "First Gen Source Code / Output Tokens",
+      "status": "mapped",
+      "cells": [
+        "N8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "O",
+      "header": "First Gen Source Code / Total Tokens",
+      "status": "mapped",
+      "cells": [
+        "O8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "P",
+      "header": "First Gen Source Code / DurationTime (in second)",
+      "status": "mapped",
+      "cells": [
+        "P8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "Q",
+      "header": "First Gen Source Code / Wall Clock Time(in second)",
+      "status": "mapped",
+      "cells": [
+        "Q8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "R",
+      "header": "First Gen Source Code / Workflow Turns",
+      "status": "mapped",
+      "cells": [
+        "R8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "S",
+      "header": "First Gen Source Code / Tool Calls",
+      "status": "mapped",
+      "cells": [
+        "S8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "T",
+      "header": "Repair / Cached Input Tokens",
+      "status": "mapped",
+      "cells": [
+        "T8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "U",
+      "header": "Repair / Input Tokens",
+      "status": "mapped",
+      "cells": [
+        "U8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "V",
+      "header": "Repair / Output Tokens",
+      "status": "mapped",
+      "cells": [
+        "V8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "W",
+      "header": "Repair / Total Tokens",
+      "status": "mapped",
+      "cells": [
+        "W8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "X",
+      "header": "Repair / DurationTime (in second)",
+      "status": "mapped",
+      "cells": [
+        "X8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "Y",
+      "header": "Repair / Wall Clock Time(in second)",
+      "status": "mapped",
+      "cells": [
+        "Y8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "Z",
+      "header": "Repair / Workflow Turns",
+      "status": "mapped",
+      "cells": [
+        "Z8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "AA",
+      "header": "Repair / Tool Calls",
+      "status": "mapped",
+      "cells": [
+        "AA8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "AB",
+      "header": "Total 3 phases / Cached Input Tokens",
+      "status": "mapped",
+      "cells": [
+        "AB8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "AC",
+      "header": "Total 3 phases / Input Tokens",
+      "status": "mapped",
+      "cells": [
+        "AC8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "AD",
+      "header": "Total 3 phases / Output Tokens",
+      "status": "mapped",
+      "cells": [
+        "AD8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "AE",
+      "header": "Total 3 phases / Total Tokens",
+      "status": "mapped",
+      "cells": [
+        "AE8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "AF",
+      "header": "Total 3 phases / DurationTime (in second)",
+      "status": "mapped",
+      "cells": [
+        "AF8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "AG",
+      "header": "Total 3 phases / Wall Clock Time(in second)",
+      "status": "mapped",
+      "cells": [
+        "AG8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "AH",
+      "header": "Total 3 phases / Workflow Turns",
+      "status": "mapped",
+      "cells": [
+        "AH8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "AI",
+      "header": "Total 3 phases / Tool Calls",
+      "status": "mapped",
+      "cells": [
+        "AI8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "AJ",
+      "header": "Work follow / Total Tokens",
+      "status": "mapped",
+      "cells": [
+        "AJ8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "AK",
+      "header": "Work follow / Wall Clock Time(in second)",
+      "status": "mapped",
+      "cells": [
+        "AK8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "AL",
+      "header": "Manual Coding Time Estimate (3 Experts) (in hour) / Tu",
+      "status": "skipped",
+      "cells": [],
+      "reason": "Pre-existing expert manual estimate, preserved"
+    },
+    {
+      "sheet": "New",
+      "column": "AM",
+      "header": "Manual Coding Time Estimate (3 Experts) (in hour) / Kien",
+      "status": "skipped",
+      "cells": [],
+      "reason": "Pre-existing expert manual estimate, preserved"
+    },
+    {
+      "sheet": "New",
+      "column": "AN",
+      "header": "Manual Coding Time Estimate (3 Experts) (in hour) / Khanh",
+      "status": "skipped",
+      "cells": [],
+      "reason": "Pre-existing expert manual estimate, preserved"
+    },
+    {
+      "sheet": "New",
+      "column": "AO",
+      "header": "First Generation / Correct Business Requirements ",
+      "status": "mapped",
+      "cells": [
+        "AO8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "AP",
+      "header": "First Generation / Incorrect Business Requirements ",
+      "status": "mapped",
+      "cells": [
+        "AP8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "AQ",
+      "header": "First Generation / Flow Accuracy (%) ",
+      "status": "mapped",
+      "cells": [
+        "AQ8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "AR",
+      "header": "After Fixing / Correct Business Requirements ",
+      "status": "mapped",
+      "cells": [
+        "AR8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "AS",
+      "header": "After Fixing / Incorrect Business Requirements ",
+      "status": "mapped",
+      "cells": [
+        "AS8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "AT",
+      "header": "After Fixing / Flow Accuracy (%) ",
+      "status": "mapped",
+      "cells": [
+        "AT8"
+      ]
+    },
+    {
+      "sheet": "New",
+      "column": "AU",
+      "header": "Figma UI Match Ratio (%)",
+      "status": "na",
+      "cells": [
+        "AU8"
+      ],
+      "reason": "Optional UI diff / Figma match metric not present in canonical results"
+    },
+    {
+      "sheet": "New",
+      "column": "AV",
+      "header": "UC Complexity",
+      "status": "skipped",
+      "cells": [],
+      "reason": "Pre-existing manual complexity category, preserved"
+    },
+    {
+      "sheet": "New",
+      "column": "AW",
+      "header": "Notes",
+      "status": "skipped",
+      "cells": [],
+      "reason": "Preserved manual qualitative notes field"
+    }
+  ],
+  "cells": [
+    {
+      "sheet": "New",
+      "cell": "C8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "business_rules.initial.total",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "C6",
+          "value": "Number of Business Requirements"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Total number of business requirements evaluated in UC-01 baseline",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "D8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.prompt_generation.values.tokens.cached_input_tokens",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "D6",
+          "value": "Coding Prompt "
+        },
+        {
+          "cell": "D7",
+          "value": "Cached Input Tokens"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Prompt generation cached input tokens",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "E8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.prompt_generation.values.tokens.input_tokens",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "D6",
+          "value": "Coding Prompt "
+        },
+        {
+          "cell": "E7",
+          "value": "Input Tokens"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Prompt generation input tokens",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "F8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.prompt_generation.values.tokens.output_tokens",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "D6",
+          "value": "Coding Prompt "
+        },
+        {
+          "cell": "F7",
+          "value": "Output Tokens"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Prompt generation output tokens",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "G8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.prompt_generation.values.tokens.total_tokens",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "D6",
+          "value": "Coding Prompt "
+        },
+        {
+          "cell": "G7",
+          "value": "Total Tokens"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Prompt generation total tokens",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "H8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.prompt_generation.values.duration_seconds",
+      "type": "number",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "D6",
+          "value": "Coding Prompt "
+        },
+        {
+          "cell": "H7",
+          "value": "DurationTime (in second)"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Prompt generation duration in seconds",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "I8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.prompt_generation.values.wall_clock_seconds",
+      "type": "number",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "D6",
+          "value": "Coding Prompt "
+        },
+        {
+          "cell": "I7",
+          "value": "Wall Clock Time(in second)"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Prompt generation wall clock time in seconds",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "J8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.prompt_generation.values.workflow_turn_count",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "D6",
+          "value": "Coding Prompt "
+        },
+        {
+          "cell": "J7",
+          "value": "Workflow Turns"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Prompt generation workflow turn count",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "K8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.prompt_generation.values.tool_call_count",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "D6",
+          "value": "Coding Prompt "
+        },
+        {
+          "cell": "K7",
+          "value": "Tool Calls"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Prompt generation tool call count",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "L8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.source_generation.values.tokens.cached_input_tokens",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "L6",
+          "value": "First Gen Source Code"
+        },
+        {
+          "cell": "L7",
+          "value": "Cached Input Tokens"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "First generation source code cached input tokens",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "M8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.source_generation.values.tokens.input_tokens",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "L6",
+          "value": "First Gen Source Code"
+        },
+        {
+          "cell": "M7",
+          "value": "Input Tokens"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "First generation source code input tokens",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "N8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.source_generation.values.tokens.output_tokens",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "L6",
+          "value": "First Gen Source Code"
+        },
+        {
+          "cell": "N7",
+          "value": "Output Tokens"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "First generation source code output tokens",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "O8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.source_generation.values.tokens.total_tokens",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "L6",
+          "value": "First Gen Source Code"
+        },
+        {
+          "cell": "O7",
+          "value": "Total Tokens"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "First generation source code total tokens",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "P8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.source_generation.values.duration_seconds",
+      "type": "number",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "L6",
+          "value": "First Gen Source Code"
+        },
+        {
+          "cell": "P7",
+          "value": "DurationTime (in second)"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "First generation source code duration in seconds",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "Q8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.source_generation.values.wall_clock_seconds",
+      "type": "number",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "L6",
+          "value": "First Gen Source Code"
+        },
+        {
+          "cell": "Q7",
+          "value": "Wall Clock Time(in second)"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "First generation source code wall clock time in seconds",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "R8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.source_generation.values.workflow_turn_count",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "L6",
+          "value": "First Gen Source Code"
+        },
+        {
+          "cell": "R7",
+          "value": "Workflow Turns"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "First generation source code workflow turn count",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "S8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.source_generation.values.tool_call_count",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "L6",
+          "value": "First Gen Source Code"
+        },
+        {
+          "cell": "S7",
+          "value": "Tool Calls"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "First generation source code tool call count",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "T8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.repair.values.tokens.cached_input_tokens",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "T6",
+          "value": "Repair"
+        },
+        {
+          "cell": "T7",
+          "value": "Cached Input Tokens"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Repair phase cached input tokens (skipped repair exports stored zero)",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "U8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.repair.values.tokens.input_tokens",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "T6",
+          "value": "Repair"
+        },
+        {
+          "cell": "U7",
+          "value": "Input Tokens"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Repair phase input tokens (skipped repair exports stored zero)",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "V8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.repair.values.tokens.output_tokens",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "T6",
+          "value": "Repair"
+        },
+        {
+          "cell": "V7",
+          "value": "Output Tokens"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Repair phase output tokens (skipped repair exports stored zero)",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "W8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.repair.values.tokens.total_tokens",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "T6",
+          "value": "Repair"
+        },
+        {
+          "cell": "W7",
+          "value": "Total Tokens"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Repair phase total tokens (skipped repair exports stored zero)",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "X8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.repair.values.duration_seconds",
+      "type": "number",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "T6",
+          "value": "Repair"
+        },
+        {
+          "cell": "X7",
+          "value": "DurationTime (in second)"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Repair phase duration in seconds (skipped repair exports stored zero)",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "Y8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.repair.values.wall_clock_seconds",
+      "type": "number",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "T6",
+          "value": "Repair"
+        },
+        {
+          "cell": "Y7",
+          "value": "Wall Clock Time(in second)"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Repair phase wall clock time in seconds (skipped repair exports stored zero)",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "Z8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.repair.values.workflow_turn_count",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "T6",
+          "value": "Repair"
+        },
+        {
+          "cell": "Z7",
+          "value": "Workflow Turns"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Repair phase workflow turn count (skipped repair exports stored zero)",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "AA8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.phases.repair.values.tool_call_count",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "T6",
+          "value": "Repair"
+        },
+        {
+          "cell": "AA7",
+          "value": "Tool Calls"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Repair phase tool call count (skipped repair exports stored zero)",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "AB8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.workflow.tokens.cached_input_tokens",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "AB6",
+          "value": "Total 3 phases"
+        },
+        {
+          "cell": "AB7",
+          "value": "Cached Input Tokens"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Total 3 phases workflow cached input tokens",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "AC8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.workflow.tokens.input_tokens",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "AB6",
+          "value": "Total 3 phases"
+        },
+        {
+          "cell": "AC7",
+          "value": "Input Tokens"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Total 3 phases workflow input tokens",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "AD8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.workflow.tokens.output_tokens",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "AB6",
+          "value": "Total 3 phases"
+        },
+        {
+          "cell": "AD7",
+          "value": "Output Tokens"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Total 3 phases workflow output tokens",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "AE8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.workflow.tokens.total_tokens",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "AB6",
+          "value": "Total 3 phases"
+        },
+        {
+          "cell": "AE7",
+          "value": "Total Tokens"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Total 3 phases workflow total tokens",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "AF8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.workflow.duration_seconds",
+      "type": "number",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "AB6",
+          "value": "Total 3 phases"
+        },
+        {
+          "cell": "AF7",
+          "value": "DurationTime (in second)"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Total 3 phases workflow duration in seconds",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "AG8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.workflow.wall_clock_seconds",
+      "type": "number",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "AB6",
+          "value": "Total 3 phases"
+        },
+        {
+          "cell": "AG7",
+          "value": "Wall Clock Time(in second)"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Total 3 phases workflow wall clock time in seconds",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "AH8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.workflow.workflow_turn_count",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "AB6",
+          "value": "Total 3 phases"
+        },
+        {
+          "cell": "AH7",
+          "value": "Workflow Turns"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Total 3 phases workflow turn count",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "AI8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.workflow.tool_call_count",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "AB6",
+          "value": "Total 3 phases"
+        },
+        {
+          "cell": "AI7",
+          "value": "Tool Calls"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Total 3 phases workflow tool call count",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "AJ8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.workflow.tokens.total_tokens",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "AJ6",
+          "value": "Work follow"
+        },
+        {
+          "cell": "AJ7",
+          "value": "Total Tokens"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Work follow (workflow) total tokens",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "AK8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "metrics.workflow.wall_clock_seconds",
+      "type": "number",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "AJ6",
+          "value": "Work follow"
+        },
+        {
+          "cell": "AK7",
+          "value": "Wall Clock Time(in second)"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Work follow (workflow) wall clock time in seconds",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "AO8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "business_rules.initial.met",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "AO6",
+          "value": "First Generation"
+        },
+        {
+          "cell": "AO7",
+          "value": "Correct Business Requirements "
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Initial first generation correct (met) business requirements count",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "AP8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "business_rules.initial.unmet",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "AO6",
+          "value": "First Generation"
+        },
+        {
+          "cell": "AP7",
+          "value": "Incorrect Business Requirements "
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Initial first generation incorrect (unmet) business requirements count",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "AQ8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "flow_accuracy.assessments.0.flow_accuracy_percent",
+      "type": "number",
+      "conversion": "percent_to_fraction",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "AO6",
+          "value": "First Generation"
+        },
+        {
+          "cell": "AQ7",
+          "value": "Flow Accuracy (%) "
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Initial first generation flow accuracy fraction (0..1) for percent format cell",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "AR8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "business_rules.final.met",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "AR6",
+          "value": "After Fixing"
+        },
+        {
+          "cell": "AR7",
+          "value": "Correct Business Requirements "
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Final after fixing / current correct (met) business requirements count",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "AS8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "business_rules.final.unmet",
+      "type": "integer",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "AR6",
+          "value": "After Fixing"
+        },
+        {
+          "cell": "AS7",
+          "value": "Incorrect Business Requirements "
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Final after fixing / current incorrect (unmet) business requirements count",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "AT8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": "flow_accuracy.current_summary.flow_accuracy_percent",
+      "type": "number",
+      "conversion": "percent_to_fraction",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "AR6",
+          "value": "After Fixing"
+        },
+        {
+          "cell": "AT7",
+          "value": "Flow Accuracy (%) "
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "semantic_reason": "Final after fixing / current accepted summary flow accuracy fraction (0..1) for percent format cell",
+      "review_range": "A6:AW8"
+    },
+    {
+      "sheet": "New",
+      "cell": "AU8",
+      "identity": {
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA"
+      },
+      "field": null,
+      "type": "number",
+      "conversion": "identity",
+      "expected_value": null,
+      "overwrite_existing": false,
+      "basis": [
+        {
+          "cell": "AU6",
+          "value": "Figma UI Match Ratio (%)"
+        },
+        {
+          "cell": "A8",
+          "value": "UC-01"
+        }
+      ],
+      "unresolved_reason": "Optional Figma UI match ratio is not measured in canonical run",
+      "semantic_reason": "Optional UI diff / Figma match metric not present in canonical results",
+      "review_range": "A6:AW8"
+    }
+  ],
+  "issues": []
+}

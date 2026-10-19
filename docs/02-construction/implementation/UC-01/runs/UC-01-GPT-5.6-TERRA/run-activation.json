@@ -1,0 +1,16 @@
+{
+  "artifact_type": "run-activation",
+  "gate_version": 5,
+  "uc_id": "UC-01",
+  "run_id": "UC-01-GPT-5.6-TERRA",
+  "configuration_artifact": "docs/04-experiments/configurations/CFG-UC-01-GPT-5.6-TERRA.json",
+  "configuration_checksum": "sha256:c972b51c4d3ea1a70831ba336c54a3f2dbc0c627efcee38d653398e240c2fd46",
+  "activated_at": "2026-10-19T04:05:16.052724Z",
+  "status": "Confirmed",
+  "approved_prompt": {
+    "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/approved-prompt/UC-01-coding-prompt.md",
+    "sha256": "sha256:295b93e7f0d8c4cfd84827b5c3294bb2115a16c3519b25695d3c378c3b9961f0"
+  },
+  "created_by": "measure_prompt_close",
+  "prompt_close_turn_id": "01a15253-b138-72b2-b68c-dd9645c2c110"
+}

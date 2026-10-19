@@ -1,0 +1,50 @@
+{
+  "elements": [
+    {
+      "role": "heading",
+      "name": "Get Started",
+      "visible": true
+    },
+    {
+      "role": "status",
+      "text": "You are the first to join",
+      "visible": true
+    },
+    {
+      "role": "video",
+      "aria-label": "Local camera preview",
+      "visible": true
+    },
+    {
+      "role": "button",
+      "name": "Camera on",
+      "aria-pressed": true
+    },
+    {
+      "role": "button",
+      "name": "Mic on",
+      "aria-pressed": true
+    },
+    {
+      "role": "combobox",
+      "name": "Role",
+      "value": "BROADCASTER"
+    },
+    {
+      "role": "textbox",
+      "name": "Display name",
+      "value": ""
+    },
+    {
+      "role": "button",
+      "name": "Go Live",
+      "disabled": true
+    },
+    {
+      "role": "button",
+      "name": "Request camera and microphone access",
+      "visible": true
+    }
+  ],
+  "captured_at": "2026-10-19T14:48:10+07:00"
+}
