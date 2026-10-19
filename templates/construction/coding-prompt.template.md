@@ -11,11 +11,11 @@ generated_at: <ISO-8601 timestamp>
 
 # <UC-ID> Coding Prompt - <Use case name>
 
-Both backend and frontend together must cover every specified Basic/Main, Alternative and Exception Flow and its terminal outcome; distribute these behaviors across Prompts A-D without changing the frozen functional scope.
+Construct the technical implementation across Prompts A-D, where each prompt addresses a distinct architectural scope: backend endpoint contract (Prompt A), frontend visual structure (Prompt B), client interaction and state wiring (Prompt C), and visual feedback with request handling (Prompt D).
 
 ## Prompt A: Backend API
 
-### Objective: Build the API endpoint, logic, validation, and server-side error handling.
+### Objective: Build the API endpoint routing, request parsing, and response envelope.
 
 Create the `[HTTP METHOD] [API PATH]` endpoint in `[BACKEND ENTRY POINT]`.
 
@@ -25,29 +25,25 @@ This endpoint MUST be `[PUBLIC / PROTECTED]`. If protected, use `[AUTHENTICATION
 
 `[REQUEST BODY / QUERY PARAMS / PATH PARAMS]`
 
-Implement the main logic in `[LOGIC LOCATION]`.
+Define the request DTO and route handler in `[LOGIC LOCATION]`.
 
-### Logic
+### Endpoint Handler
 
-Implement the backend flow for `[USE CASE / API ID]`.
+Define the controller handler for `[USE CASE / API ID]`.
 
-Implement backend and database behavior specified by the functional use-case flows, UML model, applicable API contract, and configured database contract, including applicable normalization, validation, authorization, persistence, transaction, concurrency, and sensitive-data handling.
+Map incoming request parameters and body fields to the endpoint handler according to the applicable API contract. Read the configured checksum-pinned DBML as the database contract to map entities to existing tables and exact column definitions. Allow authorized DML only; never change schema/DBML/migration files, generate/run migrations or enable synchronization. Missing required structure is an input blocker.
 
 ### Success Response
 
 `[SUCCESS RESPONSE]`
 
-Wrap the domain payload in `{ "success": true, "message": "[MESSAGE]", "data": [DOMAIN PAYLOAD] }` without changing source-defined fields or message semantics.
+Wrap the response payload in `{ "success": true, "message": "[MESSAGE]", "data": [DOMAIN PAYLOAD] }` adhering to the configured API contract format without altering source-defined field names.
 
 ### Error Handling
 
-If `[ERROR CONDITION]`, return or throw `[ERROR TYPE / HTTP STATUS]` with `[ERROR RESPONSE]`.
-
-Preserve the source status and message through `{ "success": false, "statusCode": [STATUS], "message": "[MESSAGE]", "timestamp": "[ISO-8601]", "path": "[API PATH]" }`.
+If request parsing fails or the handler encounters an unhandled exception, return `{ "success": false, "statusCode": [STATUS], "message": "[MESSAGE]", "timestamp": "[ISO-8601]", "path": "[API PATH]" }`.
 
 Follow the existing project architecture. Do not introduce new architectural layers or dependencies.
-
-Handle relevant ownership, transaction, concurrency, idempotency, date/timezone, and data-precision rules. Read the configured checksum-pinned DBML as the database contract. Map entities/queries to existing tables and exact column/key definitions. Allow authorized DML only; never change schema/DBML/migration files, generate/run migrations or enable synchronization. Missing required structure is an input blocker.
 
 ## Prompt B: Frontend UI
 
@@ -88,65 +84,59 @@ Use the project's existing styling system and component conventions.
 
 ## Prompt C: Frontend Logic and API Integration
 
-### Objective: Connect the frontend component to the API and implement the successful flow.
+### Objective: Connect interactive UI controls to local component state and dispatch service calls.
 
 Continue working on `[COMPONENT NAME]`.
 
-Add the required state using `[STATE / FORM MANAGEMENT APPROACH]`.
+Initialize component state using `[STATE / FORM MANAGEMENT APPROACH]`.
 
-Implement the asynchronous function `[FUNCTION NAME]` to send a `[HTTP METHOD]` request to `[API PATH FROM PROMPT A]`.
+Implement the event handler `[FUNCTION NAME]` to collect current state and dispatch the request to `[API PATH FROM PROMPT A OR LOCAL SERVICE]`.
+
+### State and Event Binding
+
+Bind interactive elements from Prompt B to component state:
+
+- Attach event listeners (`onChange`, `onClick`) to update local state values: `[INPUT CONTROL / STATE BINDINGS]`.
+- Trigger `[FUNCTION NAME]` upon primary user action.
 
 ### Request Payload
 
 `[REQUEST PAYLOAD]`
 
-Use the project's existing API client or request approach.
+Use the project's existing API client or service utility to dispatch the payload.
 
-### Success Response
+### Response Handling
 
-`[SUCCESS RESPONSE FROM PROMPT A]`
+Upon receiving successful service resolution:
 
-Read the domain payload from the normalized response data.
-
-When successful:
-
-1. `[SUCCESS ACTION 1]`
-2. `[SUCCESS ACTION 2]`
-3. `[UPDATE STATE / SESSION]`
-4. `[NAVIGATE / REFRESH DATA]`
-
-Preserve API request idempotency where applicable.
-
-Normalize date/timezone and numeric values according to the API contract and existing project conventions.
+1. Store returned payload data in local component state.
+2. Update visual state indicators (`[UPDATE STATE / SESSION]`).
+3. Execute post-action transition or view update (`[NAVIGATE / REFRESH DATA]`).
 
 ## Prompt D: Validation and Error Handling
 
-### Objective: Complete client-side validation, loading state, and API error handling.
+### Objective: Implement UI loading indicators, request error feedback, and form field presence guards.
 
 Refine `[FUNCTION NAME]` in `[COMPONENT NAME]`.
 
-### Loading State
+### Loading Feedback
 
-When `[LOADING STATE]` is true:
+Manage asynchronous request in-flight status:
 
-- Disable `[SUBMIT BUTTON]`.
-- Display `[SPINNER / LOADING TEXT]`.
-- Prevent duplicate submissions.
+- When request is in flight: disable `[SUBMIT / ACTION BUTTON]`, display `[SPINNER / LOADING TEXT]`, and prevent duplicate invocations.
+- When request completes: restore button active status and remove loading indicators.
 
-### API Error
+### Service and Network Error Display
 
-If the API returns `[STATUS / ERROR CONDITION]`:
+Render transport failure and error responses:
 
-- Display `[ERROR MESSAGE]`.
-- Display the message at `[ERROR DISPLAY LOCATION]`.
+- When the service returns an error status or network failure occurs: display `[ERROR MESSAGE]` at `[ERROR DISPLAY LOCATION]`.
+- Provide dialog dismissal or recovery button matching Figma design components.
 
-### Client-Side Validation
+### Form Input Presence Guard
 
-Before calling the API, enforce client-side validation specified by the functional use-case flows and applicable UI/API contracts for `[USE CASE / API ID]`.
+Provide basic form completion feedback before submission:
 
-Display validation messages at `[VALIDATION MESSAGE LOCATION]`.
-
-Backend validation remains authoritative.
-
-Do not call the API when client-side validation fails.
+- Verify that required form fields are not empty before dispatching `[FUNCTION NAME]`.
+- Display inline format/presence alert at `[VALIDATION MESSAGE LOCATION]` when required fields are missing.
 
