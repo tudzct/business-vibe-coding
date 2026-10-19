@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 
 from metrics_contract import USAGE, digest, require, usage
 
@@ -11,6 +12,22 @@ from metrics_contract import USAGE, digest, require, usage
 START = {"turn_started", "task_started"}
 END = {"turn_complete", "turn_completed", "task_complete", "task_completed"}
 ABORT = {"turn_aborted", "task_aborted"}
+INTERNAL_USER_CONTEXT = re.compile(
+    r"<(?P<tag>external_codex_apps_[A-Za-z0-9_.:-]+)>.*</(?P=tag)>", re.DOTALL)
+
+
+def content_text(content):
+    if not isinstance(content, list):
+        return ""
+    return "\n".join(
+        item["text"] for item in content
+        if isinstance(item, dict) and item.get("type") in {"input_text", "text", "Text"}
+        and isinstance(item.get("text"), str)
+    ).strip()
+
+
+def is_internal_user_context(message):
+    return bool(INTERNAL_USER_CONTEXT.fullmatch(message.strip()))
 
 
 def resolve_current_rollout():
@@ -85,12 +102,22 @@ def analyze_session():
                 if isinstance(message, str):
                     current["message"] = message.strip()
                     current["user_message_seen"] = True
+            elif top == "event_msg" and kind == "item_completed" and current:
+                item = payload.get("item") or {}
+                if isinstance(item, dict) and item.get("type") == "UserMessage":
+                    message = content_text(item.get("content"))
+                    if message:
+                        # This is the authoritative user message emitted by the
+                        # current Codex rollout format. It may replace an earlier
+                        # response_item fallback containing injected app context.
+                        current["message"] = message
+                        current["user_message_seen"] = True
             elif top == "response_item" and current:
                 if payload.get("role") == "user" and current["turn_context_seen"] and not current["user_message_seen"]:
-                    current["message"] = "\n".join(
-                        item.get("text", "") for item in payload.get("content", [])
-                        if isinstance(item, dict) and item.get("type") in ("input_text", "text"))
-                    current["user_message_seen"] = bool(current["message"].strip())
+                    message = content_text(payload.get("content"))
+                    if message and not is_internal_user_context(message):
+                        current["message"] = message
+                        current["user_message_seen"] = True
                 if isinstance(kind, str) and kind.endswith("_call"):
                     call_id = payload.get("call_id") or payload.get("id")
                     if not call_id or call_id not in current["call_ids"]:
