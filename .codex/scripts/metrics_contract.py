@@ -15,7 +15,7 @@ USAGE = ("input_tokens", "cached_input_tokens", "output_tokens",
          "reasoning_output_tokens", "total_tokens")
 METHOD = "system_timestamp_delta"
 TIMING_PROTOCOL = "generation_execution_with_repair_audit_v2"
-ROOT = Path(__file__).resolve().parents[4]
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def require(condition, message):
@@ -152,7 +152,6 @@ def duration(segment):
     start, end = segment["start"], segment["end"]
     for key in ("uc_id", "run_id", "session_id", "turn_id", "phase", "segment_id"):
         require(start.get(key) == end.get(key), f"timestamp {key} mismatch")
-    require(start.get("repair_id") == end.get("repair_id"), "timestamp repair identity mismatch")
     require(start.get("repair_activity") == end.get("repair_activity"), "timestamp repair activity mismatch")
     require(start["event"] == "start" and end["event"] == "end", "invalid timestamp events")
     a, b = endpoint(start), endpoint(end)
@@ -211,30 +210,9 @@ def token_breakdown(rows):
     return result
 
 
-def repair_timing(rows, repair_ids):
-    result = {}
-    for repair_id in repair_ids:
-        segments = [s for r in rows for s in r.get("timing_segments", [])
-                    if s["start"]["phase"] == "repair" and s["start"].get("repair_id") == repair_id]
-        missing = not segments or any("end" not in s for s in segments)
-        result[repair_id] = {
-            "duration_seconds": None if missing else round(sum(duration(s) for s in segments), 3),
-            "timing_unavailable_reason": "Missing repair execution endpoints" if missing else None,
-            "segment_ids": [s["start"]["segment_id"] for s in segments]}
-    return result
-
-
-def execution_phase_aggregate(rows, phase, repairs):
-    result = phase_aggregate(rows, phase)
-    if phase == "repair":
-        times = [v["duration_seconds"] for v in repairs.values()]
-        # phase_aggregate already includes both phase-level sub-prompt generation
-        # and every round segment exactly once. Per-round timing only proves that
-        # no canonical round is missing its own capture.
-        missing = any(v is None for v in times) or result["duration_seconds"] is None
-        result["duration_seconds"] = None if missing else result["duration_seconds"]
-        result["timing_unavailable_reason"] = "Missing repair execution endpoints" if missing else None
-    return result
+def execution_phase_aggregate(rows, phase):
+    """Aggregate whole selected turns and their phase-level execution intervals."""
+    return phase_aggregate(rows, phase)
 
 
 def execution_workflow_aggregate(rows, phases):
@@ -295,12 +273,8 @@ def validate_metrics(metrics):
                 activity = segment["start"].get("repair_activity")
                 require(activity in {"sub_prompt_generation", "source_correction"},
                         "repair segment needs a valid activity")
-                if activity == "sub_prompt_generation":
-                    require(segment["start"].get("repair_id") is None,
-                            "sub-prompt generation is phase-level")
-                else:
-                    require(segment["start"].get("repair_id") in metrics.get("repair_timing", {}),
-                            "source-correction segment missing canonical round identity")
+                require(segment["start"].get("repair_id") is None,
+                        "Repair timing is phase-level, never defect/round-level")
         for segment in segments:
             require(all(segment["start"].get(k) == metrics[k] for k in ("uc_id", "run_id")),
                     "segment UC/run mismatch")
@@ -309,8 +283,6 @@ def validate_metrics(metrics):
             require((segment["start"]["phase"] in AUX) or
                     segment["start"]["phase"] == row["timing_phase"],
                     "segment timing bucket mismatch")
-    require(isinstance(metrics.get("repair_timing"), dict), "repair timing breakdown required")
-    require(metrics["repair_timing"] == repair_timing(rows, metrics["repair_timing"]), "repair timing mismatch")
     expected_workflow = execution_workflow_aggregate(rows, metrics["phases"])
     require(metrics["workflow"] == expected_workflow, "workflow metrics differ from selected turns")
     require(metrics.get("token_phase_breakdown") == token_breakdown(rows), "token phase breakdown mismatch")
@@ -320,7 +292,7 @@ def validate_metrics(metrics):
     for phase in CORE:
         item = metrics["phases"][phase]
         if item["status"] in ("closed", "skipped"):
-            expected = execution_phase_aggregate(rows, phase, metrics["repair_timing"])
+            expected = execution_phase_aggregate(rows, phase)
             require(item["values"] == expected, f"{phase} metrics mismatch")
             if item["status"] == "skipped":
                 require(phase == "repair" and bool(item.get("reason")) and not any(r["phase"] == phase for r in rows),
@@ -363,13 +335,11 @@ def metrics_markdown(metrics):
     lines += [f"Timing protocol: `{metrics['timing_protocol']}`.", "",
               ("Repair seconds include sub-prompt generation, integrated BR/flow/runtime verification and final evidence persistence. "
                "A turn with core execution must retain that core token label."), "",
-              "Workflow duration seconds = Prompt execution + first-pass Source execution + all Repair executions. "
+              "Workflow duration seconds = Prompt execution + first-pass Source execution + the two Repair activities. "
               "Configuration, approvals, dataset resolution, separate audit/runtime and reporting are excluded from duration seconds. "
               "Eligible auxiliary turns contribute tokens and wall-clock time to workflow. "
               "Pending/missing duration seconds are N/A, not zero. Workflow wall-clock covers selected completed turns to date; "
               "it is final only when workflow status is finalized.", ""]
-    for repair_id, item in metrics["repair_timing"].items():
-        lines.append(f"- {repair_id}: {item['duration_seconds'] if item['duration_seconds'] is not None else 'N/A'} seconds")
     if metrics["phases"]["repair"]["status"] == "skipped":
         lines += ["Repair skipped: " + metrics["phases"]["repair"]["reason"], ""]
     for row in metrics["turns"]:

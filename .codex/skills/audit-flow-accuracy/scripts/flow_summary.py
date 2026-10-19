@@ -2,7 +2,10 @@
 
 import json
 import re
+import sys
+from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from metrics_contract import digest, epoch, require
 
 RESULT_POLICY = "accepted-audit-results-v1"

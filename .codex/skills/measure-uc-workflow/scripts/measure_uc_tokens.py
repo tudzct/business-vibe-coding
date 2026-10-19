@@ -2,166 +2,18 @@
 """Extract and persist post-turn UC telemetry from cumulative usage counters."""
 
 import argparse
-import hashlib
 import json
-import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from metrics_contract import (CORE, AUX, USAGE, METHOD, TIMING_PROTOCOL, aggregate, execution_phase_aggregate,
-                              execution_workflow_aggregate, repair_timing, token_breakdown, atomic_write, context,
+                              execution_workflow_aggregate, token_breakdown, atomic_write, context,
                               digest, duration, epoch, journal, metrics_markdown, read_json,
                               require, run_lock, save_journal, usage, validate_core_token_phase, validate_metrics,
                               wall_clock_seconds)
-
-START = {"turn_started", "task_started"}
-END = {"turn_complete", "turn_completed", "task_complete", "task_completed"}
-ABORT = {"turn_aborted", "task_aborted"}
-
-
-def resolve_current_rollout(_supplied_path=None):
-    """Resolve the active Codex rollout without trusting a model-supplied path."""
-    sessions_root = Path.home() / ".codex" / "sessions"
-    require(sessions_root.is_dir(), f"Codex sessions directory not found: {sessions_root}")
-    session_id = os.environ.get("CODEX_SESSION_ID") or os.environ.get("CODEX_THREAD_ID")
-    if session_id:
-        matches = list(sessions_root.rglob(f"*{session_id}*.jsonl"))
-        require(len(matches) == 1,
-                f"current Codex rollout not uniquely found for session {session_id}: {len(matches)} matches")
-        return matches[0], session_id
-    rollouts = list(sessions_root.rglob("rollout-*.jsonl"))
-    require(rollouts, f"no Codex rollout found in {sessions_root}")
-    return max(rollouts, key=lambda item: item.stat().st_mtime_ns), None
-
-
-def analyze_session(path):
-    path, expected_session_id = resolve_current_rollout(path)
-    raw = Path(path).read_bytes()
-    lines = raw.splitlines(keepends=True)
-    turns, current, previous, session_id = [], None, None, None
-    offset = 0
-    prefix_hasher = hashlib.sha256()
-    diagnostics = {"token_updates": 0, "duplicate_updates": 0, "counter_resets": 0}
-    for index, line in enumerate(lines):
-        offset += len(line)
-        prefix_hasher.update(line)
-        if not line.strip():
-            continue
-        try:
-            record = json.loads(line)
-        except json.JSONDecodeError:
-            # The only tolerated partial record is the actively appended last line.
-            require(index == len(lines) - 1 and not line.endswith(b"\n"), "malformed JSONL record")
-            break
-        top, payload = record.get("type"), record.get("payload") or {}
-        kind, at = payload.get("type"), record.get("timestamp")
-        if top == "session_meta":
-            session_id = payload.get("id") or session_id
-        if top == "event_msg" and kind in START:
-            if current:
-                turns.append(current)  # Missing completion is never inferred from next start.
-            current = {"turn_id": payload.get("turn_id"), "turn_number": len(turns) + 1,
-                       "started_at": at, "ended_at": None, "completed": False,
-                       "message": "", "model": None, "tokens": None,
-                       "turn_context_seen": False, "user_message_seen": False,
-                       "usage_updates": 0, "tool_call_count": 0, "call_ids": set(),
-                       "prefix_bytes": None, "prefix_sha256": None}
-        elif top == "turn_context" and current:
-            current["turn_context_seen"] = True
-            current["turn_id"] = current["turn_id"] or payload.get("turn_id")
-            current["model"] = payload.get("model") or current["model"]
-        elif top == "event_msg" and kind == "user_message" and current:
-            message = payload.get("message")
-            if isinstance(message, str):
-                current["message"] = message.strip()
-                current["user_message_seen"] = True
-        elif top == "response_item" and current:
-            # Bootstrap context precedes turn_context; the first user response
-            # after it is the request, followed by optional injected skill text.
-            if payload.get("role") == "user" and current["turn_context_seen"] and not current["user_message_seen"]:
-                current["message"] = "\n".join(x.get("text", "") for x in payload.get("content", [])
-                                                 if isinstance(x, dict) and x.get("type") in ("input_text", "text"))
-                current["user_message_seen"] = bool(current["message"].strip())
-            if isinstance(kind, str) and kind.endswith("_call"):
-                call_id = payload.get("call_id") or payload.get("id")
-                if not call_id or call_id not in current["call_ids"]:
-                    current["tool_call_count"] += 1
-                    if call_id:
-                        current["call_ids"].add(call_id)
-        elif top == "event_msg" and kind in END | ABORT and current:
-            require(not payload.get("turn_id") or payload["turn_id"] == current["turn_id"],
-                    "completion turn identity mismatch")
-            current.update(ended_at=at, completed=True, terminal_event=kind,
-                           prefix_bytes=offset,
-                           prefix_sha256="sha256:" + prefix_hasher.copy().hexdigest())
-            turns.append(current)
-            current = None
-        if top != "event_msg" or kind != "token_count":
-            continue
-        info = payload.get("info") or {}
-        if not isinstance(info.get("total_token_usage"), dict):
-            continue
-        counters = usage(info["total_token_usage"])
-        if counters == previous:
-            diagnostics["duplicate_updates"] += 1
-            continue
-        backwards = previous is not None and any(
-            counters[k] is not None and previous[k] is not None and counters[k] < previous[k] for k in USAGE)
-        if backwards:
-            diagnostics["counter_resets"] += 1
-            delta = usage(info.get("last_token_usage"))
-        elif previous is None:
-            delta = counters.copy()
-            if current and isinstance(info.get("last_token_usage"), dict):
-                first_usage = usage(info["last_token_usage"])
-                require(all(counters[k] == first_usage[k] for k in ("input_tokens", "output_tokens", "total_tokens")),
-                        "first cumulative event contains prior usage without a baseline; supply complete rollout")
-        else:
-            delta = {k: None if counters[k] is None or previous[k] is None else counters[k] - previous[k]
-                     for k in USAGE}
-        previous = counters
-        diagnostics["token_updates"] += 1
-        if current:
-            old = current["tokens"]
-            current["tokens"] = delta if old is None else {
-                k: None if old[k] is None or delta[k] is None else old[k] + delta[k] for k in USAGE}
-            current["usage_updates"] += 1
-    if current:
-        turns.append(current)
-    require(session_id, "session_meta.id required; do not infer identity from latest file")
-    if expected_session_id:
-        require(session_id == expected_session_id, "resolved rollout session identity mismatch")
-    require(all(t["turn_id"] for t in turns), "explicit turn IDs required")
-    require(len({t["turn_id"] for t in turns}) == len(turns), "duplicate turn IDs")
-    return {"session_id": session_id, "file_name": Path(path).name,
-            "sha256": digest(raw), "turns": turns, "diagnostics": diagnostics}
-
-
-def public_turn(turn):
-    return {k: v for k, v in turn.items() if k not in (
-        "message", "call_ids", "usage_updates", "turn_context_seen", "user_message_seen")} | {
-        "message_sha256": digest(turn["message"].encode("utf-8"))}
-
-
-def find_turn(session, turn_id):
-    values = [t for t in session["turns"] if t["turn_id"] == turn_id]
-    require(len(values) == 1, f"turn not uniquely found: {turn_id}")
-    return values[0]
-
-
-def classified_phase(state, turn, session):
-    """Return the live timing/control bucket, never a semantic token label."""
-    number = turn["turn_number"]
-    for phase, value in state["phases"].items():
-        if value["status"] == "skipped":
-            continue
-        start = find_turn(session, value["first_turn_id"])["turn_number"]
-        end = (find_turn(session, value["measurement_turn_id"])["turn_number"]
-               if value.get("measurement_turn_id") else float("inf"))
-        if start <= number < end:
-            return phase
-    return None
+from rollout_contract import analyze_session, classified_phase, find_turn, public_turn
 
 
 def close_repair_and_finalize(state, run, rows, selection, measurement_turn_id):
@@ -190,6 +42,17 @@ def close_repair_and_finalize(state, run, rows, selection, measurement_turn_id):
     else:
         require(repair["status"] in {"closed", "skipped"},
                 "repair phase must be open, closed or skipped")
+    if run.get("repair_status") in {"completed", "unresolved"}:
+        segments = [segment for row in rows for segment in row.get("timing_segments", [])
+                    if segment["start"]["phase"] == "repair"]
+        activities = [segment["start"].get("repair_activity") for segment in segments]
+        require(activities.count("sub_prompt_generation") == 1 and
+                activities.count("source_correction") == 1 and len(activities) == 2,
+                "completed Repair needs one sub-prompt segment and one complete source-correction segment")
+        timed_turns = {segment["start"]["turn_id"] for segment in segments}
+        selected_turns = {row["turn_id"] for row in rows if row["phase"] == "repair"}
+        require(timed_turns == selected_turns and len(selected_turns) == 2,
+                "Repair metrics must contain exactly the sub-prompt turn and complete correction turn")
     state["workflow_status"] = "finalized"
 
 
@@ -207,7 +70,7 @@ def measure(args):
     path, run, folder = context(args.run_json)
     selection = read_json(args.selection)
     require(all(selection.get(k) == run[k] for k in ("uc_id", "run_id")), "selection UC/run mismatch")
-    session = analyze_session(selection["session_path"])
+    session = analyze_session()
     measurement = find_turn(session, args.measurement_turn_id)
     require(measurement == session["turns"][-1] and not measurement["completed"],
             "measurement ID must identify the current active turn")
@@ -294,10 +157,6 @@ def measure(args):
                                       "timing_unavailable_reason": missing if seconds is None else None,
                                       "timing_exclusion_reason": "Auxiliary work excluded from generation time" if excluded_time else None,
                                       "timing_segments": segments}
-            if selector.get("repair_id"):
-                require(any(r.get("repair_id") == selector["repair_id"] for r in run.get("repairs", [])),
-                        "repair_id must match canonical repair entry")
-                row["repair_id"] = selector["repair_id"]
             rows.append(row)
         intervals.sort()
         require(all(a[1] <= b[0] for a, b in zip(intervals, intervals[1:])), "overlapping timing segments would double-count")
@@ -322,13 +181,9 @@ def measure(args):
                 close_repair_and_finalize(state, run, rows, selection, args.measurement_turn_id)
         phases = {p: {"status": state["phases"].get(p, {}).get("status", "not_started"), "values": None}
                   for p in CORE}
-        repair_ids = [r.get("repair_id") for r in run.get("repairs", [])]
-        require(all(isinstance(i, str) and i.strip() for i in repair_ids) and len(set(repair_ids)) == len(repair_ids),
-                "each canonical repair needs a unique repair_id")
-        repairs = repair_timing(rows, repair_ids)
         for p in CORE:
             if phases[p]["status"] == "closed":
-                phases[p]["values"] = execution_phase_aggregate(rows, p, repairs)
+                phases[p]["values"] = execution_phase_aggregate(rows, p)
             elif phases[p]["status"] == "skipped":
                 phases[p]["reason"] = state["phases"][p]["reason"]
                 phases[p]["values"] = aggregate([])
@@ -337,7 +192,7 @@ def measure(args):
             state["observations"].append({"measurement_turn_id": args.measurement_turn_id,
                 "action": action, "last_turn_id": rows[-1]["turn_id"], "evidence_sha256": evidence_sha})
         metrics = {"schema_version": 3, "provenance_class": "observed_post_run", "timing_method": METHOD,
-                   "timing_protocol": TIMING_PROTOCOL, "repair_timing": repairs,
+                   "timing_protocol": TIMING_PROTOCOL,
                    "token_attribution_method": "semantic_primary_phase_per_turn",
                    "uc_id": run["uc_id"], "run_id": run["run_id"], "status": state["workflow_status"],
                    "measured_at": datetime.now(timezone.utc).isoformat(),
@@ -389,8 +244,7 @@ def measure(args):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
-    listing = commands.add_parser("list", help="Read-only list of explicit turns; never writes final metrics")
-    listing.add_argument("--session", type=Path, required=True)
+    commands.add_parser("list", help="Read-only list of explicit turns from the active rollout; never writes final metrics")
     for command in ("close-phase", "finalize-workflow"):
         sub = commands.add_parser(command)
         sub.add_argument("--run-json", type=Path, required=True)
@@ -400,7 +254,7 @@ def main():
             sub.add_argument("--phase", choices=("prompt_generation", "source_generation"), required=True)
     args = parser.parse_args()
     if args.command == "list":
-        session = analyze_session(args.session)
+        session = analyze_session()
         session["turns"] = [public_turn(t) for t in session["turns"]]
         print(json.dumps(session, ensure_ascii=False, indent=2))
     else:

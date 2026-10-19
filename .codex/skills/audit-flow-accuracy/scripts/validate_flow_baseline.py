@@ -3,9 +3,11 @@
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
-from score_flow_accuracy import validate_baseline
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
+from flow_baseline_contract import validate_baseline
 
 
 def main():

@@ -7,12 +7,9 @@ import re
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow/scripts"))
 from metrics_contract import ROOT, digest, epoch, require, validate_canonical_path, writable, validate_metrics
-sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from validate_experiment_configuration import frozen_uc_api_ids, read_configuration_json as read_json, validate
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-flow-accuracy/scripts"))
-from score_flow_accuracy import validate_baseline as validate_flow_baseline
+from flow_baseline_contract import validate_baseline as validate_flow_baseline
 from database_baseline import validate_input as validate_database_input, verify_database
 
 
@@ -157,7 +154,7 @@ def check_canonical(run, config, assignment, uc, stage):
     gates = run.get("gates")
     require(isinstance(gates, dict), "canonical gate state missing")
     # Imported lazily because gate validation also imports the prompt validator.
-    sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "advance-experiment-gate/scripts"))
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "skills/advance-experiment-gate/scripts"))
     from record_gate import validate_gate_history
     validate_gate_history(gates, "prompt" if stage == "prompt" else "source")
     if stage == "prompt":
