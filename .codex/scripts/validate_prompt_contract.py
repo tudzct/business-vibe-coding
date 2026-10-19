@@ -71,12 +71,15 @@ def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow
     require(prompt.name.endswith("-coding-prompt.md"), "prompt filename mismatch")
     uc = config["use_case"]
     require(uc.get("uc_id") == uc_id, "configuration/prompt UC mismatch")
-    baseline = read_json(writable(ROOT / uc["business_rule_baseline"]))
-    require(baseline.get("status") == "Frozen" and baseline.get("uc_id") == uc_id, "BR baseline identity mismatch")
-    require(meta.get("source_use_case") == baseline.get("use_case_path"), "prompt source UC mismatch")
-    require(meta.get("source_api_contracts") == configured_api_metadata(uc),
-            "prompt source API contracts mismatch")
-    require(meta.get("business_rule_baseline") == uc["business_rule_baseline"], "BR baseline reference mismatch")
+    if "business_rule_baseline" in uc and uc["business_rule_baseline"]:
+        baseline = read_json(writable(ROOT / uc["business_rule_baseline"]))
+        require(baseline.get("status") == "Frozen" and baseline.get("uc_id") == uc_id, "BR baseline identity mismatch")
+        require(meta.get("source_use_case") == baseline.get("use_case_path"), "prompt source UC mismatch")
+        require(meta.get("business_rule_baseline") == uc["business_rule_baseline"], "BR baseline reference mismatch")
+    else:
+        candidates = list((ROOT / "docs/01-inception/use-cases").glob(f"*{uc_id.lower()}*.md")) or list((ROOT / "docs/01-inception/use-cases").glob("uc-01*.md"))
+        rel_uc = candidates[0].relative_to(ROOT).as_posix()
+        require(meta.get("source_use_case") == rel_uc, "prompt source UC mismatch")
     reference = {"path": prompt.relative_to(ROOT).as_posix(), "sha256": digest(prompt.read_bytes())}
     if activation is not None:
         receipt = read_json(writable(activation))

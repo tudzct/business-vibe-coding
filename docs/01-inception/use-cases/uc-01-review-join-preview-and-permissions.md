@@ -82,7 +82,7 @@ Preview preparation is client-local. Its participantKey identifies local draft s
 
 ## UML Model
 
-Local projection of exactly the vocabulary needed by the Business Rules below, including signature and helper types. Enum domains are retained in full to preserve their value semantics.
+Domain entities and structural types for session preview and device permissions.
 
 ~~~plantuml
 @startuml
@@ -97,15 +97,6 @@ enum PermissionStatus {
   UNKNOWN
   GRANTED
   DENIED
-}
-class Participant <<extent>> {
-  {static} allInstances(): Set(Participant)
-}
-class MediaPreference <<extent>> {
-  {static} allInstances(): Set(MediaPreference)
-}
-class ViewPreference <<extent>> {
-  {static} allInstances(): Set(ViewPreference)
 }
 class PreviewCommand {
   participantKey: String
@@ -124,10 +115,6 @@ class PreviewState {
   microphoneEnabled: Boolean
   isReadyToJoin: Boolean
 }
-class PreviewService {
-  prepare(command: PreviewCommand): PreviewState
-}
-note "allInstances() is the standard OCL classifier extent.\nAn extent-only classifier has no structural properties in this UC projection." as ExtentSemantics
 @enduml
 ~~~
 

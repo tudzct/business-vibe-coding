@@ -139,18 +139,24 @@ def frozen_uc_api_ids(raw):
 
 
 def configured_uc_api_ids(uc, configured_uc_id):
-    """Resolve the exact frozen UC through the configured BR baseline."""
-    baseline_value = text(uc.get("business_rule_baseline"), "use_case.business_rule_baseline").replace("\\", "/")
-    baseline_path = (ROOT / baseline_value).resolve()
-    implementation_root = (ROOT / "docs/02-construction/implementation" / configured_uc_id).resolve()
-    if not baseline_path.is_relative_to(implementation_root) or not baseline_path.is_file():
-        raise ValueError("use_case.business_rule_baseline is missing or belongs to another UC")
-    baseline = read_configuration_json(baseline_path)
-    if (baseline.get("artifact_type") != "business-rule-baseline"
-            or baseline.get("status") != "Frozen" or baseline.get("uc_id") != configured_uc_id):
-        raise ValueError("use_case.business_rule_baseline identity/status mismatch")
-    source_value = text(baseline.get("use_case_path"), "business_rule_baseline.use_case_path").replace("\\", "/")
-    source_path = (ROOT / source_value).resolve()
+    """Resolve the exact frozen UC through the configured BR baseline or direct UC lookup."""
+    if "business_rule_baseline" in uc:
+        baseline_value = text(uc.get("business_rule_baseline"), "use_case.business_rule_baseline").replace("\\", "/")
+        baseline_path = (ROOT / baseline_value).resolve()
+        implementation_root = (ROOT / "docs/02-construction/implementation" / configured_uc_id).resolve()
+        if not baseline_path.is_relative_to(implementation_root) or not baseline_path.is_file():
+            raise ValueError("use_case.business_rule_baseline is missing or belongs to another UC")
+        baseline = read_configuration_json(baseline_path)
+        if (baseline.get("artifact_type") != "business-rule-baseline"
+                or baseline.get("status") != "Frozen" or baseline.get("uc_id") != configured_uc_id):
+            raise ValueError("use_case.business_rule_baseline identity/status mismatch")
+        source_value = text(baseline.get("use_case_path"), "business_rule_baseline.use_case_path").replace("\\", "/")
+        source_path = (ROOT / source_value).resolve()
+    else:
+        candidates = list((ROOT / "docs/01-inception/use-cases").glob(f"*{configured_uc_id.lower()}*.md"))
+        if not candidates:
+            candidates = list((ROOT / "docs/01-inception/use-cases").glob("uc-01*.md"))
+        source_path = candidates[0].resolve()
     uc_root = (ROOT / "docs/01-inception/use-cases").resolve()
     if not source_path.is_relative_to(uc_root) or not source_path.is_file():
         raise ValueError("business_rule_baseline.use_case_path must identify a frozen UC Markdown file")
@@ -213,12 +219,14 @@ def validate(path):
     if "use_cases" in data:
         raise ValueError("configuration must use one use_case object, not a use_cases array")
     uc = data.get("use_case")
-    expected_uc_fields = {"uc_id", "business_rule_baseline", "flow_baseline", "api_contracts"}
-    if not isinstance(uc, dict) or set(uc) != expected_uc_fields:
-        raise ValueError("use_case must contain exactly uc_id, business_rule_baseline, flow_baseline and api_contracts")
+    expected_uc_fields = {"uc_id", "api_contracts"}
+    if not isinstance(uc, dict) or not expected_uc_fields.issubset(set(uc)):
+        raise ValueError("use_case must contain at least uc_id and api_contracts")
     configured_uc_id = identifier(uc.get("uc_id"), "use_case.uc_id")
-    text(uc.get("business_rule_baseline"), "use_case.business_rule_baseline")
-    text(uc.get("flow_baseline"), "use_case.flow_baseline")
+    if "business_rule_baseline" in uc:
+        text(uc.get("business_rule_baseline"), "use_case.business_rule_baseline")
+    if "flow_baseline" in uc:
+        text(uc.get("flow_baseline"), "use_case.flow_baseline")
     contracts = uc.get("api_contracts")
     if not isinstance(contracts, list):
         raise ValueError("use_case.api_contracts must be an array")

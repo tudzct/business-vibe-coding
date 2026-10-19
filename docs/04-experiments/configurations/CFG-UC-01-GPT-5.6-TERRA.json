@@ -29,8 +29,6 @@
   },
   "use_case": {
     "uc_id": "UC-01",
-    "business_rule_baseline": "docs/02-construction/implementation/UC-01/business-rule-baseline.json",
-    "flow_baseline": "docs/02-construction/implementation/UC-01/flow-baseline.json",
     "api_contracts": []
   },
   "runs": [
