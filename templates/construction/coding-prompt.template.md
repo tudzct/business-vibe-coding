@@ -10,7 +10,7 @@ generated_at: <ISO-8601 timestamp>
 
 # <UC-ID> Coding Prompt - <Use case name>
 
-Construct the technical implementation across Prompts A-D, where each prompt addresses a distinct architectural scope: backend endpoint contract (Prompt A), frontend visual structure (Prompt B), client interaction and state wiring (Prompt C), and visual feedback with request handling (Prompt D).
+Construct the technical implementation modularly, where each prompt section addresses a distinct responsibility: backend endpoint contract, frontend visual structure, client interaction and state wiring, and visual feedback with request handling.
 
 ## Prompt A: Backend API
 
@@ -89,11 +89,11 @@ Continue working on `[COMPONENT NAME]`.
 
 Initialize component state using `[STATE / FORM MANAGEMENT APPROACH]`.
 
-Implement the event handler `[FUNCTION NAME]` to collect current state and dispatch the request to `[API PATH FROM PROMPT A OR LOCAL SERVICE]`.
+Implement the event handler `[FUNCTION NAME]` to collect current state and dispatch the request to `[API ENDPOINT OR LOCAL SERVICE]`.
 
 ### State and Event Binding
 
-Bind interactive elements from Prompt B to component state:
+Bind component interactive controls to state:
 
 - Attach event listeners (`onChange`, `onClick`) to update local state values: `[INPUT CONTROL / STATE BINDINGS]`.
 - Trigger `[FUNCTION NAME]` upon primary user action.
