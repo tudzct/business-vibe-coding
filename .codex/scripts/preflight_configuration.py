@@ -3,12 +3,12 @@
 
 import argparse
 import json
-import re
 import sys
 from pathlib import Path
 
 from metrics_contract import ROOT, digest, epoch, require, validate_canonical_path, writable, validate_metrics
-from validate_experiment_configuration import frozen_uc_api_ids, read_configuration_json as read_json, validate
+from validate_experiment_configuration import (configured_business_rule_baseline, frozen_uc_api_ids,
+                                                read_configuration_json as read_json, validate)
 from flow_baseline_contract import validate_baseline as validate_flow_baseline
 from database_baseline import validate_input as validate_database_input, verify_database
 
@@ -41,21 +41,8 @@ def check_pinned_evidence(path, config, checksum):
                     and evidence.get("configuration_checksum") == checksum, "activation configuration checksum/identity conflict")
 
 
-def source_br_ids(raw):
-    content = raw.decode("utf-8-sig")
-    headings = list(re.finditer(r"(?m)^## Business Rules[ \t]*\r?$", content))
-    require(len(headings) == 1, "frozen UC Business Rules section missing or ambiguous")
-    section = content[headings[0].end():]
-    following_heading = re.search(r"(?m)^## [^\r\n]+", section)
-    if following_heading:
-        section = section[:following_heading.start()]
-    ids = re.findall(r"(?m)^BR-[A-Z]+-\d+(?=[ \t]*(?::|-)[ \t]+\S)", section)
-    require(ids and len(ids) == len(set(ids)), "frozen UC BR IDs missing or duplicated")
-    return ids
-
-
 def check_baselines(uc):
-    result, baselines, source_raw = {}, [], None
+    result, source_raw = {}, None
     for field, kind in (("business_rule_baseline", "business-rule-baseline"), ("flow_baseline", "flow-baseline")):
         value = uc.get(field)
         require(isinstance(value, str) and value.strip(), f"missing {field}")
@@ -67,29 +54,13 @@ def check_baselines(uc):
         require(data.get("status") == "Frozen" and data.get("artifact_type") == kind
                 and data.get("uc_id") == uc["uc_id"], f"invalid {field} identity/status")
         if field == "business_rule_baseline":
-            expected_fields = {"schema_version", "artifact_type", "status", "uc_id", "use_case_path",
-                               "use_case_sha256", "ordered_br_ids", "frozen_at"}
-            require(set(data) == expected_fields, "invalid BR baseline fields")
-            require(data.get("schema_version") == 1, "invalid BR baseline schema")
+            data = configured_business_rule_baseline(uc, uc["uc_id"])
             epoch(data.get("frozen_at"))
-            source = writable(ROOT / data.get("use_case_path", ""))
-            require(source.is_file(), "BR baseline UC source missing")
-            raw = source.read_bytes()
-            source_raw = raw
-            lf = raw.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
-            expected = data.get("use_case_sha256")
-            require(expected in {digest(raw), digest(lf), digest(lf.replace(b"\n", b"\r\n"))}, "BR baseline UC checksum mismatch")
-            if expected != digest(raw):
-                receipt = ROOT / "docs/02-construction/implementation" / uc["uc_id"] / "source-checksum-normalization.json"
-                require(receipt.is_file(), "UC newline-only match requires source-checksum-normalization.json")
-            source_ids = source_br_ids(raw)
-            require(data["ordered_br_ids"] == source_ids, "frozen UC/BR baseline order conflict")
         else:
             validate_flow_baseline(data)
-        baselines.append(data)
+            source_raw = writable(ROOT / data["use_case_path"]).read_bytes()
         result[field] = "valid"
-    if len(baselines) == 2:
-        require(baselines[0]["use_case_path"] == baselines[1]["use_case_path"], "BR/flow baseline UC source conflict")
+    require(source_raw is not None, "flow baseline UC source missing")
     contracts = uc.get("api_contracts")
     require(isinstance(contracts, list), "configured API contracts must be an array")
     configured_ids = [entry.get("api_id") for entry in contracts]
@@ -217,7 +188,7 @@ def preflight(uc_id, configuration=None, run_id=None, run_json=None,
         verify_database(data)
     else:
         validate_database_input(data)
-    baseline = read_json(writable(ROOT / uc["business_rule_baseline"]))
+    baseline = read_json(writable(ROOT / uc["flow_baseline"]))
     if use_case is not None:
         require(writable(use_case) == writable(ROOT / baseline["use_case_path"]), "requested UC path differs from frozen baseline")
     activation_path = (ROOT / "docs/02-construction/implementation" / uc_id / "runs"

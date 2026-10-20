@@ -3,8 +3,8 @@
   "artifact_type": "business-rule-baseline",
   "status": "Frozen",
   "uc_id": "<UC-ID>", // Điền thủ công, phải khớp cả bốn file. Ví dụ: UC-01
-  "use_case_path": "docs/01-inception/use-cases/<uc-file>.md", // Điền theo hướng dẫn trong docs.
-  "use_case_sha256": "sha256:<64-hex>", // Điền theo hướng dẫn trong docs.
-  "ordered_br_ids": ["<BR-ID>"], // Điền thủ công, đủ và đúng thứ tự trong frozen UC. Ví dụ: ["BR-AUTH-001", "BR-AUTH-002"]
+  "business_rule_path": "docs/01-inception/business-rules/<business-rule-file>.md", // Điền theo hướng dẫn trong docs.
+  "business_rule_sha256": "sha256:<64-hex>", // Điền theo hướng dẫn trong docs.
+  "ordered_br_ids": ["<BR-ID>"], // Điền thủ công, đủ và đúng thứ tự trong tài liệu luật đã đóng băng. Ví dụ: ["BR-AUTH-001", "BR-AUTH-002"]
   "frozen_at": "<ISO-8601>" // Điền thủ công, ISO-8601 có múi giờ. Ví dụ: 2026-10-17T10:30:00+07:00
 }

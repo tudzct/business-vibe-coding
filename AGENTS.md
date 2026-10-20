@@ -4,7 +4,7 @@ Work only inside this repository unless the operator explicitly expands scope. O
 
 ## Authoritative project inputs
 
-Files under `docs/01-inception/use-cases/uc-*.md` and `docs/01-inception/api-contracts/` are frozen, read-only project specifications. `docs/00-context/FIGMA-LINK-REVIEW.md` is the mapping authority for approved Figma capture targets. `docs/00-context/engineering/schema.dbml` and the configured live database describe the database structure available to the active run. The clean source archive is integrity-pinned by `.codex/skills/restore-source-baseline/assets/source-baseline.sha256`.
+Files under `docs/01-inception/use-cases/`, `docs/01-inception/business-rules/` and `docs/01-inception/api-contracts/` are frozen, read-only project specifications. `docs/00-context/FIGMA-LINK-REVIEW.md` is the mapping authority for approved Figma capture targets. `docs/00-context/engineering/schema.dbml` and the configured live database describe the database structure available to the active run. The clean source archive is integrity-pinned by `.codex/skills/restore-source-baseline/assets/source-baseline.sha256`.
 
 Never alter a frozen input, baseline, configuration or recorded result to make an operation pass. When an authorized project input is ambiguous or conflicts with another pinned input, report the exact location and stop for operator resolution. A changed frozen input requires refreshed dependent checksums and a new compatible run configuration.
 

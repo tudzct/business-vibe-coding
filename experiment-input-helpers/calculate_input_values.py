@@ -16,13 +16,13 @@ import sys
 ROOT = Path(__file__).resolve().parent.parent
 API_ROOT = (ROOT / "docs/01-inception/api-contracts").resolve()
 UC_ROOT = (ROOT / "docs/01-inception/use-cases").resolve()
+BUSINESS_RULE_ROOT = (ROOT / "docs/01-inception/business-rules").resolve()
 FIGMA_ROOT = (ROOT / "resource/figma-design-dataset").resolve()
 BASELINE_ARCHIVE = ".codex/skills/restore-source-baseline/assets/source-baseline.zip"
 
-sys.path.insert(0, str(ROOT / ".codex/skills/gen-coding-prompt/scripts"))
+sys.path.insert(0, str(ROOT / ".codex/scripts"))
 from database_baseline import capture as capture_database  # noqa: E402
 from database_baseline import dbml_file  # noqa: E402
-sys.path.insert(0, str(ROOT / ".codex/scripts"))
 from validate_experiment_configuration import frozen_uc_api_ids  # noqa: E402
 
 
@@ -82,6 +82,26 @@ def inspect_use_case(value):
     return path, raw, uc_id, frozen_uc_api_ids(raw)
 
 
+def inspect_business_rules(value, expected_uc_id):
+    path = repository_file(value, BUSINESS_RULE_ROOT, ".md", "business-rule specification")
+    raw = path.read_bytes()
+    content = raw.decode("utf-8-sig")
+    metadata = frontmatter(content, "business-rule specification")
+    require(metadata.get("artifact_type") == "business-rule-specification",
+            "business-rule artifact_type must be business-rule-specification")
+    require(metadata.get("status") == "Frozen", "business-rule specification status must be Frozen")
+    require(metadata.get("uc_id") == expected_uc_id, "business-rule specification UC identity mismatch")
+    headings = list(re.finditer(r"(?m)^## Business Rules[ \t]*\r?$", content))
+    require(len(headings) == 1, "business-rule section missing or ambiguous")
+    section = content[headings[0].end():]
+    following_heading = re.search(r"(?m)^## [^\r\n]+", section)
+    if following_heading:
+        section = section[:following_heading.start()]
+    ids = re.findall(r"(?m)^BR-[A-Z]+-\d+(?=[ \t]*(?::|-)[ \t]+\S)", section)
+    require(ids and len(ids) == len(set(ids)), "business-rule IDs missing or duplicated")
+    return path, raw
+
+
 def inspect_api_contract(value, expected_id):
     path = repository_file(value, API_ROOT, ".md", "API contract")
     raw = path.read_bytes()
@@ -114,6 +134,8 @@ def inspect_figma_dataset(version):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--use-case", required=True, help="Frozen repository UC Markdown path")
+    parser.add_argument("--business-rules", required=True,
+                        help="Frozen repository business-rule Markdown path")
     parser.add_argument("--api-contract", action="append",
                         help="Frozen API Markdown path; repeat in the UC's Related API IDs order; omit when it is None.")
     parser.add_argument("--figma-dataset-version", required=True,
@@ -123,6 +145,7 @@ def main():
     args = parser.parse_args()
 
     uc_path, uc_raw, uc_id, expected_api_ids = inspect_use_case(args.use_case)
+    business_rule_path, business_rule_raw = inspect_business_rules(args.business_rules, uc_id)
     supplied_api_contracts = args.api_contract or []
     expected_description = ", ".join(expected_api_ids) if expected_api_ids else "None."
     require(len(supplied_api_contracts) == len(expected_api_ids),
@@ -149,6 +172,8 @@ def main():
     require(dbml_file()[1] == dbml_checksum, "DBML changed during database fingerprint capture")
 
     require(uc_path.read_bytes() == uc_raw, "use case changed during input calculation")
+    require(business_rule_path.read_bytes() == business_rule_raw,
+            "business-rule specification changed during input calculation")
     require(all(path.read_bytes() == raw for path, raw in api_snapshots),
             "an API contract changed during input calculation")
     require(manifest_path.read_bytes() == manifest_raw, "Figma manifest changed during input calculation")
@@ -156,6 +181,8 @@ def main():
 
     uc_relative = relative(uc_path)
     uc_checksum = sha256(uc_raw)
+    business_rule_relative = relative(business_rule_path)
+    business_rule_checksum = sha256(business_rule_raw)
     implementation_root = f"docs/02-construction/implementation/{uc_id}"
     output = {
         "clean_source_baseline": {
@@ -170,8 +197,8 @@ def main():
         "baseline_values": {
             "business_rule_baseline": {
                 "path": f"{implementation_root}/business-rule-baseline.json",
-                "use_case_path": uc_relative,
-                "use_case_sha256": uc_checksum,
+                "business_rule_path": business_rule_relative,
+                "business_rule_sha256": business_rule_checksum,
             },
             "flow_baseline": {
                 "path": f"{implementation_root}/flow-baseline.json",
