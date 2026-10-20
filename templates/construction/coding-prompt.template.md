@@ -154,13 +154,15 @@ Do not call the API when client-side validation fails.
 
 ### Objective: Implement the complete frozen Business Rule set for this use case without changing its meaning.
 
+Read the frozen business-rule specification pinned by the configured Business Rule baseline. Preserve the complete ordered inventory in this section.
+
 One implementation control may enforce multiple rules when appropriate.
 
 ### Business Rule: `[BR-ID]`
 
 - **Name:** `[rule name]`
 - **Representation:** `OCL invariant | OCL precondition | OCL postcondition | natural language`
-- **Expression / authoritative text:** `[verbatim content from the frozen UC]`
+- **Expression / authoritative text:** `[verbatim content from the frozen business-rule specification]`
 - **Context:** `[OCL context/class/operation or scope]`
 - **Enforcement layer:** `[frontend | backend | database | multiple]`
 - **Failure behavior:** `[source-backed status/message/state, or unresolved]`

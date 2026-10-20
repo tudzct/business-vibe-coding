@@ -14,13 +14,14 @@ import re
 import shutil
 import subprocess
 
-ROOT = Path(__file__).resolve().parents[4]
+ROOT = Path(__file__).resolve().parents[2]
 PROTOCOL = "mysql84-tables-v1"
 HASH = re.compile(r"sha256:[0-9a-f]{64}\Z")
 FIELDS = {"migration_head", "dbml_sha256", "schema_fingerprint_sha256"}
 DBML_PATH = "docs/00-context/engineering/schema.dbml"
 MIGRATIONS_PATH = "finalsource/be/src/database/migrations"
 MIGRATION_TABLE = "typeorm_migrations"
+DOCKER_ACCESS_REQUIRED = "DOCKER_ACCESS_REQUIRED"
 
 # Explicit metadata allow-list excludes row counts, cardinality, timestamps,
 # physical sizes and the current AUTO_INCREMENT counter. Case is preserved.
@@ -136,13 +137,33 @@ def docker_executable():
     executable = shutil.which("docker")
     if executable:
         return executable
-    # Support the packaged Windows Docker Desktop installation without changing PATH.
-    for base in (os.environ.get("LOCALAPPDATA"), os.environ.get("ProgramFiles")):
-        if base:
-            for suffix in ("Programs/DockerDesktop/resources/bin/docker.exe", "Docker/Docker/resources/bin/docker.exe"):
-                candidate = Path(base) / suffix
-                if candidate.is_file():
-                    return str(candidate)
+    # A restricted Windows sandbox may hide a valid Docker Desktop executable.
+    # Check the standard locations when visible, but distinguish an inconclusive
+    # sandbox lookup from a confirmed host-level absence.
+    candidates = []
+    local_app_data = os.environ.get("LOCALAPPDATA")
+    program_files = os.environ.get("ProgramFiles")
+    if local_app_data:
+        candidates.append(Path(local_app_data) / "Programs/DockerDesktop/resources/bin/docker.exe")
+    candidates.append(Path.home() / "AppData/Local/Programs/DockerDesktop/resources/bin/docker.exe")
+    if program_files:
+        candidates.append(Path(program_files) / "Docker/Docker/resources/bin/docker.exe")
+    for candidate in dict.fromkeys(candidates):
+        try:
+            if candidate.is_file():
+                return str(candidate)
+        except OSError as exc:
+            if isinstance(exc, PermissionError) or getattr(exc, "winerror", None) == 5:
+                raise ValueError(
+                    f"{DOCKER_ACCESS_REQUIRED}: Docker Desktop path is hidden by the current sandbox; "
+                    "rerun this same read-only validation with host approval"
+                ) from None
+            raise
+    if os.name == "nt":
+        raise ValueError(
+            f"{DOCKER_ACCESS_REQUIRED}: Docker Desktop is not visible in the current sandbox; "
+            "rerun this same read-only validation with host approval"
+        )
     raise ValueError("Docker CLI unavailable; database validation requires Docker Compose v2")
 
 
@@ -152,6 +173,11 @@ def command(args, label, stdin=None):
                                 encoding="utf-8", errors="strict", timeout=25, cwd=ROOT)
     except subprocess.TimeoutExpired:
         raise ValueError(f"{label} timed out; database preflight blocked") from None
+    except PermissionError:
+        raise ValueError(
+            f"{DOCKER_ACCESS_REQUIRED}: {label} cannot access Docker in the current sandbox; "
+            "rerun this same read-only validation with host approval"
+        ) from None
     except OSError:
         raise ValueError(f"{label} unavailable; check Docker access") from None
     # Raw stderr/config/inspect may contain secrets. Never forward it to model output.

@@ -18,7 +18,7 @@ Resolve one exact UC/run. Never choose the newest file or infer a match from fil
 
 ## Optional deterministic preparation
 
-`experiment-input-helpers/calculate_input_values.py` prints project paths, identities and checksums without writing configuration files. Supply one explicit use-case path, one explicit Figma dataset version and each declared API contract path in source order. Omit API arguments only when the frozen use case explicitly declares no related API. Use `--require-empty` only for initial empty-database setup.
+`experiment-input-helpers/calculate_input_values.py` prints project paths, identities and checksums without writing configuration files. Supply one explicit use-case path, its explicit frozen business-rule specification, one explicit Figma dataset version and each declared API contract path in source order. Omit API arguments only when the frozen use case explicitly declares no related API. Use `--require-empty` only for initial empty-database setup.
 
 After manually completing and reviewing a configuration, `experiment-input-helpers/calculate_configuration_checksum.py --configuration <configuration-path>` prints its checksum for the matching active-run artifact.
 

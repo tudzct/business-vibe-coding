@@ -8,6 +8,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
+from flow_baseline_contract import validate_baseline as validate_flow_baseline
+
 EFFORTS = {"none", "low", "medium", "high", "xhigh", "max"}
 MODES = {"standard", "pro"}
 PROTOCOLS = {"fixed", "matched", "cross"}
@@ -138,22 +140,80 @@ def frozen_uc_api_ids(raw):
     return ids
 
 
-def configured_uc_api_ids(uc, configured_uc_id):
-    """Resolve the exact frozen UC through the configured BR baseline."""
+def frozen_business_rule_ids(raw):
+    """Return the ordered IDs from one frozen business-rule specification."""
+    content = raw.decode("utf-8-sig")
+    headings = list(re.finditer(r"(?m)^## Business Rules[ \t]*\r?$", content))
+    if len(headings) != 1:
+        raise ValueError("frozen business-rule section missing or ambiguous")
+    section = content[headings[0].end():]
+    following_heading = re.search(r"(?m)^## [^\r\n]+", section)
+    if following_heading:
+        section = section[:following_heading.start()]
+    ids = re.findall(r"(?m)^BR-[A-Z]+-\d+(?=[ \t]*(?::|-)[ \t]+\S)", section)
+    if not ids or len(ids) != len(set(ids)):
+        raise ValueError("frozen business-rule IDs missing or duplicated")
+    return ids
+
+
+def configured_business_rule_baseline(uc, configured_uc_id):
     baseline_value = text(uc.get("business_rule_baseline"), "use_case.business_rule_baseline").replace("\\", "/")
     baseline_path = (ROOT / baseline_value).resolve()
     implementation_root = (ROOT / "docs/02-construction/implementation" / configured_uc_id).resolve()
     if not baseline_path.is_relative_to(implementation_root) or not baseline_path.is_file():
         raise ValueError("use_case.business_rule_baseline is missing or belongs to another UC")
     baseline = read_configuration_json(baseline_path)
+    expected_fields = {"schema_version", "artifact_type", "status", "uc_id", "business_rule_path",
+                       "business_rule_sha256", "ordered_br_ids", "frozen_at"}
+    if set(baseline) != expected_fields or baseline.get("schema_version") != 1:
+        raise ValueError("business_rule_baseline fields/schema mismatch")
     if (baseline.get("artifact_type") != "business-rule-baseline"
             or baseline.get("status") != "Frozen" or baseline.get("uc_id") != configured_uc_id):
         raise ValueError("use_case.business_rule_baseline identity/status mismatch")
-    source_value = text(baseline.get("use_case_path"), "business_rule_baseline.use_case_path").replace("\\", "/")
+    source_value = text(baseline.get("business_rule_path"),
+                        "business_rule_baseline.business_rule_path").replace("\\", "/")
+    source_path = (ROOT / source_value).resolve()
+    source_root = (ROOT / "docs/01-inception/business-rules").resolve()
+    if not source_path.is_relative_to(source_root) or source_path.suffix.lower() != ".md" or not source_path.is_file():
+        raise ValueError("business_rule_baseline.business_rule_path must identify a Markdown file under docs/01-inception/business-rules")
+    raw = source_path.read_bytes()
+    expected_hash = "sha256:" + hashlib.sha256(raw).hexdigest()
+    if baseline.get("business_rule_sha256") != expected_hash:
+        raise ValueError("business_rule_baseline.business_rule_sha256 mismatch")
+    content = raw.decode("utf-8-sig")
+    frontmatter = re.match(r"\A---\s*\r?\n(.*?)\r?\n---(?:\r?\n|$)", content, re.S)
+    if frontmatter is None:
+        raise ValueError("business-rule specification frontmatter missing")
+    metadata = {}
+    for line in frontmatter.group(1).splitlines():
+        match = re.fullmatch(r"([a-z_]+):\s*(.*?)\s*", line)
+        if match:
+            metadata[match.group(1)] = match.group(2).strip().strip('"').strip("'")
+    if (metadata.get("artifact_type") != "business-rule-specification"
+            or metadata.get("status") != "Frozen" or metadata.get("uc_id") != configured_uc_id):
+        raise ValueError("business-rule specification identity/status mismatch")
+    if baseline.get("ordered_br_ids") != frozen_business_rule_ids(raw):
+        raise ValueError("business-rule specification/baseline order conflict")
+    return baseline
+
+
+def configured_uc_api_ids(uc, configured_uc_id):
+    """Resolve the exact frozen UC through the configured flow baseline."""
+    baseline_value = text(uc.get("flow_baseline"), "use_case.flow_baseline").replace("\\", "/")
+    baseline_path = (ROOT / baseline_value).resolve()
+    implementation_root = (ROOT / "docs/02-construction/implementation" / configured_uc_id).resolve()
+    if not baseline_path.is_relative_to(implementation_root) or not baseline_path.is_file():
+        raise ValueError("use_case.flow_baseline is missing or belongs to another UC")
+    baseline = read_configuration_json(baseline_path)
+    if (baseline.get("artifact_type") != "flow-baseline"
+            or baseline.get("status") != "Frozen" or baseline.get("uc_id") != configured_uc_id):
+        raise ValueError("use_case.flow_baseline identity/status mismatch")
+    validate_flow_baseline(baseline)
+    source_value = text(baseline.get("use_case_path"), "flow_baseline.use_case_path").replace("\\", "/")
     source_path = (ROOT / source_value).resolve()
     uc_root = (ROOT / "docs/01-inception/use-cases").resolve()
     if not source_path.is_relative_to(uc_root) or not source_path.is_file():
-        raise ValueError("business_rule_baseline.use_case_path must identify a frozen UC Markdown file")
+        raise ValueError("flow_baseline.use_case_path must identify a frozen UC Markdown file")
     return frozen_uc_api_ids(source_path.read_bytes())
 
 
@@ -183,7 +243,6 @@ def validate(path):
         raise ValueError(f"schema {schema_version} timing_method must be {TIMING_METHOD}")
     # Offline database contract: migration_head, dbml_sha256, schema_fingerprint_sha256.
     # Runtime history/drift checks belong to generation/audit, never Measure.
-    sys.path.insert(0, str(ROOT / ".codex/skills/gen-coding-prompt/scripts"))
     from database_baseline import validate_input
     validate_input(data)
     figma = data.get("figma_dataset")
@@ -220,6 +279,7 @@ def validate(path):
     configured_uc_id = identifier(uc.get("uc_id"), "use_case.uc_id")
     text(uc.get("business_rule_baseline"), "use_case.business_rule_baseline")
     text(uc.get("flow_baseline"), "use_case.flow_baseline")
+    configured_business_rule_baseline(uc, configured_uc_id)
     contracts = uc.get("api_contracts")
     if not isinstance(contracts, list):
         raise ValueError("use_case.api_contracts must be an array")

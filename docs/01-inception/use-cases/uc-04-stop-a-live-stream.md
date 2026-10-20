@@ -1,4 +1,4 @@
-﻿---
+---
 artifact_type: use-case-specification
 status: Frozen
 uc_id: UC-04
@@ -82,8 +82,6 @@ API-SESSION-STATE.
 The shared model defines trusted context, persistence mapping, and query helpers. Server mutation execution uses MutationGateway and its common OCL constraints in UC-02. API command dispatch selects the named operation; it does not combine the preconditions of different operations. Read operations have no domain writes.
 
 ## UML Model
-
-Local projection of exactly the vocabulary needed by the Business Rules below, including signature and helper types. Enum domains are retained in full to preserve their value semantics.
 
 ~~~plantuml
 @startuml
@@ -197,82 +195,4 @@ Principal and session are decoded from the authenticated session access token.
 participantId resolves the principal's membership.
 end note
 @enduml
-~~~
-
-## Business Rules
-
-### OCL Utility Definitions
-
-```text
-String.trim(): String
-- Removes leading and trailing whitespace; internal whitespace is unchanged.
-```
-
-### Rule Definitions
-
-~~~text
-BR-STLS-01 - Authenticated Membership
-context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
-pre BR_STLS_01_AuthenticatedMembership:
-  RequestContext::authenticated and RequestContext::sessionId = command.sessionId and
-  command.actorParticipantId = RequestContext::participantId and
-  Participant.allInstances()->exists(p | p.id = command.actorParticipantId and
-    p.principalId = RequestContext::principalId and p.sessionId = command.sessionId and
-    p.status = ParticipantStatus::JOINED and p.role = ParticipantRole::HOST)
-
-BR-STLS-02 - Target Session
-context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
-pre BR_STLS_02_TargetSession:
-  command.sessionId = session.id and session.status <> SessionStatus::ENDED
-
-BR-STLS-03 - Command Key
-context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
-pre BR_STLS_03_CommandKey:
-  command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0
-
-BR-STLS-04 - Stream Target And Version
-context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
-pre BR_STLS_04_StreamTargetAndVersion:
-  command.action = StreamAction::STOP and session.kind = SessionKind::LIVE_STREAM and
-  session.status = SessionStatus::LIVE and stream.sessionId = session.id and command.expectedVersion = stream.version
-
-BR-STLS-05 - Same Stream Version
-context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
-post BR_STLS_05_SameStreamVersion:
-  result = stream and stream.version = stream.version@pre + 1
-
-BR-STLS-06 - Running Only
-context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
-pre BR_STLS_06_RunningOnly:
-  stream.status = StreamStatus::LIVE or stream.status = StreamStatus::STARTING
-
-BR-STLS-07 - Ended Stream
-context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
-post BR_STLS_07_EndedStream:
-  stream.status = StreamStatus::ENDED and stream.endedAt <> null and session.status = session.status@pre
-
-BR-STLS-08 - Demote Former Stage Participants
-context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
-post BR_STLS_08_DemoteFormerStageParticipants:
-  Participant.allInstances()@pre->select(p | p.sessionId = command.sessionId and p.role@pre = ParticipantRole::STAGE_PARTICIPANT)->forAll(p |
-    p.role = ParticipantRole::VIEWER and not p.microphoneEnabled and not p.cameraEnabled)
-
-BR-STLS-09 - Stop Content Shares
-context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
-post BR_STLS_09_StopContentShares:
-  ContentShare.allInstances()@pre->select(cs | cs.sessionId = command.sessionId and cs.status@pre = ShareStatus::ACTIVE)->forAll(cs |
-    cs.status = ShareStatus::STOPPED and cs.stoppedAt <> null and cs.version = cs.version@pre + 1)
-
-BR-STLS-10 - Cancel Pending Requests
-context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
-post BR_STLS_10_CancelPendingRequests:
-  StageRequest.allInstances()@pre->select(r | r.sessionId = command.sessionId and r.status@pre = StageRequestStatus::PENDING)->forAll(r |
-    r.status = StageRequestStatus::CANCELLED and r.decidedAt <> null and r.version = r.version@pre + 1)
-
-BR-STLS-11 - Stop Recordings
-context LiveStreamService::stop(command: StreamControlCommand, stream: LiveStream, session: Session): LiveStream
-post BR_STLS_11_StopRecordings:
-  Recording.allInstances()@pre->select(r | r.sessionId = command.sessionId and
-    (r.status@pre = RecordingStatus::STARTING or r.status@pre = RecordingStatus::RECORDING))->forAll(r |
-    r.status = RecordingStatus::STOPPED and r.stoppedAt <> null and r.version = r.version@pre + 1)
 ~~~

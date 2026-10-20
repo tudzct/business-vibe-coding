@@ -7,9 +7,7 @@ import re
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "measure-uc-workflow/scripts"))
 from metrics_contract import ROOT, digest, read_json, require, writable, epoch
-sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from validate_experiment_configuration import validate as validate_configuration
 
 
@@ -61,6 +59,12 @@ def configured_api_metadata(uc):
     return ";".join(entry["path"] for entry in contracts) if contracts else "None."
 
 
+def prompt_e_business_rule_ids(body):
+    match = re.search(r"(?ms)^##\s+Prompt\s+E\s*:[^\r\n]*\r?\n(.*?)(?=^##\s+Prompt\s+[A-Z]\s*:|\Z)", body)
+    require(match is not None, "Prompt E section missing")
+    return re.findall(r"(?m)^###\s+Business Rule:\s*`?(BR-[A-Z]+-\d+)`?\s*$", match.group(1))
+
+
 def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow_draft=False):
     configuration, prompt = writable(configuration), writable(prompt)
     config = validate_configuration(configuration)
@@ -74,11 +78,17 @@ def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow
     uc = config["use_case"]
     require(uc.get("uc_id") == uc_id, "configuration/prompt UC mismatch")
     baseline = read_json(writable(ROOT / uc["business_rule_baseline"]))
+    flow_baseline = read_json(writable(ROOT / uc["flow_baseline"]))
     require(baseline.get("status") == "Frozen" and baseline.get("uc_id") == uc_id, "BR baseline identity mismatch")
-    require(meta.get("source_use_case") == baseline.get("use_case_path"), "prompt source UC mismatch")
+    require(flow_baseline.get("status") == "Frozen" and flow_baseline.get("uc_id") == uc_id,
+            "flow baseline identity mismatch")
+    require(meta.get("source_use_case") == flow_baseline.get("use_case_path"), "prompt source UC mismatch")
     require(meta.get("source_api_contracts") == configured_api_metadata(uc),
             "prompt source API contracts mismatch")
     require(meta.get("business_rule_baseline") == uc["business_rule_baseline"], "BR baseline reference mismatch")
+    if "E" in headings:
+        require(prompt_e_business_rule_ids(body) == baseline.get("ordered_br_ids"),
+                "Prompt E Business Rule inventory/order mismatch")
     reference = {"path": prompt.relative_to(ROOT).as_posix(), "sha256": digest(prompt.read_bytes())}
     if activation is not None:
         receipt = read_json(writable(activation))
