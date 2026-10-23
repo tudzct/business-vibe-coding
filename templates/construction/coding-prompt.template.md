@@ -5,7 +5,6 @@ uc_id: <UC-ID>
 uc_name: <Use case name>
 source_use_case: docs/01-inception/use-cases/<use-case-file>.md
 source_api_contracts: <semicolon-separated ordered configured API paths, or None.>
-business_rule_baseline: docs/02-construction/implementation/<UC-ID>/business-rule-baseline.json
 generated_at: <ISO-8601 timestamp>
 ---
 
@@ -149,44 +148,3 @@ Display validation messages at `[VALIDATION MESSAGE LOCATION]`.
 Backend validation remains authoritative.
 
 Do not call the API when client-side validation fails.
-
-## Prompt E: Business Rules Compliance
-
-### Objective: Implement the complete frozen Business Rule set for this use case without changing its meaning.
-
-Read the frozen business-rule specification pinned by the configured Business Rule baseline. Preserve the complete ordered inventory in this section.
-
-One implementation control may enforce multiple rules when appropriate.
-
-### Business Rule: `[BR-ID]`
-
-- **Name:** `[rule name]`
-- **Representation:** `OCL invariant | OCL precondition | OCL postcondition | natural language`
-- **Expression / authoritative text:** `[verbatim content from the frozen business-rule specification]`
-- **Context:** `[OCL context/class/operation or scope]`
-- **Enforcement layer:** `[frontend | backend | database | multiple]`
-- **Failure behavior:** `[source-backed status/message/state, or unresolved]`
-- **Traceability:** `[UC step/API/UI/source range]`
-
-Preserve every Rule ID, OCL expression and authoritative natural-language constraint exactly.
-
-Trace every Rule ID to its implementing controls without redefining the rule. Backend/database enforcement remains authoritative across trust boundaries; frontend enforcement is an additional user-experience control.
-
-Do not invent missing thresholds, statuses, ownership, schema, enforcement layers or failure behavior.
-
-## Prompt F: Implementation Context
-
-Use every prompt present in this approved artifact together with:
-
-- project rules and target manifests/lockfiles;
-- database contract;
-- API contract;
-- Figma evidence when applicable;
-- existing source-code conventions.
-
-Priority:
-
-1. Requirements explicitly present in this approved prompt
-2. API and database/project contracts
-3. Figma evidence
-4. Existing source-code conventions

@@ -85,7 +85,12 @@ def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow
     require(meta.get("source_use_case") == flow_baseline.get("use_case_path"), "prompt source UC mismatch")
     require(meta.get("source_api_contracts") == configured_api_metadata(uc),
             "prompt source API contracts mismatch")
-    require(meta.get("business_rule_baseline") == uc["business_rule_baseline"], "BR baseline reference mismatch")
+    template = writable(ROOT / "templates/construction/coding-prompt.template.md")
+    template_meta, _, _ = prompt_metadata(template)
+    if "business_rule_baseline" in template_meta:
+        require(meta.get("business_rule_baseline") == uc["business_rule_baseline"], "BR baseline reference mismatch")
+    else:
+        require("business_rule_baseline" not in meta, "prompt must not expose BR baseline")
     if "E" in headings:
         require(prompt_e_business_rule_ids(body) == baseline.get("ordered_br_ids"),
                 "Prompt E Business Rule inventory/order mismatch")
