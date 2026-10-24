@@ -26,7 +26,7 @@ During this operation, the agent may read ONLY:
 - **Execute-only scripts**: All repository and skill helper scripts (`.codex/scripts/*.py`, `.codex/skills/*/scripts/*.py`) are execute-only. **NEVER open, view, or read Python script source code**. Only execute them via CLI and inspect stdout/stderr.
 - **No prior or existing coding prompts**: **NEVER open, read, or inspect any file in `docs/02-construction/coding-prompts/`** (including prior drafts or prompts from other UCs).
 - **No other use cases**: **NEVER open or read any other UC file** under `docs/01-inception/use-cases/`.
-- **No experiment artifacts or logs**: **NEVER open or read files in `docs/04-experiments/`** (e.g., reports, excel sheets, previous run journals, audits) other than reading the single active Canonical Run JSON / Configuration JSON required by arguments.
+- **No experiment artifacts or logs**: **NEVER open or read files in `docs/04-experiments/`** (e.g., reports, excel sheets, previous run journals, audits) other than reading the single active Canonical Run JSON / Configuration JSON required by arguments or resolved by preflight.
 - **No governance or gate documents**: Do not read gate documents (`EXPERIMENT-CONFIGURATION-GATE.md`, `PROJECT_CONTEXT.md`, etc.) as generation context. Input integrity is verified deterministically by preflight.
 - **No recursive scanning**: Do not run recursive directory scans or broad file search commands across the repository.
 
@@ -39,8 +39,12 @@ The operator may prepare these files manually, with another model, external Pyth
 Resolve an available Python executable and execute this read-only command (do not read the script source):
 
 ```text
-<python-executable> .codex/scripts/preflight_configuration.py --uc-id <UC-ID> --run-json <canonical.json> --use-case <use-case.md>
+<python-executable> .codex/scripts/preflight_configuration.py --uc-id <UC-ID> --use-case <use-case.md> [--run-json <canonical.json>]
 ```
+
+If `--run-json` (or `--configuration` / `--run-id`) is supplied explicitly by the operator, include it. If omitted, execute preflight with `--uc-id <UC-ID>` (uppercase, e.g. `UC-01`) and `--use-case`; the preflight script internally and deterministically resolves the unique matching Canonical Run JSON under `docs/04-experiments/<UC-ID>/`. Do not search, scan, or select files manually. If missing or ambiguous, preflight fails deterministically.
+
+Use the `canonical_run.path` returned in preflight's JSON stdout as `<canonical.json>` for timestamp capture and subsequent steps.
 
 If and only if this command exits with `DOCKER_ACCESS_REQUIRED`, rerun the identical read-only command once with host approval. A denied approval or failed retry blocks the operation. Never elevate, retry or reinterpret any other validation error.
 

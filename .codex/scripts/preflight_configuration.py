@@ -148,6 +148,7 @@ def preflight(uc_id, configuration=None, run_id=None, run_json=None,
     require(stage in {"prompt", "activation", "source"}, "invalid preflight stage")
     require(isinstance(uc_id, str) and uc_id and all(c.isalnum() or c in "-_." for c in uc_id)
             and uc_id not in {".", ".."}, "invalid UC ID")
+    uc_id = uc_id.upper()
     canonical_path, canonical = select_canonical(uc_id, run_id, configuration, run_json)
     canonical_checksum = digest(canonical_path.read_bytes())
     if canonical is not None:
