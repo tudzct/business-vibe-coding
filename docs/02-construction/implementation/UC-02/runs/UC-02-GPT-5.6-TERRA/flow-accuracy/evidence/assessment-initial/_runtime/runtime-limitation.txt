@@ -1,0 +1,1 @@
+Integrated runtime observation is blocked. The backend service container failed to build due to TypeScript compilation error TS2352 in src/modules/sessions/sessions.service.ts line 94. Because the backend service cannot be built or started, the backend API endpoints (/api/v1/sessions/*) are unavailable, blocking integrated execution of all use case flows and business rules.

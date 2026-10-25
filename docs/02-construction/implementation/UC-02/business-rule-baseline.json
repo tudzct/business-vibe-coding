@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "artifact_type": "business-rule-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-02",
+  "business_rule_path": "docs/01-inception/business-rules/uc-02-join-a-session-business-rules.md",
+  "business_rule_sha256": "sha256:67d76f1dc02bb322acf16e1338045eaacfcbd3408f292f2384b8febcbbd05f30",
+  "ordered_br_ids": [
+    "BR-JS-01",
+    "BR-JS-02",
+    "BR-JS-03",
+    "BR-JS-04",
+    "BR-JS-05",
+    "BR-JS-06",
+    "BR-JS-07",
+    "BR-JS-08",
+    "BR-JS-09",
+    "BR-JS-10",
+    "BR-JS-11",
+    "BR-JS-12",
+    "BR-JS-13",
+    "BR-JS-14",
+    "BR-JS-15",
+    "BR-JS-16",
+    "BR-JS-17",
+    "BR-JS-18",
+    "BR-JS-19"
+  ],
+  "frozen_at": "2026-10-25T19:01:03+07:00"
+}

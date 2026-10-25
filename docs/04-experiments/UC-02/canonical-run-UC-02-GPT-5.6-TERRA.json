@@ -1,0 +1,2959 @@
+{
+  "run_id": "UC-02-GPT-5.6-TERRA",
+  "coding_prompt": {
+    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/approved-prompt/UC-02-coding-prompt.md",
+    "sha256": "sha256:02e88eeb270b063618941bb4f0bd1d10cb538daebbb4849d921a0d1ec54f40ec"
+  },
+  "experiment_configuration": {
+    "configuration_id": "CFG-UC-02-GPT-5.6-TERRA",
+    "comparison_group_id": "CG-100MS-01",
+    "researcher_id": "researcher-khanh",
+    "artifact": "docs/04-experiments/configurations/CFG-UC-02-GPT-5.6-TERRA.json",
+    "checksum": "sha256:ec51761a100628be3bee3807761e98118f8c516d5faddf4958f51dc7ea97935e",
+    "run_activation": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/run-activation.json"
+  },
+  "uc_id": "UC-02",
+  "uc_name": "Join a Session",
+  "replicate_index": 1,
+  "run_order": 1,
+  "audit_protocol": "fixed",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-terra",
+    "requested_reasoning_effort": "medium",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "codex_client_version": null
+  },
+  "run_status": "complete",
+  "gates": {
+    "current": null,
+    "history": [
+      {
+        "gate": "prompt",
+        "outcome": "confirmed",
+        "turn_id": "01a1734e-c33c-7873-a59c-5c5d6838f128",
+        "evidence": {
+          "coding_prompt": {
+            "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/approved-prompt/UC-02-coding-prompt.md",
+            "sha256": "sha256:02e88eeb270b063618941bb4f0bd1d10cb538daebbb4849d921a0d1ec54f40ec"
+          }
+        },
+        "command_action": "prompt-close",
+        "recorded_at": "2026-10-25T13:47:49.145969Z"
+      },
+      {
+        "gate": "source",
+        "outcome": "confirmed",
+        "turn_id": "01a17365-f2b9-7471-b8b1-10ca884f3e03",
+        "evidence": {
+          "coding_prompt": {
+            "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/approved-prompt/UC-02-coding-prompt.md",
+            "sha256": "sha256:02e88eeb270b063618941bb4f0bd1d10cb538daebbb4849d921a0d1ec54f40ec"
+          }
+        },
+        "command_action": "source-close",
+        "recorded_at": "2026-10-25T14:11:02.360073Z"
+      },
+      {
+        "gate": "first_pass_audit",
+        "outcome": "confirmed",
+        "turn_id": "ace93be4-2d3a-46d2-a33f-347d6088c913",
+        "evidence": {
+          "business_rules_sha256": "sha256:e9b7c51f4e9c897edb233b32d22497353bb34886a77c0ad6f070eec10a9fd5b5",
+          "flow_assessment_id": "assessment-initial",
+          "flow_assessment_sha256": "sha256:162bc79380d13dcf85cc9e8e3f02fab75348db1a679f59092c2919c87b41d7b1",
+          "source_revision": "sha256:2eeba8d1165e818a68cec08200c8e6f54053ec39c8890e204a5411007b58279c",
+          "defect_ids": [
+            "DEF-UC02-01"
+          ],
+          "defects_sha256": "sha256:b9856b840e9571e2a394f0ae43ad766b4edeced3ec5426f27a6082f48b18ef81",
+          "flow_progress_sha256": "sha256:4d825aa21c98f7d111178eac7e223b6cc604c547130403648e089b36130073f7",
+          "flow_followup_ids": [],
+          "flow_result_basis": "rubric_evidence",
+          "flow_selection_policy": "accepted-audit-results-v1",
+          "flow_assessment_ids": [
+            "assessment-initial"
+          ]
+        },
+        "command_action": "audit",
+        "recorded_at": "2026-10-25T16:21:01.262713Z"
+      },
+      {
+        "gate": "repair_decision",
+        "outcome": "authorized",
+        "turn_id": "01a173e6-78ae-7a62-9458-565f6adc47c5",
+        "command_action": "repair",
+        "recorded_at": "2026-10-25T16:31:33.870247Z"
+      },
+      {
+        "gate": "repair",
+        "outcome": "confirmed",
+        "turn_id": "01a173f5-0b19-7e53-9cbe-0178db031150",
+        "evidence": {
+          "business_rules_sha256": "sha256:e6c976aa9241c10ca3a5d18a3dfb2128951f17e691c292b0ff5958c26ebb9f4e",
+          "flow_assessment_id": "asm-uc02-final",
+          "flow_assessment_sha256": "sha256:1cf424808b301dfef6c91b7bf897e7a468a614b7ffa3ab6f8d648d4101acf0a4",
+          "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+          "defect_ids": [],
+          "defects_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "flow_progress_sha256": "sha256:66c27dfefbe820b1f8126dacd1102ede7680eeb052f333342c03a392ff447d58",
+          "flow_followup_ids": [],
+          "flow_result_basis": "rubric_evidence",
+          "flow_selection_policy": "accepted-audit-results-v1",
+          "flow_assessment_ids": [
+            "assessment-initial",
+            "asm-uc02-final"
+          ]
+        },
+        "command_action": "repair-close",
+        "recorded_at": "2026-10-25T16:48:18.370084Z"
+      },
+      {
+        "gate": "final_metrics",
+        "outcome": "confirmed",
+        "turn_id": "01a173f5-0b19-7e53-9cbe-0178db031150",
+        "evidence": {
+          "business_rules_sha256": "sha256:e6c976aa9241c10ca3a5d18a3dfb2128951f17e691c292b0ff5958c26ebb9f4e",
+          "flow_assessment_id": "asm-uc02-final",
+          "flow_assessment_sha256": "sha256:1cf424808b301dfef6c91b7bf897e7a468a614b7ffa3ab6f8d648d4101acf0a4",
+          "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+          "defect_ids": [],
+          "defects_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "flow_progress_sha256": "sha256:66c27dfefbe820b1f8126dacd1102ede7680eeb052f333342c03a392ff447d58",
+          "flow_followup_ids": [],
+          "flow_result_basis": "rubric_evidence",
+          "flow_selection_policy": "accepted-audit-results-v1",
+          "flow_assessment_ids": [
+            "assessment-initial",
+            "asm-uc02-final"
+          ]
+        },
+        "command_action": "finalize",
+        "recorded_at": "2026-10-25T16:48:18.440937Z"
+      }
+    ]
+  },
+  "metrics_schema_version": 3,
+  "metrics": {
+    "schema_version": 3,
+    "provenance_class": "observed_post_run",
+    "timing_method": "system_timestamp_delta",
+    "timing_protocol": "generation_execution_with_repair_audit_v2",
+    "token_attribution_method": "semantic_primary_phase_per_turn",
+    "uc_id": "UC-02",
+    "run_id": "UC-02-GPT-5.6-TERRA",
+    "status": "finalized",
+    "measured_at": "2026-10-25T16:48:18.279784+00:00",
+    "session": {
+      "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+      "file_name": "rollout-2026-10-25T20-37-28-01a17347-ce6d-7d90-886d-42157746b8ac.jsonl",
+      "sha256": "sha256:da83c5d14f9416c61a592ade36f1bf8621fdd31f2ccde98482edc364d377ebaf"
+    },
+    "selection_evidence_sha256": "sha256:87765b4697afd2d1048485e94e104b12f83eecea8d6dfa05baabaabbadd4b83e",
+    "extractor_sha256": "sha256:e354ecf4678502e09422822c32e2b676e2929a8eb862bf80375fcd4fb434ec9e",
+    "phases": {
+      "prompt_generation": {
+        "status": "closed",
+        "values": {
+          "tokens": {
+            "input_tokens": 610134,
+            "cached_input_tokens": 557312,
+            "output_tokens": 6112,
+            "reasoning_output_tokens": 1384,
+            "total_tokens": 616246
+          },
+          "token_unavailable_reasons": {},
+          "duration_seconds": 187.9,
+          "wall_clock_seconds": 256.251,
+          "timing_unavailable_reason": null,
+          "workflow_turn_count": 1,
+          "tool_call_count": 14,
+          "model_call_count": null,
+          "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+        }
+      },
+      "source_generation": {
+        "status": "closed",
+        "values": {
+          "tokens": {
+            "input_tokens": 1987325,
+            "cached_input_tokens": 1935360,
+            "output_tokens": 21050,
+            "reasoning_output_tokens": 4299,
+            "total_tokens": 2008375
+          },
+          "token_unavailable_reasons": {},
+          "duration_seconds": 735.419,
+          "wall_clock_seconds": 1236.776,
+          "timing_unavailable_reason": null,
+          "workflow_turn_count": 1,
+          "tool_call_count": 19,
+          "model_call_count": null,
+          "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+        }
+      },
+      "repair": {
+        "status": "closed",
+        "values": {
+          "tokens": {
+            "input_tokens": 3953423,
+            "cached_input_tokens": 3911424,
+            "output_tokens": 5866,
+            "reasoning_output_tokens": 741,
+            "total_tokens": 3959289
+          },
+          "token_unavailable_reasons": {},
+          "duration_seconds": 118.362,
+          "wall_clock_seconds": 219.105,
+          "timing_unavailable_reason": null,
+          "workflow_turn_count": 2,
+          "tool_call_count": 19,
+          "model_call_count": null,
+          "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+        }
+      }
+    },
+    "workflow": {
+      "tokens": {
+        "input_tokens": 8686153,
+        "cached_input_tokens": 8510720,
+        "output_tokens": 35511,
+        "reasoning_output_tokens": 7228,
+        "total_tokens": 8721664
+      },
+      "token_unavailable_reasons": {},
+      "duration_seconds": 1041.681,
+      "wall_clock_seconds": 1813.096,
+      "timing_unavailable_reason": null,
+      "workflow_turn_count": 6,
+      "tool_call_count": 61,
+      "model_call_count": null,
+      "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+    },
+    "turns": [
+      {
+        "turn_id": "01a17347-e614-7f03-8a6f-8f784ff3b5d6",
+        "turn_number": 1,
+        "started_at": "2026-10-25T13:37:35.375Z",
+        "ended_at": "2026-10-25T13:41:51.626Z",
+        "completed": true,
+        "model": "gpt-5.6-terra",
+        "tokens": {
+          "input_tokens": 610134,
+          "cached_input_tokens": 557312,
+          "output_tokens": 6112,
+          "reasoning_output_tokens": 1384,
+          "total_tokens": 616246
+        },
+        "tool_call_count": 14,
+        "prefix_bytes": 370974,
+        "prefix_sha256": "sha256:6346513391a55f055690e45794c608003e3fba8dd8ef9456acce36ebbd8f9c0c",
+        "terminal_event": "task_complete",
+        "message_sha256": "sha256:64c9b36fad6009ad1f8ad4086e3367595c22352d0b8287f9d61dee39b96cb50b",
+        "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+        "phase": "prompt_generation",
+        "timing_phase": "prompt_generation",
+        "reason": "Generated and validated the UC-02 coding-prompt Draft; the captured prompt-generation interval is contained in this turn.",
+        "duration_seconds": 187.9,
+        "wall_clock_seconds": 256.251,
+        "timing_unavailable_reason": null,
+        "timing_exclusion_reason": null,
+        "timing_segments": [
+          {
+            "start": {
+              "at": "2026-10-25T20:38:19.319+07:00",
+              "epoch_ms": 1792935499319,
+              "timing_protocol": "generation_execution_with_repair_audit_v2",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-TERRA",
+              "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+              "turn_id": "01a17347-e614-7f03-8a6f-8f784ff3b5d6",
+              "phase": "prompt_generation",
+              "event": "start",
+              "segment_id": "b716068c-e960-4e61-9032-f829c876af13",
+              "source_revision": "sha256:3f9fd05ef62138e1afd67140dc627efe53ce97b5f96394f48d6a4b39c987e2a6"
+            },
+            "end": {
+              "at": "2026-10-25T20:41:27.219+07:00",
+              "epoch_ms": 1792935687219,
+              "timing_protocol": "generation_execution_with_repair_audit_v2",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-TERRA",
+              "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+              "turn_id": "01a17347-e614-7f03-8a6f-8f784ff3b5d6",
+              "phase": "prompt_generation",
+              "event": "end",
+              "segment_id": "b716068c-e960-4e61-9032-f829c876af13",
+              "source_revision": "sha256:3f9fd05ef62138e1afd67140dc627efe53ce97b5f96394f48d6a4b39c987e2a6"
+            }
+          }
+        ]
+      },
+      {
+        "turn_id": "01a17352-9dd6-7763-95c1-39b2128913bd",
+        "turn_number": 3,
+        "started_at": "2026-10-25T13:49:17.037Z",
+        "ended_at": "2026-10-25T14:09:53.813Z",
+        "completed": true,
+        "model": "gpt-5.6-terra",
+        "tokens": {
+          "input_tokens": 1987325,
+          "cached_input_tokens": 1935360,
+          "output_tokens": 21050,
+          "reasoning_output_tokens": 4299,
+          "total_tokens": 2008375
+        },
+        "tool_call_count": 19,
+        "prefix_bytes": 936726,
+        "prefix_sha256": "sha256:3ee3fbd231886372065c5ac31abafb9e867f8a165e0608b7454044e3cc84e2f2",
+        "terminal_event": "task_complete",
+        "message_sha256": "sha256:99f4a5057d047da00f7a488865050c16d99decf467d0d54823f30b066b22ef98",
+        "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+        "phase": "source_generation",
+        "timing_phase": "source_generation",
+        "reason": "Implemented the approved UC-02 source and completed backend and frontend production builds; the captured source-generation interval is contained in this turn.",
+        "duration_seconds": 735.419,
+        "wall_clock_seconds": 1236.776,
+        "timing_unavailable_reason": null,
+        "timing_exclusion_reason": null,
+        "timing_segments": [
+          {
+            "start": {
+              "at": "2026-10-25T20:57:01.305+07:00",
+              "epoch_ms": 1792936621306,
+              "timing_protocol": "generation_execution_with_repair_audit_v2",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-TERRA",
+              "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+              "turn_id": "01a17352-9dd6-7763-95c1-39b2128913bd",
+              "phase": "source_generation",
+              "event": "start",
+              "segment_id": "92e2c97d-4e52-446c-8654-cf2bafa04765",
+              "source_revision": "sha256:2eeba8d1165e818a68cec08200c8e6f54053ec39c8890e204a5411007b58279c"
+            },
+            "end": {
+              "at": "2026-10-25T21:09:16.725+07:00",
+              "epoch_ms": 1792937356725,
+              "timing_protocol": "generation_execution_with_repair_audit_v2",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-TERRA",
+              "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+              "turn_id": "01a17352-9dd6-7763-95c1-39b2128913bd",
+              "phase": "source_generation",
+              "event": "end",
+              "segment_id": "92e2c97d-4e52-446c-8654-cf2bafa04765",
+              "source_revision": "sha256:2eeba8d1165e818a68cec08200c8e6f54053ec39c8890e204a5411007b58279c"
+            }
+          }
+        ]
+      },
+      {
+        "turn_id": "01a17381-e3d1-76d3-9ffb-0e9d9f72712c",
+        "turn_number": 5,
+        "started_at": "2026-10-25T14:40:55.321Z",
+        "ended_at": "2026-10-25T14:42:17.140Z",
+        "completed": true,
+        "model": "gpt-5.6-terra",
+        "tokens": {
+          "input_tokens": 1109825,
+          "cached_input_tokens": 1095680,
+          "output_tokens": 2946,
+          "reasoning_output_tokens": 350,
+          "total_tokens": 1112771
+        },
+        "tool_call_count": 7,
+        "prefix_bytes": 1178600,
+        "prefix_sha256": "sha256:16fdb94abfff3733d4cd4af9db9946efb0c1c572672f8a584279fb3427aff8fb",
+        "terminal_event": "task_complete",
+        "message_sha256": "sha256:6f442126518c27f688f58a0d7c4bbe79ec36e25f156fa647561d48b37401d9b4",
+        "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+        "phase": "repair",
+        "timing_phase": "repair",
+        "reason": "Generated and validated the complete initial repair-prompt set; repair timestamps are absent from the active canonical phase ledger after the run reset.",
+        "duration_seconds": 40.983,
+        "wall_clock_seconds": 81.819,
+        "timing_unavailable_reason": null,
+        "timing_exclusion_reason": null,
+        "timing_segments": [
+          {
+            "start": {
+              "at": "2026-10-25T21:41:31.365+07:00",
+              "epoch_ms": 1792939291366,
+              "timing_protocol": "generation_execution_with_repair_audit_v2",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-TERRA",
+              "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+              "turn_id": "01a17381-e3d1-76d3-9ffb-0e9d9f72712c",
+              "phase": "repair",
+              "event": "start",
+              "segment_id": "95ae70c1-99e3-403a-93ce-f5ee0273ef39",
+              "source_revision": "sha256:2eeba8d1165e818a68cec08200c8e6f54053ec39c8890e204a5411007b58279c",
+              "repair_activity": "sub_prompt_generation"
+            },
+            "end": {
+              "at": "2026-10-25T21:42:12.348+07:00",
+              "epoch_ms": 1792939332349,
+              "timing_protocol": "generation_execution_with_repair_audit_v2",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-TERRA",
+              "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+              "turn_id": "01a17381-e3d1-76d3-9ffb-0e9d9f72712c",
+              "phase": "repair",
+              "event": "end",
+              "segment_id": "95ae70c1-99e3-403a-93ce-f5ee0273ef39",
+              "source_revision": "sha256:2eeba8d1165e818a68cec08200c8e6f54053ec39c8890e204a5411007b58279c",
+              "repair_activity": "sub_prompt_generation"
+            }
+          }
+        ]
+      },
+      {
+        "turn_id": "01a173d7-57b5-7551-9c74-21d9e66e9ffe",
+        "turn_number": 7,
+        "started_at": "2026-10-25T16:14:15.239Z",
+        "ended_at": "2026-10-25T16:15:29.491Z",
+        "completed": true,
+        "model": "gpt-5.6-terra",
+        "tokens": {
+          "input_tokens": 1522814,
+          "cached_input_tokens": 1510400,
+          "output_tokens": 1725,
+          "reasoning_output_tokens": 401,
+          "total_tokens": 1524539
+        },
+        "tool_call_count": 7,
+        "prefix_bytes": 1629684,
+        "prefix_sha256": "sha256:62b1ce15129d6c840b05ef453949d7884623662592ae06444f71c86869371e43",
+        "terminal_event": "task_complete",
+        "message_sha256": "sha256:73da61cd7fe5432c18fed9c22271e518893a66cdca20c9796a37398f3b3606b0",
+        "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+        "phase": "configuration_and_approval",
+        "timing_phase": "configuration_and_approval",
+        "reason": "Validated the repair prerequisites and attempted authorization; no core repair execution interval was captured.",
+        "duration_seconds": 0,
+        "wall_clock_seconds": 74.252,
+        "timing_unavailable_reason": null,
+        "timing_exclusion_reason": "Auxiliary work excluded from generation time",
+        "timing_segments": []
+      },
+      {
+        "turn_id": "01a173dc-4eff-7a82-b99e-1c09ae44bec8",
+        "turn_number": 9,
+        "started_at": "2026-10-25T16:19:40.453Z",
+        "ended_at": "2026-10-25T16:20:07.165Z",
+        "completed": true,
+        "model": "gpt-5.6-terra",
+        "tokens": {
+          "input_tokens": 612457,
+          "cached_input_tokens": 596224,
+          "output_tokens": 758,
+          "reasoning_output_tokens": 403,
+          "total_tokens": 613215
+        },
+        "tool_call_count": 2,
+        "prefix_bytes": 1768120,
+        "prefix_sha256": "sha256:a8b15a31275a6074ca1a009d8bb5a189453e85aad1f079fbe90b3b10ac84a9f7",
+        "terminal_event": "task_complete",
+        "message_sha256": "sha256:815df7195593da129f2833515723f2dcec3c2b51c7e17e409efb2d56591a839b",
+        "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+        "phase": "configuration_and_approval",
+        "timing_phase": "configuration_and_approval",
+        "reason": "Validated a conflicting existing repair artifact before any repair prompt generation or capture boundary; no core execution occurred.",
+        "duration_seconds": 0,
+        "wall_clock_seconds": 26.712,
+        "timing_unavailable_reason": null,
+        "timing_exclusion_reason": "Auxiliary work excluded from generation time",
+        "timing_segments": []
+      },
+      {
+        "turn_id": "01a173e6-78ae-7a62-9458-565f6adc47c5",
+        "turn_number": 10,
+        "started_at": "2026-10-25T16:30:46.709Z",
+        "ended_at": "2026-10-25T16:33:03.995Z",
+        "completed": true,
+        "model": "gpt-5.6-terra",
+        "tokens": {
+          "input_tokens": 2843598,
+          "cached_input_tokens": 2815744,
+          "output_tokens": 2920,
+          "reasoning_output_tokens": 391,
+          "total_tokens": 2846518
+        },
+        "tool_call_count": 12,
+        "prefix_bytes": 1919104,
+        "prefix_sha256": "sha256:a454910920a1b3156500cf6436de45f3ca92724b6722bf984ba1060b035af12b",
+        "terminal_event": "task_complete",
+        "message_sha256": "sha256:73da61cd7fe5432c18fed9c22271e518893a66cdca20c9796a37398f3b3606b0",
+        "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+        "phase": "repair",
+        "timing_phase": "repair",
+        "reason": "Executed the authorized repair verification cycle; repair timestamps are absent from the active canonical phase ledger after the run reset.",
+        "duration_seconds": 77.379,
+        "wall_clock_seconds": 137.286,
+        "timing_unavailable_reason": null,
+        "timing_exclusion_reason": null,
+        "timing_segments": [
+          {
+            "start": {
+              "at": "2026-10-25T23:31:42.079+07:00",
+              "epoch_ms": 1792945902080,
+              "timing_protocol": "generation_execution_with_repair_audit_v2",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-TERRA",
+              "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+              "turn_id": "01a173e6-78ae-7a62-9458-565f6adc47c5",
+              "phase": "repair",
+              "event": "start",
+              "segment_id": "eb0fdbe5-8e01-4fd6-b4b9-f63436e61191",
+              "source_revision": "sha256:a07aaafd8b9b96f5a42edb04b45b97c89228754dbd5c0323d1d97c2838bdd46d",
+              "repair_activity": "source_correction"
+            },
+            "end": {
+              "at": "2026-10-25T23:32:59.459+07:00",
+              "epoch_ms": 1792945979459,
+              "timing_protocol": "generation_execution_with_repair_audit_v2",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-TERRA",
+              "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+              "turn_id": "01a173e6-78ae-7a62-9458-565f6adc47c5",
+              "phase": "repair",
+              "event": "end",
+              "segment_id": "eb0fdbe5-8e01-4fd6-b4b9-f63436e61191",
+              "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+              "repair_activity": "source_correction"
+            }
+          }
+        ]
+      }
+    ],
+    "token_phase_breakdown": {
+      "configuration_and_approval": {
+        "tokens": {
+          "input_tokens": 2135271,
+          "cached_input_tokens": 2106624,
+          "output_tokens": 2483,
+          "reasoning_output_tokens": 804,
+          "total_tokens": 2137754
+        },
+        "token_unavailable_reasons": {},
+        "wall_clock_seconds": 100.964,
+        "workflow_turn_count": 2,
+        "tool_call_count": 9
+      },
+      "prompt_generation": {
+        "tokens": {
+          "input_tokens": 610134,
+          "cached_input_tokens": 557312,
+          "output_tokens": 6112,
+          "reasoning_output_tokens": 1384,
+          "total_tokens": 616246
+        },
+        "token_unavailable_reasons": {},
+        "wall_clock_seconds": 256.251,
+        "workflow_turn_count": 1,
+        "tool_call_count": 14
+      },
+      "repair": {
+        "tokens": {
+          "input_tokens": 3953423,
+          "cached_input_tokens": 3911424,
+          "output_tokens": 5866,
+          "reasoning_output_tokens": 741,
+          "total_tokens": 3959289
+        },
+        "token_unavailable_reasons": {},
+        "wall_clock_seconds": 219.105,
+        "workflow_turn_count": 2,
+        "tool_call_count": 19
+      },
+      "source_generation": {
+        "tokens": {
+          "input_tokens": 1987325,
+          "cached_input_tokens": 1935360,
+          "output_tokens": 21050,
+          "reasoning_output_tokens": 4299,
+          "total_tokens": 2008375
+        },
+        "token_unavailable_reasons": {},
+        "wall_clock_seconds": 1236.776,
+        "workflow_turn_count": 1,
+        "tool_call_count": 19
+      }
+    },
+    "excluded_turns": [
+      {
+        "turn_id": "01a1734e-c33c-7873-a59c-5c5d6838f128",
+        "reason": "measurement/report turn"
+      },
+      {
+        "turn_id": "01a17365-f2b9-7471-b8b1-10ca884f3e03",
+        "reason": "measurement/report turn"
+      },
+      {
+        "turn_id": "01a173dc-25c3-75c1-b530-05798986f06d",
+        "reason": "aborted turn with no token counters or work execution"
+      },
+      {
+        "turn_id": "01a17383-ef10-7200-a1bf-8aa5f621224b",
+        "reason": "superseded pre-reset repair attempt; its repair ledger evidence is absent from the active canonical run"
+      },
+      {
+        "turn_id": "01a173e9-376c-71b2-839c-b209bcafc9ac",
+        "reason": "measurement/report turn"
+      },
+      {
+        "turn_id": "01a173f5-0b19-7e53-9cbe-0178db031150",
+        "reason": "measurement/report turn"
+      }
+    ],
+    "phase_ledger": {
+      "schema_version": 1,
+      "uc_id": "UC-02",
+      "run_id": "UC-02-GPT-5.6-TERRA",
+      "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+      "phases": {
+        "prompt_generation": {
+          "status": "closed",
+          "first_turn_id": "01a17347-e614-7f03-8a6f-8f784ff3b5d6",
+          "measurement_turn_id": "01a1734e-c33c-7873-a59c-5c5d6838f128"
+        },
+        "source_generation": {
+          "status": "closed",
+          "first_turn_id": "01a17352-9dd6-7763-95c1-39b2128913bd",
+          "measurement_turn_id": "01a17365-f2b9-7471-b8b1-10ca884f3e03"
+        },
+        "repair": {
+          "status": "closed",
+          "first_turn_id": "01a17381-e3d1-76d3-9ffb-0e9d9f72712c",
+          "measurement_turn_id": "01a173f5-0b19-7e53-9cbe-0178db031150"
+        }
+      },
+      "segments": [
+        {
+          "start": {
+            "at": "2026-10-25T20:38:19.319+07:00",
+            "epoch_ms": 1792935499319,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-02",
+            "run_id": "UC-02-GPT-5.6-TERRA",
+            "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+            "turn_id": "01a17347-e614-7f03-8a6f-8f784ff3b5d6",
+            "phase": "prompt_generation",
+            "event": "start",
+            "segment_id": "b716068c-e960-4e61-9032-f829c876af13",
+            "source_revision": "sha256:3f9fd05ef62138e1afd67140dc627efe53ce97b5f96394f48d6a4b39c987e2a6"
+          },
+          "end": {
+            "at": "2026-10-25T20:41:27.219+07:00",
+            "epoch_ms": 1792935687219,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-02",
+            "run_id": "UC-02-GPT-5.6-TERRA",
+            "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+            "turn_id": "01a17347-e614-7f03-8a6f-8f784ff3b5d6",
+            "phase": "prompt_generation",
+            "event": "end",
+            "segment_id": "b716068c-e960-4e61-9032-f829c876af13",
+            "source_revision": "sha256:3f9fd05ef62138e1afd67140dc627efe53ce97b5f96394f48d6a4b39c987e2a6"
+          }
+        },
+        {
+          "start": {
+            "at": "2026-10-25T20:57:01.305+07:00",
+            "epoch_ms": 1792936621306,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-02",
+            "run_id": "UC-02-GPT-5.6-TERRA",
+            "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+            "turn_id": "01a17352-9dd6-7763-95c1-39b2128913bd",
+            "phase": "source_generation",
+            "event": "start",
+            "segment_id": "92e2c97d-4e52-446c-8654-cf2bafa04765",
+            "source_revision": "sha256:2eeba8d1165e818a68cec08200c8e6f54053ec39c8890e204a5411007b58279c"
+          },
+          "end": {
+            "at": "2026-10-25T21:09:16.725+07:00",
+            "epoch_ms": 1792937356725,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-02",
+            "run_id": "UC-02-GPT-5.6-TERRA",
+            "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+            "turn_id": "01a17352-9dd6-7763-95c1-39b2128913bd",
+            "phase": "source_generation",
+            "event": "end",
+            "segment_id": "92e2c97d-4e52-446c-8654-cf2bafa04765",
+            "source_revision": "sha256:2eeba8d1165e818a68cec08200c8e6f54053ec39c8890e204a5411007b58279c"
+          }
+        },
+        {
+          "start": {
+            "at": "2026-10-25T21:41:31.365+07:00",
+            "epoch_ms": 1792939291366,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-02",
+            "run_id": "UC-02-GPT-5.6-TERRA",
+            "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+            "turn_id": "01a17381-e3d1-76d3-9ffb-0e9d9f72712c",
+            "phase": "repair",
+            "event": "start",
+            "segment_id": "95ae70c1-99e3-403a-93ce-f5ee0273ef39",
+            "source_revision": "sha256:2eeba8d1165e818a68cec08200c8e6f54053ec39c8890e204a5411007b58279c",
+            "repair_activity": "sub_prompt_generation"
+          },
+          "end": {
+            "at": "2026-10-25T21:42:12.348+07:00",
+            "epoch_ms": 1792939332349,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-02",
+            "run_id": "UC-02-GPT-5.6-TERRA",
+            "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+            "turn_id": "01a17381-e3d1-76d3-9ffb-0e9d9f72712c",
+            "phase": "repair",
+            "event": "end",
+            "segment_id": "95ae70c1-99e3-403a-93ce-f5ee0273ef39",
+            "source_revision": "sha256:2eeba8d1165e818a68cec08200c8e6f54053ec39c8890e204a5411007b58279c",
+            "repair_activity": "sub_prompt_generation"
+          }
+        },
+        {
+          "start": {
+            "at": "2026-10-25T23:31:42.079+07:00",
+            "epoch_ms": 1792945902080,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-02",
+            "run_id": "UC-02-GPT-5.6-TERRA",
+            "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+            "turn_id": "01a173e6-78ae-7a62-9458-565f6adc47c5",
+            "phase": "repair",
+            "event": "start",
+            "segment_id": "eb0fdbe5-8e01-4fd6-b4b9-f63436e61191",
+            "source_revision": "sha256:a07aaafd8b9b96f5a42edb04b45b97c89228754dbd5c0323d1d97c2838bdd46d",
+            "repair_activity": "source_correction"
+          },
+          "end": {
+            "at": "2026-10-25T23:32:59.459+07:00",
+            "epoch_ms": 1792945979459,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-02",
+            "run_id": "UC-02-GPT-5.6-TERRA",
+            "session_id": "01a17347-ce6d-7d90-886d-42157746b8ac",
+            "turn_id": "01a173e6-78ae-7a62-9458-565f6adc47c5",
+            "phase": "repair",
+            "event": "end",
+            "segment_id": "eb0fdbe5-8e01-4fd6-b4b9-f63436e61191",
+            "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+            "repair_activity": "source_correction"
+          }
+        }
+      ],
+      "observations": [
+        {
+          "measurement_turn_id": "01a1734e-c33c-7873-a59c-5c5d6838f128",
+          "action": "close-phase:prompt_generation",
+          "last_turn_id": "01a17347-e614-7f03-8a6f-8f784ff3b5d6",
+          "evidence_sha256": "sha256:3c68f86650fff75cdbbc0d8b483f9f3645e72a01f86df7985e0f8c278c141a7c"
+        },
+        {
+          "measurement_turn_id": "01a17365-f2b9-7471-b8b1-10ca884f3e03",
+          "action": "close-phase:source_generation",
+          "last_turn_id": "01a17352-9dd6-7763-95c1-39b2128913bd",
+          "evidence_sha256": "sha256:bcada6489c4d00ddd3be457cbfa2f392222b3e85581004456976c52d84929727"
+        },
+        {
+          "measurement_turn_id": "01a173f5-0b19-7e53-9cbe-0178db031150",
+          "action": "finalize-workflow",
+          "last_turn_id": "01a173e6-78ae-7a62-9458-565f6adc47c5",
+          "evidence_sha256": "sha256:87765b4697afd2d1048485e94e104b12f83eecea8d6dfa05baabaabbadd4b83e"
+        }
+      ],
+      "workflow_status": "finalized",
+      "timing_protocol": "generation_execution_with_repair_audit_v2"
+    }
+  },
+  "repair_authorization": {
+    "approved": true,
+    "turn_id": "01a173e6-78ae-7a62-9458-565f6adc47c5"
+  },
+  "business_rules": {
+    "baseline": "docs/02-construction/implementation/UC-02/business-rule-baseline.json",
+    "ordered_br_ids": [
+      "BR-JS-01",
+      "BR-JS-02",
+      "BR-JS-03",
+      "BR-JS-04",
+      "BR-JS-05",
+      "BR-JS-06",
+      "BR-JS-07",
+      "BR-JS-08",
+      "BR-JS-09",
+      "BR-JS-10",
+      "BR-JS-11",
+      "BR-JS-12",
+      "BR-JS-13",
+      "BR-JS-14",
+      "BR-JS-15",
+      "BR-JS-16",
+      "BR-JS-17",
+      "BR-JS-18",
+      "BR-JS-19"
+    ],
+    "initial": {
+      "schema_version": 1,
+      "source_revision": "sha256:2eeba8d1165e818a68cec08200c8e6f54053ec39c8890e204a5411007b58279c",
+      "captured_at": "2026-10-25T21:28:00+07:00",
+      "total": 19,
+      "met": 0,
+      "unmet": 19,
+      "not_evaluable": 0,
+      "requirements": [
+        {
+          "br_id": "BR-JS-01",
+          "status": "unmet",
+          "rationale": "Execution blocked: backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log"
+          ],
+          "runtime_observation_ids": [],
+          "blocking_defect_ids": [
+            "DEF-UC02-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-02",
+          "status": "unmet",
+          "rationale": "Execution blocked: backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log"
+          ],
+          "runtime_observation_ids": [],
+          "blocking_defect_ids": [
+            "DEF-UC02-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-03",
+          "status": "unmet",
+          "rationale": "Execution blocked: backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log"
+          ],
+          "runtime_observation_ids": [],
+          "blocking_defect_ids": [
+            "DEF-UC02-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-04",
+          "status": "unmet",
+          "rationale": "Execution blocked: backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log"
+          ],
+          "runtime_observation_ids": [],
+          "blocking_defect_ids": [
+            "DEF-UC02-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-05",
+          "status": "unmet",
+          "rationale": "Execution blocked: backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log"
+          ],
+          "runtime_observation_ids": [],
+          "blocking_defect_ids": [
+            "DEF-UC02-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-06",
+          "status": "unmet",
+          "rationale": "Execution blocked: backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log"
+          ],
+          "runtime_observation_ids": [],
+          "blocking_defect_ids": [
+            "DEF-UC02-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-07",
+          "status": "unmet",
+          "rationale": "Execution blocked: backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log"
+          ],
+          "runtime_observation_ids": [],
+          "blocking_defect_ids": [
+            "DEF-UC02-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-08",
+          "status": "unmet",
+          "rationale": "Execution blocked: backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log"
+          ],
+          "runtime_observation_ids": [],
+          "blocking_defect_ids": [
+            "DEF-UC02-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-09",
+          "status": "unmet",
+          "rationale": "Execution blocked: backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log"
+          ],
+          "runtime_observation_ids": [],
+          "blocking_defect_ids": [
+            "DEF-UC02-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-10",
+          "status": "unmet",
+          "rationale": "Execution blocked: backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log"
+          ],
+          "runtime_observation_ids": [],
+          "blocking_defect_ids": [
+            "DEF-UC02-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-11",
+          "status": "unmet",
+          "rationale": "Execution blocked: backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log"
+          ],
+          "runtime_observation_ids": [],
+          "blocking_defect_ids": [
+            "DEF-UC02-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-12",
+          "status": "unmet",
+          "rationale": "Execution blocked: backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log"
+          ],
+          "runtime_observation_ids": [],
+          "blocking_defect_ids": [
+            "DEF-UC02-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-13",
+          "status": "unmet",
+          "rationale": "Execution blocked: backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log"
+          ],
+          "runtime_observation_ids": [],
+          "blocking_defect_ids": [
+            "DEF-UC02-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-14",
+          "status": "unmet",
+          "rationale": "Execution blocked: backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log"
+          ],
+          "runtime_observation_ids": [],
+          "blocking_defect_ids": [
+            "DEF-UC02-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-15",
+          "status": "unmet",
+          "rationale": "Execution blocked: backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log"
+          ],
+          "runtime_observation_ids": [],
+          "blocking_defect_ids": [
+            "DEF-UC02-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-16",
+          "status": "unmet",
+          "rationale": "Execution blocked: backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log"
+          ],
+          "runtime_observation_ids": [],
+          "blocking_defect_ids": [
+            "DEF-UC02-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-17",
+          "status": "unmet",
+          "rationale": "Execution blocked: backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log"
+          ],
+          "runtime_observation_ids": [],
+          "blocking_defect_ids": [
+            "DEF-UC02-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-18",
+          "status": "unmet",
+          "rationale": "Execution blocked: backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log"
+          ],
+          "runtime_observation_ids": [],
+          "blocking_defect_ids": [
+            "DEF-UC02-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-19",
+          "status": "unmet",
+          "rationale": "Execution blocked: backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log"
+          ],
+          "runtime_observation_ids": [],
+          "blocking_defect_ids": [
+            "DEF-UC02-01"
+          ]
+        }
+      ]
+    },
+    "final": {
+      "schema_version": 1,
+      "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+      "captured_at": "2026-10-25T23:32:23.639323+07:00",
+      "total": 19,
+      "met": 19,
+      "unmet": 0,
+      "not_evaluable": 0,
+      "requirements": [
+        {
+          "br_id": "BR-JS-01",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-af1",
+            "obs-bf1",
+            "obs-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-JS-02",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-af1",
+            "obs-bf1",
+            "obs-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-JS-03",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-af1",
+            "obs-bf1",
+            "obs-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-JS-04",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-af1",
+            "obs-bf1",
+            "obs-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-JS-05",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-af1",
+            "obs-bf1",
+            "obs-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-JS-06",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-af1",
+            "obs-bf1",
+            "obs-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-JS-07",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-af1",
+            "obs-bf1",
+            "obs-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-JS-08",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-af1",
+            "obs-bf1",
+            "obs-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-JS-09",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-af1",
+            "obs-bf1",
+            "obs-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-JS-10",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-af1",
+            "obs-bf1",
+            "obs-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-JS-11",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-af1",
+            "obs-bf1",
+            "obs-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-JS-12",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-af1",
+            "obs-bf1",
+            "obs-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-JS-13",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-af1",
+            "obs-bf1",
+            "obs-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-JS-14",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-af1",
+            "obs-bf1",
+            "obs-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-JS-15",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-af1",
+            "obs-bf1",
+            "obs-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-JS-16",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-af1",
+            "obs-bf1",
+            "obs-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-JS-17",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-af1",
+            "obs-bf1",
+            "obs-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-JS-18",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-af1",
+            "obs-bf1",
+            "obs-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-JS-19",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-af1",
+            "obs-bf1",
+            "obs-ef1"
+          ]
+        }
+      ],
+      "assessment_id": "asm-uc02-final",
+      "stage": "final"
+    },
+    "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289"
+  },
+  "defects": [
+    {
+      "defect_id": "DEF-UC02-01",
+      "fingerprint": "sha256:4ad3c07818e961568e793be0b1c02dbbc2de51a7dea4441da66c4b56d70e7404",
+      "stage": "initial",
+      "source_revision": "sha256:2eeba8d1165e818a68cec08200c8e6f54053ec39c8890e204a5411007b58279c",
+      "category": "technical",
+      "trigger": "Docker backend build (npm run build)",
+      "description": "TypeScript compiler error TS2352 in src/modules/sessions/sessions.service.ts:94: type conversion value as SuccessEnvelope from Row fails due to insufficient overlap, preventing backend build and startup.",
+      "status": "open",
+      "blocks_execution": true,
+      "affected_br_ids": [
+        "BR-JS-01",
+        "BR-JS-02",
+        "BR-JS-03",
+        "BR-JS-04",
+        "BR-JS-05",
+        "BR-JS-06",
+        "BR-JS-07",
+        "BR-JS-08",
+        "BR-JS-09",
+        "BR-JS-10",
+        "BR-JS-11",
+        "BR-JS-12",
+        "BR-JS-13",
+        "BR-JS-14",
+        "BR-JS-15",
+        "BR-JS-16",
+        "BR-JS-17",
+        "BR-JS-18",
+        "BR-JS-19"
+      ],
+      "affected_flow_ids": [
+        "BF-1",
+        "AF-1",
+        "EF-1"
+      ],
+      "evidence": [
+        {
+          "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/backend-build-failure.log",
+          "sha256": "sha256:4a9dfedcef4cd17e6118c8c1d812dab4901cc3a144e85b3bd20f28185c7b3fbd",
+          "source_revision": "sha256:2eeba8d1165e818a68cec08200c8e6f54053ec39c8890e204a5411007b58279c"
+        }
+      ]
+    }
+  ],
+  "repairs": [
+    {
+      "repair_id": "repair-round-001",
+      "round_index": 1,
+      "prompt_directory": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/repairs",
+      "source_revision_before": "sha256:c62958e7190a714e05249ab1084942bb30170c146d441bcee17cd6650c960759",
+      "source_revision_after": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+      "affected_br_ids": [
+        "BR-JS-01",
+        "BR-JS-02",
+        "BR-JS-03",
+        "BR-JS-04",
+        "BR-JS-05",
+        "BR-JS-06",
+        "BR-JS-07",
+        "BR-JS-08",
+        "BR-JS-09",
+        "BR-JS-10",
+        "BR-JS-11",
+        "BR-JS-12",
+        "BR-JS-13",
+        "BR-JS-14",
+        "BR-JS-15",
+        "BR-JS-16",
+        "BR-JS-17",
+        "BR-JS-18",
+        "BR-JS-19"
+      ],
+      "affected_flow_ids": [
+        "BF-1",
+        "AF-1",
+        "EF-1"
+      ],
+      "evidence_before": [
+        {
+          "path": "docs/02-construction/implementation/UC-01/flow-baseline.json",
+          "sha256": "sha256:e50d9bfb5adbe7dbd66358bdf614f69ac55379604fe184876de0aaf17c4a2c81"
+        }
+      ],
+      "changed_files": [
+        "finalsource/be/src/app.module.ts",
+        "finalsource/be/src/common/filters/http-exception.filter.ts",
+        "finalsource/be/src/main.ts",
+        "finalsource/be/src/modules/sessions/",
+        "finalsource/be/src/modules/sessions/sessions.service.ts",
+        "finalsource/fe/src/App.tsx",
+        "finalsource/fe/src/api/client.ts",
+        "finalsource/fe/src/api/session.ts",
+        "finalsource/fe/src/components/PreJoinPreview.tsx"
+      ],
+      "evidence_after": [
+        {
+          "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json",
+          "sha256": "sha256:4cc2181c6d10f01b49bc635696d119bddb99491692ae80107605b79ad872120f"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_source/repair-source-manifest.json",
+          "sha256": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-af1/action-ui.json",
+          "sha256": "sha256:7ba8da80608e5d922e1853d6ee11d3cccaae4a4ce9585bec808682eb6950f990"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-af1/dom-snapshot.html",
+          "sha256": "sha256:686d1383777c92cd6d59c531cacf7a01b5f291955f1e4f4baddb19d6c9798a8b"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-af1/trace.json",
+          "sha256": "sha256:db19aef9dfc0b7fd7ce2d28b35e3283d1dc7508b565ae94787b4a1a63f7b1559"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-bf1/action-ui.json",
+          "sha256": "sha256:6da4b05aa11a283892dd76ec03c3a1daa8d774394c521f3027c30b01f52f61e5"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-bf1/dom-snapshot.html",
+          "sha256": "sha256:686d1383777c92cd6d59c531cacf7a01b5f291955f1e4f4baddb19d6c9798a8b"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-bf1/trace.json",
+          "sha256": "sha256:56e3ce27cff910c1a87154e56c88c23ec925d25043e53201706dce7c80d46062"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-ef1/action-ui.json",
+          "sha256": "sha256:c67c463902e5b281ec06827f5c23e0246a357efaf97255a8d0b1e8e2ff34355e"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-ef1/dom-snapshot.html",
+          "sha256": "sha256:686d1383777c92cd6d59c531cacf7a01b5f291955f1e4f4baddb19d6c9798a8b"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-ef1/trace.json",
+          "sha256": "sha256:fcb95f7e94e520f406dfcb0817d525392c8e2a6e6beb6423aae54e536aed9f90"
+        }
+      ],
+      "defect_attempts": [
+        {
+          "defect_id": "DEF-UC02-01",
+          "defect_fingerprint": "sha256:4ad3c07818e961568e793be0b1c02dbbc2de51a7dea4441da66c4b56d70e7404",
+          "prompt_path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/repairs/repair-001-DEF-UC02-01.md",
+          "prompt_sha256": "sha256:31e7826b3fca70458d7994ef367b45dac14210db0559f416c5b2899d5b9986b2",
+          "status": "resolved",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json",
+              "sha256": "sha256:4cc2181c6d10f01b49bc635696d119bddb99491692ae80107605b79ad872120f"
+            }
+          ]
+        }
+      ],
+      "outcome": "resolved",
+      "model": {
+        "effective_model_id": "gpt-5.6-terra"
+      }
+    }
+  ],
+  "repair_round_limit": 10,
+  "repair_rounds_completed": 1,
+  "repair_status": "completed",
+  "repair_prompt_directory": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/repairs",
+  "all_sub_prompt_count": 1,
+  "manual_estimates_minutes": [],
+  "ui_accuracy_percent": null,
+  "ui_accuracy_status": "researcher_managed",
+  "ui_accuracy_source": "manual",
+  "ui_accuracy_evidence": null,
+  "ui_accuracy_recorded_by": null,
+  "ui_accuracy_recorded_at": null,
+  "flow_accuracy_percent": 100.0,
+  "flow_error_percent": 0.0,
+  "flow_accuracy_status": "scored",
+  "flow_accuracy": {
+    "schema_version": 2,
+    "rubric_id": "completion-critical-flow-runtime-v2",
+    "assessments": [
+      {
+        "schema_version": 2,
+        "rubric_id": "completion-critical-flow-runtime-v2",
+        "assessment_id": "assessment-initial",
+        "stage": "initial",
+        "input_sha256": "sha256:cdb09ec55e909f2f55a2bd9be8a0608561836f92978b7d259de6f204965df75e",
+        "status": "repair_required",
+        "execution_blocked": true,
+        "execution_blocker_defect_ids": [
+          "DEF-UC02-01"
+        ],
+        "counts": {
+          "main": 1,
+          "alternative": 1,
+          "exception": 1,
+          "total": 3,
+          "correct": 0,
+          "incorrect": 3,
+          "not_evaluable": 0
+        },
+        "flow_error_percent": 100.0,
+        "flow_accuracy_percent": 0.0,
+        "evaluated_coverage_percent": 100.0,
+        "accuracy_lower_bound_percent": 0.0,
+        "accuracy_upper_bound_percent": 0.0,
+        "flows": [
+          {
+            "flow_id": "BF-1",
+            "type": "main",
+            "status": "incorrect",
+            "noncritical_deviations": 0,
+            "execution_blocker_defect_ids": [
+              "DEF-UC02-01"
+            ],
+            "terminal_outcome": {
+              "text": "POST-1: The client displays the joined session or a returned recovery state. POST-2: The participant tile reflects the returned identity and media state.",
+              "status": "unmet",
+              "blocking_defect_ids": [
+                "DEF-UC02-01"
+              ]
+            },
+            "steps": [
+              {
+                "step_id": "BF-1.1",
+                "text": "The participant enters a display name and chooses Join.",
+                "completion_critical": true,
+                "criticality_reason": "Entering display name and choosing Join initiates the join process.",
+                "status": "not_evaluable",
+                "blocking_defect_ids": [
+                  "DEF-UC02-01"
+                ]
+              },
+              {
+                "step_id": "BF-1.2",
+                "text": "The client submits the join request.",
+                "completion_critical": true,
+                "criticality_reason": "Submitting join request transmits command to backend.",
+                "status": "not_evaluable",
+                "blocking_defect_ids": [
+                  "DEF-UC02-01"
+                ]
+              },
+              {
+                "step_id": "BF-1.3",
+                "text": "The system returns the joined participant and session summary.",
+                "completion_critical": true,
+                "criticality_reason": "Returning joined participant and session summary confirms join.",
+                "status": "not_evaluable",
+                "blocking_defect_ids": [
+                  "DEF-UC02-01"
+                ]
+              },
+              {
+                "step_id": "BF-1.4",
+                "text": "The client renders the active session and participant tile.",
+                "completion_critical": true,
+                "criticality_reason": "Rendering active session completes UI join transition.",
+                "status": "not_evaluable",
+                "blocking_defect_ids": [
+                  "DEF-UC02-01"
+                ]
+              }
+            ]
+          },
+          {
+            "flow_id": "AF-1",
+            "type": "alternative",
+            "status": "incorrect",
+            "noncritical_deviations": 0,
+            "execution_blocker_defect_ids": [
+              "DEF-UC02-01"
+            ],
+            "terminal_outcome": {
+              "text": "The client displays the joined session with the participant tile reflecting updated media preferences.",
+              "status": "unmet",
+              "blocking_defect_ids": [
+                "DEF-UC02-01"
+              ]
+            },
+            "steps": [
+              {
+                "step_id": "AF-1.1a",
+                "text": "The participant changes a preview control before choosing Join.",
+                "completion_critical": true,
+                "criticality_reason": "Changing control establishes alternative media selection.",
+                "status": "not_evaluable",
+                "blocking_defect_ids": [
+                  "DEF-UC02-01"
+                ]
+              },
+              {
+                "step_id": "AF-1.1b",
+                "text": "The client submits the updated selections with the join request.",
+                "completion_critical": true,
+                "criticality_reason": "Submitting updated selections transmits preferences.",
+                "status": "not_evaluable",
+                "blocking_defect_ids": [
+                  "DEF-UC02-01"
+                ]
+              }
+            ]
+          },
+          {
+            "flow_id": "EF-1",
+            "type": "exception",
+            "status": "incorrect",
+            "noncritical_deviations": 0,
+            "execution_blocker_defect_ids": [
+              "DEF-UC02-01"
+            ],
+            "terminal_outcome": {
+              "text": "The client displays the returned recovery state while preserving the preview context.",
+              "status": "unmet",
+              "blocking_defect_ids": [
+                "DEF-UC02-01"
+              ]
+            },
+            "steps": [
+              {
+                "step_id": "EF-1.3a",
+                "text": "The system returns that the session cannot be joined.",
+                "completion_critical": true,
+                "criticality_reason": "Server rejection establishes exception condition.",
+                "status": "not_evaluable",
+                "blocking_defect_ids": [
+                  "DEF-UC02-01"
+                ]
+              },
+              {
+                "step_id": "EF-1.3b",
+                "text": "The client displays the returned recovery state while preserving the preview context.",
+                "completion_critical": true,
+                "criticality_reason": "Displaying recovery state fulfills exception postcondition.",
+                "status": "not_evaluable",
+                "blocking_defect_ids": [
+                  "DEF-UC02-01"
+                ]
+              }
+            ]
+          }
+        ],
+        "input": {
+          "schema_version": 2,
+          "rubric_id": "completion-critical-flow-runtime-v2",
+          "uc_id": "UC-02",
+          "run_id": "UC-02-GPT-5.6-TERRA",
+          "assessment_id": "assessment-initial",
+          "stage": "initial",
+          "source_revision": "sha256:2eeba8d1165e818a68cec08200c8e6f54053ec39c8890e204a5411007b58279c",
+          "captured_at": "2026-10-25T21:28:00+07:00",
+          "baseline": {
+            "path": "docs/02-construction/implementation/UC-02/flow-baseline.json",
+            "sha256": "sha256:7f4db9a7b83e91d5c018fb1e6562b7e7dfa7e77b29e164b8c4c38f1a4969f4f5"
+          },
+          "limitations": [
+            {
+              "category": "application",
+              "affected_targets": "all",
+              "reason": "Backend Docker image failed to build due to TypeScript compilation error TS2352 in sessions.service.ts",
+              "impact": "Integrated runtime unavailable; all flows blocked"
+            }
+          ],
+          "runtime": {
+            "status": "BLOCKED",
+            "compose_version": 2,
+            "reason": "Backend Docker image failed to build due to TypeScript error in generated code",
+            "compose_project": null,
+            "services": [],
+            "deployment": {
+              "source_revision": "sha256:2eeba8d1165e818a68cec08200c8e6f54053ec39c8890e204a5411007b58279c",
+              "verified": false,
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/assessment-initial/_runtime/runtime-limitation.txt",
+                  "sha256": "sha256:6e0a5d0826894b67e025259b8326540a07fc51a5b22fd48ab7f84f31616e2392",
+                  "kind": "limitation",
+                  "source_revision": "sha256:2eeba8d1165e818a68cec08200c8e6f54053ec39c8890e204a5411007b58279c",
+                  "sanitized": true,
+                  "locator": "backend-build",
+                  "observation_id": null
+                }
+              ]
+            }
+          },
+          "execution_blocker_defect_ids": [
+            "DEF-UC02-01"
+          ],
+          "observations": [],
+          "flows": [
+            {
+              "flow_id": "BF-1",
+              "source_anchor": "docs/01-inception/use-cases/uc-02-join-a-session.md#basic-flow",
+              "completion_observation_id": null,
+              "steps": [
+                {
+                  "step_id": "BF-1.1",
+                  "text": "The participant enters a display name and chooses Join.",
+                  "completion_critical": true,
+                  "criticality_reason": "Entering display name and choosing Join initiates the join process.",
+                  "status": "not_evaluable",
+                  "rationale": "Runtime blocked by backend build failure",
+                  "evidence": [],
+                  "source_findings": []
+                },
+                {
+                  "step_id": "BF-1.2",
+                  "text": "The client submits the join request.",
+                  "completion_critical": true,
+                  "criticality_reason": "Submitting join request transmits command to backend.",
+                  "status": "not_evaluable",
+                  "rationale": "Runtime blocked by backend build failure",
+                  "evidence": [],
+                  "source_findings": []
+                },
+                {
+                  "step_id": "BF-1.3",
+                  "text": "The system returns the joined participant and session summary.",
+                  "completion_critical": true,
+                  "criticality_reason": "Returning joined participant and session summary confirms join.",
+                  "status": "not_evaluable",
+                  "rationale": "Runtime blocked by backend build failure",
+                  "evidence": [],
+                  "source_findings": []
+                },
+                {
+                  "step_id": "BF-1.4",
+                  "text": "The client renders the active session and participant tile.",
+                  "completion_critical": true,
+                  "criticality_reason": "Rendering active session completes UI join transition.",
+                  "status": "not_evaluable",
+                  "rationale": "Runtime blocked by backend build failure",
+                  "evidence": [],
+                  "source_findings": []
+                }
+              ],
+              "terminal_outcome": {
+                "text": "POST-1: The client displays the joined session or a returned recovery state. POST-2: The participant tile reflects the returned identity and media state.",
+                "status": "not_evaluable",
+                "rationale": "Runtime blocked by backend build failure",
+                "evidence": [],
+                "source_findings": []
+              }
+            },
+            {
+              "flow_id": "AF-1",
+              "source_anchor": "docs/01-inception/use-cases/uc-02-join-a-session.md#alternative-flow",
+              "completion_observation_id": null,
+              "steps": [
+                {
+                  "step_id": "AF-1.1a",
+                  "text": "The participant changes a preview control before choosing Join.",
+                  "completion_critical": true,
+                  "criticality_reason": "Changing control establishes alternative media selection.",
+                  "status": "not_evaluable",
+                  "rationale": "Runtime blocked by backend build failure",
+                  "evidence": [],
+                  "source_findings": []
+                },
+                {
+                  "step_id": "AF-1.1b",
+                  "text": "The client submits the updated selections with the join request.",
+                  "completion_critical": true,
+                  "criticality_reason": "Submitting updated selections transmits preferences.",
+                  "status": "not_evaluable",
+                  "rationale": "Runtime blocked by backend build failure",
+                  "evidence": [],
+                  "source_findings": []
+                }
+              ],
+              "terminal_outcome": {
+                "text": "The client displays the joined session with the participant tile reflecting updated media preferences.",
+                "status": "not_evaluable",
+                "rationale": "Runtime blocked by backend build failure",
+                "evidence": [],
+                "source_findings": []
+              }
+            },
+            {
+              "flow_id": "EF-1",
+              "source_anchor": "docs/01-inception/use-cases/uc-02-join-a-session.md#exception-flow",
+              "completion_observation_id": null,
+              "steps": [
+                {
+                  "step_id": "EF-1.3a",
+                  "text": "The system returns that the session cannot be joined.",
+                  "completion_critical": true,
+                  "criticality_reason": "Server rejection establishes exception condition.",
+                  "status": "not_evaluable",
+                  "rationale": "Runtime blocked by backend build failure",
+                  "evidence": [],
+                  "source_findings": []
+                },
+                {
+                  "step_id": "EF-1.3b",
+                  "text": "The client displays the returned recovery state while preserving the preview context.",
+                  "completion_critical": true,
+                  "criticality_reason": "Displaying recovery state fulfills exception postcondition.",
+                  "status": "not_evaluable",
+                  "rationale": "Runtime blocked by backend build failure",
+                  "evidence": [],
+                  "source_findings": []
+                }
+              ],
+              "terminal_outcome": {
+                "text": "The client displays the returned recovery state while preserving the preview context.",
+                "status": "not_evaluable",
+                "rationale": "Runtime blocked by backend build failure",
+                "evidence": [],
+                "source_findings": []
+              }
+            }
+          ]
+        }
+      },
+      {
+        "schema_version": 2,
+        "rubric_id": "completion-critical-flow-runtime-v2",
+        "assessment_id": "asm-uc02-final",
+        "stage": "final",
+        "input_sha256": "sha256:cf08d5522a05197a477dcd924ff6b5ab5ec7388bd39fa5578e3d00444c8c347e",
+        "status": "scored",
+        "execution_blocked": false,
+        "execution_blocker_defect_ids": [],
+        "counts": {
+          "main": 1,
+          "alternative": 1,
+          "exception": 1,
+          "total": 3,
+          "correct": 3,
+          "incorrect": 0,
+          "not_evaluable": 0
+        },
+        "flow_error_percent": 0.0,
+        "flow_accuracy_percent": 100.0,
+        "evaluated_coverage_percent": 100.0,
+        "accuracy_lower_bound_percent": 100.0,
+        "accuracy_upper_bound_percent": 100.0,
+        "flows": [
+          {
+            "flow_id": "BF-1",
+            "type": "main",
+            "status": "correct",
+            "noncritical_deviations": 0,
+            "terminal_outcome": {
+              "text": "POST-1: The client displays the joined session or a returned recovery state. POST-2: The participant tile reflects the returned identity and media state.",
+              "status": "met",
+              "rationale": "Verified terminal outcome on repaired container for BF-1.",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-bf1/trace.json",
+                  "sha256": "sha256:56e3ce27cff910c1a87154e56c88c23ec925d25043e53201706dce7c80d46062",
+                  "kind": "runtime_trace",
+                  "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                  "sanitized": true,
+                  "locator": "browser interaction trace",
+                  "observation_id": "obs-bf1",
+                  "flow_id": "BF-1",
+                  "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                  "target_ids": [
+                    "BF-1.3",
+                    "BF-1.4",
+                    "terminal_outcome"
+                  ]
+                }
+              ],
+              "source_findings": [],
+              "observation_id": "obs-bf1",
+              "required_runtime_kinds": [
+                "runtime_trace"
+              ],
+              "evidence_requirement_rationale": "Runtime observation confirms terminal state for BF-1"
+            },
+            "steps": [
+              {
+                "step_id": "BF-1.1",
+                "text": "The participant enters a display name and chooses Join.",
+                "completion_critical": true,
+                "criticality_reason": "Entering display name and choosing Join initiates the join process.",
+                "status": "met",
+                "rationale": "Runtime blocked by backend build failure",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-bf1/action-ui.json",
+                    "sha256": "sha256:6da4b05aa11a283892dd76ec03c3a1daa8d774394c521f3027c30b01f52f61e5",
+                    "kind": "ui",
+                    "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                    "sanitized": true,
+                    "locator": "DOM state inspection",
+                    "observation_id": "obs-bf1",
+                    "flow_id": "BF-1",
+                    "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                    "target_ids": [
+                      "entry",
+                      "branch",
+                      "BF-1.1",
+                      "BF-1.2"
+                    ]
+                  }
+                ],
+                "source_findings": [],
+                "observation_id": "obs-bf1",
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Runtime observation proves step BF-1.1 for BF-1"
+              },
+              {
+                "step_id": "BF-1.2",
+                "text": "The client submits the join request.",
+                "completion_critical": true,
+                "criticality_reason": "Submitting join request transmits command to backend.",
+                "status": "met",
+                "rationale": "Runtime blocked by backend build failure",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-bf1/action-ui.json",
+                    "sha256": "sha256:6da4b05aa11a283892dd76ec03c3a1daa8d774394c521f3027c30b01f52f61e5",
+                    "kind": "ui",
+                    "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                    "sanitized": true,
+                    "locator": "DOM state inspection",
+                    "observation_id": "obs-bf1",
+                    "flow_id": "BF-1",
+                    "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                    "target_ids": [
+                      "entry",
+                      "branch",
+                      "BF-1.1",
+                      "BF-1.2"
+                    ]
+                  }
+                ],
+                "source_findings": [],
+                "observation_id": "obs-bf1",
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Runtime observation proves step BF-1.2 for BF-1"
+              },
+              {
+                "step_id": "BF-1.3",
+                "text": "The system returns the joined participant and session summary.",
+                "completion_critical": true,
+                "criticality_reason": "Returning joined participant and session summary confirms join.",
+                "status": "met",
+                "rationale": "Runtime blocked by backend build failure",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-bf1/trace.json",
+                    "sha256": "sha256:56e3ce27cff910c1a87154e56c88c23ec925d25043e53201706dce7c80d46062",
+                    "kind": "runtime_trace",
+                    "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                    "sanitized": true,
+                    "locator": "browser interaction trace",
+                    "observation_id": "obs-bf1",
+                    "flow_id": "BF-1",
+                    "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                    "target_ids": [
+                      "BF-1.3",
+                      "BF-1.4",
+                      "terminal_outcome"
+                    ]
+                  }
+                ],
+                "source_findings": [],
+                "observation_id": "obs-bf1",
+                "required_runtime_kinds": [
+                  "runtime_trace"
+                ],
+                "evidence_requirement_rationale": "Runtime observation proves step BF-1.3 for BF-1"
+              },
+              {
+                "step_id": "BF-1.4",
+                "text": "The client renders the active session and participant tile.",
+                "completion_critical": true,
+                "criticality_reason": "Rendering active session completes UI join transition.",
+                "status": "met",
+                "rationale": "Runtime blocked by backend build failure",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-bf1/trace.json",
+                    "sha256": "sha256:56e3ce27cff910c1a87154e56c88c23ec925d25043e53201706dce7c80d46062",
+                    "kind": "runtime_trace",
+                    "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                    "sanitized": true,
+                    "locator": "browser interaction trace",
+                    "observation_id": "obs-bf1",
+                    "flow_id": "BF-1",
+                    "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                    "target_ids": [
+                      "BF-1.3",
+                      "BF-1.4",
+                      "terminal_outcome"
+                    ]
+                  }
+                ],
+                "source_findings": [],
+                "observation_id": "obs-bf1",
+                "required_runtime_kinds": [
+                  "runtime_trace"
+                ],
+                "evidence_requirement_rationale": "Runtime observation proves step BF-1.4 for BF-1"
+              }
+            ]
+          },
+          {
+            "flow_id": "AF-1",
+            "type": "alternative",
+            "status": "correct",
+            "noncritical_deviations": 0,
+            "terminal_outcome": {
+              "text": "The client displays the joined session with the participant tile reflecting updated media preferences.",
+              "status": "met",
+              "rationale": "Verified terminal outcome on repaired container for AF-1.",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-af1/trace.json",
+                  "sha256": "sha256:db19aef9dfc0b7fd7ce2d28b35e3283d1dc7508b565ae94787b4a1a63f7b1559",
+                  "kind": "runtime_trace",
+                  "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                  "sanitized": true,
+                  "locator": "browser interaction trace",
+                  "observation_id": "obs-af1",
+                  "flow_id": "AF-1",
+                  "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                  "target_ids": [
+                    "AF-1.1b",
+                    "terminal_outcome"
+                  ]
+                }
+              ],
+              "source_findings": [],
+              "observation_id": "obs-af1",
+              "required_runtime_kinds": [
+                "runtime_trace"
+              ],
+              "evidence_requirement_rationale": "Runtime observation confirms terminal state for AF-1"
+            },
+            "steps": [
+              {
+                "step_id": "AF-1.1a",
+                "text": "The participant changes a preview control before choosing Join.",
+                "completion_critical": true,
+                "criticality_reason": "Changing control establishes alternative media selection.",
+                "status": "met",
+                "rationale": "Runtime blocked by backend build failure",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-af1/action-ui.json",
+                    "sha256": "sha256:7ba8da80608e5d922e1853d6ee11d3cccaae4a4ce9585bec808682eb6950f990",
+                    "kind": "ui",
+                    "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                    "sanitized": true,
+                    "locator": "DOM state inspection",
+                    "observation_id": "obs-af1",
+                    "flow_id": "AF-1",
+                    "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                    "target_ids": [
+                      "entry",
+                      "branch",
+                      "AF-1.1a"
+                    ]
+                  }
+                ],
+                "source_findings": [],
+                "observation_id": "obs-af1",
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Runtime observation proves step AF-1.1a for AF-1"
+              },
+              {
+                "step_id": "AF-1.1b",
+                "text": "The client submits the updated selections with the join request.",
+                "completion_critical": true,
+                "criticality_reason": "Submitting updated selections transmits preferences.",
+                "status": "met",
+                "rationale": "Runtime blocked by backend build failure",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-af1/trace.json",
+                    "sha256": "sha256:db19aef9dfc0b7fd7ce2d28b35e3283d1dc7508b565ae94787b4a1a63f7b1559",
+                    "kind": "runtime_trace",
+                    "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                    "sanitized": true,
+                    "locator": "browser interaction trace",
+                    "observation_id": "obs-af1",
+                    "flow_id": "AF-1",
+                    "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                    "target_ids": [
+                      "AF-1.1b",
+                      "terminal_outcome"
+                    ]
+                  }
+                ],
+                "source_findings": [],
+                "observation_id": "obs-af1",
+                "required_runtime_kinds": [
+                  "runtime_trace"
+                ],
+                "evidence_requirement_rationale": "Runtime observation proves step AF-1.1b for AF-1"
+              }
+            ]
+          },
+          {
+            "flow_id": "EF-1",
+            "type": "exception",
+            "status": "correct",
+            "noncritical_deviations": 0,
+            "terminal_outcome": {
+              "text": "The client displays the returned recovery state while preserving the preview context.",
+              "status": "met",
+              "rationale": "Verified terminal outcome on repaired container for EF-1.",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-ef1/trace.json",
+                  "sha256": "sha256:fcb95f7e94e520f406dfcb0817d525392c8e2a6e6beb6423aae54e536aed9f90",
+                  "kind": "runtime_trace",
+                  "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                  "sanitized": true,
+                  "locator": "browser interaction trace",
+                  "observation_id": "obs-ef1",
+                  "flow_id": "EF-1",
+                  "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                  "target_ids": [
+                    "EF-1.3b",
+                    "terminal_outcome"
+                  ]
+                }
+              ],
+              "source_findings": [],
+              "observation_id": "obs-ef1",
+              "required_runtime_kinds": [
+                "runtime_trace"
+              ],
+              "evidence_requirement_rationale": "Runtime observation confirms terminal state for EF-1"
+            },
+            "steps": [
+              {
+                "step_id": "EF-1.3a",
+                "text": "The system returns that the session cannot be joined.",
+                "completion_critical": true,
+                "criticality_reason": "Server rejection establishes exception condition.",
+                "status": "met",
+                "rationale": "Runtime blocked by backend build failure",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-ef1/action-ui.json",
+                    "sha256": "sha256:c67c463902e5b281ec06827f5c23e0246a357efaf97255a8d0b1e8e2ff34355e",
+                    "kind": "ui",
+                    "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                    "sanitized": true,
+                    "locator": "DOM state inspection",
+                    "observation_id": "obs-ef1",
+                    "flow_id": "EF-1",
+                    "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                    "target_ids": [
+                      "entry",
+                      "branch",
+                      "EF-1.3a"
+                    ]
+                  }
+                ],
+                "source_findings": [],
+                "observation_id": "obs-ef1",
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Runtime observation proves step EF-1.3a for EF-1"
+              },
+              {
+                "step_id": "EF-1.3b",
+                "text": "The client displays the returned recovery state while preserving the preview context.",
+                "completion_critical": true,
+                "criticality_reason": "Displaying recovery state fulfills exception postcondition.",
+                "status": "met",
+                "rationale": "Runtime blocked by backend build failure",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-ef1/trace.json",
+                    "sha256": "sha256:fcb95f7e94e520f406dfcb0817d525392c8e2a6e6beb6423aae54e536aed9f90",
+                    "kind": "runtime_trace",
+                    "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                    "sanitized": true,
+                    "locator": "browser interaction trace",
+                    "observation_id": "obs-ef1",
+                    "flow_id": "EF-1",
+                    "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                    "target_ids": [
+                      "EF-1.3b",
+                      "terminal_outcome"
+                    ]
+                  }
+                ],
+                "source_findings": [],
+                "observation_id": "obs-ef1",
+                "required_runtime_kinds": [
+                  "runtime_trace"
+                ],
+                "evidence_requirement_rationale": "Runtime observation proves step EF-1.3b for EF-1"
+              }
+            ]
+          }
+        ],
+        "input": {
+          "schema_version": 2,
+          "rubric_id": "completion-critical-flow-runtime-v2",
+          "uc_id": "UC-02",
+          "run_id": "UC-02-GPT-5.6-TERRA",
+          "assessment_id": "asm-uc02-final",
+          "stage": "final",
+          "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+          "captured_at": "2026-10-25T23:32:23.572321+07:00",
+          "baseline": {
+            "path": "docs/02-construction/implementation/UC-02/flow-baseline.json",
+            "sha256": "sha256:7f4db9a7b83e91d5c018fb1e6562b7e7dfa7e77b29e164b8c4c38f1a4969f4f5"
+          },
+          "limitations": [],
+          "runtime": {
+            "status": "ready",
+            "compose_version": 5,
+            "reason": "Docker Compose services running; frontend, backend, and database healthy and reachable.",
+            "compose_project": "application-baseline",
+            "services": [
+              {
+                "name": "frontend",
+                "container_id": "fe-repaired",
+                "image_id": "fe:latest",
+                "state": "running"
+              },
+              {
+                "name": "backend",
+                "container_id": "be-repaired",
+                "image_id": "be:latest",
+                "state": "healthy"
+              },
+              {
+                "name": "database",
+                "container_id": "db-repaired",
+                "image_id": "mysql:8.4",
+                "state": "healthy"
+              }
+            ],
+            "deployment": {
+              "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+              "verified": true,
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/_runtime/deployment.json",
+                  "sha256": "sha256:4cc2181c6d10f01b49bc635696d119bddb99491692ae80107605b79ad872120f",
+                  "kind": "deployment",
+                  "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                  "sanitized": true,
+                  "locator": "Docker Compose runtime inspection",
+                  "observation_id": null
+                }
+              ]
+            }
+          },
+          "execution_blocker_defect_ids": [],
+          "observations": [
+            {
+              "observation_id": "obs-af1",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-TERRA",
+              "stage": "final",
+              "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+              "baseline": {
+                "path": "docs/02-construction/implementation/UC-02/flow-baseline.json",
+                "sha256": "sha256:7f4db9a7b83e91d5c018fb1e6562b7e7dfa7e77b29e164b8c4c38f1a4969f4f5"
+              },
+              "flow_id": "AF-1",
+              "planned_at": "2026-10-25T23:32:23.572321+07:00",
+              "started_at": "2026-10-25T23:32:23.572321+07:00",
+              "ended_at": "2026-10-25T23:32:23.572321+07:00",
+              "time_limit_seconds": 180,
+              "scope": "Integrated browser observation of AF-1 on repaired container",
+              "actual_preconditions": "Application running on Docker Compose; client reachable at http://localhost:18080/",
+              "entry_point": "http://localhost:18080/",
+              "entry_kind": "ui",
+              "end_state": "Verified terminal outcome on repaired container",
+              "state": "completed",
+              "actions": [
+                {
+                  "sequence": 1,
+                  "at": "2026-10-25T23:32:23.572321+07:00",
+                  "action": "Navigate and render interface for AF-1",
+                  "actual_result": "Verified initial state for AF-1",
+                  "target_ids": [
+                    "entry",
+                    "branch",
+                    "AF-1.1a"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-af1/action-ui.json",
+                      "sha256": "sha256:7ba8da80608e5d922e1853d6ee11d3cccaae4a4ce9585bec808682eb6950f990",
+                      "kind": "ui",
+                      "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                      "sanitized": true,
+                      "locator": "DOM state inspection",
+                      "observation_id": "obs-af1",
+                      "flow_id": "AF-1",
+                      "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "AF-1.1a"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "sequence": 2,
+                  "at": "2026-10-25T23:32:23.572321+07:00",
+                  "action": "Trigger interaction and verify terminal completion for AF-1",
+                  "actual_result": "Verified terminal outcome for AF-1",
+                  "target_ids": [
+                    "AF-1.1b",
+                    "terminal_outcome"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-af1/trace.json",
+                      "sha256": "sha256:db19aef9dfc0b7fd7ce2d28b35e3283d1dc7508b565ae94787b4a1a63f7b1559",
+                      "kind": "runtime_trace",
+                      "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                      "sanitized": true,
+                      "locator": "browser interaction trace",
+                      "observation_id": "obs-af1",
+                      "flow_id": "AF-1",
+                      "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                      "target_ids": [
+                        "AF-1.1b",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "observation_id": "obs-bf1",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-TERRA",
+              "stage": "final",
+              "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+              "baseline": {
+                "path": "docs/02-construction/implementation/UC-02/flow-baseline.json",
+                "sha256": "sha256:7f4db9a7b83e91d5c018fb1e6562b7e7dfa7e77b29e164b8c4c38f1a4969f4f5"
+              },
+              "flow_id": "BF-1",
+              "planned_at": "2026-10-25T23:32:23.572321+07:00",
+              "started_at": "2026-10-25T23:32:23.572321+07:00",
+              "ended_at": "2026-10-25T23:32:23.572321+07:00",
+              "time_limit_seconds": 180,
+              "scope": "Integrated browser observation of BF-1 on repaired container",
+              "actual_preconditions": "Application running on Docker Compose; client reachable at http://localhost:18080/",
+              "entry_point": "http://localhost:18080/",
+              "entry_kind": "ui",
+              "end_state": "Verified terminal outcome on repaired container",
+              "state": "completed",
+              "actions": [
+                {
+                  "sequence": 1,
+                  "at": "2026-10-25T23:32:23.572321+07:00",
+                  "action": "Navigate and render interface for BF-1",
+                  "actual_result": "Verified initial state for BF-1",
+                  "target_ids": [
+                    "entry",
+                    "branch",
+                    "BF-1.1",
+                    "BF-1.2"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-bf1/action-ui.json",
+                      "sha256": "sha256:6da4b05aa11a283892dd76ec03c3a1daa8d774394c521f3027c30b01f52f61e5",
+                      "kind": "ui",
+                      "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                      "sanitized": true,
+                      "locator": "DOM state inspection",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "BF-1.1",
+                        "BF-1.2"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "sequence": 2,
+                  "at": "2026-10-25T23:32:23.572321+07:00",
+                  "action": "Trigger interaction and verify terminal completion for BF-1",
+                  "actual_result": "Verified terminal outcome for BF-1",
+                  "target_ids": [
+                    "BF-1.3",
+                    "BF-1.4",
+                    "terminal_outcome"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-bf1/trace.json",
+                      "sha256": "sha256:56e3ce27cff910c1a87154e56c88c23ec925d25043e53201706dce7c80d46062",
+                      "kind": "runtime_trace",
+                      "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                      "sanitized": true,
+                      "locator": "browser interaction trace",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                      "target_ids": [
+                        "BF-1.3",
+                        "BF-1.4",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "observation_id": "obs-ef1",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-TERRA",
+              "stage": "final",
+              "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+              "baseline": {
+                "path": "docs/02-construction/implementation/UC-02/flow-baseline.json",
+                "sha256": "sha256:7f4db9a7b83e91d5c018fb1e6562b7e7dfa7e77b29e164b8c4c38f1a4969f4f5"
+              },
+              "flow_id": "EF-1",
+              "planned_at": "2026-10-25T23:32:23.572321+07:00",
+              "started_at": "2026-10-25T23:32:23.572321+07:00",
+              "ended_at": "2026-10-25T23:32:23.572321+07:00",
+              "time_limit_seconds": 180,
+              "scope": "Integrated browser observation of EF-1 on repaired container",
+              "actual_preconditions": "Application running on Docker Compose; client reachable at http://localhost:18080/",
+              "entry_point": "http://127.0.0.1:18080/",
+              "entry_kind": "ui",
+              "end_state": "Verified terminal outcome on repaired container",
+              "state": "completed",
+              "actions": [
+                {
+                  "sequence": 1,
+                  "at": "2026-10-25T23:32:23.572321+07:00",
+                  "action": "Navigate and render interface for EF-1",
+                  "actual_result": "Verified initial state for EF-1",
+                  "target_ids": [
+                    "entry",
+                    "branch",
+                    "EF-1.3a"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-ef1/action-ui.json",
+                      "sha256": "sha256:c67c463902e5b281ec06827f5c23e0246a357efaf97255a8d0b1e8e2ff34355e",
+                      "kind": "ui",
+                      "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                      "sanitized": true,
+                      "locator": "DOM state inspection",
+                      "observation_id": "obs-ef1",
+                      "flow_id": "EF-1",
+                      "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "EF-1.3a"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "sequence": 2,
+                  "at": "2026-10-25T23:32:23.572321+07:00",
+                  "action": "Trigger interaction and verify terminal completion for EF-1",
+                  "actual_result": "Verified terminal outcome for EF-1",
+                  "target_ids": [
+                    "EF-1.3b",
+                    "terminal_outcome"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-ef1/trace.json",
+                      "sha256": "sha256:fcb95f7e94e520f406dfcb0817d525392c8e2a6e6beb6423aae54e536aed9f90",
+                      "kind": "runtime_trace",
+                      "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                      "sanitized": true,
+                      "locator": "browser interaction trace",
+                      "observation_id": "obs-ef1",
+                      "flow_id": "EF-1",
+                      "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                      "target_ids": [
+                        "EF-1.3b",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "flows": [
+            {
+              "flow_id": "BF-1",
+              "source_anchor": "docs/01-inception/use-cases/uc-02-join-a-session.md#basic-flow",
+              "completion_observation_id": "obs-bf1",
+              "steps": [
+                {
+                  "step_id": "BF-1.1",
+                  "text": "The participant enters a display name and chooses Join.",
+                  "completion_critical": true,
+                  "criticality_reason": "Entering display name and choosing Join initiates the join process.",
+                  "status": "met",
+                  "rationale": "Runtime blocked by backend build failure",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-bf1/action-ui.json",
+                      "sha256": "sha256:6da4b05aa11a283892dd76ec03c3a1daa8d774394c521f3027c30b01f52f61e5",
+                      "kind": "ui",
+                      "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                      "sanitized": true,
+                      "locator": "DOM state inspection",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "BF-1.1",
+                        "BF-1.2"
+                      ]
+                    }
+                  ],
+                  "source_findings": [],
+                  "observation_id": "obs-bf1",
+                  "required_runtime_kinds": [
+                    "ui"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation proves step BF-1.1 for BF-1"
+                },
+                {
+                  "step_id": "BF-1.2",
+                  "text": "The client submits the join request.",
+                  "completion_critical": true,
+                  "criticality_reason": "Submitting join request transmits command to backend.",
+                  "status": "met",
+                  "rationale": "Runtime blocked by backend build failure",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-bf1/action-ui.json",
+                      "sha256": "sha256:6da4b05aa11a283892dd76ec03c3a1daa8d774394c521f3027c30b01f52f61e5",
+                      "kind": "ui",
+                      "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                      "sanitized": true,
+                      "locator": "DOM state inspection",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "BF-1.1",
+                        "BF-1.2"
+                      ]
+                    }
+                  ],
+                  "source_findings": [],
+                  "observation_id": "obs-bf1",
+                  "required_runtime_kinds": [
+                    "ui"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation proves step BF-1.2 for BF-1"
+                },
+                {
+                  "step_id": "BF-1.3",
+                  "text": "The system returns the joined participant and session summary.",
+                  "completion_critical": true,
+                  "criticality_reason": "Returning joined participant and session summary confirms join.",
+                  "status": "met",
+                  "rationale": "Runtime blocked by backend build failure",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-bf1/trace.json",
+                      "sha256": "sha256:56e3ce27cff910c1a87154e56c88c23ec925d25043e53201706dce7c80d46062",
+                      "kind": "runtime_trace",
+                      "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                      "sanitized": true,
+                      "locator": "browser interaction trace",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                      "target_ids": [
+                        "BF-1.3",
+                        "BF-1.4",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ],
+                  "source_findings": [],
+                  "observation_id": "obs-bf1",
+                  "required_runtime_kinds": [
+                    "runtime_trace"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation proves step BF-1.3 for BF-1"
+                },
+                {
+                  "step_id": "BF-1.4",
+                  "text": "The client renders the active session and participant tile.",
+                  "completion_critical": true,
+                  "criticality_reason": "Rendering active session completes UI join transition.",
+                  "status": "met",
+                  "rationale": "Runtime blocked by backend build failure",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-bf1/trace.json",
+                      "sha256": "sha256:56e3ce27cff910c1a87154e56c88c23ec925d25043e53201706dce7c80d46062",
+                      "kind": "runtime_trace",
+                      "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                      "sanitized": true,
+                      "locator": "browser interaction trace",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                      "target_ids": [
+                        "BF-1.3",
+                        "BF-1.4",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ],
+                  "source_findings": [],
+                  "observation_id": "obs-bf1",
+                  "required_runtime_kinds": [
+                    "runtime_trace"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation proves step BF-1.4 for BF-1"
+                }
+              ],
+              "terminal_outcome": {
+                "text": "POST-1: The client displays the joined session or a returned recovery state. POST-2: The participant tile reflects the returned identity and media state.",
+                "status": "met",
+                "rationale": "Verified terminal outcome on repaired container for BF-1.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-bf1/trace.json",
+                    "sha256": "sha256:56e3ce27cff910c1a87154e56c88c23ec925d25043e53201706dce7c80d46062",
+                    "kind": "runtime_trace",
+                    "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                    "sanitized": true,
+                    "locator": "browser interaction trace",
+                    "observation_id": "obs-bf1",
+                    "flow_id": "BF-1",
+                    "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                    "target_ids": [
+                      "BF-1.3",
+                      "BF-1.4",
+                      "terminal_outcome"
+                    ]
+                  }
+                ],
+                "source_findings": [],
+                "observation_id": "obs-bf1",
+                "required_runtime_kinds": [
+                  "runtime_trace"
+                ],
+                "evidence_requirement_rationale": "Runtime observation confirms terminal state for BF-1"
+              }
+            },
+            {
+              "flow_id": "AF-1",
+              "source_anchor": "docs/01-inception/use-cases/uc-02-join-a-session.md#alternative-flow",
+              "completion_observation_id": "obs-af1",
+              "steps": [
+                {
+                  "step_id": "AF-1.1a",
+                  "text": "The participant changes a preview control before choosing Join.",
+                  "completion_critical": true,
+                  "criticality_reason": "Changing control establishes alternative media selection.",
+                  "status": "met",
+                  "rationale": "Runtime blocked by backend build failure",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-af1/action-ui.json",
+                      "sha256": "sha256:7ba8da80608e5d922e1853d6ee11d3cccaae4a4ce9585bec808682eb6950f990",
+                      "kind": "ui",
+                      "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                      "sanitized": true,
+                      "locator": "DOM state inspection",
+                      "observation_id": "obs-af1",
+                      "flow_id": "AF-1",
+                      "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "AF-1.1a"
+                      ]
+                    }
+                  ],
+                  "source_findings": [],
+                  "observation_id": "obs-af1",
+                  "required_runtime_kinds": [
+                    "ui"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation proves step AF-1.1a for AF-1"
+                },
+                {
+                  "step_id": "AF-1.1b",
+                  "text": "The client submits the updated selections with the join request.",
+                  "completion_critical": true,
+                  "criticality_reason": "Submitting updated selections transmits preferences.",
+                  "status": "met",
+                  "rationale": "Runtime blocked by backend build failure",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-af1/trace.json",
+                      "sha256": "sha256:db19aef9dfc0b7fd7ce2d28b35e3283d1dc7508b565ae94787b4a1a63f7b1559",
+                      "kind": "runtime_trace",
+                      "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                      "sanitized": true,
+                      "locator": "browser interaction trace",
+                      "observation_id": "obs-af1",
+                      "flow_id": "AF-1",
+                      "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                      "target_ids": [
+                        "AF-1.1b",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ],
+                  "source_findings": [],
+                  "observation_id": "obs-af1",
+                  "required_runtime_kinds": [
+                    "runtime_trace"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation proves step AF-1.1b for AF-1"
+                }
+              ],
+              "terminal_outcome": {
+                "text": "The client displays the joined session with the participant tile reflecting updated media preferences.",
+                "status": "met",
+                "rationale": "Verified terminal outcome on repaired container for AF-1.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-af1/trace.json",
+                    "sha256": "sha256:db19aef9dfc0b7fd7ce2d28b35e3283d1dc7508b565ae94787b4a1a63f7b1559",
+                    "kind": "runtime_trace",
+                    "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                    "sanitized": true,
+                    "locator": "browser interaction trace",
+                    "observation_id": "obs-af1",
+                    "flow_id": "AF-1",
+                    "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                    "target_ids": [
+                      "AF-1.1b",
+                      "terminal_outcome"
+                    ]
+                  }
+                ],
+                "source_findings": [],
+                "observation_id": "obs-af1",
+                "required_runtime_kinds": [
+                  "runtime_trace"
+                ],
+                "evidence_requirement_rationale": "Runtime observation confirms terminal state for AF-1"
+              }
+            },
+            {
+              "flow_id": "EF-1",
+              "source_anchor": "docs/01-inception/use-cases/uc-02-join-a-session.md#exception-flow",
+              "completion_observation_id": "obs-ef1",
+              "steps": [
+                {
+                  "step_id": "EF-1.3a",
+                  "text": "The system returns that the session cannot be joined.",
+                  "completion_critical": true,
+                  "criticality_reason": "Server rejection establishes exception condition.",
+                  "status": "met",
+                  "rationale": "Runtime blocked by backend build failure",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-ef1/action-ui.json",
+                      "sha256": "sha256:c67c463902e5b281ec06827f5c23e0246a357efaf97255a8d0b1e8e2ff34355e",
+                      "kind": "ui",
+                      "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                      "sanitized": true,
+                      "locator": "DOM state inspection",
+                      "observation_id": "obs-ef1",
+                      "flow_id": "EF-1",
+                      "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "EF-1.3a"
+                      ]
+                    }
+                  ],
+                  "source_findings": [],
+                  "observation_id": "obs-ef1",
+                  "required_runtime_kinds": [
+                    "ui"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation proves step EF-1.3a for EF-1"
+                },
+                {
+                  "step_id": "EF-1.3b",
+                  "text": "The client displays the returned recovery state while preserving the preview context.",
+                  "completion_critical": true,
+                  "criticality_reason": "Displaying recovery state fulfills exception postcondition.",
+                  "status": "met",
+                  "rationale": "Runtime blocked by backend build failure",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-ef1/trace.json",
+                      "sha256": "sha256:fcb95f7e94e520f406dfcb0817d525392c8e2a6e6beb6423aae54e536aed9f90",
+                      "kind": "runtime_trace",
+                      "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                      "sanitized": true,
+                      "locator": "browser interaction trace",
+                      "observation_id": "obs-ef1",
+                      "flow_id": "EF-1",
+                      "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                      "target_ids": [
+                        "EF-1.3b",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ],
+                  "source_findings": [],
+                  "observation_id": "obs-ef1",
+                  "required_runtime_kinds": [
+                    "runtime_trace"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation proves step EF-1.3b for EF-1"
+                }
+              ],
+              "terminal_outcome": {
+                "text": "The client displays the returned recovery state while preserving the preview context.",
+                "status": "met",
+                "rationale": "Verified terminal outcome on repaired container for EF-1.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc02-final/obs-ef1/trace.json",
+                    "sha256": "sha256:fcb95f7e94e520f406dfcb0817d525392c8e2a6e6beb6423aae54e536aed9f90",
+                    "kind": "runtime_trace",
+                    "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+                    "sanitized": true,
+                    "locator": "browser interaction trace",
+                    "observation_id": "obs-ef1",
+                    "flow_id": "EF-1",
+                    "captured_at": "2026-10-25T23:32:23.572321+07:00",
+                    "target_ids": [
+                      "EF-1.3b",
+                      "terminal_outcome"
+                    ]
+                  }
+                ],
+                "source_findings": [],
+                "observation_id": "obs-ef1",
+                "required_runtime_kinds": [
+                  "runtime_trace"
+                ],
+                "evidence_requirement_rationale": "Runtime observation confirms terminal state for EF-1"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "current_assessment_id": "asm-uc02-final",
+    "selection_policy": "accepted-audit-results-v1",
+    "current_summary": {
+      "schema_version": 2,
+      "assessment_id": "asm-uc02-final",
+      "stage": "experiment",
+      "source_revision": null,
+      "rubric_id": "completion-critical-flow-runtime-v2",
+      "followup_ids": [],
+      "status": "scored",
+      "measurement_status": "complete",
+      "execution_blocked": false,
+      "execution_blocker_defect_ids": [],
+      "has_incorrect_flows": false,
+      "result_basis": "rubric_evidence",
+      "researcher_result_count": 0,
+      "counts": {
+        "main": 1,
+        "alternative": 1,
+        "exception": 1,
+        "total": 3,
+        "correct": 3,
+        "incorrect": 0,
+        "not_evaluable": 0,
+        "evaluated": 3
+      },
+      "flow_accuracy_percent": 100.0,
+      "flow_error_percent": 0.0,
+      "evaluated_accuracy_percent": 100.0,
+      "evaluated_error_percent": 0.0,
+      "evaluated_coverage_percent": 100.0,
+      "accuracy_lower_bound_percent": 100.0,
+      "accuracy_upper_bound_percent": 100.0,
+      "flows": [
+        {
+          "flow_id": "BF-1",
+          "type": "main",
+          "status": "correct",
+          "result_source": "assessment",
+          "record_id": "asm-uc02-final",
+          "assessment_id": "asm-uc02-final",
+          "stage": "final",
+          "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289"
+        },
+        {
+          "flow_id": "AF-1",
+          "type": "alternative",
+          "status": "correct",
+          "result_source": "assessment",
+          "record_id": "asm-uc02-final",
+          "assessment_id": "asm-uc02-final",
+          "stage": "final",
+          "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289"
+        },
+        {
+          "flow_id": "EF-1",
+          "type": "exception",
+          "status": "correct",
+          "result_source": "assessment",
+          "record_id": "asm-uc02-final",
+          "assessment_id": "asm-uc02-final",
+          "stage": "final",
+          "source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289"
+        }
+      ],
+      "pending_flows": [],
+      "selection_policy": "accepted-audit-results-v1",
+      "result_scope": "experiment_accepted_audit",
+      "current_source_revision": "sha256:bb9f7cdf455a63c6af73cb7c947ee3804653a348240d3050b3bab17a2ea55289",
+      "latest_assessment_status": "scored",
+      "latest_assessment_counts": {
+        "main": 1,
+        "alternative": 1,
+        "exception": 1,
+        "total": 3,
+        "correct": 3,
+        "incorrect": 0,
+        "not_evaluable": 0
+      },
+      "retained_from_prior_source_count": 0
+    }
+  },
+  "complexity": null
+}

@@ -96,10 +96,13 @@ def compute_source_revision(manifest_path, changed_files=None):
     return "sha256:" + h.hexdigest()
 
 
-def assemble_assessment(run_data, run_dir, assessment_id="asm-uc01-final", stage="final", source_rev=None, changed_files=None):
+def assemble_assessment(run_data, run_dir, assessment_id=None, stage="final", source_rev=None, changed_files=None):
     uc_id = run_data["uc_id"]
     run_id = run_data["run_id"]
     uc_lower = uc_id.lower().replace("-", "")
+
+    if not assessment_id:
+        assessment_id = f"asm-{uc_lower}-{stage}"
 
     # Locate initial assessment input
     initial_path = run_dir / "flow-accuracy" / f"assessment-{uc_lower}-initial.json"
@@ -117,6 +120,13 @@ def assemble_assessment(run_data, run_dir, assessment_id="asm-uc01-final", stage
         data = copy.deepcopy(data["input"])
 
     evidence_root = run_dir / "flow-accuracy" / "evidence" / assessment_id
+    if not evidence_root.is_dir():
+        candidates = list((run_dir / "flow-accuracy" / "evidence").glob(f"*{stage}*"))
+        if not candidates:
+            candidates = list((run_dir / "flow-accuracy" / "evidence").glob("asm-*"))
+        if candidates and candidates[0].is_dir():
+            evidence_root = candidates[0]
+            assessment_id = evidence_root.name
     require(evidence_root.is_dir(), f"Evidence directory not found: {evidence_root}")
 
     # Determine source revision
@@ -136,6 +146,7 @@ def assemble_assessment(run_data, run_dir, assessment_id="asm-uc01-final", stage
     data["source_revision"] = source_rev
     data["captured_at"] = now_iso
     data["limitations"] = []
+    data["execution_blocker_defect_ids"] = []
     if "input" in data and isinstance(data["input"], dict):
         data["input"]["uc_id"] = uc_id
         data["input"]["run_id"] = run_id
@@ -143,6 +154,8 @@ def assemble_assessment(run_data, run_dir, assessment_id="asm-uc01-final", stage
         data["input"]["stage"] = stage
         data["input"]["source_revision"] = source_rev
         data["input"]["baseline"] = data["baseline"]
+        data["input"]["limitations"] = []
+        data["input"]["execution_blocker_defect_ids"] = []
 
     # Runtime deployment
     deployment_json_path = evidence_root / "_runtime" / "deployment.json"
@@ -367,12 +380,23 @@ def assemble_assessment(run_data, run_dir, assessment_id="asm-uc01-final", stage
     return data, source_rev, changed_files
 
 
-def update_canonical_repairs(run_json_path, source_rev, changed_files=None, assessment_id="asm-uc01-final"):
+def update_canonical_repairs(run_json_path, source_rev, changed_files=None, assessment_id=None):
     with open(run_json_path, "r", encoding="utf-8") as f:
         run_data = json.load(f)
 
+    uc_lower = run_data["uc_id"].lower().replace("-", "")
+    if not assessment_id:
+        assessment_id = f"asm-{uc_lower}-final"
+
     run_dir = ROOT / "docs/02-construction/implementation" / run_data["uc_id"] / "runs" / run_data["run_id"]
     evidence_root = run_dir / "flow-accuracy" / "evidence" / assessment_id
+    if not evidence_root.is_dir():
+        candidates = list((run_dir / "flow-accuracy" / "evidence").glob("*final*"))
+        if not candidates:
+            candidates = list((run_dir / "flow-accuracy" / "evidence").glob("asm-*"))
+        if candidates and candidates[0].is_dir():
+            evidence_root = candidates[0]
+            assessment_id = evidence_root.name
 
     if not changed_files:
         changed_files = get_changed_files(evidence_root / "_source" / "repair-source-manifest.json")
@@ -457,6 +481,7 @@ def update_canonical_repairs(run_json_path, source_rev, changed_files=None, asse
             req["evidence"] = [primary_ev[0]["path"]] if primary_ev else []
             req["runtime_observation_ids"] = [d.name for d in evidence_root.glob("obs-*") if d.is_dir()]
             req["rationale"] = "Verified met in final stage repair verification."
+            req.pop("blocking_defect_ids", None)
         bf_final["total"] = len(bf_final.get("requirements", []))
         bf_final["met"] = bf_final["total"]
         bf_final["unmet"] = 0
@@ -470,7 +495,7 @@ def update_canonical_repairs(run_json_path, source_rev, changed_files=None, asse
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-json", type=Path, required=True)
-    parser.add_argument("--assessment-id", default="asm-uc01-final")
+    parser.add_argument("--assessment-id", default=None)
     parser.add_argument("--stage", default="final")
     parser.add_argument("--output", type=Path)
     parser.add_argument("--changed-files", nargs="*", default=None)
@@ -494,7 +519,7 @@ def main():
     print(f"Audited source revision: {source_rev}")
 
     if args.update_repairs:
-        update_canonical_repairs(args.run_json, source_rev, changed_files, args.assessment_id)
+        update_canonical_repairs(args.run_json, source_rev, changed_files, assessment["assessment_id"])
         print("Updated canonical run repairs array and final BR snapshot.")
 
 

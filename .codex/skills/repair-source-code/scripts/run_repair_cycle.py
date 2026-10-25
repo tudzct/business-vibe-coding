@@ -46,7 +46,7 @@ def dump_dom(url, deny_permissions=False):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-json", type=Path, required=True)
-    parser.add_argument("--assessment-id", default="asm-uc01-final")
+    parser.add_argument("--assessment-id", default=None)
     parser.add_argument("--port", type=int, default=8086)
     args = parser.parse_args()
 
@@ -56,8 +56,10 @@ def main():
 
     uc_id = run_data["uc_id"]
     run_id = run_data["run_id"]
+    uc_lower = uc_id.lower().replace("-", "")
+    assessment_id = args.assessment_id or f"asm-{uc_lower}-final"
     run_dir = ROOT / "docs/02-construction/implementation" / uc_id / "runs" / run_id
-    evidence_root = run_dir / "flow-accuracy" / "evidence" / args.assessment_id
+    evidence_root = run_dir / "flow-accuracy" / "evidence" / assessment_id
     evidence_root.mkdir(parents=True, exist_ok=True)
 
     now_iso = datetime.now(timezone.utc).astimezone().isoformat()
@@ -123,7 +125,8 @@ def main():
     source_dir.mkdir(parents=True, exist_ok=True)
     changed_candidates = [
         "finalsource/fe/src/App.tsx",
-        "finalsource/fe/src/components/PreJoinPreview.tsx"
+        "finalsource/fe/src/components/PreJoinPreview.tsx",
+        "finalsource/be/src/modules/sessions/sessions.service.ts"
     ]
     manifest_files = []
     for c in changed_candidates:
@@ -139,7 +142,7 @@ def main():
     run_cmd([
         sys.executable, str(assemble_script),
         "--run-json", str(run_path),
-        "--assessment-id", args.assessment_id,
+        "--assessment-id", assessment_id,
         "--update-repairs"
     ])
 

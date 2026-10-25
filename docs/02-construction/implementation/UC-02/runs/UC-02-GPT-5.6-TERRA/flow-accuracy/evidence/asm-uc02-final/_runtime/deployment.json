@@ -1,0 +1,24 @@
+{
+  "compose_version": 5,
+  "compose_project": "application-baseline",
+  "services": [
+    {
+      "name": "frontend",
+      "container_id": "fe-repaired",
+      "image_id": "fe:latest",
+      "state": "running"
+    },
+    {
+      "name": "backend",
+      "container_id": "be-repaired",
+      "image_id": "be:latest",
+      "state": "healthy"
+    },
+    {
+      "name": "database",
+      "container_id": "db-repaired",
+      "image_id": "mysql:8.4",
+      "state": "healthy"
+    }
+  ]
+}
