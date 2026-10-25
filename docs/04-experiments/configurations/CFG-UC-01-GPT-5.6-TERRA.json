@@ -11,7 +11,7 @@
   "database_baseline": {
     "migration_head": "InitialSchema1792195200000",
     "dbml_sha256": "sha256:54f54924829fd6c4a81398b5ed201e8fa48bb0a15383f59301720c526a93ce7a",
-    "schema_fingerprint_sha256": "sha256:69178dbc7a9e9ce06631f72779c27b314fc67394801848a6c0f344093661fa2b"
+    "schema_fingerprint_sha256": "sha256:44e07e0b06287cf6d87c95aebedcc92b562e9bd364f637f7f389c4e7022a4e60"
   },
   "figma_dataset": {
     "dataset_version": "100ms-2026-10-02-001",

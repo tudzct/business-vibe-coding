@@ -34,6 +34,9 @@ To guarantee seamless, fully autonomous execution without human operator interru
      This helper clones Schema v2 structure, calculates SHA-256 for all runtime artifacts, sets valid target IDs and runtime kinds, sets the round's `source_revision_after`, and synchronizes canonical repairs and final BR snapshot.
    - Run the flow scorer:
      `python .codex/skills/audit-flow-accuracy/scripts/score_flow_accuracy.py --run-json <canonical.json> --assessment <assembled-assessment-path>`
+   - Alternatively, execute the all-in-one autonomous verification helper:
+     `python .codex/skills/repair-source-code/scripts/run_repair_cycle.py --run-json <canonical.json>`
+     This helper automatically captures headless Edge observations/traces, assembles Schema v2 assessment, synchronizes canonical repairs, scores flow accuracy, and runs final round validation in one single step.
 5. **Self-Correction Retry Directive**:
    - If any command, build, or verification script exits with an error or validation failure, do NOT stop and report to the operator.
    - Read the traceback/error directly, modify the offending source code or evidence files to fix the error, and retry up to 3 times per round.

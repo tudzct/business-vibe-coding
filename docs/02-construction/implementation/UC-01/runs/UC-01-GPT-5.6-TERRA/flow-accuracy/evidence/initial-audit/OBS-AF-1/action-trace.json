@@ -1,0 +1,72 @@
+[
+  {
+    "sequence": 1,
+    "at": "2026-10-25T17:11:10+07:00",
+    "action": "Traverse shared main prefix to pre-join preview interface",
+    "actual_result": "Pre-join interface active with media controls",
+    "target_ids": [
+      "entry"
+    ],
+    "evidence": [
+      {
+        "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/initial-audit/OBS-AF-1/dom-snapshot.html",
+        "kind": "ui",
+        "locator": "main",
+        "observation_id": "OBS-AF-1",
+        "flow_id": "AF-1",
+        "captured_at": "2026-10-25T17:11:10+07:00",
+        "target_ids": [
+          "entry"
+        ]
+      }
+    ]
+  },
+  {
+    "sequence": 2,
+    "at": "2026-10-25T17:11:12+07:00",
+    "action": "Click camera toggle button to turn camera off",
+    "actual_result": "Camera toggled off; button aria-pressed updated to false",
+    "target_ids": [
+      "branch",
+      "AF-1.1"
+    ],
+    "evidence": [
+      {
+        "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/initial-audit/OBS-AF-1/dom-snapshot.html",
+        "kind": "ui",
+        "locator": "button[aria-pressed=\"false\"]",
+        "observation_id": "OBS-AF-1",
+        "flow_id": "AF-1",
+        "captured_at": "2026-10-25T17:11:12+07:00",
+        "target_ids": [
+          "branch",
+          "AF-1.1"
+        ]
+      }
+    ]
+  },
+  {
+    "sequence": 3,
+    "at": "2026-10-25T17:11:14+07:00",
+    "action": "Verify client renders the corresponding muted preview state",
+    "actual_result": "Client rendered avatar icon \"◉\" with aria-label \"Camera preview muted\" and muted camera control",
+    "target_ids": [
+      "AF-1.2",
+      "terminal_outcome"
+    ],
+    "evidence": [
+      {
+        "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/initial-audit/OBS-AF-1/muted-screenshot.png",
+        "kind": "ui",
+        "locator": "div[aria-label=\"Camera preview muted\"]",
+        "observation_id": "OBS-AF-1",
+        "flow_id": "AF-1",
+        "captured_at": "2026-10-25T17:11:14+07:00",
+        "target_ids": [
+          "AF-1.2",
+          "terminal_outcome"
+        ]
+      }
+    ]
+  }
+]

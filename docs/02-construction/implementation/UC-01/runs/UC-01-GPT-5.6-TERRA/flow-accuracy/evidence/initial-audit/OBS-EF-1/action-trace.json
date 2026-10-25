@@ -1,0 +1,72 @@
+[
+  {
+    "sequence": 1,
+    "at": "2026-10-25T17:11:20+07:00",
+    "action": "Enter pre-join preview and initiate media permission request",
+    "actual_result": "Permission request triggered",
+    "target_ids": [
+      "entry"
+    ],
+    "evidence": [
+      {
+        "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/initial-audit/OBS-EF-1/dom-snapshot.html",
+        "kind": "ui",
+        "locator": "button:contains(\"Enable preview\")",
+        "observation_id": "OBS-EF-1",
+        "flow_id": "EF-1",
+        "captured_at": "2026-10-25T17:11:20+07:00",
+        "target_ids": [
+          "entry"
+        ]
+      }
+    ]
+  },
+  {
+    "sequence": 2,
+    "at": "2026-10-25T17:11:22+07:00",
+    "action": "Browser rejects media access with NotAllowedError",
+    "actual_result": "Access is not granted (Permission denied error received)",
+    "target_ids": [
+      "branch",
+      "EF-1.1"
+    ],
+    "evidence": [
+      {
+        "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/initial-audit/OBS-EF-1/dom-snapshot.html",
+        "kind": "ui",
+        "locator": "div[role=\"alertdialog\"]",
+        "observation_id": "OBS-EF-1",
+        "flow_id": "EF-1",
+        "captured_at": "2026-10-25T17:11:22+07:00",
+        "target_ids": [
+          "branch",
+          "EF-1.1"
+        ]
+      }
+    ]
+  },
+  {
+    "sequence": 3,
+    "at": "2026-10-25T17:11:24+07:00",
+    "action": "Observe client modal display and visible recovery action",
+    "actual_result": "Client rendered alertdialog \"Camera or microphone access was not granted\" and recovery action button \"Try again\"",
+    "target_ids": [
+      "EF-1.2",
+      "terminal_outcome"
+    ],
+    "evidence": [
+      {
+        "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/initial-audit/OBS-EF-1/permission-denied-dialog.png",
+        "kind": "ui",
+        "locator": "div[role=\"alertdialog\"] h2#permission-title",
+        "observation_id": "OBS-EF-1",
+        "flow_id": "EF-1",
+        "captured_at": "2026-10-25T17:11:24+07:00",
+        "target_ids": [
+          "EF-1.2",
+          "terminal_outcome"
+        ]
+      }
+    ]
+  }
+]

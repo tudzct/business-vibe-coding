@@ -1,0 +1,13 @@
+{
+  "captured_at": "2026-10-25T18:16:10.031319+07:00",
+  "files": [
+    {
+      "path": "finalsource/fe/src/App.tsx",
+      "sha256": "sha256:1da87de96b33853e5a1782ef69af5ea10b1c6b74b2a454cae13d8d2c1d8f50cc"
+    },
+    {
+      "path": "finalsource/fe/src/components/PreJoinPreview.tsx",
+      "sha256": "sha256:a7bc0b27a69f10b136b3e1159d5be1ac1cd7961969e76ec93bfa8f0577b276ba"
+    }
+  ]
+}

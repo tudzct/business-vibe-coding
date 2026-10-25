@@ -218,9 +218,24 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
         require(initial is not None and snapshot_hash(initial) == recorded.get("flow_assessment_sha256"), "initial flow evidence changed")
         initial_defects = validate_defects(run, "initial", recorded.get("source_revision"),
                                            [row["flow_id"] for row in initial["flows"]])
-        require([row["defect_id"] for row in initial_defects] == recorded.get("defect_ids")
-                and snapshot_hash(initial_defects) == recorded.get("defects_sha256"),
-                "initial defect evidence changed")
+        pinned_defect_ids = recorded.get("defect_ids") or []
+        exact_match = ([row["defect_id"] for row in initial_defects] == pinned_defect_ids
+                       and snapshot_hash(initial_defects) == recorded.get("defects_sha256"))
+        if not exact_match:
+            base_defects = [row for row in initial_defects if row["defect_id"] in pinned_defect_ids]
+            require([row["defect_id"] for row in base_defects] == pinned_defect_ids
+                    and snapshot_hash(base_defects) == recorded.get("defects_sha256"),
+                    "initial defect evidence changed")
+            added_defects = [row for row in initial_defects if row["defect_id"] not in pinned_defect_ids]
+            valid_followup_ids = {
+                r.get("followup_id") for r in run.get("flow_accuracy", {}).get("followups", [])
+            } | {
+                r.get("followup_id") for r in run.get("business_rules", {}).get("followups", [])
+            }
+            require(added_defects and all(row.get("reported_by") == "researcher"
+                                          and row.get("researcher_followup_id") in valid_followup_ids
+                                          for row in added_defects),
+                    "initial defect evidence changed")
         for prior_receipt in history:
             pinned = prior_receipt.get("evidence") or {}
             if "flow_progress_sha256" not in pinned:

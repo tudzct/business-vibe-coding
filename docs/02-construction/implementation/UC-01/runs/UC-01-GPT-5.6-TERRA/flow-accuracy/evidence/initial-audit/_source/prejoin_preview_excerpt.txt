@@ -1,0 +1,26 @@
+// Source excerpt from finalsource/fe/src/components/PreJoinPreview.tsx
+// Lines 30-53:
+const [displayName, setDisplayName] = useState('');
+const [cameraEnabled, setCameraEnabled] = useState(true);
+const [microphoneEnabled, setMicrophoneEnabled] = useState(true);
+const [cameraPermission, setCameraPermission] = useState<PermissionStatus>('UNKNOWN');
+const [microphonePermission, setMicrophonePermission] = useState<PermissionStatus>('UNKNOWN');
+const [cameraAvailable, setCameraAvailable] = useState(true);
+const [microphoneAvailable, setMicrophoneAvailable] = useState(true);
+const [isPreparing, setIsPreparing] = useState(false);
+const [isReadyToJoin, setIsReadyToJoin] = useState(false);
+const [permissionDenied, setPermissionDenied] = useState(false);
+const [availabilityMessage, setAvailabilityMessage] = useState<string | null>(null);
+
+const trimmedName = displayName.trim();
+const nameError = displayName.length > 0 && trimmedName.length === 0 ? 'Enter a name to continue.' : null;
+const previewCommand: PreviewCommand = useMemo(
+  () => ({
+    participantKey: participantKey.current,
+    role: 'VIEWER',
+    displayName: trimmedName,
+    requestCamera: cameraEnabled,
+    requestMicrophone: microphoneEnabled,
+  }),
+  [cameraEnabled, microphoneEnabled, trimmedName],
+);
