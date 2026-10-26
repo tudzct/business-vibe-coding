@@ -1,0 +1,25 @@
+{
+  "artifact_type": "source-output",
+  "uc_id": "UC-03",
+  "run_id": "UC-03-GPT-5.6-TERRA",
+  "input_source_hash": "sha256:30939cc1e67cf109c6045ac2628d54312b56c3f035bd530e3ff0a50b87a79d6c",
+  "output_source_hash": "sha256:5cc859a5bc0edd0b40c70edcc3d7a078a10576bd58562c3b9e96c9c862bfb41b",
+  "hash_method": "sha256 of sorted tracked and untracked finalsource paths and their SHA-256 file hashes",
+  "changed_files": [
+    "finalsource/be/src/modules/sessions/dto/live-stream-command.dto.ts",
+    "finalsource/be/src/modules/sessions/sessions.controller.ts",
+    "finalsource/be/src/modules/sessions/sessions.service.ts",
+    "finalsource/fe/src/App.tsx",
+    "finalsource/fe/src/api/session.ts",
+    "finalsource/fe/src/components/BroadcasterLivePreview.tsx"
+  ],
+  "timing_segments": [
+    "8f40ec00-3a21-41d1-8115-94e89f0f5e2f",
+    "6aa30747-3dd6-426a-b62e-f5cbdde4dede",
+    "b77de9ca-bf31-44e9-99df-c66624d470ca"
+  ],
+  "verification": {
+    "backend_build": "passed",
+    "frontend_build": "passed"
+  }
+}

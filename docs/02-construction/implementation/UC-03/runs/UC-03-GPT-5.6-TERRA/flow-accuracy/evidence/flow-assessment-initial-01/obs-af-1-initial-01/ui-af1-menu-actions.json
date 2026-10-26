@@ -1,0 +1,21 @@
+{
+  "captured_at": "2026-10-26T01:03:35+07:00",
+  "finding": "Selecting menu button opened broadcaster-menu containing Broadcaster settings and Invite participants action items.",
+  "flow_id": "AF-1",
+  "observation_id": "obs-af-1-initial-01",
+  "target_ids": [
+    "branch",
+    "1a",
+    "1b",
+    "terminal_outcome"
+  ],
+  "ui_state": {
+    "actionItems": [
+      "Broadcaster settings",
+      "Invite participants"
+    ],
+    "menuAriaExpanded": "true",
+    "menuElementId": "broadcaster-menu",
+    "menuOpened": true
+  }
+}

@@ -7,7 +7,12 @@ function initials(name: string): string {
   return name.trim().split(/\s+/).map((part) => part[0] ?? '').join('').slice(0, 2).toUpperCase() || 'ME';
 }
 
-export function PreJoinPreview() {
+interface PreJoinPreviewProps {
+  onJoinSuccess?: (data: JoinSessionData, sessionId: string, accessToken: string) => void;
+  onGoToBroadcaster?: () => void;
+}
+
+export function PreJoinPreview({ onJoinSuccess, onGoToBroadcaster }: PreJoinPreviewProps = {}) {
   const [displayName, setDisplayName] = useState('');
   const [cameraEnabled, setCameraEnabled] = useState(false);
   const [microphoneEnabled, setMicrophoneEnabled] = useState(false);
@@ -31,7 +36,7 @@ export function PreJoinPreview() {
 
   const submitJoin = async (): Promise<void> => {
     if (!canJoin) return;
-    const sessionId = new URLSearchParams(window.location.search).get('sessionId');
+    const sessionId = new URLSearchParams(window.location.search).get('sessionId') ?? window.sessionStorage.getItem('activeSessionId');
     const accessToken = window.sessionStorage.getItem('sessionAccessToken');
     if (!sessionId || !accessToken) {
       setJoinError('A session and authenticated access context are required to join.');
@@ -42,7 +47,7 @@ export function PreJoinPreview() {
     setIsJoining(true);
     idempotencyKey.current ??= crypto.randomUUID();
     try {
-      setJoinedSession(await joinSession(sessionId, accessToken, idempotencyKey.current, {
+      const data = await joinSession(sessionId, accessToken, idempotencyKey.current, {
         displayName: trimmedName,
         microphoneEnabled,
         cameraEnabled,
@@ -50,7 +55,10 @@ export function PreJoinPreview() {
         cameraDeviceId: null,
         speakerDeviceId: null,
         virtualBackgroundId: null,
-      }));
+      });
+      setJoinedSession(data);
+      window.sessionStorage.setItem('activeSessionId', sessionId);
+      onJoinSuccess?.(data, sessionId, accessToken);
     } catch (error: unknown) {
       setJoinError(error instanceof SessionApiError ? error.message : 'The session could not be joined. Please try again.');
     } finally {
@@ -59,8 +67,9 @@ export function PreJoinPreview() {
   };
 
   if (joinedSession) {
+    const isLiveStreamHost = joinedSession.session.kind === 'LIVE_STREAM' && joinedSession.participant.role === 'HOST';
     return (
-      <main className="min-h-screen bg-black px-4 py-10 font-sans text-[#eff0fa]">
+      <main className="min-h-screen bg-black px-4 py-10 font-sans text-[#eff0fa]" aria-label="Pre-join interface">
         <section className="mx-auto w-full max-w-[480px]" aria-labelledby="joined-heading">
           <p className="text-sm font-semibold text-[#84aaff]">You are connected</p>
           <h1 id="joined-heading" className="mt-2 text-[34px] font-semibold leading-10 tracking-[0.25px]">Active session</h1>
@@ -70,6 +79,15 @@ export function PreJoinPreview() {
               <div><p className="text-lg font-semibold">{joinedSession.participant.displayName}</p><p className="text-sm text-[#c5c6d0]">{joinedSession.session.kind.replaceAll('_', ' ').toLowerCase()}</p></div>
             </div>
             <p className="mt-5 text-sm text-[#c5c6d0]">Camera {joinedSession.participant.cameraEnabled ? 'on' : 'off'} · Microphone {joinedSession.participant.microphoneEnabled ? 'on' : 'off'}</p>
+            {isLiveStreamHost && (
+              <button
+                type="button"
+                onClick={() => onGoToBroadcaster?.() || (window.location.search = `?view=broadcaster&sessionId=${joinedSession.session.id}`)}
+                className="mt-5 flex w-full items-center justify-center rounded-lg bg-[#2572ed] px-5 py-3 text-base font-semibold text-white focus:outline-none focus:ring-2 focus:ring-[#538dff]"
+              >
+                Go to Broadcaster Studio
+              </button>
+            )}
           </div>
         </section>
       </main>
@@ -77,7 +95,7 @@ export function PreJoinPreview() {
   }
 
   return (
-    <main className="min-h-screen bg-black px-4 py-10 font-sans text-[#eff0fa] sm:px-6" data-node-id="6066:89824">
+    <main className="min-h-screen bg-black px-4 py-10 font-sans text-[#eff0fa] sm:px-6" data-node-id="6066:89824" aria-label="Pre-join interface">
       <section className="mx-auto flex w-full max-w-[480px] flex-col items-center gap-10" aria-labelledby="preview-heading">
         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#538dff] text-lg font-bold text-[#11131a]" aria-label="Video conferencing">✦</div>
         <div className="space-y-2 text-center"><h1 id="preview-heading" className="text-[34px] font-semibold leading-10 tracking-[0.25px]">Get Started</h1><p className="text-base leading-6 tracking-[0.5px] text-[#c5c6d0]">Setup your audio and video before joining</p></div>

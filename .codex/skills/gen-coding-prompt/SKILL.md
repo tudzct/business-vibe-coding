@@ -20,8 +20,7 @@ During this operation, the agent may read ONLY:
 3. **The ordered active API contracts (if applicable)**: Only the exact paths declared in the active UC's `Related API IDs` section after preflight validation. If `Related API IDs` is `None.`, **DO NOT read any file in `docs/01-inception/api-contracts/`**.
 4. **The database baseline schema**: Read `docs/00-context/engineering/schema.dbml` ONCE after preflight PASS.
 5. **The resolved Figma design target**: Only the specific local snapshot JSON/node directory returned by `resolve.py` for the UC's mapped frame/node.
-6. **Minimal application codebase entry points**: Shallow inspection of `finalsource/` entry points (e.g., `finalsource/fe/src/App.tsx`, `finalsource/be/src/app.module.ts`) solely to determine component or module placement paths when required by template placeholders.
-
+6. Investigate the source code from D:\business-vibe-coding\finalsource
 ### 2. Forbidden Reads (Strict Negative Constraints)
 - **Execute-only scripts**: All repository and skill helper scripts (`.codex/scripts/*.py`, `.codex/skills/*/scripts/*.py`) are execute-only. **NEVER open, view, or read Python script source code**. Only execute them via CLI and inspect stdout/stderr.
 - **No prior or existing coding prompts**: **NEVER open, read, or inspect any file in `docs/02-construction/coding-prompts/`** (including prior drafts or prompts from other UCs).

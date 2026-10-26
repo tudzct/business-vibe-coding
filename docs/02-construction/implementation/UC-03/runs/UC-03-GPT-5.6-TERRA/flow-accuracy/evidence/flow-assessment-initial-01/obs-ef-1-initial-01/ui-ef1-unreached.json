@@ -1,0 +1,18 @@
+{
+  "captured_at": "2026-10-26T01:03:45+07:00",
+  "flow_id": "EF-1",
+  "observation_id": "obs-ef-1-initial-01",
+  "target_ids": [
+    "entry",
+    "branch",
+    "3a",
+    "3b",
+    "terminal_outcome"
+  ],
+  "ui_state": {
+    "previewVisible": true,
+    "reason": "Prefix step to submit start request cannot be executed from UI because Go Live button is disabled.",
+    "startFailureConditionReached": false,
+    "startRequestAttempted": false
+  }
+}

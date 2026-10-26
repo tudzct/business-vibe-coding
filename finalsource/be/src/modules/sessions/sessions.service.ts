@@ -12,6 +12,8 @@ import { DataSource, type EntityManager } from 'typeorm';
 import { createHash, randomUUID } from 'node:crypto';
 import type { SessionPrincipal } from './auth/session-principal';
 import type { JoinSessionDto } from './dto/join-session.dto';
+import type { CompleteLiveStreamDto } from './dto/complete-live-stream.dto';
+import type { LiveStreamCommandDto } from './dto/live-stream-command.dto';
 import type { SessionStateQueryDto } from './dto/session-state-query.dto';
 
 type Row = Record<string, unknown>;
@@ -177,10 +179,11 @@ export class SessionsService {
         'SELECT id, session_id, owner_participant_id, kind, status, version, started_at, stopped_at FROM content_shares WHERE session_id = ? AND status = \'ACTIVE\' LIMIT 1',
         [sessionId],
       )) ?? null;
-      const reactions = await this.dataSource.manager.query(
+      const rawReactions: unknown = await this.dataSource.manager.query(
         'SELECT id, session_id, participant_id, reaction, created_at, sequence FROM reaction_events WHERE session_id = ? ORDER BY sequence ASC LIMIT 50',
         [sessionId],
-      ) as unknown[];
+      );
+      const reactions = Array.isArray(rawReactions) ? rawReactions.filter(isRow) : [];
 
       return this.success({
         session: toSession(session),
@@ -191,13 +194,169 @@ export class SessionsService {
         media,
         view,
         stageRequests: [],
-        reactions: reactions.filter(isRow),
+        reactions,
         nextReactionCursor: query.reactionCursor ?? '',
       });
     } catch (error: unknown) {
       if (error instanceof HttpException) throw error;
       throw new ServiceUnavailableException('The session service is temporarily unavailable');
     }
+  }
+
+  async commandLiveStream(
+    sessionId: string,
+    idempotencyKey: string | undefined,
+    command: LiveStreamCommandDto,
+    principal: SessionPrincipal,
+  ): Promise<SuccessEnvelope> {
+    if (!idempotencyKey?.trim()) {
+      throw new BadRequestException('Idempotency-Key is required');
+    }
+    if (principal.sessionId !== sessionId) {
+      throw new ForbiddenException('The requested session is not authorized');
+    }
+
+    const payload = {
+      action: command.action,
+      expectedVersion: command.expectedVersion,
+    };
+    const payloadHash = createHash('sha256').update(JSON.stringify(payload)).digest('hex');
+
+    try {
+      return await this.dataSource.transaction('SERIALIZABLE', async (manager) => {
+        const existing = firstRow(await manager.query(
+          'SELECT payload_hash, response_reference FROM idempotency_records WHERE principal_id = ? AND session_id = ? AND operation = ? AND idempotency_key = ? FOR UPDATE',
+          [principal.principalId, sessionId, 'live-stream-command', idempotencyKey],
+        ));
+        if (existing) {
+          if (existing.payload_hash !== payloadHash) {
+            throw new ConflictException('Idempotency-Key was already used for a different command');
+          }
+          const replay = firstRow(await manager.query(
+            'SELECT response_body FROM idempotency_responses WHERE id = ?',
+            [existing.response_reference],
+          ));
+          if (!replay) throw new ConflictException('The previous command response is unavailable');
+          return parseStoredResponse(replay.response_body);
+        }
+
+        const session = await this.findSession(manager, sessionId, true);
+        if (session.status === 'ENDED') {
+          throw new UnprocessableEntityException('The stream cannot be started');
+        }
+        if (session.kind !== 'LIVE_STREAM') {
+          throw new UnprocessableEntityException('The session is not a live stream');
+        }
+
+        const participant = await this.findActiveParticipant(manager, sessionId, principal.principalId, true);
+        if (!participant || participant.role !== 'HOST') {
+          throw new ForbiddenException('The caller is not authorized to start this live stream');
+        }
+
+        let stream = firstRow(await manager.query(
+          'SELECT id, session_id, status, version, started_at, ended_at FROM live_streams WHERE session_id = ? FOR UPDATE',
+          [sessionId],
+        ));
+        if (!stream) {
+          if (command.expectedVersion !== 0) {
+            throw new NotFoundException('The live stream is unavailable');
+          }
+          const newStreamId = randomUUID();
+          await manager.query(
+            'INSERT INTO live_streams (id, session_id, status, version) VALUES (?, ?, \'READY\', 0)',
+            [newStreamId, sessionId],
+          );
+          stream = firstRow(await manager.query(
+            'SELECT id, session_id, status, version, started_at, ended_at FROM live_streams WHERE id = ? FOR UPDATE',
+            [newStreamId],
+          ));
+        }
+
+        if (!stream) {
+          throw new NotFoundException('The live stream is unavailable');
+        }
+
+        if (stream.version !== command.expectedVersion) {
+          throw new ConflictException('The stream version is no longer current');
+        }
+
+        if (command.action === 'START') {
+          if (stream.status !== 'READY') {
+            throw new UnprocessableEntityException('The stream cannot be started in its current state');
+          }
+          await manager.query(
+            'UPDATE live_streams SET status = \'STARTING\', version = version + 1 WHERE id = ?',
+            [stream.id],
+          );
+          await manager.query(
+            'UPDATE sessions SET status = \'LIVE\', version = version + 1 WHERE id = ?',
+            [sessionId],
+          );
+        } else if (command.action === 'STOP') {
+          if (stream.status !== 'LIVE' && stream.status !== 'STARTING') {
+            throw new UnprocessableEntityException('The stream cannot be stopped in its current state');
+          }
+          await manager.query(
+            'UPDATE live_streams SET status = \'ENDED\', version = version + 1, ended_at = UTC_TIMESTAMP(3) WHERE id = ?',
+            [stream.id],
+          );
+          await manager.query(
+            'UPDATE sessions SET version = version + 1 WHERE id = ?',
+            [sessionId],
+          );
+        }
+
+        const updatedStream = firstRow(await manager.query(
+          'SELECT id, session_id AS sessionId, status, version, started_at AS startedAt, ended_at AS endedAt FROM live_streams WHERE id = ?',
+          [stream.id],
+        ));
+        const updatedSession = toSession(await this.findSession(manager, sessionId, false));
+
+        const response: SuccessEnvelope = {
+          success: true,
+          message: 'The stream command was completed.',
+          data: {
+            stream: updatedStream ?? {},
+            session: updatedSession,
+          },
+        };
+
+        const responseId = randomUUID();
+        await manager.query(
+          'INSERT INTO idempotency_responses (id, status_code, response_body) VALUES (?, ?, ?)',
+          [responseId, 200, JSON.stringify(response)],
+        );
+        await manager.query(
+          'INSERT INTO idempotency_records (principal_id, session_id, operation, idempotency_key, payload_hash, response_reference, completed_at, expires_at) VALUES (?, ?, ?, ?, ?, ?, UTC_TIMESTAMP(3), DATE_ADD(UTC_TIMESTAMP(3), INTERVAL 24 HOUR))',
+          [principal.principalId, sessionId, 'live-stream-command', idempotencyKey, payloadHash, responseId],
+        );
+
+        return response;
+      });
+    } catch (error: unknown) {
+      if (error instanceof HttpException) throw error;
+      if (isDatabaseError(error, 'ER_DUP_ENTRY')) {
+        throw new ConflictException('The stream command conflicts with current state');
+      }
+      if (isDatabaseError(error, 'ER_LOCK_DEADLOCK') || isDatabaseError(error, 'ER_LOCK_WAIT_TIMEOUT')) {
+        throw new ServiceUnavailableException('The session is temporarily unavailable');
+      }
+      throw new ServiceUnavailableException('The session service is temporarily unavailable');
+    }
+  }
+
+  async completeLiveStream(sessionId: string, command: CompleteLiveStreamDto, principal: SessionPrincipal): Promise<SuccessEnvelope> {
+    if (principal.sessionId !== sessionId) throw new ForbiddenException('The requested session is not authorized');
+    return this.dataSource.transaction('SERIALIZABLE', async (manager) => {
+      const session = await this.findSession(manager, sessionId, true);
+      const stream = firstRow(await manager.query('SELECT id, status, version, session_id FROM live_streams WHERE session_id = ? FOR UPDATE', [sessionId]));
+      if (!stream) throw new NotFoundException('The live stream is unavailable');
+      if (session.status !== 'LIVE' || stream.status !== 'STARTING') throw new UnprocessableEntityException('The stream completion is not valid in its current state');
+      if (stream.id !== command.resourceId || stream.version !== command.expectedVersion) throw new ConflictException('The stream completion version is no longer current');
+      await manager.query('UPDATE live_streams SET status = ?, version = version + 1, started_at = CASE WHEN ? THEN UTC_TIMESTAMP(3) ELSE started_at END WHERE id = ?', [command.succeeded ? 'LIVE' : 'READY', command.succeeded, stream.id]);
+      await manager.query('UPDATE sessions SET version = version + 1 WHERE id = ?', [sessionId]);
+      return this.success({ stream: firstRow(await manager.query('SELECT id, session_id AS sessionId, status, version, started_at AS startedAt, ended_at AS endedAt FROM live_streams WHERE id = ?', [stream.id])) ?? {}, session: toSession(await this.findSession(manager, sessionId, false)) });
+    });
   }
 
   private async executeJoin(

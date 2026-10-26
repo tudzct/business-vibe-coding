@@ -1,0 +1,19 @@
+{
+  "captured_at": "2026-10-26T01:03:10+07:00",
+  "finding": "Start button is permanently disabled (disabled=true) because state is null following failed initial getSessionState call to localhost:3000. Host cannot choose Start.",
+  "flow_id": "BF-1",
+  "observation_id": "obs-bf-1-initial-01",
+  "target_ids": [
+    "entry",
+    "BF-1.1",
+    "terminal_outcome"
+  ],
+  "ui_state": {
+    "alertMessage": "The broadcaster session could not be loaded.",
+    "buttonDisabled": true,
+    "buttonFound": true,
+    "buttonText": "\u25c9 Go Live",
+    "previewDisplayed": true,
+    "statusText": "Ready to go live"
+  }
+}
