@@ -21,7 +21,7 @@ During this operation, the agent may read ONLY:
 4. **The database baseline schema**: Read `docs/00-context/engineering/schema.dbml` ONCE after preflight PASS.
 5. **The resolved Figma design target**: Only the specific local snapshot JSON/node directory returned by `resolve.py` for the UC's mapped frame/node.
 6. Investigate the source code from D:\business-vibe-coding\finalsource
-7. **Additional inputs explicitly required by the prompt template**: The agent may read additional baseline/specification inputs if and only if a section or instruction in `templates/construction/coding-prompt.template.md` explicitly requires them.
+7. **Additional inputs explicitly required by the prompt template**: The agent may read additional baseline/specification inputs if a section or instruction in `templates/construction/coding-prompt.template.md` explicitly requires them.
 ### 2. Forbidden Reads (Strict Negative Constraints)
 - **Execute-only scripts**: All repository and skill helper scripts (`.codex/scripts/*.py`, `.codex/skills/*/scripts/*.py`) are execute-only. **NEVER open, view, or read Python script source code**. Only execute them via CLI and inspect stdout/stderr.
 - **No prior or existing coding prompts**: **NEVER open, read, or inspect any file in `docs/02-construction/coding-prompts/`** (including prior drafts or prompts from other UCs).
