@@ -1,7 +1,0 @@
-{
-  "content": "const session = await this.findSession(manager, sessionId, true);\nif (session.kind !== 'LIVE_STREAM') throw new UnprocessableEntityException('The session is not a live stream');",
-  "defect_finding": "Omission of session.status <> 'ENDED' check in commandLiveStream allows stream start on terminated sessions, violating BR-SLS-02.",
-  "file": "finalsource/be/src/modules/sessions/sessions.service.ts",
-  "lines": "281-300",
-  "source_revision": "sha256:5cc859a5bc0edd0b40c70edcc3d7a078a10576bd58562c3b9e96c9c862bfb41b"
-}

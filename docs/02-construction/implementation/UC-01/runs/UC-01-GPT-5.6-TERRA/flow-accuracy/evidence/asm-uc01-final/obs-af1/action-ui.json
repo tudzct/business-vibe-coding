@@ -1,9 +1,0 @@
-{
-  "captured_at": "2026-10-25T18:16:10.031319+07:00",
-  "url": "http://localhost:8086/?role=VIEWER",
-  "flow_id": "AF-1",
-  "status": "success",
-  "locator": "div[aria-label=\"Pre-join interface\"]",
-  "dom_length": 3083,
-  "permissions_denied": false
-}
