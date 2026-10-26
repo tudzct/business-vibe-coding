@@ -21,6 +21,7 @@ During this operation, the agent may read ONLY:
 4. **The database baseline schema**: Read `docs/00-context/engineering/schema.dbml` ONCE after preflight PASS.
 5. **The resolved Figma design target**: Only the specific local snapshot JSON/node directory returned by `resolve.py` for the UC's mapped frame/node.
 6. Investigate the source code from D:\business-vibe-coding\finalsource
+7. **Additional inputs explicitly required by the prompt template**: The agent may read additional baseline/specification inputs if and only if a section or instruction in `templates/construction/coding-prompt.template.md` explicitly requires them.
 ### 2. Forbidden Reads (Strict Negative Constraints)
 - **Execute-only scripts**: All repository and skill helper scripts (`.codex/scripts/*.py`, `.codex/skills/*/scripts/*.py`) are execute-only. **NEVER open, view, or read Python script source code**. Only execute them via CLI and inspect stdout/stderr.
 - **No prior or existing coding prompts**: **NEVER open, read, or inspect any file in `docs/02-construction/coding-prompts/`** (including prior drafts or prompts from other UCs).
@@ -73,17 +74,19 @@ Ingest ONLY the items in the Closed Whitelist:
    Read only the local snapshot JSON/node data for the resolved target node(s).
 5. **Read DBML once**: Read `docs/00-context/engineering/schema.dbml` once as technical input for exact table, column, and constraint definitions.
 6. **Identify entry points**: If template placeholders require component or controller placement locations, inspect minimal entry point files in `finalsource/` without reading unrelated feature logic.
+7. **Read additional inputs required by the template**: Ingest any additional baseline or specification input strictly required by a section present in `templates/construction/coding-prompt.template.md` (e.g., reading the Business Rule baseline and frozen specification if Prompt E is included).
 
 ## Phase 3: Author the Coding Prompt Draft
 
 1. Reason over the whitelisted inputs collected in Phase 2.
 2. Author the complete coding prompt draft by populating `templates/construction/coding-prompt.template.md`.
 3. Do not call any additional file reading tools during authoring.
-4. Distribute use-case behaviors across Prompts A-D without altering frozen scope:
+4. Distribute use-case behaviors across Prompts A-D (and any additional sections such as Prompt E/F present in the configured template) without altering frozen scope:
    - **Prompt A (Backend API)**: API endpoints, DTOs, logic location, database behavior, success/error envelopes.
    - **Prompt B (Frontend UI)**: UI components, styling, layout matching the resolved Figma target frame.
    - **Prompt C (Frontend Logic & Integration)**: State management, API integration, data mapping.
    - **Prompt D (Validation & Error Handling)**: Client-side validation, loading states, error handling.
+   - **Additional sections (e.g., Prompt E / F)**: Populate according to the configured template instructions.
 
 ## Phase 4: Save Draft, END Timing & Post-Validation (Execute-Only)
 
