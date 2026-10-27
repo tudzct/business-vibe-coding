@@ -122,27 +122,6 @@ Trigger: Returned with the HTTP 200 success response.
 Description: sessionVersion value.
 Example: 1
 
-### data.canPlayMedia
-
-Type: boolean; Required: Yes; Nullable: No
-Trigger: Returned with the HTTP 200 success response.
-Description: canPlayMedia value.
-Example: false
-
-### data.canPublishMedia
-
-Type: boolean; Required: Yes; Nullable: No
-Trigger: Returned with the HTTP 200 success response.
-Description: canPublishMedia value.
-Example: false
-
-### data.initialAudioMuted
-
-Type: boolean; Required: Yes; Nullable: No
-Trigger: Returned with the HTTP 200 success response.
-Description: initialAudioMuted value.
-Example: false
-
 ## Error Response — HTTP 400
 
 ### message
@@ -196,3 +175,4 @@ Note: The source contract does not specify the type, requiredness or nullability
 ## Notes
 
 Media playback is delivered through the media adapter.
+The view response contains only the declared session and stream snapshot.

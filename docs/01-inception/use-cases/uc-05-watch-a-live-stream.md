@@ -39,7 +39,7 @@ PRE-1: The client has a live-session destination to display.
 
 ### Post-Condition(s)
 
-POST-1: The client displays live playback and the viewer controls returned by the system.
+POST-1: The client displays the live-session experience using the returned session and stream snapshot.
 
 ### Basic Flow
 
@@ -48,7 +48,7 @@ Flow ID: BF-1
 BF-1.1: The viewer opens the live session.
 BF-1.2: The client requests the current session representation.
 BF-1.3: The system returns the viewer-facing stream state.
-BF-1.4: The client renders playback and viewer controls.
+BF-1.4: The client renders the live-session experience.
 
 ### Alternative Flow
 
@@ -110,7 +110,7 @@ enum StreamStatus {
 }
 class String <<datatype>> {
 }
-note right of String: Used only as a type; no structural member is accessed by these BRs.
+note right of String: Identifier value type.
 class RequestContext {
   {static} principalId: String
   {static} participantId: String
@@ -142,9 +142,6 @@ class ViewerSession {
   streamStatus: StreamStatus
   streamVersion: Integer
   sessionVersion: Integer
-  canPlayMedia: Boolean
-  canPublishMedia: Boolean
-  initialAudioMuted: Boolean
 }
 class LiveStreamService {
   view(sessionId: String, participantId: String, session: Session, stream: LiveStream): ViewerSession
