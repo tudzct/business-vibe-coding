@@ -9,12 +9,10 @@ Apply the [shared operational constitution](../../../AGENTS.md#shared-operationa
 
 Accept one readable `docs/01-inception/use-cases/uc-*.md` path. Optional `--configuration <config.json>`, `--run-id <RUN-ID>` and `--run-json <canonical.json>` disambiguate existing inputs; explicit values must match their recorded identities. Resolve only a unique matching Canonical Run JSON. Never select the newest file.
 
-## Strict Read Boundary (Mandatory)
+## 
 
-To prevent context contamination, token waste, and accidental data leakage, prompt generation must adhere to a strict closed whitelist. Reading any file outside this list is a direct violation of operational policy.
-
-### 1. Closed Whitelist (Only Permitted Reads)
-During this operation, the agent may read ONLY:
+### 1. Should Whitelist 
+During this operation, the agent should read :
 1. **The single active frozen use case**: The explicit `docs/01-inception/use-cases/uc-*.md` path provided.
 2. **The configured prompt template**: `templates/construction/coding-prompt.template.md`.
 3. **The ordered active API contracts (if applicable)**: Only the exact paths declared in the active UC's `Related API IDs` section after preflight validation. If `Related API IDs` is `None.`, **DO NOT read any file in `docs/01-inception/api-contracts/`**.

@@ -1,0 +1,60 @@
+{
+  "schema_version": "2.4",
+  "artifact_type": "experiment-configuration",
+  "status": "Confirmed",
+  "configuration_id": "CFG-UC-05-GPT-5.6-TERRA",
+  "comparison_group_id": "CG-100MS-01",
+  "researcher_id": "researcher-khanh",
+  "decided_at": "2026-10-27T10:30:00+07:00",
+  "timing_method": "system_timestamp_delta",
+  "flow_audit_rubric": "completion-critical-flow-runtime-v2",
+  "database_baseline": {
+    "migration_head": "InitialSchema1792195200000",
+    "dbml_sha256": "sha256:b29bf9517d543d9a805eb15572d604deeca842bb054ea1718a118fa302427fd9",
+    "schema_fingerprint_sha256": "sha256:44e07e0b06287cf6d87c95aebedcc92b562e9bd364f637f7f389c4e7022a4e60"
+  },
+  "figma_dataset": {
+    "dataset_version": "100ms-2026-10-02-001",
+    "manifest_path": "resource/figma-design-dataset/100ms-2026-10-02-001/manifest.json",
+    "manifest_sha256": "sha256:ead5b6aa248f3c132950dc533b5b3392052cfdcfec6efc029c3fb01e6845c298"
+  },
+  "audit_design": {
+    "protocol": "fixed",
+    "fixed_auditor": {
+      "requested_label": "GPT-5.6-TERRA",
+      "requested_model_id": "gpt-5.6-terra",
+      "requested_reasoning_effort": "medium",
+      "requested_reasoning_mode": "standard"
+    }
+  },
+  "use_case": {
+    "uc_id": "UC-05",
+    "business_rule_baseline": "docs/02-construction/implementation/UC-05/business-rule-baseline.json",
+    "flow_baseline": "docs/02-construction/implementation/UC-05/flow-baseline.json",
+    "api_contracts": [
+      {
+        "api_id": "API-LIVE-STREAM-VIEW",
+        "path": "docs/01-inception/api-contracts/api-live-stream-view.md",
+        "sha256": "sha256:929279690fbc0fd270192dd0c271e875a6dd82348b0f695031d42c62993b1adf"
+      },
+      {
+        "api_id": "API-SESSION-STATE",
+        "path": "docs/01-inception/api-contracts/api-session-state.md",
+        "sha256": "sha256:610a6e5dfed7dcf86435790a5052e00d251db04a7119af8fb8638ab04c875511"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "run_id": "UC-05-GPT-5.6-TERRA",
+      "uc_id": "UC-05",
+      "requested_label": "GPT-5.6-TERRA",
+      "requested_model_id": "gpt-5.6-terra",
+      "requested_reasoning_effort": "medium",
+      "requested_reasoning_mode": "standard",
+      "replicate_index": 1,
+      "run_order": 1,
+      "auditor_assignment": "fixed-auditor"
+    }
+  ]
+}

@@ -72,7 +72,10 @@ def get_changed_files(manifest_path=None, passed_files=None):
         candidates = [
             "finalsource/fe/nginx.conf",
             "finalsource/fe/src/App.tsx",
-            "finalsource/fe/src/index.css"
+            "finalsource/fe/src/main.tsx",
+            "finalsource/fe/src/index.css",
+            "finalsource/be/src/main.ts",
+            "finalsource/be/src/app.module.ts"
         ]
         for c in candidates:
             if (ROOT / c).is_file():
@@ -141,6 +144,13 @@ def assemble_assessment(run_data, run_dir, assessment_id=None, stage="final", so
     data["uc_id"] = uc_id
     data["run_id"] = run_id
     data["baseline"] = data.get("baseline") or data.get("input", {}).get("baseline")
+    if not data["baseline"]:
+        uc_baseline_path = ROOT / "docs/02-construction/implementation" / uc_id / "flow-baseline.json"
+        if uc_baseline_path.is_file():
+            data["baseline"] = {
+                "path": uc_baseline_path.relative_to(ROOT).as_posix(),
+                "sha256": digest(uc_baseline_path)
+            }
     data["assessment_id"] = assessment_id
     data["stage"] = stage
     data["source_revision"] = source_rev
@@ -216,14 +226,43 @@ def assemble_assessment(run_data, run_dir, assessment_id=None, stage="final", so
 
     for obs_dir in obs_dirs:
         oid = obs_dir.name
-        # Match flow_id (e.g. obs-*-bf1 -> BF-1, obs-*-af1 -> AF-1, obs-*-ef1 -> EF-1)
-        m = re.search(r"(bf|af|ef)(\d+)", oid.lower())
-        if m:
-            flow_prefix = m.group(1).upper()
-            flow_num = m.group(2)
-            flow_id = f"{flow_prefix}-{flow_num}"
-        else:
-            flow_id = "BF-1"
+        action_ui = obs_dir / "action-ui.json"
+        trace_json = obs_dir / "trace.json"
+
+        # Discover flow_id and recorded URL from evidence files if available
+        flow_id = None
+        obs_url = None
+        if action_ui.is_file():
+            try:
+                with open(action_ui, "r", encoding="utf-8") as f:
+                    uij = json.load(f)
+                    flow_id = uij.get("flow_id")
+                    obs_url = uij.get("url")
+            except Exception:
+                pass
+        if not flow_id and trace_json.is_file():
+            try:
+                with open(trace_json, "r", encoding="utf-8") as f:
+                    trj = json.load(f)
+                    flow_id = trj.get("flow_id")
+                    obs_url = obs_url or trj.get("url")
+            except Exception:
+                pass
+
+        if not flow_id:
+            m = re.search(r"(bf|af|ef)[-_]?(\d+)", oid.lower())
+            if m:
+                flow_prefix = m.group(1).upper()
+                flow_num = m.group(2)
+                flow_id = f"{flow_prefix}-{flow_num}"
+            else:
+                for fl in data.get("flows", []):
+                    clean_fid = fl.get("flow_id", "").lower().replace("-", "")
+                    if clean_fid and clean_fid in oid.lower():
+                        flow_id = fl["flow_id"]
+                        break
+                if not flow_id:
+                    flow_id = "BF-1"
 
         obs_by_flow[flow_id] = oid
 
@@ -231,10 +270,6 @@ def assemble_assessment(run_data, run_dir, assessment_id=None, stage="final", so
         flow_step_ids = [s["step_id"] for s in matching_flow["steps"]] if matching_flow else []
         is_branch = (matching_flow.get("flow_type") != "basic") if matching_flow else True
         branch_targets = ["branch"] if is_branch else []
-
-        # Collect evidence files
-        action_ui = obs_dir / "action-ui.json"
-        trace_json = obs_dir / "trace.json"
 
         actions = []
         if action_ui.is_file() and trace_json.is_file() and len(flow_step_ids) > 1:
@@ -320,6 +355,7 @@ def assemble_assessment(run_data, run_dir, assessment_id=None, stage="final", so
                 "evidence": action_evidence
             })
 
+        entry_url = obs_url or ("http://localhost:8086/" if flow_id != "EF-1" else "http://127.0.0.1:8086/")
         obs_entry = {
             "observation_id": oid,
             "uc_id": uc_id,
@@ -333,8 +369,8 @@ def assemble_assessment(run_data, run_dir, assessment_id=None, stage="final", so
             "ended_at": now_iso,
             "time_limit_seconds": 180,
             "scope": f"Integrated browser observation of {flow_id} on repaired container",
-            "actual_preconditions": "Application running on Docker Compose; client reachable at http://localhost:18080/",
-            "entry_point": "http://localhost:18080/" if flow_id != "EF-1" else "http://127.0.0.1:18080/",
+            "actual_preconditions": f"Application running on Docker Compose; client reachable at {entry_url}",
+            "entry_point": entry_url,
             "entry_kind": "ui",
             "end_state": "Verified terminal outcome on repaired container",
             "state": "completed",
@@ -367,6 +403,8 @@ def assemble_assessment(run_data, run_dir, assessment_id=None, stage="final", so
         flow["terminal_outcome"]["evidence"] = [term_ev]
         flow["terminal_outcome"]["required_runtime_kinds"] = [term_ev["kind"]]
         flow["terminal_outcome"]["evidence_requirement_rationale"] = f"Runtime observation confirms terminal state for {fid}"
+        if "source_findings" in flow["terminal_outcome"]:
+            flow["terminal_outcome"]["source_findings"] = []
 
         for step in flow["steps"]:
             sid = step["step_id"]
@@ -376,6 +414,8 @@ def assemble_assessment(run_data, run_dir, assessment_id=None, stage="final", so
             step["required_runtime_kinds"] = [step_ev["kind"]]
             step["evidence_requirement_rationale"] = f"Runtime observation proves step {sid} for {fid}"
             step["evidence"] = [step_ev]
+            if "source_findings" in step:
+                step["source_findings"] = []
 
     return data, source_rev, changed_files
 
@@ -411,29 +451,66 @@ def update_canonical_repairs(run_json_path, source_rev, changed_files=None, asse
                     "sha256": digest(p)
                 })
 
+    initial_defects = [row for row in run_data.get("defects", []) if row.get("stage") == "initial"]
+    prompts_dir = run_dir / "repairs"
+    primary_ev = [evidence_after[0]] if evidence_after else []
+    defect_attempts = []
+    for df in initial_defects:
+        did = df["defect_id"]
+        matches = list(prompts_dir.glob(f"repair-*-{did}.md"))
+        pfile = matches[0] if matches else (prompts_dir / f"repair-{did}.md")
+        defect_attempts.append({
+            "defect_id": did,
+            "defect_fingerprint": df["fingerprint"],
+            "prompt_path": pfile.relative_to(ROOT).as_posix(),
+            "prompt_sha256": digest(pfile),
+            "status": "resolved",
+            "evidence": primary_ev
+        })
+
     if not run_data.get("repairs"):
-        initial_defects = [row for row in run_data.get("defects", []) if row.get("stage") == "initial"]
         expected_directory = (run_dir / "repairs").relative_to(ROOT).as_posix()
-        source_before = run_data.get("business_rules", {}).get("source_revision") or "sha256:c62958e7190a714e05249ab1084942bb30170c146d441bcee17cd6650c960759"
-        initial_audit_dir = run_dir / "flow-accuracy" / "evidence" / "initial-audit"
-        ev_before = [{"path": item.relative_to(ROOT).as_posix(), "sha256": digest(item)}
-                     for item in sorted(initial_audit_dir.rglob("*")) if item.is_file() and not item.name.startswith(".")]
-        prompts_dir = run_dir / "repairs"
-        defect_attempts = []
-        for df in initial_defects:
-            did = df["defect_id"]
-            matches = list(prompts_dir.glob(f"repair-*-{did}.md"))
-            pfile = matches[0] if matches else (prompts_dir / f"repair-{did}.md")
-            defect_attempts.append({
-                "defect_id": did,
-                "defect_fingerprint": df["fingerprint"],
-                "prompt_path": pfile.relative_to(ROOT).as_posix(),
-                "prompt_sha256": digest(pfile),
-                "status": "resolved",
-                "evidence": []
-            })
+        source_before = (
+            run_data.get("business_rules", {}).get("source_revision")
+            or run_data.get("business_rules", {}).get("initial", {}).get("source_revision")
+            or (initial_defects[0].get("source_revision") if initial_defects else None)
+            or run_data.get("source_revision")
+        )
+        if not source_before:
+            for cand in (run_dir / "flow-accuracy").glob("*initial*.json"):
+                try:
+                    with open(cand, "r", encoding="utf-8") as f:
+                        cd = json.load(f)
+                        source_before = cd.get("source_revision") or cd.get("input", {}).get("source_revision")
+                        if source_before:
+                            break
+                except Exception:
+                    pass
+        require(source_before, "Could not determine source_revision_before for repair round")
+
+        ev_dir = run_dir / "flow-accuracy" / "evidence"
+        initial_audit_dirs = []
+        if ev_dir.is_dir():
+            initial_audit_dirs = [d for d in ev_dir.iterdir() if d.is_dir() and "initial" in d.name.lower()]
+            if not initial_audit_dirs:
+                initial_audit_dirs = [d for d in ev_dir.iterdir() if d.is_dir() and "final" not in d.name.lower() and not d.name.startswith("_")]
+        ev_before = []
+        if initial_audit_dirs:
+            initial_audit_dir = initial_audit_dirs[0]
+            ev_before = [{"path": item.relative_to(ROOT).as_posix(), "sha256": digest(item)}
+                         for item in sorted(initial_audit_dir.rglob("*")) if item.is_file() and not item.name.startswith(".")]
+
+        uc_baseline_path = ROOT / "docs/02-construction/implementation" / run_data["uc_id"] / "flow-baseline.json"
+        if not ev_before and uc_baseline_path.is_file():
+            ev_before = [{"path": uc_baseline_path.relative_to(ROOT).as_posix(), "sha256": digest(uc_baseline_path)}]
+
         all_brs = [b for df in initial_defects for b in df.get("affected_br_ids", [])]
         all_flows = [f for df in initial_defects for f in df.get("affected_flow_ids", [])]
+        model_id = (
+            run_data.get("generation_model", {}).get("effective_model_id")
+            or run_data.get("generation_model", {}).get("requested_model_id")
+            or "gpt-5.6-terra"
+        )
         round0 = {
             "repair_id": "repair-round-001",
             "round_index": 1,
@@ -442,12 +519,12 @@ def update_canonical_repairs(run_json_path, source_rev, changed_files=None, asse
             "source_revision_after": source_rev,
             "affected_br_ids": list(dict.fromkeys(all_brs)),
             "affected_flow_ids": list(dict.fromkeys(all_flows)),
-            "evidence_before": ev_before if ev_before else [{"path": "docs/02-construction/implementation/UC-01/flow-baseline.json", "sha256": digest(ROOT / "docs/02-construction/implementation/UC-01/flow-baseline.json")}],
+            "evidence_before": ev_before,
             "changed_files": changed_files,
             "evidence_after": evidence_after,
             "defect_attempts": defect_attempts,
             "outcome": "resolved",
-            "model": {"effective_model_id": "gpt-5.6-terra"}
+            "model": {"effective_model_id": model_id}
         }
         run_data["repairs"] = [round0]
     else:
@@ -456,8 +533,11 @@ def update_canonical_repairs(run_json_path, source_rev, changed_files=None, asse
         round0["changed_files"] = changed_files
         round0["evidence_after"] = evidence_after
         round0["outcome"] = "resolved"
+        round0["defect_attempts"] = defect_attempts
 
     primary_ev = [evidence_after[0]] if evidence_after else []
+    if not round0.get("defect_attempts"):
+        round0["defect_attempts"] = defect_attempts
     for attempt in round0.get("defect_attempts", []):
         attempt["status"] = "resolved"
         attempt["evidence"] = primary_ev

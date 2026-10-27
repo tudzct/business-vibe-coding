@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "artifact_type": "flow-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-05",
+  "use_case_path": "docs/01-inception/use-cases/uc-05-watch-a-live-stream.md",
+  "use_case_sha256": "sha256:a0c6e3b7ccd051c68be0ed7323894c840fd8d6c976d7d56ffeddef85794f04a5",
+  "ordered_flow_ids": [
+    "BF-1",
+    "AF-1",
+    "EF-1"
+  ],
+  "frozen_at": "2026-10-27T10:30:00+07:00"
+}

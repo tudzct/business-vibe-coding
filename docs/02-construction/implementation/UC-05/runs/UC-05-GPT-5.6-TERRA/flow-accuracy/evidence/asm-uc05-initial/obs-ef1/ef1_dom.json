@@ -1,0 +1,5 @@
+{
+  "alertText": "The requested session is not authorized",
+  "alertOuter": "<p class=\"relative max-w-md rounded-lg border border-[#c74e5b] bg-black/80 px-4 py-3 text-sm text-[#ffedec]\" role=\"alert\">The requested session is not authorized</p>",
+  "bodyText": "*\nLIVE—\n\nThe requested session is not authorized\n\nⅡ\n◖\n● LIVE\n⚙ Auto • 720p\n⛶\n\nLive session unavailable\n\nMic\nCamera\nChat\nParticipants\nMore"
+}

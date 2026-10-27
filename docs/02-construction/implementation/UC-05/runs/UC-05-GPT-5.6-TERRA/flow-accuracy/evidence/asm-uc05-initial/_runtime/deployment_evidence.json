@@ -1,0 +1,28 @@
+{
+  "compose_project": "application-baseline",
+  "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+  "verified_at": "2026-10-27T12:11:24+07:00",
+  "services": [
+    {
+      "name": "backend",
+      "container_id": "665dfc67fc69",
+      "image_id": "sha256:edd223d8f8868532071bdc34dd21a81dfe1142dd03105993d10b3e446e260449",
+      "state": "healthy",
+      "ports": "127.0.0.1:3006->3000/tcp"
+    },
+    {
+      "name": "database",
+      "container_id": "e69459707f34",
+      "image_id": "sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb",
+      "state": "healthy",
+      "ports": "0.0.0.0:3307->3306/tcp"
+    },
+    {
+      "name": "frontend",
+      "container_id": "c06e307cc68f",
+      "image_id": "sha256:2da23accc7f7009ac2ac9a78927f1c4fdf3d670b0d4495f1d25363883ad333d8",
+      "state": "healthy",
+      "ports": "0.0.0.0:8086->8080/tcp"
+    }
+  ]
+}

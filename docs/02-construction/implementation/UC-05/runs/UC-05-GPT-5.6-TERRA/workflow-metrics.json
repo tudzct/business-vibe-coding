@@ -1,0 +1,565 @@
+{
+  "schema_version": 3,
+  "provenance_class": "observed_post_run",
+  "timing_method": "system_timestamp_delta",
+  "timing_protocol": "generation_execution_with_repair_audit_v2",
+  "token_attribution_method": "semantic_primary_phase_per_turn",
+  "uc_id": "UC-05",
+  "run_id": "UC-05-GPT-5.6-TERRA",
+  "status": "finalized",
+  "measured_at": "2026-10-27T07:50:50.491343+00:00",
+  "session": {
+    "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+    "file_name": "rollout-2026-10-27T10-48-24-01a17b79-3a13-7cc0-a6d6-3e2607fda7ee.jsonl",
+    "sha256": "sha256:c56f7dfbf412f4daeb74ff13879671b6906ed938357a2d9433759a3fb26d7f77"
+  },
+  "selection_evidence_sha256": "sha256:2e0881551e2de4b44ddd5e777284b18ca3e9f2b3eb039c59425286fbbb30d3fb",
+  "extractor_sha256": "sha256:e354ecf4678502e09422822c32e2b676e2929a8eb862bf80375fcd4fb434ec9e",
+  "phases": {
+    "prompt_generation": {
+      "status": "closed",
+      "values": {
+        "tokens": {
+          "input_tokens": 917775,
+          "cached_input_tokens": 854528,
+          "output_tokens": 6748,
+          "reasoning_output_tokens": 1514,
+          "total_tokens": 924523
+        },
+        "token_unavailable_reasons": {},
+        "duration_seconds": 169.024,
+        "wall_clock_seconds": 264.44,
+        "timing_unavailable_reason": null,
+        "workflow_turn_count": 1,
+        "tool_call_count": 21,
+        "model_call_count": null,
+        "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+      }
+    },
+    "source_generation": {
+      "status": "closed",
+      "values": {
+        "tokens": {
+          "input_tokens": 1781015,
+          "cached_input_tokens": 1729024,
+          "output_tokens": 11064,
+          "reasoning_output_tokens": 3851,
+          "total_tokens": 1792079
+        },
+        "token_unavailable_reasons": {},
+        "duration_seconds": 103.42,
+        "wall_clock_seconds": 404.59,
+        "timing_unavailable_reason": null,
+        "workflow_turn_count": 1,
+        "tool_call_count": 17,
+        "model_call_count": null,
+        "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+      }
+    },
+    "repair": {
+      "status": "closed",
+      "values": {
+        "tokens": {
+          "input_tokens": 6153612,
+          "cached_input_tokens": 6076416,
+          "output_tokens": 12515,
+          "reasoning_output_tokens": 4642,
+          "total_tokens": 6166127
+        },
+        "token_unavailable_reasons": {},
+        "duration_seconds": 325.117,
+        "wall_clock_seconds": 507.424,
+        "timing_unavailable_reason": null,
+        "workflow_turn_count": 2,
+        "tool_call_count": 34,
+        "model_call_count": null,
+        "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+      }
+    }
+  },
+  "workflow": {
+    "tokens": {
+      "input_tokens": 8852402,
+      "cached_input_tokens": 8659968,
+      "output_tokens": 30327,
+      "reasoning_output_tokens": 10007,
+      "total_tokens": 8882729
+    },
+    "token_unavailable_reasons": {},
+    "duration_seconds": 597.561,
+    "wall_clock_seconds": 1176.454,
+    "timing_unavailable_reason": null,
+    "workflow_turn_count": 4,
+    "tool_call_count": 72,
+    "model_call_count": null,
+    "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+  },
+  "turns": [
+    {
+      "turn_id": "01a17b79-3ffd-7f42-8cbb-c7f246b0d531",
+      "turn_number": 1,
+      "started_at": "2026-10-27T03:48:26.621Z",
+      "ended_at": "2026-10-27T03:52:51.061Z",
+      "completed": true,
+      "model": "gpt-5.6-terra",
+      "tokens": {
+        "input_tokens": 917775,
+        "cached_input_tokens": 854528,
+        "output_tokens": 6748,
+        "reasoning_output_tokens": 1514,
+        "total_tokens": 924523
+      },
+      "tool_call_count": 21,
+      "prefix_bytes": 454878,
+      "prefix_sha256": "sha256:55302fb90eefacf7431dca99ce11ea560f1feae3aa004e3595a18fd8795fdd0c",
+      "terminal_event": "task_complete",
+      "message_sha256": "sha256:38f8ed592381fa8680dd55aecc0b184d95ae3bca383a6ffaf0b25ed757d119a4",
+      "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+      "phase": "prompt_generation",
+      "timing_phase": "prompt_generation",
+      "reason": "Generated and contract-validated the UC-05 Draft, including the captured prompt execution interval.",
+      "duration_seconds": 169.024,
+      "wall_clock_seconds": 264.44,
+      "timing_unavailable_reason": null,
+      "timing_exclusion_reason": null,
+      "timing_segments": [
+        {
+          "start": {
+            "at": "2026-10-27T10:49:37.281+07:00",
+            "epoch_ms": 1793072977281,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-05",
+            "run_id": "UC-05-GPT-5.6-TERRA",
+            "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+            "turn_id": "01a17b79-3ffd-7f42-8cbb-c7f246b0d531",
+            "phase": "prompt_generation",
+            "event": "start",
+            "segment_id": "181c7c33-1fe4-4f89-a31a-e678403a9062",
+            "source_revision": "sha256:ed826979f557db31ff91d58e84ee5df9fd6ef2a6424660a934001e798312c849"
+          },
+          "end": {
+            "at": "2026-10-27T10:52:26.305+07:00",
+            "epoch_ms": 1793073146305,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-05",
+            "run_id": "UC-05-GPT-5.6-TERRA",
+            "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+            "turn_id": "01a17b79-3ffd-7f42-8cbb-c7f246b0d531",
+            "phase": "prompt_generation",
+            "event": "end",
+            "segment_id": "181c7c33-1fe4-4f89-a31a-e678403a9062",
+            "source_revision": "sha256:ed826979f557db31ff91d58e84ee5df9fd6ef2a6424660a934001e798312c849"
+          }
+        }
+      ]
+    },
+    {
+      "turn_id": "01a17b82-e4ee-7591-92f5-2fed9087e5a9",
+      "turn_number": 3,
+      "started_at": "2026-10-27T03:58:58.354Z",
+      "ended_at": "2026-10-27T04:05:42.944Z",
+      "completed": true,
+      "model": "gpt-5.6-terra",
+      "tokens": {
+        "input_tokens": 1781015,
+        "cached_input_tokens": 1729024,
+        "output_tokens": 11064,
+        "reasoning_output_tokens": 3851,
+        "total_tokens": 1792079
+      },
+      "tool_call_count": 17,
+      "prefix_bytes": 952442,
+      "prefix_sha256": "sha256:765aa0a96d3bb88e9398747eb1e05fa62d7659c614240c49a3fbacc0ddabdf99",
+      "terminal_event": "task_complete",
+      "message_sha256": "sha256:3e038aba0ae6784f8c89d1c3e36e449d7be0199ad0506e646897594021936cd3",
+      "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+      "phase": "source_generation",
+      "timing_phase": "source_generation",
+      "reason": "Implemented the approved UC-05 source changes and completed the captured source-generation interval.",
+      "duration_seconds": 103.42,
+      "wall_clock_seconds": 404.59,
+      "timing_unavailable_reason": null,
+      "timing_exclusion_reason": null,
+      "timing_segments": [
+        {
+          "start": {
+            "at": "2026-10-27T11:01:17.083+07:00",
+            "epoch_ms": 1793073677083,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-05",
+            "run_id": "UC-05-GPT-5.6-TERRA",
+            "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+            "turn_id": "01a17b82-e4ee-7591-92f5-2fed9087e5a9",
+            "phase": "source_generation",
+            "event": "start",
+            "segment_id": "af2d9b75-6ad9-4997-bfb6-16255bc49226",
+            "source_revision": "sha256:ed826979f557db31ff91d58e84ee5df9fd6ef2a6424660a934001e798312c849"
+          },
+          "end": {
+            "at": "2026-10-27T11:03:00.503+07:00",
+            "epoch_ms": 1793073780503,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-05",
+            "run_id": "UC-05-GPT-5.6-TERRA",
+            "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+            "turn_id": "01a17b82-e4ee-7591-92f5-2fed9087e5a9",
+            "phase": "source_generation",
+            "event": "end",
+            "segment_id": "af2d9b75-6ad9-4997-bfb6-16255bc49226",
+            "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33"
+          }
+        }
+      ]
+    },
+    {
+      "turn_id": "01a17be2-19e0-72c3-8c4f-779ec77e06e1",
+      "turn_number": 5,
+      "started_at": "2026-10-27T05:42:58.116Z",
+      "ended_at": "2026-10-27T05:45:01.334Z",
+      "completed": true,
+      "model": "gpt-5.6-terra",
+      "tokens": {
+        "input_tokens": 1441399,
+        "cached_input_tokens": 1413632,
+        "output_tokens": 4284,
+        "reasoning_output_tokens": 1292,
+        "total_tokens": 1445683
+      },
+      "tool_call_count": 9,
+      "prefix_bytes": 1254803,
+      "prefix_sha256": "sha256:cdb94aff4c03e49970934262a644258c01272da3455de83997a022d8f2221141",
+      "terminal_event": "task_complete",
+      "message_sha256": "sha256:6f442126518c27f688f58a0d7c4bbe79ec36e25f156fa647561d48b37401d9b4",
+      "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+      "phase": "repair",
+      "timing_phase": "repair",
+      "reason": "Generated repair sub-prompts for initial defects",
+      "duration_seconds": 79.035,
+      "wall_clock_seconds": 123.218,
+      "timing_unavailable_reason": null,
+      "timing_exclusion_reason": null,
+      "timing_segments": [
+        {
+          "start": {
+            "at": "2026-10-27T12:43:38.157+07:00",
+            "epoch_ms": 1793079818158,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-05",
+            "run_id": "UC-05-GPT-5.6-TERRA",
+            "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+            "turn_id": "01a17be2-19e0-72c3-8c4f-779ec77e06e1",
+            "phase": "repair",
+            "event": "start",
+            "segment_id": "3eba1e9b-a282-4377-98f1-f1205434b707",
+            "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+            "repair_activity": "sub_prompt_generation"
+          },
+          "end": {
+            "at": "2026-10-27T12:44:57.192+07:00",
+            "epoch_ms": 1793079897193,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-05",
+            "run_id": "UC-05-GPT-5.6-TERRA",
+            "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+            "turn_id": "01a17be2-19e0-72c3-8c4f-779ec77e06e1",
+            "phase": "repair",
+            "event": "end",
+            "segment_id": "3eba1e9b-a282-4377-98f1-f1205434b707",
+            "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+            "repair_activity": "sub_prompt_generation"
+          }
+        }
+      ]
+    },
+    {
+      "turn_id": "01a17c12-6390-7f62-b742-2baddd24dc9f",
+      "turn_number": 7,
+      "started_at": "2026-10-27T06:35:42.578Z",
+      "ended_at": "2026-10-27T06:42:06.784Z",
+      "completed": true,
+      "model": "gpt-5.6-terra",
+      "tokens": {
+        "input_tokens": 4712213,
+        "cached_input_tokens": 4662784,
+        "output_tokens": 8231,
+        "reasoning_output_tokens": 3350,
+        "total_tokens": 4720444
+      },
+      "tool_call_count": 25,
+      "prefix_bytes": 1703168,
+      "prefix_sha256": "sha256:61f87fbbf93c05cd6e8269596dc79f2f7edfcf264b2480806139b031503e86ae",
+      "terminal_event": "task_complete",
+      "message_sha256": "sha256:7af7761d1cefe7decae8b561219b3fc9a5276db743037c2cb94c56b5ef7f785a",
+      "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+      "phase": "repair",
+      "timing_phase": "repair",
+      "reason": "Executed repair source correction and verification",
+      "duration_seconds": 246.082,
+      "wall_clock_seconds": 384.206,
+      "timing_unavailable_reason": null,
+      "timing_exclusion_reason": null,
+      "timing_segments": [
+        {
+          "start": {
+            "at": "2026-10-27T13:37:36.658+07:00",
+            "epoch_ms": 1793083056658,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-05",
+            "run_id": "UC-05-GPT-5.6-TERRA",
+            "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+            "turn_id": "01a17c12-6390-7f62-b742-2baddd24dc9f",
+            "phase": "repair",
+            "event": "start",
+            "segment_id": "0f0696db-2fa6-488d-85b9-44fa058f0351",
+            "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+            "repair_activity": "source_correction"
+          },
+          "end": {
+            "at": "2026-10-27T13:41:42.740+07:00",
+            "epoch_ms": 1793083302740,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-05",
+            "run_id": "UC-05-GPT-5.6-TERRA",
+            "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+            "turn_id": "01a17c12-6390-7f62-b742-2baddd24dc9f",
+            "phase": "repair",
+            "event": "end",
+            "segment_id": "0f0696db-2fa6-488d-85b9-44fa058f0351",
+            "source_revision": "sha256:264e25b9f81d07148456de8e5fe2f15045671523f0ecb11b7cfd3e8e13441523",
+            "repair_activity": "source_correction"
+          }
+        }
+      ]
+    }
+  ],
+  "token_phase_breakdown": {
+    "prompt_generation": {
+      "tokens": {
+        "input_tokens": 917775,
+        "cached_input_tokens": 854528,
+        "output_tokens": 6748,
+        "reasoning_output_tokens": 1514,
+        "total_tokens": 924523
+      },
+      "token_unavailable_reasons": {},
+      "wall_clock_seconds": 264.44,
+      "workflow_turn_count": 1,
+      "tool_call_count": 21
+    },
+    "repair": {
+      "tokens": {
+        "input_tokens": 6153612,
+        "cached_input_tokens": 6076416,
+        "output_tokens": 12515,
+        "reasoning_output_tokens": 4642,
+        "total_tokens": 6166127
+      },
+      "token_unavailable_reasons": {},
+      "wall_clock_seconds": 507.424,
+      "workflow_turn_count": 2,
+      "tool_call_count": 34
+    },
+    "source_generation": {
+      "tokens": {
+        "input_tokens": 1781015,
+        "cached_input_tokens": 1729024,
+        "output_tokens": 11064,
+        "reasoning_output_tokens": 3851,
+        "total_tokens": 1792079
+      },
+      "token_unavailable_reasons": {},
+      "wall_clock_seconds": 404.59,
+      "workflow_turn_count": 1,
+      "tool_call_count": 17
+    }
+  },
+  "excluded_turns": [
+    {
+      "turn_id": "01a17b7d-e88a-7253-8d3a-177669a43483",
+      "reason": "measurement/report turn"
+    },
+    {
+      "turn_id": "01a17b89-f2c2-7801-b685-35defc51754f",
+      "reason": "measurement/report turn"
+    },
+    {
+      "turn_id": "01a17be4-3e47-7a02-84ed-e93f9e9aeb85",
+      "reason": "repair authorization blocker before execution"
+    },
+    {
+      "turn_id": "01a17c3a-fade-7961-b765-bcbc992d66cc",
+      "reason": "measurement/report turn"
+    },
+    {
+      "turn_id": "01a17c45-4d6c-7a22-afce-ac4166d8040f",
+      "reason": "measurement/report turn"
+    },
+    {
+      "turn_id": "01a17c56-3893-74d3-a89c-b50148433877",
+      "reason": "measurement/report turn"
+    }
+  ],
+  "phase_ledger": {
+    "schema_version": 1,
+    "uc_id": "UC-05",
+    "run_id": "UC-05-GPT-5.6-TERRA",
+    "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+    "phases": {
+      "prompt_generation": {
+        "status": "closed",
+        "first_turn_id": "01a17b79-3ffd-7f42-8cbb-c7f246b0d531",
+        "measurement_turn_id": "01a17b7d-e88a-7253-8d3a-177669a43483"
+      },
+      "source_generation": {
+        "status": "closed",
+        "first_turn_id": "01a17b82-e4ee-7591-92f5-2fed9087e5a9",
+        "measurement_turn_id": "01a17b89-f2c2-7801-b685-35defc51754f"
+      },
+      "repair": {
+        "status": "closed",
+        "first_turn_id": "01a17be2-19e0-72c3-8c4f-779ec77e06e1",
+        "measurement_turn_id": "01a17c56-3893-74d3-a89c-b50148433877"
+      }
+    },
+    "segments": [
+      {
+        "start": {
+          "at": "2026-10-27T10:49:37.281+07:00",
+          "epoch_ms": 1793072977281,
+          "timing_protocol": "generation_execution_with_repair_audit_v2",
+          "uc_id": "UC-05",
+          "run_id": "UC-05-GPT-5.6-TERRA",
+          "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+          "turn_id": "01a17b79-3ffd-7f42-8cbb-c7f246b0d531",
+          "phase": "prompt_generation",
+          "event": "start",
+          "segment_id": "181c7c33-1fe4-4f89-a31a-e678403a9062",
+          "source_revision": "sha256:ed826979f557db31ff91d58e84ee5df9fd6ef2a6424660a934001e798312c849"
+        },
+        "end": {
+          "at": "2026-10-27T10:52:26.305+07:00",
+          "epoch_ms": 1793073146305,
+          "timing_protocol": "generation_execution_with_repair_audit_v2",
+          "uc_id": "UC-05",
+          "run_id": "UC-05-GPT-5.6-TERRA",
+          "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+          "turn_id": "01a17b79-3ffd-7f42-8cbb-c7f246b0d531",
+          "phase": "prompt_generation",
+          "event": "end",
+          "segment_id": "181c7c33-1fe4-4f89-a31a-e678403a9062",
+          "source_revision": "sha256:ed826979f557db31ff91d58e84ee5df9fd6ef2a6424660a934001e798312c849"
+        }
+      },
+      {
+        "start": {
+          "at": "2026-10-27T11:01:17.083+07:00",
+          "epoch_ms": 1793073677083,
+          "timing_protocol": "generation_execution_with_repair_audit_v2",
+          "uc_id": "UC-05",
+          "run_id": "UC-05-GPT-5.6-TERRA",
+          "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+          "turn_id": "01a17b82-e4ee-7591-92f5-2fed9087e5a9",
+          "phase": "source_generation",
+          "event": "start",
+          "segment_id": "af2d9b75-6ad9-4997-bfb6-16255bc49226",
+          "source_revision": "sha256:ed826979f557db31ff91d58e84ee5df9fd6ef2a6424660a934001e798312c849"
+        },
+        "end": {
+          "at": "2026-10-27T11:03:00.503+07:00",
+          "epoch_ms": 1793073780503,
+          "timing_protocol": "generation_execution_with_repair_audit_v2",
+          "uc_id": "UC-05",
+          "run_id": "UC-05-GPT-5.6-TERRA",
+          "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+          "turn_id": "01a17b82-e4ee-7591-92f5-2fed9087e5a9",
+          "phase": "source_generation",
+          "event": "end",
+          "segment_id": "af2d9b75-6ad9-4997-bfb6-16255bc49226",
+          "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33"
+        }
+      },
+      {
+        "start": {
+          "at": "2026-10-27T12:43:38.157+07:00",
+          "epoch_ms": 1793079818158,
+          "timing_protocol": "generation_execution_with_repair_audit_v2",
+          "uc_id": "UC-05",
+          "run_id": "UC-05-GPT-5.6-TERRA",
+          "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+          "turn_id": "01a17be2-19e0-72c3-8c4f-779ec77e06e1",
+          "phase": "repair",
+          "event": "start",
+          "segment_id": "3eba1e9b-a282-4377-98f1-f1205434b707",
+          "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+          "repair_activity": "sub_prompt_generation"
+        },
+        "end": {
+          "at": "2026-10-27T12:44:57.192+07:00",
+          "epoch_ms": 1793079897193,
+          "timing_protocol": "generation_execution_with_repair_audit_v2",
+          "uc_id": "UC-05",
+          "run_id": "UC-05-GPT-5.6-TERRA",
+          "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+          "turn_id": "01a17be2-19e0-72c3-8c4f-779ec77e06e1",
+          "phase": "repair",
+          "event": "end",
+          "segment_id": "3eba1e9b-a282-4377-98f1-f1205434b707",
+          "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+          "repair_activity": "sub_prompt_generation"
+        }
+      },
+      {
+        "start": {
+          "at": "2026-10-27T13:37:36.658+07:00",
+          "epoch_ms": 1793083056658,
+          "timing_protocol": "generation_execution_with_repair_audit_v2",
+          "uc_id": "UC-05",
+          "run_id": "UC-05-GPT-5.6-TERRA",
+          "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+          "turn_id": "01a17c12-6390-7f62-b742-2baddd24dc9f",
+          "phase": "repair",
+          "event": "start",
+          "segment_id": "0f0696db-2fa6-488d-85b9-44fa058f0351",
+          "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+          "repair_activity": "source_correction"
+        },
+        "end": {
+          "at": "2026-10-27T13:41:42.740+07:00",
+          "epoch_ms": 1793083302740,
+          "timing_protocol": "generation_execution_with_repair_audit_v2",
+          "uc_id": "UC-05",
+          "run_id": "UC-05-GPT-5.6-TERRA",
+          "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+          "turn_id": "01a17c12-6390-7f62-b742-2baddd24dc9f",
+          "phase": "repair",
+          "event": "end",
+          "segment_id": "0f0696db-2fa6-488d-85b9-44fa058f0351",
+          "source_revision": "sha256:264e25b9f81d07148456de8e5fe2f15045671523f0ecb11b7cfd3e8e13441523",
+          "repair_activity": "source_correction"
+        }
+      }
+    ],
+    "observations": [
+      {
+        "measurement_turn_id": "01a17b7d-e88a-7253-8d3a-177669a43483",
+        "action": "close-phase:prompt_generation",
+        "last_turn_id": "01a17b79-3ffd-7f42-8cbb-c7f246b0d531",
+        "evidence_sha256": "sha256:a97a1b1961741b513e0c03db2472b51c1d98a76d6e2c538334cd959e61d2963d"
+      },
+      {
+        "measurement_turn_id": "01a17b89-f2c2-7801-b685-35defc51754f",
+        "action": "close-phase:source_generation",
+        "last_turn_id": "01a17b82-e4ee-7591-92f5-2fed9087e5a9",
+        "evidence_sha256": "sha256:c2583ea944619ce5acffed86f061aa96d234430ba97ccd20122bd2a1ff83aa27"
+      },
+      {
+        "measurement_turn_id": "01a17c56-3893-74d3-a89c-b50148433877",
+        "action": "finalize-workflow",
+        "last_turn_id": "01a17c12-6390-7f62-b742-2baddd24dc9f",
+        "evidence_sha256": "sha256:2e0881551e2de4b44ddd5e777284b18ca3e9f2b3eb039c59425286fbbb30d3fb"
+      }
+    ],
+    "workflow_status": "finalized",
+    "timing_protocol": "generation_execution_with_repair_audit_v2"
+  }
+}

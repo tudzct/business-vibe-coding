@@ -48,10 +48,29 @@ export class SessionApiError extends Error {
 export interface LiveStream { readonly id: string; readonly status: 'READY' | 'STARTING' | 'LIVE' | 'ENDED'; readonly version: number; }
 export interface SessionStateData { readonly session: { readonly id: string; readonly status: string; readonly kind: string; readonly version: number }; readonly selfParticipant: Participant; readonly stream: LiveStream | null; readonly recording: Record<string, unknown> | null; readonly share: Record<string, unknown> | null; readonly media: Record<string, unknown>; readonly view: Record<string, unknown>; readonly stageRequests: readonly Record<string, unknown>[]; readonly reactions: readonly Record<string, unknown>[]; readonly nextReactionCursor: string; }
 export interface StreamCommandData { readonly stream: LiveStream; readonly session: SessionStateData['session']; }
+export interface LiveStreamViewData {
+  readonly sessionId: string;
+  readonly participantId: string;
+  readonly viewerRole: 'VIEWER' | 'STAGE_PARTICIPANT';
+  readonly streamStatus: 'READY' | 'STARTING' | 'LIVE' | 'ENDED';
+  readonly streamVersion: number;
+  readonly sessionVersion: number;
+}
 
-export async function getSessionState(sessionId: string, accessToken: string): Promise<SessionStateData> {
-  try { return (await apiClient.get<SuccessEnvelope<SessionStateData>>(`/api/v1/sessions/${encodeURIComponent(sessionId)}/state`, { headers: { Authorization: `Bearer ${accessToken}` } })).data.data; }
+export async function getSessionState(sessionId: string, accessToken: string, signal?: AbortSignal): Promise<SessionStateData> {
+  try { return (await apiClient.get<SuccessEnvelope<SessionStateData>>(`/api/v1/sessions/${encodeURIComponent(sessionId)}/state`, { headers: { Authorization: `Bearer ${accessToken}` }, signal })).data.data; }
   catch (error: unknown) { throw new SessionApiError(error instanceof AxiosError ? ((error.response?.data as ErrorEnvelope | undefined)?.message ?? 'The updated session state could not be loaded.') : 'The updated session state could not be loaded.'); }
+}
+
+export async function getLiveStreamView(sessionId: string, accessToken: string, signal?: AbortSignal): Promise<LiveStreamViewData> {
+  try {
+    return (await apiClient.get<SuccessEnvelope<LiveStreamViewData>>(
+      `/api/v1/sessions/${encodeURIComponent(sessionId)}/live-stream/view`,
+      { headers: { Authorization: `Bearer ${accessToken}` }, signal },
+    )).data.data;
+  } catch (error: unknown) {
+    throw new SessionApiError(error instanceof AxiosError ? ((error.response?.data as ErrorEnvelope | undefined)?.message ?? 'The live session could not be loaded. Please try again.') : 'The live session could not be loaded. Please try again.');
+  }
 }
 export async function startLiveStream(sessionId: string, accessToken: string, idempotencyKey: string, expectedVersion: number): Promise<StreamCommandData> {
   try { return (await apiClient.post<SuccessEnvelope<StreamCommandData>>(`/api/v1/sessions/${encodeURIComponent(sessionId)}/live-stream/commands`, { action: 'START', expectedVersion }, { headers: { Authorization: `Bearer ${accessToken}`, 'Idempotency-Key': idempotencyKey } })).data.data; }

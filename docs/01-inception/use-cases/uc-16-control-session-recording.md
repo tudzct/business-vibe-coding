@@ -79,7 +79,7 @@ API-SESSION-STATE.
 
 ### Notes
 
-The shared model defines trusted context, persistence mapping, and query helpers. Server mutation execution uses MutationGateway and its common OCL constraints in UC-02. API command dispatch selects the named operation; it does not combine the preconditions of different operations. Read operations have no domain writes.
+The shared model defines trusted context, persistence mapping, and query helpers. Server mutation execution uses MutationGateway. API command dispatch selects the named operation. Read operations have no domain writes.
 
 ## UML Model
 
@@ -114,7 +114,7 @@ enum RecordingAction {
 }
 class DateTime <<datatype>> {
 }
-note right of DateTime: Used only as a type; no structural member is accessed by these BRs.
+note right of DateTime: Used only as a type.
 class RequestContext {
   {static} principalId: String
   {static} participantId: String

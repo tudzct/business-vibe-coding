@@ -78,7 +78,7 @@ API-SESSION-STATE.
 
 ### Notes
 
-The shared model defines trusted context, persistence mapping, and query helpers. Server mutation execution uses MutationGateway and its common OCL constraints in UC-02. API command dispatch selects the named operation; it does not combine the preconditions of different operations. Read operations have no domain writes.
+The shared model defines trusted context, persistence mapping, and query helpers. Server mutation execution uses MutationGateway. API command dispatch selects the named operation. Read operations have no domain writes.
 
 ## UML Model
 
@@ -104,7 +104,7 @@ enum ReactionCode {
 }
 class DateTime <<datatype>> {
 }
-note right of DateTime: Used only as a type; no structural member is accessed by these BRs.
+note right of DateTime: Used only as a type.
 class RequestContext {
   {static} principalId: String
   {static} participantId: String
@@ -142,7 +142,7 @@ class ReactionCommand {
 class CollaborationService {
   sendReaction(command: ReactionCommand, session: Session): ReactionEvent
 }
-note "allInstances() is the standard OCL classifier extent.\nAn extent-only classifier has no structural properties in this UC projection." as ExtentSemantics
+note "allInstances() represents the classifier extent.\nAn extent-only classifier has no structural properties in this UC projection." as ExtentSemantics
 note right of RequestContext
 Request-local trusted adapter data; not a process-global singleton.
 Principal and session are decoded from the authenticated session access token.

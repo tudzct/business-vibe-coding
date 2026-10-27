@@ -1,0 +1,63 @@
+{
+  "uc_id": "UC-05",
+  "run_id": "UC-05-GPT-5.6-TERRA",
+  "turns": [
+    {
+      "turn_id": "01a17b79-3ffd-7f42-8cbb-c7f246b0d531",
+      "phase": "prompt_generation",
+      "reason": "Generated and contract-validated the UC-05 Draft, including the captured prompt execution interval."
+    },
+    {
+      "turn_id": "01a17b82-e4ee-7591-92f5-2fed9087e5a9",
+      "phase": "source_generation",
+      "reason": "Implemented the approved UC-05 source changes and completed the captured source-generation interval."
+    },
+    {
+      "turn_id": "01a17be2-19e0-72c3-8c4f-779ec77e06e1",
+      "phase": "repair",
+      "reason": "Generated and validated the complete repair sub-prompt set in the captured repair sub-prompt-generation interval."
+    },
+    {
+      "turn_id": "01a17be4-3e47-7a02-84ed-e93f9e9aeb85",
+      "phase": "configuration_and_approval",
+      "reason": "Repair authorization and validation encountered a gate-integrity blocker before any repair execution interval began."
+    },
+    {
+      "turn_id": "01a17c12-6390-7f62-b742-2baddd24dc9f",
+      "phase": "repair",
+      "reason": "Executed the captured source-correction interval, including rebuild and integrated repair verification for the immutable defect set."
+    }
+  ],
+  "excluded_turns": [
+    {
+      "turn_id": "01a17b7d-e88a-7253-8d3a-177669a43483",
+      "reason": "measurement/report turn"
+    },
+    {
+      "turn_id": "01a17b89-f2c2-7801-b685-35defc51754f",
+      "reason": "measurement/report turn"
+    },
+    {
+      "turn_id": "01a17c3a-fade-7961-b765-bcbc992d66cc",
+      "reason": "measurement/report turn"
+    },
+    {
+      "turn_id": "01a17c45-4d6c-7a22-afce-ac4166d8040f",
+      "reason": "measurement/report turn"
+    }
+  ],
+  "workflow_evidence": {
+    "start": {
+      "turn_id": "01a17b79-3ffd-7f42-8cbb-c7f246b0d531",
+      "required_terms": [
+        "UC-05"
+      ]
+    },
+    "terminal": {
+      "turn_id": "01a17c12-6390-7f62-b742-2baddd24dc9f",
+      "required_terms": [
+        "repair-source-code"
+      ]
+    }
+  }
+}

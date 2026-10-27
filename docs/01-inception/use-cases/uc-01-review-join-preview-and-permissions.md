@@ -125,6 +125,6 @@ class PreviewState {
 class PreviewService {
   prepare(command: PreviewCommand): PreviewState
 }
-note "allInstances() is the standard OCL classifier extent.\nAn extent-only classifier has no structural properties in this UC projection." as ExtentSemantics
+note "allInstances() represents the classifier extent.\nAn extent-only classifier has no structural properties in this UC projection." as ExtentSemantics
 @enduml
 ~~~

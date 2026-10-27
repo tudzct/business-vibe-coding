@@ -1,0 +1,8 @@
+{
+  "isMenuOpen": "true",
+  "menu": "<div id=\"viewer-session-menu\" role=\"menu\" class=\"absolute bottom-14 right-0 z-10 w-48 rounded-lg border border-[#272a31] bg-[#191b23] p-2 shadow-xl\"><button type=\"button\" role=\"menuitem\" class=\"w-full rounded px-3 py-2 text-left text-sm hover:bg-[#2e3038] focus:bg-[#2e3038] focus:outline-none\">Playback quality</button><button type=\"button\" role=\"menuitem\" class=\"w-full rounded px-3 py-2 text-left text-sm hover:bg-[#2e3038] focus:bg-[#2e3038] focus:outline-none\">Fullscreen</button></div>",
+  "menuItems": [
+    "Playback quality",
+    "Fullscreen"
+  ]
+}

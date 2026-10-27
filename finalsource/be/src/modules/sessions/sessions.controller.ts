@@ -53,6 +53,15 @@ export class SessionsController {
     return this.sessionsService.completeLiveStream(sessionId, body, principal);
   }
 
+  @Get(':sessionId/live-stream/view')
+  viewLiveStream(
+    @Param('sessionId', new ParseUUIDPipe()) sessionId: string,
+    @Headers('accept') acceptHeader: string | undefined,
+    @CurrentPrincipal() principal: SessionPrincipal,
+  ): Promise<SuccessEnvelope> {
+    return this.sessionsService.viewLiveStream(sessionId, acceptHeader, principal);
+  }
+
   @Get(':sessionId/state')
   getState(
     @Param('sessionId', new ParseUUIDPipe()) sessionId: string,

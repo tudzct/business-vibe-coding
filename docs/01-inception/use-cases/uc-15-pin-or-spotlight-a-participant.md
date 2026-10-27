@@ -94,9 +94,9 @@ API-SESSION-STATE.
 
 ### Notes
 
-The shared model defines trusted context, persistence mapping, and query helpers. Server mutation execution uses MutationGateway and its common OCL constraints in UC-02. API command dispatch selects the named operation; it does not combine the preconditions of different operations. Read operations have no domain writes.
+The shared model defines trusted context, persistence mapping, and query helpers. Server mutation execution uses MutationGateway. API command dispatch selects the named operation. Read operations have no domain writes.
 
-BR-PSP-01 through BR-PSP-03 constrain the personal pin stored by PreferenceService.update. BR-PSP-04 through BR-PSP-10 constrain the shared session spotlight stored by SpotlightService.update. Client-local preview operations do not call either server operation.
+Personal pin updates are handled by PreferenceService.update. Shared session spotlight updates are handled by SpotlightService.update. Client-local preview operations do not call either server operation.
 
 ## UML Model
 
@@ -125,7 +125,7 @@ enum LayoutMode {
 }
 class DateTime <<datatype>> {
 }
-note right of DateTime: Used only as a type; no structural member is accessed by these BRs.
+note right of DateTime: Used only as a type.
 class RequestContext {
   {static} principalId: String
   {static} participantId: String
@@ -147,7 +147,7 @@ class Participant {
 }
 class MediaPreference <<opaque>> {
 }
-note right of MediaPreference: Used only as a type; no structural member is accessed by these BRs.
+note right of MediaPreference: Used only as a type.
 class ViewPreference {
   participantId: String
   layout: LayoutMode
@@ -171,7 +171,7 @@ class SpotlightCommand {
 }
 class PreferencesResult <<opaque>> {
 }
-note right of PreferencesResult: Used only as a type; no structural member is accessed by these BRs.
+note right of PreferencesResult: Used only as a type.
 class PreferenceService {
   update(command: PreferencePatch, media: MediaPreference, view: ViewPreference): PreferencesResult
 }

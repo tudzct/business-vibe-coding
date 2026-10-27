@@ -4,7 +4,7 @@
   "status": "Frozen",
   "uc_id": "UC-02",
   "use_case_path": "docs/01-inception/use-cases/uc-02-join-a-session.md",
-  "use_case_sha256": "sha256:9fb8587a7fd1ec4d991bb888315a9b508b8e6e2e0567844d4b921370e99698bf",
+  "use_case_sha256": "sha256:29a2b7131cf7a9f2204e202cab449fea9e48840feeafa8e7777561b016de197c",
   "ordered_flow_ids": [
     "BF-1",
     "AF-1",

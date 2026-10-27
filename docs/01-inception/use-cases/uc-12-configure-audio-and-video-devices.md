@@ -80,9 +80,9 @@ API-SESSION-STATE.
 
 ### Notes
 
-The shared model defines trusted context, persistence mapping, and query helpers. Server mutation execution uses MutationGateway and its common OCL constraints in UC-02. API command dispatch selects the named operation; it does not combine the preconditions of different operations. Read operations have no domain writes.
+The shared model defines trusted context, persistence mapping, and query helpers. Server mutation execution uses MutationGateway. API command dispatch selects the named operation. Read operations have no domain writes.
 
-UC-12 through UC-14 and the personal-pin rules in UC-15 constrain one atomic PreferenceService.update operation. Field-presence guards determine which values change. Client-local preview operations do not call this server operation.
+Preference updates are handled by PreferenceService.update. Field-presence guards determine which values change. Client-local preview operations do not call this server operation.
 
 ## UML Model
 
@@ -100,7 +100,7 @@ enum ParticipantStatus {
 }
 class DateTime <<datatype>> {
 }
-note right of DateTime: Used only as a type; no structural member is accessed by these BRs.
+note right of DateTime: Used only as a type.
 class RequestContext {
   {static} principalId: String
   {static} participantId: String

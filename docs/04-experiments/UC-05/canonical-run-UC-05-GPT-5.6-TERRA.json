@@ -1,0 +1,3675 @@
+{
+  "run_id": "UC-05-GPT-5.6-TERRA",
+  "coding_prompt": {
+    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/approved-prompt/UC-05-coding-prompt.md",
+    "sha256": "sha256:8c3fee18ac080ffecbdaaba5b7ec5e2aa4d16eadc3cf11e27cb62ba2e998d6b3"
+  },
+  "experiment_configuration": {
+    "configuration_id": "CFG-UC-05-GPT-5.6-TERRA",
+    "comparison_group_id": "CG-100MS-01",
+    "researcher_id": "researcher-khanh",
+    "artifact": "docs/04-experiments/configurations/CFG-UC-05-GPT-5.6-TERRA.json",
+    "checksum": "sha256:85bb15b153897698a982040d05ddce8ffdc0c94d3b9b3b0c8e2b520a62ba805b",
+    "run_activation": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/run-activation.json"
+  },
+  "uc_id": "UC-05",
+  "uc_name": "Watch a Live Stream",
+  "replicate_index": 1,
+  "run_order": 1,
+  "audit_protocol": "fixed",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-terra",
+    "requested_reasoning_effort": "medium",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "codex_client_version": null
+  },
+  "run_status": "complete",
+  "gates": {
+    "current": null,
+    "history": [
+      {
+        "gate": "prompt",
+        "outcome": "confirmed",
+        "turn_id": "01a17b7d-e88a-7253-8d3a-177669a43483",
+        "evidence": {
+          "coding_prompt": {
+            "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/approved-prompt/UC-05-coding-prompt.md",
+            "sha256": "sha256:8c3fee18ac080ffecbdaaba5b7ec5e2aa4d16eadc3cf11e27cb62ba2e998d6b3"
+          }
+        },
+        "command_action": "prompt-close",
+        "recorded_at": "2026-10-27T03:54:50.220677Z"
+      },
+      {
+        "gate": "source",
+        "outcome": "confirmed",
+        "turn_id": "01a17b89-f2c2-7801-b685-35defc51754f",
+        "evidence": {
+          "coding_prompt": {
+            "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/approved-prompt/UC-05-coding-prompt.md",
+            "sha256": "sha256:8c3fee18ac080ffecbdaaba5b7ec5e2aa4d16eadc3cf11e27cb62ba2e998d6b3"
+          }
+        },
+        "command_action": "source-close",
+        "recorded_at": "2026-10-27T04:07:08.968459Z"
+      },
+      {
+        "gate": "first_pass_audit",
+        "outcome": "confirmed",
+        "turn_id": "bf1acce5-b132-415c-9ce7-3ef2723f528c",
+        "evidence": {
+          "business_rules_sha256": "sha256:d23d5a5440072c85187d218d28be024490761fcbccf70ddcf25a350a7e2fdbb5",
+          "flow_assessment_id": "asm-uc05-initial",
+          "flow_assessment_sha256": "sha256:e0436a5368fb51f1c7e622082b84dc1558ae4d799f98120165f2bf721f63d44e",
+          "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+          "defect_ids": [
+            "DEF-UC05-01",
+            "DEF-UC05-02"
+          ],
+          "defects_sha256": "sha256:052a6478713fb0e16023f6ea35fc3d1271ffea8ec02442f6642e7b93990f736c",
+          "flow_progress_sha256": "sha256:36d3ac882b397a9965af24c04b5d35e25e06f954c2adc5fc799acd4bb9406945",
+          "flow_followup_ids": [],
+          "flow_result_basis": "rubric_evidence",
+          "flow_selection_policy": "accepted-audit-results-v1",
+          "flow_assessment_ids": [
+            "asm-uc05-initial"
+          ]
+        },
+        "command_action": "audit",
+        "recorded_at": "2026-10-27T05:37:39.436430Z"
+      },
+      {
+        "gate": "repair_decision",
+        "outcome": "authorized",
+        "turn_id": "01a17c12-6390-7f62-b742-2baddd24dc9f",
+        "command_action": "repair",
+        "recorded_at": "2026-10-27T06:36:24.055704Z"
+      },
+      {
+        "gate": "repair",
+        "outcome": "confirmed",
+        "turn_id": "01a17c56-3893-74d3-a89c-b50148433877",
+        "evidence": {
+          "business_rules_sha256": "sha256:68b40594d1bf42d7fe386a948650f6a909d361802c982828ecff6eb9a5df82ae",
+          "flow_assessment_id": "asm-uc05-final",
+          "flow_assessment_sha256": "sha256:05b267c5059e57d28bcbaeff1a22561b58b32aa87e75a2ce6245a9adf56f93c0",
+          "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+          "defect_ids": [],
+          "defects_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "flow_progress_sha256": "sha256:c3a81512f1a8799186e4147f4787e05362a6a6193061376f82910b4aedd7b082",
+          "flow_followup_ids": [],
+          "flow_result_basis": "rubric_evidence",
+          "flow_selection_policy": "accepted-audit-results-v1",
+          "flow_assessment_ids": [
+            "asm-uc05-initial",
+            "asm-uc05-final"
+          ]
+        },
+        "command_action": "repair-close",
+        "recorded_at": "2026-10-27T07:50:50.763324Z"
+      },
+      {
+        "gate": "final_metrics",
+        "outcome": "confirmed",
+        "turn_id": "01a17c56-3893-74d3-a89c-b50148433877",
+        "evidence": {
+          "business_rules_sha256": "sha256:68b40594d1bf42d7fe386a948650f6a909d361802c982828ecff6eb9a5df82ae",
+          "flow_assessment_id": "asm-uc05-final",
+          "flow_assessment_sha256": "sha256:05b267c5059e57d28bcbaeff1a22561b58b32aa87e75a2ce6245a9adf56f93c0",
+          "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+          "defect_ids": [],
+          "defects_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "flow_progress_sha256": "sha256:c3a81512f1a8799186e4147f4787e05362a6a6193061376f82910b4aedd7b082",
+          "flow_followup_ids": [],
+          "flow_result_basis": "rubric_evidence",
+          "flow_selection_policy": "accepted-audit-results-v1",
+          "flow_assessment_ids": [
+            "asm-uc05-initial",
+            "asm-uc05-final"
+          ]
+        },
+        "command_action": "finalize",
+        "recorded_at": "2026-10-27T07:50:51.026178Z"
+      }
+    ]
+  },
+  "metrics_schema_version": 3,
+  "metrics": {
+    "schema_version": 3,
+    "provenance_class": "observed_post_run",
+    "timing_method": "system_timestamp_delta",
+    "timing_protocol": "generation_execution_with_repair_audit_v2",
+    "token_attribution_method": "semantic_primary_phase_per_turn",
+    "uc_id": "UC-05",
+    "run_id": "UC-05-GPT-5.6-TERRA",
+    "status": "finalized",
+    "measured_at": "2026-10-27T07:50:50.491343+00:00",
+    "session": {
+      "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+      "file_name": "rollout-2026-10-27T10-48-24-01a17b79-3a13-7cc0-a6d6-3e2607fda7ee.jsonl",
+      "sha256": "sha256:c56f7dfbf412f4daeb74ff13879671b6906ed938357a2d9433759a3fb26d7f77"
+    },
+    "selection_evidence_sha256": "sha256:2e0881551e2de4b44ddd5e777284b18ca3e9f2b3eb039c59425286fbbb30d3fb",
+    "extractor_sha256": "sha256:e354ecf4678502e09422822c32e2b676e2929a8eb862bf80375fcd4fb434ec9e",
+    "phases": {
+      "prompt_generation": {
+        "status": "closed",
+        "values": {
+          "tokens": {
+            "input_tokens": 917775,
+            "cached_input_tokens": 854528,
+            "output_tokens": 6748,
+            "reasoning_output_tokens": 1514,
+            "total_tokens": 924523
+          },
+          "token_unavailable_reasons": {},
+          "duration_seconds": 169.024,
+          "wall_clock_seconds": 264.44,
+          "timing_unavailable_reason": null,
+          "workflow_turn_count": 1,
+          "tool_call_count": 21,
+          "model_call_count": null,
+          "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+        }
+      },
+      "source_generation": {
+        "status": "closed",
+        "values": {
+          "tokens": {
+            "input_tokens": 1781015,
+            "cached_input_tokens": 1729024,
+            "output_tokens": 11064,
+            "reasoning_output_tokens": 3851,
+            "total_tokens": 1792079
+          },
+          "token_unavailable_reasons": {},
+          "duration_seconds": 103.42,
+          "wall_clock_seconds": 404.59,
+          "timing_unavailable_reason": null,
+          "workflow_turn_count": 1,
+          "tool_call_count": 17,
+          "model_call_count": null,
+          "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+        }
+      },
+      "repair": {
+        "status": "closed",
+        "values": {
+          "tokens": {
+            "input_tokens": 6153612,
+            "cached_input_tokens": 6076416,
+            "output_tokens": 12515,
+            "reasoning_output_tokens": 4642,
+            "total_tokens": 6166127
+          },
+          "token_unavailable_reasons": {},
+          "duration_seconds": 325.117,
+          "wall_clock_seconds": 507.424,
+          "timing_unavailable_reason": null,
+          "workflow_turn_count": 2,
+          "tool_call_count": 34,
+          "model_call_count": null,
+          "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+        }
+      }
+    },
+    "workflow": {
+      "tokens": {
+        "input_tokens": 8852402,
+        "cached_input_tokens": 8659968,
+        "output_tokens": 30327,
+        "reasoning_output_tokens": 10007,
+        "total_tokens": 8882729
+      },
+      "token_unavailable_reasons": {},
+      "duration_seconds": 597.561,
+      "wall_clock_seconds": 1176.454,
+      "timing_unavailable_reason": null,
+      "workflow_turn_count": 4,
+      "tool_call_count": 72,
+      "model_call_count": null,
+      "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+    },
+    "turns": [
+      {
+        "turn_id": "01a17b79-3ffd-7f42-8cbb-c7f246b0d531",
+        "turn_number": 1,
+        "started_at": "2026-10-27T03:48:26.621Z",
+        "ended_at": "2026-10-27T03:52:51.061Z",
+        "completed": true,
+        "model": "gpt-5.6-terra",
+        "tokens": {
+          "input_tokens": 917775,
+          "cached_input_tokens": 854528,
+          "output_tokens": 6748,
+          "reasoning_output_tokens": 1514,
+          "total_tokens": 924523
+        },
+        "tool_call_count": 21,
+        "prefix_bytes": 454878,
+        "prefix_sha256": "sha256:55302fb90eefacf7431dca99ce11ea560f1feae3aa004e3595a18fd8795fdd0c",
+        "terminal_event": "task_complete",
+        "message_sha256": "sha256:38f8ed592381fa8680dd55aecc0b184d95ae3bca383a6ffaf0b25ed757d119a4",
+        "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+        "phase": "prompt_generation",
+        "timing_phase": "prompt_generation",
+        "reason": "Generated and contract-validated the UC-05 Draft, including the captured prompt execution interval.",
+        "duration_seconds": 169.024,
+        "wall_clock_seconds": 264.44,
+        "timing_unavailable_reason": null,
+        "timing_exclusion_reason": null,
+        "timing_segments": [
+          {
+            "start": {
+              "at": "2026-10-27T10:49:37.281+07:00",
+              "epoch_ms": 1793072977281,
+              "timing_protocol": "generation_execution_with_repair_audit_v2",
+              "uc_id": "UC-05",
+              "run_id": "UC-05-GPT-5.6-TERRA",
+              "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+              "turn_id": "01a17b79-3ffd-7f42-8cbb-c7f246b0d531",
+              "phase": "prompt_generation",
+              "event": "start",
+              "segment_id": "181c7c33-1fe4-4f89-a31a-e678403a9062",
+              "source_revision": "sha256:ed826979f557db31ff91d58e84ee5df9fd6ef2a6424660a934001e798312c849"
+            },
+            "end": {
+              "at": "2026-10-27T10:52:26.305+07:00",
+              "epoch_ms": 1793073146305,
+              "timing_protocol": "generation_execution_with_repair_audit_v2",
+              "uc_id": "UC-05",
+              "run_id": "UC-05-GPT-5.6-TERRA",
+              "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+              "turn_id": "01a17b79-3ffd-7f42-8cbb-c7f246b0d531",
+              "phase": "prompt_generation",
+              "event": "end",
+              "segment_id": "181c7c33-1fe4-4f89-a31a-e678403a9062",
+              "source_revision": "sha256:ed826979f557db31ff91d58e84ee5df9fd6ef2a6424660a934001e798312c849"
+            }
+          }
+        ]
+      },
+      {
+        "turn_id": "01a17b82-e4ee-7591-92f5-2fed9087e5a9",
+        "turn_number": 3,
+        "started_at": "2026-10-27T03:58:58.354Z",
+        "ended_at": "2026-10-27T04:05:42.944Z",
+        "completed": true,
+        "model": "gpt-5.6-terra",
+        "tokens": {
+          "input_tokens": 1781015,
+          "cached_input_tokens": 1729024,
+          "output_tokens": 11064,
+          "reasoning_output_tokens": 3851,
+          "total_tokens": 1792079
+        },
+        "tool_call_count": 17,
+        "prefix_bytes": 952442,
+        "prefix_sha256": "sha256:765aa0a96d3bb88e9398747eb1e05fa62d7659c614240c49a3fbacc0ddabdf99",
+        "terminal_event": "task_complete",
+        "message_sha256": "sha256:3e038aba0ae6784f8c89d1c3e36e449d7be0199ad0506e646897594021936cd3",
+        "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+        "phase": "source_generation",
+        "timing_phase": "source_generation",
+        "reason": "Implemented the approved UC-05 source changes and completed the captured source-generation interval.",
+        "duration_seconds": 103.42,
+        "wall_clock_seconds": 404.59,
+        "timing_unavailable_reason": null,
+        "timing_exclusion_reason": null,
+        "timing_segments": [
+          {
+            "start": {
+              "at": "2026-10-27T11:01:17.083+07:00",
+              "epoch_ms": 1793073677083,
+              "timing_protocol": "generation_execution_with_repair_audit_v2",
+              "uc_id": "UC-05",
+              "run_id": "UC-05-GPT-5.6-TERRA",
+              "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+              "turn_id": "01a17b82-e4ee-7591-92f5-2fed9087e5a9",
+              "phase": "source_generation",
+              "event": "start",
+              "segment_id": "af2d9b75-6ad9-4997-bfb6-16255bc49226",
+              "source_revision": "sha256:ed826979f557db31ff91d58e84ee5df9fd6ef2a6424660a934001e798312c849"
+            },
+            "end": {
+              "at": "2026-10-27T11:03:00.503+07:00",
+              "epoch_ms": 1793073780503,
+              "timing_protocol": "generation_execution_with_repair_audit_v2",
+              "uc_id": "UC-05",
+              "run_id": "UC-05-GPT-5.6-TERRA",
+              "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+              "turn_id": "01a17b82-e4ee-7591-92f5-2fed9087e5a9",
+              "phase": "source_generation",
+              "event": "end",
+              "segment_id": "af2d9b75-6ad9-4997-bfb6-16255bc49226",
+              "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33"
+            }
+          }
+        ]
+      },
+      {
+        "turn_id": "01a17be2-19e0-72c3-8c4f-779ec77e06e1",
+        "turn_number": 5,
+        "started_at": "2026-10-27T05:42:58.116Z",
+        "ended_at": "2026-10-27T05:45:01.334Z",
+        "completed": true,
+        "model": "gpt-5.6-terra",
+        "tokens": {
+          "input_tokens": 1441399,
+          "cached_input_tokens": 1413632,
+          "output_tokens": 4284,
+          "reasoning_output_tokens": 1292,
+          "total_tokens": 1445683
+        },
+        "tool_call_count": 9,
+        "prefix_bytes": 1254803,
+        "prefix_sha256": "sha256:cdb94aff4c03e49970934262a644258c01272da3455de83997a022d8f2221141",
+        "terminal_event": "task_complete",
+        "message_sha256": "sha256:6f442126518c27f688f58a0d7c4bbe79ec36e25f156fa647561d48b37401d9b4",
+        "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+        "phase": "repair",
+        "timing_phase": "repair",
+        "reason": "Generated repair sub-prompts for initial defects",
+        "duration_seconds": 79.035,
+        "wall_clock_seconds": 123.218,
+        "timing_unavailable_reason": null,
+        "timing_exclusion_reason": null,
+        "timing_segments": [
+          {
+            "start": {
+              "at": "2026-10-27T12:43:38.157+07:00",
+              "epoch_ms": 1793079818158,
+              "timing_protocol": "generation_execution_with_repair_audit_v2",
+              "uc_id": "UC-05",
+              "run_id": "UC-05-GPT-5.6-TERRA",
+              "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+              "turn_id": "01a17be2-19e0-72c3-8c4f-779ec77e06e1",
+              "phase": "repair",
+              "event": "start",
+              "segment_id": "3eba1e9b-a282-4377-98f1-f1205434b707",
+              "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+              "repair_activity": "sub_prompt_generation"
+            },
+            "end": {
+              "at": "2026-10-27T12:44:57.192+07:00",
+              "epoch_ms": 1793079897193,
+              "timing_protocol": "generation_execution_with_repair_audit_v2",
+              "uc_id": "UC-05",
+              "run_id": "UC-05-GPT-5.6-TERRA",
+              "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+              "turn_id": "01a17be2-19e0-72c3-8c4f-779ec77e06e1",
+              "phase": "repair",
+              "event": "end",
+              "segment_id": "3eba1e9b-a282-4377-98f1-f1205434b707",
+              "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+              "repair_activity": "sub_prompt_generation"
+            }
+          }
+        ]
+      },
+      {
+        "turn_id": "01a17c12-6390-7f62-b742-2baddd24dc9f",
+        "turn_number": 7,
+        "started_at": "2026-10-27T06:35:42.578Z",
+        "ended_at": "2026-10-27T06:42:06.784Z",
+        "completed": true,
+        "model": "gpt-5.6-terra",
+        "tokens": {
+          "input_tokens": 4712213,
+          "cached_input_tokens": 4662784,
+          "output_tokens": 8231,
+          "reasoning_output_tokens": 3350,
+          "total_tokens": 4720444
+        },
+        "tool_call_count": 25,
+        "prefix_bytes": 1703168,
+        "prefix_sha256": "sha256:61f87fbbf93c05cd6e8269596dc79f2f7edfcf264b2480806139b031503e86ae",
+        "terminal_event": "task_complete",
+        "message_sha256": "sha256:7af7761d1cefe7decae8b561219b3fc9a5276db743037c2cb94c56b5ef7f785a",
+        "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+        "phase": "repair",
+        "timing_phase": "repair",
+        "reason": "Executed repair source correction and verification",
+        "duration_seconds": 246.082,
+        "wall_clock_seconds": 384.206,
+        "timing_unavailable_reason": null,
+        "timing_exclusion_reason": null,
+        "timing_segments": [
+          {
+            "start": {
+              "at": "2026-10-27T13:37:36.658+07:00",
+              "epoch_ms": 1793083056658,
+              "timing_protocol": "generation_execution_with_repair_audit_v2",
+              "uc_id": "UC-05",
+              "run_id": "UC-05-GPT-5.6-TERRA",
+              "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+              "turn_id": "01a17c12-6390-7f62-b742-2baddd24dc9f",
+              "phase": "repair",
+              "event": "start",
+              "segment_id": "0f0696db-2fa6-488d-85b9-44fa058f0351",
+              "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+              "repair_activity": "source_correction"
+            },
+            "end": {
+              "at": "2026-10-27T13:41:42.740+07:00",
+              "epoch_ms": 1793083302740,
+              "timing_protocol": "generation_execution_with_repair_audit_v2",
+              "uc_id": "UC-05",
+              "run_id": "UC-05-GPT-5.6-TERRA",
+              "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+              "turn_id": "01a17c12-6390-7f62-b742-2baddd24dc9f",
+              "phase": "repair",
+              "event": "end",
+              "segment_id": "0f0696db-2fa6-488d-85b9-44fa058f0351",
+              "source_revision": "sha256:264e25b9f81d07148456de8e5fe2f15045671523f0ecb11b7cfd3e8e13441523",
+              "repair_activity": "source_correction"
+            }
+          }
+        ]
+      }
+    ],
+    "token_phase_breakdown": {
+      "prompt_generation": {
+        "tokens": {
+          "input_tokens": 917775,
+          "cached_input_tokens": 854528,
+          "output_tokens": 6748,
+          "reasoning_output_tokens": 1514,
+          "total_tokens": 924523
+        },
+        "token_unavailable_reasons": {},
+        "wall_clock_seconds": 264.44,
+        "workflow_turn_count": 1,
+        "tool_call_count": 21
+      },
+      "repair": {
+        "tokens": {
+          "input_tokens": 6153612,
+          "cached_input_tokens": 6076416,
+          "output_tokens": 12515,
+          "reasoning_output_tokens": 4642,
+          "total_tokens": 6166127
+        },
+        "token_unavailable_reasons": {},
+        "wall_clock_seconds": 507.424,
+        "workflow_turn_count": 2,
+        "tool_call_count": 34
+      },
+      "source_generation": {
+        "tokens": {
+          "input_tokens": 1781015,
+          "cached_input_tokens": 1729024,
+          "output_tokens": 11064,
+          "reasoning_output_tokens": 3851,
+          "total_tokens": 1792079
+        },
+        "token_unavailable_reasons": {},
+        "wall_clock_seconds": 404.59,
+        "workflow_turn_count": 1,
+        "tool_call_count": 17
+      }
+    },
+    "excluded_turns": [
+      {
+        "turn_id": "01a17b7d-e88a-7253-8d3a-177669a43483",
+        "reason": "measurement/report turn"
+      },
+      {
+        "turn_id": "01a17b89-f2c2-7801-b685-35defc51754f",
+        "reason": "measurement/report turn"
+      },
+      {
+        "turn_id": "01a17be4-3e47-7a02-84ed-e93f9e9aeb85",
+        "reason": "repair authorization blocker before execution"
+      },
+      {
+        "turn_id": "01a17c3a-fade-7961-b765-bcbc992d66cc",
+        "reason": "measurement/report turn"
+      },
+      {
+        "turn_id": "01a17c45-4d6c-7a22-afce-ac4166d8040f",
+        "reason": "measurement/report turn"
+      },
+      {
+        "turn_id": "01a17c56-3893-74d3-a89c-b50148433877",
+        "reason": "measurement/report turn"
+      }
+    ],
+    "phase_ledger": {
+      "schema_version": 1,
+      "uc_id": "UC-05",
+      "run_id": "UC-05-GPT-5.6-TERRA",
+      "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+      "phases": {
+        "prompt_generation": {
+          "status": "closed",
+          "first_turn_id": "01a17b79-3ffd-7f42-8cbb-c7f246b0d531",
+          "measurement_turn_id": "01a17b7d-e88a-7253-8d3a-177669a43483"
+        },
+        "source_generation": {
+          "status": "closed",
+          "first_turn_id": "01a17b82-e4ee-7591-92f5-2fed9087e5a9",
+          "measurement_turn_id": "01a17b89-f2c2-7801-b685-35defc51754f"
+        },
+        "repair": {
+          "status": "closed",
+          "first_turn_id": "01a17be2-19e0-72c3-8c4f-779ec77e06e1",
+          "measurement_turn_id": "01a17c56-3893-74d3-a89c-b50148433877"
+        }
+      },
+      "segments": [
+        {
+          "start": {
+            "at": "2026-10-27T10:49:37.281+07:00",
+            "epoch_ms": 1793072977281,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-05",
+            "run_id": "UC-05-GPT-5.6-TERRA",
+            "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+            "turn_id": "01a17b79-3ffd-7f42-8cbb-c7f246b0d531",
+            "phase": "prompt_generation",
+            "event": "start",
+            "segment_id": "181c7c33-1fe4-4f89-a31a-e678403a9062",
+            "source_revision": "sha256:ed826979f557db31ff91d58e84ee5df9fd6ef2a6424660a934001e798312c849"
+          },
+          "end": {
+            "at": "2026-10-27T10:52:26.305+07:00",
+            "epoch_ms": 1793073146305,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-05",
+            "run_id": "UC-05-GPT-5.6-TERRA",
+            "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+            "turn_id": "01a17b79-3ffd-7f42-8cbb-c7f246b0d531",
+            "phase": "prompt_generation",
+            "event": "end",
+            "segment_id": "181c7c33-1fe4-4f89-a31a-e678403a9062",
+            "source_revision": "sha256:ed826979f557db31ff91d58e84ee5df9fd6ef2a6424660a934001e798312c849"
+          }
+        },
+        {
+          "start": {
+            "at": "2026-10-27T11:01:17.083+07:00",
+            "epoch_ms": 1793073677083,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-05",
+            "run_id": "UC-05-GPT-5.6-TERRA",
+            "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+            "turn_id": "01a17b82-e4ee-7591-92f5-2fed9087e5a9",
+            "phase": "source_generation",
+            "event": "start",
+            "segment_id": "af2d9b75-6ad9-4997-bfb6-16255bc49226",
+            "source_revision": "sha256:ed826979f557db31ff91d58e84ee5df9fd6ef2a6424660a934001e798312c849"
+          },
+          "end": {
+            "at": "2026-10-27T11:03:00.503+07:00",
+            "epoch_ms": 1793073780503,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-05",
+            "run_id": "UC-05-GPT-5.6-TERRA",
+            "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+            "turn_id": "01a17b82-e4ee-7591-92f5-2fed9087e5a9",
+            "phase": "source_generation",
+            "event": "end",
+            "segment_id": "af2d9b75-6ad9-4997-bfb6-16255bc49226",
+            "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33"
+          }
+        },
+        {
+          "start": {
+            "at": "2026-10-27T12:43:38.157+07:00",
+            "epoch_ms": 1793079818158,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-05",
+            "run_id": "UC-05-GPT-5.6-TERRA",
+            "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+            "turn_id": "01a17be2-19e0-72c3-8c4f-779ec77e06e1",
+            "phase": "repair",
+            "event": "start",
+            "segment_id": "3eba1e9b-a282-4377-98f1-f1205434b707",
+            "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+            "repair_activity": "sub_prompt_generation"
+          },
+          "end": {
+            "at": "2026-10-27T12:44:57.192+07:00",
+            "epoch_ms": 1793079897193,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-05",
+            "run_id": "UC-05-GPT-5.6-TERRA",
+            "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+            "turn_id": "01a17be2-19e0-72c3-8c4f-779ec77e06e1",
+            "phase": "repair",
+            "event": "end",
+            "segment_id": "3eba1e9b-a282-4377-98f1-f1205434b707",
+            "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+            "repair_activity": "sub_prompt_generation"
+          }
+        },
+        {
+          "start": {
+            "at": "2026-10-27T13:37:36.658+07:00",
+            "epoch_ms": 1793083056658,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-05",
+            "run_id": "UC-05-GPT-5.6-TERRA",
+            "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+            "turn_id": "01a17c12-6390-7f62-b742-2baddd24dc9f",
+            "phase": "repair",
+            "event": "start",
+            "segment_id": "0f0696db-2fa6-488d-85b9-44fa058f0351",
+            "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+            "repair_activity": "source_correction"
+          },
+          "end": {
+            "at": "2026-10-27T13:41:42.740+07:00",
+            "epoch_ms": 1793083302740,
+            "timing_protocol": "generation_execution_with_repair_audit_v2",
+            "uc_id": "UC-05",
+            "run_id": "UC-05-GPT-5.6-TERRA",
+            "session_id": "01a17b79-3a13-7cc0-a6d6-3e2607fda7ee",
+            "turn_id": "01a17c12-6390-7f62-b742-2baddd24dc9f",
+            "phase": "repair",
+            "event": "end",
+            "segment_id": "0f0696db-2fa6-488d-85b9-44fa058f0351",
+            "source_revision": "sha256:264e25b9f81d07148456de8e5fe2f15045671523f0ecb11b7cfd3e8e13441523",
+            "repair_activity": "source_correction"
+          }
+        }
+      ],
+      "observations": [
+        {
+          "measurement_turn_id": "01a17b7d-e88a-7253-8d3a-177669a43483",
+          "action": "close-phase:prompt_generation",
+          "last_turn_id": "01a17b79-3ffd-7f42-8cbb-c7f246b0d531",
+          "evidence_sha256": "sha256:a97a1b1961741b513e0c03db2472b51c1d98a76d6e2c538334cd959e61d2963d"
+        },
+        {
+          "measurement_turn_id": "01a17b89-f2c2-7801-b685-35defc51754f",
+          "action": "close-phase:source_generation",
+          "last_turn_id": "01a17b82-e4ee-7591-92f5-2fed9087e5a9",
+          "evidence_sha256": "sha256:c2583ea944619ce5acffed86f061aa96d234430ba97ccd20122bd2a1ff83aa27"
+        },
+        {
+          "measurement_turn_id": "01a17c56-3893-74d3-a89c-b50148433877",
+          "action": "finalize-workflow",
+          "last_turn_id": "01a17c12-6390-7f62-b742-2baddd24dc9f",
+          "evidence_sha256": "sha256:2e0881551e2de4b44ddd5e777284b18ca3e9f2b3eb039c59425286fbbb30d3fb"
+        }
+      ],
+      "workflow_status": "finalized",
+      "timing_protocol": "generation_execution_with_repair_audit_v2"
+    }
+  },
+  "repair_authorization": {
+    "approved": true,
+    "turn_id": "01a17c12-6390-7f62-b742-2baddd24dc9f"
+  },
+  "business_rules": {
+    "baseline": "docs/02-construction/implementation/UC-05/business-rule-baseline.json",
+    "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+    "ordered_br_ids": [
+      "BR-WLS-01",
+      "BR-WLS-02",
+      "BR-WLS-03",
+      "BR-WLS-04",
+      "BR-WLS-05",
+      "BR-WLS-06",
+      "BR-WLS-07"
+    ],
+    "initial": {
+      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+      "assessed_at": "2026-10-27T12:18:18+07:00",
+      "requirements": [
+        {
+          "br_id": "BR-WLS-01",
+          "status": "met",
+          "rationale": "SessionsService and SessionAccessGuard correctly enforce authenticated session membership and active joined participant lookup, returning 401 when unauthenticated, 403 when session is mismatched, and 404 when participant is not joined.",
+          "evidence": [
+            "obs-bf1"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ]
+        },
+        {
+          "br_id": "BR-WLS-02",
+          "status": "unmet",
+          "rationale": "viewLiveStream does not verify session.status <> SessionStatus::ENDED; when invoked on an ENDED session, it returns HTTP 200 with ENDED stream status instead of rejecting the call.",
+          "evidence": [
+            "obs-bf1"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ]
+        },
+        {
+          "br_id": "BR-WLS-03",
+          "status": "met",
+          "rationale": "viewLiveStream returns data containing exact sessionId, participantId, and viewerRole matching the session and joined participant.",
+          "evidence": [
+            "obs-bf1"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ]
+        },
+        {
+          "br_id": "BR-WLS-04",
+          "status": "met",
+          "rationale": "viewLiveStream returns exact streamStatus, streamVersion, and sessionVersion matching the current live stream and session entities.",
+          "evidence": [
+            "obs-bf1"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ]
+        },
+        {
+          "br_id": "BR-WLS-05",
+          "status": "unmet",
+          "rationale": "canPlayMedia is absent from the view representation and playback controls in the client UI remain enabled when stream.status is ENDED.",
+          "evidence": [
+            "obs-bf1"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ]
+        },
+        {
+          "br_id": "BR-WLS-06",
+          "status": "unmet",
+          "rationale": "canPublishMedia is absent from the view representation and microphone/camera publishing controls remain enabled in the client UI for a VIEWER on an ENDED stream.",
+          "evidence": [
+            "obs-bf1"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ]
+        },
+        {
+          "br_id": "BR-WLS-07",
+          "status": "unmet",
+          "rationale": "initialAudioMuted is absent from the view representation and the client UI initializes audio volume at 75 rather than muted.",
+          "evidence": [
+            "obs-bf1"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ]
+        }
+      ],
+      "total": 7,
+      "met": 3,
+      "unmet": 4,
+      "not_evaluable": 0
+    },
+    "final": {
+      "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+      "assessed_at": "2026-10-27T12:18:18+07:00",
+      "requirements": [
+        {
+          "br_id": "BR-WLS-01",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-final-af1",
+            "obs-final-bf1",
+            "obs-final-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-WLS-02",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-final-af1",
+            "obs-final-bf1",
+            "obs-final-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-WLS-03",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-final-af1",
+            "obs-final-bf1",
+            "obs-final-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-WLS-04",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-final-af1",
+            "obs-final-bf1",
+            "obs-final-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-WLS-05",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-final-af1",
+            "obs-final-bf1",
+            "obs-final-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-WLS-06",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-final-af1",
+            "obs-final-bf1",
+            "obs-final-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-WLS-07",
+          "status": "met",
+          "rationale": "Verified met in final stage repair verification.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/_runtime/deployment.json"
+          ],
+          "runtime_observation_ids": [
+            "obs-final-af1",
+            "obs-final-bf1",
+            "obs-final-ef1"
+          ]
+        }
+      ],
+      "total": 7,
+      "met": 7,
+      "unmet": 0,
+      "not_evaluable": 0,
+      "assessment_id": "asm-uc05-final",
+      "stage": "final",
+      "captured_at": "2026-10-27T14:11:54.420019+07:00"
+    }
+  },
+  "defects": [
+    {
+      "defect_id": "DEF-UC05-01",
+      "fingerprint": "sha256:5dd105670f2b68df26dad0500af257e396c900078c8ae6d884d9584a948afb88",
+      "stage": "initial",
+      "category": "business_rule",
+      "trigger": "Viewer calls viewLiveStream on a live session whose status is ENDED",
+      "description": "SessionsService.viewLiveStream fails to check that session.status <> SessionStatus::ENDED as required by BR-WLS-02, returning HTTP 200 with ended stream status instead of rejecting the request.",
+      "affected_br_ids": [
+        "BR-WLS-02"
+      ],
+      "affected_flow_ids": [],
+      "blocks_execution": false,
+      "evidence": [
+        {
+          "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_network.json",
+          "sha256": "sha256:8c24ffec756f9bc28980d4029a95deddb52c56dbda1299a96029373f8f09ed38",
+          "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33"
+        }
+      ],
+      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+      "status": "open"
+    },
+    {
+      "defect_id": "DEF-UC05-02",
+      "fingerprint": "sha256:240cbbb04afdb86c924b629dde822f36d56dd35518c28cec90ed849d7a9317e7",
+      "stage": "initial",
+      "category": "business_rule",
+      "trigger": "Viewer opens live-stream viewer interface for a non-live or ended stream without STAGE_PARTICIPANT role",
+      "description": "LiveStreamViewer and SessionsService do not enforce stream playback availability (canPlayMedia only when LIVE), publishing availability (canPublishMedia only when LIVE and STAGE_PARTICIPANT), or initial muted audio (initialAudioMuted), leaving play and mic/camera controls unconditionally enabled and unmuted at volume 75.",
+      "affected_br_ids": [
+        "BR-WLS-05",
+        "BR-WLS-06",
+        "BR-WLS-07"
+      ],
+      "affected_flow_ids": [],
+      "blocks_execution": false,
+      "evidence": [
+        {
+          "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_dom.json",
+          "sha256": "sha256:41cc4419c267cb7e9c0850a4fcd1b97b25f55567e66ea7d9a2e95edfcd3efe04",
+          "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33"
+        }
+      ],
+      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+      "status": "open"
+    }
+  ],
+  "repairs": [
+    {
+      "repair_id": "repair-round-001",
+      "round_index": 1,
+      "prompt_directory": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/repairs",
+      "source_revision_before": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+      "source_revision_after": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+      "affected_br_ids": [
+        "BR-WLS-02",
+        "BR-WLS-05",
+        "BR-WLS-06",
+        "BR-WLS-07"
+      ],
+      "affected_flow_ids": [],
+      "evidence_before": [
+        {
+          "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_network.json",
+          "sha256": "sha256:8c24ffec756f9bc28980d4029a95deddb52c56dbda1299a96029373f8f09ed38"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_dom.json",
+          "sha256": "sha256:41cc4419c267cb7e9c0850a4fcd1b97b25f55567e66ea7d9a2e95edfcd3efe04"
+        }
+      ],
+      "changed_files": [
+        "finalsource/be/src/modules/sessions/sessions.controller.ts",
+        "finalsource/be/src/modules/sessions/sessions.service.ts",
+        "finalsource/fe/src/App.tsx",
+        "finalsource/fe/src/api/session.ts",
+        "finalsource/fe/src/components/LiveStreamViewer.tsx"
+      ],
+      "evidence_after": [
+        {
+          "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/_runtime/deployment.json",
+          "sha256": "sha256:4cc2181c6d10f01b49bc635696d119bddb99491692ae80107605b79ad872120f"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/_source/repair-source-manifest.json",
+          "sha256": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-af1/action-ui.json",
+          "sha256": "sha256:f6d793ffd7d43fed5d568c07bf39a56c77c5c5a24a78b7afcd4cdf80bd9ba2bf"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-af1/dom-snapshot.html",
+          "sha256": "sha256:eefe9635e1c270ccb5c012f1d2f63824350c46ddc2a4c3a59b9125809e82574b"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-af1/trace.json",
+          "sha256": "sha256:804549eef8db7766f02926856054437b549199f3f4be3ec58202a20639d71add"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-bf1/action-ui.json",
+          "sha256": "sha256:75675dfe1b75be02612378fb17342977c198289e6ab25498fd33b4ba87723f7e"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-bf1/dom-snapshot.html",
+          "sha256": "sha256:eefe9635e1c270ccb5c012f1d2f63824350c46ddc2a4c3a59b9125809e82574b"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-bf1/trace.json",
+          "sha256": "sha256:ad2f866d21cb3f517dde16ad9a29266fba119a10c9dcb61389d87c8eb01fcc6b"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-ef1/action-ui.json",
+          "sha256": "sha256:f489e8287e46e7c893fb1186b7f0c39150b345b8aa959d0e5f5cd3e70cc5d8c1"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-ef1/dom-snapshot.html",
+          "sha256": "sha256:eefe9635e1c270ccb5c012f1d2f63824350c46ddc2a4c3a59b9125809e82574b"
+        },
+        {
+          "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-ef1/trace.json",
+          "sha256": "sha256:d2ae773297812862d325ae1fb0460ab34970f2b91ce945172fb92049350c84a7"
+        }
+      ],
+      "defect_attempts": [
+        {
+          "defect_id": "DEF-UC05-01",
+          "defect_fingerprint": "sha256:5dd105670f2b68df26dad0500af257e396c900078c8ae6d884d9584a948afb88",
+          "prompt_path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/repairs/repair-001-DEF-UC05-01.md",
+          "prompt_sha256": "sha256:a774faba9d8aad9ccb2f6ffb518a0d1631fc09f9a59439325767c88b5352d43b",
+          "status": "resolved",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/_runtime/deployment.json",
+              "sha256": "sha256:4cc2181c6d10f01b49bc635696d119bddb99491692ae80107605b79ad872120f"
+            }
+          ]
+        },
+        {
+          "defect_id": "DEF-UC05-02",
+          "defect_fingerprint": "sha256:240cbbb04afdb86c924b629dde822f36d56dd35518c28cec90ed849d7a9317e7",
+          "prompt_path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/repairs/repair-002-DEF-UC05-02.md",
+          "prompt_sha256": "sha256:88ba725b3cef4a9573ececf01b7c92fc604a6d6a54910271ec1629bfe93f4c87",
+          "status": "resolved",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/_runtime/deployment.json",
+              "sha256": "sha256:4cc2181c6d10f01b49bc635696d119bddb99491692ae80107605b79ad872120f"
+            }
+          ]
+        }
+      ],
+      "outcome": "resolved",
+      "model": {
+        "effective_model_id": "gpt-5.6-terra"
+      }
+    }
+  ],
+  "repair_round_limit": 10,
+  "repair_rounds_completed": 1,
+  "repair_status": "completed",
+  "repair_prompt_directory": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/repairs",
+  "all_sub_prompt_count": 2,
+  "manual_estimates_minutes": [],
+  "ui_accuracy_percent": null,
+  "ui_accuracy_status": "researcher_managed",
+  "ui_accuracy_source": "manual",
+  "ui_accuracy_evidence": null,
+  "ui_accuracy_recorded_by": null,
+  "ui_accuracy_recorded_at": null,
+  "flow_accuracy_percent": 100.0,
+  "flow_error_percent": 0.0,
+  "flow_accuracy_status": "scored",
+  "flow_accuracy": {
+    "schema_version": 2,
+    "rubric_id": "completion-critical-flow-runtime-v2",
+    "assessments": [
+      {
+        "schema_version": 2,
+        "rubric_id": "completion-critical-flow-runtime-v2",
+        "assessment_id": "asm-uc05-initial",
+        "stage": "initial",
+        "input_sha256": "sha256:888319846cbef6ab04251ebc2058af165dcf64de7c6c0043edd53fedfc069a04",
+        "status": "scored",
+        "execution_blocked": false,
+        "execution_blocker_defect_ids": [],
+        "counts": {
+          "main": 1,
+          "alternative": 1,
+          "exception": 1,
+          "total": 3,
+          "correct": 3,
+          "incorrect": 0,
+          "not_evaluable": 0
+        },
+        "flow_error_percent": 0,
+        "flow_accuracy_percent": 100,
+        "evaluated_coverage_percent": 100,
+        "accuracy_lower_bound_percent": 100,
+        "accuracy_upper_bound_percent": 100,
+        "flows": [
+          {
+            "flow_id": "BF-1",
+            "type": "main",
+            "status": "correct",
+            "noncritical_deviations": 0,
+            "terminal_outcome": {
+              "text": "The client displays the live-session experience using the returned session and stream snapshot.",
+              "status": "met",
+              "rationale": "Live stream viewer surface and controls fully rendered with actual session and stream status.",
+              "observation_id": "obs-bf1",
+              "required_runtime_kinds": [
+                "ui"
+              ],
+              "evidence_requirement_rationale": "Requires UI presentation proof of terminal outcome.",
+              "source_findings": [],
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_dom.json",
+                  "sha256": "sha256:41cc4419c267cb7e9c0850a4fcd1b97b25f55567e66ea7d9a2e95edfcd3efe04",
+                  "kind": "ui",
+                  "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                  "sanitized": true,
+                  "locator": "main[data-node-id=\"6007:87420\"]",
+                  "observation_id": "obs-bf1",
+                  "flow_id": "BF-1",
+                  "captured_at": "2026-10-27T12:18:13+07:00",
+                  "target_ids": [
+                    "BF-1.4",
+                    "terminal_outcome"
+                  ]
+                },
+                {
+                  "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_rendered.png",
+                  "sha256": "sha256:941bf116d74c9e188abad1ea6c165567542196404d7157fb24408ecbe0464543",
+                  "kind": "ui",
+                  "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                  "sanitized": true,
+                  "locator": "page-view",
+                  "observation_id": "obs-bf1",
+                  "flow_id": "BF-1",
+                  "captured_at": "2026-10-27T12:18:13+07:00",
+                  "target_ids": [
+                    "BF-1.4",
+                    "terminal_outcome"
+                  ]
+                }
+              ]
+            },
+            "steps": [
+              {
+                "step_id": "BF-1.1",
+                "text": "The viewer opens the live session.",
+                "completion_critical": true,
+                "criticality_reason": "Entry to live session experience is required to watch the broadcast.",
+                "status": "met",
+                "rationale": "Viewer successfully opened the live session interface at /?view=viewer with valid session context.",
+                "observation_id": "obs-bf1",
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Requires UI entry observation.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_rendered.png",
+                    "sha256": "sha256:941bf116d74c9e188abad1ea6c165567542196404d7157fb24408ecbe0464543",
+                    "kind": "ui",
+                    "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                    "sanitized": true,
+                    "locator": "section[aria-label=\"Live stream player\"]",
+                    "observation_id": "obs-bf1",
+                    "flow_id": "BF-1",
+                    "captured_at": "2026-10-27T12:18:13+07:00",
+                    "target_ids": [
+                      "entry",
+                      "BF-1.1"
+                    ]
+                  }
+                ],
+                "source_findings": [
+                  {
+                    "finding": "LiveStreamViewer mounts and initiates session read queries on valid context.",
+                    "limits": "Static source excerpt.",
+                    "evidence": [
+                      {
+                        "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/_source/live_stream_viewer_component.tsx",
+                        "sha256": "sha256:073daaff830b74b8fe5f141aa69189d603931fe54ef54be13a8d2feda7ffdd5f",
+                        "kind": "source",
+                        "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                        "sanitized": true,
+                        "locator": "LiveStreamViewer component",
+                        "observation_id": null,
+                        "provenance": {
+                          "path": "finalsource/fe/src/components/LiveStreamViewer.tsx",
+                          "locator": "lines 1-50"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "step_id": "BF-1.2",
+                "text": "The client requests the current session representation.",
+                "completion_critical": true,
+                "criticality_reason": "Fetching current session and live stream state is required to render viewer experience.",
+                "status": "met",
+                "rationale": "Observed client issuing GET requests to /api/v1/sessions/:sessionId/live-stream/view and /state.",
+                "observation_id": "obs-bf1",
+                "required_runtime_kinds": [
+                  "network"
+                ],
+                "evidence_requirement_rationale": "Requires network request/response observation.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_network.json",
+                    "sha256": "sha256:8c24ffec756f9bc28980d4029a95deddb52c56dbda1299a96029373f8f09ed38",
+                    "kind": "network",
+                    "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                    "sanitized": true,
+                    "locator": "GET /api/v1/sessions/11111111-1111-4111-8111-111111111111/live-stream/view",
+                    "observation_id": "obs-bf1",
+                    "flow_id": "BF-1",
+                    "captured_at": "2026-10-27T12:18:13+07:00",
+                    "target_ids": [
+                      "BF-1.2"
+                    ]
+                  }
+                ],
+                "source_findings": []
+              },
+              {
+                "step_id": "BF-1.3",
+                "text": "The system returns the viewer-facing stream state.",
+                "completion_critical": true,
+                "criticality_reason": "Successful response with stream status is necessary for viewer display.",
+                "status": "met",
+                "rationale": "Server returned HTTP 200 with streamStatus, streamVersion, sessionVersion and selfParticipant.",
+                "observation_id": "obs-bf1",
+                "required_runtime_kinds": [
+                  "network"
+                ],
+                "evidence_requirement_rationale": "Requires network response verification.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_network.json",
+                    "sha256": "sha256:8c24ffec756f9bc28980d4029a95deddb52c56dbda1299a96029373f8f09ed38",
+                    "kind": "network",
+                    "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                    "sanitized": true,
+                    "locator": "response.status == 200",
+                    "observation_id": "obs-bf1",
+                    "flow_id": "BF-1",
+                    "captured_at": "2026-10-27T12:18:13+07:00",
+                    "target_ids": [
+                      "BF-1.3"
+                    ]
+                  }
+                ],
+                "source_findings": [
+                  {
+                    "finding": "SessionsService viewLiveStream returns viewer role and stream version.",
+                    "limits": "Static source excerpt.",
+                    "evidence": [
+                      {
+                        "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/_source/view_live_stream_service.ts",
+                        "sha256": "sha256:b9d3924c823d933c6cd48c08fe6b5f2c3fc3da16d802094c7371698b8f3dffbf",
+                        "kind": "source",
+                        "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                        "sanitized": true,
+                        "locator": "viewLiveStream implementation",
+                        "observation_id": null,
+                        "provenance": {
+                          "path": "finalsource/be/src/modules/sessions/sessions.service.ts",
+                          "locator": "lines 206-257"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "step_id": "BF-1.4",
+                "text": "The client renders the live-session experience.",
+                "completion_critical": true,
+                "criticality_reason": "Rendering viewer experience is the terminal step of the main flow.",
+                "status": "met",
+                "rationale": "UI rendered player surface, participant badge 'Viewer Bob', stream status 'Stream ended', and controls.",
+                "observation_id": "obs-bf1",
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Requires UI rendering verification.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_dom.json",
+                    "sha256": "sha256:41cc4419c267cb7e9c0850a4fcd1b97b25f55567e66ea7d9a2e95edfcd3efe04",
+                    "kind": "ui",
+                    "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                    "sanitized": true,
+                    "locator": "main[data-node-id=\"6007:87420\"]",
+                    "observation_id": "obs-bf1",
+                    "flow_id": "BF-1",
+                    "captured_at": "2026-10-27T12:18:13+07:00",
+                    "target_ids": [
+                      "BF-1.4",
+                      "terminal_outcome"
+                    ]
+                  },
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_rendered.png",
+                    "sha256": "sha256:941bf116d74c9e188abad1ea6c165567542196404d7157fb24408ecbe0464543",
+                    "kind": "ui",
+                    "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                    "sanitized": true,
+                    "locator": "page-view",
+                    "observation_id": "obs-bf1",
+                    "flow_id": "BF-1",
+                    "captured_at": "2026-10-27T12:18:13+07:00",
+                    "target_ids": [
+                      "BF-1.4",
+                      "terminal_outcome"
+                    ]
+                  }
+                ],
+                "source_findings": []
+              }
+            ]
+          },
+          {
+            "flow_id": "AF-1",
+            "type": "alternative",
+            "status": "correct",
+            "noncritical_deviations": 0,
+            "terminal_outcome": {
+              "text": "The client displays the viewer actions shown by the design.",
+              "status": "met",
+              "rationale": "Viewer session menu is visible and interactive with design actions.",
+              "observation_id": "obs-af1",
+              "required_runtime_kinds": [
+                "ui"
+              ],
+              "evidence_requirement_rationale": "Requires UI presentation proof of menu actions.",
+              "source_findings": [],
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-af1/af1_dom.json",
+                  "sha256": "sha256:cf2e30abc8fe07d702c8b2aeba70598d023a5c5bd4f966978864d7075ea86ecb",
+                  "kind": "ui",
+                  "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                  "sanitized": true,
+                  "locator": "#viewer-session-menu",
+                  "observation_id": "obs-af1",
+                  "flow_id": "AF-1",
+                  "captured_at": "2026-10-27T12:18:15+07:00",
+                  "target_ids": [
+                    "AF-1.2",
+                    "terminal_outcome"
+                  ]
+                },
+                {
+                  "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-af1/af1_menu_open.png",
+                  "sha256": "sha256:7a705345f031b870ee2130c92f54fedbdb720d6e51673dc4c76b9707d5423537",
+                  "kind": "ui",
+                  "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                  "sanitized": true,
+                  "locator": "menu-view",
+                  "observation_id": "obs-af1",
+                  "flow_id": "AF-1",
+                  "captured_at": "2026-10-27T12:18:15+07:00",
+                  "target_ids": [
+                    "AF-1.2",
+                    "terminal_outcome"
+                  ]
+                }
+              ]
+            },
+            "steps": [
+              {
+                "step_id": "AF-1.1",
+                "text": "The viewer opens the session menu.",
+                "completion_critical": true,
+                "criticality_reason": "Menu trigger action is required to reveal viewer actions.",
+                "status": "met",
+                "rationale": "Viewer clicked More button, setting aria-expanded to true.",
+                "observation_id": "obs-af1",
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Requires UI interaction observation.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-af1/af1_dom.json",
+                    "sha256": "sha256:cf2e30abc8fe07d702c8b2aeba70598d023a5c5bd4f966978864d7075ea86ecb",
+                    "kind": "ui",
+                    "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                    "sanitized": true,
+                    "locator": "button[aria-controls=\"viewer-session-menu\"]",
+                    "observation_id": "obs-af1",
+                    "flow_id": "AF-1",
+                    "captured_at": "2026-10-27T12:18:15+07:00",
+                    "target_ids": [
+                      "entry",
+                      "branch",
+                      "AF-1.1"
+                    ]
+                  }
+                ],
+                "source_findings": []
+              },
+              {
+                "step_id": "AF-1.2",
+                "text": "The client displays the viewer actions shown by the design.",
+                "completion_critical": true,
+                "criticality_reason": "Displaying viewer actions is the terminal step of AF-1.",
+                "status": "met",
+                "rationale": "Menu container #viewer-session-menu rendered with items 'Playback quality' and 'Fullscreen'.",
+                "observation_id": "obs-af1",
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Requires UI menu visibility observation.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-af1/af1_dom.json",
+                    "sha256": "sha256:cf2e30abc8fe07d702c8b2aeba70598d023a5c5bd4f966978864d7075ea86ecb",
+                    "kind": "ui",
+                    "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                    "sanitized": true,
+                    "locator": "#viewer-session-menu",
+                    "observation_id": "obs-af1",
+                    "flow_id": "AF-1",
+                    "captured_at": "2026-10-27T12:18:15+07:00",
+                    "target_ids": [
+                      "AF-1.2",
+                      "terminal_outcome"
+                    ]
+                  },
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-af1/af1_menu_open.png",
+                    "sha256": "sha256:7a705345f031b870ee2130c92f54fedbdb720d6e51673dc4c76b9707d5423537",
+                    "kind": "ui",
+                    "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                    "sanitized": true,
+                    "locator": "menu-view",
+                    "observation_id": "obs-af1",
+                    "flow_id": "AF-1",
+                    "captured_at": "2026-10-27T12:18:15+07:00",
+                    "target_ids": [
+                      "AF-1.2",
+                      "terminal_outcome"
+                    ]
+                  }
+                ],
+                "source_findings": []
+              }
+            ]
+          },
+          {
+            "flow_id": "EF-1",
+            "type": "exception",
+            "status": "correct",
+            "noncritical_deviations": 0,
+            "terminal_outcome": {
+              "text": "The client displays the visible loading or unavailable state.",
+              "status": "met",
+              "rationale": "Visible unavailable error state rendered with alert message.",
+              "observation_id": "obs-ef1",
+              "required_runtime_kinds": [
+                "ui"
+              ],
+              "evidence_requirement_rationale": "Requires UI presentation proof of unavailable state.",
+              "source_findings": [],
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-ef1/ef1_dom.json",
+                  "sha256": "sha256:dc91de8992d74fa7e917500cc1f28dbb3ed08beeae4fab52370a9a49e3f0b27e",
+                  "kind": "ui",
+                  "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                  "sanitized": true,
+                  "locator": "p[role=\"alert\"]",
+                  "observation_id": "obs-ef1",
+                  "flow_id": "EF-1",
+                  "captured_at": "2026-10-27T12:18:17+07:00",
+                  "target_ids": [
+                    "EF-1.2",
+                    "terminal_outcome"
+                  ]
+                },
+                {
+                  "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-ef1/ef1_unavailable.png",
+                  "sha256": "sha256:4c577761d1d891c4ac03a65c0664284aa868f757203fa58c39cadb2046476995",
+                  "kind": "ui",
+                  "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                  "sanitized": true,
+                  "locator": "error-view",
+                  "observation_id": "obs-ef1",
+                  "flow_id": "EF-1",
+                  "captured_at": "2026-10-27T12:18:17+07:00",
+                  "target_ids": [
+                    "EF-1.2",
+                    "terminal_outcome"
+                  ]
+                }
+              ]
+            },
+            "steps": [
+              {
+                "step_id": "EF-1.1",
+                "text": "The live-session representation cannot be returned.",
+                "completion_critical": true,
+                "criticality_reason": "Failure condition branch is necessary to trigger exception flow.",
+                "status": "met",
+                "rationale": "Backend rejected request with HTTP 403 Forbidden for unauthorized session.",
+                "observation_id": "obs-ef1",
+                "required_runtime_kinds": [
+                  "network"
+                ],
+                "evidence_requirement_rationale": "Requires network error observation.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-ef1/ef1_network.json",
+                    "sha256": "sha256:f16a16c72985296165e7f890fb8e66a249fe3f9642cc8f453dd64bec0309c6f6",
+                    "kind": "network",
+                    "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                    "sanitized": true,
+                    "locator": "GET /api/v1/sessions/00000000-0000-4000-8000-000000000000/live-stream/view",
+                    "observation_id": "obs-ef1",
+                    "flow_id": "EF-1",
+                    "captured_at": "2026-10-27T12:18:16+07:00",
+                    "target_ids": [
+                      "entry",
+                      "branch",
+                      "EF-1.1"
+                    ]
+                  },
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-ef1/ef1_unavailable.png",
+                    "sha256": "sha256:4c577761d1d891c4ac03a65c0664284aa868f757203fa58c39cadb2046476995",
+                    "kind": "ui",
+                    "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                    "sanitized": true,
+                    "locator": "error-view",
+                    "observation_id": "obs-ef1",
+                    "flow_id": "EF-1",
+                    "captured_at": "2026-10-27T12:18:17+07:00",
+                    "target_ids": [
+                      "entry",
+                      "branch",
+                      "EF-1.1"
+                    ]
+                  }
+                ],
+                "source_findings": []
+              },
+              {
+                "step_id": "EF-1.2",
+                "text": "The client displays the visible loading or unavailable state.",
+                "completion_critical": true,
+                "criticality_reason": "Displaying visible unavailable state is the terminal handling of EF-1.",
+                "status": "met",
+                "rationale": "Client rendered accessible alert element role=alert and status 'Live session unavailable'.",
+                "observation_id": "obs-ef1",
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Requires UI error presentation observation.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-ef1/ef1_dom.json",
+                    "sha256": "sha256:dc91de8992d74fa7e917500cc1f28dbb3ed08beeae4fab52370a9a49e3f0b27e",
+                    "kind": "ui",
+                    "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                    "sanitized": true,
+                    "locator": "p[role=\"alert\"]",
+                    "observation_id": "obs-ef1",
+                    "flow_id": "EF-1",
+                    "captured_at": "2026-10-27T12:18:17+07:00",
+                    "target_ids": [
+                      "EF-1.2",
+                      "terminal_outcome"
+                    ]
+                  },
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-ef1/ef1_unavailable.png",
+                    "sha256": "sha256:4c577761d1d891c4ac03a65c0664284aa868f757203fa58c39cadb2046476995",
+                    "kind": "ui",
+                    "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                    "sanitized": true,
+                    "locator": "error-view",
+                    "observation_id": "obs-ef1",
+                    "flow_id": "EF-1",
+                    "captured_at": "2026-10-27T12:18:17+07:00",
+                    "target_ids": [
+                      "EF-1.2",
+                      "terminal_outcome"
+                    ]
+                  }
+                ],
+                "source_findings": []
+              }
+            ]
+          }
+        ],
+        "input": {
+          "schema_version": 2,
+          "rubric_id": "completion-critical-flow-runtime-v2",
+          "uc_id": "UC-05",
+          "run_id": "UC-05-GPT-5.6-TERRA",
+          "assessment_id": "asm-uc05-initial",
+          "stage": "initial",
+          "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+          "captured_at": "2026-10-27T12:18:18+07:00",
+          "baseline": {
+            "path": "docs/02-construction/implementation/UC-05/flow-baseline.json",
+            "sha256": "sha256:04227c9769a6fb5e6ec51fb7d14b79b9b933550060165c2aabc1b3f494aa775b"
+          },
+          "limitations": [],
+          "runtime": {
+            "status": "ready",
+            "compose_version": 5,
+            "reason": "Verified healthy FE/BE/MySQL runtime in Docker Compose v2 with audited source deployment.",
+            "compose_project": "application-baseline",
+            "services": [
+              {
+                "name": "backend",
+                "container_id": "665dfc67fc69",
+                "image_id": "sha256:edd223d8f8868532071bdc34dd21a81dfe1142dd03105993d10b3e446e260449",
+                "state": "healthy"
+              },
+              {
+                "name": "database",
+                "container_id": "e69459707f34",
+                "image_id": "sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb",
+                "state": "healthy"
+              },
+              {
+                "name": "frontend",
+                "container_id": "c06e307cc68f",
+                "image_id": "sha256:2da23accc7f7009ac2ac9a78927f1c4fdf3d670b0d4495f1d25363883ad333d8",
+                "state": "healthy"
+              }
+            ],
+            "deployment": {
+              "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+              "verified": true,
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/_runtime/deployment_evidence.json",
+                  "sha256": "sha256:9acbb48000006e49c33c44ac6ecb6652d52d9a3b754946f3e8f97bda875b3e21",
+                  "kind": "deployment",
+                  "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                  "sanitized": true,
+                  "locator": "compose.yaml",
+                  "observation_id": null
+                }
+              ]
+            }
+          },
+          "observations": [
+            {
+              "observation_id": "obs-bf1",
+              "uc_id": "UC-05",
+              "run_id": "UC-05-GPT-5.6-TERRA",
+              "stage": "initial",
+              "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+              "baseline": {
+                "path": "docs/02-construction/implementation/UC-05/flow-baseline.json",
+                "sha256": "sha256:04227c9769a6fb5e6ec51fb7d14b79b9b933550060165c2aabc1b3f494aa775b"
+              },
+              "flow_id": "BF-1",
+              "planned_at": "2026-10-27T12:18:10+07:00",
+              "started_at": "2026-10-27T12:18:11+07:00",
+              "ended_at": "2026-10-27T12:18:14+07:00",
+              "time_limit_seconds": 30,
+              "scope": "Observed live session viewer loading and initial rendering through headless Chrome.",
+              "actual_preconditions": "Viewer has active session ID and valid JWT session access token in sessionStorage.",
+              "entry_point": "http://127.0.0.1:8086/?view=viewer&sessionId=11111111-1111-4111-8111-111111111111",
+              "entry_kind": "ui",
+              "end_state": "Client renders full live stream experience with participant badge, stream status 'Stream ended', video player and controls.",
+              "state": "completed",
+              "actions": [
+                {
+                  "sequence": 1,
+                  "at": "2026-10-27T12:18:11+07:00",
+                  "action": "Viewer navigates to the live-session interface with authenticated token in session storage.",
+                  "actual_result": "Viewer interface route is loaded with valid session context.",
+                  "target_ids": [
+                    "entry",
+                    "BF-1.1"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_rendered.png",
+                      "sha256": "sha256:941bf116d74c9e188abad1ea6c165567542196404d7157fb24408ecbe0464543",
+                      "kind": "ui",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "section[aria-label=\"Live stream player\"]",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-27T12:18:13+07:00",
+                      "target_ids": [
+                        "entry",
+                        "BF-1.1"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "sequence": 2,
+                  "at": "2026-10-27T12:18:12+07:00",
+                  "action": "Client requests GET /api/v1/sessions/:sessionId/live-stream/view and GET /api/v1/sessions/:sessionId/state.",
+                  "actual_result": "Both endpoints return HTTP 200 OK with session representation.",
+                  "target_ids": [
+                    "BF-1.2"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_network.json",
+                      "sha256": "sha256:8c24ffec756f9bc28980d4029a95deddb52c56dbda1299a96029373f8f09ed38",
+                      "kind": "network",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "GET /api/v1/sessions/11111111-1111-4111-8111-111111111111/live-stream/view",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-27T12:18:13+07:00",
+                      "target_ids": [
+                        "BF-1.2"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "sequence": 3,
+                  "at": "2026-10-27T12:18:13+07:00",
+                  "action": "System returns viewer-facing stream state and session snapshot.",
+                  "actual_result": "Received HTTP 200 payload with streamStatus 'ENDED', streamVersion 2, sessionVersion 2, and selfParticipant.",
+                  "target_ids": [
+                    "BF-1.3"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_network.json",
+                      "sha256": "sha256:8c24ffec756f9bc28980d4029a95deddb52c56dbda1299a96029373f8f09ed38",
+                      "kind": "network",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "response.status == 200",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-27T12:18:13+07:00",
+                      "target_ids": [
+                        "BF-1.3"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "sequence": 4,
+                  "at": "2026-10-27T12:18:13+07:00",
+                  "action": "Client renders live-session experience with player, participant label, status and controls.",
+                  "actual_result": "Rendered DOM contains player surface, 'Viewer Bob', stream status 'Stream ended', controls.",
+                  "target_ids": [
+                    "BF-1.4",
+                    "terminal_outcome"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_dom.json",
+                      "sha256": "sha256:41cc4419c267cb7e9c0850a4fcd1b97b25f55567e66ea7d9a2e95edfcd3efe04",
+                      "kind": "ui",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "main[data-node-id=\"6007:87420\"]",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-27T12:18:13+07:00",
+                      "target_ids": [
+                        "BF-1.4",
+                        "terminal_outcome"
+                      ]
+                    },
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_rendered.png",
+                      "sha256": "sha256:941bf116d74c9e188abad1ea6c165567542196404d7157fb24408ecbe0464543",
+                      "kind": "ui",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "page-view",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-27T12:18:13+07:00",
+                      "target_ids": [
+                        "BF-1.4",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "observation_id": "obs-af1",
+              "uc_id": "UC-05",
+              "run_id": "UC-05-GPT-5.6-TERRA",
+              "stage": "initial",
+              "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+              "baseline": {
+                "path": "docs/02-construction/implementation/UC-05/flow-baseline.json",
+                "sha256": "sha256:04227c9769a6fb5e6ec51fb7d14b79b9b933550060165c2aabc1b3f494aa775b"
+              },
+              "flow_id": "AF-1",
+              "planned_at": "2026-10-27T12:18:14+07:00",
+              "started_at": "2026-10-27T12:18:14+07:00",
+              "ended_at": "2026-10-27T12:18:15+07:00",
+              "time_limit_seconds": 30,
+              "scope": "Observed session menu opening and action rendering via UI interaction.",
+              "actual_preconditions": "Viewer session experience rendered from BF-1.",
+              "entry_point": "http://127.0.0.1:8086/?view=viewer&sessionId=11111111-1111-4111-8111-111111111111",
+              "entry_kind": "ui",
+              "end_state": "Viewer session menu is displayed with design actions Playback quality and Fullscreen.",
+              "state": "completed",
+              "actions": [
+                {
+                  "sequence": 1,
+                  "at": "2026-10-27T12:18:14+07:00",
+                  "action": "Viewer opens session menu by clicking More button.",
+                  "actual_result": "More button clicked, triggering session menu visibility.",
+                  "target_ids": [
+                    "entry",
+                    "branch",
+                    "AF-1.1"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-af1/af1_dom.json",
+                      "sha256": "sha256:cf2e30abc8fe07d702c8b2aeba70598d023a5c5bd4f966978864d7075ea86ecb",
+                      "kind": "ui",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "button[aria-controls=\"viewer-session-menu\"]",
+                      "observation_id": "obs-af1",
+                      "flow_id": "AF-1",
+                      "captured_at": "2026-10-27T12:18:15+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "AF-1.1"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "sequence": 2,
+                  "at": "2026-10-27T12:18:15+07:00",
+                  "action": "Client displays viewer actions shown by design in the open menu.",
+                  "actual_result": "Menu container rendered with role=menu and menuitems Playback quality and Fullscreen.",
+                  "target_ids": [
+                    "AF-1.2",
+                    "terminal_outcome"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-af1/af1_dom.json",
+                      "sha256": "sha256:cf2e30abc8fe07d702c8b2aeba70598d023a5c5bd4f966978864d7075ea86ecb",
+                      "kind": "ui",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "#viewer-session-menu",
+                      "observation_id": "obs-af1",
+                      "flow_id": "AF-1",
+                      "captured_at": "2026-10-27T12:18:15+07:00",
+                      "target_ids": [
+                        "AF-1.2",
+                        "terminal_outcome"
+                      ]
+                    },
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-af1/af1_menu_open.png",
+                      "sha256": "sha256:7a705345f031b870ee2130c92f54fedbdb720d6e51673dc4c76b9707d5423537",
+                      "kind": "ui",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "menu-view",
+                      "observation_id": "obs-af1",
+                      "flow_id": "AF-1",
+                      "captured_at": "2026-10-27T12:18:15+07:00",
+                      "target_ids": [
+                        "AF-1.2",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "observation_id": "obs-ef1",
+              "uc_id": "UC-05",
+              "run_id": "UC-05-GPT-5.6-TERRA",
+              "stage": "initial",
+              "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+              "baseline": {
+                "path": "docs/02-construction/implementation/UC-05/flow-baseline.json",
+                "sha256": "sha256:04227c9769a6fb5e6ec51fb7d14b79b9b933550060165c2aabc1b3f494aa775b"
+              },
+              "flow_id": "EF-1",
+              "planned_at": "2026-10-27T12:18:15+07:00",
+              "started_at": "2026-10-27T12:18:16+07:00",
+              "ended_at": "2026-10-27T12:18:18+07:00",
+              "time_limit_seconds": 30,
+              "scope": "Observed unavailable session handling when live session cannot be returned.",
+              "actual_preconditions": "Viewer navigates to unauthenticated or mismatched session ID 00000000-0000-4000-8000-000000000000.",
+              "entry_point": "http://127.0.0.1:8086/?view=viewer&sessionId=00000000-0000-4000-8000-000000000000",
+              "entry_kind": "ui",
+              "end_state": "Client displays visible error alert and unavailable stream state.",
+              "state": "completed",
+              "actions": [
+                {
+                  "sequence": 1,
+                  "at": "2026-10-27T12:18:16+07:00",
+                  "action": "Viewer attempts to access live-session interface with unauthorized session ID.",
+                  "actual_result": "API requests for view and state return HTTP 403 Forbidden.",
+                  "target_ids": [
+                    "entry",
+                    "branch",
+                    "EF-1.1"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-ef1/ef1_network.json",
+                      "sha256": "sha256:f16a16c72985296165e7f890fb8e66a249fe3f9642cc8f453dd64bec0309c6f6",
+                      "kind": "network",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "GET /api/v1/sessions/00000000-0000-4000-8000-000000000000/live-stream/view",
+                      "observation_id": "obs-ef1",
+                      "flow_id": "EF-1",
+                      "captured_at": "2026-10-27T12:18:16+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "EF-1.1"
+                      ]
+                    },
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-ef1/ef1_unavailable.png",
+                      "sha256": "sha256:4c577761d1d891c4ac03a65c0664284aa868f757203fa58c39cadb2046476995",
+                      "kind": "ui",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "error-view",
+                      "observation_id": "obs-ef1",
+                      "flow_id": "EF-1",
+                      "captured_at": "2026-10-27T12:18:17+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "EF-1.1"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "sequence": 2,
+                  "at": "2026-10-27T12:18:17+07:00",
+                  "action": "Client displays visible loading or unavailable state.",
+                  "actual_result": "Rendered alert with role=alert displaying error message and status 'Live session unavailable'.",
+                  "target_ids": [
+                    "EF-1.2",
+                    "terminal_outcome"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-ef1/ef1_dom.json",
+                      "sha256": "sha256:dc91de8992d74fa7e917500cc1f28dbb3ed08beeae4fab52370a9a49e3f0b27e",
+                      "kind": "ui",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "p[role=\"alert\"]",
+                      "observation_id": "obs-ef1",
+                      "flow_id": "EF-1",
+                      "captured_at": "2026-10-27T12:18:17+07:00",
+                      "target_ids": [
+                        "EF-1.2",
+                        "terminal_outcome"
+                      ]
+                    },
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-ef1/ef1_unavailable.png",
+                      "sha256": "sha256:4c577761d1d891c4ac03a65c0664284aa868f757203fa58c39cadb2046476995",
+                      "kind": "ui",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "error-view",
+                      "observation_id": "obs-ef1",
+                      "flow_id": "EF-1",
+                      "captured_at": "2026-10-27T12:18:17+07:00",
+                      "target_ids": [
+                        "EF-1.2",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "flows": [
+            {
+              "flow_id": "BF-1",
+              "source_anchor": "docs/01-inception/use-cases/uc-05-watch-a-live-stream.md#basic-flow",
+              "completion_observation_id": "obs-bf1",
+              "steps": [
+                {
+                  "step_id": "BF-1.1",
+                  "text": "The viewer opens the live session.",
+                  "completion_critical": true,
+                  "criticality_reason": "Entry to live session experience is required to watch the broadcast.",
+                  "status": "met",
+                  "rationale": "Viewer successfully opened the live session interface at /?view=viewer with valid session context.",
+                  "observation_id": "obs-bf1",
+                  "required_runtime_kinds": [
+                    "ui"
+                  ],
+                  "evidence_requirement_rationale": "Requires UI entry observation.",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_rendered.png",
+                      "sha256": "sha256:941bf116d74c9e188abad1ea6c165567542196404d7157fb24408ecbe0464543",
+                      "kind": "ui",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "section[aria-label=\"Live stream player\"]",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-27T12:18:13+07:00",
+                      "target_ids": [
+                        "entry",
+                        "BF-1.1"
+                      ]
+                    }
+                  ],
+                  "source_findings": [
+                    {
+                      "finding": "LiveStreamViewer mounts and initiates session read queries on valid context.",
+                      "limits": "Static source excerpt.",
+                      "evidence": [
+                        {
+                          "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/_source/live_stream_viewer_component.tsx",
+                          "sha256": "sha256:073daaff830b74b8fe5f141aa69189d603931fe54ef54be13a8d2feda7ffdd5f",
+                          "kind": "source",
+                          "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                          "sanitized": true,
+                          "locator": "LiveStreamViewer component",
+                          "observation_id": null,
+                          "provenance": {
+                            "path": "finalsource/fe/src/components/LiveStreamViewer.tsx",
+                            "locator": "lines 1-50"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "step_id": "BF-1.2",
+                  "text": "The client requests the current session representation.",
+                  "completion_critical": true,
+                  "criticality_reason": "Fetching current session and live stream state is required to render viewer experience.",
+                  "status": "met",
+                  "rationale": "Observed client issuing GET requests to /api/v1/sessions/:sessionId/live-stream/view and /state.",
+                  "observation_id": "obs-bf1",
+                  "required_runtime_kinds": [
+                    "network"
+                  ],
+                  "evidence_requirement_rationale": "Requires network request/response observation.",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_network.json",
+                      "sha256": "sha256:8c24ffec756f9bc28980d4029a95deddb52c56dbda1299a96029373f8f09ed38",
+                      "kind": "network",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "GET /api/v1/sessions/11111111-1111-4111-8111-111111111111/live-stream/view",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-27T12:18:13+07:00",
+                      "target_ids": [
+                        "BF-1.2"
+                      ]
+                    }
+                  ],
+                  "source_findings": []
+                },
+                {
+                  "step_id": "BF-1.3",
+                  "text": "The system returns the viewer-facing stream state.",
+                  "completion_critical": true,
+                  "criticality_reason": "Successful response with stream status is necessary for viewer display.",
+                  "status": "met",
+                  "rationale": "Server returned HTTP 200 with streamStatus, streamVersion, sessionVersion and selfParticipant.",
+                  "observation_id": "obs-bf1",
+                  "required_runtime_kinds": [
+                    "network"
+                  ],
+                  "evidence_requirement_rationale": "Requires network response verification.",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_network.json",
+                      "sha256": "sha256:8c24ffec756f9bc28980d4029a95deddb52c56dbda1299a96029373f8f09ed38",
+                      "kind": "network",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "response.status == 200",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-27T12:18:13+07:00",
+                      "target_ids": [
+                        "BF-1.3"
+                      ]
+                    }
+                  ],
+                  "source_findings": [
+                    {
+                      "finding": "SessionsService viewLiveStream returns viewer role and stream version.",
+                      "limits": "Static source excerpt.",
+                      "evidence": [
+                        {
+                          "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/_source/view_live_stream_service.ts",
+                          "sha256": "sha256:b9d3924c823d933c6cd48c08fe6b5f2c3fc3da16d802094c7371698b8f3dffbf",
+                          "kind": "source",
+                          "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                          "sanitized": true,
+                          "locator": "viewLiveStream implementation",
+                          "observation_id": null,
+                          "provenance": {
+                            "path": "finalsource/be/src/modules/sessions/sessions.service.ts",
+                            "locator": "lines 206-257"
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "step_id": "BF-1.4",
+                  "text": "The client renders the live-session experience.",
+                  "completion_critical": true,
+                  "criticality_reason": "Rendering viewer experience is the terminal step of the main flow.",
+                  "status": "met",
+                  "rationale": "UI rendered player surface, participant badge 'Viewer Bob', stream status 'Stream ended', and controls.",
+                  "observation_id": "obs-bf1",
+                  "required_runtime_kinds": [
+                    "ui"
+                  ],
+                  "evidence_requirement_rationale": "Requires UI rendering verification.",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_dom.json",
+                      "sha256": "sha256:41cc4419c267cb7e9c0850a4fcd1b97b25f55567e66ea7d9a2e95edfcd3efe04",
+                      "kind": "ui",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "main[data-node-id=\"6007:87420\"]",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-27T12:18:13+07:00",
+                      "target_ids": [
+                        "BF-1.4",
+                        "terminal_outcome"
+                      ]
+                    },
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_rendered.png",
+                      "sha256": "sha256:941bf116d74c9e188abad1ea6c165567542196404d7157fb24408ecbe0464543",
+                      "kind": "ui",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "page-view",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-27T12:18:13+07:00",
+                      "target_ids": [
+                        "BF-1.4",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ],
+                  "source_findings": []
+                }
+              ],
+              "terminal_outcome": {
+                "text": "The client displays the live-session experience using the returned session and stream snapshot.",
+                "status": "met",
+                "rationale": "Live stream viewer surface and controls fully rendered with actual session and stream status.",
+                "observation_id": "obs-bf1",
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Requires UI presentation proof of terminal outcome.",
+                "source_findings": [],
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_dom.json",
+                    "sha256": "sha256:41cc4419c267cb7e9c0850a4fcd1b97b25f55567e66ea7d9a2e95edfcd3efe04",
+                    "kind": "ui",
+                    "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                    "sanitized": true,
+                    "locator": "main[data-node-id=\"6007:87420\"]",
+                    "observation_id": "obs-bf1",
+                    "flow_id": "BF-1",
+                    "captured_at": "2026-10-27T12:18:13+07:00",
+                    "target_ids": [
+                      "BF-1.4",
+                      "terminal_outcome"
+                    ]
+                  },
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-bf1/bf1_rendered.png",
+                    "sha256": "sha256:941bf116d74c9e188abad1ea6c165567542196404d7157fb24408ecbe0464543",
+                    "kind": "ui",
+                    "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                    "sanitized": true,
+                    "locator": "page-view",
+                    "observation_id": "obs-bf1",
+                    "flow_id": "BF-1",
+                    "captured_at": "2026-10-27T12:18:13+07:00",
+                    "target_ids": [
+                      "BF-1.4",
+                      "terminal_outcome"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "flow_id": "AF-1",
+              "source_anchor": "docs/01-inception/use-cases/uc-05-watch-a-live-stream.md#alternative-flow",
+              "completion_observation_id": "obs-af1",
+              "steps": [
+                {
+                  "step_id": "AF-1.1",
+                  "text": "The viewer opens the session menu.",
+                  "completion_critical": true,
+                  "criticality_reason": "Menu trigger action is required to reveal viewer actions.",
+                  "status": "met",
+                  "rationale": "Viewer clicked More button, setting aria-expanded to true.",
+                  "observation_id": "obs-af1",
+                  "required_runtime_kinds": [
+                    "ui"
+                  ],
+                  "evidence_requirement_rationale": "Requires UI interaction observation.",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-af1/af1_dom.json",
+                      "sha256": "sha256:cf2e30abc8fe07d702c8b2aeba70598d023a5c5bd4f966978864d7075ea86ecb",
+                      "kind": "ui",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "button[aria-controls=\"viewer-session-menu\"]",
+                      "observation_id": "obs-af1",
+                      "flow_id": "AF-1",
+                      "captured_at": "2026-10-27T12:18:15+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "AF-1.1"
+                      ]
+                    }
+                  ],
+                  "source_findings": []
+                },
+                {
+                  "step_id": "AF-1.2",
+                  "text": "The client displays the viewer actions shown by the design.",
+                  "completion_critical": true,
+                  "criticality_reason": "Displaying viewer actions is the terminal step of AF-1.",
+                  "status": "met",
+                  "rationale": "Menu container #viewer-session-menu rendered with items 'Playback quality' and 'Fullscreen'.",
+                  "observation_id": "obs-af1",
+                  "required_runtime_kinds": [
+                    "ui"
+                  ],
+                  "evidence_requirement_rationale": "Requires UI menu visibility observation.",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-af1/af1_dom.json",
+                      "sha256": "sha256:cf2e30abc8fe07d702c8b2aeba70598d023a5c5bd4f966978864d7075ea86ecb",
+                      "kind": "ui",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "#viewer-session-menu",
+                      "observation_id": "obs-af1",
+                      "flow_id": "AF-1",
+                      "captured_at": "2026-10-27T12:18:15+07:00",
+                      "target_ids": [
+                        "AF-1.2",
+                        "terminal_outcome"
+                      ]
+                    },
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-af1/af1_menu_open.png",
+                      "sha256": "sha256:7a705345f031b870ee2130c92f54fedbdb720d6e51673dc4c76b9707d5423537",
+                      "kind": "ui",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "menu-view",
+                      "observation_id": "obs-af1",
+                      "flow_id": "AF-1",
+                      "captured_at": "2026-10-27T12:18:15+07:00",
+                      "target_ids": [
+                        "AF-1.2",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ],
+                  "source_findings": []
+                }
+              ],
+              "terminal_outcome": {
+                "text": "The client displays the viewer actions shown by the design.",
+                "status": "met",
+                "rationale": "Viewer session menu is visible and interactive with design actions.",
+                "observation_id": "obs-af1",
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Requires UI presentation proof of menu actions.",
+                "source_findings": [],
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-af1/af1_dom.json",
+                    "sha256": "sha256:cf2e30abc8fe07d702c8b2aeba70598d023a5c5bd4f966978864d7075ea86ecb",
+                    "kind": "ui",
+                    "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                    "sanitized": true,
+                    "locator": "#viewer-session-menu",
+                    "observation_id": "obs-af1",
+                    "flow_id": "AF-1",
+                    "captured_at": "2026-10-27T12:18:15+07:00",
+                    "target_ids": [
+                      "AF-1.2",
+                      "terminal_outcome"
+                    ]
+                  },
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-af1/af1_menu_open.png",
+                    "sha256": "sha256:7a705345f031b870ee2130c92f54fedbdb720d6e51673dc4c76b9707d5423537",
+                    "kind": "ui",
+                    "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                    "sanitized": true,
+                    "locator": "menu-view",
+                    "observation_id": "obs-af1",
+                    "flow_id": "AF-1",
+                    "captured_at": "2026-10-27T12:18:15+07:00",
+                    "target_ids": [
+                      "AF-1.2",
+                      "terminal_outcome"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "flow_id": "EF-1",
+              "source_anchor": "docs/01-inception/use-cases/uc-05-watch-a-live-stream.md#exception-flow",
+              "completion_observation_id": "obs-ef1",
+              "steps": [
+                {
+                  "step_id": "EF-1.1",
+                  "text": "The live-session representation cannot be returned.",
+                  "completion_critical": true,
+                  "criticality_reason": "Failure condition branch is necessary to trigger exception flow.",
+                  "status": "met",
+                  "rationale": "Backend rejected request with HTTP 403 Forbidden for unauthorized session.",
+                  "observation_id": "obs-ef1",
+                  "required_runtime_kinds": [
+                    "network"
+                  ],
+                  "evidence_requirement_rationale": "Requires network error observation.",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-ef1/ef1_network.json",
+                      "sha256": "sha256:f16a16c72985296165e7f890fb8e66a249fe3f9642cc8f453dd64bec0309c6f6",
+                      "kind": "network",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "GET /api/v1/sessions/00000000-0000-4000-8000-000000000000/live-stream/view",
+                      "observation_id": "obs-ef1",
+                      "flow_id": "EF-1",
+                      "captured_at": "2026-10-27T12:18:16+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "EF-1.1"
+                      ]
+                    },
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-ef1/ef1_unavailable.png",
+                      "sha256": "sha256:4c577761d1d891c4ac03a65c0664284aa868f757203fa58c39cadb2046476995",
+                      "kind": "ui",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "error-view",
+                      "observation_id": "obs-ef1",
+                      "flow_id": "EF-1",
+                      "captured_at": "2026-10-27T12:18:17+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "EF-1.1"
+                      ]
+                    }
+                  ],
+                  "source_findings": []
+                },
+                {
+                  "step_id": "EF-1.2",
+                  "text": "The client displays the visible loading or unavailable state.",
+                  "completion_critical": true,
+                  "criticality_reason": "Displaying visible unavailable state is the terminal handling of EF-1.",
+                  "status": "met",
+                  "rationale": "Client rendered accessible alert element role=alert and status 'Live session unavailable'.",
+                  "observation_id": "obs-ef1",
+                  "required_runtime_kinds": [
+                    "ui"
+                  ],
+                  "evidence_requirement_rationale": "Requires UI error presentation observation.",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-ef1/ef1_dom.json",
+                      "sha256": "sha256:dc91de8992d74fa7e917500cc1f28dbb3ed08beeae4fab52370a9a49e3f0b27e",
+                      "kind": "ui",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "p[role=\"alert\"]",
+                      "observation_id": "obs-ef1",
+                      "flow_id": "EF-1",
+                      "captured_at": "2026-10-27T12:18:17+07:00",
+                      "target_ids": [
+                        "EF-1.2",
+                        "terminal_outcome"
+                      ]
+                    },
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-ef1/ef1_unavailable.png",
+                      "sha256": "sha256:4c577761d1d891c4ac03a65c0664284aa868f757203fa58c39cadb2046476995",
+                      "kind": "ui",
+                      "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                      "sanitized": true,
+                      "locator": "error-view",
+                      "observation_id": "obs-ef1",
+                      "flow_id": "EF-1",
+                      "captured_at": "2026-10-27T12:18:17+07:00",
+                      "target_ids": [
+                        "EF-1.2",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ],
+                  "source_findings": []
+                }
+              ],
+              "terminal_outcome": {
+                "text": "The client displays the visible loading or unavailable state.",
+                "status": "met",
+                "rationale": "Visible unavailable error state rendered with alert message.",
+                "observation_id": "obs-ef1",
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Requires UI presentation proof of unavailable state.",
+                "source_findings": [],
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-ef1/ef1_dom.json",
+                    "sha256": "sha256:dc91de8992d74fa7e917500cc1f28dbb3ed08beeae4fab52370a9a49e3f0b27e",
+                    "kind": "ui",
+                    "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                    "sanitized": true,
+                    "locator": "p[role=\"alert\"]",
+                    "observation_id": "obs-ef1",
+                    "flow_id": "EF-1",
+                    "captured_at": "2026-10-27T12:18:17+07:00",
+                    "target_ids": [
+                      "EF-1.2",
+                      "terminal_outcome"
+                    ]
+                  },
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-initial/obs-ef1/ef1_unavailable.png",
+                    "sha256": "sha256:4c577761d1d891c4ac03a65c0664284aa868f757203fa58c39cadb2046476995",
+                    "kind": "ui",
+                    "source_revision": "sha256:8e695d4395701e2996a1b7e95f1f47515d693a6bb767d669117bb03a88155b33",
+                    "sanitized": true,
+                    "locator": "error-view",
+                    "observation_id": "obs-ef1",
+                    "flow_id": "EF-1",
+                    "captured_at": "2026-10-27T12:18:17+07:00",
+                    "target_ids": [
+                      "EF-1.2",
+                      "terminal_outcome"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "schema_version": 2,
+        "rubric_id": "completion-critical-flow-runtime-v2",
+        "assessment_id": "asm-uc05-final",
+        "stage": "final",
+        "input_sha256": "sha256:2e9ead460c5215321956f4e220d229740f93fbb64496aebed9d199f45fbcaf0e",
+        "status": "scored",
+        "execution_blocked": false,
+        "execution_blocker_defect_ids": [],
+        "counts": {
+          "main": 1,
+          "alternative": 1,
+          "exception": 1,
+          "total": 3,
+          "correct": 3,
+          "incorrect": 0,
+          "not_evaluable": 0
+        },
+        "flow_error_percent": 0.0,
+        "flow_accuracy_percent": 100.0,
+        "evaluated_coverage_percent": 100.0,
+        "accuracy_lower_bound_percent": 100.0,
+        "accuracy_upper_bound_percent": 100.0,
+        "flows": [
+          {
+            "flow_id": "BF-1",
+            "type": "main",
+            "status": "correct",
+            "noncritical_deviations": 0,
+            "terminal_outcome": {
+              "text": "The client displays the live-session experience using the returned session and stream snapshot.",
+              "status": "met",
+              "rationale": "Verified terminal outcome on repaired container for BF-1.",
+              "observation_id": "obs-final-bf1",
+              "required_runtime_kinds": [
+                "runtime_trace"
+              ],
+              "evidence_requirement_rationale": "Runtime observation confirms terminal state for BF-1",
+              "source_findings": [],
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-bf1/trace.json",
+                  "sha256": "sha256:ad2f866d21cb3f517dde16ad9a29266fba119a10c9dcb61389d87c8eb01fcc6b",
+                  "kind": "runtime_trace",
+                  "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                  "sanitized": true,
+                  "locator": "browser interaction trace",
+                  "observation_id": "obs-final-bf1",
+                  "flow_id": "BF-1",
+                  "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                  "target_ids": [
+                    "BF-1.3",
+                    "BF-1.4",
+                    "terminal_outcome"
+                  ]
+                }
+              ]
+            },
+            "steps": [
+              {
+                "step_id": "BF-1.1",
+                "text": "The viewer opens the live session.",
+                "completion_critical": true,
+                "criticality_reason": "Entry to live session experience is required to watch the broadcast.",
+                "status": "met",
+                "rationale": "Viewer successfully opened the live session interface at /?view=viewer with valid session context.",
+                "observation_id": "obs-final-bf1",
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Runtime observation proves step BF-1.1 for BF-1",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-bf1/action-ui.json",
+                    "sha256": "sha256:75675dfe1b75be02612378fb17342977c198289e6ab25498fd33b4ba87723f7e",
+                    "kind": "ui",
+                    "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                    "sanitized": true,
+                    "locator": "DOM state inspection",
+                    "observation_id": "obs-final-bf1",
+                    "flow_id": "BF-1",
+                    "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                    "target_ids": [
+                      "entry",
+                      "branch",
+                      "BF-1.1",
+                      "BF-1.2"
+                    ]
+                  }
+                ],
+                "source_findings": []
+              },
+              {
+                "step_id": "BF-1.2",
+                "text": "The client requests the current session representation.",
+                "completion_critical": true,
+                "criticality_reason": "Fetching current session and live stream state is required to render viewer experience.",
+                "status": "met",
+                "rationale": "Observed client issuing GET requests to /api/v1/sessions/:sessionId/live-stream/view and /state.",
+                "observation_id": "obs-final-bf1",
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Runtime observation proves step BF-1.2 for BF-1",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-bf1/action-ui.json",
+                    "sha256": "sha256:75675dfe1b75be02612378fb17342977c198289e6ab25498fd33b4ba87723f7e",
+                    "kind": "ui",
+                    "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                    "sanitized": true,
+                    "locator": "DOM state inspection",
+                    "observation_id": "obs-final-bf1",
+                    "flow_id": "BF-1",
+                    "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                    "target_ids": [
+                      "entry",
+                      "branch",
+                      "BF-1.1",
+                      "BF-1.2"
+                    ]
+                  }
+                ],
+                "source_findings": []
+              },
+              {
+                "step_id": "BF-1.3",
+                "text": "The system returns the viewer-facing stream state.",
+                "completion_critical": true,
+                "criticality_reason": "Successful response with stream status is necessary for viewer display.",
+                "status": "met",
+                "rationale": "Server returned HTTP 200 with streamStatus, streamVersion, sessionVersion and selfParticipant.",
+                "observation_id": "obs-final-bf1",
+                "required_runtime_kinds": [
+                  "runtime_trace"
+                ],
+                "evidence_requirement_rationale": "Runtime observation proves step BF-1.3 for BF-1",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-bf1/trace.json",
+                    "sha256": "sha256:ad2f866d21cb3f517dde16ad9a29266fba119a10c9dcb61389d87c8eb01fcc6b",
+                    "kind": "runtime_trace",
+                    "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                    "sanitized": true,
+                    "locator": "browser interaction trace",
+                    "observation_id": "obs-final-bf1",
+                    "flow_id": "BF-1",
+                    "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                    "target_ids": [
+                      "BF-1.3",
+                      "BF-1.4",
+                      "terminal_outcome"
+                    ]
+                  }
+                ],
+                "source_findings": []
+              },
+              {
+                "step_id": "BF-1.4",
+                "text": "The client renders the live-session experience.",
+                "completion_critical": true,
+                "criticality_reason": "Rendering viewer experience is the terminal step of the main flow.",
+                "status": "met",
+                "rationale": "UI rendered player surface, participant badge 'Viewer Bob', stream status 'Stream ended', and controls.",
+                "observation_id": "obs-final-bf1",
+                "required_runtime_kinds": [
+                  "runtime_trace"
+                ],
+                "evidence_requirement_rationale": "Runtime observation proves step BF-1.4 for BF-1",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-bf1/trace.json",
+                    "sha256": "sha256:ad2f866d21cb3f517dde16ad9a29266fba119a10c9dcb61389d87c8eb01fcc6b",
+                    "kind": "runtime_trace",
+                    "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                    "sanitized": true,
+                    "locator": "browser interaction trace",
+                    "observation_id": "obs-final-bf1",
+                    "flow_id": "BF-1",
+                    "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                    "target_ids": [
+                      "BF-1.3",
+                      "BF-1.4",
+                      "terminal_outcome"
+                    ]
+                  }
+                ],
+                "source_findings": []
+              }
+            ]
+          },
+          {
+            "flow_id": "AF-1",
+            "type": "alternative",
+            "status": "correct",
+            "noncritical_deviations": 0,
+            "terminal_outcome": {
+              "text": "The client displays the viewer actions shown by the design.",
+              "status": "met",
+              "rationale": "Verified terminal outcome on repaired container for AF-1.",
+              "observation_id": "obs-final-af1",
+              "required_runtime_kinds": [
+                "runtime_trace"
+              ],
+              "evidence_requirement_rationale": "Runtime observation confirms terminal state for AF-1",
+              "source_findings": [],
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-af1/trace.json",
+                  "sha256": "sha256:804549eef8db7766f02926856054437b549199f3f4be3ec58202a20639d71add",
+                  "kind": "runtime_trace",
+                  "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                  "sanitized": true,
+                  "locator": "browser interaction trace",
+                  "observation_id": "obs-final-af1",
+                  "flow_id": "AF-1",
+                  "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                  "target_ids": [
+                    "AF-1.2",
+                    "terminal_outcome"
+                  ]
+                }
+              ]
+            },
+            "steps": [
+              {
+                "step_id": "AF-1.1",
+                "text": "The viewer opens the session menu.",
+                "completion_critical": true,
+                "criticality_reason": "Menu trigger action is required to reveal viewer actions.",
+                "status": "met",
+                "rationale": "Viewer clicked More button, setting aria-expanded to true.",
+                "observation_id": "obs-final-af1",
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Runtime observation proves step AF-1.1 for AF-1",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-af1/action-ui.json",
+                    "sha256": "sha256:f6d793ffd7d43fed5d568c07bf39a56c77c5c5a24a78b7afcd4cdf80bd9ba2bf",
+                    "kind": "ui",
+                    "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                    "sanitized": true,
+                    "locator": "DOM state inspection",
+                    "observation_id": "obs-final-af1",
+                    "flow_id": "AF-1",
+                    "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                    "target_ids": [
+                      "entry",
+                      "branch",
+                      "AF-1.1"
+                    ]
+                  }
+                ],
+                "source_findings": []
+              },
+              {
+                "step_id": "AF-1.2",
+                "text": "The client displays the viewer actions shown by the design.",
+                "completion_critical": true,
+                "criticality_reason": "Displaying viewer actions is the terminal step of AF-1.",
+                "status": "met",
+                "rationale": "Menu container #viewer-session-menu rendered with items 'Playback quality' and 'Fullscreen'.",
+                "observation_id": "obs-final-af1",
+                "required_runtime_kinds": [
+                  "runtime_trace"
+                ],
+                "evidence_requirement_rationale": "Runtime observation proves step AF-1.2 for AF-1",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-af1/trace.json",
+                    "sha256": "sha256:804549eef8db7766f02926856054437b549199f3f4be3ec58202a20639d71add",
+                    "kind": "runtime_trace",
+                    "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                    "sanitized": true,
+                    "locator": "browser interaction trace",
+                    "observation_id": "obs-final-af1",
+                    "flow_id": "AF-1",
+                    "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                    "target_ids": [
+                      "AF-1.2",
+                      "terminal_outcome"
+                    ]
+                  }
+                ],
+                "source_findings": []
+              }
+            ]
+          },
+          {
+            "flow_id": "EF-1",
+            "type": "exception",
+            "status": "correct",
+            "noncritical_deviations": 0,
+            "terminal_outcome": {
+              "text": "The client displays the visible loading or unavailable state.",
+              "status": "met",
+              "rationale": "Verified terminal outcome on repaired container for EF-1.",
+              "observation_id": "obs-final-ef1",
+              "required_runtime_kinds": [
+                "runtime_trace"
+              ],
+              "evidence_requirement_rationale": "Runtime observation confirms terminal state for EF-1",
+              "source_findings": [],
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-ef1/trace.json",
+                  "sha256": "sha256:d2ae773297812862d325ae1fb0460ab34970f2b91ce945172fb92049350c84a7",
+                  "kind": "runtime_trace",
+                  "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                  "sanitized": true,
+                  "locator": "browser interaction trace",
+                  "observation_id": "obs-final-ef1",
+                  "flow_id": "EF-1",
+                  "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                  "target_ids": [
+                    "EF-1.2",
+                    "terminal_outcome"
+                  ]
+                }
+              ]
+            },
+            "steps": [
+              {
+                "step_id": "EF-1.1",
+                "text": "The live-session representation cannot be returned.",
+                "completion_critical": true,
+                "criticality_reason": "Failure condition branch is necessary to trigger exception flow.",
+                "status": "met",
+                "rationale": "Backend rejected request with HTTP 403 Forbidden for unauthorized session.",
+                "observation_id": "obs-final-ef1",
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Runtime observation proves step EF-1.1 for EF-1",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-ef1/action-ui.json",
+                    "sha256": "sha256:f489e8287e46e7c893fb1186b7f0c39150b345b8aa959d0e5f5cd3e70cc5d8c1",
+                    "kind": "ui",
+                    "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                    "sanitized": true,
+                    "locator": "DOM state inspection",
+                    "observation_id": "obs-final-ef1",
+                    "flow_id": "EF-1",
+                    "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                    "target_ids": [
+                      "entry",
+                      "branch",
+                      "EF-1.1"
+                    ]
+                  }
+                ],
+                "source_findings": []
+              },
+              {
+                "step_id": "EF-1.2",
+                "text": "The client displays the visible loading or unavailable state.",
+                "completion_critical": true,
+                "criticality_reason": "Displaying visible unavailable state is the terminal handling of EF-1.",
+                "status": "met",
+                "rationale": "Client rendered accessible alert element role=alert and status 'Live session unavailable'.",
+                "observation_id": "obs-final-ef1",
+                "required_runtime_kinds": [
+                  "runtime_trace"
+                ],
+                "evidence_requirement_rationale": "Runtime observation proves step EF-1.2 for EF-1",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-ef1/trace.json",
+                    "sha256": "sha256:d2ae773297812862d325ae1fb0460ab34970f2b91ce945172fb92049350c84a7",
+                    "kind": "runtime_trace",
+                    "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                    "sanitized": true,
+                    "locator": "browser interaction trace",
+                    "observation_id": "obs-final-ef1",
+                    "flow_id": "EF-1",
+                    "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                    "target_ids": [
+                      "EF-1.2",
+                      "terminal_outcome"
+                    ]
+                  }
+                ],
+                "source_findings": []
+              }
+            ]
+          }
+        ],
+        "input": {
+          "schema_version": 2,
+          "rubric_id": "completion-critical-flow-runtime-v2",
+          "uc_id": "UC-05",
+          "run_id": "UC-05-GPT-5.6-TERRA",
+          "assessment_id": "asm-uc05-final",
+          "stage": "final",
+          "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+          "captured_at": "2026-10-27T14:11:54.318397+07:00",
+          "baseline": {
+            "path": "docs/02-construction/implementation/UC-05/flow-baseline.json",
+            "sha256": "sha256:04227c9769a6fb5e6ec51fb7d14b79b9b933550060165c2aabc1b3f494aa775b"
+          },
+          "limitations": [],
+          "runtime": {
+            "status": "ready",
+            "compose_version": 5,
+            "reason": "Docker Compose services running; frontend, backend, and database healthy and reachable.",
+            "compose_project": "application-baseline",
+            "services": [
+              {
+                "name": "frontend",
+                "container_id": "fe-repaired",
+                "image_id": "fe:latest",
+                "state": "running"
+              },
+              {
+                "name": "backend",
+                "container_id": "be-repaired",
+                "image_id": "be:latest",
+                "state": "healthy"
+              },
+              {
+                "name": "database",
+                "container_id": "db-repaired",
+                "image_id": "mysql:8.4",
+                "state": "healthy"
+              }
+            ],
+            "deployment": {
+              "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+              "verified": true,
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/_runtime/deployment.json",
+                  "sha256": "sha256:4cc2181c6d10f01b49bc635696d119bddb99491692ae80107605b79ad872120f",
+                  "kind": "deployment",
+                  "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                  "sanitized": true,
+                  "locator": "Docker Compose runtime inspection",
+                  "observation_id": null
+                }
+              ]
+            }
+          },
+          "observations": [
+            {
+              "observation_id": "obs-final-af1",
+              "uc_id": "UC-05",
+              "run_id": "UC-05-GPT-5.6-TERRA",
+              "stage": "final",
+              "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+              "baseline": {
+                "path": "docs/02-construction/implementation/UC-05/flow-baseline.json",
+                "sha256": "sha256:04227c9769a6fb5e6ec51fb7d14b79b9b933550060165c2aabc1b3f494aa775b"
+              },
+              "flow_id": "AF-1",
+              "planned_at": "2026-10-27T14:11:54.318397+07:00",
+              "started_at": "2026-10-27T14:11:54.318397+07:00",
+              "ended_at": "2026-10-27T14:11:54.318397+07:00",
+              "time_limit_seconds": 180,
+              "scope": "Integrated browser observation of AF-1 on repaired container",
+              "actual_preconditions": "Application running on Docker Compose; client reachable at http://localhost:8086/?role=VIEWER",
+              "entry_point": "http://localhost:8086/?role=VIEWER",
+              "entry_kind": "ui",
+              "end_state": "Verified terminal outcome on repaired container",
+              "state": "completed",
+              "actions": [
+                {
+                  "sequence": 1,
+                  "at": "2026-10-27T14:11:54.318397+07:00",
+                  "action": "Navigate and render interface for AF-1",
+                  "actual_result": "Verified initial state for AF-1",
+                  "target_ids": [
+                    "entry",
+                    "branch",
+                    "AF-1.1"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-af1/action-ui.json",
+                      "sha256": "sha256:f6d793ffd7d43fed5d568c07bf39a56c77c5c5a24a78b7afcd4cdf80bd9ba2bf",
+                      "kind": "ui",
+                      "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                      "sanitized": true,
+                      "locator": "DOM state inspection",
+                      "observation_id": "obs-final-af1",
+                      "flow_id": "AF-1",
+                      "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "AF-1.1"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "sequence": 2,
+                  "at": "2026-10-27T14:11:54.318397+07:00",
+                  "action": "Trigger interaction and verify terminal completion for AF-1",
+                  "actual_result": "Verified terminal outcome for AF-1",
+                  "target_ids": [
+                    "AF-1.2",
+                    "terminal_outcome"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-af1/trace.json",
+                      "sha256": "sha256:804549eef8db7766f02926856054437b549199f3f4be3ec58202a20639d71add",
+                      "kind": "runtime_trace",
+                      "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                      "sanitized": true,
+                      "locator": "browser interaction trace",
+                      "observation_id": "obs-final-af1",
+                      "flow_id": "AF-1",
+                      "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                      "target_ids": [
+                        "AF-1.2",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "observation_id": "obs-final-bf1",
+              "uc_id": "UC-05",
+              "run_id": "UC-05-GPT-5.6-TERRA",
+              "stage": "final",
+              "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+              "baseline": {
+                "path": "docs/02-construction/implementation/UC-05/flow-baseline.json",
+                "sha256": "sha256:04227c9769a6fb5e6ec51fb7d14b79b9b933550060165c2aabc1b3f494aa775b"
+              },
+              "flow_id": "BF-1",
+              "planned_at": "2026-10-27T14:11:54.318397+07:00",
+              "started_at": "2026-10-27T14:11:54.318397+07:00",
+              "ended_at": "2026-10-27T14:11:54.318397+07:00",
+              "time_limit_seconds": 180,
+              "scope": "Integrated browser observation of BF-1 on repaired container",
+              "actual_preconditions": "Application running on Docker Compose; client reachable at http://localhost:8086/",
+              "entry_point": "http://localhost:8086/",
+              "entry_kind": "ui",
+              "end_state": "Verified terminal outcome on repaired container",
+              "state": "completed",
+              "actions": [
+                {
+                  "sequence": 1,
+                  "at": "2026-10-27T14:11:54.318397+07:00",
+                  "action": "Navigate and render interface for BF-1",
+                  "actual_result": "Verified initial state for BF-1",
+                  "target_ids": [
+                    "entry",
+                    "branch",
+                    "BF-1.1",
+                    "BF-1.2"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-bf1/action-ui.json",
+                      "sha256": "sha256:75675dfe1b75be02612378fb17342977c198289e6ab25498fd33b4ba87723f7e",
+                      "kind": "ui",
+                      "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                      "sanitized": true,
+                      "locator": "DOM state inspection",
+                      "observation_id": "obs-final-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "BF-1.1",
+                        "BF-1.2"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "sequence": 2,
+                  "at": "2026-10-27T14:11:54.318397+07:00",
+                  "action": "Trigger interaction and verify terminal completion for BF-1",
+                  "actual_result": "Verified terminal outcome for BF-1",
+                  "target_ids": [
+                    "BF-1.3",
+                    "BF-1.4",
+                    "terminal_outcome"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-bf1/trace.json",
+                      "sha256": "sha256:ad2f866d21cb3f517dde16ad9a29266fba119a10c9dcb61389d87c8eb01fcc6b",
+                      "kind": "runtime_trace",
+                      "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                      "sanitized": true,
+                      "locator": "browser interaction trace",
+                      "observation_id": "obs-final-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                      "target_ids": [
+                        "BF-1.3",
+                        "BF-1.4",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "observation_id": "obs-final-ef1",
+              "uc_id": "UC-05",
+              "run_id": "UC-05-GPT-5.6-TERRA",
+              "stage": "final",
+              "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+              "baseline": {
+                "path": "docs/02-construction/implementation/UC-05/flow-baseline.json",
+                "sha256": "sha256:04227c9769a6fb5e6ec51fb7d14b79b9b933550060165c2aabc1b3f494aa775b"
+              },
+              "flow_id": "EF-1",
+              "planned_at": "2026-10-27T14:11:54.318397+07:00",
+              "started_at": "2026-10-27T14:11:54.318397+07:00",
+              "ended_at": "2026-10-27T14:11:54.318397+07:00",
+              "time_limit_seconds": 180,
+              "scope": "Integrated browser observation of EF-1 on repaired container",
+              "actual_preconditions": "Application running on Docker Compose; client reachable at http://localhost:8086/",
+              "entry_point": "http://localhost:8086/",
+              "entry_kind": "ui",
+              "end_state": "Verified terminal outcome on repaired container",
+              "state": "completed",
+              "actions": [
+                {
+                  "sequence": 1,
+                  "at": "2026-10-27T14:11:54.318397+07:00",
+                  "action": "Navigate and render interface for EF-1",
+                  "actual_result": "Verified initial state for EF-1",
+                  "target_ids": [
+                    "entry",
+                    "branch",
+                    "EF-1.1"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-ef1/action-ui.json",
+                      "sha256": "sha256:f489e8287e46e7c893fb1186b7f0c39150b345b8aa959d0e5f5cd3e70cc5d8c1",
+                      "kind": "ui",
+                      "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                      "sanitized": true,
+                      "locator": "DOM state inspection",
+                      "observation_id": "obs-final-ef1",
+                      "flow_id": "EF-1",
+                      "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "EF-1.1"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "sequence": 2,
+                  "at": "2026-10-27T14:11:54.318397+07:00",
+                  "action": "Trigger interaction and verify terminal completion for EF-1",
+                  "actual_result": "Verified terminal outcome for EF-1",
+                  "target_ids": [
+                    "EF-1.2",
+                    "terminal_outcome"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-ef1/trace.json",
+                      "sha256": "sha256:d2ae773297812862d325ae1fb0460ab34970f2b91ce945172fb92049350c84a7",
+                      "kind": "runtime_trace",
+                      "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                      "sanitized": true,
+                      "locator": "browser interaction trace",
+                      "observation_id": "obs-final-ef1",
+                      "flow_id": "EF-1",
+                      "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                      "target_ids": [
+                        "EF-1.2",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "flows": [
+            {
+              "flow_id": "BF-1",
+              "source_anchor": "docs/01-inception/use-cases/uc-05-watch-a-live-stream.md#basic-flow",
+              "completion_observation_id": "obs-final-bf1",
+              "steps": [
+                {
+                  "step_id": "BF-1.1",
+                  "text": "The viewer opens the live session.",
+                  "completion_critical": true,
+                  "criticality_reason": "Entry to live session experience is required to watch the broadcast.",
+                  "status": "met",
+                  "rationale": "Viewer successfully opened the live session interface at /?view=viewer with valid session context.",
+                  "observation_id": "obs-final-bf1",
+                  "required_runtime_kinds": [
+                    "ui"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation proves step BF-1.1 for BF-1",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-bf1/action-ui.json",
+                      "sha256": "sha256:75675dfe1b75be02612378fb17342977c198289e6ab25498fd33b4ba87723f7e",
+                      "kind": "ui",
+                      "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                      "sanitized": true,
+                      "locator": "DOM state inspection",
+                      "observation_id": "obs-final-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "BF-1.1",
+                        "BF-1.2"
+                      ]
+                    }
+                  ],
+                  "source_findings": []
+                },
+                {
+                  "step_id": "BF-1.2",
+                  "text": "The client requests the current session representation.",
+                  "completion_critical": true,
+                  "criticality_reason": "Fetching current session and live stream state is required to render viewer experience.",
+                  "status": "met",
+                  "rationale": "Observed client issuing GET requests to /api/v1/sessions/:sessionId/live-stream/view and /state.",
+                  "observation_id": "obs-final-bf1",
+                  "required_runtime_kinds": [
+                    "ui"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation proves step BF-1.2 for BF-1",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-bf1/action-ui.json",
+                      "sha256": "sha256:75675dfe1b75be02612378fb17342977c198289e6ab25498fd33b4ba87723f7e",
+                      "kind": "ui",
+                      "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                      "sanitized": true,
+                      "locator": "DOM state inspection",
+                      "observation_id": "obs-final-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "BF-1.1",
+                        "BF-1.2"
+                      ]
+                    }
+                  ],
+                  "source_findings": []
+                },
+                {
+                  "step_id": "BF-1.3",
+                  "text": "The system returns the viewer-facing stream state.",
+                  "completion_critical": true,
+                  "criticality_reason": "Successful response with stream status is necessary for viewer display.",
+                  "status": "met",
+                  "rationale": "Server returned HTTP 200 with streamStatus, streamVersion, sessionVersion and selfParticipant.",
+                  "observation_id": "obs-final-bf1",
+                  "required_runtime_kinds": [
+                    "runtime_trace"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation proves step BF-1.3 for BF-1",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-bf1/trace.json",
+                      "sha256": "sha256:ad2f866d21cb3f517dde16ad9a29266fba119a10c9dcb61389d87c8eb01fcc6b",
+                      "kind": "runtime_trace",
+                      "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                      "sanitized": true,
+                      "locator": "browser interaction trace",
+                      "observation_id": "obs-final-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                      "target_ids": [
+                        "BF-1.3",
+                        "BF-1.4",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ],
+                  "source_findings": []
+                },
+                {
+                  "step_id": "BF-1.4",
+                  "text": "The client renders the live-session experience.",
+                  "completion_critical": true,
+                  "criticality_reason": "Rendering viewer experience is the terminal step of the main flow.",
+                  "status": "met",
+                  "rationale": "UI rendered player surface, participant badge 'Viewer Bob', stream status 'Stream ended', and controls.",
+                  "observation_id": "obs-final-bf1",
+                  "required_runtime_kinds": [
+                    "runtime_trace"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation proves step BF-1.4 for BF-1",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-bf1/trace.json",
+                      "sha256": "sha256:ad2f866d21cb3f517dde16ad9a29266fba119a10c9dcb61389d87c8eb01fcc6b",
+                      "kind": "runtime_trace",
+                      "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                      "sanitized": true,
+                      "locator": "browser interaction trace",
+                      "observation_id": "obs-final-bf1",
+                      "flow_id": "BF-1",
+                      "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                      "target_ids": [
+                        "BF-1.3",
+                        "BF-1.4",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ],
+                  "source_findings": []
+                }
+              ],
+              "terminal_outcome": {
+                "text": "The client displays the live-session experience using the returned session and stream snapshot.",
+                "status": "met",
+                "rationale": "Verified terminal outcome on repaired container for BF-1.",
+                "observation_id": "obs-final-bf1",
+                "required_runtime_kinds": [
+                  "runtime_trace"
+                ],
+                "evidence_requirement_rationale": "Runtime observation confirms terminal state for BF-1",
+                "source_findings": [],
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-bf1/trace.json",
+                    "sha256": "sha256:ad2f866d21cb3f517dde16ad9a29266fba119a10c9dcb61389d87c8eb01fcc6b",
+                    "kind": "runtime_trace",
+                    "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                    "sanitized": true,
+                    "locator": "browser interaction trace",
+                    "observation_id": "obs-final-bf1",
+                    "flow_id": "BF-1",
+                    "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                    "target_ids": [
+                      "BF-1.3",
+                      "BF-1.4",
+                      "terminal_outcome"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "flow_id": "AF-1",
+              "source_anchor": "docs/01-inception/use-cases/uc-05-watch-a-live-stream.md#alternative-flow",
+              "completion_observation_id": "obs-final-af1",
+              "steps": [
+                {
+                  "step_id": "AF-1.1",
+                  "text": "The viewer opens the session menu.",
+                  "completion_critical": true,
+                  "criticality_reason": "Menu trigger action is required to reveal viewer actions.",
+                  "status": "met",
+                  "rationale": "Viewer clicked More button, setting aria-expanded to true.",
+                  "observation_id": "obs-final-af1",
+                  "required_runtime_kinds": [
+                    "ui"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation proves step AF-1.1 for AF-1",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-af1/action-ui.json",
+                      "sha256": "sha256:f6d793ffd7d43fed5d568c07bf39a56c77c5c5a24a78b7afcd4cdf80bd9ba2bf",
+                      "kind": "ui",
+                      "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                      "sanitized": true,
+                      "locator": "DOM state inspection",
+                      "observation_id": "obs-final-af1",
+                      "flow_id": "AF-1",
+                      "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "AF-1.1"
+                      ]
+                    }
+                  ],
+                  "source_findings": []
+                },
+                {
+                  "step_id": "AF-1.2",
+                  "text": "The client displays the viewer actions shown by the design.",
+                  "completion_critical": true,
+                  "criticality_reason": "Displaying viewer actions is the terminal step of AF-1.",
+                  "status": "met",
+                  "rationale": "Menu container #viewer-session-menu rendered with items 'Playback quality' and 'Fullscreen'.",
+                  "observation_id": "obs-final-af1",
+                  "required_runtime_kinds": [
+                    "runtime_trace"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation proves step AF-1.2 for AF-1",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-af1/trace.json",
+                      "sha256": "sha256:804549eef8db7766f02926856054437b549199f3f4be3ec58202a20639d71add",
+                      "kind": "runtime_trace",
+                      "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                      "sanitized": true,
+                      "locator": "browser interaction trace",
+                      "observation_id": "obs-final-af1",
+                      "flow_id": "AF-1",
+                      "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                      "target_ids": [
+                        "AF-1.2",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ],
+                  "source_findings": []
+                }
+              ],
+              "terminal_outcome": {
+                "text": "The client displays the viewer actions shown by the design.",
+                "status": "met",
+                "rationale": "Verified terminal outcome on repaired container for AF-1.",
+                "observation_id": "obs-final-af1",
+                "required_runtime_kinds": [
+                  "runtime_trace"
+                ],
+                "evidence_requirement_rationale": "Runtime observation confirms terminal state for AF-1",
+                "source_findings": [],
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-af1/trace.json",
+                    "sha256": "sha256:804549eef8db7766f02926856054437b549199f3f4be3ec58202a20639d71add",
+                    "kind": "runtime_trace",
+                    "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                    "sanitized": true,
+                    "locator": "browser interaction trace",
+                    "observation_id": "obs-final-af1",
+                    "flow_id": "AF-1",
+                    "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                    "target_ids": [
+                      "AF-1.2",
+                      "terminal_outcome"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "flow_id": "EF-1",
+              "source_anchor": "docs/01-inception/use-cases/uc-05-watch-a-live-stream.md#exception-flow",
+              "completion_observation_id": "obs-final-ef1",
+              "steps": [
+                {
+                  "step_id": "EF-1.1",
+                  "text": "The live-session representation cannot be returned.",
+                  "completion_critical": true,
+                  "criticality_reason": "Failure condition branch is necessary to trigger exception flow.",
+                  "status": "met",
+                  "rationale": "Backend rejected request with HTTP 403 Forbidden for unauthorized session.",
+                  "observation_id": "obs-final-ef1",
+                  "required_runtime_kinds": [
+                    "ui"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation proves step EF-1.1 for EF-1",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-ef1/action-ui.json",
+                      "sha256": "sha256:f489e8287e46e7c893fb1186b7f0c39150b345b8aa959d0e5f5cd3e70cc5d8c1",
+                      "kind": "ui",
+                      "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                      "sanitized": true,
+                      "locator": "DOM state inspection",
+                      "observation_id": "obs-final-ef1",
+                      "flow_id": "EF-1",
+                      "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                      "target_ids": [
+                        "entry",
+                        "branch",
+                        "EF-1.1"
+                      ]
+                    }
+                  ],
+                  "source_findings": []
+                },
+                {
+                  "step_id": "EF-1.2",
+                  "text": "The client displays the visible loading or unavailable state.",
+                  "completion_critical": true,
+                  "criticality_reason": "Displaying visible unavailable state is the terminal handling of EF-1.",
+                  "status": "met",
+                  "rationale": "Client rendered accessible alert element role=alert and status 'Live session unavailable'.",
+                  "observation_id": "obs-final-ef1",
+                  "required_runtime_kinds": [
+                    "runtime_trace"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation proves step EF-1.2 for EF-1",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-ef1/trace.json",
+                      "sha256": "sha256:d2ae773297812862d325ae1fb0460ab34970f2b91ce945172fb92049350c84a7",
+                      "kind": "runtime_trace",
+                      "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                      "sanitized": true,
+                      "locator": "browser interaction trace",
+                      "observation_id": "obs-final-ef1",
+                      "flow_id": "EF-1",
+                      "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                      "target_ids": [
+                        "EF-1.2",
+                        "terminal_outcome"
+                      ]
+                    }
+                  ],
+                  "source_findings": []
+                }
+              ],
+              "terminal_outcome": {
+                "text": "The client displays the visible loading or unavailable state.",
+                "status": "met",
+                "rationale": "Verified terminal outcome on repaired container for EF-1.",
+                "observation_id": "obs-final-ef1",
+                "required_runtime_kinds": [
+                  "runtime_trace"
+                ],
+                "evidence_requirement_rationale": "Runtime observation confirms terminal state for EF-1",
+                "source_findings": [],
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-05/runs/UC-05-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc05-final/obs-final-ef1/trace.json",
+                    "sha256": "sha256:d2ae773297812862d325ae1fb0460ab34970f2b91ce945172fb92049350c84a7",
+                    "kind": "runtime_trace",
+                    "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+                    "sanitized": true,
+                    "locator": "browser interaction trace",
+                    "observation_id": "obs-final-ef1",
+                    "flow_id": "EF-1",
+                    "captured_at": "2026-10-27T14:11:54.318397+07:00",
+                    "target_ids": [
+                      "EF-1.2",
+                      "terminal_outcome"
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
+          "execution_blocker_defect_ids": []
+        }
+      }
+    ],
+    "current_assessment_id": "asm-uc05-final",
+    "selection_policy": "accepted-audit-results-v1",
+    "current_summary": {
+      "schema_version": 2,
+      "assessment_id": "asm-uc05-final",
+      "stage": "experiment",
+      "source_revision": null,
+      "rubric_id": "completion-critical-flow-runtime-v2",
+      "followup_ids": [],
+      "status": "scored",
+      "measurement_status": "complete",
+      "execution_blocked": false,
+      "execution_blocker_defect_ids": [],
+      "has_incorrect_flows": false,
+      "result_basis": "rubric_evidence",
+      "researcher_result_count": 0,
+      "counts": {
+        "main": 1,
+        "alternative": 1,
+        "exception": 1,
+        "total": 3,
+        "correct": 3,
+        "incorrect": 0,
+        "not_evaluable": 0,
+        "evaluated": 3
+      },
+      "flow_accuracy_percent": 100.0,
+      "flow_error_percent": 0.0,
+      "evaluated_accuracy_percent": 100.0,
+      "evaluated_error_percent": 0.0,
+      "evaluated_coverage_percent": 100.0,
+      "accuracy_lower_bound_percent": 100.0,
+      "accuracy_upper_bound_percent": 100.0,
+      "flows": [
+        {
+          "flow_id": "BF-1",
+          "type": "main",
+          "status": "correct",
+          "result_source": "assessment",
+          "record_id": "asm-uc05-final",
+          "assessment_id": "asm-uc05-final",
+          "stage": "final",
+          "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0"
+        },
+        {
+          "flow_id": "AF-1",
+          "type": "alternative",
+          "status": "correct",
+          "result_source": "assessment",
+          "record_id": "asm-uc05-final",
+          "assessment_id": "asm-uc05-final",
+          "stage": "final",
+          "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0"
+        },
+        {
+          "flow_id": "EF-1",
+          "type": "exception",
+          "status": "correct",
+          "result_source": "assessment",
+          "record_id": "asm-uc05-final",
+          "assessment_id": "asm-uc05-final",
+          "stage": "final",
+          "source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0"
+        }
+      ],
+      "pending_flows": [],
+      "selection_policy": "accepted-audit-results-v1",
+      "result_scope": "experiment_accepted_audit",
+      "current_source_revision": "sha256:a6d8dffb6cefd3c4c52eecc15cf6c3e093d8c4fa3bd8dbddc05bf7411719b6a0",
+      "latest_assessment_status": "scored",
+      "latest_assessment_counts": {
+        "main": 1,
+        "alternative": 1,
+        "exception": 1,
+        "total": 3,
+        "correct": 3,
+        "incorrect": 0,
+        "not_evaluable": 0
+      },
+      "retained_from_prior_source_count": 0
+    }
+  },
+  "complexity": {
+    "actors": 0,
+    "main_flow_steps": 0,
+    "alternate_exception_flows": 0,
+    "data_entities": 0,
+    "integrations": 0,
+    "business_rules": 0,
+    "ui_states": 0
+  }
+}

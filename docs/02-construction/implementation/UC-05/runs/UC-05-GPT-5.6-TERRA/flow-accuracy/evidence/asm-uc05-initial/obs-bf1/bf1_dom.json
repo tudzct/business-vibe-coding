@@ -1,0 +1,10 @@
+{
+  "title": "Application",
+  "header": "*\nLIVE—",
+  "streamLabel": "Stream ended",
+  "participantLabel": "Viewer Bob",
+  "isPaused": "Pause stream",
+  "micButton": "<button type=\"button\" class=\"rounded-lg border border-[#272a31] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#538dff] disabled:opacity-60\" aria-label=\"Toggle microphone\">Mic</button>",
+  "moreButton": "<button type=\"button\" aria-expanded=\"false\" aria-controls=\"viewer-session-menu\" class=\"rounded-lg border border-[#272a31] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#538dff] disabled:opacity-60\">More</button>",
+  "bodyText": "*\nLIVE—\nVI\nViewer Bob\nⅡ\n◖\n● LIVE\n⚙ Auto • 720p\n⛶\n\nStream ended\n\nMic\nCamera\nChat\nParticipants\nMore"
+}

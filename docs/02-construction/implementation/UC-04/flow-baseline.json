@@ -4,7 +4,7 @@
   "status": "Frozen",
   "uc_id": "UC-04",
   "use_case_path": "docs/01-inception/use-cases/uc-04-stop-a-live-stream.md",
-  "use_case_sha256": "sha256:e74b2f15bfdd1b3722064d18485428006b353968a0e8beead26745150a61d1c1",
+  "use_case_sha256": "sha256:d6a338f5121e4ee449b06e6fa9ec44bc45b3680d835d49e58fbe9ce48c69e359",
   "ordered_flow_ids": [
     "BF-1",
     "AF-1",

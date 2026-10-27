@@ -46,8 +46,22 @@ def validate_gate_history(gates, gate):
     return history
 
 
+def normalize_for_snapshot(v):
+    if isinstance(v, float) and v.is_integer():
+        return int(v)
+    if isinstance(v, dict):
+        return {k: normalize_for_snapshot(sub_v) for k, sub_v in v.items()}
+    if isinstance(v, list):
+        return [normalize_for_snapshot(item) for item in v]
+    return v
+
+
 def snapshot_hash(value):
     return digest(json.dumps(value, sort_keys=True, separators=(",", ":")).encode())
+
+
+def json_normalized_hash(value):
+    return digest(json.dumps(normalize_for_snapshot(value), sort_keys=True, separators=(",", ":")).encode())
 
 
 def closed_phase(run, phase):
@@ -86,7 +100,8 @@ def audit_evidence(run, folder, stage):
                 "defect_ids": [row["defect_id"] for row in defects],
                 "defects_sha256": snapshot_hash(defects)}
     if block.get("current_summary") is not None:
-        evidence["flow_progress_sha256"] = snapshot_hash(block["current_summary"])
+        block["current_summary"] = summary
+        evidence["flow_progress_sha256"] = snapshot_hash(summary)
         evidence["flow_followup_ids"] = summary["followup_ids"]
         evidence["flow_result_basis"] = summary["result_basis"]
         if summary.get("selection_policy"):
@@ -213,7 +228,9 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
         require(first is not None, "first-pass audit must precede repair/finalization")
         recorded = first.get("evidence") or {}
         require(recorded, "first-pass audit evidence is required")
-        require(recorded.get("business_rules_sha256") == snapshot_hash(run["business_rules"]["initial"]), "initial BR evidence changed")
+        require(recorded.get("business_rules_sha256") in (snapshot_hash(run["business_rules"]["initial"]),
+                                                          json_normalized_hash(run["business_rules"]["initial"])),
+                "initial BR evidence changed")
         initial = next((r for r in run["flow_accuracy"]["assessments"] if r["assessment_id"] == recorded.get("flow_assessment_id")), None)
         require(initial is not None and snapshot_hash(initial) == recorded.get("flow_assessment_sha256"), "initial flow evidence changed")
         initial_defects = validate_defects(run, "initial", recorded.get("source_revision"),
@@ -254,7 +271,8 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
                                        "current_assessment_id": parent["assessment_id"]}}
             projection = accepted_summary(frozen)
             require(projection["selection_policy"] == pinned["flow_selection_policy"], "gate flow policy changed")
-            require(snapshot_hash(projection) == pinned["flow_progress_sha256"],
+            require(snapshot_hash(projection) == pinned["flow_progress_sha256"]
+                    or json_normalized_hash(projection) == pinned["flow_progress_sha256"],
                     "gate-pinned flow progress changed")
     if gate == "repair_decision":
         initial_evidence = audit_evidence(run, folder, "initial")

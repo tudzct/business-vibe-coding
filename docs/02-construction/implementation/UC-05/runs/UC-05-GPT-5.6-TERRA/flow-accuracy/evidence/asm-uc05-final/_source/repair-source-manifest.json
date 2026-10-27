@@ -1,0 +1,25 @@
+{
+  "captured_at": "2026-10-27T14:11:42.987081+07:00",
+  "files": [
+    {
+      "path": "finalsource/be/src/modules/sessions/sessions.controller.ts",
+      "sha256": "sha256:aa4b46d6d40cbaa58873b970bf0126926b92c9126b30cb3e17ed248e21655f25"
+    },
+    {
+      "path": "finalsource/be/src/modules/sessions/sessions.service.ts",
+      "sha256": "sha256:ce5d3a295dc4c7ea9d3c75adb1fa89125193920ab2aa12394abf6146e7ca7590"
+    },
+    {
+      "path": "finalsource/fe/src/App.tsx",
+      "sha256": "sha256:2e79ebc1cb916a61742cd4d48b60b8cb89fe6919a319d1252b86472aea2346fb"
+    },
+    {
+      "path": "finalsource/fe/src/api/session.ts",
+      "sha256": "sha256:0a12ccf6d55e8a6b55edcf417c5a90beed2eabe095ce18941f3c5dcbf29aeb4c"
+    },
+    {
+      "path": "finalsource/fe/src/components/LiveStreamViewer.tsx",
+      "sha256": "sha256:0cdc5111a85b447847a99f87ef81f4dd2f50020e4009849ff16842e18ad0c752"
+    }
+  ]
+}

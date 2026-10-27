@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "artifact_type": "business-rule-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-05",
+  "business_rule_path": "docs/01-inception/business-rules/uc-05-watch-a-live-stream-business-rules.md",
+  "business_rule_sha256": "sha256:cc31d49d83cd0bbd12dea96845a4a26d11e0e516e21dbe52e48a9b478a76b0d4",
+  "ordered_br_ids": [
+    "BR-WLS-01",
+    "BR-WLS-02",
+    "BR-WLS-03",
+    "BR-WLS-04",
+    "BR-WLS-05",
+    "BR-WLS-06",
+    "BR-WLS-07"
+  ],
+  "frozen_at": "2026-10-27T10:30:00+07:00"
+}

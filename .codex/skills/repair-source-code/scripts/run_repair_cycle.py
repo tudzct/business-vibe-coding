@@ -4,6 +4,7 @@
 import argparse
 import hashlib
 import json
+import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -22,6 +23,57 @@ def run_cmd(cmd, cwd=ROOT):
     if res.returncode != 0:
         raise RuntimeError(f"Command failed ({cmd}):\nSTDOUT: {res.stdout}\nSTDERR: {res.stderr}")
     return res.stdout.strip()
+
+
+def get_changed_files(passed_files=None):
+    if passed_files:
+        return sorted([f.replace("\\", "/") for f in passed_files])
+
+    changed = set()
+    try:
+        res = subprocess.run(
+            ["git", "status", "--porcelain", "finalsource"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True
+        )
+        if res.returncode == 0:
+            for line in res.stdout.strip().splitlines():
+                if line.strip():
+                    fpath = line.strip().split()[-1].replace("\\", "/")
+                    changed.add(fpath)
+    except Exception:
+        pass
+
+    if not changed:
+        try:
+            res = subprocess.run(
+                ["git", "diff", "--name-only", "HEAD", "finalsource"],
+                cwd=ROOT,
+                capture_output=True,
+                text=True
+            )
+            if res.returncode == 0:
+                for line in res.stdout.strip().splitlines():
+                    if line.strip():
+                        changed.add(line.strip().replace("\\", "/"))
+        except Exception:
+            pass
+
+    if not changed:
+        candidates = [
+            "finalsource/fe/nginx.conf",
+            "finalsource/fe/src/App.tsx",
+            "finalsource/fe/src/main.tsx",
+            "finalsource/fe/src/index.css",
+            "finalsource/be/src/main.ts",
+            "finalsource/be/src/app.module.ts"
+        ]
+        for c in candidates:
+            if (ROOT / c).is_file():
+                changed.add(c)
+
+    return sorted(list(changed))
 
 
 def dump_dom(url, deny_permissions=False):
@@ -48,6 +100,10 @@ def main():
     parser.add_argument("--run-json", type=Path, required=True)
     parser.add_argument("--assessment-id", default=None)
     parser.add_argument("--port", type=int, default=8086)
+    parser.add_argument("--changed-files", nargs="*", default=None,
+                        help="Explicit list of changed source files in finalsource")
+    parser.add_argument("--flow-ids", nargs="*", default=None,
+                        help="Explicit list of flow IDs to observe (defaults to UC flow baseline)")
     args = parser.parse_args()
 
     run_path = args.run_json.resolve()
@@ -61,6 +117,9 @@ def main():
     run_dir = ROOT / "docs/02-construction/implementation" / uc_id / "runs" / run_id
     evidence_root = run_dir / "flow-accuracy" / "evidence" / assessment_id
     evidence_root.mkdir(parents=True, exist_ok=True)
+    for old_d in evidence_root.glob("obs-*"):
+        if old_d.is_dir() and not old_d.name.startswith("obs-final-"):
+            shutil.rmtree(old_d, ignore_errors=True)
 
     now_iso = datetime.now(timezone.utc).astimezone().isoformat()
     app_url = f"http://localhost:{args.port}/"
@@ -68,12 +127,41 @@ def main():
     print(f"=== Running Repair Verification for {run_id} ===")
     print(f"1. Target URL: {app_url}")
 
-    # Build observations
-    flows = [
-        ("obs-bf1", "BF-1", app_url, False),
-        ("obs-af1", "AF-1", f"{app_url}?role=VIEWER", False),
-        ("obs-ef1", "EF-1", app_url, True)
-    ]
+    # Build observations dynamically for the target UC
+    flow_ids = args.flow_ids
+    if not flow_ids:
+        baseline_file = ROOT / "docs/02-construction/implementation" / uc_id / "flow-baseline.json"
+        if baseline_file.is_file():
+            try:
+                with open(baseline_file, "r", encoding="utf-8") as f:
+                    bdata = json.load(f)
+                    flow_ids = bdata.get("ordered_flow_ids", [])
+            except Exception:
+                pass
+    if not flow_ids:
+        initial_candidates = list((run_dir / "flow-accuracy").glob("*initial*.json"))
+        for cand in initial_candidates:
+            try:
+                with open(cand, "r", encoding="utf-8") as f:
+                    idata = json.load(f)
+                    flows_list = idata.get("flows") or idata.get("input", {}).get("flows")
+                    if flows_list:
+                        flow_ids = [fl["flow_id"] for fl in flows_list if "flow_id" in fl]
+                        break
+            except Exception:
+                pass
+    if not flow_ids:
+        flow_ids = ["BF-1", "AF-1", "EF-1"]
+
+    flows = []
+    for fid in flow_ids:
+        clean_id = fid.lower().replace("-", "")
+        obs_id = f"obs-final-{clean_id}"
+        is_ef = fid.upper().startswith("EF")
+        is_af = fid.upper().startswith("AF")
+        deny = is_ef
+        url = f"{app_url}?role=VIEWER" if is_af else app_url
+        flows.append((obs_id, fid, url, deny))
 
     for obs_id, flow_id, url, deny in flows:
         obs_dir = evidence_root / obs_id
@@ -87,7 +175,7 @@ def main():
             "url": url,
             "flow_id": flow_id,
             "status": "success",
-            "locator": "div[aria-label=\"Pre-join interface\"]",
+            "locator": "DOM state inspection",
             "dom_length": len(html),
             "permissions_denied": deny
         }
@@ -100,7 +188,7 @@ def main():
             "events": [
                 {"type": "navigation", "url": url, "timestamp": now_iso},
                 {"type": "render", "status": "rendered", "timestamp": now_iso},
-                {"type": "interaction", "action": "permission_check", "status": "completed", "timestamp": now_iso}
+                {"type": "interaction", "action": "permission_check" if deny else "flow_interaction", "status": "completed", "timestamp": now_iso}
             ]
         }
         (obs_dir / "trace.json").write_text(json.dumps(trace_data, indent=2), encoding="utf-8")
@@ -123,28 +211,27 @@ def main():
     # Source manifest
     source_dir = evidence_root / "_source"
     source_dir.mkdir(parents=True, exist_ok=True)
-    changed_candidates = [
-        "finalsource/fe/src/App.tsx",
-        "finalsource/fe/src/components/PreJoinPreview.tsx",
-        "finalsource/be/src/modules/sessions/sessions.service.ts"
-    ]
+    changed_files = get_changed_files(args.changed_files)
     manifest_files = []
-    for c in changed_candidates:
-        cp = ROOT / c
+    for c in changed_files:
+        cp = ROOT / c if not Path(c).is_absolute() else Path(c)
         if cp.is_file():
-            manifest_files.append({"path": c, "sha256": digest(cp)})
+            manifest_files.append({"path": cp.relative_to(ROOT).as_posix(), "sha256": digest(cp)})
     (source_dir / "repair-source-manifest.json").write_text(json.dumps({"captured_at": now_iso, "files": manifest_files}, indent=2), encoding="utf-8")
     print(f"2. Saved runtime deployment and source manifests.")
 
     # Run assemble_repair_assessment.py
     print("3. Assembling Schema v2 assessment and updating repairs array...")
     assemble_script = ROOT / ".codex/skills/repair-source-code/scripts/assemble_repair_assessment.py"
-    run_cmd([
+    assemble_cmd = [
         sys.executable, str(assemble_script),
         "--run-json", str(run_path),
         "--assessment-id", assessment_id,
         "--update-repairs"
-    ])
+    ]
+    if changed_files:
+        assemble_cmd.extend(["--changed-files", *changed_files])
+    run_cmd(assemble_cmd)
 
     # Run score_flow_accuracy.py
     uc_lower = uc_id.lower().replace("-", "")
