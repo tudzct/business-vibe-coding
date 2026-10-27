@@ -1,0 +1,2 @@
+Observation obs-bf-1: BF-1.6 & terminal_outcome
+UI displays Stream ended and closes confirmation dialog.

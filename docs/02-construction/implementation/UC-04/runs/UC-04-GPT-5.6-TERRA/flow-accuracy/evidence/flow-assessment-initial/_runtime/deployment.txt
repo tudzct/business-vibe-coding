@@ -1,0 +1,13 @@
+Integrated Runtime Deployment Verification
+Time: 2026-10-26T20:13:00+07:00
+Compose project: application-baseline
+Compose CLI version: 5.0.2
+
+Services:
+- backend: application-baseline-backend-1 (image: application-baseline-backend:latest sha256:a4a307248d390a5f4ae2458f2066f3b37b533406821550be7ddc9791a693d9c8) status: running (healthy) on 127.0.0.1:3006
+- frontend: application-baseline-frontend-1 (image: application-baseline-frontend:latest sha256:517755d2653aea807cba0a0e67dc357c4b74d0a696b089cb684eba576e066cda) status: running (healthy) on 0.0.0.0:8086
+- database: application-baseline-database-1 (image: mysql:8.4 sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb) status: running (healthy) on 0.0.0.0:3307
+
+Source revision verified: sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea
+Healthcheck GET /api/health returned 200 OK {"status":"ok"}
+Frontend GET / returned 200 OK

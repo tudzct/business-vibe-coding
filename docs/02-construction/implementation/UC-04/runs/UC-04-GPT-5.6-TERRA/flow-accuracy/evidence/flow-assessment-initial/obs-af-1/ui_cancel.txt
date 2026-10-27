@@ -1,0 +1,6 @@
+Observation attempt obs-af-1: 3a & 3b (AF-1.1, AF-1.2, terminal_outcome)
+Timestamp: 2026-10-26T20:13:19.400+07:00
+Target: branch, AF-1.1, AF-1.2, terminal_outcome
+Action: Host clicks Cancel button in confirmation dialog.
+Result: setIsStopConfirmationOpen(false) executes. Confirmation section data-node-id="6007:87451" is removed from DOM.
+Live session preview and controls remain active. No network request sent.

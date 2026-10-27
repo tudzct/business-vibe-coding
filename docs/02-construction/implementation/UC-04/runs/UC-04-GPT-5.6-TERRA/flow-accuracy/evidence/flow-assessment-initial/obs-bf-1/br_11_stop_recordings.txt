@@ -1,0 +1,20 @@
+Observation obs-bf-1: BR-STLS-11 Stop Recordings
+Postcondition verification:
+Rule: Recording.allInstances()@pre->select(r | r.sessionId = command.sessionId and
+  (r.status@pre = RecordingStatus::STARTING or r.status@pre = RecordingStatus::RECORDING))->forAll(r |
+  r.status = RecordingStatus::STOPPED and r.stoppedAt <> null and r.version = r.version@pre + 1)
+
+Pre-condition state:
+Recording 66666666-6666-4666-8666-666666666661 had status = RECORDING, stopped_at = NULL, version = 1.
+
+Post-STOP observation:
+Query: SELECT id, status, stopped_at, version FROM recordings WHERE session_id = '11111111-1111-4111-8111-111111111111';
+Result:
+id: 66666666-6666-4666-8666-666666666661
+status: RECORDING (expected: STOPPED)
+stopped_at: NULL (expected: non-null timestamp)
+version: 1 (expected: 2)
+
+Findings:
+The backend LiveStreamService.commandLiveStream implementation completely omits stopping active recordings when a live stream is stopped.
+Verdict: unmet.

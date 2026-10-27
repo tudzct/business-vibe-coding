@@ -1,0 +1,10 @@
+Observation obs-bf-1: BR-STLS-02 Target Session
+Precondition verification:
+1. Target session status is ENDED:
+   Database state: UPDATE sessions SET status = 'ENDED' WHERE id = '11111111-1111-4111-8111-111111111111';
+   Request: POST /api/v1/sessions/11111111-1111-4111-8111-111111111111/live-stream/commands (action: STOP)
+   Result: HTTP 422 Unprocessable Entity {"statusCode":422,"message":"The stream cannot be stopped"}
+2. Target session status is LIVE:
+   Request: POST command with action STOP
+   Result: HTTP 200 OK accepted.
+Verdict: met.

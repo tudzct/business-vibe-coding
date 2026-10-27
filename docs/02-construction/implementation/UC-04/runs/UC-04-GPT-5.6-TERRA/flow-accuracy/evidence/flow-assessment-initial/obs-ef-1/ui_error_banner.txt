@@ -1,0 +1,2 @@
+Observation obs-ef-1: EF-1.2 & terminal_outcome
+Error banner displayed, current session view preserved.

@@ -1,0 +1,2 @@
+Observation obs-bf-1: Entry & BF-1.1
+Host clicks End button on live preview.

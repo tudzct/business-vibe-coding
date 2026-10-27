@@ -1,0 +1,2 @@
+Observation obs-bf-1: BF-1.5 data
+Database query verified status ENDED, version 2, ended_at set.

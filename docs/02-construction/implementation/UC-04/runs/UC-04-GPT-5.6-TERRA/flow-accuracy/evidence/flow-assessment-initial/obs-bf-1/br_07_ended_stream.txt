@@ -1,0 +1,9 @@
+Observation obs-bf-1: BR-STLS-07 Ended Stream
+Postcondition verification:
+1. Stream status and endedAt:
+   Query: SELECT id, status, started_at, ended_at FROM live_streams WHERE id = '33333333-3333-4333-8333-333333333331';
+   Result: status = 'ENDED', ended_at = '2026-10-26 13:13:18.106' (endedAt is not null).
+2. Session status preservation:
+   Query: SELECT id, status, version FROM sessions WHERE id = '11111111-1111-4111-8111-111111111111';
+   Result: status = 'LIVE' (session.status = session.status@pre).
+Verdict: met.

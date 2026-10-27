@@ -1,0 +1,2 @@
+Observation obs-ef-1: BF-1.4
+POST command with stale expectedVersion 999.

@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "artifact_type": "business-rule-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-04",
+  "business_rule_path": "docs/01-inception/business-rules/uc-04-stop-a-live-stream-business-rules.md",
+  "business_rule_sha256": "sha256:f700ba9e1cabfcab727aa515d6635ce394117cc09eb58777a9ff9f3f9f3b60ee",
+  "ordered_br_ids": [
+    "BR-STLS-01",
+    "BR-STLS-02",
+    "BR-STLS-03",
+    "BR-STLS-04",
+    "BR-STLS-05",
+    "BR-STLS-06",
+    "BR-STLS-07",
+    "BR-STLS-08",
+    "BR-STLS-09",
+    "BR-STLS-10",
+    "BR-STLS-11"
+  ],
+  "frozen_at": "2026-10-26T17:55:00+07:00"
+}

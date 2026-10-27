@@ -1,0 +1,7 @@
+Observation attempt obs-bf-1: BF-1.6 & terminal_outcome
+Timestamp: 2026-10-26T20:13:18.400+07:00
+Target: BF-1.6, terminal_outcome
+Action: BroadcasterLivePreview consumes updated session state from getSessionState.
+Result: Confirmation dialog closed (isStopConfirmationOpen: false).
+Stream status label text: "Stream ended". End button removed from header/controls (canStop: false).
+Post-stream state correctly displayed.

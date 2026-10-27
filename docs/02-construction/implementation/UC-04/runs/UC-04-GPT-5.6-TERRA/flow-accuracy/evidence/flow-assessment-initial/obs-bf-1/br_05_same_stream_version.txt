@@ -1,0 +1,8 @@
+Observation obs-bf-1: BR-STLS-05 Same Stream Version
+Postcondition verification:
+1. Stream version before STOP: stream.version@pre = 1
+2. Stream version in response: data.stream.version = 2
+3. Stream version in database:
+   SELECT id, version FROM live_streams WHERE id = '33333333-3333-4333-8333-333333333331';
+   Result: version = 2 (stream.version = stream.version@pre + 1)
+Verdict: met.

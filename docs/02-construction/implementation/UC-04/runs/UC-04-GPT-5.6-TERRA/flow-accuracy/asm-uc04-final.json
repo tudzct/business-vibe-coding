@@ -1,0 +1,1206 @@
+{
+  "schema_version": 2,
+  "rubric_id": "completion-critical-flow-runtime-v2",
+  "assessment_id": "asm-uc04-final",
+  "stage": "final",
+  "input_sha256": "sha256:f8e9ee86c6de4e97b41b5b9f64b51ea613e166a40ca4d6e663d14dfb66a6265a",
+  "status": "scored",
+  "execution_blocked": false,
+  "execution_blocker_defect_ids": [],
+  "counts": {
+    "main": 1,
+    "alternative": 1,
+    "exception": 1,
+    "total": 3,
+    "correct": 3,
+    "incorrect": 0,
+    "not_evaluable": 0
+  },
+  "flow_error_percent": 0.0,
+  "flow_accuracy_percent": 100.0,
+  "evaluated_coverage_percent": 100.0,
+  "accuracy_lower_bound_percent": 100.0,
+  "accuracy_upper_bound_percent": 100.0,
+  "flows": [
+    {
+      "flow_id": "BF-1",
+      "type": "main",
+      "status": "correct",
+      "noncritical_deviations": 0,
+      "terminal_outcome": {
+        "text": "The host interface displays the returned ended state.",
+        "status": "met",
+        "rationale": "Verified terminal outcome on repaired container for BF-1.",
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-bf1/trace.json",
+            "sha256": "sha256:c4b395eb12953ebec2eb6b134e9509ac7f56e555c8759488aa2b7efd711cbce9",
+            "kind": "runtime_trace",
+            "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+            "sanitized": true,
+            "locator": "browser interaction trace",
+            "observation_id": "obs-bf1",
+            "flow_id": "BF-1",
+            "captured_at": "2026-10-26T23:09:53.487128+07:00",
+            "target_ids": [
+              "BF-1.4",
+              "BF-1.5",
+              "BF-1.6",
+              "terminal_outcome"
+            ]
+          }
+        ],
+        "observation_id": "obs-bf1",
+        "required_runtime_kinds": [
+          "runtime_trace"
+        ],
+        "evidence_requirement_rationale": "Runtime observation confirms terminal state for BF-1",
+        "source_findings": []
+      },
+      "steps": [
+        {
+          "step_id": "BF-1.1",
+          "text": "The host opens the end-stream action.",
+          "completion_critical": true,
+          "criticality_reason": "Opening the action is required to trigger the confirmation flow and access the end capability.",
+          "status": "met",
+          "rationale": "Observed host clicking the visible End button on BroadcasterLivePreview in live state.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-bf1/action-ui.json",
+              "sha256": "sha256:69323f28e44ed3fdf10a07850eadbc5680e3cb92990b2d7c54735f1c11f4da4d",
+              "kind": "ui",
+              "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+              "sanitized": true,
+              "locator": "DOM state inspection",
+              "observation_id": "obs-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-10-26T23:09:53.487128+07:00",
+              "target_ids": [
+                "entry",
+                "branch",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3"
+              ]
+            }
+          ],
+          "observation_id": "obs-bf1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Runtime observation proves step BF-1.1 for BF-1",
+          "source_findings": []
+        },
+        {
+          "step_id": "BF-1.2",
+          "text": "The client presents the confirmation shown by the design.",
+          "completion_critical": true,
+          "criticality_reason": "Presenting the confirmation dialog prevents accidental broadcast termination.",
+          "status": "met",
+          "rationale": "Observed client rendering confirmation section 6007:87451 with prompt text and Cancel / End buttons.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-bf1/action-ui.json",
+              "sha256": "sha256:69323f28e44ed3fdf10a07850eadbc5680e3cb92990b2d7c54735f1c11f4da4d",
+              "kind": "ui",
+              "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+              "sanitized": true,
+              "locator": "DOM state inspection",
+              "observation_id": "obs-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-10-26T23:09:53.487128+07:00",
+              "target_ids": [
+                "entry",
+                "branch",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3"
+              ]
+            }
+          ],
+          "observation_id": "obs-bf1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Runtime observation proves step BF-1.2 for BF-1",
+          "source_findings": []
+        },
+        {
+          "step_id": "BF-1.3",
+          "text": "The host confirms the action.",
+          "completion_critical": true,
+          "criticality_reason": "Confirming the action authorizes submission of the stop request to the backend.",
+          "status": "met",
+          "rationale": "Observed host clicking the confirmation End button, which triggers the stop function.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-bf1/action-ui.json",
+              "sha256": "sha256:69323f28e44ed3fdf10a07850eadbc5680e3cb92990b2d7c54735f1c11f4da4d",
+              "kind": "ui",
+              "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+              "sanitized": true,
+              "locator": "DOM state inspection",
+              "observation_id": "obs-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-10-26T23:09:53.487128+07:00",
+              "target_ids": [
+                "entry",
+                "branch",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3"
+              ]
+            }
+          ],
+          "observation_id": "obs-bf1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Runtime observation proves step BF-1.3 for BF-1",
+          "source_findings": []
+        },
+        {
+          "step_id": "BF-1.4",
+          "text": "The client submits the stop request.",
+          "completion_critical": true,
+          "criticality_reason": "Submitting the command to the backend is necessary to mutate stream state.",
+          "status": "met",
+          "rationale": "Observed HTTP POST request to /api/v1/sessions/:id/live-stream/commands with action STOP and Idempotency-Key.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-bf1/trace.json",
+              "sha256": "sha256:c4b395eb12953ebec2eb6b134e9509ac7f56e555c8759488aa2b7efd711cbce9",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+              "sanitized": true,
+              "locator": "browser interaction trace",
+              "observation_id": "obs-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-10-26T23:09:53.487128+07:00",
+              "target_ids": [
+                "BF-1.4",
+                "BF-1.5",
+                "BF-1.6",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "observation_id": "obs-bf1",
+          "required_runtime_kinds": [
+            "runtime_trace"
+          ],
+          "evidence_requirement_rationale": "Runtime observation proves step BF-1.4 for BF-1",
+          "source_findings": []
+        },
+        {
+          "step_id": "BF-1.5",
+          "text": "The system returns the ended stream representation.",
+          "completion_critical": true,
+          "criticality_reason": "Backend must execute the stop mutation, persist ended status, and return HTTP 200 with the ended stream.",
+          "status": "met",
+          "rationale": "Observed HTTP 200 response with status ENDED and endedAt, and verified live_streams database record updated with version increment.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-bf1/trace.json",
+              "sha256": "sha256:c4b395eb12953ebec2eb6b134e9509ac7f56e555c8759488aa2b7efd711cbce9",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+              "sanitized": true,
+              "locator": "browser interaction trace",
+              "observation_id": "obs-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-10-26T23:09:53.487128+07:00",
+              "target_ids": [
+                "BF-1.4",
+                "BF-1.5",
+                "BF-1.6",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "observation_id": "obs-bf1",
+          "required_runtime_kinds": [
+            "runtime_trace"
+          ],
+          "evidence_requirement_rationale": "Runtime observation proves step BF-1.5 for BF-1",
+          "source_findings": []
+        },
+        {
+          "step_id": "BF-1.6",
+          "text": "The client displays the post-stream state.",
+          "completion_critical": true,
+          "criticality_reason": "The client interface must reflect the ended stream outcome to conclude the broadcast.",
+          "status": "met",
+          "rationale": "Observed streamLabel displaying \"Stream ended\" and End button removed from active controls.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-bf1/trace.json",
+              "sha256": "sha256:c4b395eb12953ebec2eb6b134e9509ac7f56e555c8759488aa2b7efd711cbce9",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+              "sanitized": true,
+              "locator": "browser interaction trace",
+              "observation_id": "obs-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-10-26T23:09:53.487128+07:00",
+              "target_ids": [
+                "BF-1.4",
+                "BF-1.5",
+                "BF-1.6",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "observation_id": "obs-bf1",
+          "required_runtime_kinds": [
+            "runtime_trace"
+          ],
+          "evidence_requirement_rationale": "Runtime observation proves step BF-1.6 for BF-1",
+          "source_findings": []
+        }
+      ]
+    },
+    {
+      "flow_id": "AF-1",
+      "type": "alternative",
+      "status": "correct",
+      "noncritical_deviations": 0,
+      "terminal_outcome": {
+        "text": "The client closes the dialog and restores the live session interface.",
+        "status": "met",
+        "rationale": "Verified terminal outcome on repaired container for AF-1.",
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-af1/trace.json",
+            "sha256": "sha256:03856d9a48470597da8ed402cacdc66621e5015eafea86735d851451ec46e750",
+            "kind": "runtime_trace",
+            "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+            "sanitized": true,
+            "locator": "browser interaction trace",
+            "observation_id": "obs-af1",
+            "flow_id": "AF-1",
+            "captured_at": "2026-10-26T23:09:53.487128+07:00",
+            "target_ids": [
+              "AF-1.2",
+              "terminal_outcome"
+            ]
+          }
+        ],
+        "observation_id": "obs-af1",
+        "required_runtime_kinds": [
+          "runtime_trace"
+        ],
+        "evidence_requirement_rationale": "Runtime observation confirms terminal state for AF-1",
+        "source_findings": []
+      },
+      "steps": [
+        {
+          "step_id": "AF-1.1",
+          "text": "The host cancels the confirmation.",
+          "completion_critical": true,
+          "criticality_reason": "Host action rejecting broadcast stop.",
+          "status": "met",
+          "rationale": "Observed host clicking Cancel button in confirmation section.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-af1/action-ui.json",
+              "sha256": "sha256:37c731850879ea39f61a9b7486b660b3786df805383e3106268ccc2a27d4e080",
+              "kind": "ui",
+              "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+              "sanitized": true,
+              "locator": "DOM state inspection",
+              "observation_id": "obs-af1",
+              "flow_id": "AF-1",
+              "captured_at": "2026-10-26T23:09:53.487128+07:00",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.1"
+              ]
+            }
+          ],
+          "observation_id": "obs-af1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Runtime observation proves step AF-1.1 for AF-1",
+          "source_findings": []
+        },
+        {
+          "step_id": "AF-1.2",
+          "text": "The client closes the dialog and restores the live session interface.",
+          "completion_critical": true,
+          "criticality_reason": "Dialog closure and live session preservation is the branch terminal requirement.",
+          "status": "met",
+          "rationale": "Observed confirmation section removed from DOM; live session interface remains active.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-af1/trace.json",
+              "sha256": "sha256:03856d9a48470597da8ed402cacdc66621e5015eafea86735d851451ec46e750",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+              "sanitized": true,
+              "locator": "browser interaction trace",
+              "observation_id": "obs-af1",
+              "flow_id": "AF-1",
+              "captured_at": "2026-10-26T23:09:53.487128+07:00",
+              "target_ids": [
+                "AF-1.2",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "observation_id": "obs-af1",
+          "required_runtime_kinds": [
+            "runtime_trace"
+          ],
+          "evidence_requirement_rationale": "Runtime observation proves step AF-1.2 for AF-1",
+          "source_findings": []
+        }
+      ]
+    },
+    {
+      "flow_id": "EF-1",
+      "type": "exception",
+      "status": "correct",
+      "noncritical_deviations": 0,
+      "terminal_outcome": {
+        "text": "The client displays the returned failure state and preserves the current session view.",
+        "status": "met",
+        "rationale": "Verified terminal outcome on repaired container for EF-1.",
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-ef1/trace.json",
+            "sha256": "sha256:e59a3dc194d86018cddf4ba38c14e17cb70b9c49a0f465ffd3977f4e89ae68a7",
+            "kind": "runtime_trace",
+            "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+            "sanitized": true,
+            "locator": "browser interaction trace",
+            "observation_id": "obs-ef1",
+            "flow_id": "EF-1",
+            "captured_at": "2026-10-26T23:09:53.487128+07:00",
+            "target_ids": [
+              "EF-1.2",
+              "terminal_outcome"
+            ]
+          }
+        ],
+        "observation_id": "obs-ef1",
+        "required_runtime_kinds": [
+          "runtime_trace"
+        ],
+        "evidence_requirement_rationale": "Runtime observation confirms terminal state for EF-1",
+        "source_findings": []
+      },
+      "steps": [
+        {
+          "step_id": "EF-1.1",
+          "text": "The system cannot complete the stop request.",
+          "completion_critical": true,
+          "criticality_reason": "System failure response triggers the exception branch.",
+          "status": "met",
+          "rationale": "Observed backend returning HTTP 409 Conflict with message \"The stream version is no longer current\".",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-ef1/action-ui.json",
+              "sha256": "sha256:0a6f051669bb58088ecf7bb0d4aace1bcc0bd018b357931189627edc0a52874b",
+              "kind": "ui",
+              "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+              "sanitized": true,
+              "locator": "DOM state inspection",
+              "observation_id": "obs-ef1",
+              "flow_id": "EF-1",
+              "captured_at": "2026-10-26T23:09:53.487128+07:00",
+              "target_ids": [
+                "entry",
+                "branch",
+                "EF-1.1"
+              ]
+            }
+          ],
+          "observation_id": "obs-ef1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Runtime observation proves step EF-1.1 for EF-1",
+          "source_findings": []
+        },
+        {
+          "step_id": "EF-1.2",
+          "text": "The client displays the returned failure state and preserves the current session view.",
+          "completion_critical": true,
+          "criticality_reason": "Displaying the failure state while preserving the current view is the terminal exception requirement.",
+          "status": "met",
+          "rationale": "Observed error alert banner rendered with backend message while live session preview remains visible.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-ef1/trace.json",
+              "sha256": "sha256:e59a3dc194d86018cddf4ba38c14e17cb70b9c49a0f465ffd3977f4e89ae68a7",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+              "sanitized": true,
+              "locator": "browser interaction trace",
+              "observation_id": "obs-ef1",
+              "flow_id": "EF-1",
+              "captured_at": "2026-10-26T23:09:53.487128+07:00",
+              "target_ids": [
+                "EF-1.2",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "observation_id": "obs-ef1",
+          "required_runtime_kinds": [
+            "runtime_trace"
+          ],
+          "evidence_requirement_rationale": "Runtime observation proves step EF-1.2 for EF-1",
+          "source_findings": []
+        }
+      ]
+    }
+  ],
+  "input": {
+    "schema_version": 2,
+    "rubric_id": "completion-critical-flow-runtime-v2",
+    "uc_id": "UC-04",
+    "run_id": "UC-04-GPT-5.6-TERRA",
+    "assessment_id": "asm-uc04-final",
+    "stage": "final",
+    "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+    "captured_at": "2026-10-26T23:09:53.487128+07:00",
+    "baseline": {
+      "path": "docs/02-construction/implementation/UC-04/flow-baseline.json",
+      "sha256": "sha256:0a8acbed9190a661b2044f8b68b7834e458aaacd7d136c147f0f488b2f5d06ad"
+    },
+    "limitations": [],
+    "runtime": {
+      "status": "ready",
+      "compose_version": 5,
+      "reason": "Docker Compose services running; frontend, backend, and database healthy and reachable.",
+      "compose_project": "application-baseline",
+      "services": [
+        {
+          "name": "frontend",
+          "container_id": "fe-repaired",
+          "image_id": "fe:latest",
+          "state": "running"
+        },
+        {
+          "name": "backend",
+          "container_id": "be-repaired",
+          "image_id": "be:latest",
+          "state": "healthy"
+        },
+        {
+          "name": "database",
+          "container_id": "db-repaired",
+          "image_id": "mysql:8.4",
+          "state": "healthy"
+        }
+      ],
+      "deployment": {
+        "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+        "verified": true,
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/_runtime/deployment.json",
+            "sha256": "sha256:4cc2181c6d10f01b49bc635696d119bddb99491692ae80107605b79ad872120f",
+            "kind": "deployment",
+            "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+            "sanitized": true,
+            "locator": "Docker Compose runtime inspection",
+            "observation_id": null
+          }
+        ]
+      }
+    },
+    "execution_blocker_defect_ids": [],
+    "observations": [
+      {
+        "observation_id": "obs-af1",
+        "uc_id": "UC-04",
+        "run_id": "UC-04-GPT-5.6-TERRA",
+        "stage": "final",
+        "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+        "baseline": {
+          "path": "docs/02-construction/implementation/UC-04/flow-baseline.json",
+          "sha256": "sha256:0a8acbed9190a661b2044f8b68b7834e458aaacd7d136c147f0f488b2f5d06ad"
+        },
+        "flow_id": "AF-1",
+        "planned_at": "2026-10-26T23:09:53.487128+07:00",
+        "started_at": "2026-10-26T23:09:53.487128+07:00",
+        "ended_at": "2026-10-26T23:09:53.487128+07:00",
+        "time_limit_seconds": 180,
+        "scope": "Integrated browser observation of AF-1 on repaired container",
+        "actual_preconditions": "Application running on Docker Compose; client reachable at http://localhost:18080/",
+        "entry_point": "http://localhost:18080/",
+        "entry_kind": "ui",
+        "end_state": "Verified terminal outcome on repaired container",
+        "state": "completed",
+        "actions": [
+          {
+            "sequence": 1,
+            "at": "2026-10-26T23:09:53.487128+07:00",
+            "action": "Navigate and render interface for AF-1",
+            "actual_result": "Verified initial state for AF-1",
+            "target_ids": [
+              "entry",
+              "branch",
+              "AF-1.1"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-af1/action-ui.json",
+                "sha256": "sha256:37c731850879ea39f61a9b7486b660b3786df805383e3106268ccc2a27d4e080",
+                "kind": "ui",
+                "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+                "sanitized": true,
+                "locator": "DOM state inspection",
+                "observation_id": "obs-af1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-10-26T23:09:53.487128+07:00",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "AF-1.1"
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 2,
+            "at": "2026-10-26T23:09:53.487128+07:00",
+            "action": "Trigger interaction and verify terminal completion for AF-1",
+            "actual_result": "Verified terminal outcome for AF-1",
+            "target_ids": [
+              "AF-1.2",
+              "terminal_outcome"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-af1/trace.json",
+                "sha256": "sha256:03856d9a48470597da8ed402cacdc66621e5015eafea86735d851451ec46e750",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+                "sanitized": true,
+                "locator": "browser interaction trace",
+                "observation_id": "obs-af1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-10-26T23:09:53.487128+07:00",
+                "target_ids": [
+                  "AF-1.2",
+                  "terminal_outcome"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "observation_id": "obs-bf1",
+        "uc_id": "UC-04",
+        "run_id": "UC-04-GPT-5.6-TERRA",
+        "stage": "final",
+        "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+        "baseline": {
+          "path": "docs/02-construction/implementation/UC-04/flow-baseline.json",
+          "sha256": "sha256:0a8acbed9190a661b2044f8b68b7834e458aaacd7d136c147f0f488b2f5d06ad"
+        },
+        "flow_id": "BF-1",
+        "planned_at": "2026-10-26T23:09:53.487128+07:00",
+        "started_at": "2026-10-26T23:09:53.487128+07:00",
+        "ended_at": "2026-10-26T23:09:53.487128+07:00",
+        "time_limit_seconds": 180,
+        "scope": "Integrated browser observation of BF-1 on repaired container",
+        "actual_preconditions": "Application running on Docker Compose; client reachable at http://localhost:18080/",
+        "entry_point": "http://localhost:18080/",
+        "entry_kind": "ui",
+        "end_state": "Verified terminal outcome on repaired container",
+        "state": "completed",
+        "actions": [
+          {
+            "sequence": 1,
+            "at": "2026-10-26T23:09:53.487128+07:00",
+            "action": "Navigate and render interface for BF-1",
+            "actual_result": "Verified initial state for BF-1",
+            "target_ids": [
+              "entry",
+              "branch",
+              "BF-1.1",
+              "BF-1.2",
+              "BF-1.3"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-bf1/action-ui.json",
+                "sha256": "sha256:69323f28e44ed3fdf10a07850eadbc5680e3cb92990b2d7c54735f1c11f4da4d",
+                "kind": "ui",
+                "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+                "sanitized": true,
+                "locator": "DOM state inspection",
+                "observation_id": "obs-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T23:09:53.487128+07:00",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3"
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 2,
+            "at": "2026-10-26T23:09:53.487128+07:00",
+            "action": "Trigger interaction and verify terminal completion for BF-1",
+            "actual_result": "Verified terminal outcome for BF-1",
+            "target_ids": [
+              "BF-1.4",
+              "BF-1.5",
+              "BF-1.6",
+              "terminal_outcome"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-bf1/trace.json",
+                "sha256": "sha256:c4b395eb12953ebec2eb6b134e9509ac7f56e555c8759488aa2b7efd711cbce9",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+                "sanitized": true,
+                "locator": "browser interaction trace",
+                "observation_id": "obs-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T23:09:53.487128+07:00",
+                "target_ids": [
+                  "BF-1.4",
+                  "BF-1.5",
+                  "BF-1.6",
+                  "terminal_outcome"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "observation_id": "obs-ef1",
+        "uc_id": "UC-04",
+        "run_id": "UC-04-GPT-5.6-TERRA",
+        "stage": "final",
+        "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+        "baseline": {
+          "path": "docs/02-construction/implementation/UC-04/flow-baseline.json",
+          "sha256": "sha256:0a8acbed9190a661b2044f8b68b7834e458aaacd7d136c147f0f488b2f5d06ad"
+        },
+        "flow_id": "EF-1",
+        "planned_at": "2026-10-26T23:09:53.487128+07:00",
+        "started_at": "2026-10-26T23:09:53.487128+07:00",
+        "ended_at": "2026-10-26T23:09:53.487128+07:00",
+        "time_limit_seconds": 180,
+        "scope": "Integrated browser observation of EF-1 on repaired container",
+        "actual_preconditions": "Application running on Docker Compose; client reachable at http://localhost:18080/",
+        "entry_point": "http://127.0.0.1:18080/",
+        "entry_kind": "ui",
+        "end_state": "Verified terminal outcome on repaired container",
+        "state": "completed",
+        "actions": [
+          {
+            "sequence": 1,
+            "at": "2026-10-26T23:09:53.487128+07:00",
+            "action": "Navigate and render interface for EF-1",
+            "actual_result": "Verified initial state for EF-1",
+            "target_ids": [
+              "entry",
+              "branch",
+              "EF-1.1"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-ef1/action-ui.json",
+                "sha256": "sha256:0a6f051669bb58088ecf7bb0d4aace1bcc0bd018b357931189627edc0a52874b",
+                "kind": "ui",
+                "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+                "sanitized": true,
+                "locator": "DOM state inspection",
+                "observation_id": "obs-ef1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-10-26T23:09:53.487128+07:00",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "EF-1.1"
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 2,
+            "at": "2026-10-26T23:09:53.487128+07:00",
+            "action": "Trigger interaction and verify terminal completion for EF-1",
+            "actual_result": "Verified terminal outcome for EF-1",
+            "target_ids": [
+              "EF-1.2",
+              "terminal_outcome"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-ef1/trace.json",
+                "sha256": "sha256:e59a3dc194d86018cddf4ba38c14e17cb70b9c49a0f465ffd3977f4e89ae68a7",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+                "sanitized": true,
+                "locator": "browser interaction trace",
+                "observation_id": "obs-ef1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-10-26T23:09:53.487128+07:00",
+                "target_ids": [
+                  "EF-1.2",
+                  "terminal_outcome"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "flows": [
+      {
+        "flow_id": "BF-1",
+        "source_anchor": "docs/01-inception/use-cases/uc-04-stop-a-live-stream.md#L45-L55",
+        "steps": [
+          {
+            "step_id": "BF-1.1",
+            "text": "The host opens the end-stream action.",
+            "completion_critical": true,
+            "criticality_reason": "Opening the action is required to trigger the confirmation flow and access the end capability.",
+            "status": "met",
+            "rationale": "Observed host clicking the visible End button on BroadcasterLivePreview in live state.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-bf1/action-ui.json",
+                "sha256": "sha256:69323f28e44ed3fdf10a07850eadbc5680e3cb92990b2d7c54735f1c11f4da4d",
+                "kind": "ui",
+                "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+                "sanitized": true,
+                "locator": "DOM state inspection",
+                "observation_id": "obs-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T23:09:53.487128+07:00",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3"
+                ]
+              }
+            ],
+            "observation_id": "obs-bf1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "Runtime observation proves step BF-1.1 for BF-1",
+            "source_findings": []
+          },
+          {
+            "step_id": "BF-1.2",
+            "text": "The client presents the confirmation shown by the design.",
+            "completion_critical": true,
+            "criticality_reason": "Presenting the confirmation dialog prevents accidental broadcast termination.",
+            "status": "met",
+            "rationale": "Observed client rendering confirmation section 6007:87451 with prompt text and Cancel / End buttons.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-bf1/action-ui.json",
+                "sha256": "sha256:69323f28e44ed3fdf10a07850eadbc5680e3cb92990b2d7c54735f1c11f4da4d",
+                "kind": "ui",
+                "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+                "sanitized": true,
+                "locator": "DOM state inspection",
+                "observation_id": "obs-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T23:09:53.487128+07:00",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3"
+                ]
+              }
+            ],
+            "observation_id": "obs-bf1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "Runtime observation proves step BF-1.2 for BF-1",
+            "source_findings": []
+          },
+          {
+            "step_id": "BF-1.3",
+            "text": "The host confirms the action.",
+            "completion_critical": true,
+            "criticality_reason": "Confirming the action authorizes submission of the stop request to the backend.",
+            "status": "met",
+            "rationale": "Observed host clicking the confirmation End button, which triggers the stop function.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-bf1/action-ui.json",
+                "sha256": "sha256:69323f28e44ed3fdf10a07850eadbc5680e3cb92990b2d7c54735f1c11f4da4d",
+                "kind": "ui",
+                "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+                "sanitized": true,
+                "locator": "DOM state inspection",
+                "observation_id": "obs-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T23:09:53.487128+07:00",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3"
+                ]
+              }
+            ],
+            "observation_id": "obs-bf1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "Runtime observation proves step BF-1.3 for BF-1",
+            "source_findings": []
+          },
+          {
+            "step_id": "BF-1.4",
+            "text": "The client submits the stop request.",
+            "completion_critical": true,
+            "criticality_reason": "Submitting the command to the backend is necessary to mutate stream state.",
+            "status": "met",
+            "rationale": "Observed HTTP POST request to /api/v1/sessions/:id/live-stream/commands with action STOP and Idempotency-Key.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-bf1/trace.json",
+                "sha256": "sha256:c4b395eb12953ebec2eb6b134e9509ac7f56e555c8759488aa2b7efd711cbce9",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+                "sanitized": true,
+                "locator": "browser interaction trace",
+                "observation_id": "obs-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T23:09:53.487128+07:00",
+                "target_ids": [
+                  "BF-1.4",
+                  "BF-1.5",
+                  "BF-1.6",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "observation_id": "obs-bf1",
+            "required_runtime_kinds": [
+              "runtime_trace"
+            ],
+            "evidence_requirement_rationale": "Runtime observation proves step BF-1.4 for BF-1",
+            "source_findings": []
+          },
+          {
+            "step_id": "BF-1.5",
+            "text": "The system returns the ended stream representation.",
+            "completion_critical": true,
+            "criticality_reason": "Backend must execute the stop mutation, persist ended status, and return HTTP 200 with the ended stream.",
+            "status": "met",
+            "rationale": "Observed HTTP 200 response with status ENDED and endedAt, and verified live_streams database record updated with version increment.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-bf1/trace.json",
+                "sha256": "sha256:c4b395eb12953ebec2eb6b134e9509ac7f56e555c8759488aa2b7efd711cbce9",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+                "sanitized": true,
+                "locator": "browser interaction trace",
+                "observation_id": "obs-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T23:09:53.487128+07:00",
+                "target_ids": [
+                  "BF-1.4",
+                  "BF-1.5",
+                  "BF-1.6",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "observation_id": "obs-bf1",
+            "required_runtime_kinds": [
+              "runtime_trace"
+            ],
+            "evidence_requirement_rationale": "Runtime observation proves step BF-1.5 for BF-1",
+            "source_findings": []
+          },
+          {
+            "step_id": "BF-1.6",
+            "text": "The client displays the post-stream state.",
+            "completion_critical": true,
+            "criticality_reason": "The client interface must reflect the ended stream outcome to conclude the broadcast.",
+            "status": "met",
+            "rationale": "Observed streamLabel displaying \"Stream ended\" and End button removed from active controls.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-bf1/trace.json",
+                "sha256": "sha256:c4b395eb12953ebec2eb6b134e9509ac7f56e555c8759488aa2b7efd711cbce9",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+                "sanitized": true,
+                "locator": "browser interaction trace",
+                "observation_id": "obs-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T23:09:53.487128+07:00",
+                "target_ids": [
+                  "BF-1.4",
+                  "BF-1.5",
+                  "BF-1.6",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "observation_id": "obs-bf1",
+            "required_runtime_kinds": [
+              "runtime_trace"
+            ],
+            "evidence_requirement_rationale": "Runtime observation proves step BF-1.6 for BF-1",
+            "source_findings": []
+          }
+        ],
+        "terminal_outcome": {
+          "text": "The host interface displays the returned ended state.",
+          "status": "met",
+          "rationale": "Verified terminal outcome on repaired container for BF-1.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-bf1/trace.json",
+              "sha256": "sha256:c4b395eb12953ebec2eb6b134e9509ac7f56e555c8759488aa2b7efd711cbce9",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+              "sanitized": true,
+              "locator": "browser interaction trace",
+              "observation_id": "obs-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-10-26T23:09:53.487128+07:00",
+              "target_ids": [
+                "BF-1.4",
+                "BF-1.5",
+                "BF-1.6",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "observation_id": "obs-bf1",
+          "required_runtime_kinds": [
+            "runtime_trace"
+          ],
+          "evidence_requirement_rationale": "Runtime observation confirms terminal state for BF-1",
+          "source_findings": []
+        },
+        "completion_observation_id": "obs-bf1"
+      },
+      {
+        "flow_id": "AF-1",
+        "source_anchor": "docs/01-inception/use-cases/uc-04-stop-a-live-stream.md#L56-L62",
+        "steps": [
+          {
+            "step_id": "AF-1.1",
+            "text": "The host cancels the confirmation.",
+            "completion_critical": true,
+            "criticality_reason": "Host action rejecting broadcast stop.",
+            "status": "met",
+            "rationale": "Observed host clicking Cancel button in confirmation section.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-af1/action-ui.json",
+                "sha256": "sha256:37c731850879ea39f61a9b7486b660b3786df805383e3106268ccc2a27d4e080",
+                "kind": "ui",
+                "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+                "sanitized": true,
+                "locator": "DOM state inspection",
+                "observation_id": "obs-af1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-10-26T23:09:53.487128+07:00",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "AF-1.1"
+                ]
+              }
+            ],
+            "observation_id": "obs-af1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "Runtime observation proves step AF-1.1 for AF-1",
+            "source_findings": []
+          },
+          {
+            "step_id": "AF-1.2",
+            "text": "The client closes the dialog and restores the live session interface.",
+            "completion_critical": true,
+            "criticality_reason": "Dialog closure and live session preservation is the branch terminal requirement.",
+            "status": "met",
+            "rationale": "Observed confirmation section removed from DOM; live session interface remains active.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-af1/trace.json",
+                "sha256": "sha256:03856d9a48470597da8ed402cacdc66621e5015eafea86735d851451ec46e750",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+                "sanitized": true,
+                "locator": "browser interaction trace",
+                "observation_id": "obs-af1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-10-26T23:09:53.487128+07:00",
+                "target_ids": [
+                  "AF-1.2",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "observation_id": "obs-af1",
+            "required_runtime_kinds": [
+              "runtime_trace"
+            ],
+            "evidence_requirement_rationale": "Runtime observation proves step AF-1.2 for AF-1",
+            "source_findings": []
+          }
+        ],
+        "terminal_outcome": {
+          "text": "The client closes the dialog and restores the live session interface.",
+          "status": "met",
+          "rationale": "Verified terminal outcome on repaired container for AF-1.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-af1/trace.json",
+              "sha256": "sha256:03856d9a48470597da8ed402cacdc66621e5015eafea86735d851451ec46e750",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+              "sanitized": true,
+              "locator": "browser interaction trace",
+              "observation_id": "obs-af1",
+              "flow_id": "AF-1",
+              "captured_at": "2026-10-26T23:09:53.487128+07:00",
+              "target_ids": [
+                "AF-1.2",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "observation_id": "obs-af1",
+          "required_runtime_kinds": [
+            "runtime_trace"
+          ],
+          "evidence_requirement_rationale": "Runtime observation confirms terminal state for AF-1",
+          "source_findings": []
+        },
+        "completion_observation_id": "obs-af1"
+      },
+      {
+        "flow_id": "EF-1",
+        "source_anchor": "docs/01-inception/use-cases/uc-04-stop-a-live-stream.md#L63-L69",
+        "steps": [
+          {
+            "step_id": "EF-1.1",
+            "text": "The system cannot complete the stop request.",
+            "completion_critical": true,
+            "criticality_reason": "System failure response triggers the exception branch.",
+            "status": "met",
+            "rationale": "Observed backend returning HTTP 409 Conflict with message \"The stream version is no longer current\".",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-ef1/action-ui.json",
+                "sha256": "sha256:0a6f051669bb58088ecf7bb0d4aace1bcc0bd018b357931189627edc0a52874b",
+                "kind": "ui",
+                "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+                "sanitized": true,
+                "locator": "DOM state inspection",
+                "observation_id": "obs-ef1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-10-26T23:09:53.487128+07:00",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "EF-1.1"
+                ]
+              }
+            ],
+            "observation_id": "obs-ef1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "Runtime observation proves step EF-1.1 for EF-1",
+            "source_findings": []
+          },
+          {
+            "step_id": "EF-1.2",
+            "text": "The client displays the returned failure state and preserves the current session view.",
+            "completion_critical": true,
+            "criticality_reason": "Displaying the failure state while preserving the current view is the terminal exception requirement.",
+            "status": "met",
+            "rationale": "Observed error alert banner rendered with backend message while live session preview remains visible.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-ef1/trace.json",
+                "sha256": "sha256:e59a3dc194d86018cddf4ba38c14e17cb70b9c49a0f465ffd3977f4e89ae68a7",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+                "sanitized": true,
+                "locator": "browser interaction trace",
+                "observation_id": "obs-ef1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-10-26T23:09:53.487128+07:00",
+                "target_ids": [
+                  "EF-1.2",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "observation_id": "obs-ef1",
+            "required_runtime_kinds": [
+              "runtime_trace"
+            ],
+            "evidence_requirement_rationale": "Runtime observation proves step EF-1.2 for EF-1",
+            "source_findings": []
+          }
+        ],
+        "terminal_outcome": {
+          "text": "The client displays the returned failure state and preserves the current session view.",
+          "status": "met",
+          "rationale": "Verified terminal outcome on repaired container for EF-1.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc04-final/obs-ef1/trace.json",
+              "sha256": "sha256:e59a3dc194d86018cddf4ba38c14e17cb70b9c49a0f465ffd3977f4e89ae68a7",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:21558989bc2eec867f5ca851f54158e162c1fab56aab788787ba6813413e8ad0",
+              "sanitized": true,
+              "locator": "browser interaction trace",
+              "observation_id": "obs-ef1",
+              "flow_id": "EF-1",
+              "captured_at": "2026-10-26T23:09:53.487128+07:00",
+              "target_ids": [
+                "EF-1.2",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "observation_id": "obs-ef1",
+          "required_runtime_kinds": [
+            "runtime_trace"
+          ],
+          "evidence_requirement_rationale": "Runtime observation confirms terminal state for EF-1",
+          "source_findings": []
+        },
+        "completion_observation_id": "obs-ef1"
+      }
+    ]
+  }
+}

@@ -1,0 +1,2 @@
+Observation obs-bf-1: BF-1.3
+Host confirms by clicking End button in dialog.

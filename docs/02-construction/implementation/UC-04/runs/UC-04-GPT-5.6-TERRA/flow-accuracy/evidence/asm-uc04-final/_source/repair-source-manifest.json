@@ -1,0 +1,17 @@
+{
+  "captured_at": "2026-10-26T21:12:10.652783+07:00",
+  "files": [
+    {
+      "path": "finalsource/fe/src/App.tsx",
+      "sha256": "sha256:2e9b5d2daa57bf4ab99c440ac334817ec95be9e8b0330428862a3acfba41a927"
+    },
+    {
+      "path": "finalsource/fe/src/components/PreJoinPreview.tsx",
+      "sha256": "sha256:da439107ac18af28dbb94eb3a73d539b2a0f022ab43b913363b2dfcfa8e3ea01"
+    },
+    {
+      "path": "finalsource/be/src/modules/sessions/sessions.service.ts",
+      "sha256": "sha256:0a7244c4480ed4ea2030367b461c4e26d8d5504739cb04291919c0133deddb73"
+    }
+  ]
+}

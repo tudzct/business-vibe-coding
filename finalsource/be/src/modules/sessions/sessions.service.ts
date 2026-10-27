@@ -242,7 +242,7 @@ export class SessionsService {
 
         const session = await this.findSession(manager, sessionId, true);
         if (session.status === 'ENDED') {
-          throw new UnprocessableEntityException('The stream cannot be started');
+          throw new UnprocessableEntityException(`The stream cannot be ${command.action === 'STOP' ? 'stopped' : 'started'}`);
         }
         if (session.kind !== 'LIVE_STREAM') {
           throw new UnprocessableEntityException('The session is not a live stream');
@@ -250,7 +250,7 @@ export class SessionsService {
 
         const participant = await this.findActiveParticipant(manager, sessionId, principal.principalId, true);
         if (!participant || participant.role !== 'HOST') {
-          throw new ForbiddenException('The caller is not authorized to start this live stream');
+          throw new ForbiddenException(`The caller is not authorized to ${command.action === 'STOP' ? 'stop' : 'start'} this live stream`);
         }
 
         let stream = firstRow(await manager.query(
@@ -299,6 +299,22 @@ export class SessionsService {
           await manager.query(
             'UPDATE live_streams SET status = \'ENDED\', version = version + 1, ended_at = UTC_TIMESTAMP(3) WHERE id = ?',
             [stream.id],
+          );
+          await manager.query(
+            'UPDATE participants SET role = \'VIEWER\', microphone_enabled = false, camera_enabled = false, version = version + 1 WHERE session_id = ? AND status = \'JOINED\' AND role = \'STAGE_PARTICIPANT\'',
+            [sessionId],
+          );
+          await manager.query(
+            'UPDATE content_shares SET status = \'STOPPED\', version = version + 1, stopped_at = UTC_TIMESTAMP(3) WHERE session_id = ? AND status = \'ACTIVE\'',
+            [sessionId],
+          );
+          await manager.query(
+            'UPDATE stage_requests SET status = \'CANCELLED\', version = version + 1, decided_at = UTC_TIMESTAMP(3) WHERE session_id = ? AND status = \'PENDING\'',
+            [sessionId],
+          );
+          await manager.query(
+            'UPDATE recordings SET status = \'STOPPED\', version = version + 1, stopped_at = UTC_TIMESTAMP(3) WHERE session_id = ? AND status IN (\'STARTING\', \'RECORDING\')',
+            [sessionId],
           );
           await manager.query(
             'UPDATE sessions SET version = version + 1 WHERE id = ?',

@@ -1,0 +1,1684 @@
+{
+  "schema_version": 2,
+  "rubric_id": "completion-critical-flow-runtime-v2",
+  "assessment_id": "flow-assessment-initial",
+  "stage": "initial",
+  "input_sha256": "sha256:04709f1b5781f7675f37948d825257104ac3e21b73de891be4cb71b63a22249a",
+  "status": "scored",
+  "execution_blocked": false,
+  "execution_blocker_defect_ids": [],
+  "counts": {
+    "main": 1,
+    "alternative": 1,
+    "exception": 1,
+    "total": 3,
+    "correct": 3,
+    "incorrect": 0,
+    "not_evaluable": 0
+  },
+  "flow_error_percent": 0.0,
+  "flow_accuracy_percent": 100.0,
+  "evaluated_coverage_percent": 100.0,
+  "accuracy_lower_bound_percent": 100.0,
+  "accuracy_upper_bound_percent": 100.0,
+  "flows": [
+    {
+      "flow_id": "BF-1",
+      "type": "main",
+      "status": "correct",
+      "noncritical_deviations": 0,
+      "terminal_outcome": {
+        "text": "The host interface displays the returned ended state.",
+        "status": "met",
+        "rationale": "Observed BroadcasterLivePreview updating to show Stream ended label and closing confirmation dialog.",
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/ui_ended.txt",
+            "sha256": "sha256:996b6b31314656ac00e9b4488e373c28a6e3a6ec27b325896311ef2568c8b778",
+            "kind": "ui",
+            "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+            "sanitized": true,
+            "locator": "BroadcasterLivePreview post-stream display",
+            "observation_id": "obs-bf-1",
+            "flow_id": "BF-1",
+            "captured_at": "2026-10-26T20:13:18+07:00",
+            "target_ids": [
+              "BF-1.6",
+              "terminal_outcome"
+            ]
+          }
+        ],
+        "observation_id": "obs-bf-1",
+        "required_runtime_kinds": [
+          "ui"
+        ],
+        "evidence_requirement_rationale": "Host interface outcome requires observed UI display.",
+        "source_findings": []
+      },
+      "steps": [
+        {
+          "step_id": "BF-1.1",
+          "text": "The host opens the end-stream action.",
+          "completion_critical": true,
+          "criticality_reason": "Opening the action is required to trigger the confirmation flow and access the end capability.",
+          "status": "met",
+          "rationale": "Observed host clicking the visible End button on BroadcasterLivePreview in live state.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/ui_entry.txt",
+              "sha256": "sha256:f60eb6da0b98235eeab5ab54d0dc9a6ed0e7fda57f9cfd1ee5b897eb6c1e2a30",
+              "kind": "ui",
+              "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+              "sanitized": true,
+              "locator": "BroadcasterLivePreview End button",
+              "observation_id": "obs-bf-1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-10-26T20:13:17+07:00",
+              "target_ids": [
+                "entry",
+                "BF-1.1"
+              ]
+            }
+          ],
+          "observation_id": "obs-bf-1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Host UI interaction is required to open the end-stream action.",
+          "source_findings": [
+            {
+              "finding": "BroadcasterLivePreview renders End button when canStop is true and binds click to open confirmation dialog.",
+              "limits": "Source analysis does not verify live button click.",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/_source/BroadcasterLivePreview.excerpt.ts",
+                  "sha256": "sha256:7c7f70f9d9b5ff2f3caf0d1273b7df04980c5b20893377eed92e95f999f323e0",
+                  "kind": "source",
+                  "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                  "sanitized": true,
+                  "locator": "BroadcasterLivePreview.tsx:64-83",
+                  "observation_id": null,
+                  "provenance": {
+                    "path": "finalsource/fe/src/components/BroadcasterLivePreview.tsx",
+                    "locator": "lines 64-83"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "step_id": "BF-1.2",
+          "text": "The client presents the confirmation shown by the design.",
+          "completion_critical": true,
+          "criticality_reason": "Presenting the confirmation dialog prevents accidental broadcast termination.",
+          "status": "met",
+          "rationale": "Observed client rendering confirmation section 6007:87451 with prompt text and Cancel / End buttons.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/ui_dialog.txt",
+              "sha256": "sha256:8722e56ac2e72a3ee24a581ffad7cda1a168fb23b58a10a00393ff636a901f18",
+              "kind": "ui",
+              "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+              "sanitized": true,
+              "locator": "Confirmation dialog 6007:87451",
+              "observation_id": "obs-bf-1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-10-26T20:13:17+07:00",
+              "target_ids": [
+                "BF-1.2"
+              ]
+            }
+          ],
+          "observation_id": "obs-bf-1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI rendering of the confirmation dialog must be directly observed.",
+          "source_findings": [
+            {
+              "finding": "isStopConfirmationOpen state conditionally renders the confirmation dialog section.",
+              "limits": "State condition does not guarantee rendered DOM without runtime observation.",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/_source/BroadcasterLivePreview.excerpt.ts",
+                  "sha256": "sha256:7c7f70f9d9b5ff2f3caf0d1273b7df04980c5b20893377eed92e95f999f323e0",
+                  "kind": "source",
+                  "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                  "sanitized": true,
+                  "locator": "BroadcasterLivePreview.tsx:64-83",
+                  "observation_id": null,
+                  "provenance": {
+                    "path": "finalsource/fe/src/components/BroadcasterLivePreview.tsx",
+                    "locator": "lines 64-83"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "step_id": "BF-1.3",
+          "text": "The host confirms the action.",
+          "completion_critical": true,
+          "criticality_reason": "Confirming the action authorizes submission of the stop request to the backend.",
+          "status": "met",
+          "rationale": "Observed host clicking the confirmation End button, which triggers the stop function.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/ui_confirm.txt",
+              "sha256": "sha256:1f5485b7f462780572744fbef94016cb3afca0649ea7fb7b602075bc1f7c440f",
+              "kind": "ui",
+              "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+              "sanitized": true,
+              "locator": "Confirmation End button click",
+              "observation_id": "obs-bf-1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-10-26T20:13:17+07:00",
+              "target_ids": [
+                "BF-1.3"
+              ]
+            }
+          ],
+          "observation_id": "obs-bf-1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Host confirmation click must be observed in the UI.",
+          "source_findings": [
+            {
+              "finding": "Confirmation dialog End button onClick calls stop().",
+              "limits": "Static onClick does not verify user interaction.",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/_source/BroadcasterLivePreview.excerpt.ts",
+                  "sha256": "sha256:7c7f70f9d9b5ff2f3caf0d1273b7df04980c5b20893377eed92e95f999f323e0",
+                  "kind": "source",
+                  "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                  "sanitized": true,
+                  "locator": "BroadcasterLivePreview.tsx:64-83",
+                  "observation_id": null,
+                  "provenance": {
+                    "path": "finalsource/fe/src/components/BroadcasterLivePreview.tsx",
+                    "locator": "lines 64-83"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "step_id": "BF-1.4",
+          "text": "The client submits the stop request.",
+          "completion_critical": true,
+          "criticality_reason": "Submitting the command to the backend is necessary to mutate stream state.",
+          "status": "met",
+          "rationale": "Observed HTTP POST request to /api/v1/sessions/:id/live-stream/commands with action STOP and Idempotency-Key.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/network_post.txt",
+              "sha256": "sha256:4a298d03afba28999e734e55206d3aa2d4619fd3a5ec6e810a48805a1cbdfaca",
+              "kind": "network",
+              "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+              "sanitized": true,
+              "locator": "POST /api/v1/sessions/:id/live-stream/commands",
+              "observation_id": "obs-bf-1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-10-26T20:13:18+07:00",
+              "target_ids": [
+                "BF-1.4"
+              ]
+            }
+          ],
+          "observation_id": "obs-bf-1",
+          "required_runtime_kinds": [
+            "network"
+          ],
+          "evidence_requirement_rationale": "Network capture verifies the actual request transmission and payload.",
+          "source_findings": [
+            {
+              "finding": "stopLiveStream sends POST request with action STOP and expectedVersion.",
+              "limits": "API helper declaration does not prove network submission.",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/_source/BroadcasterLivePreview.excerpt.ts",
+                  "sha256": "sha256:7c7f70f9d9b5ff2f3caf0d1273b7df04980c5b20893377eed92e95f999f323e0",
+                  "kind": "source",
+                  "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                  "sanitized": true,
+                  "locator": "BroadcasterLivePreview.tsx:64-83",
+                  "observation_id": null,
+                  "provenance": {
+                    "path": "finalsource/fe/src/components/BroadcasterLivePreview.tsx",
+                    "locator": "lines 64-83"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "step_id": "BF-1.5",
+          "text": "The system returns the ended stream representation.",
+          "completion_critical": true,
+          "criticality_reason": "Backend must execute the stop mutation, persist ended status, and return HTTP 200 with the ended stream.",
+          "status": "met",
+          "rationale": "Observed HTTP 200 response with status ENDED and endedAt, and verified live_streams database record updated with version increment.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/network_resp.txt",
+              "sha256": "sha256:3cc313967aeae0c07d6e444b6afed8f42c104d33e397ddb160d71b74c3ce5398",
+              "kind": "network",
+              "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+              "sanitized": true,
+              "locator": "HTTP 200 response representation",
+              "observation_id": "obs-bf-1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-10-26T20:13:18+07:00",
+              "target_ids": [
+                "BF-1.5"
+              ]
+            },
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/data_stream.txt",
+              "sha256": "sha256:1353f25ff77395c9adff2f86f4d6fccc3cc4ee37fb808f546711bbda4c60d2b8",
+              "kind": "data",
+              "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+              "sanitized": true,
+              "locator": "live_streams table post-STOP state",
+              "observation_id": "obs-bf-1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-10-26T20:13:18+07:00",
+              "target_ids": [
+                "BF-1.5"
+              ]
+            }
+          ],
+          "observation_id": "obs-bf-1",
+          "required_runtime_kinds": [
+            "network",
+            "data"
+          ],
+          "evidence_requirement_rationale": "Network response and database inspection together verify ended representation and persistence.",
+          "source_findings": [
+            {
+              "finding": "SessionsService.commandLiveStream executes UPDATE live_streams SET status = ENDED, version = version + 1, ended_at = UTC_TIMESTAMP(3).",
+              "limits": "SQL query in service does not verify successful transaction execution.",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/_source/SessionsService.excerpt.ts",
+                  "sha256": "sha256:7dd3750aac35237874b82c8711dbcb267cfb9146aaee8238a26cb0b6cb488e4e",
+                  "kind": "source",
+                  "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                  "sanitized": true,
+                  "locator": "sessions.service.ts:295-307",
+                  "observation_id": null,
+                  "provenance": {
+                    "path": "finalsource/be/src/modules/sessions/sessions.service.ts",
+                    "locator": "lines 295-307"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "step_id": "BF-1.6",
+          "text": "The client displays the post-stream state.",
+          "completion_critical": true,
+          "criticality_reason": "The client interface must reflect the ended stream outcome to conclude the broadcast.",
+          "status": "met",
+          "rationale": "Observed streamLabel displaying \"Stream ended\" and End button removed from active controls.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/ui_ended.txt",
+              "sha256": "sha256:996b6b31314656ac00e9b4488e373c28a6e3a6ec27b325896311ef2568c8b778",
+              "kind": "ui",
+              "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+              "sanitized": true,
+              "locator": "BroadcasterLivePreview post-stream display",
+              "observation_id": "obs-bf-1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-10-26T20:13:18+07:00",
+              "target_ids": [
+                "BF-1.6",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "observation_id": "obs-bf-1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI observation verifies that post-stream state is displayed to the user.",
+          "source_findings": [
+            {
+              "finding": "streamLabel returns \"Stream ended\" when state.stream.status is ENDED.",
+              "limits": "Helper function return value does not prove UI DOM rendering.",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/_source/BroadcasterLivePreview.excerpt.ts",
+                  "sha256": "sha256:7c7f70f9d9b5ff2f3caf0d1273b7df04980c5b20893377eed92e95f999f323e0",
+                  "kind": "source",
+                  "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                  "sanitized": true,
+                  "locator": "BroadcasterLivePreview.tsx:64-83",
+                  "observation_id": null,
+                  "provenance": {
+                    "path": "finalsource/fe/src/components/BroadcasterLivePreview.tsx",
+                    "locator": "lines 64-83"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "flow_id": "AF-1",
+      "type": "alternative",
+      "status": "correct",
+      "noncritical_deviations": 0,
+      "terminal_outcome": {
+        "text": "The client closes the dialog and restores the live session interface.",
+        "status": "met",
+        "rationale": "Observed confirmation dialog closed and live session view restored with no network submission.",
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-af-1/ui_restored.txt",
+            "sha256": "sha256:a84e3754c1e6b2ca84d2d9faebe3dbd3c23d41b9b8312801fd5210daafe9c924",
+            "kind": "ui",
+            "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+            "sanitized": true,
+            "locator": "Live session interface restored",
+            "observation_id": "obs-af-1",
+            "flow_id": "AF-1",
+            "captured_at": "2026-10-26T20:13:19+07:00",
+            "target_ids": [
+              "AF-1.2",
+              "terminal_outcome"
+            ]
+          }
+        ],
+        "observation_id": "obs-af-1",
+        "required_runtime_kinds": [
+          "ui"
+        ],
+        "evidence_requirement_rationale": "UI observation of restored live session interface.",
+        "source_findings": []
+      },
+      "steps": [
+        {
+          "step_id": "AF-1.1",
+          "text": "The host cancels the confirmation.",
+          "completion_critical": true,
+          "criticality_reason": "Host action rejecting broadcast stop.",
+          "status": "met",
+          "rationale": "Observed host clicking Cancel button in confirmation section.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-af-1/ui_cancel_action.txt",
+              "sha256": "sha256:6da9c8f40fbc0044e16c3faf4404a58de908c12775f82df1388d59bea33f144a",
+              "kind": "ui",
+              "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+              "sanitized": true,
+              "locator": "Confirmation Cancel button clicked",
+              "observation_id": "obs-af-1",
+              "flow_id": "AF-1",
+              "captured_at": "2026-10-26T20:13:19+07:00",
+              "target_ids": [
+                "branch",
+                "AF-1.1"
+              ]
+            }
+          ],
+          "observation_id": "obs-af-1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI observation of cancel interaction.",
+          "source_findings": []
+        },
+        {
+          "step_id": "AF-1.2",
+          "text": "The client closes the dialog and restores the live session interface.",
+          "completion_critical": true,
+          "criticality_reason": "Dialog closure and live session preservation is the branch terminal requirement.",
+          "status": "met",
+          "rationale": "Observed confirmation section removed from DOM; live session interface remains active.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-af-1/ui_restored.txt",
+              "sha256": "sha256:a84e3754c1e6b2ca84d2d9faebe3dbd3c23d41b9b8312801fd5210daafe9c924",
+              "kind": "ui",
+              "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+              "sanitized": true,
+              "locator": "Live session interface restored",
+              "observation_id": "obs-af-1",
+              "flow_id": "AF-1",
+              "captured_at": "2026-10-26T20:13:19+07:00",
+              "target_ids": [
+                "AF-1.2",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "observation_id": "obs-af-1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI observation of dialog closure and view restoration.",
+          "source_findings": []
+        }
+      ]
+    },
+    {
+      "flow_id": "EF-1",
+      "type": "exception",
+      "status": "correct",
+      "noncritical_deviations": 0,
+      "terminal_outcome": {
+        "text": "The client displays the returned failure state and preserves the current session view.",
+        "status": "met",
+        "rationale": "Observed client displaying failure alert banner while maintaining the session view.",
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-ef-1/ui_error_banner.txt",
+            "sha256": "sha256:8c2105f032c6541e9b595201c8cad424f3009352d411933b9ce1c90679ef7c09",
+            "kind": "ui",
+            "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+            "sanitized": true,
+            "locator": "Error alert displayed and view preserved",
+            "observation_id": "obs-ef-1",
+            "flow_id": "EF-1",
+            "captured_at": "2026-10-26T20:13:20+07:00",
+            "target_ids": [
+              "EF-1.2",
+              "terminal_outcome"
+            ]
+          }
+        ],
+        "observation_id": "obs-ef-1",
+        "required_runtime_kinds": [
+          "ui"
+        ],
+        "evidence_requirement_rationale": "UI observation of failure state display.",
+        "source_findings": []
+      },
+      "steps": [
+        {
+          "step_id": "EF-1.1",
+          "text": "The system cannot complete the stop request.",
+          "completion_critical": true,
+          "criticality_reason": "System failure response triggers the exception branch.",
+          "status": "met",
+          "rationale": "Observed backend returning HTTP 409 Conflict with message \"The stream version is no longer current\".",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-ef-1/network_error.txt",
+              "sha256": "sha256:cfaa77d4d4f196a01e679891c56108038cab9f7aa7b430ad127846d656887d50",
+              "kind": "network",
+              "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+              "sanitized": true,
+              "locator": "HTTP 409 Conflict returned by backend",
+              "observation_id": "obs-ef-1",
+              "flow_id": "EF-1",
+              "captured_at": "2026-10-26T20:13:20+07:00",
+              "target_ids": [
+                "branch",
+                "EF-1.1"
+              ]
+            }
+          ],
+          "observation_id": "obs-ef-1",
+          "required_runtime_kinds": [
+            "network"
+          ],
+          "evidence_requirement_rationale": "Network capture of error status and message.",
+          "source_findings": []
+        },
+        {
+          "step_id": "EF-1.2",
+          "text": "The client displays the returned failure state and preserves the current session view.",
+          "completion_critical": true,
+          "criticality_reason": "Displaying the failure state while preserving the current view is the terminal exception requirement.",
+          "status": "met",
+          "rationale": "Observed error alert banner rendered with backend message while live session preview remains visible.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-ef-1/ui_error_banner.txt",
+              "sha256": "sha256:8c2105f032c6541e9b595201c8cad424f3009352d411933b9ce1c90679ef7c09",
+              "kind": "ui",
+              "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+              "sanitized": true,
+              "locator": "Error alert displayed and view preserved",
+              "observation_id": "obs-ef-1",
+              "flow_id": "EF-1",
+              "captured_at": "2026-10-26T20:13:20+07:00",
+              "target_ids": [
+                "EF-1.2",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "observation_id": "obs-ef-1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI observation of error message display and preserved session view.",
+          "source_findings": []
+        }
+      ]
+    }
+  ],
+  "input": {
+    "schema_version": 2,
+    "rubric_id": "completion-critical-flow-runtime-v2",
+    "uc_id": "UC-04",
+    "run_id": "UC-04-GPT-5.6-TERRA",
+    "assessment_id": "flow-assessment-initial",
+    "stage": "initial",
+    "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+    "captured_at": "2026-10-26T20:13:25+07:00",
+    "baseline": {
+      "path": "docs/02-construction/implementation/UC-04/flow-baseline.json",
+      "sha256": "sha256:0a8acbed9190a661b2044f8b68b7834e458aaacd7d136c147f0f488b2f5d06ad"
+    },
+    "limitations": [],
+    "runtime": {
+      "status": "ready",
+      "compose_version": 5,
+      "reason": "Docker Compose v2-compatible runtime with healthy database, backend, and frontend containers verified through live requests.",
+      "compose_project": "application-baseline",
+      "services": [
+        {
+          "name": "backend",
+          "container_id": "e5a8decbccc3b3d2a0b51da723849dd0d6314f6f6f2897d76789e393547628b8",
+          "image_id": "sha256:a4a307248d390a5f4ae2458f2066f3b37b533406821550be7ddc9791a693d9c8",
+          "state": "running"
+        },
+        {
+          "name": "frontend",
+          "container_id": "e2d6ad33dca624db84886818cb566358dc8e21917a72ba9de4bb107288d8cf85",
+          "image_id": "sha256:517755d2653aea807cba0a0e67dc357c4b74d0a696b089cb684eba576e066cda",
+          "state": "running"
+        },
+        {
+          "name": "database",
+          "container_id": "e69459707f3495531388cc96f8c851da1cdc728db7f2c7704ea786800d24c79f",
+          "image_id": "sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb",
+          "state": "running"
+        }
+      ],
+      "deployment": {
+        "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+        "verified": true,
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/_runtime/deployment.txt",
+            "sha256": "sha256:4ce1f8533380c7cfb8cb3a408ebe4fd8e53a24ee590f6cc261bf568cc9a6907d",
+            "kind": "deployment",
+            "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+            "sanitized": true,
+            "locator": "compose.yaml & docker inspect verification",
+            "observation_id": null
+          }
+        ]
+      }
+    },
+    "execution_blocker_defect_ids": [],
+    "observations": [
+      {
+        "observation_id": "obs-bf-1",
+        "uc_id": "UC-04",
+        "run_id": "UC-04-GPT-5.6-TERRA",
+        "stage": "initial",
+        "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+        "baseline": {
+          "path": "docs/02-construction/implementation/UC-04/flow-baseline.json",
+          "sha256": "sha256:0a8acbed9190a661b2044f8b68b7834e458aaacd7d136c147f0f488b2f5d06ad"
+        },
+        "flow_id": "BF-1",
+        "planned_at": "2026-10-26T20:13:16+07:00",
+        "started_at": "2026-10-26T20:13:17+07:00",
+        "ended_at": "2026-10-26T20:13:19+07:00",
+        "time_limit_seconds": 60,
+        "scope": "Host opens end confirmation, confirms stop, client submits STOP command, backend returns ENDED stream, and UI displays post-stream state.",
+        "actual_preconditions": "Live stream session in LIVE state with host joined.",
+        "entry_point": "http://127.0.0.1:8086/?sessionId=11111111-1111-4111-8111-111111111111",
+        "entry_kind": "ui",
+        "end_state": "Live stream status is ENDED, confirmation closed, UI displays Stream ended.",
+        "state": "completed",
+        "actions": [
+          {
+            "sequence": 1,
+            "at": "2026-10-26T20:13:17+07:00",
+            "action": "Host opens BroadcasterLivePreview and clicks End button",
+            "actual_result": "End stream action is opened, triggering confirmation dialog display",
+            "target_ids": [
+              "entry",
+              "BF-1.1"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/ui_entry.txt",
+                "sha256": "sha256:f60eb6da0b98235eeab5ab54d0dc9a6ed0e7fda57f9cfd1ee5b897eb6c1e2a30",
+                "kind": "ui",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "BroadcasterLivePreview End button",
+                "observation_id": "obs-bf-1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T20:13:17+07:00",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1"
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 2,
+            "at": "2026-10-26T20:13:17+07:00",
+            "action": "Client displays confirmation dialog",
+            "actual_result": "Confirmation dialog 6007:87451 displayed",
+            "target_ids": [
+              "BF-1.2"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/ui_dialog.txt",
+                "sha256": "sha256:8722e56ac2e72a3ee24a581ffad7cda1a168fb23b58a10a00393ff636a901f18",
+                "kind": "ui",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "Confirmation dialog 6007:87451",
+                "observation_id": "obs-bf-1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T20:13:17+07:00",
+                "target_ids": [
+                  "BF-1.2"
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 3,
+            "at": "2026-10-26T20:13:17+07:00",
+            "action": "Host clicks confirm End button in dialog",
+            "actual_result": "Action confirmed by host",
+            "target_ids": [
+              "BF-1.3"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/ui_confirm.txt",
+                "sha256": "sha256:1f5485b7f462780572744fbef94016cb3afca0649ea7fb7b602075bc1f7c440f",
+                "kind": "ui",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "Confirmation End button click",
+                "observation_id": "obs-bf-1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T20:13:17+07:00",
+                "target_ids": [
+                  "BF-1.3"
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 4,
+            "at": "2026-10-26T20:13:18+07:00",
+            "action": "Client posts STOP command to backend",
+            "actual_result": "POST request sent with action STOP",
+            "target_ids": [
+              "BF-1.4"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/network_post.txt",
+                "sha256": "sha256:4a298d03afba28999e734e55206d3aa2d4619fd3a5ec6e810a48805a1cbdfaca",
+                "kind": "network",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "POST /api/v1/sessions/:id/live-stream/commands",
+                "observation_id": "obs-bf-1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T20:13:18+07:00",
+                "target_ids": [
+                  "BF-1.4"
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 5,
+            "at": "2026-10-26T20:13:18+07:00",
+            "action": "Backend returns HTTP 200 OK with ended stream representation and database updates",
+            "actual_result": "Stream representation returned with status ENDED and version incremented in database",
+            "target_ids": [
+              "BF-1.5"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/network_resp.txt",
+                "sha256": "sha256:3cc313967aeae0c07d6e444b6afed8f42c104d33e397ddb160d71b74c3ce5398",
+                "kind": "network",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "HTTP 200 response representation",
+                "observation_id": "obs-bf-1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T20:13:18+07:00",
+                "target_ids": [
+                  "BF-1.5"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/data_stream.txt",
+                "sha256": "sha256:1353f25ff77395c9adff2f86f4d6fccc3cc4ee37fb808f546711bbda4c60d2b8",
+                "kind": "data",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "live_streams table post-STOP state",
+                "observation_id": "obs-bf-1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T20:13:18+07:00",
+                "target_ids": [
+                  "BF-1.5"
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 6,
+            "at": "2026-10-26T20:13:18+07:00",
+            "action": "Client updates state from response and displays post-stream interface",
+            "actual_result": "Dialog closed, status label shows Stream ended, End button disabled/hidden",
+            "target_ids": [
+              "BF-1.6",
+              "terminal_outcome"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/ui_ended.txt",
+                "sha256": "sha256:996b6b31314656ac00e9b4488e373c28a6e3a6ec27b325896311ef2568c8b778",
+                "kind": "ui",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "BroadcasterLivePreview post-stream display",
+                "observation_id": "obs-bf-1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T20:13:18+07:00",
+                "target_ids": [
+                  "BF-1.6",
+                  "terminal_outcome"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "observation_id": "obs-af-1",
+        "uc_id": "UC-04",
+        "run_id": "UC-04-GPT-5.6-TERRA",
+        "stage": "initial",
+        "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+        "baseline": {
+          "path": "docs/02-construction/implementation/UC-04/flow-baseline.json",
+          "sha256": "sha256:0a8acbed9190a661b2044f8b68b7834e458aaacd7d136c147f0f488b2f5d06ad"
+        },
+        "flow_id": "AF-1",
+        "planned_at": "2026-10-26T20:13:18+07:00",
+        "started_at": "2026-10-26T20:13:19+07:00",
+        "ended_at": "2026-10-26T20:13:20+07:00",
+        "time_limit_seconds": 60,
+        "scope": "Host opens confirmation dialog then clicks Cancel, restoring live interface.",
+        "actual_preconditions": "Live stream session in LIVE state with host joined.",
+        "entry_point": "http://127.0.0.1:8086/?sessionId=11111111-1111-4111-8111-111111111111",
+        "entry_kind": "ui",
+        "end_state": "Confirmation dialog closed, live stream remains LIVE with all controls active.",
+        "state": "completed",
+        "actions": [
+          {
+            "sequence": 1,
+            "at": "2026-10-26T20:13:19+07:00",
+            "action": "Host clicks End button",
+            "actual_result": "End stream action opened",
+            "target_ids": [
+              "entry",
+              "BF-1.1"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-af-1/ui_entry.txt",
+                "sha256": "sha256:78e4466a389d362d6bb27484082fbb970736173f9f10b291acaaa47ddb6dfc59",
+                "kind": "ui",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "BroadcasterLivePreview End button",
+                "observation_id": "obs-af-1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-10-26T20:13:19+07:00",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1"
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 2,
+            "at": "2026-10-26T20:13:19+07:00",
+            "action": "Client displays confirmation dialog",
+            "actual_result": "Confirmation dialog 6007:87451 displayed",
+            "target_ids": [
+              "BF-1.2"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-af-1/ui_dialog.txt",
+                "sha256": "sha256:b3deb19b1a0ccc54ce357a3dceb60b20f061ad7ac35629ed17c310f7479060db",
+                "kind": "ui",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "Confirmation dialog presented",
+                "observation_id": "obs-af-1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-10-26T20:13:19+07:00",
+                "target_ids": [
+                  "BF-1.2"
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 3,
+            "at": "2026-10-26T20:13:19+07:00",
+            "action": "Host clicks Cancel button in confirmation dialog",
+            "actual_result": "Host cancels confirmation",
+            "target_ids": [
+              "branch",
+              "AF-1.1"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-af-1/ui_cancel_action.txt",
+                "sha256": "sha256:6da9c8f40fbc0044e16c3faf4404a58de908c12775f82df1388d59bea33f144a",
+                "kind": "ui",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "Confirmation Cancel button clicked",
+                "observation_id": "obs-af-1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-10-26T20:13:19+07:00",
+                "target_ids": [
+                  "branch",
+                  "AF-1.1"
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 4,
+            "at": "2026-10-26T20:13:19+07:00",
+            "action": "Client closes dialog and restores live session interface",
+            "actual_result": "Confirmation dialog removed from DOM, live interface restored, no stop request sent",
+            "target_ids": [
+              "AF-1.2",
+              "terminal_outcome"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-af-1/ui_restored.txt",
+                "sha256": "sha256:a84e3754c1e6b2ca84d2d9faebe3dbd3c23d41b9b8312801fd5210daafe9c924",
+                "kind": "ui",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "Live session interface restored",
+                "observation_id": "obs-af-1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-10-26T20:13:19+07:00",
+                "target_ids": [
+                  "AF-1.2",
+                  "terminal_outcome"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "observation_id": "obs-ef-1",
+        "uc_id": "UC-04",
+        "run_id": "UC-04-GPT-5.6-TERRA",
+        "stage": "initial",
+        "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+        "baseline": {
+          "path": "docs/02-construction/implementation/UC-04/flow-baseline.json",
+          "sha256": "sha256:0a8acbed9190a661b2044f8b68b7834e458aaacd7d136c147f0f488b2f5d06ad"
+        },
+        "flow_id": "EF-1",
+        "planned_at": "2026-10-26T20:13:19+07:00",
+        "started_at": "2026-10-26T20:13:20+07:00",
+        "ended_at": "2026-10-26T20:13:21+07:00",
+        "time_limit_seconds": 60,
+        "scope": "Stop request fails due to version mismatch, client displays error message and preserves session view.",
+        "actual_preconditions": "Live stream session in LIVE state.",
+        "entry_point": "http://127.0.0.1:8086/?sessionId=11111111-1111-4111-8111-111111111111",
+        "entry_kind": "ui",
+        "end_state": "Error banner displayed, current session view maintained.",
+        "state": "completed",
+        "actions": [
+          {
+            "sequence": 1,
+            "at": "2026-10-26T20:13:20+07:00",
+            "action": "Host opens End stream action",
+            "actual_result": "End stream action opened",
+            "target_ids": [
+              "entry",
+              "BF-1.1"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-ef-1/ui_entry.txt",
+                "sha256": "sha256:9f4c40658f1f12584c1bd4f0e9c9634a69fe8b4d4ab6d043e4cf47e40a80a590",
+                "kind": "ui",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "BroadcasterLivePreview End button",
+                "observation_id": "obs-ef-1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-10-26T20:13:20+07:00",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1"
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 2,
+            "at": "2026-10-26T20:13:20+07:00",
+            "action": "Confirmation dialog presented",
+            "actual_result": "Dialog rendered",
+            "target_ids": [
+              "BF-1.2"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-ef-1/ui_dialog.txt",
+                "sha256": "sha256:19a609daba3b33d1605a864b855eb6f93585ee87659e39d4bbf3251269d23b41",
+                "kind": "ui",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "Confirmation dialog displayed",
+                "observation_id": "obs-ef-1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-10-26T20:13:20+07:00",
+                "target_ids": [
+                  "BF-1.2"
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 3,
+            "at": "2026-10-26T20:13:20+07:00",
+            "action": "Host confirms end action",
+            "actual_result": "Confirmed by host",
+            "target_ids": [
+              "BF-1.3"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-ef-1/ui_confirm.txt",
+                "sha256": "sha256:1b79774a44fb2cf82e65873f0fa18af0b79c90b08448f2208e1bb4d1267c6012",
+                "kind": "ui",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "Confirmation End confirmed",
+                "observation_id": "obs-ef-1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-10-26T20:13:20+07:00",
+                "target_ids": [
+                  "BF-1.3"
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 4,
+            "at": "2026-10-26T20:13:20+07:00",
+            "action": "Client submits stop request with stale version 999",
+            "actual_result": "POST request sent",
+            "target_ids": [
+              "BF-1.4"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-ef-1/network_post.txt",
+                "sha256": "sha256:2dd94bc7dc081c62d04878f55a4ffb17b1339f485cae221a81b366c2e98f79d2",
+                "kind": "network",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "POST command with stale expectedVersion",
+                "observation_id": "obs-ef-1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-10-26T20:13:20+07:00",
+                "target_ids": [
+                  "BF-1.4"
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 5,
+            "at": "2026-10-26T20:13:20+07:00",
+            "action": "Backend rejects stop request with HTTP 409 Conflict",
+            "actual_result": "System cannot complete stop request, returns error 409",
+            "target_ids": [
+              "branch",
+              "EF-1.1"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-ef-1/network_error.txt",
+                "sha256": "sha256:cfaa77d4d4f196a01e679891c56108038cab9f7aa7b430ad127846d656887d50",
+                "kind": "network",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "HTTP 409 Conflict returned by backend",
+                "observation_id": "obs-ef-1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-10-26T20:13:20+07:00",
+                "target_ids": [
+                  "branch",
+                  "EF-1.1"
+                ]
+              }
+            ]
+          },
+          {
+            "sequence": 6,
+            "at": "2026-10-26T20:13:20+07:00",
+            "action": "Client displays returned failure message while keeping current session view",
+            "actual_result": "Error message banner rendered, session preview preserved",
+            "target_ids": [
+              "EF-1.2",
+              "terminal_outcome"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-ef-1/ui_error_banner.txt",
+                "sha256": "sha256:8c2105f032c6541e9b595201c8cad424f3009352d411933b9ce1c90679ef7c09",
+                "kind": "ui",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "Error alert displayed and view preserved",
+                "observation_id": "obs-ef-1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-10-26T20:13:20+07:00",
+                "target_ids": [
+                  "EF-1.2",
+                  "terminal_outcome"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "flows": [
+      {
+        "flow_id": "BF-1",
+        "source_anchor": "docs/01-inception/use-cases/uc-04-stop-a-live-stream.md#L45-L55",
+        "steps": [
+          {
+            "step_id": "BF-1.1",
+            "text": "The host opens the end-stream action.",
+            "completion_critical": true,
+            "criticality_reason": "Opening the action is required to trigger the confirmation flow and access the end capability.",
+            "status": "met",
+            "rationale": "Observed host clicking the visible End button on BroadcasterLivePreview in live state.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/ui_entry.txt",
+                "sha256": "sha256:f60eb6da0b98235eeab5ab54d0dc9a6ed0e7fda57f9cfd1ee5b897eb6c1e2a30",
+                "kind": "ui",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "BroadcasterLivePreview End button",
+                "observation_id": "obs-bf-1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T20:13:17+07:00",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1"
+                ]
+              }
+            ],
+            "observation_id": "obs-bf-1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "Host UI interaction is required to open the end-stream action.",
+            "source_findings": [
+              {
+                "finding": "BroadcasterLivePreview renders End button when canStop is true and binds click to open confirmation dialog.",
+                "limits": "Source analysis does not verify live button click.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/_source/BroadcasterLivePreview.excerpt.ts",
+                    "sha256": "sha256:7c7f70f9d9b5ff2f3caf0d1273b7df04980c5b20893377eed92e95f999f323e0",
+                    "kind": "source",
+                    "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                    "sanitized": true,
+                    "locator": "BroadcasterLivePreview.tsx:64-83",
+                    "observation_id": null,
+                    "provenance": {
+                      "path": "finalsource/fe/src/components/BroadcasterLivePreview.tsx",
+                      "locator": "lines 64-83"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "step_id": "BF-1.2",
+            "text": "The client presents the confirmation shown by the design.",
+            "completion_critical": true,
+            "criticality_reason": "Presenting the confirmation dialog prevents accidental broadcast termination.",
+            "status": "met",
+            "rationale": "Observed client rendering confirmation section 6007:87451 with prompt text and Cancel / End buttons.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/ui_dialog.txt",
+                "sha256": "sha256:8722e56ac2e72a3ee24a581ffad7cda1a168fb23b58a10a00393ff636a901f18",
+                "kind": "ui",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "Confirmation dialog 6007:87451",
+                "observation_id": "obs-bf-1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T20:13:17+07:00",
+                "target_ids": [
+                  "BF-1.2"
+                ]
+              }
+            ],
+            "observation_id": "obs-bf-1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "UI rendering of the confirmation dialog must be directly observed.",
+            "source_findings": [
+              {
+                "finding": "isStopConfirmationOpen state conditionally renders the confirmation dialog section.",
+                "limits": "State condition does not guarantee rendered DOM without runtime observation.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/_source/BroadcasterLivePreview.excerpt.ts",
+                    "sha256": "sha256:7c7f70f9d9b5ff2f3caf0d1273b7df04980c5b20893377eed92e95f999f323e0",
+                    "kind": "source",
+                    "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                    "sanitized": true,
+                    "locator": "BroadcasterLivePreview.tsx:64-83",
+                    "observation_id": null,
+                    "provenance": {
+                      "path": "finalsource/fe/src/components/BroadcasterLivePreview.tsx",
+                      "locator": "lines 64-83"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "step_id": "BF-1.3",
+            "text": "The host confirms the action.",
+            "completion_critical": true,
+            "criticality_reason": "Confirming the action authorizes submission of the stop request to the backend.",
+            "status": "met",
+            "rationale": "Observed host clicking the confirmation End button, which triggers the stop function.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/ui_confirm.txt",
+                "sha256": "sha256:1f5485b7f462780572744fbef94016cb3afca0649ea7fb7b602075bc1f7c440f",
+                "kind": "ui",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "Confirmation End button click",
+                "observation_id": "obs-bf-1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T20:13:17+07:00",
+                "target_ids": [
+                  "BF-1.3"
+                ]
+              }
+            ],
+            "observation_id": "obs-bf-1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "Host confirmation click must be observed in the UI.",
+            "source_findings": [
+              {
+                "finding": "Confirmation dialog End button onClick calls stop().",
+                "limits": "Static onClick does not verify user interaction.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/_source/BroadcasterLivePreview.excerpt.ts",
+                    "sha256": "sha256:7c7f70f9d9b5ff2f3caf0d1273b7df04980c5b20893377eed92e95f999f323e0",
+                    "kind": "source",
+                    "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                    "sanitized": true,
+                    "locator": "BroadcasterLivePreview.tsx:64-83",
+                    "observation_id": null,
+                    "provenance": {
+                      "path": "finalsource/fe/src/components/BroadcasterLivePreview.tsx",
+                      "locator": "lines 64-83"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "step_id": "BF-1.4",
+            "text": "The client submits the stop request.",
+            "completion_critical": true,
+            "criticality_reason": "Submitting the command to the backend is necessary to mutate stream state.",
+            "status": "met",
+            "rationale": "Observed HTTP POST request to /api/v1/sessions/:id/live-stream/commands with action STOP and Idempotency-Key.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/network_post.txt",
+                "sha256": "sha256:4a298d03afba28999e734e55206d3aa2d4619fd3a5ec6e810a48805a1cbdfaca",
+                "kind": "network",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "POST /api/v1/sessions/:id/live-stream/commands",
+                "observation_id": "obs-bf-1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T20:13:18+07:00",
+                "target_ids": [
+                  "BF-1.4"
+                ]
+              }
+            ],
+            "observation_id": "obs-bf-1",
+            "required_runtime_kinds": [
+              "network"
+            ],
+            "evidence_requirement_rationale": "Network capture verifies the actual request transmission and payload.",
+            "source_findings": [
+              {
+                "finding": "stopLiveStream sends POST request with action STOP and expectedVersion.",
+                "limits": "API helper declaration does not prove network submission.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/_source/BroadcasterLivePreview.excerpt.ts",
+                    "sha256": "sha256:7c7f70f9d9b5ff2f3caf0d1273b7df04980c5b20893377eed92e95f999f323e0",
+                    "kind": "source",
+                    "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                    "sanitized": true,
+                    "locator": "BroadcasterLivePreview.tsx:64-83",
+                    "observation_id": null,
+                    "provenance": {
+                      "path": "finalsource/fe/src/components/BroadcasterLivePreview.tsx",
+                      "locator": "lines 64-83"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "step_id": "BF-1.5",
+            "text": "The system returns the ended stream representation.",
+            "completion_critical": true,
+            "criticality_reason": "Backend must execute the stop mutation, persist ended status, and return HTTP 200 with the ended stream.",
+            "status": "met",
+            "rationale": "Observed HTTP 200 response with status ENDED and endedAt, and verified live_streams database record updated with version increment.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/network_resp.txt",
+                "sha256": "sha256:3cc313967aeae0c07d6e444b6afed8f42c104d33e397ddb160d71b74c3ce5398",
+                "kind": "network",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "HTTP 200 response representation",
+                "observation_id": "obs-bf-1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T20:13:18+07:00",
+                "target_ids": [
+                  "BF-1.5"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/data_stream.txt",
+                "sha256": "sha256:1353f25ff77395c9adff2f86f4d6fccc3cc4ee37fb808f546711bbda4c60d2b8",
+                "kind": "data",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "live_streams table post-STOP state",
+                "observation_id": "obs-bf-1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T20:13:18+07:00",
+                "target_ids": [
+                  "BF-1.5"
+                ]
+              }
+            ],
+            "observation_id": "obs-bf-1",
+            "required_runtime_kinds": [
+              "network",
+              "data"
+            ],
+            "evidence_requirement_rationale": "Network response and database inspection together verify ended representation and persistence.",
+            "source_findings": [
+              {
+                "finding": "SessionsService.commandLiveStream executes UPDATE live_streams SET status = ENDED, version = version + 1, ended_at = UTC_TIMESTAMP(3).",
+                "limits": "SQL query in service does not verify successful transaction execution.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/_source/SessionsService.excerpt.ts",
+                    "sha256": "sha256:7dd3750aac35237874b82c8711dbcb267cfb9146aaee8238a26cb0b6cb488e4e",
+                    "kind": "source",
+                    "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                    "sanitized": true,
+                    "locator": "sessions.service.ts:295-307",
+                    "observation_id": null,
+                    "provenance": {
+                      "path": "finalsource/be/src/modules/sessions/sessions.service.ts",
+                      "locator": "lines 295-307"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "step_id": "BF-1.6",
+            "text": "The client displays the post-stream state.",
+            "completion_critical": true,
+            "criticality_reason": "The client interface must reflect the ended stream outcome to conclude the broadcast.",
+            "status": "met",
+            "rationale": "Observed streamLabel displaying \"Stream ended\" and End button removed from active controls.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/ui_ended.txt",
+                "sha256": "sha256:996b6b31314656ac00e9b4488e373c28a6e3a6ec27b325896311ef2568c8b778",
+                "kind": "ui",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "BroadcasterLivePreview post-stream display",
+                "observation_id": "obs-bf-1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-10-26T20:13:18+07:00",
+                "target_ids": [
+                  "BF-1.6",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "observation_id": "obs-bf-1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "UI observation verifies that post-stream state is displayed to the user.",
+            "source_findings": [
+              {
+                "finding": "streamLabel returns \"Stream ended\" when state.stream.status is ENDED.",
+                "limits": "Helper function return value does not prove UI DOM rendering.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/_source/BroadcasterLivePreview.excerpt.ts",
+                    "sha256": "sha256:7c7f70f9d9b5ff2f3caf0d1273b7df04980c5b20893377eed92e95f999f323e0",
+                    "kind": "source",
+                    "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                    "sanitized": true,
+                    "locator": "BroadcasterLivePreview.tsx:64-83",
+                    "observation_id": null,
+                    "provenance": {
+                      "path": "finalsource/fe/src/components/BroadcasterLivePreview.tsx",
+                      "locator": "lines 64-83"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "terminal_outcome": {
+          "text": "The host interface displays the returned ended state.",
+          "status": "met",
+          "rationale": "Observed BroadcasterLivePreview updating to show Stream ended label and closing confirmation dialog.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-bf-1/ui_ended.txt",
+              "sha256": "sha256:996b6b31314656ac00e9b4488e373c28a6e3a6ec27b325896311ef2568c8b778",
+              "kind": "ui",
+              "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+              "sanitized": true,
+              "locator": "BroadcasterLivePreview post-stream display",
+              "observation_id": "obs-bf-1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-10-26T20:13:18+07:00",
+              "target_ids": [
+                "BF-1.6",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "observation_id": "obs-bf-1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Host interface outcome requires observed UI display.",
+          "source_findings": []
+        },
+        "completion_observation_id": "obs-bf-1"
+      },
+      {
+        "flow_id": "AF-1",
+        "source_anchor": "docs/01-inception/use-cases/uc-04-stop-a-live-stream.md#L56-L62",
+        "steps": [
+          {
+            "step_id": "AF-1.1",
+            "text": "The host cancels the confirmation.",
+            "completion_critical": true,
+            "criticality_reason": "Host action rejecting broadcast stop.",
+            "status": "met",
+            "rationale": "Observed host clicking Cancel button in confirmation section.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-af-1/ui_cancel_action.txt",
+                "sha256": "sha256:6da9c8f40fbc0044e16c3faf4404a58de908c12775f82df1388d59bea33f144a",
+                "kind": "ui",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "Confirmation Cancel button clicked",
+                "observation_id": "obs-af-1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-10-26T20:13:19+07:00",
+                "target_ids": [
+                  "branch",
+                  "AF-1.1"
+                ]
+              }
+            ],
+            "observation_id": "obs-af-1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "UI observation of cancel interaction.",
+            "source_findings": []
+          },
+          {
+            "step_id": "AF-1.2",
+            "text": "The client closes the dialog and restores the live session interface.",
+            "completion_critical": true,
+            "criticality_reason": "Dialog closure and live session preservation is the branch terminal requirement.",
+            "status": "met",
+            "rationale": "Observed confirmation section removed from DOM; live session interface remains active.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-af-1/ui_restored.txt",
+                "sha256": "sha256:a84e3754c1e6b2ca84d2d9faebe3dbd3c23d41b9b8312801fd5210daafe9c924",
+                "kind": "ui",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "Live session interface restored",
+                "observation_id": "obs-af-1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-10-26T20:13:19+07:00",
+                "target_ids": [
+                  "AF-1.2",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "observation_id": "obs-af-1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "UI observation of dialog closure and view restoration.",
+            "source_findings": []
+          }
+        ],
+        "terminal_outcome": {
+          "text": "The client closes the dialog and restores the live session interface.",
+          "status": "met",
+          "rationale": "Observed confirmation dialog closed and live session view restored with no network submission.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-af-1/ui_restored.txt",
+              "sha256": "sha256:a84e3754c1e6b2ca84d2d9faebe3dbd3c23d41b9b8312801fd5210daafe9c924",
+              "kind": "ui",
+              "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+              "sanitized": true,
+              "locator": "Live session interface restored",
+              "observation_id": "obs-af-1",
+              "flow_id": "AF-1",
+              "captured_at": "2026-10-26T20:13:19+07:00",
+              "target_ids": [
+                "AF-1.2",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "observation_id": "obs-af-1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI observation of restored live session interface.",
+          "source_findings": []
+        },
+        "completion_observation_id": "obs-af-1"
+      },
+      {
+        "flow_id": "EF-1",
+        "source_anchor": "docs/01-inception/use-cases/uc-04-stop-a-live-stream.md#L63-L69",
+        "steps": [
+          {
+            "step_id": "EF-1.1",
+            "text": "The system cannot complete the stop request.",
+            "completion_critical": true,
+            "criticality_reason": "System failure response triggers the exception branch.",
+            "status": "met",
+            "rationale": "Observed backend returning HTTP 409 Conflict with message \"The stream version is no longer current\".",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-ef-1/network_error.txt",
+                "sha256": "sha256:cfaa77d4d4f196a01e679891c56108038cab9f7aa7b430ad127846d656887d50",
+                "kind": "network",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "HTTP 409 Conflict returned by backend",
+                "observation_id": "obs-ef-1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-10-26T20:13:20+07:00",
+                "target_ids": [
+                  "branch",
+                  "EF-1.1"
+                ]
+              }
+            ],
+            "observation_id": "obs-ef-1",
+            "required_runtime_kinds": [
+              "network"
+            ],
+            "evidence_requirement_rationale": "Network capture of error status and message.",
+            "source_findings": []
+          },
+          {
+            "step_id": "EF-1.2",
+            "text": "The client displays the returned failure state and preserves the current session view.",
+            "completion_critical": true,
+            "criticality_reason": "Displaying the failure state while preserving the current view is the terminal exception requirement.",
+            "status": "met",
+            "rationale": "Observed error alert banner rendered with backend message while live session preview remains visible.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-ef-1/ui_error_banner.txt",
+                "sha256": "sha256:8c2105f032c6541e9b595201c8cad424f3009352d411933b9ce1c90679ef7c09",
+                "kind": "ui",
+                "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+                "sanitized": true,
+                "locator": "Error alert displayed and view preserved",
+                "observation_id": "obs-ef-1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-10-26T20:13:20+07:00",
+                "target_ids": [
+                  "EF-1.2",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "observation_id": "obs-ef-1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "UI observation of error message display and preserved session view.",
+            "source_findings": []
+          }
+        ],
+        "terminal_outcome": {
+          "text": "The client displays the returned failure state and preserves the current session view.",
+          "status": "met",
+          "rationale": "Observed client displaying failure alert banner while maintaining the session view.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-04/runs/UC-04-GPT-5.6-TERRA/flow-accuracy/evidence/flow-assessment-initial/obs-ef-1/ui_error_banner.txt",
+              "sha256": "sha256:8c2105f032c6541e9b595201c8cad424f3009352d411933b9ce1c90679ef7c09",
+              "kind": "ui",
+              "source_revision": "sha256:c81fd74c8a89df1158fd59f21a43a669c4ac92404194934a9fb9b9f38873cdea",
+              "sanitized": true,
+              "locator": "Error alert displayed and view preserved",
+              "observation_id": "obs-ef-1",
+              "flow_id": "EF-1",
+              "captured_at": "2026-10-26T20:13:20+07:00",
+              "target_ids": [
+                "EF-1.2",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "observation_id": "obs-ef-1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI observation of failure state display.",
+          "source_findings": []
+        },
+        "completion_observation_id": "obs-ef-1"
+      }
+    ]
+  }
+}

@@ -47,15 +47,27 @@ export class SessionApiError extends Error {
 
 export interface LiveStream { readonly id: string; readonly status: 'READY' | 'STARTING' | 'LIVE' | 'ENDED'; readonly version: number; }
 export interface SessionStateData { readonly session: { readonly id: string; readonly status: string; readonly kind: string; readonly version: number }; readonly selfParticipant: Participant; readonly stream: LiveStream | null; readonly recording: Record<string, unknown> | null; readonly share: Record<string, unknown> | null; readonly media: Record<string, unknown>; readonly view: Record<string, unknown>; readonly stageRequests: readonly Record<string, unknown>[]; readonly reactions: readonly Record<string, unknown>[]; readonly nextReactionCursor: string; }
-interface StreamEnvelope { readonly stream: LiveStream; readonly session: SessionStateData['session']; }
+export interface StreamCommandData { readonly stream: LiveStream; readonly session: SessionStateData['session']; }
 
 export async function getSessionState(sessionId: string, accessToken: string): Promise<SessionStateData> {
   try { return (await apiClient.get<SuccessEnvelope<SessionStateData>>(`/api/v1/sessions/${encodeURIComponent(sessionId)}/state`, { headers: { Authorization: `Bearer ${accessToken}` } })).data.data; }
   catch (error: unknown) { throw new SessionApiError(error instanceof AxiosError ? ((error.response?.data as ErrorEnvelope | undefined)?.message ?? 'The updated session state could not be loaded.') : 'The updated session state could not be loaded.'); }
 }
-export async function startLiveStream(sessionId: string, accessToken: string, idempotencyKey: string, expectedVersion: number): Promise<StreamEnvelope> {
-  try { return (await apiClient.post<SuccessEnvelope<StreamEnvelope>>(`/api/v1/sessions/${encodeURIComponent(sessionId)}/live-stream/commands`, { action: 'START', expectedVersion }, { headers: { Authorization: `Bearer ${accessToken}`, 'Idempotency-Key': idempotencyKey } })).data.data; }
+export async function startLiveStream(sessionId: string, accessToken: string, idempotencyKey: string, expectedVersion: number): Promise<StreamCommandData> {
+  try { return (await apiClient.post<SuccessEnvelope<StreamCommandData>>(`/api/v1/sessions/${encodeURIComponent(sessionId)}/live-stream/commands`, { action: 'START', expectedVersion }, { headers: { Authorization: `Bearer ${accessToken}`, 'Idempotency-Key': idempotencyKey } })).data.data; }
   catch (error: unknown) { throw new SessionApiError(error instanceof AxiosError ? ((error.response?.data as ErrorEnvelope | undefined)?.message ?? 'The live stream could not be started.') : 'The live stream could not be started.'); }
+}
+
+export async function stopLiveStream(sessionId: string, accessToken: string, idempotencyKey: string, expectedVersion: number): Promise<StreamCommandData> {
+  try {
+    return (await apiClient.post<SuccessEnvelope<StreamCommandData>>(
+      `/api/v1/sessions/${encodeURIComponent(sessionId)}/live-stream/commands`,
+      { action: 'STOP', expectedVersion },
+      { headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json', 'Idempotency-Key': idempotencyKey } },
+    )).data.data;
+  } catch (error: unknown) {
+    throw new SessionApiError(error instanceof AxiosError ? ((error.response?.data as ErrorEnvelope | undefined)?.message ?? 'The live stream could not be ended.') : 'The live stream could not be ended.');
+  }
 }
 
 export async function joinSession(

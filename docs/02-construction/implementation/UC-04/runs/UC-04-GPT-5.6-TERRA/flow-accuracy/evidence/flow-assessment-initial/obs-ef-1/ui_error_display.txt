@@ -1,0 +1,6 @@
+Observation attempt obs-ef-1: 5b (EF-1.2) & terminal_outcome
+Timestamp: 2026-10-26T20:13:20.600+07:00
+Target: EF-1.2, terminal_outcome
+Action: BroadcasterLivePreview catch block receives SessionApiError.
+Result: Sets message to "The stream version is no longer current" rendered in role="alert" banner.
+Live session preview and video interface remain preserved.

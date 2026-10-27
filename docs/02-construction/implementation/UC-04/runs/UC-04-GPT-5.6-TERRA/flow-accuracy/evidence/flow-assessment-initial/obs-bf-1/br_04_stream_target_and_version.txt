@@ -1,0 +1,9 @@
+Observation obs-bf-1: BR-STLS-04 Stream Target And Version
+Precondition verification:
+1. Request with mismatched expectedVersion (expectedVersion: 999, stream.version: 1):
+   POST /api/v1/sessions/11111111-1111-4111-8111-111111111111/live-stream/commands
+   Body: {"action":"STOP","expectedVersion":999}
+   Result: HTTP 409 Conflict {"statusCode":409,"message":"The stream version is no longer current"}
+2. Request with matching expectedVersion (expectedVersion: 1):
+   Result: HTTP 200 OK accepted.
+Verdict: met.

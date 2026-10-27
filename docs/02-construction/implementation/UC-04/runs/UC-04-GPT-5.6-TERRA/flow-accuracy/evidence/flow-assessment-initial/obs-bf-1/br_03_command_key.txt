@@ -1,0 +1,13 @@
+Observation obs-bf-1: BR-STLS-03 Command Key
+Precondition verification:
+1. Request with missing Idempotency-Key:
+   POST /api/v1/sessions/11111111-1111-4111-8111-111111111111/live-stream/commands
+   Headers: Authorization: Bearer <host-token> (no Idempotency-Key header)
+   Result: HTTP 400 Bad Request {"statusCode":400,"message":"Idempotency-Key is required"}
+2. Request with whitespace Idempotency-Key:
+   Headers: Idempotency-Key: "   "
+   Result: HTTP 400 Bad Request
+3. Request with valid non-empty Idempotency-Key:
+   Headers: Idempotency-Key: "key-valid-stop-01"
+   Result: HTTP 200 OK accepted.
+Verdict: met.

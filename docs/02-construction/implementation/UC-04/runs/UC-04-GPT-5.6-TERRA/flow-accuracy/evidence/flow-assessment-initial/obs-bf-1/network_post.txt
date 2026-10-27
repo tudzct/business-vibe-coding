@@ -1,0 +1,2 @@
+Observation obs-bf-1: BF-1.4
+POST /api/v1/sessions/11111111-1111-4111-8111-111111111111/live-stream/commands body {"action":"STOP","expectedVersion":1}
