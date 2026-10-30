@@ -4,10 +4,9 @@
 
 Follow the [configured template](../../../../templates/construction/coding-prompt.template.md) for the complete prompt. Its sections, order and instructions define the prompt structure.
 
-## Synthesis & isolation boundaries
+## Synthesis contract
 
-- **Zero cross-contamination**: Prompt content must be synthesized solely from the active UC specification, its checksum-validated API contracts (if any), the technical DBML schema, and the resolved Figma target frame.
-- **No prior prompt reference**: Never open, read, or infer patterns from prior coding prompts in `docs/02-construction/coding-prompts/`. Prompts must be generated independently from source specifications.
+- **Template responsibilities**: Preserve the responsibility boundary defined by each section of the configured template and avoid unnecessary duplication across sections.
 - **Standard response envelopes**:
   - Raw UC success fields become the domain payload in the standard success envelope (`{ "success": true, "message": "...", "data": ... }`).
   - UC error status/message use the standard error envelope (`{ "success": false, "statusCode": ..., "message": "...", "timestamp": "...", "path": "..." }`).

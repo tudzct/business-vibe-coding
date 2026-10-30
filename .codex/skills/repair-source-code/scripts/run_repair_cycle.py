@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
-"""Execute the complete subordinate audit, assembly, scoring, and final validation for Repair."""
+"""Assemble, score, and validate one evidence-backed Repair verification round."""
 
 import argparse
 import hashlib
 import json
-import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[4]
+
+
+def require(condition, message):
+    if not condition:
+        raise ValueError(message)
 
 
 def digest(path_or_bytes):
@@ -60,50 +64,67 @@ def get_changed_files(passed_files=None):
         except Exception:
             pass
 
-    if not changed:
-        candidates = [
-            "finalsource/fe/nginx.conf",
-            "finalsource/fe/src/App.tsx",
-            "finalsource/fe/src/main.tsx",
-            "finalsource/fe/src/index.css",
-            "finalsource/be/src/main.ts",
-            "finalsource/be/src/app.module.ts"
-        ]
-        for c in candidates:
-            if (ROOT / c).is_file():
-                changed.add(c)
-
-    return sorted(list(changed))
+    verified = []
+    for value in sorted(changed):
+        path = Path(value)
+        absolute = path if path.is_absolute() else ROOT / path
+        require(absolute.is_file(), f"Changed source file not found: {value}")
+        require(absolute.is_relative_to(ROOT / "finalsource"),
+                f"Repair changed file is outside finalsource: {value}")
+        verified.append(absolute.relative_to(ROOT).as_posix())
+    require(verified, "No changed Repair source files were supplied or detected")
+    return verified
 
 
-def dump_dom(url, deny_permissions=False):
-    edge_path = Path(r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe")
-    if not edge_path.is_file():
-        edge_path = Path(r"C:\Program Files\Microsoft\Edge\Application\msedge.exe")
-    args = [str(edge_path), "--headless", "--dump-dom"]
-    if deny_permissions:
-        args.append("--deny-permission-prompts")
-    args.append(url)
-    try:
-        res = subprocess.run(args, capture_output=True, text=True, timeout=15)
-        if res.stdout and len(res.stdout) > 200:
-            return res.stdout
-    except Exception:
-        pass
-    # Fallback to curl
-    res = subprocess.run(["curl.exe", "-s", url], capture_output=True, text=True, timeout=10)
-    return res.stdout
+def configured_flow_ids(run_data, run_dir, explicit=None):
+    if explicit:
+        return list(dict.fromkeys(explicit))
+
+    baseline_file = (
+        ROOT / "docs/02-construction/implementation" / run_data["uc_id"] / "flow-baseline.json"
+    )
+    if baseline_file.is_file():
+        with open(baseline_file, "r", encoding="utf-8") as handle:
+            values = json.load(handle).get("ordered_flow_ids", [])
+        if values:
+            return list(dict.fromkeys(values))
+
+    for candidate in sorted((run_dir / "flow-accuracy").glob("*initial*.json")):
+        with open(candidate, "r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+        flows = payload.get("flows") or payload.get("input", {}).get("flows") or []
+        values = [item.get("flow_id") for item in flows if item.get("flow_id")]
+        if values:
+            return list(dict.fromkeys(values))
+    raise ValueError("Could not resolve the active UC flow inventory from baseline or initial assessment")
+
+
+def validate_verification_results(path, run_data, assessment_id, flow_ids):
+    require(path.is_file(), f"Repair verification results not found: {path}")
+    with open(path, "r", encoding="utf-8") as handle:
+        data = json.load(handle)
+    require(data.get("uc_id") == run_data["uc_id"], "verification UC identity mismatch")
+    require(data.get("run_id") == run_data["run_id"], "verification run identity mismatch")
+    require(data.get("assessment_id") == assessment_id, "verification assessment identity mismatch")
+    recorded = [item.get("flow_id") for item in data.get("flows", [])]
+    require(recorded == flow_ids,
+            "verification flow inventory/order must exactly match the active flow baseline")
+    require(isinstance(data.get("business_rules"), list),
+            "verification business_rules results must be an array")
+    require(isinstance(data.get("defects"), list),
+            "verification defects results must be an array")
+    return data
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-json", type=Path, required=True)
-    parser.add_argument("--assessment-id", default=None)
-    parser.add_argument("--port", type=int, default=8086)
+    parser.add_argument("--assessment-id", required=True)
+    parser.add_argument("--verification-results", type=Path)
     parser.add_argument("--changed-files", nargs="*", default=None,
                         help="Explicit list of changed source files in finalsource")
     parser.add_argument("--flow-ids", nargs="*", default=None,
-                        help="Explicit list of flow IDs to observe (defaults to UC flow baseline)")
+                        help="Exact flow inventory; defaults to the frozen baseline")
     args = parser.parse_args()
 
     run_path = args.run_json.resolve()
@@ -112,101 +133,20 @@ def main():
 
     uc_id = run_data["uc_id"]
     run_id = run_data["run_id"]
-    uc_lower = uc_id.lower().replace("-", "")
-    assessment_id = args.assessment_id or f"asm-{uc_lower}-final"
+    assessment_id = args.assessment_id
     run_dir = ROOT / "docs/02-construction/implementation" / uc_id / "runs" / run_id
     evidence_root = run_dir / "flow-accuracy" / "evidence" / assessment_id
-    evidence_root.mkdir(parents=True, exist_ok=True)
-    for old_d in evidence_root.glob("obs-*"):
-        if old_d.is_dir() and not old_d.name.startswith("obs-final-"):
-            shutil.rmtree(old_d, ignore_errors=True)
+    require(evidence_root.is_dir(), f"Repair evidence directory not found: {evidence_root}")
 
     now_iso = datetime.now(timezone.utc).astimezone().isoformat()
-    app_url = f"http://localhost:{args.port}/"
+    flow_ids = configured_flow_ids(run_data, run_dir, args.flow_ids)
+    results_path = (args.verification_results.resolve() if args.verification_results
+                    else evidence_root / "verification-results.json")
+    validate_verification_results(results_path, run_data, assessment_id, flow_ids)
 
-    print(f"=== Running Repair Verification for {run_id} ===")
-    print(f"1. Target URL: {app_url}")
-
-    # Build observations dynamically for the target UC
-    flow_ids = args.flow_ids
-    if not flow_ids:
-        baseline_file = ROOT / "docs/02-construction/implementation" / uc_id / "flow-baseline.json"
-        if baseline_file.is_file():
-            try:
-                with open(baseline_file, "r", encoding="utf-8") as f:
-                    bdata = json.load(f)
-                    flow_ids = bdata.get("ordered_flow_ids", [])
-            except Exception:
-                pass
-    if not flow_ids:
-        initial_candidates = list((run_dir / "flow-accuracy").glob("*initial*.json"))
-        for cand in initial_candidates:
-            try:
-                with open(cand, "r", encoding="utf-8") as f:
-                    idata = json.load(f)
-                    flows_list = idata.get("flows") or idata.get("input", {}).get("flows")
-                    if flows_list:
-                        flow_ids = [fl["flow_id"] for fl in flows_list if "flow_id" in fl]
-                        break
-            except Exception:
-                pass
-    if not flow_ids:
-        flow_ids = ["BF-1", "AF-1", "EF-1"]
-
-    flows = []
-    for fid in flow_ids:
-        clean_id = fid.lower().replace("-", "")
-        obs_id = f"obs-final-{clean_id}"
-        is_ef = fid.upper().startswith("EF")
-        is_af = fid.upper().startswith("AF")
-        deny = is_ef
-        url = f"{app_url}?role=VIEWER" if is_af else app_url
-        flows.append((obs_id, fid, url, deny))
-
-    for obs_id, flow_id, url, deny in flows:
-        obs_dir = evidence_root / obs_id
-        obs_dir.mkdir(parents=True, exist_ok=True)
-        html = dump_dom(url, deny_permissions=deny)
-
-        (obs_dir / "dom-snapshot.html").write_text(html, encoding="utf-8")
-
-        action_ui = {
-            "captured_at": now_iso,
-            "url": url,
-            "flow_id": flow_id,
-            "status": "success",
-            "locator": "DOM state inspection",
-            "dom_length": len(html),
-            "permissions_denied": deny
-        }
-        (obs_dir / "action-ui.json").write_text(json.dumps(action_ui, indent=2), encoding="utf-8")
-
-        trace_data = {
-            "captured_at": now_iso,
-            "flow_id": flow_id,
-            "url": url,
-            "events": [
-                {"type": "navigation", "url": url, "timestamp": now_iso},
-                {"type": "render", "status": "rendered", "timestamp": now_iso},
-                {"type": "interaction", "action": "permission_check" if deny else "flow_interaction", "status": "completed", "timestamp": now_iso}
-            ]
-        }
-        (obs_dir / "trace.json").write_text(json.dumps(trace_data, indent=2), encoding="utf-8")
-        print(f"   - Captured evidence for {flow_id} -> {obs_id}")
-
-    # Deployment record
-    runtime_dir = evidence_root / "_runtime"
-    runtime_dir.mkdir(parents=True, exist_ok=True)
-    deployment = {
-        "compose_version": 5,
-        "compose_project": "application-baseline",
-        "services": [
-            {"name": "frontend", "container_id": "fe-repaired", "image_id": "fe:latest", "state": "running"},
-            {"name": "backend", "container_id": "be-repaired", "image_id": "be:latest", "state": "healthy"},
-            {"name": "database", "container_id": "db-repaired", "image_id": "mysql:8.4", "state": "healthy"}
-        ]
-    }
-    (runtime_dir / "deployment.json").write_text(json.dumps(deployment, indent=2), encoding="utf-8")
+    deployment_path = evidence_root / "_runtime" / "deployment.json"
+    require(deployment_path.is_file(),
+            f"Actual runtime deployment evidence not found: {deployment_path}")
 
     # Source manifest
     source_dir = evidence_root / "_source"
@@ -218,7 +158,9 @@ def main():
         if cp.is_file():
             manifest_files.append({"path": cp.relative_to(ROOT).as_posix(), "sha256": digest(cp)})
     (source_dir / "repair-source-manifest.json").write_text(json.dumps({"captured_at": now_iso, "files": manifest_files}, indent=2), encoding="utf-8")
-    print(f"2. Saved runtime deployment and source manifests.")
+    print(f"=== Running Repair Verification for {run_id} ===")
+    print(f"1. Verified evidence-backed results for {len(flow_ids)} configured flows.")
+    print("2. Saved the Repair source manifest.")
 
     # Run assemble_repair_assessment.py
     print("3. Assembling Schema v2 assessment and updating repairs array...")
@@ -227,6 +169,7 @@ def main():
         sys.executable, str(assemble_script),
         "--run-json", str(run_path),
         "--assessment-id", assessment_id,
+        "--verification-results", str(results_path),
         "--update-repairs"
     ]
     if changed_files:
@@ -247,16 +190,20 @@ def main():
 
     # Validate repair rounds
     prompt_dir = run_dir / "repairs"
-    print(f"5. Validating final repair rounds (--final)...")
+    print("5. Validating the recorded Repair round...")
     val_script = ROOT / ".codex/skills/repair-source-code/scripts/validate_repair_rounds.py"
-    val_out = run_cmd([
+    with open(run_path, "r", encoding="utf-8") as handle:
+        updated_run = json.load(handle)
+    validation_cmd = [
         sys.executable, str(val_script),
         "--run-json", str(run_path),
-        "--prompt-dir", str(prompt_dir),
-        "--final"
-    ])
+        "--prompt-dir", str(prompt_dir)
+    ]
+    if updated_run.get("repair_status") in {"completed", "unresolved", "blocked"}:
+        validation_cmd.append("--final")
+    val_out = run_cmd(validation_cmd)
     print("   Validation result:", val_out)
-    print("\n=== REPAIR CYCLE SUCCESSFULLY VERIFIED & FINALIZED! ===")
+    print("\n=== REPAIR VERIFICATION ROUND RECORDED ===")
 
 
 if __name__ == "__main__":

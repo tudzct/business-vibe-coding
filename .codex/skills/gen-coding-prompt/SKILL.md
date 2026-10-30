@@ -9,24 +9,16 @@ Apply the [shared operational constitution](../../../AGENTS.md#shared-operationa
 
 Accept one readable `docs/01-inception/use-cases/uc-*.md` path. Optional `--configuration <config.json>`, `--run-id <RUN-ID>` and `--run-json <canonical.json>` disambiguate existing inputs; explicit values must match their recorded identities. Resolve only a unique matching Canonical Run JSON. Never select the newest file.
 
-## 
+## Primary Inputs
 
-### 1. Should Whitelist 
-During this operation, the agent should read :
+During this operation, the agent should read:
 1. **The single active frozen use case**: The explicit `docs/01-inception/use-cases/uc-*.md` path provided.
 2. **The configured prompt template**: `templates/construction/coding-prompt.template.md`.
 3. **The ordered active API contracts (if applicable)**: Only the exact paths declared in the active UC's `Related API IDs` section after preflight validation. If `Related API IDs` is `None.`, **DO NOT read any file in `docs/01-inception/api-contracts/`**.
 4. **The database baseline schema**: Read `docs/00-context/engineering/schema.dbml` ONCE after preflight PASS.
 5. **The resolved Figma design target**: Only the specific local snapshot JSON/node directory returned by `resolve.py` for the UC's mapped frame/node.
-6. Investigate the source code from D:\business-vibe-coding\finalsource
+6. **The current application source**: Inspect relevant entry points under `finalsource/`.
 7. **Additional inputs explicitly required by the prompt template**: The agent may read additional baseline/specification inputs if a section or instruction in `templates/construction/coding-prompt.template.md` explicitly requires them.
-### 2. Forbidden Reads (Strict Negative Constraints)
-- **Execute-only scripts**: All repository and skill helper scripts (`.codex/scripts/*.py`, `.codex/skills/*/scripts/*.py`) are execute-only. **NEVER open, view, or read Python script source code**. Only execute them via CLI and inspect stdout/stderr.
-- **No prior or existing coding prompts**: **NEVER open, read, or inspect any file in `docs/02-construction/coding-prompts/`** (including prior drafts or prompts from other UCs).
-- **No other use cases**: **NEVER open or read any other UC file** under `docs/01-inception/use-cases/`.
-- **No experiment artifacts or logs**: **NEVER open or read files in `docs/04-experiments/`** (e.g., reports, excel sheets, previous run journals, audits) other than reading the single active Canonical Run JSON / Configuration JSON required by arguments or resolved by preflight.
-- **No governance or gate documents**: Do not read gate documents (`EXPERIMENT-CONFIGURATION-GATE.md`, `PROJECT_CONTEXT.md`, etc.) as generation context. Input integrity is verified deterministically by preflight.
-- **No recursive scanning**: Do not run recursive directory scans or broad file search commands across the repository.
 
 ## Phase 1: Read-Only Preflight & START (Execute-Only)
 
@@ -34,7 +26,7 @@ Before START, run the deterministic read-only preflight over the operator-prepar
 
 The operator may prepare these files manually, with another model, external Python or optional repository helpers. Validate their contents, identities and checksums; never require a particular creator, skill invocation, creation command or fabricated creation receipt. Configuration has no confirmation gate or summary for approval. Root `.env` is not required.
 
-Resolve an available Python executable and execute this read-only command (do not read the script source):
+Resolve an available Python executable and execute this read-only command:
 
 ```text
 <python-executable> .codex/scripts/preflight_configuration.py --uc-id <UC-ID> --use-case <use-case.md> [--run-json <canonical.json>]
@@ -59,9 +51,9 @@ Capture live prompt START immediately:
 ```
 The helper resolves the active rollout and turn internally; never supply or guess either path or ID.
 
-## Phase 2: Ingest Permitted Technical Inputs
+## Phase 2: Ingest Primary Technical Inputs
 
-Ingest ONLY the items in the Closed Whitelist:
+Ingest the primary inputs listed above:
 1. **Read `templates/construction/coding-prompt.template.md`**: Understand required prompt sections and structure.
 2. **Read the active `docs/01-inception/use-cases/uc-*.md`**: Extract functional specifications, flows, actors, preconditions, postconditions, and UML model.
 3. **Read active API contracts**: If `Related API IDs` is non-empty, read only the specified contract paths under `docs/01-inception/api-contracts/`. If `None.`, skip this step completely.
@@ -72,19 +64,14 @@ Ingest ONLY the items in the Closed Whitelist:
    Read only the local snapshot JSON/node data for the resolved target node(s).
 5. **Read DBML once**: Read `docs/00-context/engineering/schema.dbml` once as technical input for exact table, column, and constraint definitions.
 6. **Identify entry points**: If template placeholders require component or controller placement locations, inspect minimal entry point files in `finalsource/` without reading unrelated feature logic.
-7. **Read additional inputs required by the template**: Ingest any additional baseline or specification input strictly required by a section present in `templates/construction/coding-prompt.template.md` (e.g., reading the Business Rule baseline and frozen specification if Prompt E is included).
+7. **Read additional inputs required by the template**: Ingest any additional baseline or specification input required by a section present in `templates/construction/coding-prompt.template.md`.
 
 ## Phase 3: Author the Coding Prompt Draft
 
-1. Reason over the whitelisted inputs collected in Phase 2.
+1. Reason over the inputs collected in Phase 2.
 2. Author the complete coding prompt draft by populating `templates/construction/coding-prompt.template.md`.
-3. Do not call any additional file reading tools during authoring.
-4. Distribute use-case behaviors across Prompts A-D (and any additional sections such as Prompt E/F present in the configured template) without altering frozen scope:
-   - **Prompt A (Backend API)**: API endpoints, DTOs, logic location, database behavior, success/error envelopes.
-   - **Prompt B (Frontend UI)**: UI components, styling, layout matching the resolved Figma target frame.
-   - **Prompt C (Frontend Logic & Integration)**: State management, API integration, data mapping.
-   - **Prompt D (Validation & Error Handling)**: Client-side validation, loading states, error handling.
-   - **Additional sections (e.g., Prompt E / F)**: Populate according to the configured template instructions.
+3. Distribute use-case behaviors across the sections defined by the configured coding prompt template without altering frozen scope.
+4. Preserve the responsibility boundary defined by each template section. Place each requirement in the section whose declared responsibility covers it, and avoid unnecessary duplication across sections.
 
 ## Phase 4: Save Draft, END Timing & Post-Validation (Execute-Only)
 

@@ -38,3 +38,63 @@ Each canonical round uses this shape; arrays retain canonical defect order:
 ```
 
 Create the record as `outcome: in_progress` and set `repair_status: in_progress` before its START capture. Atomically complete the evidence, source revision and outcome before END, and increment `repair_rounds_completed` only for a completed round. Validate the full set with `scripts/validate_repair_rounds.py`; never infer a missing record after the turn.
+
+## Verification results handoff
+
+Each subordinate verification writes one `verification-results.json` under the round's evidence directory. It records observed results; it is not a substitute for runtime evidence. Flow, BR and defect arrays preserve their frozen canonical order. Every evidence entry uses a repository-relative path to an existing sanitized file.
+
+```json
+{
+  "uc_id": "<UC-ID>",
+  "run_id": "<RUN-ID>",
+  "assessment_id": "<ASSESSMENT-ID>",
+  "captured_at": "<ISO-8601>",
+  "limitations": [],
+  "execution_blocker_defect_ids": [],
+  "flows": [{
+    "flow_id": "<FLOW-ID>",
+    "observation_id": "<UNIQUE-OBSERVATION-ID>",
+    "entry_point": "<OBSERVED-ENTRY-POINT>",
+    "entry_kind": "ui",
+    "actual_preconditions": "<OBSERVED-PRECONDITIONS>",
+    "end_state": "<OBSERVED-END-STATE>",
+    "state": "completed",
+    "actions": [{
+      "sequence": 1,
+      "action": "<ACTION-PERFORMED>",
+      "actual_result": "<OBSERVED-RESULT>",
+      "target_ids": ["<STEP-ID>"],
+      "evidence": [{"path": "<PATH>", "kind": "runtime_trace", "target_ids": ["<STEP-ID>"]}]
+    }],
+    "steps": [{
+      "step_id": "<STEP-ID>",
+      "status": "met",
+      "rationale": "<EVIDENCE-BASED-RATIONALE>",
+      "evidence": [{"path": "<PATH>", "kind": "runtime_trace", "target_ids": ["<STEP-ID>"]}]
+    }],
+    "terminal_outcome": {
+      "status": "met",
+      "rationale": "<EVIDENCE-BASED-RATIONALE>",
+      "evidence": [{"path": "<PATH>", "kind": "runtime_trace", "target_ids": ["terminal_outcome"]}]
+    }
+  }],
+  "business_rules": [{
+    "br_id": "<BR-ID>",
+    "status": "met",
+    "rationale": "<EVIDENCE-BASED-RATIONALE>",
+    "evidence": ["<PATH>"],
+    "runtime_observation_ids": ["<OBSERVATION-ID>"]
+  }],
+  "defects": [{
+    "defect_id": "<IMMUTABLE-DEFECT-ID>",
+    "status": "resolved",
+    "evidence": ["<PATH>"]
+  }]
+}
+```
+
+Allowed BR/step/terminal statuses are `met`, `unmet` and `not_evaluable`. Allowed defect statuses are `resolved` and `unresolved`. The assembler validates identities, frozen inventories, evidence existence and hashes; it never supplies a successful default.
+
+For a ready runtime, each observation's evidence files stay under `<assessment-id>/<observation-id>/`; its first action covers `entry`, its last action covers `terminal_outcome`, and every recorded step target is linked to an actual action. The `_runtime/deployment.json` record contains the observed Compose major version, project and service identities.
+
+If execution remains blocked, `_runtime/deployment.json` records `status: "BLOCKED"`, `verified: false`, the Compose major version, an empty service list when nothing started, and the actual blocker reason. `execution_blocker_defect_ids` lists the unresolved blocking defects, `flows` preserves the frozen flow-ID order without invented observations, every BR is recorded `unmet`, and the blocking defect remains `unresolved`. The scorer then records every Flow as incorrect without manufacturing runtime evidence.
