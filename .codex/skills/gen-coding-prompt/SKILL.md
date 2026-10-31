@@ -75,7 +75,7 @@ Ingest the primary inputs listed above:
 
 ## Phase 4: Save Draft, END Timing & Post-Validation (Execute-Only)
 
-1. **Persist the Draft**: Write the prompt to `docs/02-construction/coding-prompts/<UC-ID>-coding-prompt.md`. Include `source_api_contracts` as the semicolon-separated ordered configured API paths, or exactly `None.` for an empty inventory.
+1. **Persist the Draft**: Write the prompt to `docs/02-construction/coding-prompts/<UC-ID>-coding-prompt.md`.
 2. **Capture live prompt END immediately**:
    ```text
    <python-executable> .codex/scripts/capture_timestamp.py --run-json <canonical.json> --phase prompt_generation --event end --segment-id <one-unique-segment-id> --source-revision sha256:<actual-64-hex>

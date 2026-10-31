@@ -3,8 +3,6 @@ artifact_type: coding-prompt
 status: Draft | Approved
 uc_id: <UC-ID>
 uc_name: <Use case name>
-source_use_case: docs/01-inception/use-cases/<use-case-file>.md
-source_api_contracts: <semicolon-separated ordered configured API paths, or None.>
 generated_at: <ISO-8601 timestamp>
 ---
 
@@ -30,8 +28,6 @@ Implement the main logic in `[LOGIC LOCATION]`.
 
 Implement the backend flow for `[USE CASE / API ID]`.
 
-Implement backend and database behavior specified by the functional use-case flows, UML model, applicable API contract, and configured database contract, including applicable normalization, validation, authorization, persistence, transaction, concurrency, and sensitive-data handling.
-
 ### Success Response
 
 `[SUCCESS RESPONSE]`
@@ -46,7 +42,7 @@ Preserve the source status and message through `{ "success": false, "statusCode"
 
 Follow the existing project architecture.
 
-Handle relevant ownership, transaction, concurrency, idempotency, date/timezone, and data-precision rules. Read the configured checksum-pinned DBML as the database contract. Map entities/queries to existing tables and exact column/key definitions. Allow authorized DML only; never change schema/DBML/migration files, generate/run migrations or enable synchronization. Missing required structure is an input blocker.
+Handle relevant ownership, transaction, concurrency, idempotency, date/timezone, and data-precision rules. Map entities/queries to existing tables and exact column/key definitions. Allow authorized DML only; never change schema/DBML/migration files, generate/run migrations or enable synchronization. Missing required structure is an input blocker.
 
 ## Prompt B: Frontend UI
 
@@ -65,21 +61,13 @@ The component MUST display:
 
 Frozen Figma dataset and target: `[DATASET / FRAME / NODE / CHECKSUM or N/A]`
 
-Use the checksum-valid frozen Figma dataset to identify all frames relevant to the active use case.
-
-Determine relevant frames using the use case name, purpose, application-user actions, screen titles, visible UI text, and semantically related terms.
-
 Record the exact names and node IDs of all identified target frames:
 
 - `[IDENTIFIED FIGMA FRAME NAME AND NODE ID 1]`
 - `[IDENTIFIED FIGMA FRAME NAME AND NODE ID 2]`
 - `[...]`
 
-If the relevant frames cannot be identified unambiguously, stop and report the matching candidates instead of selecting or inventing a frame.
-
 ### Implementation Requirements
-
-STRICTLY follow the frozen Figma design at `[DATASET / FRAME / NODE / CHECKSUM]`.
 
 Ensure the layout, spacing, typography, colors, components, states, and responsive behavior match the design.
 
@@ -116,8 +104,6 @@ When successful:
 
 Preserve API request idempotency where applicable.
 
-Normalize date/timezone and numeric values according to the API contract and existing project conventions.
-
 ## Prompt D: Validation and Error Handling
 
 ### Objective: Complete client-side validation, loading state, and API error handling.
@@ -140,8 +126,6 @@ If the API returns `[STATUS / ERROR CONDITION]`:
 - Display the message at `[ERROR DISPLAY LOCATION]`.
 
 ### Client-Side Validation
-
-Before calling the API, enforce client-side validation specified by the functional use-case flows and applicable UI/API contracts for `[USE CASE / API ID]`.
 
 Display validation messages at `[VALIDATION MESSAGE LOCATION]`.
 

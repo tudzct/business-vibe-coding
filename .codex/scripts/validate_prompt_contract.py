@@ -53,12 +53,6 @@ def configured_headings():
     return headings
 
 
-def configured_api_metadata(uc):
-    contracts = uc.get("api_contracts")
-    require(isinstance(contracts, list), "configured API contracts must be an array")
-    return ";".join(entry["path"] for entry in contracts) if contracts else "None."
-
-
 def prompt_e_business_rule_ids(body):
     match = re.search(r"(?ms)^##\s+Prompt\s+E\s*:[^\r\n]*\r?\n(.*?)(?=^##\s+Prompt\s+[A-Z]\s*:|\Z)", body)
     require(match is not None, "Prompt E section missing")
@@ -78,13 +72,10 @@ def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow
     uc = config["use_case"]
     require(uc.get("uc_id") == uc_id, "configuration/prompt UC mismatch")
     baseline = read_json(writable(ROOT / uc["business_rule_baseline"]))
-    flow_baseline = read_json(writable(ROOT / uc["flow_baseline"]))
     require(baseline.get("status") == "Frozen" and baseline.get("uc_id") == uc_id, "BR baseline identity mismatch")
+    flow_baseline = read_json(writable(ROOT / uc["flow_baseline"]))
     require(flow_baseline.get("status") == "Frozen" and flow_baseline.get("uc_id") == uc_id,
             "flow baseline identity mismatch")
-    require(meta.get("source_use_case") == flow_baseline.get("use_case_path"), "prompt source UC mismatch")
-    require(meta.get("source_api_contracts") == configured_api_metadata(uc),
-            "prompt source API contracts mismatch")
     template = writable(ROOT / "templates/construction/coding-prompt.template.md")
     template_meta, _, _ = prompt_metadata(template)
     if "business_rule_baseline" in template_meta:
