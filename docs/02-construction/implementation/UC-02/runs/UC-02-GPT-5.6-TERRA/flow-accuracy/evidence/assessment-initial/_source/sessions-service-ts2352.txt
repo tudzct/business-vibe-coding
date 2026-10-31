@@ -1,7 +1,0 @@
-function parseStoredResponse(value: unknown): SuccessEnvelope {
-  if (typeof value === 'string') {
-    return JSON.parse(value) as SuccessEnvelope;
-  }
-  if (isRow(value)) return value as SuccessEnvelope;
-  throw new ConflictException('The previous command response is unavailable');
-}

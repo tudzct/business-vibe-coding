@@ -1,4 +1,0 @@
-{
-  "requests_during_denial": 0,
-  "capture_method": "Network.requestWillBeSent"
-}

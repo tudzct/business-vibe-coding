@@ -1,2 +1,0 @@
-Observation obs-af-1: AF-1.2 & terminal_outcome
-Dialog closed, live session interface restored.

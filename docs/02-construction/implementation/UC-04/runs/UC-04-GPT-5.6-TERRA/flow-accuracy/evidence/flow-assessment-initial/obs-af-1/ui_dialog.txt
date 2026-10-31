@@ -1,2 +1,0 @@
-Observation obs-af-1: BF-1.2
-Confirmation dialog displayed.

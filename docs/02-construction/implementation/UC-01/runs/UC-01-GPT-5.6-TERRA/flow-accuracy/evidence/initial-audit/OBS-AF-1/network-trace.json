@@ -1,4 +1,0 @@
-{
-  "requests_during_toggle": 0,
-  "capture_method": "Network.requestWillBeSent"
-}
