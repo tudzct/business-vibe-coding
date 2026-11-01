@@ -23,7 +23,7 @@ from calculate_metrics import accepted_br_summary, br_summary_snapshot
 HASH = re.compile(r"sha256:[0-9a-f]{64}\Z")
 BR_ID = re.compile(r"BR-[A-Z0-9][A-Z0-9-]*-\d+\Z")
 FLOW_ID = re.compile(r"(?:BF|AF|EF)-\d+\Z")
-FLOW_STEP_ID = re.compile(r"(BF-\d+)\.(\d+)\Z")
+FLOW_STEP_ID = re.compile(r"((?:BF|AF|EF)-\d+)\.([0-9]+[a-z]?)\Z")
 ROOT_FIELDS = {
     "schema_version", "artifact_type", "uc_id", "run_id", "source_revision",
     "canonical_defects_sha256", "accepted_results_sha256", "status",
@@ -233,22 +233,40 @@ def flow_sections(text):
     return result
 
 
+def flow_step_lines(parent_id, section):
+    """Return canonical step IDs and verbatim source lines in source order."""
+    result = {}
+    if parent_id.startswith("BF-"):
+        pattern = re.compile(rf"(?m)^({re.escape(parent_id)}\.[0-9]+[a-z]?):\s*\S.*$")
+        for match in pattern.finditer(section):
+            result[match.group(1)] = match.group(0).strip()
+        return result
+    pattern = re.compile(r"(?m)^([0-9]+[a-z]?)\s*:\s*\S.*$")
+    for match in pattern.finditer(section):
+        result[f"{parent_id}.{match.group(1)}"] = match.group(0).strip()
+    return result
+
+
 def flow_correction(ids, step_ids, specification):
     sections = flow_sections(specification)
     require(ids and all(identity in sections for identity in ids), "affected Flow is absent from frozen UC")
-    selected = []
+    require(step_ids, "a Flow defect must identify at least one exact affected Flow step")
+    requested = set(step_ids)
     step_parents = set()
     for step_id in step_ids:
         match = FLOW_STEP_ID.fullmatch(step_id)
-        require(match is not None and match.group(1) in ids, "affected Basic Flow step has no affected parent")
-        line = re.search(rf"(?m)^{re.escape(step_id)}:\s*\S.*$", sections[match.group(1)])
-        require(line is not None, f"{step_id} is absent from frozen UC")
-        selected.append(line.group(0).strip())
+        require(match is not None and match.group(1) in ids, "affected Flow step has no affected parent")
         step_parents.add(match.group(1))
-    selected.extend(sections[identity] for identity in ids if identity not in step_parents)
+    require(step_parents == set(ids), "each affected Flow must identify at least one exact affected step")
+    available = {}
+    for identity in ids:
+        available.update(flow_step_lines(identity, sections[identity]))
+    missing = requested - set(available)
+    require(not missing, f"affected Flow step is absent from frozen UC: {sorted(missing)}")
+    selected = [line for identity, line in available.items() if identity in requested]
     return {
         "mode": "verbatim_authoritative",
-        "representation": "flow step" if step_ids else "flow",
+        "representation": "flow step",
         "text": "\n\n".join(selected),
         "supporting_definitions": [],
     }
@@ -333,8 +351,17 @@ def build_defect(defect, enrichment, unmet, incorrect, br_text, flow_text):
         affected_flow_ids = [identity for identity in affected_flow_ids if identity in incorrect]
     steps = enrichment.get("affected_flow_step_ids", [])
     require(isinstance(steps, list) and len(steps) == len(set(steps))
-            and all(isinstance(item, str) for item in steps),
+            and all(isinstance(item, str) and FLOW_STEP_ID.fullmatch(item) for item in steps),
             f"{defect['defect_id']} affected_flow_step_ids is invalid")
+    step_parents = {FLOW_STEP_ID.fullmatch(item).group(1) for item in steps}
+    require(step_parents <= set(affected_flow_ids),
+            f"{defect['defect_id']} affected Flow step has no affected parent")
+    if category == "flow":
+        require(affected_flow_ids and step_parents == set(affected_flow_ids),
+                f"{defect['defect_id']} must identify at least one exact step for every affected Flow")
+    elif category == "technical" and affected_flow_ids and not defect["blocks_execution"]:
+        require(step_parents == set(affected_flow_ids),
+                f"{defect['defect_id']} must identify exact steps for every affected Flow")
     files = enrichment.get("affected_files", [])
     require(isinstance(files, list) and len(files) == len(set(files)),
             f"{defect['defect_id']} affected_files is invalid")
@@ -421,6 +448,16 @@ def validate_handoff(value, expected_uc=None, expected_run=None):
             require(isinstance(rows, list) and len(rows) == len(set(rows))
                     and all(pattern.fullmatch(str(item)) for item in rows),
                     f"{label}.{field} is invalid")
+        flow_ids = set(defect["affected_flow_ids"])
+        step_parents = {FLOW_STEP_ID.fullmatch(item).group(1)
+                        for item in defect["affected_flow_step_ids"]}
+        require(step_parents <= flow_ids, f"{label} contains a Flow step without its parent Flow")
+        if defect["category"] == "flow":
+            require(flow_ids and step_parents == flow_ids,
+                    f"{label} must identify at least one exact step for every affected Flow")
+        elif defect["category"] == "technical" and flow_ids and not defect["blocks_execution"]:
+            require(step_parents == flow_ids,
+                    f"{label} must identify exact steps for every affected Flow")
         files = defect.get("affected_files")
         require(isinstance(files, list) and len(files) == len(set(files)),
                 f"{label}.affected_files is invalid")

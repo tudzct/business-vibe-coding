@@ -28,7 +28,7 @@ Pass enrichment through stdin; do not create an intermediate payload file. The r
 ```json
 {
   "defect_id": "DEFECT-ID",
-  "affected_flow_step_ids": ["BF-1.3"],
+  "affected_flow_step_ids": ["BF-1.3", "AF-1.3a", "EF-1.4a"],
   "affected_files": ["finalsource/path/to/file.ts"],
   "evidence_annotations": {
     "path/to/evidence.txt": {
@@ -49,9 +49,11 @@ Pass enrichment through stdin; do not create an intermediate payload file. The r
 }
 ```
 
-`affected_flow_step_ids` identifies exact Basic Flow steps while `affected_flow_ids` continues to identify the parent Flow used by the Audit denominator. Do not add the step ID to `ordered_flow_ids`.
+`affected_flow_step_ids` identifies exact steps under the parent IDs in `affected_flow_ids`. Use `BF-1.1` for Basic Flow steps and prefix the source labels of Alternative or Exception Flow steps with their parent, for example `AF-1.3a` and `EF-1.4a`. Keep only parent Flow IDs in `ordered_flow_ids`; step IDs do not change the Audit denominator.
 
-The builder derives exact `verbatim_authoritative` corrections for BR and Flow defects from the checksum-pinned specifications. For a BR it preserves the authoritative rule text and only the referenced shared utility definitions. For a Flow it preserves the exact affected step when supplied, otherwise the exact frozen Flow block. Audit supplies `evidence_derived` correction text only for technical defects; it states the observable correct outcome and must not prescribe an implementation strategy.
+Every `flow` defect must name at least one exact step for every affected parent Flow. If the whole Flow is affected, list all of its steps. A non-blocking `technical` defect that names affected parent Flows follows the same rule. An execution-blocking technical root cause may leave both Flow arrays empty when no precise step can be observed; do not invent step IDs.
+
+The builder derives exact `verbatim_authoritative` corrections for BR and Flow defects from the checksum-pinned specifications. For a BR it preserves the authoritative rule text and only the referenced shared utility definitions. For a Flow it preserves the exact source lines for every listed step. Audit supplies `evidence_derived` correction text only for technical defects; it states the observable correct outcome and must not prescribe an implementation strategy.
 
 Evidence annotations locate and explain already immutable evidence. Text and JSON evidence content is copied into the handoff, optionally limited by validated line bounds. Images remain referenced by path, hash and media type and carry the confirmed visual observation; they are never embedded as base64.
 
