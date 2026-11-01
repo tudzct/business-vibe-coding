@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Assemble, score, and validate one evidence-backed Repair verification round."""
+"""Assemble, score, and validate one evidence-backed per-defect Repair attempt."""
 
 import argparse
 import hashlib
@@ -72,7 +72,6 @@ def get_changed_files(passed_files=None):
         require(absolute.is_relative_to(ROOT / "finalsource"),
                 f"Repair changed file is outside finalsource: {value}")
         verified.append(absolute.relative_to(ROOT).as_posix())
-    require(verified, "No changed Repair source files were supplied or detected")
     return verified
 
 
@@ -99,7 +98,7 @@ def configured_flow_ids(run_data, run_dir, explicit=None):
     raise ValueError("Could not resolve the active UC flow inventory from baseline or initial assessment")
 
 
-def validate_verification_results(path, run_data, assessment_id, flow_ids):
+def validate_verification_results(path, run_data, assessment_id, flow_ids, defect_id):
     require(path.is_file(), f"Repair verification results not found: {path}")
     with open(path, "r", encoding="utf-8") as handle:
         data = json.load(handle)
@@ -111,8 +110,9 @@ def validate_verification_results(path, run_data, assessment_id, flow_ids):
             "verification flow inventory/order must exactly match the active flow baseline")
     require(isinstance(data.get("business_rules"), list),
             "verification business_rules results must be an array")
-    require(isinstance(data.get("defects"), list),
-            "verification defects results must be an array")
+    require(isinstance(data.get("defects"), list)
+            and [item.get("defect_id") for item in data["defects"]] == [defect_id],
+            "verification defects must contain exactly the current fixed defect")
     return data
 
 
@@ -121,6 +121,8 @@ def main():
     parser.add_argument("--run-json", type=Path, required=True)
     parser.add_argument("--assessment-id", required=True)
     parser.add_argument("--verification-results", type=Path)
+    parser.add_argument("--defect-id", required=True,
+                        help="The one fixed defect verified by this attempt")
     parser.add_argument("--changed-files", nargs="*", default=None,
                         help="Explicit list of changed source files in finalsource")
     parser.add_argument("--flow-ids", nargs="*", default=None,
@@ -142,7 +144,7 @@ def main():
     flow_ids = configured_flow_ids(run_data, run_dir, args.flow_ids)
     results_path = (args.verification_results.resolve() if args.verification_results
                     else evidence_root / "verification-results.json")
-    validate_verification_results(results_path, run_data, assessment_id, flow_ids)
+    validate_verification_results(results_path, run_data, assessment_id, flow_ids, args.defect_id)
 
     deployment_path = evidence_root / "_runtime" / "deployment.json"
     require(deployment_path.is_file(),
@@ -170,6 +172,7 @@ def main():
         "--run-json", str(run_path),
         "--assessment-id", assessment_id,
         "--verification-results", str(results_path),
+        "--defect-id", args.defect_id,
         "--update-repairs"
     ]
     if changed_files:
@@ -188,9 +191,9 @@ def main():
     ])
     print("   Scorer output:", score_out)
 
-    # Validate repair rounds
+    # Validate per-defect Repair attempts
     prompt_dir = run_dir / "repairs"
-    print("5. Validating the recorded Repair round...")
+    print("5. Validating the recorded per-defect Repair attempt...")
     val_script = ROOT / ".codex/skills/repair-source-code/scripts/validate_repair_rounds.py"
     with open(run_path, "r", encoding="utf-8") as handle:
         updated_run = json.load(handle)
@@ -203,7 +206,11 @@ def main():
         validation_cmd.append("--final")
     val_out = run_cmd(validation_cmd)
     print("   Validation result:", val_out)
-    print("\n=== REPAIR VERIFICATION ROUND RECORDED ===")
+    if updated_run.get("repair_status") in {"completed", "unresolved", "blocked"}:
+        metrics_script = ROOT / ".codex/skills/audit-generation-metrics/scripts/calculate_metrics.py"
+        summary_out = run_cmd([sys.executable, str(metrics_script), str(run_path)])
+        print("6. Final pre/post-Repair summary:", summary_out)
+    print("\n=== REPAIR DEFECT ATTEMPT RECORDED ===")
 
 
 if __name__ == "__main__":

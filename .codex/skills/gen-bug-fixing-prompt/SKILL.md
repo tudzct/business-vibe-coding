@@ -36,7 +36,7 @@ Immediately before the first prompt-artifact write, derive the active Canonical 
 After the complete set is written:
 
 1. execute `scripts/validate_sub_prompts.py --handoff <path> --prompt-dir <repairs-directory>`;
-2. execute `scripts/record_prompt_handoff.py --handoff <path> --prompt-dir <repairs-directory>` to persist only `repair_prompt_directory`, `all_sub_prompt_count`, `repair_round_limit: 10`, `repair_rounds_completed: 0` and `repair_status: not_started`;
+2. execute `scripts/record_prompt_handoff.py --handoff <path> --prompt-dir <repairs-directory>` to persist only `repair_prompt_directory`, `all_sub_prompt_count`, per-defect `repair_round_limit: 10`, total `repair_rounds_completed: 0` and `repair_status: not_started`;
 3. capture Repair END with the same shared helper, segment ID and `repair_activity`.
 
 Helpers are execute-only. Use only their exit status and emitted result; do not inspect their source or the files they manage. If generation fails after START, capture END before responding and preserve the actual failed work.

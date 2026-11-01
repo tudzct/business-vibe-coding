@@ -96,19 +96,23 @@ def verification_defects(run, stage, source_revision, ordered_flow_ids):
         return selected
     require(not selected, "Repair verification must not append final-stage defects")
     latest = run["repairs"][-1]
-    require(isinstance(latest, dict), "latest Repair round must be an object")
+    require(isinstance(latest, dict), "latest Repair attempt must be an object")
     require(latest.get("source_revision_after") == source_revision,
-            "Repair verifier source revision differs from the latest round")
-    attempts = latest.get("defect_attempts")
-    require(isinstance(attempts, list), "latest Repair round needs defect_attempts")
-    unresolved_ids = [item.get("defect_id") for item in attempts
-                      if isinstance(item, dict) and item.get("status") == "unresolved"]
-    require(len(unresolved_ids) == len(set(unresolved_ids)),
-            "latest Repair round has duplicate unresolved defect IDs")
+            "Repair verifier source revision differs from the latest attempt")
     initial = validate_defects(run, "initial", ordered_flow_ids=ordered_flow_ids)
     by_id = {item["defect_id"]: item for item in initial}
-    require(set(unresolved_ids) <= set(by_id),
-            "Repair verifier references a defect outside the immutable initial inventory")
+    latest_status = {}
+    for repair_index, repair in enumerate(run["repairs"]):
+        attempts = repair.get("defect_attempts") if isinstance(repair, dict) else None
+        require(isinstance(attempts, list) and len(attempts) == 1,
+                f"repairs[{repair_index}] must contain exactly one defect attempt")
+        attempt = attempts[0]
+        identity = attempt.get("defect_id")
+        require(identity in by_id, "Repair verifier references a defect outside the immutable inventory")
+        if attempt.get("status") in {"resolved", "unresolved"}:
+            latest_status[identity] = attempt["status"]
+    unresolved_ids = [item["defect_id"] for item in initial
+                      if latest_status.get(item["defect_id"]) != "resolved"]
     return [by_id[identity] for identity in unresolved_ids]
 
 

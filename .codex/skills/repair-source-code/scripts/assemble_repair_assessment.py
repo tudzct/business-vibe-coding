@@ -12,6 +12,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[4]
+PROMPT_VALIDATOR = ROOT / ".codex/skills/gen-bug-fixing-prompt/scripts"
+sys.path.insert(0, str(PROMPT_VALIDATOR))
+from validate_sub_prompts import parse_prompt  # noqa: E402
+
 SHA = re.compile(r"sha256:[0-9a-f]{64}")
 
 
@@ -22,6 +26,25 @@ def require(condition, message):
 
 def digest(path):
     return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def fixed_prompt_inventory(prompt_dir):
+    files = sorted(prompt_dir.glob("repair-*.md")) if prompt_dir.is_dir() else []
+    require(files, "validated Repair prompt set is required")
+    result = {}
+    for index, path in enumerate(files, 1):
+        fields, arrays, _ = parse_prompt(path)
+        defect_id = fields["defect_id"]
+        require(defect_id not in result, f"duplicate Repair prompt for {defect_id}")
+        require(fields["repair_index"] == str(index)
+                and path.name == f"repair-{index:03d}-{defect_id}.md",
+                f"Repair prompt order or filename mismatch: {path.name}")
+        result[defect_id] = {
+            "path": path,
+            "affected_br_ids": arrays["affected_br_ids"],
+            "affected_flow_ids": arrays["affected_flow_ids"],
+        }
+    return result
 
 
 def evidence_object(item, source_rev, observation_id, flow_id, captured_at):
@@ -225,7 +248,7 @@ def assemble_assessment(run_data, run_dir, assessment_id=None, stage="final", so
     data["runtime"] = {
         "status": runtime_status,
         "compose_version": dep_content["compose_version"],
-        "reason": dep_content.get("reason", "Runtime deployment inspected for this Repair round."),
+        "reason": dep_content.get("reason", "Runtime deployment inspected for this Repair attempt."),
         "compose_project": dep_content.get("compose_project"),
         "services": services,
         "deployment": {
@@ -357,7 +380,7 @@ def assemble_assessment(run_data, run_dir, assessment_id=None, stage="final", so
 
 
 def update_canonical_repairs(run_json_path, source_rev, changed_files=None, assessment_id=None,
-                             verification_results_path=None):
+                             verification_results_path=None, defect_id=None):
     with open(run_json_path, "r", encoding="utf-8") as f:
         run_data = json.load(f)
 
@@ -394,62 +417,78 @@ def update_canonical_repairs(run_json_path, source_rev, changed_files=None, asse
                     "sha256": digest(p)
                 })
 
-    initial_defects = [row for row in run_data.get("defects", []) if row.get("stage") == "initial"]
     prompts_dir = run_dir / "repairs"
+    prompts = fixed_prompt_inventory(prompts_dir)
+    require(defect_id in prompts, "--defect-id must identify one fixed repair prompt")
+    initial_defects = [row for row in run_data.get("defects", []) if row.get("stage") == "initial"]
     repairs = run_data.get("repairs") or []
+    prompt_ids = list(prompts)
+    attempt_counts = {identity: 0 for identity in prompt_ids}
+    terminal_results = {}
+    current_position = 0
     active_round = None
-    if repairs:
-        last_round = repairs[-1]
-        if last_round.get("outcome") == "in_progress":
-            active_round = last_round
-            expected_defect_ids = [item["defect_id"] for item in last_round.get("defect_attempts", [])]
-        elif last_round.get("outcome") == "unresolved":
-            require(len(repairs) < 10, "Repair round limit exhausted; an eleventh round is forbidden")
-            expected_defect_ids = [
-                item["defect_id"] for item in last_round.get("defect_attempts", [])
-                if item.get("status") == "unresolved"
-            ]
-        else:
-            raise ValueError("Cannot append verification to a terminal Repair run")
-    else:
-        expected_defect_ids = [item["defect_id"] for item in initial_defects]
-    require(expected_defect_ids, "No unresolved immutable defects are eligible for this Repair round")
+    for position, recorded in enumerate(repairs):
+        attempts = recorded.get("defect_attempts")
+        require(isinstance(attempts, list) and len(attempts) == 1,
+                f"repairs[{position}] must contain exactly one defect attempt")
+        attempt = attempts[0]
+        require(current_position < len(prompt_ids), "Repair contains attempts after all prompts were processed")
+        expected = prompt_ids[current_position]
+        require(attempt.get("defect_id") == expected,
+                "Repair attempts do not process fixed prompts sequentially")
+        if recorded.get("outcome") == "in_progress":
+            require(position == len(repairs) - 1, "only the last Repair attempt may be in progress")
+            active_round = recorded
+            break
+        expected_index = attempt_counts[expected] + 1
+        require(attempt.get("attempt_index") == expected_index <= 10,
+                "Repair defect attempt indexes must be consecutive and at most ten")
+        require(attempt.get("status") in {"resolved", "unresolved"},
+                "completed Repair attempt status is invalid")
+        attempt_counts[expected] = expected_index
+        if attempt["status"] == "resolved":
+            terminal_results[expected] = "resolved"
+            current_position += 1
+        elif expected_index == 10:
+            terminal_results[expected] = "unresolved"
+            current_position += 1
+
+    require(current_position < len(prompt_ids), "Every fixed defect already has a terminal result")
+    expected_defect_id = prompt_ids[current_position]
+    require(defect_id == expected_defect_id,
+            "Repair must finish the current defect before advancing to another prompt")
+    next_attempt_index = attempt_counts[defect_id] + 1
+    require(next_attempt_index <= 10, "An eleventh attempt for one defect is forbidden")
     initial_by_id = {item["defect_id"]: item for item in initial_defects}
-    require(all(identity in initial_by_id for identity in expected_defect_ids),
-            "Repair round references a defect outside the immutable initial inventory")
-    target_defects = [initial_by_id[identity] for identity in expected_defect_ids]
+    require(defect_id in initial_by_id,
+            "Repair attempt references a defect outside the immutable initial inventory")
+    target_defect = initial_by_id[defect_id]
 
     defect_results = verification.get("defects")
     require(isinstance(defect_results, list), "verification defects must be an array")
-    require([item.get("defect_id") for item in defect_results]
-            == expected_defect_ids,
-            "verification defect inventory/order differs from the active immutable Repair targets")
-    defect_attempts = []
-    for df, verdict in zip(target_defects, defect_results):
-        did = df["defect_id"]
-        matches = list(prompts_dir.glob(f"repair-*-{did}.md"))
-        require(len(matches) == 1, f"Expected one Repair prompt for {did}, found {len(matches)}")
-        pfile = matches[0] if matches else (prompts_dir / f"repair-{did}.md")
-        require(verdict.get("status") in {"resolved", "unresolved"},
-                f"invalid verification defect status for {did}")
-        verdict_evidence = []
-        for item in verdict.get("evidence", []):
-            path_value = item.get("path") if isinstance(item, dict) else item
-            require(path_value, f"verification defect evidence path is required for {did}")
-            path = ROOT / path_value
-            require(path.is_file(), f"verification defect evidence not found: {path_value}")
-            verdict_evidence.append({"path": path.relative_to(ROOT).as_posix(), "sha256": digest(path)})
-        require(verdict_evidence, f"verification defect evidence is required for {did}")
-        defect_attempts.append({
-            "defect_id": did,
-            "defect_fingerprint": df["fingerprint"],
-            "prompt_path": pfile.relative_to(ROOT).as_posix(),
-            "prompt_sha256": digest(pfile),
-            "status": verdict["status"],
-            "evidence": verdict_evidence
-        })
-
-    all_resolved = all(item["status"] == "resolved" for item in defect_attempts)
+    require([item.get("defect_id") for item in defect_results] == [defect_id],
+            "verification must contain exactly the current fixed defect")
+    verdict = defect_results[0]
+    pfile = prompts[defect_id]["path"]
+    require(verdict.get("status") in {"resolved", "unresolved"},
+            f"invalid verification defect status for {defect_id}")
+    verdict_evidence = []
+    for item in verdict.get("evidence", []):
+        path_value = item.get("path") if isinstance(item, dict) else item
+        require(path_value, f"verification defect evidence path is required for {defect_id}")
+        path = ROOT / path_value
+        require(path.is_file(), f"verification defect evidence not found: {path_value}")
+        verdict_evidence.append({"path": path.relative_to(ROOT).as_posix(), "sha256": digest(path)})
+    require(verdict_evidence, f"verification defect evidence is required for {defect_id}")
+    defect_attempts = [{
+        "defect_id": defect_id,
+        "attempt_index": next_attempt_index,
+        "defect_fingerprint": target_defect["fingerprint"],
+        "prompt_path": pfile.relative_to(ROOT).as_posix(),
+        "prompt_sha256": digest(pfile),
+        "status": verdict["status"],
+        "evidence": verdict_evidence
+    }]
 
     if active_round is not None:
         round0 = active_round
@@ -479,26 +518,22 @@ def update_canonical_repairs(run_json_path, source_rev, changed_files=None, asse
                 for item in sorted(initial_dirs[0].rglob("*"))
                 if item.is_file() and not item.name.startswith(".")
             ]
-        require(source_before, "Could not determine source_revision_before for Repair round")
-        require(ev_before, "Could not determine evidence_before for Repair round")
+        require(source_before, "Could not determine source_revision_before for Repair attempt")
+        require(ev_before, "Could not determine evidence_before for Repair attempt")
         model_id = (
             run_data.get("generation_model", {}).get("effective_model_id")
             or run_data.get("generation_model", {}).get("requested_model_id")
         )
-        require(model_id, "Could not determine the effective model for Repair round")
+        require(model_id, "Could not determine the effective model for Repair attempt")
         round_index = len(repairs) + 1
         round0 = {
-            "repair_id": f"repair-round-{round_index:03d}",
+            "repair_id": f"repair-attempt-{round_index:03d}",
             "round_index": round_index,
             "prompt_directory": expected_directory,
             "source_revision_before": source_before,
             "source_revision_after": source_rev,
-            "affected_br_ids": list(dict.fromkeys(
-                value for defect in target_defects for value in defect.get("affected_br_ids", [])
-            )),
-            "affected_flow_ids": list(dict.fromkeys(
-                value for defect in target_defects for value in defect.get("affected_flow_ids", [])
-            )),
+            "affected_br_ids": prompts[defect_id]["affected_br_ids"],
+            "affected_flow_ids": prompts[defect_id]["affected_flow_ids"],
             "evidence_before": ev_before,
             "changed_files": changed_files,
             "evidence_after": evidence_after,
@@ -560,21 +595,29 @@ def update_canonical_repairs(run_json_path, source_rev, changed_files=None, asse
         and flow.get("terminal_outcome", {}).get("status") == "met"
         for flow in verification.get("flows", [])
     )
-    completed = all_resolved and all_br_met and all_flows_met
-    if not completed:
-        require(not all_resolved,
-                "Unmet BR/Flow verification requires a corresponding unresolved immutable defect")
-    round0["outcome"] = "resolved" if completed else "unresolved"
+    round0["outcome"] = verdict["status"]
     run_data["repair_rounds_completed"] = len(run_data["repairs"])
-    if completed:
-        run_data["repair_status"] = "completed"
-        run_data["run_status"] = "complete"
-    elif len(run_data["repairs"]) >= 10:
-        run_data["repair_status"] = "unresolved"
-        run_data["run_status"] = "stopped"
-    else:
+    attempt_counts[defect_id] = next_attempt_index
+    if verdict["status"] == "resolved":
+        terminal_results[defect_id] = "resolved"
+        current_position += 1
+    elif next_attempt_index == 10:
+        terminal_results[defect_id] = "unresolved"
+        current_position += 1
+
+    all_processed = current_position == len(prompt_ids)
+    every_defect_resolved = all(
+        terminal_results.get(identity) == "resolved" for identity in prompt_ids
+    )
+    if not all_processed:
         run_data["repair_status"] = "in_progress"
         run_data["run_status"] = "active"
+    elif every_defect_resolved and all_br_met and all_flows_met:
+        run_data["repair_status"] = "completed"
+        run_data["run_status"] = "complete"
+    else:
+        run_data["repair_status"] = "unresolved"
+        run_data["run_status"] = "stopped"
 
     with open(run_json_path, "w", encoding="utf-8") as f:
         json.dump(run_data, f, indent=2, ensure_ascii=False)
@@ -587,6 +630,8 @@ def main():
     parser.add_argument("--stage", default="final")
     parser.add_argument("--output", type=Path)
     parser.add_argument("--verification-results", type=Path)
+    parser.add_argument("--defect-id", required=True,
+                        help="The one fixed defect verified by this Repair attempt")
     parser.add_argument("--changed-files", nargs="*", default=None)
     parser.add_argument("--update-repairs", action="store_true",
                         help="Also update canonical run repairs array and business_rules.final")
@@ -611,7 +656,7 @@ def main():
     if args.update_repairs:
         update_canonical_repairs(
             args.run_json, source_rev, changed_files, assessment["assessment_id"],
-            verification_results_path=args.verification_results
+            verification_results_path=args.verification_results, defect_id=args.defect_id
         )
         print("Updated canonical run repairs array and final BR snapshot.")
 
