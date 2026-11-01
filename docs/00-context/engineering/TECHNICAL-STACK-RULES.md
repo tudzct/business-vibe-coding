@@ -1,6 +1,6 @@
 # Technical-stack skill routing
 
-Persistence follows [DATABASE-SCHEMA.md](DATABASE-SCHEMA.md): read the configured DBML and map existing structure. Keep `synchronize: false` and application `migrationsRun: false`. Operator setup alone may execute TypeORM migrations between runs; an active model operation cannot edit or execute them.
+Persistence follows [DATABASE-SCHEMA.md](DATABASE-SCHEMA.md). Read a configured structure source only when the owning operation explicitly authorizes it; otherwise use that operation's authorized implementation inputs and current application source. Keep `synchronize: false` and application `migrationsRun: false`. Operator setup alone may execute TypeORM migrations between runs; an active model operation cannot edit or execute them.
 
 The owning source operation reads this routing table and invokes only the applicable stack skill. Each stack skill loads only the references required by the active change areas.
 

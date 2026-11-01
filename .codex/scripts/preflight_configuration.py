@@ -205,14 +205,19 @@ def preflight(uc_id, configuration=None, run_id=None, run_json=None,
         validate_prompt(path, uc_id, assignment["run_id"], prompt_path, activation=activation)
     require(digest(path.read_bytes()) == checksum, "configuration changed during preflight")
     require(digest(canonical_path.read_bytes()) == canonical_checksum, "Canonical Run JSON changed during preflight")
-    return {"status": "valid", "uc_id": uc_id, "run_id": assignment["run_id"],
+    result = {"status": "valid", "uc_id": uc_id, "run_id": assignment["run_id"],
             "experiment_configuration": {"artifact": path.relative_to(ROOT).as_posix(),
                                          "configuration_id": data["configuration_id"], "checksum": checksum,
                                          "comparison_group_id": data["comparison_group_id"],
                                          "researcher_id": data["researcher_id"],
                                          "run_activation": activation_ref},
             "canonical_run": {"path": canonical_path.relative_to(ROOT).as_posix(), "sha256": canonical_checksum},
-            "stage": stage, "baselines": baselines}
+            "stage": stage}
+    if stage == "source":
+        result["prepared_inputs"] = "valid"
+    else:
+        result["baselines"] = baselines
+    return result
 
 
 def main():
