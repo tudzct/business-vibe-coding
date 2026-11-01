@@ -49,7 +49,7 @@ For a BR target, accept only `met` or `unmet`; for a Flow target, accept only `c
 
 A blocker-derived `incorrect` result is not researcher-overridable while its generated-source blocker remains open; preserve the blocker for an authorized correction consumer. Do not ask for timestamps, checksums, a special command or JSON edits. Preserve the sanitized item as a repository evidence artifact attributed to the researcher; the LLM resolves identities, paths, source revision, hashes and the internal payload. If a target or result is genuinely ambiguous, ask only about that ambiguity. A bare overall percentage cannot identify which targets failed; do not invent individual outcomes from it.
 
-Preserve sanitized text in `researcher_result`. Do not fabricate step outcomes, runtime evidence, observation times or independent verification. A negative researcher correction includes normalized canonical defects in the combined helper payload. Each added defect is `stage: initial`, `status: open`, `reported_by: researcher`, names the shared `researcher_followup_id`, uses the immutable parent source revision and references the attributed researcher-statement artifact. Create no defect for a correction to `met` or `correct`. Defect addition is allowed only before sub-prompt generation and Repair. Accepted rows use `result_source: researcher_result`; the summary exposes `result_basis: includes_researcher_results` and `researcher_result_count`. The original rubric assessment remains unchanged. Compare results with their actual provenance.
+Preserve sanitized text in `researcher_result`. Do not fabricate step outcomes, runtime evidence, observation times or independent verification. A negative researcher correction includes normalized canonical defects in the combined helper payload. Each added defect is `stage: initial`, `status: open`, `reported_by: researcher`, names the shared `researcher_followup_id`, uses the immutable parent source revision and references the attributed researcher-statement artifact. Create no defect for a correction to `met` or `correct`. Defect addition is allowed only before another operation consumes the accepted Audit results. Accepted rows use `result_source: researcher_result`; the summary exposes `result_basis: includes_researcher_results` and `researcher_result_count`. The original rubric assessment remains unchanged. Compare results with their actual provenance.
 
 ## LLM measurement path
 
@@ -118,6 +118,8 @@ The BR part is tied to the immutable initial BR snapshot and source revision. It
 python -B .codex/skills/audit-flow-accuracy/scripts/record_flow_followup.py --run-json <canonical.json> --input - --dry-run
 python -B .codex/skills/audit-flow-accuracy/scripts/record_flow_followup.py --run-json <canonical.json> --input -
 ```
+
+After a successful Audit follow-up has persisted conclusive accepted BR and Flow results, rebuild the active run's derived `defects-handoff.json` through `audit-generation-metrics/scripts/build_defects_handoff.py`, dry-run first and then persist with identical stdin enrichment. If any accepted target remains `not_evaluable`, preserve the follow-up and do not create or replace the handoff. This remains part of Audit result persistence; it does not authorize another operation.
 
 
 ## Formulas and evidence integrity
