@@ -180,7 +180,7 @@ def preflight(uc_id, configuration=None, run_id=None, run_json=None,
         check_reference(canonical.get("experiment_configuration"), path, data, checksum)
     check_pinned_evidence(path, data, checksum)
     uc = data["use_case"]
-    baselines = check_baselines(uc)
+    validated_inputs = check_baselines(uc)
     check_canonical(canonical, data, assignment, uc, stage)
     # Fifth prepared input: ordered migration history/head and DBML/runtime hashes.
     # Never initialize migrations or derive replacement pins from the live DB.
@@ -213,10 +213,9 @@ def preflight(uc_id, configuration=None, run_id=None, run_json=None,
                                          "run_activation": activation_ref},
             "canonical_run": {"path": canonical_path.relative_to(ROOT).as_posix(), "sha256": canonical_checksum},
             "stage": stage}
-    if stage == "source":
-        result["prepared_inputs"] = "valid"
-    else:
-        result["baselines"] = baselines
+    result["prepared_inputs"] = "valid"
+    if stage == "prompt":
+        result["api_contracts"] = validated_inputs["api_contracts"]
     return result
 
 
