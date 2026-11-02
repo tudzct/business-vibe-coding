@@ -11,16 +11,18 @@ Accept one readable `docs/01-inception/use-cases/uc-*.md` path. Optional `--conf
 
 ## Primary Inputs
 
-During this operation, the agent should read the following primary inputs. This list is intentionally non-exhaustive: it must not prevent autonomous discovery of other active-run project inputs permitted by the shared constitution. Apply the same discovery boundary regardless of which configured prompt-template sections are present. Derived prompts, assessments, defects, repairs and telemetry are not project inputs.
+During this operation, read and use only the following project-content inputs to author the Coding Prompt. Do not inspect or use any other project-content source.
 
-1. **The single active frozen use case**: The explicit `docs/01-inception/use-cases/uc-*.md` path provided.
-2. **The configured prompt template**: `templates/construction/coding-prompt.template.md`.
-3. **The ordered active API contracts (if applicable)**: Only the exact paths declared in the active UC's `Related API IDs` section after preflight validation. If `Related API IDs` is `None.`, **DO NOT read any file in `docs/01-inception/api-contracts/`**.
-4. **The database baseline schema**: Read `docs/00-context/engineering/schema.dbml` ONCE after preflight PASS.
-5. **The configured live database**: Read-only inspection is permitted after preflight PASS. Do not insert, update or delete data; execute DDL; run migrations or schema synchronization; or change tables, columns, indexes, constraints, grants or any other database state.
-6. **The resolved Figma design target**: Only the specific local snapshot JSON/node directory returned by `resolve.py` for the UC's mapped frame/node.
-7. **The current application source**: Inspect relevant entry points under `finalsource/`.
-8. **Additional active-run project inputs**: The agent may autonomously inspect additional frozen baseline/specification inputs relevant to completing the configured template without changing product scope.
+1. **The configured prompt template**: `templates/construction/coding-prompt.template.md`.
+2. **The single active frozen use case**: The explicit `docs/01-inception/use-cases/uc-*.md` path provided.
+3. **The active frozen business-rule specification**: Only the exact `business_rule_path` returned by successful preflight validation.
+4. **The ordered active API contracts (if applicable)**: Only the exact paths declared in the active UC's `Related API IDs` section after preflight validation. If `Related API IDs` is `None.`, **DO NOT read any file in `docs/01-inception/api-contracts/`**.
+5. **The database baseline schema**: Read `docs/00-context/engineering/schema.dbml` ONCE after preflight PASS.
+6. **The configured live database**: Read-only inspection is permitted after preflight PASS. Do not insert, update or delete data; execute DDL; run migrations or schema synchronization; or change tables, columns, indexes, constraints, grants or any other database state.
+7. **The active UC's resolved Figma evidence**: Only the local snapshot JSON/node directory returned by `resolve.py` from the configured frozen dataset.
+8. **The entire current application source**: Read the cumulative source under `finalsource/`, including implementation added by earlier UCs. This operation must not modify source files.
+
+Technical and control-plane material may be read only to operate this workflow and must not add product behavior or requirements. Permitted material is `AGENTS.md`, this skill and its own references, [technical stack rules](../../../docs/00-context/engineering/TECHNICAL-STACK-RULES.md), [database policy](../../../docs/00-context/engineering/DATABASE-SCHEMA.md), the [active-run contract](../../../docs/00-context/workflow/WORKFLOW-CONTRACT.md), and output emitted by required execute-only helpers.
 
 ## Content Boundary
 
@@ -65,21 +67,21 @@ Capture live prompt START immediately:
 ```
 The helper resolves the active rollout and turn internally; never supply or guess either path or ID.
 
-## Phase 2: Ingest Primary Technical Inputs
+## Phase 2: Ingest Exclusive Project Inputs
 
 Ingest the primary inputs listed above:
 1. **Read `templates/construction/coding-prompt.template.md`**: Understand required prompt sections and structure.
 2. **Read the active `docs/01-inception/use-cases/uc-*.md`**: Extract functional specifications, flows, actors, preconditions, postconditions, and UML model.
-3. **Read active API contracts**: If `Related API IDs` is non-empty, read only the specified contract paths under `docs/01-inception/api-contracts/`. If `None.`, skip this step completely.
-4. **Resolve Figma evidence**: Execute `resolve.py` in read-only mode:
+3. **Read the active business-rule specification**: Read only the exact `business_rule_path` returned by preflight.
+4. **Read active API contracts**: If `Related API IDs` is non-empty, read only the specified contract paths under `docs/01-inception/api-contracts/`. If `None.`, skip this step completely.
+5. **Resolve Figma evidence**: Execute `resolve.py` in read-only mode:
    ```text
    <python-executable> .codex/skills/resolve-figma-design-dataset/scripts/resolve.py <UC-ID-or-path> --dataset-version <version>
    ```
    Read only the local snapshot JSON/node data for the resolved target node(s).
-5. **Read DBML once**: Read `docs/00-context/engineering/schema.dbml` once as technical input for exact table, column, and constraint definitions.
-6. **Inspect the configured live database read-only**: Read the active database state needed to understand the prepared input. Do not execute any statement or tool action that mutates data, schema or database configuration.
-7. **Identify entry points**: If template placeholders require component or controller placement locations, inspect minimal entry point files in `finalsource/` without reading unrelated feature logic.
-8. **Discover additional active-run project inputs when useful**: Apply the same autonomous discovery boundary for every configured template variant. Do not use downstream prompt, Audit, defect, Repair or telemetry artifacts as inputs.
+6. **Read DBML once**: Read `docs/00-context/engineering/schema.dbml` once as technical input for exact table, column, and constraint definitions.
+7. **Inspect the configured live database read-only**: Read the active database state needed to understand the prepared input. Do not execute any statement or tool action that mutates data, schema or database configuration.
+8. **Read the entire current application source**: Inspect the cumulative source under `finalsource/`, including implementation added by earlier UCs. Do not mutate source during prompt generation.
 
 ## Phase 3: Author the Coding Prompt Draft
 
