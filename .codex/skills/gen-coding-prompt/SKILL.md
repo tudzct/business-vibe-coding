@@ -85,8 +85,10 @@ Ingest the primary inputs listed above:
 
 1. Reason over the inputs collected in Phase 2.
 2. Author the complete coding prompt draft by populating `templates/construction/coding-prompt.template.md`.
-3. Distribute use-case behaviors across the sections defined by the configured coding prompt template without altering frozen scope.
-4. Preserve the responsibility boundary defined by each template section. Place each requirement in the section whose declared responsibility covers it, and avoid unnecessary duplication across sections.
+3. Treat the completed Coding Prompt as a self-contained implementation handoff. For every template placeholder, inline the concrete information that placeholder requests from the applicable validated inputs into the section responsible for it. Do not copy unrelated source content merely because it is available.
+4. Populate every value only with facts directly supported by the validated inputs. Leave no placeholder unresolved. Use `N/A` only when an input explicitly establishes that the item is not applicable. If a required value is missing or ambiguous, report the input gap; never fabricate, assume, generalize or fill it from generic knowledge.
+5. Do not fill a placeholder with only a path, identifier or instruction for a later phase to reopen an original input. The completed value must contain the information requested by that placeholder.
+6. Preserve the configured template's structure, section order and declared responsibilities. Distribute use-case behaviors without altering frozen scope, moving content into a section with a different responsibility or unnecessarily duplicating content across sections.
 
 ## Phase 4: Save Draft, END Timing & Post-Validation (Execute-Only)
 

@@ -25,8 +25,11 @@ Use-case context:
 
 ### Backend Scope
 
-- Domain/UML model: `[RELEVANT CLASSES, ATTRIBUTES, OPERATIONS, ENUMS, RELATIONSHIPS, AND TYPE DEFINITIONS / N/A]`
-- Backend locations: `[MODULE / CONTROLLER / HANDLER / SERVICE / DOMAIN FILES / N/A]`
+- Domain classes and attributes: `[RELEVANT CLASSES; ATTRIBUTE NAMES, TYPES, AND REQUIRED/OPTIONAL STATUS / N/A]`
+- Domain operations and enums: `[RELEVANT OPERATIONS, SIGNATURES, ENUMS, AND VALUES / N/A]`
+- Domain relationships and types: `[RELEVANT RELATIONSHIPS, CARDINALITIES, AND TYPE DEFINITIONS / N/A]`
+- Backend module and entry point: `[MODULE; CONTROLLER/HANDLER; ROUTE REGISTRATION / N/A]`
+- Backend logic locations: `[SERVICE, DOMAIN, REPOSITORY, AND SUPPORTING FILES / N/A]`
 - Backend Flow steps: `[FLOW IDS AND EXACT STEPS REQUIRING SERVER-SIDE PROCESSING / N/A]`
 
 If no backend API is required, write `N/A` and do not create a placeholder endpoint or backend implementation.
@@ -35,13 +38,47 @@ Repeat this block for each related API in declared order:
 
 ### API: `[API ID]` - `[HTTP METHOD] [API PATH]`
 
-- Access: `[PUBLIC / PROTECTED; AUTHENTICATION, HEADERS, IDENTITY, AND AUTHORIZATION CONTEXT]`
-- Request: `[PATH/QUERY/BODY DTO NAMES AND FIELDS WITH TYPES, REQUIRED/OPTIONAL STATUS, AND SERVER VALIDATION]`
-- Processing: `[ORDERED BACKEND ACTIONS, STATE TRANSITIONS, AND FLOW OUTCOMES]`
-- Database mapping: `[TABLES, COLUMNS, TYPES, KEYS, RELATIONSHIPS, CONSTRAINTS, FILTERS, AND ORDERING / N/A]`
-- Database use: `[REQUIRED EXISTING DATA; AUTHORIZED WRITES; TRANSACTION BOUNDARY / N/A]`
-- Success: `[HTTP STATUS, SOURCE-DEFINED MESSAGE, AND EXACT RESPONSE DTO/DOMAIN PAYLOAD FIELDS/TYPES]`
-- Errors: `[CONDITION -> ERROR TYPE/HTTP STATUS -> SOURCE-DEFINED MESSAGE/PAYLOAD]`
+### Access
+
+- Access level: `[PUBLIC / PROTECTED]`
+- Authentication mechanism: `[AUTHENTICATION MECHANISM / N/A]`
+- Required headers: `[HEADER NAMES, TYPES/FORMATS, AND REQUIRED/OPTIONAL STATUS / N/A]`
+- Identity and authorization context: `[IDENTITY SOURCE, OWNERSHIP/ROLE CHECKS, AND AUTHORIZATION CONDITIONS / N/A]`
+
+### Request
+
+- Path parameters: `[NAME, TYPE, REQUIRED STATUS, AND SERVER VALIDATION / N/A]`
+- Query parameters: `[NAME, TYPE, REQUIRED/OPTIONAL STATUS, DEFAULT, AND SERVER VALIDATION / N/A]`
+- Request body: `[DTO NAME; FIELD NAMES, TYPES, REQUIRED/OPTIONAL STATUS, AND SERVER VALIDATION / N/A]`
+
+### Processing
+
+1. `[ORDERED BACKEND ACTION OR CHECK]`
+2. `[STATE TRANSITION OR PERSISTENCE ACTION]`
+3. `[TERMINAL BACKEND OUTCOME]`
+
+### Database Mapping and Use
+
+- Tables: `[EXACT TABLE NAMES / N/A]`
+- Columns and types: `[TABLE.COLUMN -> DATABASE TYPE AND NULLABILITY / N/A]`
+- Keys and relationships: `[PRIMARY/UNIQUE/FOREIGN KEYS AND RELATIONSHIPS / N/A]`
+- Constraints: `[RELEVANT DATABASE CONSTRAINTS / N/A]`
+- Query filters and ordering: `[FILTERS, JOINS, AND ORDERING / N/A]`
+- Required existing data: `[REQUIRED ROWS/STATE / N/A]`
+- Authorized writes: `[INSERT/UPDATE/DELETE EFFECTS / N/A]`
+- Transaction boundary: `[ATOMIC OPERATIONS AND ROLLBACK CONDITION / N/A]`
+
+### Success Response
+
+- HTTP status: `[SUCCESS STATUS]`
+- Message: `[SOURCE-DEFINED SUCCESS MESSAGE]`
+- Domain payload: `[RESPONSE DTO; EXACT FIELD NAMES, TYPES, AND NULLABILITY]`
+
+### Error Handling
+
+Repeat for every specified server-side error:
+
+- `[CONDITION -> ERROR TYPE/HTTP STATUS -> SOURCE-DEFINED MESSAGE -> ERROR PAYLOAD]`
 
 Wrap the domain payload in `{ "success": true, "message": "[MESSAGE]", "data": [DOMAIN PAYLOAD] }` without changing source-defined fields or message semantics.
 
@@ -55,16 +92,45 @@ Handle relevant transaction, concurrency, idempotency, date/timezone, and data-p
 
 ### UI Scope
 
-- Route, component and source location: `[ROUTE / PARENT VIEW; COMPONENT; FRONTEND FILE / N/A]`
+- Route and parent view: `[ROUTE AND PARENT VIEW / N/A]`
+- Component: `[COMPONENT NAME]`
+- Source location: `[FRONTEND FILE]`
 - Screen coverage: `[FLOW STEP ID -> FIGMA FRAME/NODE OR VISUAL VIEW]`
 
 ### Figma and Visual Specification
 
-- Targets: `[DATASET; FRAME/NODE NAMES AND IDS; CHECKSUM / N/A]`
-- Elements and hierarchy: `[CONTENT, CONTROLS, CONTAINERS, ORDER, AND VISUAL PLACEMENT]`
-- Visual tokens: `[DIMENSIONS, SPACING, TYPOGRAPHY, COLORS, ASSETS, AND ICONS]`
-- Visual variants: `[FIGMA FRAME/NODE AND VISUAL TOKENS FOR DEFAULT, EMPTY, LOADING, ERROR, AND SUCCESS APPEARANCE / N/A]`
-- Responsive behavior: `[BREAKPOINT OR RESIZING BEHAVIOR / N/A]`
+### Design Targets
+
+- Dataset version and checksum: `[DATASET VERSION AND CHECKSUM / N/A]`
+- Frames and nodes: `[EXACT FRAME/NODE NAMES AND IDS / N/A]`
+
+### Elements and Hierarchy
+
+- Visible content: `[EXACT LABELS, HEADINGS, BODY TEXT, VALUES, AND PLACEHOLDERS]`
+- Controls: `[BUTTONS, INPUTS, LINKS, MENUS, ICON CONTROLS, AND THEIR VISIBLE LABELS]`
+- Containers and hierarchy: `[PARENT/CHILD STRUCTURE AND GROUPING]`
+- Order and placement: `[VISUAL ORDER, ALIGNMENT, AND PLACEMENT]`
+
+### Visual Tokens
+
+- Dimensions: `[WIDTHS, HEIGHTS, MIN/MAX SIZES, AND SHAPE/RADIUS VALUES]`
+- Spacing: `[PADDING, MARGINS, GAPS, AND GRID VALUES]`
+- Typography: `[FONT FAMILY, SIZE, WEIGHT, LINE HEIGHT, AND ALIGNMENT]`
+- Colors and effects: `[FOREGROUND/BACKGROUND/BORDER COLORS, SHADOWS, AND OPACITY]`
+- Assets and icons: `[ASSET/ICON IDENTITY, SOURCE, SIZE, AND PLACEMENT / N/A]`
+
+### Visual Variants
+
+- Default: `[FRAME/NODE AND EXACT APPEARANCE]`
+- Empty: `[FRAME/NODE AND EXACT APPEARANCE / N/A]`
+- Loading: `[FRAME/NODE AND EXACT APPEARANCE / N/A]`
+- Error: `[FRAME/NODE AND EXACT APPEARANCE / N/A]`
+- Success: `[FRAME/NODE AND EXACT APPEARANCE / N/A]`
+
+### Responsive Behavior
+
+- Breakpoints: `[BREAKPOINTS / N/A]`
+- Resizing and reflow: `[WIDTH/HEIGHT RULES, WRAPPING, STACKING, AND OVERFLOW / N/A]`
 
 Use the existing styling system and component conventions without adding interaction, validation or error behavior to this prompt.
 
@@ -72,13 +138,41 @@ Use the existing styling system and component conventions without adding interac
 
 ### Objective: Implement successful frontend interaction logic and API integration when applicable.
 
-- Frontend target: `[COMPONENT, SOURCE LOCATION, AND INTERACTION ENTRY POINT]`
-- State approach and model: `[APPROACH; DATA/SESSION FIELD, TYPE, INITIAL VALUE, AND SUCCESSFUL UPDATE]`
-- API integration: `[FUNCTION; API ID; HTTP METHOD; API PATH; EXISTING CLIENT/SERVICE; AUTHENTICATION ATTACHMENT APPROACH / N/A]`
-- Request mapping: `[UI/STATE VALUE -> PATH/QUERY/BODY FIELD / N/A]`
-- Success mapping: `[SUCCESS STATUS AND RESPONSE FIELDS -> STATE/SESSION/NAVIGATION/REFRESH ACTION]`
+- Component: `[COMPONENT NAME]`
+- Source location: `[FRONTEND FILE]`
+- Interaction entry point: `[EVENT HANDLER OR USER TRIGGER]`
 
-Repeat the API integration and mappings for every endpoint invoked by the frontend. If no API call is defined, write `N/A` and implement only the specified local interaction.
+### State Model
+
+- State approach: `[LOCAL STATE / FORM LIBRARY / STORE / EXISTING PROJECT APPROACH]`
+- Data state: `[FIELD, TYPE, INITIAL VALUE, AND SUCCESSFUL UPDATE / N/A]`
+- Session state: `[FIELD, TYPE, INITIAL VALUE, AND SUCCESSFUL UPDATE / N/A]`
+
+### API Integration
+
+Repeat this block for every endpoint invoked by the frontend:
+
+- Function: `[FUNCTION NAME]`
+- API identity: `[API ID / N/A]`
+- Request target: `[HTTP METHOD AND API PATH / N/A]`
+- Client or service: `[EXISTING CLIENT/SERVICE AND SOURCE LOCATION / N/A]`
+- Authentication attachment: `[TOKEN/COOKIE/HEADER ATTACHMENT APPROACH / N/A]`
+
+### Request Mapping
+
+- Path mapping: `[UI/STATE VALUE -> PATH PARAMETER / N/A]`
+- Query mapping: `[UI/STATE VALUE -> QUERY PARAMETER / N/A]`
+- Body mapping: `[UI/STATE VALUE -> REQUEST BODY FIELD / N/A]`
+
+### Success Mapping
+
+- Success status and response fields: `[STATUS; EXACT RESPONSE FIELDS AND TYPES / N/A]`
+- State update: `[STATE CHANGES / N/A]`
+- Session update: `[SESSION CHANGES / N/A]`
+- Navigation: `[DESTINATION AND CONDITION / N/A]`
+- Data refresh: `[REFRESH/INVALIDATION ACTION / N/A]`
+
+If no API call is defined, write `N/A` for the API integration and mappings and implement only the specified local interaction.
 
 ### Successful Interaction Sequence
 
@@ -94,21 +188,37 @@ Preserve API request idempotency where applicable.
 
 ### Objective: Complete client-side validation, loading state, and API error handling.
 
-Refine `[FUNCTION NAME]` in `[COMPONENT NAME]`.
+- Component: `[COMPONENT NAME]`
+- Source location: `[FRONTEND FILE]`
+- Function or handler: `[FUNCTION NAME]`
 
 ### Loading State
 
-- `[LOADING CONDITION -> DISABLED CONTROLS, LOADING VISUAL, AND DUPLICATE-PREVENTION BEHAVIOR]`
+- Loading condition: `[EXACT CONDITION]`
+- Disabled controls: `[CONTROL NAMES / N/A]`
+- Loading visual: `[SPINNER, TEXT, SKELETON, OR OTHER APPEARANCE / N/A]`
+- Duplicate prevention: `[SUBMISSION/REQUEST GUARD BEHAVIOR / N/A]`
 
 ### Client-Side Validation
 
-Implement every specified client validation:
+Repeat for every specified client validation:
 
-- `[FIELD/CONDITION -> EXACT MESSAGE -> DISPLAY LOCATION AND TRIGGER TIME]`
+- Field or input: `[FIELD/INPUT NAME]`
+- Invalid condition: `[EXACT CONDITION]`
+- Message: `[EXACT MESSAGE]`
+- Display location: `[EXACT LOCATION]`
+- Trigger time: `[ON CHANGE / ON BLUR / ON SUBMIT / OTHER]`
 
 ### Error and Recovery Matrix
 
-- `[API/CLIENT/RUNTIME FAILURE CONDITION -> UI MESSAGE -> STATE CHANGE -> RETRY/NAVIGATION/TERMINAL OUTCOME]`
+Repeat for every specified API, client or runtime failure:
+
+- Failure source and condition: `[API/CLIENT/RUNTIME CONDITION AND STATUS / N/A]`
+- UI message: `[EXACT MESSAGE]`
+- Display location: `[EXACT LOCATION]`
+- State change: `[STATE/SESSION CHANGE / N/A]`
+- Recovery: `[RETRY, NAVIGATION, RESET, OR OTHER RECOVERY / N/A]`
+- Terminal outcome: `[EXACT TERMINAL OUTCOME]`
 
 Cover every Alternative and Exception Flow assigned to client-side validation, failed requests, error presentation or recovery, including its exact terminal outcome.
 
@@ -156,8 +266,14 @@ Do not invent missing thresholds, statuses, ownership, schema, enforcement layer
 Use only the implementation context embedded below and the current source under `finalsource/`. Do not reopen the original project inputs.
 
 - Technical stack and versions: `[STACK, FRAMEWORKS, RUNTIMES, AND VERSIONS]`
-- Project rules and architecture: `[PROJECT-WIDE ARCHITECTURE, REUSABLE INFRASTRUCTURE, NAMING, AND STYLE CONVENTIONS]`
-- Relevant manifests and commands: `[MANIFESTS, PACKAGE MANAGER, BUILD, LINT, AND TYPECHECK COMMANDS]`
+- Project architecture: `[PROJECT-WIDE ARCHITECTURE AND MODULE BOUNDARIES]`
+- Reusable infrastructure: `[SHARED CLIENTS, MODULES, COMPONENTS, UTILITIES, AND SERVICES]`
+- Naming conventions: `[FILES, TYPES, VARIABLES, ROUTES, AND DATABASE MAPPINGS]`
+- Style conventions: `[FORMATTING AND IMPLEMENTATION STYLE]`
+- Manifests and package manager: `[MANIFEST FILES, LOCKFILES, AND PACKAGE MANAGER]`
+- Build command: `[BUILD COMMAND]`
+- Lint command: `[LINT COMMAND / N/A]`
+- Typecheck command: `[TYPECHECK COMMAND / N/A]`
 - Immutable technical boundaries: `[CROSS-CUTTING SOURCE AND RUNTIME BOUNDARIES]`
 
 Priority:
