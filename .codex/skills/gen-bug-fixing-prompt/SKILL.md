@@ -18,7 +18,18 @@ The completed prompt content has exactly two input sources:
 
 Read both in full. The handoff must identify one UC/run, pass `scripts/validate_sub_prompts.py --handoff <path> --check-handoff-only`, and have the exact canonical location declared by its own `uc_id` and `run_id`.
 
-Do not read any other file for prompt content. In particular, do not read `finalsource/`, `docs/00-context/`, `docs/01-inception/`, `docs/04-experiments/`, `resource/`, raw evidence or log directories, measurement artifacts, Coding Prompts, other UC/run/model artifacts, Git history or branches, or instructions/templates/resources belonging to another skill. Do not read script source. Active instructions and execute-only helpers control the operation but are not prompt-content inputs.
+Do not read any other file for prompt content. The following operation-specific prohibitions apply:
+
+- do not read any file under `finalsource/` or `docs/01-inception/`;
+- do not read `docs/00-context/FIGMA-LINK-REVIEW.md`, `docs/00-context/engineering/schema.dbml`, or any file under `resource/figma-design-dataset/`;
+- do not read any generated Coding Prompt under `docs/02-construction/coding-prompts/`;
+- do not read any `defects-handoff.json` other than the one exact handoff supplied to this operation;
+- do not read any file under a `flow-accuracy/` directory beneath `docs/02-construction/implementation/`, any file under `docs/03-audit/`, or any `source-input.json` or `source-output.json`;
+- do not read existing prompt contents under the target `repairs/` directory; it is a write target, not an additional input source;
+- do not open the contents of `docs/04-experiments/configurations/*.json`, `docs/04-experiments/<UC-ID>/canonical-run-*.json`, `docs/02-construction/implementation/<UC-ID>/*-baseline.json`, or `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/{run-activation,phase-ledger,workflow-metrics}.{json,md}`; and
+- do not directly connect to, read or query a live database.
+
+Technical documents required by the active operation may constrain execution but must not supply prompt content. Execute-only helpers may inspect exact active-run configuration, handoff, output-directory and telemetry state internally. Use only their exit status and emitted results; a managed path emitted by a helper does not authorize reading that file.
 
 ## Generation
 

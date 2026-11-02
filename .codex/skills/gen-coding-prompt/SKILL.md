@@ -11,14 +11,28 @@ Accept one readable `docs/01-inception/use-cases/uc-*.md` path. Optional `--conf
 
 ## Primary Inputs
 
-During this operation, the agent should read:
+During this operation, the agent should read the following primary inputs. This list is intentionally non-exhaustive: it must not prevent autonomous discovery of other active-run project inputs permitted by the shared constitution. Apply the same discovery boundary regardless of which configured prompt-template sections are present. Derived prompts, assessments, defects, repairs and telemetry are not project inputs.
+
 1. **The single active frozen use case**: The explicit `docs/01-inception/use-cases/uc-*.md` path provided.
 2. **The configured prompt template**: `templates/construction/coding-prompt.template.md`.
 3. **The ordered active API contracts (if applicable)**: Only the exact paths declared in the active UC's `Related API IDs` section after preflight validation. If `Related API IDs` is `None.`, **DO NOT read any file in `docs/01-inception/api-contracts/`**.
 4. **The database baseline schema**: Read `docs/00-context/engineering/schema.dbml` ONCE after preflight PASS.
-5. **The resolved Figma design target**: Only the specific local snapshot JSON/node directory returned by `resolve.py` for the UC's mapped frame/node.
-6. **The current application source**: Inspect relevant entry points under `finalsource/`.
-7. **Additional inputs explicitly required by the prompt template**: The agent may read additional baseline/specification inputs if a section or instruction in `templates/construction/coding-prompt.template.md` explicitly requires them.
+5. **The configured live database**: Read-only inspection is permitted after preflight PASS. Do not insert, update or delete data; execute DDL; run migrations or schema synchronization; or change tables, columns, indexes, constraints, grants or any other database state.
+6. **The resolved Figma design target**: Only the specific local snapshot JSON/node directory returned by `resolve.py` for the UC's mapped frame/node.
+7. **The current application source**: Inspect relevant entry points under `finalsource/`.
+8. **Additional active-run project inputs**: The agent may autonomously inspect additional frozen baseline/specification inputs relevant to completing the configured template without changing product scope.
+
+## Content Boundary
+
+Do not read or use the following as prompt-generation content:
+
+- any pre-existing generated Coding Prompt under `docs/02-construction/coding-prompts/`;
+- any `defects-handoff.json`, any file under a `repairs/` directory, or any file under a `flow-accuracy/` directory beneath `docs/02-construction/implementation/`;
+- any file under `docs/03-audit/`;
+- `docs/00-context/FIGMA-LINK-REVIEW.md` or any Figma dataset content outside the exact target returned by the resolver; or
+- the direct contents of `docs/04-experiments/configurations/*.json`, `docs/04-experiments/<UC-ID>/canonical-run-*.json`, `docs/02-construction/implementation/<UC-ID>/*-baseline.json`, or `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/{run-activation,phase-ledger,workflow-metrics}.{json,md}`.
+
+Execute-only helpers may inspect exact active-run configuration, baseline, mapping, database and telemetry state internally. Use only the paths, identities, checksums, statuses and validation results they emit; do not open the managed files merely because a helper reports their paths.
 
 ## Phase 1: Read-Only Preflight & START (Execute-Only)
 
@@ -63,8 +77,9 @@ Ingest the primary inputs listed above:
    ```
    Read only the local snapshot JSON/node data for the resolved target node(s).
 5. **Read DBML once**: Read `docs/00-context/engineering/schema.dbml` once as technical input for exact table, column, and constraint definitions.
-6. **Identify entry points**: If template placeholders require component or controller placement locations, inspect minimal entry point files in `finalsource/` without reading unrelated feature logic.
-7. **Read additional inputs required by the template**: Ingest any additional baseline or specification input required by a section present in `templates/construction/coding-prompt.template.md`.
+6. **Inspect the configured live database read-only**: Read the active database state needed to understand the prepared input. Do not execute any statement or tool action that mutates data, schema or database configuration.
+7. **Identify entry points**: If template placeholders require component or controller placement locations, inspect minimal entry point files in `finalsource/` without reading unrelated feature logic.
+8. **Discover additional active-run project inputs when useful**: Apply the same autonomous discovery boundary for every configured template variant. Do not use downstream prompt, Audit, defect, Repair or telemetry artifacts as inputs.
 
 ## Phase 3: Author the Coding Prompt Draft
 
