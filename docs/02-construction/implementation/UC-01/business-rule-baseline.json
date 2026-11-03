@@ -3,8 +3,8 @@
   "artifact_type": "business-rule-baseline",
   "status": "Frozen",
   "uc_id": "UC-01",
-  "use_case_path": "docs/01-inception/use-cases/uc-01-review-join-preview-and-permissions.md",
-  "use_case_sha256": "sha256:d326dc8364ff0efcd7dfea73aff2d8b5a30508c40c52950d2137aad429b45fc3",
+  "business_rule_path": "docs/01-inception/business-rules/uc-01-review-join-preview-and-permissions-business-rules.md",
+  "business_rule_sha256": "sha256:86beb2bbb0c937a6a53d68efd0dd5bf2a8a7842253624f57dd92a6f2459415ff",
   "ordered_br_ids": [
     "BR-RJPP-01",
     "BR-RJPP-02",
