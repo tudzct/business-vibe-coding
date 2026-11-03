@@ -53,10 +53,29 @@ def configured_headings():
     return headings
 
 
-def prompt_e_business_rule_ids(body):
-    match = re.search(r"(?ms)^##\s+Prompt\s+E\s*:[^\r\n]*\r?\n(.*?)(?=^##\s+Prompt\s+[A-Z]\s*:|\Z)", body)
-    require(match is not None, "Prompt E section missing")
-    return re.findall(r"(?m)^###\s+Business Rule:\s*`?(BR-[A-Z]+-\d+)`?\s*$", match.group(1))
+def prompt_section(body, section):
+    match = re.search(
+        rf"(?ms)^##\s+Prompt\s+{re.escape(section)}\s*:[^\r\n]*\r?\n(.*?)(?=^##\s+Prompt\s+[A-Z]\s*:|\Z)",
+        body,
+    )
+    require(match is not None, "configured prompt section missing")
+    return match.group(1)
+
+
+def configured_business_rule_section():
+    template = writable(ROOT / "templates/construction/coding-prompt.template.md")
+    _, body, headings = prompt_metadata(template)
+    sections = [section for section in headings
+                if re.search(r"(?m)^###\s+Business Rule:", prompt_section(body, section))]
+    require(len(sections) <= 1, "configured template has ambiguous Business Rule sections")
+    return sections[0] if sections else None
+
+
+def business_rule_ids(body, section):
+    return re.findall(
+        r"(?m)^###\s+Business Rule:\s*`?(BR-[A-Z]+-\d+)`?\s*$",
+        prompt_section(body, section),
+    )
 
 
 def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow_draft=False):
@@ -82,9 +101,10 @@ def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow
         require(meta.get("business_rule_baseline") == uc["business_rule_baseline"], "BR baseline reference mismatch")
     else:
         require("business_rule_baseline" not in meta, "prompt must not expose BR baseline")
-    if "E" in headings:
-        require(prompt_e_business_rule_ids(body) == baseline.get("ordered_br_ids"),
-                "Prompt E Business Rule inventory/order mismatch")
+    business_rule_section = configured_business_rule_section()
+    if business_rule_section is not None:
+        require(business_rule_ids(body, business_rule_section) == baseline.get("ordered_br_ids"),
+                "configured Business Rule inventory/order mismatch")
     reference = {"path": prompt.relative_to(ROOT).as_posix(), "sha256": digest(prompt.read_bytes())}
     if activation is not None:
         receipt = read_json(writable(activation))
