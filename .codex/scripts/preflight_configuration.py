@@ -221,6 +221,7 @@ def preflight(uc_id, configuration=None, run_id=None, run_json=None,
     if stage == "prompt":
         result["api_contracts"] = validated_inputs["api_contracts"]
         result["business_rule_path"] = validated_inputs["business_rule_path"]
+        result["figma_dataset_version"] = data["figma_dataset"]["dataset_version"]
     return result
 
 
