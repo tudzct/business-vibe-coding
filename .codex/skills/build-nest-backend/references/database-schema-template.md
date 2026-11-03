@@ -1,7 +1,7 @@
 # Existing database mapping reference
 
-Follow `docs/00-context/engineering/DATABASE-SCHEMA.md`. The configured DBML is the operator-provided structure. Preserve its exact names and definitions.
+Follow `docs/00-context/engineering/DATABASE-SCHEMA.md` and the owning operation's explicit read boundaries. Use only database structure information supplied by implementation inputs that operation authorizes.
 
-Map required TypeScript properties to existing table/column names, types, null/default behavior, keys and FK actions. Implement compatible behavior in application code. Keep ownership, sensitive-field selection and API exposure explicit.
+Map required TypeScript properties compatibly with the current application source and authorized implementation inputs. Keep ownership, sensitive-field selection and API exposure explicit.
 
-Use `synchronize: false` and application `migrationsRun: false` under the [shared operational constitution](../../../../AGENTS.md#shared-operational-constitution). Report incompatible requirements with the exact table/column/constraint involved.
+Use `synchronize: false` and application `migrationsRun: false` under the [shared operational constitution](../../../../AGENTS.md#shared-operational-constitution). Report incompatible requirements with the most precise available location without opening a source prohibited by the owning operation.

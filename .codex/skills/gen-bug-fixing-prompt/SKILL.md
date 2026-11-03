@@ -1,19 +1,55 @@
 ---
 name: gen-bug-fixing-prompt
-description: Generate one complete bug-fixing sub-prompt for every evidenced open defect in the validated active run without modifying source.
+description: Generate one complete bug-fixing sub-prompt per repairable defect from the Audit defects handoff without modifying source.
 ---
 
 # Generate Bug-fixing Prompts
 
 Apply the [shared operational constitution](../../../AGENTS.md#shared-operational-constitution).
 
-Invoking `$gen-bug-fixing-prompt` authorizes prompt-artifact generation only. Resolve the exact active UC/run with closed source telemetry and a saved accepted initial BR/Flow/defect audit. Consume the canonical run, accepted audit results and checksummed defect evidence as handoff artifacts; do not read the producer skill's instructions or the source-repair skill. Read [sub-prompt.template.md](../../../templates/construction/sub-prompt.template.md) as this operation's private prompt contract. This operation belongs to the existing `repair` measurement bucket; it does not create a separate sub-prompt phase or metric.
+Invoke this skill as `$gen-bug-fixing-prompt <path-to-defects-handoff.json>`. This operation generates prompt artifacts only and belongs to the existing `repair` measurement bucket.
 
-1. Select every canonical open `initial` defect that remains repairable under the accepted researcher verdicts. A `business_rule` defect remains repairable while at least one affected BR is `unmet`; a `flow` defect remains repairable while at least one affected Flow is `incorrect`; a `technical` defect remains repairable while open. Keep canonical order, require a unique defect ID and fingerprint, and create one prompt per root-cause defect rather than one prompt per affected BR or Flow. `not_evaluable` without a canonical defect is not a repair prompt.
-2. Before writing, require the canonical `repairs` array to be empty and refuse ambiguous, missing or non-checksummed evidence. Use repair indexes `1..N` and filenames `repair-<NNN>-<DEFECT-ID>.md` under `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/repairs/`. Do not overwrite an existing non-identical artifact.
-3. Fill every template field and section from the canonical defect, its immutable evidence and the current source revision. Include defect identity/fingerprint/category/trigger, all affected BR/Flow IDs, exact evidence references, a bounded required correction, allowed files, permitted non-test verification and prohibited changes. Do not leave placeholders or invent evidence, requirements or features.
-4. Immediately before the first prompt-artifact write, capture Repair START with `.codex/scripts/capture_timestamp.py --run-json <canonical.json> --phase repair --event start --repair-activity sub_prompt_generation --segment-id <one-unique-segment-id> --source-revision sha256:<actual-64-hex>`. The helper resolves the active rollout and turn internally; never supply or guess either path or ID. Generate the complete set in this one invocation. Run `scripts/validate_sub_prompts.py --run-json <canonical.json> --prompt-dir <repairs-directory> --record-handoff`; require an exact one-to-one match between the accepted repairable initial defects and generated prompt files. This command validates the full set and atomically persists only repository-relative `repair_prompt_directory`, `all_sub_prompt_count`, `repair_round_limit: 10`, `repair_rounds_completed: 0` and `repair_status: not_started`.
-5. Preserve Audit results, `repairs`, authorization, gates and canonical `metrics` value-for-value. Capture Repair END with the same shared helper, segment ID and `repair_activity` immediately after the complete prompt set and handoff metadata are persisted. If generation fails after START, end the segment before responding and preserve the actual failed work.
-6. Report the prompt count and every generated path, then stop. Do not modify `finalsource/` or invoke repair or another top-level operation.
+## Content boundary
 
-Do not create or run tests.
+The completed prompt content has exactly two input sources:
+
+1. the explicitly supplied `defects-handoff.json`;
+2. [sub-prompt.template.md](../../../templates/construction/sub-prompt.template.md).
+
+Read both in full. The handoff must identify one UC/run, pass `scripts/validate_sub_prompts.py --handoff <path> --check-handoff-only`, and have the exact canonical location declared by its own `uc_id` and `run_id`.
+
+Do not read any other file for prompt content. The following operation-specific prohibitions apply:
+
+- do not read any file under `finalsource/` or `docs/01-inception/`;
+- do not read `docs/00-context/FIGMA-LINK-REVIEW.md`, `docs/00-context/engineering/schema.dbml`, or any file under `resource/figma-design-dataset/`;
+- do not read any generated Coding Prompt under `docs/02-construction/coding-prompts/`;
+- do not read any `defects-handoff.json` other than the one exact handoff supplied to this operation;
+- do not read any file under a `flow-accuracy/` directory beneath `docs/02-construction/implementation/`, any file under `docs/03-audit/`, or any `source-input.json` or `source-output.json`;
+- do not read existing prompt contents under the target `repairs/` directory; it is a write target, not an additional input source;
+- do not open the contents of `docs/04-experiments/configurations/*.json`, `docs/04-experiments/<UC-ID>/canonical-run-*.json`, `docs/02-construction/implementation/<UC-ID>/*-baseline.json`, or `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/{run-activation,phase-ledger,workflow-metrics}.{json,md}`; and
+- do not directly connect to, read or query a live database.
+
+Technical documents required by the active operation may constrain execution but must not supply prompt content. Execute-only helpers may inspect exact active-run configuration, handoff, output-directory and telemetry state internally. Use only their exit status and emitted results; a managed path emitted by a helper does not authorize reading that file.
+
+## Generation
+
+1. If the validated handoff has `status: no_repair_required` and `defect_count: 0`, report that no prompt is required and stop. Do not create the repairs directory or capture Repair timing.
+2. Otherwise require `status: ready`, a positive `defect_count`, unique defect IDs/fingerprints and only open handoff defects. Preserve handoff order. Create exactly one file per root-cause defect, even when that defect affects multiple BRs, Flows or Flow steps.
+3. Use repair indexes `1..N` and write only to `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/repairs/repair-<NNN>-<DEFECT-ID>.md`. Do not overwrite an existing non-identical artifact.
+4. Fill every template field from the matching handoff defect. Preserve all identifiers, evidence facts, evidence content, authoritative correction text and supporting definitions exactly. Render every evidence item as its own numbered Markdown subsection. Use a `json` or `text` fence for copied content and write `N/A` when handoff content is `null`. Use an `ocl` fence for OCL correction text and each supporting definition; use a `text` fence for Flow, natural-language or technical correction text. Do not dump the handoff as raw JSON and do not paraphrase authoritative text.
+5. `affected_flow_ids` contains parent Flow IDs. `affected_flow_step_ids` contains exact affected step IDs such as `BF-1.1`, `AF-1.3a` or `EF-1.4a`. Copy both arrays unchanged. Copy `affected_files` unchanged; do not inspect those paths.
+6. Do not add `permitted verification`, implementation strategy, inferred requirements, features, evidence, paths or identifiers. The output directory is a write target, not a third content source.
+
+## Control and measurement
+
+Immediately before the first prompt-artifact write, derive the active Canonical Run path from the validated handoff identity and execute `.codex/scripts/capture_timestamp.py --run-json <derived-canonical-path> --phase repair --event start --repair-activity sub_prompt_generation --segment-id <one-unique-segment-id> --source-revision <handoff-source-revision>`. The helper resolves rollout/turn information internally. Do not supply or guess either value and do not read the helper or Canonical Run.
+
+After the complete set is written:
+
+1. execute `scripts/validate_sub_prompts.py --handoff <path> --prompt-dir <repairs-directory>`;
+2. execute `scripts/record_prompt_handoff.py --handoff <path> --prompt-dir <repairs-directory>` to persist only `repair_prompt_directory`, `all_sub_prompt_count`, per-defect `repair_round_limit: 10`, total `repair_rounds_completed: 0` and `repair_status: not_started`;
+3. capture Repair END with the same shared helper, segment ID and `repair_activity`.
+
+Helpers are execute-only. Use only their exit status and emitted result; do not inspect their source or the files they manage. If generation fails after START, capture END before responding and preserve the actual failed work.
+
+Report the prompt count and every generated path, then stop. Do not modify `finalsource/`, invoke Repair, or invoke another top-level operation. Do not create or run tests.

@@ -2,7 +2,7 @@
 
 Use one measured workflow task/session per UC/run. An independent initial-audit context is outside this selection. All commands are run from the repository. Resolve a real canonical run path; the shared helper resolves the active rollout internally by environment identity and uses the newest rollout only as the one-active-chat fallback. The canonical JSON must exist with `uc_id` and `run_id` before opening prompt metrics; use the configured run identity. This Draft bookkeeping does not activate source generation.
 
-Prepare a private temporary selection JSON; rollout paths are neither supplied nor stored:
+Inspect turns and extract turn IDs by running `scripts/measure_uc_tokens.py list`. Prepare a private temporary selection JSON; rollout paths are neither supplied nor stored:
 
 ```json
 {

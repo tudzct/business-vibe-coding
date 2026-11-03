@@ -3,7 +3,7 @@
 ## Entity and repository
 
 - Register every entity through the existing Nest/TypeORM configuration and give every entity a primary column.
-- Map nullability, uniqueness, precision/scale, length, relation ownership and `onDelete` exactly from the configured DBML. Do not invent or broaden cascades.
+- Map nullability, uniqueness, precision/scale, length, relation ownership and `onDelete` from implementation inputs authorized by the owning operation and the current application source. Do not invent or broaden cascades.
 - Inject the entity repository using established Nest patterns. Use repository/find options or QueryBuilder parameters, never SQL string interpolation.
 - Map DTO fields explicitly. Do not pass untrusted request objects directly into `save`/`update`.
 - Scope owned-resource queries by both resource identifier and authenticated owner identifier where possible.
@@ -21,7 +21,7 @@
 - Preserve supplied database types and numeric precision; report incompatible requirements.
 - Use existing constraints and required application enforcement. Missing necessary structure is an input blocker.
 - Use existing indexes.
-- Keep timestamps/timezone semantics explicit and consistent with the API contract.
+- Keep timestamps/timezone semantics explicit and consistent with the approved implementation inputs.
 
 Official basis:
 

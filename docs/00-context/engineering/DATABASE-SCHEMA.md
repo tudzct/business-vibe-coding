@@ -60,13 +60,7 @@ Replace the example name with the actual change. To generate from reviewed entit
 
 ## Capture and read-only validation
 
-After reviewing DBML and the migrated database, obtain the three database pins as part of the operator-side input calculation:
-
-```text
-<python-executable> experiment-input-helpers/calculate_input_values.py --use-case <frozen-uc.md> --business-rules <frozen-business-rules.md> [--api-contract <frozen-api.md>] --figma-dataset-version <version> --require-empty
-```
-
-Repeat `--api-contract` in the UC's declared order when it references one or more APIs. Omit the option when the required `Related API IDs` section contains exactly `None.`; the helper then returns `api_contracts: []`. This prints the three database configuration fields together with the other objective input values, without writing files or invoking an LLM. `--require-empty` checks application tables only; migration history must contain records. Omit this option between cumulative UCs. The helper never starts containers, runs migrations or resets data. Root `.env` is unused. Copy reviewed pins into a new configuration and pin that configuration in its Canonical Run JSON.
+Database pins are prepared outside active runs through the operator input-preparation workflow. Run-scoped operations consume and validate only the existing prepared pins; they do not run input-preparation helpers. The operator workflow owns the exact preparation command and arguments. Copy the reviewed migration head, DBML checksum and live-schema fingerprint into a new configuration and pin that configuration in its Canonical Run JSON.
 
 Operations that consume the configured database call the existing `preflight_configuration.py` before their owned execution interval. Offline validation checks the three fields, DBML checksum, named migration and disabled application sync/automatic migrations. Runtime validation reads the ordered `typeorm_migrations` history, rejects pending/missing/extra/reordered migrations, compares the configured head and fingerprints the live schema. It checks migration files/history again during inspection. Missing inputs, connection errors or drift block with a concise error and never trigger setup. Read DBML only when authorized by the active operation, without dumping SQL or metadata into unrelated model context.
 

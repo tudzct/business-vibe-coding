@@ -431,22 +431,64 @@ def calculate(path_string):
         data["all_sub_prompt_count"] = len(initial_defects)
     atomic_write(path, data)
     reported_defects = all_defects
+    repair_attempt_counts = {}
+    latest_repair_status = {}
     if repairs:
-        attempts = repairs[-1].get("defect_attempts", []) if isinstance(repairs[-1], dict) else []
-        unresolved_ids = {row.get("defect_id") for row in attempts
-                          if isinstance(row, dict) and row.get("status") == "unresolved"}
         initial_by_id = {row["defect_id"]: row for row in initial_defects}
-        if not unresolved_ids <= set(initial_by_id):
-            raise ValueError("latest Repair round references a defect outside the initial inventory")
+        for repair_index, repair in enumerate(repairs):
+            attempts = repair.get("defect_attempts") if isinstance(repair, dict) else None
+            if not isinstance(attempts, list) or len(attempts) != 1 or not isinstance(attempts[0], dict):
+                raise ValueError(f"repairs[{repair_index}] must contain exactly one defect attempt")
+            attempt = attempts[0]
+            defect_id = attempt.get("defect_id")
+            if defect_id not in initial_by_id:
+                raise ValueError("Repair attempt references a defect outside the initial inventory")
+            expected_index = repair_attempt_counts.get(defect_id, 0) + 1
+            if attempt.get("attempt_index") != expected_index:
+                raise ValueError("Repair attempt indexes must be consecutive per defect")
+            repair_attempt_counts[defect_id] = expected_index
+            if attempt.get("status") in {"resolved", "unresolved"}:
+                latest_repair_status[defect_id] = attempt["status"]
+        unresolved_ids = {row["defect_id"] for row in initial_defects
+                          if latest_repair_status.get(row["defect_id"]) != "resolved"}
         reported_defects = [row for row in initial_defects if row["defect_id"] in unresolved_ids]
     defect_counts = {category: sum(row["category"] == category for row in reported_defects)
                      for category in ("business_rule", "flow", "technical")}
-    print(json.dumps({"run_id": data.get("run_id"), "business_rules": business["final"],
-                      "flow_accuracy": flow_summary,
-                      "defects": {"total": len(reported_defects), "by_category": defect_counts,
-                                  "execution_blocking": sum(row["blocks_execution"]
-                                                            for row in reported_defects)},
-                      "repairs": len(repairs)}, ensure_ascii=False, indent=2))
+    initial_defect_counts = {category: sum(row["category"] == category for row in initial_defects)
+                             for category in ("business_rule", "flow", "technical")}
+    resolved_defect_counts = {category: initial_defect_counts[category] - defect_counts[category]
+                              for category in initial_defect_counts}
+    repair_results = [{
+        "defect_id": row["defect_id"],
+        "attempts": repair_attempt_counts.get(row["defect_id"], 0),
+        "status": latest_repair_status.get(row["defect_id"], "not_attempted"),
+    } for row in initial_defects]
+    initial_flow_summary = {
+        key: initial_assessment.get(key)
+        for key in ("status", "counts", "flow_accuracy_percent", "flow_error_percent")
+    }
+    final_defect_summary = {
+        "total": len(reported_defects), "by_category": defect_counts,
+        "resolved_by_category": resolved_defect_counts,
+        "execution_blocking": sum(row["blocks_execution"] for row in reported_defects),
+    }
+    print(json.dumps({"run_id": data.get("run_id"),
+                      "before_repair": {
+                          "business_rules": business["initial"],
+                          "flow_accuracy": initial_flow_summary,
+                          "defects": {"total": len(initial_defects),
+                                      "by_category": initial_defect_counts,
+                                      "execution_blocking": sum(row["blocks_execution"]
+                                                                for row in initial_defects)},
+                      },
+                      "after_repair": {
+                          "business_rules": business["final"],
+                          "flow_accuracy": flow_summary,
+                          "defects": final_defect_summary,
+                      },
+                      "repair": {"status": data.get("repair_status"),
+                                 "total_attempts": len(repairs),
+                                 "by_defect": repair_results}}, ensure_ascii=False, indent=2))
 
 
 def main(path_string):

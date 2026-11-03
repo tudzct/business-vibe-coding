@@ -42,7 +42,7 @@ def check_pinned_evidence(path, config, checksum):
 
 
 def check_baselines(uc):
-    result, source_raw = {}, None
+    result, source_raw, business_rule_path = {}, None, None
     for field, kind in (("business_rule_baseline", "business-rule-baseline"), ("flow_baseline", "flow-baseline")):
         value = uc.get(field)
         require(isinstance(value, str) and value.strip(), f"missing {field}")
@@ -56,16 +56,20 @@ def check_baselines(uc):
         if field == "business_rule_baseline":
             data = configured_business_rule_baseline(uc, uc["uc_id"])
             epoch(data.get("frozen_at"))
+            business_rule_path = data["business_rule_path"]
         else:
             validate_flow_baseline(data)
             source_raw = writable(ROOT / data["use_case_path"]).read_bytes()
         result[field] = "valid"
     require(source_raw is not None, "flow baseline UC source missing")
+    require(isinstance(business_rule_path, str) and business_rule_path,
+            "business-rule specification path missing")
     contracts = uc.get("api_contracts")
     require(isinstance(contracts, list), "configured API contracts must be an array")
     configured_ids = [entry.get("api_id") for entry in contracts]
     require(configured_ids == frozen_uc_api_ids(source_raw), "configuration/frozen UC API contract order mismatch")
     result["api_contracts"] = contracts
+    result["business_rule_path"] = business_rule_path
     return result
 
 
@@ -148,6 +152,7 @@ def preflight(uc_id, configuration=None, run_id=None, run_json=None,
     require(stage in {"prompt", "activation", "source"}, "invalid preflight stage")
     require(isinstance(uc_id, str) and uc_id and all(c.isalnum() or c in "-_." for c in uc_id)
             and uc_id not in {".", ".."}, "invalid UC ID")
+    uc_id = uc_id.upper()
     canonical_path, canonical = select_canonical(uc_id, run_id, configuration, run_json)
     canonical_checksum = digest(canonical_path.read_bytes())
     if canonical is not None:
@@ -179,7 +184,7 @@ def preflight(uc_id, configuration=None, run_id=None, run_json=None,
         check_reference(canonical.get("experiment_configuration"), path, data, checksum)
     check_pinned_evidence(path, data, checksum)
     uc = data["use_case"]
-    baselines = check_baselines(uc)
+    validated_inputs = check_baselines(uc)
     check_canonical(canonical, data, assignment, uc, stage)
     # Fifth prepared input: ordered migration history/head and DBML/runtime hashes.
     # Never initialize migrations or derive replacement pins from the live DB.
@@ -204,14 +209,19 @@ def preflight(uc_id, configuration=None, run_id=None, run_json=None,
         validate_prompt(path, uc_id, assignment["run_id"], prompt_path, activation=activation)
     require(digest(path.read_bytes()) == checksum, "configuration changed during preflight")
     require(digest(canonical_path.read_bytes()) == canonical_checksum, "Canonical Run JSON changed during preflight")
-    return {"status": "valid", "uc_id": uc_id, "run_id": assignment["run_id"],
+    result = {"status": "valid", "uc_id": uc_id, "run_id": assignment["run_id"],
             "experiment_configuration": {"artifact": path.relative_to(ROOT).as_posix(),
                                          "configuration_id": data["configuration_id"], "checksum": checksum,
                                          "comparison_group_id": data["comparison_group_id"],
                                          "researcher_id": data["researcher_id"],
                                          "run_activation": activation_ref},
             "canonical_run": {"path": canonical_path.relative_to(ROOT).as_posix(), "sha256": canonical_checksum},
-            "stage": stage, "baselines": baselines}
+            "stage": stage}
+    result["prepared_inputs"] = "valid"
+    if stage == "prompt":
+        result["api_contracts"] = validated_inputs["api_contracts"]
+        result["business_rule_path"] = validated_inputs["business_rule_path"]
+    return result
 
 
 def main():

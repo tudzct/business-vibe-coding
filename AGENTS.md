@@ -4,13 +4,23 @@ Work only inside this repository unless the operator explicitly expands scope. O
 
 ## Authoritative project inputs
 
-Files under `docs/01-inception/use-cases/`, `docs/01-inception/business-rules/` and `docs/01-inception/api-contracts/` are frozen, read-only project specifications. `docs/00-context/FIGMA-LINK-REVIEW.md` is the mapping authority for approved Figma capture targets. `docs/00-context/engineering/schema.dbml` and the configured live database describe the database structure available to the active run. The clean source archive is integrity-pinned by `.codex/skills/restore-source-baseline/assets/source-baseline.sha256`.
+Files under `docs/01-inception/` are frozen, read-only project specifications. `docs/00-context/FIGMA-LINK-REVIEW.md` is the mapping authority for approved Figma capture targets. `docs/00-context/engineering/schema.dbml` and the configured live database describe the database structure available to the active run. The clean source archive is integrity-pinned by `.codex/skills/restore-source-baseline/assets/source-baseline.sha256`.
 
 Never alter a frozen input, baseline, configuration or recorded result to make an operation pass. When an authorized project input is ambiguous or conflicts with another pinned input, report the exact location and stop for operator resolution. A changed frozen input requires refreshed dependent checksums and a new compatible run configuration.
 
 ## Shared operational constitution
 
 These rules apply to every skill.
+
+### Required shared technical context
+
+At the start of every repository skill invocation, before executing helpers, inspecting project-content inputs or producing output, read these shared technical documents:
+
+- `docs/00-context/engineering/TECHNICAL-STACK-RULES.md`;
+- `docs/00-context/engineering/DATABASE-SCHEMA.md`;
+- `docs/00-context/workflow/WORKFLOW-CONTRACT.md`.
+
+These documents provide shared technical and operational constraints only. They do not add, replace or alter product requirements; expand the project-content inputs permitted by the active skill; or authorize reading any instruction, template, reference, context document or artifact owned by another skill. Skill-specific context remains private to its owning skill and may be read only when that skill is the explicitly invoked operation or the active skill explicitly authorizes it as a subordinate skill.
 
 Execute a top-level operation only when the operator explicitly invokes that operation in the current turn. The invocation authorizes the active skill and only subordinate skills that its own contract explicitly requires to finish the same operation. It does not authorize any other skill.
 
@@ -45,6 +55,8 @@ When a material ambiguity, contradiction or missing decision appears, do not inv
 Database handling follows `docs/00-context/engineering/DATABASE-SCHEMA.md`. The configured DBML, migration history and database fingerprint are immutable within a run. Authorized operations may perform DML, but never DDL, schema synchronization, migration execution or migration/DBML edits. Database baseline changes require operator setup and a new compatible configuration.
 
 Docker Compose v2 is the supported FE/BE/MySQL runtime. Do not fall back to native host services. Do not reset volumes, execute setup migrations or perform destructive cleanup unless the operator explicitly requests that action outside an active run.
+
+Every Python interpreter invocation must include the `-B` option immediately after the Python executable (for example, `python -B ...` or `py -B ...`). Never execute a repository Python script or module without `-B`; Python bytecode cache artifacts must not be created.
 
 Do not create or run tests or test cases unless the active skill explicitly authorizes them. Permitted non-test checks include deterministic validators, source inspection, typecheck, lint, build, Docker health/reachability and bounded runtime observation when required by the active skill.
 

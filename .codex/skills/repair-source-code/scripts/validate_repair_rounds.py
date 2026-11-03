@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate one fixed prompt set and its bounded canonical Repair rounds."""
+"""Validate one fixed prompt set and its bounded per-defect Repair attempts."""
 
 import argparse
 import hashlib
@@ -46,37 +46,52 @@ def validate_evidence(value, label):
         require(item.get("sha256") == digest(path), f"{label}[{index}] checksum mismatch")
 
 
-def prompt_inventory(run, prompt_dir, defects):
+def prompt_inventory(run, prompt_dir, all_defects):
     files = sorted(prompt_dir.glob("repair-*.md")) if prompt_dir.is_dir() else []
-    require(len(files) == len(defects), "prompt set must match the complete initial defect inventory")
+    require(files, "validated repair prompt set is required")
     result = {}
-    by_id = {item["defect_id"]: item for item in defects}
-    for path in files:
+    selected = []
+    by_id = {item["defect_id"]: item for item in all_defects}
+    for expected_index, path in enumerate(files, 1):
         fields, arrays, sections = parse_prompt(path)
         defect_id = fields["defect_id"]
         require(defect_id in by_id and defect_id not in result, f"{path}: unknown or duplicate defect")
         defect = by_id[defect_id]
+        require(fields["repair_index"] == str(expected_index)
+                and path.name == f"repair-{expected_index:03d}-{defect_id}.md",
+                f"{path}: prompt index or filename mismatch")
         require(fields["uc_id"] == run["uc_id"] and fields["run_id"] == run["run_id"],
                 f"{path}: run identity mismatch")
         require(fields["defect_fingerprint"] == defect["fingerprint"], f"{path}: fingerprint mismatch")
         require(fields["category"] == defect["category"], f"{path}: category mismatch")
         require(fields["trigger"] == defect["trigger"], f"{path}: trigger mismatch")
         require(fields["source_revision"] == defect["source_revision"], f"{path}: source mismatch")
-        require(arrays["affected_br_ids"] == defect["affected_br_ids"], f"{path}: BR mismatch")
-        require(arrays["affected_flow_ids"] == defect["affected_flow_ids"], f"{path}: Flow mismatch")
+        require(fields["blocks_execution"] == str(defect["blocks_execution"]).lower(),
+                f"{path}: execution-blocking flag mismatch")
+        require(all(value in defect["affected_br_ids"] for value in arrays["affected_br_ids"]),
+                f"{path}: affected BR is absent from the immutable defect")
+        require(all(value in defect["affected_flow_ids"] for value in arrays["affected_flow_ids"]),
+                f"{path}: affected Flow is absent from the immutable defect")
         evidence = defect.get("evidence")
-        require(isinstance(evidence, list) and evidence, f"{path}: canonical evidence missing")
+        require(isinstance(evidence, list) and evidence, f"{path}: recorded evidence missing")
         for reference in evidence:
-            require(isinstance(reference, dict), f"{path}: invalid canonical evidence reference")
+            require(isinstance(reference, dict), f"{path}: invalid recorded evidence reference")
             evidence_path = reference.get("path")
             evidence_sha = reference.get("sha256")
             require(isinstance(evidence_path, str) and evidence_path in sections["Evidence"]
                     and isinstance(evidence_sha, str) and evidence_sha in sections["Evidence"],
-                    f"{path}: canonical evidence differs from fixed prompt")
-        result[defect_id] = {"path": path.relative_to(ROOT).as_posix(), "sha256": digest(path)}
-    require(list(result) == [item["defect_id"] for item in defects],
-            "prompt files must retain canonical defect order")
-    return result
+                    f"{path}: recorded evidence differs from fixed prompt")
+        result[defect_id] = {
+            "path": path.relative_to(ROOT).as_posix(),
+            "sha256": digest(path),
+            "affected_br_ids": arrays["affected_br_ids"],
+            "affected_flow_ids": arrays["affected_flow_ids"],
+        }
+        selected.append(defect)
+    require(list(result) == [item["defect_id"] for item in all_defects
+                             if item["defect_id"] in result],
+            "prompt files must retain immutable defect order")
+    return result, selected
 
 
 def validate(run_path, prompt_dir, final=False):
@@ -94,37 +109,44 @@ def validate(run_path, prompt_dir, final=False):
     require(isinstance(all_defects, list)
             and all(isinstance(item, dict) and item.get("stage") == "initial" for item in all_defects),
             "Repair must retain only the immutable initial defect inventory")
-    defects = list(all_defects)
-    require(defects and all(item.get("status") == "open" for item in defects),
-            "immutable open initial defect inventory required")
-    require(all(item.get("category") in CATEGORIES for item in defects),
+    require(all(item.get("category") in CATEGORIES for item in all_defects),
             "initial defect category must be technical, business_rule or flow")
-    require(all(isinstance(item.get("blocks_execution"), bool) for item in defects),
+    require(all(isinstance(item.get("blocks_execution"), bool) for item in all_defects),
             "initial defects require a Boolean blocks_execution flag")
-    require(all(SHA.fullmatch(item.get("fingerprint") or "") for item in defects),
+    require(all(SHA.fullmatch(item.get("fingerprint") or "") for item in all_defects),
             "initial defect fingerprints must be SHA-256 values")
-    defect_ids = [item.get("defect_id") for item in defects]
-    require(len(defect_ids) == len(set(defect_ids)) and all(SAFE_ID.fullmatch(value or "") for value in defect_ids),
+    all_defect_ids = [item.get("defect_id") for item in all_defects]
+    require(len(all_defect_ids) == len(set(all_defect_ids))
+            and all(SAFE_ID.fullmatch(value or "") for value in all_defect_ids),
             "initial defect IDs must be unique and safe")
-    prompts = prompt_inventory(run, prompt_dir, defects)
+    prompts, defects = prompt_inventory(run, prompt_dir, all_defects)
+    require(defects and all(item.get("status") == "open" for item in defects),
+            "every prompted defect must remain open before Repair")
+    defect_ids = [item["defect_id"] for item in defects]
     expected_directory = prompt_dir.relative_to(ROOT).as_posix()
 
     require(run.get("repair_round_limit", 10) == 10, "repair_round_limit must be 10")
     require(run.get("repair_prompt_directory") == expected_directory,
             "canonical repair_prompt_directory mismatch")
     require(run.get("all_sub_prompt_count") == len(defects),
-            "all_sub_prompt_count must match the immutable initial defect inventory")
+            "all_sub_prompt_count must match the fixed repair prompt set")
     repairs = run.get("repairs")
-    require(isinstance(repairs, list) and len(repairs) <= 10, "repairs must contain at most ten rounds")
+    require(isinstance(repairs, list) and len(repairs) <= len(defect_ids) * 10,
+            "repairs may contain at most ten attempts per fixed defect")
 
-    active = list(defect_ids)
     repair_ids = set()
-    completed_rounds = 0
+    completed_attempts = 0
     terminal_outcome = None
     previous_revision_after = None
+    attempt_counts = {defect_id: 0 for defect_id in defect_ids}
+    terminal_results = {}
+    current_position = 0
     for index, repair in enumerate(repairs, 1):
         label = f"repairs[{index - 1}]"
         require(isinstance(repair, dict), f"{label} must be an object")
+        require(current_position < len(defect_ids),
+                f"{label} appears after every fixed defect reached a terminal result")
+        expected_defect_id = defect_ids[current_position]
         repair_id = repair.get("repair_id")
         require(SAFE_ID.fullmatch(repair_id or "") and repair_id not in repair_ids,
                 f"{label}.repair_id must be unique and safe")
@@ -135,70 +157,87 @@ def validate(run_path, prompt_dir, final=False):
                 f"{label}.source_revision_before invalid")
         if previous_revision_after is not None:
             require(repair["source_revision_before"] == previous_revision_after,
-                    f"{label}.source_revision_before must equal the preceding round result")
+                    f"{label}.source_revision_before must equal the preceding attempt result")
         validate_evidence(repair.get("evidence_before"), f"{label}.evidence_before")
         model = repair.get("model")
         require(isinstance(model, dict) and isinstance(model.get("effective_model_id"), str)
                 and model["effective_model_id"], f"{label}.model invalid")
         outcome = repair.get("outcome")
         require(outcome in ROUND_OUTCOMES, f"{label}.outcome invalid")
+        attempts = repair.get("defect_attempts")
+        require(isinstance(attempts, list) and len(attempts) == 1
+                and isinstance(attempts[0], dict),
+                f"{label}.defect_attempts must contain exactly one defect")
+        attempt = attempts[0]
+        attempt_label = f"{label}.defect_attempts[0]"
+        require(attempt.get("defect_id") == expected_defect_id,
+                f"{label} must finish the current defect before advancing")
+        defect = defects[current_position]
+        expected_attempt_index = attempt_counts[expected_defect_id] + 1
+        require(attempt.get("attempt_index") == expected_attempt_index <= 10,
+                f"{attempt_label}.attempt_index must be consecutive and at most ten")
+        require(attempt.get("defect_fingerprint") == defect["fingerprint"],
+                f"{attempt_label} fingerprint changed")
+        require(attempt.get("prompt_path") == prompts[expected_defect_id]["path"]
+                and attempt.get("prompt_sha256") == prompts[expected_defect_id]["sha256"],
+                f"{attempt_label} prompt identity changed")
+        require(repair.get("affected_br_ids") == prompts[expected_defect_id]["affected_br_ids"],
+                f"{label}.affected_br_ids mismatch")
+        require(repair.get("affected_flow_ids") == prompts[expected_defect_id]["affected_flow_ids"],
+                f"{label}.affected_flow_ids mismatch")
+
         if outcome == "in_progress":
-            require(not final and index == len(repairs), "only the current non-final round may be in progress")
+            require(not final and index == len(repairs),
+                    "only the current non-final defect attempt may be in progress")
+            require(attempt.get("status") in (None, "in_progress"),
+                    f"{attempt_label} in-progress status invalid")
             terminal_outcome = outcome
             break
+
         require(SHA.fullmatch(repair.get("source_revision_after") or ""),
                 f"{label}.source_revision_after invalid")
         require(isinstance(repair.get("changed_files"), list)
                 and all(isinstance(value, str) and value for value in repair["changed_files"]),
                 f"{label}.changed_files invalid")
         validate_evidence(repair.get("evidence_after"), f"{label}.evidence_after")
-        attempts = repair.get("defect_attempts")
-        require(isinstance(attempts, list), f"{label}.defect_attempts must be an array")
-        attempt_ids = [item.get("defect_id") for item in attempts if isinstance(item, dict)]
-        require(attempt_ids == active, f"{label} must verify every currently unresolved fixed defect in order")
-        unresolved = []
-        for attempt_index, attempt in enumerate(attempts):
-            attempt_label = f"{label}.defect_attempts[{attempt_index}]"
-            defect_id = attempt["defect_id"]
-            defect = defects[defect_ids.index(defect_id)]
-            require(attempt.get("defect_fingerprint") == defect["fingerprint"],
-                    f"{attempt_label} fingerprint changed")
-            require(attempt.get("prompt_path") == prompts[defect_id]["path"]
-                    and attempt.get("prompt_sha256") == prompts[defect_id]["sha256"],
-                    f"{attempt_label} prompt identity changed")
-            require(attempt.get("status") in ATTEMPT_STATUSES, f"{attempt_label}.status invalid")
-            validate_evidence(attempt.get("evidence"), f"{attempt_label}.evidence")
-            if attempt["status"] == "unresolved":
-                unresolved.append(defect_id)
-        require((not unresolved and outcome == "resolved")
-                or (unresolved and outcome in {"unresolved", "blocked"}),
-                f"{label} outcome differs from defect results")
-        expected_br = [value for item in attempts
-                       for value in defects[defect_ids.index(item["defect_id"])]["affected_br_ids"]]
-        expected_flow = [value for item in attempts
-                         for value in defects[defect_ids.index(item["defect_id"])]["affected_flow_ids"]]
-        require(repair.get("affected_br_ids") == list(dict.fromkeys(expected_br)),
-                f"{label}.affected_br_ids mismatch")
-        require(repair.get("affected_flow_ids") == list(dict.fromkeys(expected_flow)),
-                f"{label}.affected_flow_ids mismatch")
-        completed_rounds += 1
-        active = unresolved
+        require(attempt.get("status") in ATTEMPT_STATUSES, f"{attempt_label}.status invalid")
+        validate_evidence(attempt.get("evidence"), f"{attempt_label}.evidence")
+        require((attempt["status"] == "resolved" and outcome == "resolved")
+                or (attempt["status"] == "unresolved" and outcome in {"unresolved", "blocked"}),
+                f"{label} outcome differs from its defect result")
+
+        completed_attempts += 1
+        attempt_counts[expected_defect_id] = expected_attempt_index
         terminal_outcome = outcome
         previous_revision_after = repair["source_revision_after"]
-        if outcome in {"resolved", "blocked"}:
-            require(index == len(repairs), f"{label} terminal outcome must be the last round")
+        if outcome == "blocked":
+            require(index == len(repairs), f"{label} blocked outcome must be the last attempt")
+            break
+        if attempt["status"] == "resolved":
+            terminal_results[expected_defect_id] = "resolved"
+            current_position += 1
+        elif expected_attempt_index == 10:
+            terminal_results[expected_defect_id] = "unresolved"
+            current_position += 1
 
-    require(run.get("repair_rounds_completed") == completed_rounds,
+    require(run.get("repair_rounds_completed") == completed_attempts,
             "repair_rounds_completed mismatch")
     status = run.get("repair_status")
     if not repairs:
-        require(status == "not_started" and completed_rounds == 0,
-                "an unstarted Repair requires not_started status and zero completed rounds")
+        require(status == "not_started" and completed_attempts == 0,
+                "an unstarted Repair requires not_started status and zero completed attempts")
     elif terminal_outcome == "in_progress":
-        require(status == "in_progress", "an active round requires in_progress Repair status")
+        require(status == "in_progress", "an active attempt requires in_progress Repair status")
     if final:
-        require(repairs and terminal_outcome != "in_progress", "final Repair cannot retain an in-progress round")
-        if not active:
+        require(repairs and terminal_outcome != "in_progress", "final Repair cannot retain an in-progress attempt")
+        if terminal_outcome == "blocked":
+            require(status == "blocked" and run.get("run_status") == "blocked",
+                    "blocked Repair needs blocked terminal status")
+        else:
+            require(current_position == len(defect_ids),
+                    "final Repair must process every fixed defect sequentially")
+        if terminal_outcome != "blocked" and all(
+                terminal_results.get(defect_id) == "resolved" for defect_id in defect_ids):
             require(status == "completed" and run.get("run_status") == "complete",
                     "resolved Repair needs completed/complete status")
             business = (run.get("business_rules") or {}).get("final") or {}
@@ -207,15 +246,15 @@ def validate(run_path, prompt_dir, final=False):
                     "completed Repair requires every BR met")
             require(run.get("flow_accuracy_percent") == 100,
                     "completed Repair requires 100% Flow Accuracy")
-        elif terminal_outcome == "blocked":
-            require(status == "blocked" and run.get("run_status") == "blocked",
-                    "blocked Repair needs blocked terminal status")
-        else:
-            require(len(repairs) == 10 and status == "unresolved" and run.get("run_status") == "stopped",
-                    "unresolved Repair must exhaust ten rounds and stop")
+        elif terminal_outcome != "blocked":
+            require(status == "unresolved" and run.get("run_status") == "stopped",
+                    "a fully processed Repair with unresolved defects must stop honestly")
+    unresolved_ids = [defect_id for defect_id in defect_ids
+                      if terminal_results.get(defect_id) != "resolved"]
     return {"run_id": run["run_id"], "prompt_count": len(prompts),
-            "rounds_completed": completed_rounds, "repair_status": status,
-            "unresolved_defect_ids": active}
+            "attempts_completed": completed_attempts, "repair_status": status,
+            "attempts_by_defect": attempt_counts,
+            "unresolved_defect_ids": unresolved_ids}
 
 
 def main():
