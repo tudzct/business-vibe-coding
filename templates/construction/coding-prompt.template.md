@@ -8,17 +8,6 @@ generated_at: <ISO-8601 timestamp>
 
 # <UC-ID> Coding Prompt - <Use case name>
 
-Complete every placeholder with concrete information from the active project inputs. Use `N/A` only when an input explicitly establishes that the item is not applicable; do not invent a missing API, screen, database structure, behavior, message, or constraint.
-
-The completed Coding Prompt must contain the implementation details needed without reopening the original project inputs. Cover every Basic/Main, Alternative and Exception Flow and terminal outcome once in its responsible prompt without changing scope.
-
-Use-case context:
-
-- Actors and roles: `[ACTORS, ROLES, AND RELEVANT PERMISSIONS]`
-- Preconditions: `[PRECONDITIONS / N/A]`
-- Postconditions: `[SUCCESS AND FAILURE POSTCONDITIONS / N/A]`
-- Flow inventory: `[ORDERED BASIC/MAIN, ALTERNATIVE, AND EXCEPTION FLOW IDS WITH TERMINAL OUTCOMES]`
-
 ## Prompt A: Backend API
 
 ### Objective: Build the API endpoint, logic, validation, and server-side error handling.

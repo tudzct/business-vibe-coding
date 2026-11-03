@@ -91,6 +91,8 @@ Ingest the primary inputs listed above:
 4. Populate every value only with facts directly supported by the validated inputs. Leave no placeholder unresolved. Use `N/A` only when an input explicitly establishes that the item is not applicable. If a required value is missing or ambiguous, report the input gap; never fabricate, assume, generalize or fill it from generic knowledge.
 5. Do not fill a placeholder with only a path, identifier or instruction for a later phase to reopen an original input. The completed value must contain the information requested by that placeholder.
 6. Preserve the configured template's structure, section order and declared responsibilities. Distribute use-case behaviors without altering frozen scope, moving content into a section with a different responsibility or unnecessarily duplicating content across sections.
+7. Treat the template strictly as the output shape. The generated artifact must contain only its frontmatter, UC title and configured Prompt sections. Do not copy these generation instructions into the artifact, add a generation preamble, or create a separate global use-case-context section outside the configured Prompt sections.
+8. Place every implementation-relevant actor, precondition, postcondition, Flow step and terminal outcome into the placeholder of the configured Prompt section responsible for that behavior.
 
 ## Phase 4: Save Draft, END Timing & Post-Validation (Execute-Only)
 
