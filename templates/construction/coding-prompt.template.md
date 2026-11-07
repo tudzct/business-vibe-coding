@@ -8,11 +8,22 @@ generated_at: <ISO-8601 timestamp>
 
 # <UC-ID> Coding Prompt - <Use case name>
 
-Complete every placeholder with concrete information from the active project inputs. Use `N/A` only when an input explicitly establishes that the item is not applicable; do not invent a missing API, screen, database structure, behavior, message, or constraint.
+## Authoring and Synthesis Instructions (From the 8 Authorized Inputs)
 
-The completed Coding Prompt must contain the implementation details needed without reopening the original project inputs. Cover every Basic/Main, Alternative and Exception Flow and terminal outcome once in its responsible prompt without changing scope.
+1. **Exclusive Input Sources**: Populate this template using **only** facts directly supported by the 8 authorized inputs:
+   - `(1)` This template (`templates/construction/coding-prompt.template.md`);
+   - `(2)` The active frozen Use Case (`docs/01-inception/use-cases/uc-*.md`);
+   - `(3)` The active frozen Business Rule specification (`business_rule_path`);
+   - `(4)` The ordered API contracts declared in the Use Case's `Related API IDs` (`docs/01-inception/api-contracts/*.md`, or none if `Related API IDs` is `None.`);
+   - `(5)` The database schema (`docs/00-context/engineering/schema.dbml`);
+   - `(6)` The configured live database (inspected read-only);
+   - `(7)` The resolved Figma snapshot JSON/node data for the active Use Case;
+   - `(8)` The cumulative current application source under `finalsource/`.
+2. **Self-Contained Implementation Handoff**: Treat the completed Coding Prompt as a self-contained implementation specification. Inline the concrete details requested by every placeholder directly into its responsible section so downstream implementation never reopens the original project inputs. Never fill a placeholder with only a file path, identifier, or instruction to reopen an input later. Do not copy unrelated source content merely because it is available.
+3. **Completeness, `N/A` Policy, and Input Gaps**: Leave no placeholder unresolved (`<...>` or `[...]`). Set frontmatter `status: Draft` when generating the draft. Use `N/A` only when the validated inputs explicitly establish that the item is not applicable. If a required value is missing, contradictory, or ambiguous across inputs, stop and report the exact input gap; never fabricate, assume, or generalize a missing API, screen, database structure, threshold, status, message, or constraint.
+4. **Section Structure and Flow Distribution**: Preserve the exact heading order (`## Prompt A` through `## Prompt F`) and each section's responsibility boundary without unnecessary duplication across sections. Distribute Use Case behaviors so every Basic/Main, Alternative, and Exception Flow and its terminal outcome is covered in its responsible prompt section without altering frozen scope.
 
-Use-case context:
+Use-case context (extract from Input `(2)` active Use Case `uc-*.md`):
 
 - Actors and roles: `[ACTORS, ROLES, AND RELEVANT PERMISSIONS]`
 - Preconditions: `[PRECONDITIONS / N/A]`
@@ -23,6 +34,8 @@ Use-case context:
 
 ### Objective: Build the API endpoint, logic, validation, and server-side error handling.
 
+Synthesize from Input `(2)` Use Case (UML domain model and server-side Flow steps), Input `(4)` ordered API contracts, Input `(5)` `schema.dbml`, Input `(6)` read-only live database, and Input `(8)` `finalsource/be`.
+
 ### Backend Scope
 
 - Domain classes and attributes: `[RELEVANT CLASSES; ATTRIBUTE NAMES, TYPES, AND REQUIRED/OPTIONAL STATUS / N/A]`
@@ -32,9 +45,9 @@ Use-case context:
 - Backend logic locations: `[SERVICE, DOMAIN, REPOSITORY, AND SUPPORTING FILES / N/A]`
 - Backend Flow steps: `[FLOW IDS AND EXACT STEPS REQUIRING SERVER-SIDE PROCESSING / N/A]`
 
-If no backend API is required, write `N/A` and do not create a placeholder endpoint or backend implementation.
+If `Related API IDs` is `None.` and no backend API is required, write `N/A` and do not create a placeholder endpoint or backend implementation.
 
-Repeat this block for each related API in declared order:
+Repeat this block for each related API in the exact order declared in `Related API IDs`:
 
 ### API: `[API ID]` - `[HTTP METHOD] [API PATH]`
 
@@ -59,6 +72,8 @@ Repeat this block for each related API in declared order:
 
 ### Database Mapping and Use
 
+Verify every table, column, type, key, and constraint against Input `(5)` `docs/00-context/engineering/schema.dbml` and Input `(6)` live database:
+
 - Tables: `[EXACT TABLE NAMES / N/A]`
 - Columns and types: `[TABLE.COLUMN -> DATABASE TYPE AND NULLABILITY / N/A]`
 - Keys and relationships: `[PRIMARY/UNIQUE/FOREIGN KEYS AND RELATIONSHIPS / N/A]`
@@ -80,15 +95,17 @@ Repeat for every specified server-side error:
 
 - `[CONDITION -> ERROR TYPE/HTTP STATUS -> SOURCE-DEFINED MESSAGE -> ERROR PAYLOAD]`
 
-Wrap the domain payload in `{ "success": true, "message": "[MESSAGE]", "data": [DOMAIN PAYLOAD] }` without changing source-defined fields or message semantics.
+Transport envelope normalization (must not alter source-defined field names or message semantics):
+- Wrap raw UC/API success fields in `{ "success": true, "message": "[MESSAGE]", "data": [DOMAIN PAYLOAD] }`.
+- Format UC/API error status and message as `{ "success": false, "statusCode": [STATUS], "message": "[MESSAGE]", "timestamp": "[ISO-8601]", "path": "[API PATH]" }`.
 
-Preserve the source status and message through `{ "success": false, "statusCode": [STATUS], "message": "[MESSAGE]", "timestamp": "[ISO-8601]", "path": "[API PATH]" }`.
-
-Handle relevant transaction, concurrency, idempotency, date/timezone, and data-precision behavior. Map entities/queries to existing tables and exact column/key definitions. Allow authorized DML only; never change schema/DBML/migration files, generate/run migrations or enable synchronization. Missing required structure is an input blocker.
+Handle relevant transaction, concurrency, idempotency, date/timezone, and data-precision behavior. Map entities/queries strictly to existing tables and exact column/key definitions. Allow authorized DML only; never change schema/DBML/migration files, generate/run migrations or enable synchronization (`synchronize: false`, `migrationsRun: false`). Missing required database structure is an input blocker.
 
 ## Prompt B: Frontend UI
 
 ### Objective: Build the user interface according to the Figma design.
+
+Synthesize from Input `(2)` Use Case screen flows, Input `(7)` resolved Figma snapshot JSON/node data, and Input `(8)` `finalsource/fe`. Keep this section strictly visual and structural.
 
 ### UI Scope
 
@@ -132,11 +149,13 @@ Handle relevant transaction, concurrency, idempotency, date/timezone, and data-p
 - Breakpoints: `[BREAKPOINTS / N/A]`
 - Resizing and reflow: `[WIDTH/HEIGHT RULES, WRAPPING, STACKING, AND OVERFLOW / N/A]`
 
-Use the existing styling system and component conventions without adding interaction, validation or error behavior to this prompt.
+Use the existing styling system and component conventions in `finalsource/fe` without adding interaction, validation or error behavior to this prompt.
 
 ## Prompt C: Frontend Logic and API Integration
 
 ### Objective: Implement successful frontend interaction logic and API integration when applicable.
+
+Synthesize from Input `(2)` Use Case (Basic/Main Flow and successful Alternative Flows), Input `(4)` ordered API contracts, and Input `(8)` `finalsource/fe`.
 
 - Component: `[COMPONENT NAME]`
 - Source location: `[FRONTEND FILE]`
@@ -188,6 +207,8 @@ Preserve API request idempotency where applicable.
 
 ### Objective: Complete client-side validation, loading state, and API error handling.
 
+Synthesize from Input `(2)` Use Case (Alternative and Exception Flows), Input `(3)` Business Rules enforced on the client, Input `(4)` API error responses, and Input `(8)` `finalsource/fe`.
+
 - Component: `[COMPONENT NAME]`
 - Source location: `[FRONTEND FILE]`
 - Function or handler: `[FUNCTION NAME]`
@@ -230,13 +251,15 @@ Do not call the API when client-side validation fails.
 
 ### Objective: Implement the complete frozen Business Rule set for this use case without changing its meaning.
 
+Synthesize from Input `(3)` active frozen Business Rule specification (`business_rule_path`), cross-referenced with Input `(2)` Use Case, Input `(4)` API contracts, Input `(5)` `schema.dbml`, and Input `(8)` `finalsource/` for enforcement layer and traceability.
+
 ### OCL Utility Definitions
 
 ~~~text
 [VERBATIM OCL UTILITY DEFINITIONS, OR None]
 ~~~
 
-Repeat the following block for every Business Rule in frozen order. One implementation control may enforce multiple rules when appropriate.
+Repeat the following block for every Business Rule in its exact frozen order from `business_rule_path`. One implementation control may enforce multiple rules when appropriate.
 
 ### Business Rule: `[BR-ID]`
 
@@ -263,7 +286,7 @@ Do not invent missing thresholds, statuses, ownership, schema, enforcement layer
 
 ### Objective: Apply the technical implementation context without changing the functional scope.
 
-Use only the implementation context embedded below and the current source under `finalsource/`. Do not reopen the original project inputs.
+Synthesize from Input `(8)` `finalsource/` (manifests, lockfiles, configs, shared modules, and scripts) and Input `(5)` `schema.dbml`. Use only the implementation context embedded below and the current source under `finalsource/`. Do not reopen the original project inputs.
 
 - Technical stack and versions: `[STACK, FRAMEWORKS, RUNTIMES, AND VERSIONS]`
 - Project architecture: `[PROJECT-WIDE ARCHITECTURE AND MODULE BOUNDARIES]`

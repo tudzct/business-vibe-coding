@@ -67,30 +67,25 @@ Capture live prompt START immediately:
 ```
 The helper resolves the active rollout and turn internally; never supply or guess either path or ID.
 
-## Phase 2: Ingest Exclusive Project Inputs
+## Phase 2: Read Authorized Inputs
 
-Ingest the primary inputs listed above:
-1. **Read `templates/construction/coding-prompt.template.md`**: Understand required prompt sections and structure.
-2. **Read the active `docs/01-inception/use-cases/uc-*.md`**: Extract functional specifications, flows, actors, preconditions, postconditions, and UML model.
-3. **Read the active business-rule specification**: Read only the exact `business_rule_path` returned by preflight.
-4. **Read active API contracts**: If `Related API IDs` is non-empty, read only the specified contract paths under `docs/01-inception/api-contracts/`. If `None.`, skip this step completely.
-5. **Resolve Figma evidence**: Execute `resolve.py` in read-only mode:
+Read only the 8 primary inputs listed in [Primary Inputs](#primary-inputs):
+
+1. `templates/construction/coding-prompt.template.md`
+2. The active `docs/01-inception/use-cases/uc-*.md`
+3. The exact `business_rule_path` returned by preflight
+4. The exact API contract paths under `docs/01-inception/api-contracts/` declared in `Related API IDs` (skip if `None.`)
+5. `docs/00-context/engineering/schema.dbml` (read once)
+6. The configured live database (read-only inspection; never mutate data, schema or configuration)
+7. The local Figma snapshot JSON/node data returned by executing `resolve.py` in read-only mode:
    ```text
    <python-executable> .codex/skills/resolve-figma-design-dataset/scripts/resolve.py <UC-ID-or-path> --dataset-version <version>
    ```
-   Read only the local snapshot JSON/node data for the resolved target node(s).
-6. **Read DBML once**: Read `docs/00-context/engineering/schema.dbml` once as technical input for exact table, column, and constraint definitions.
-7. **Inspect the configured live database read-only**: Read the active database state needed to understand the prepared input. Do not execute any statement or tool action that mutates data, schema or database configuration.
-8. **Read the entire current application source**: Inspect the cumulative source under `finalsource/`, including implementation added by earlier UCs. Do not mutate source during prompt generation.
+8. The cumulative application source under `finalsource/` (read-only)
 
 ## Phase 3: Author the Coding Prompt Draft
 
-1. Reason over the inputs collected in Phase 2.
-2. Author the complete coding prompt draft by populating `templates/construction/coding-prompt.template.md`.
-3. Treat the completed Coding Prompt as a self-contained implementation handoff. For every template placeholder, inline the concrete information that placeholder requests from the applicable validated inputs into the section responsible for it. Do not copy unrelated source content merely because it is available.
-4. Populate every value only with facts directly supported by the validated inputs. Leave no placeholder unresolved. Use `N/A` only when an input explicitly establishes that the item is not applicable. If a required value is missing or ambiguous, report the input gap; never fabricate, assume, generalize or fill it from generic knowledge.
-5. Do not fill a placeholder with only a path, identifier or instruction for a later phase to reopen an original input. The completed value must contain the information requested by that placeholder.
-6. Preserve the configured template's structure, section order and declared responsibilities. Distribute use-case behaviors without altering frozen scope, moving content into a section with a different responsibility or unnecessarily duplicating content across sections.
+Follow the authoring, synthesis, section-mapping, and placeholder completion instructions defined inside `templates/construction/coding-prompt.template.md` to produce the complete Coding Prompt draft from the 8 inputs read in Phase 2.
 
 ## Phase 4: Save Draft, END Timing & Post-Validation (Execute-Only)
 
