@@ -10,18 +10,10 @@ generated_at: <ISO-8601 timestamp>
 
 ## Authoring and Synthesis Instructions (From the 8 Authorized Inputs)
 
-1. **Exclusive Input Sources**: Populate this template using **only** facts directly supported by the 8 authorized inputs:
-   - `(1)` This template (`templates/construction/coding-prompt.template.md`);
-   - `(2)` The active frozen Use Case (`docs/01-inception/use-cases/uc-*.md`);
-   - `(3)` The active frozen Business Rule specification (`business_rule_path`);
-   - `(4)` The ordered API contracts declared in the Use Case's `Related API IDs` (`docs/01-inception/api-contracts/*.md`, or none if `Related API IDs` is `None.`);
-   - `(5)` The database schema (`docs/00-context/engineering/schema.dbml`);
-   - `(6)` The configured live database (inspected read-only);
-   - `(7)` The resolved Figma snapshot JSON/node data for the active Use Case;
-   - `(8)` The cumulative current application source under `finalsource/`.
-2. **Self-Contained Implementation Handoff**: Treat the completed Coding Prompt as a self-contained implementation specification. Inline the concrete details requested by every placeholder directly into its responsible section so downstream implementation never reopens the original project inputs. Never fill a placeholder with only a file path, identifier, or instruction to reopen an input later. Do not copy unrelated source content merely because it is available.
-3. **Completeness, `N/A` Policy, and Input Gaps**: Leave no placeholder unresolved (`<...>` or `[...]`). Set frontmatter `status: Draft` when generating the draft. Use `N/A` only when the validated inputs explicitly establish that the item is not applicable. If a required value is missing, contradictory, or ambiguous across inputs, stop and report the exact input gap; never fabricate, assume, or generalize a missing API, screen, database structure, threshold, status, message, or constraint.
-4. **Section Structure and Flow Distribution**: Preserve the exact heading order (`## Prompt A` through `## Prompt F`) and each section's responsibility boundary without unnecessary duplication across sections. Distribute Use Case behaviors so every Basic/Main, Alternative, and Exception Flow and its terminal outcome is covered in its responsible prompt section without altering frozen scope.
+
+1. **Self-Contained Implementation Handoff**: Treat the completed Coding Prompt as a self-contained implementation specification. Inline the concrete details requested by every placeholder directly into its responsible section so downstream implementation never reopens the original project inputs. Never fill a placeholder with only a file path, identifier, or instruction to reopen an input later. Do not copy unrelated source content merely because it is available.
+2. **Completeness, `N/A` Policy, and Input Gaps**: Leave no placeholder unresolved (`<...>` or `[...]`). Set frontmatter `status: Draft` when generating the draft. Use `N/A` only when the validated inputs explicitly establish that the item is not applicable. If a required value is missing, contradictory, or ambiguous across inputs, stop and report the exact input gap; never fabricate, assume, or generalize a missing API, screen, database structure, threshold, status, message, or constraint.
+3. **Section Structure and Flow Distribution**: Preserve the exact heading order and each section's responsibility boundary without unnecessary duplication across sections. Distribute Use Case behaviors so every Basic/Main, Alternative, and Exception Flow and its terminal outcome is covered in its responsible prompt section without altering frozen scope.
 
 Use-case context (extract from Input `(2)` active Use Case `uc-*.md`):
 
@@ -34,7 +26,7 @@ Use-case context (extract from Input `(2)` active Use Case `uc-*.md`):
 
 ### Objective: Build the API endpoint, logic, validation, and server-side error handling.
 
-Synthesize from Input `(2)` Use Case (UML domain model and server-side Flow steps), Input `(4)` ordered API contracts, Input `(5)` `schema.dbml`, Input `(6)` read-only live database, and Input `(8)` `finalsource/be`.
+Synthesize from Input `(2)` Use Case (server-side Flow steps), Input `(4)` ordered API contracts, Input `(5)` `schema.dbml`, Input `(6)` read-only live database, and Input `(8)` `finalsource/be`. Populate Prompt A using strictly and only these authorized inputs; do not import, infer, or invent information from any other source.
 
 ### Backend Scope
 
@@ -105,7 +97,7 @@ Handle relevant transaction, concurrency, idempotency, date/timezone, and data-p
 
 ### Objective: Build the user interface according to the Figma design.
 
-Synthesize from Input `(2)` Use Case screen flows, Input `(7)` resolved Figma snapshot JSON/node data, and Input `(8)` `finalsource/fe`. Keep this section strictly visual and structural.
+Synthesize from Input `(2)` Use Case screen flows, Input `(7)` resolved Figma snapshot JSON/node data, and Input `(8)` `finalsource/fe`. Keep this section strictly visual and structural. Populate Prompt B using strictly and only these authorized inputs; do not import, infer, or invent information from any other source.
 
 ### UI Scope
 
@@ -155,7 +147,7 @@ Use the existing styling system and component conventions in `finalsource/fe` wi
 
 ### Objective: Implement successful frontend interaction logic and API integration when applicable.
 
-Synthesize from Input `(2)` Use Case (Basic/Main Flow and successful Alternative Flows), Input `(4)` ordered API contracts, and Input `(8)` `finalsource/fe`.
+Synthesize from Input `(2)` Use Case (Basic/Main Flow and successful Alternative Flows), Input `(4)` ordered API contracts, and Input `(8)` `finalsource/fe`. Populate Prompt C using strictly and only these authorized inputs; do not import, infer, or invent information from any other source.
 
 - Component: `[COMPONENT NAME]`
 - Source location: `[FRONTEND FILE]`
@@ -207,7 +199,7 @@ Preserve API request idempotency where applicable.
 
 ### Objective: Complete client-side validation, loading state, and API error handling.
 
-Synthesize from Input `(2)` Use Case (Alternative and Exception Flows), Input `(3)` Business Rules enforced on the client, Input `(4)` API error responses, and Input `(8)` `finalsource/fe`.
+Synthesize from Input `(2)` Use Case (Alternative and Exception Flows), Input `(4)` API error responses, and Input `(8)` `finalsource/fe`. Populate Prompt D using strictly and only these authorized inputs; do not import, infer, or invent information from any other source.
 
 - Component: `[COMPONENT NAME]`
 - Source location: `[FRONTEND FILE]`
