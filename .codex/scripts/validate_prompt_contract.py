@@ -84,7 +84,12 @@ def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow
     assignments = [r for r in config["runs"] if r.get("uc_id") == uc_id and r.get("run_id") == run_id]
     require(len(assignments) == 1, "prompt needs unique configured UC/run")
     meta, body, headings = prompt_metadata(prompt)
-    require(meta.get("artifact_type") == "coding-prompt" and meta.get("uc_id") == uc_id, "prompt UC/type mismatch")
+    template = writable(ROOT / "templates/construction/coding-prompt.template.md")
+    template_meta, _, _ = prompt_metadata(template)
+    require(set(meta) == set(template_meta),
+            "prompt metadata fields must match configured template exactly")
+    require(meta.get("artifact_type") == "business-coding-prompt"
+            and meta.get("uc_id") == uc_id, "prompt UC/type mismatch")
     require(meta.get("status") in ({"Draft", "Approved"} if allow_draft else {"Approved"}), "prompt approval status mismatch")
     require(headings == configured_headings(), "prompt sections must match configured template exactly")
     require(prompt.name.endswith("-coding-prompt.md"), "prompt filename mismatch")
@@ -95,12 +100,6 @@ def validate_prompt(configuration, uc_id, run_id, prompt, activation=None, allow
     flow_baseline = read_json(writable(ROOT / uc["flow_baseline"]))
     require(flow_baseline.get("status") == "Frozen" and flow_baseline.get("uc_id") == uc_id,
             "flow baseline identity mismatch")
-    template = writable(ROOT / "templates/construction/coding-prompt.template.md")
-    template_meta, _, _ = prompt_metadata(template)
-    if "business_rule_baseline" in template_meta:
-        require(meta.get("business_rule_baseline") == uc["business_rule_baseline"], "BR baseline reference mismatch")
-    else:
-        require("business_rule_baseline" not in meta, "prompt must not expose BR baseline")
     business_rule_section = configured_business_rule_section()
     if business_rule_section is not None:
         require(business_rule_ids(body, business_rule_section) == baseline.get("ordered_br_ids"),
