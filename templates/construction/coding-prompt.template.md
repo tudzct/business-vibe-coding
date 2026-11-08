@@ -8,7 +8,7 @@ generated_at: <ISO-8601 timestamp>
 
 # <UC-ID> Coding Prompt - <Use case name>
 
-## Authoring and Synthesis Instructions (From the 8 Authorized Inputs)
+## Authoring and Synthesis Instructions
 
 
 1. **Self-Contained Implementation Handoff**: Treat the completed Coding Prompt as a self-contained implementation specification. Inline the concrete details requested by every placeholder directly into its responsible section so downstream implementation never reopens the original project inputs. Never fill a placeholder with only a file path, identifier, or instruction to reopen an input later. Do not copy unrelated source content merely because it is available.
@@ -238,6 +238,7 @@ Cover every Alternative and Exception Flow assigned to client-side validation, f
 Backend validation remains authoritative.
 
 Do not call the API when client-side validation fails.
+
 
 ## Prompt E: Business Rules Compliance
 

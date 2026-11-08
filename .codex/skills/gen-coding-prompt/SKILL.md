@@ -11,7 +11,7 @@ Accept one readable `docs/01-inception/use-cases/uc-*.md` path. Optional `--conf
 
 ## Primary Inputs
 
-During this operation, read and use only the following project-content inputs to author the Coding Prompt. Do not inspect or use any other project-content source.
+During this operation, read only the following project-content inputs to author the Coding Prompt. Do not inspect or use any other project-content source.
 
 1. **The configured prompt template**: `templates/construction/coding-prompt.template.md`.
 2. **The single active frozen use case**: The explicit `docs/01-inception/use-cases/uc-*.md` path provided.
@@ -71,21 +71,15 @@ The helper resolves the active rollout and turn internally; never supply or gues
 
 Read only the 8 primary inputs listed in [Primary Inputs](#primary-inputs):
 
-1. `templates/construction/coding-prompt.template.md`
-2. The active `docs/01-inception/use-cases/uc-*.md`
-3. The exact `business_rule_path` returned by preflight
-4. The exact API contract paths under `docs/01-inception/api-contracts/` declared in `Related API IDs` (skip if `None.`)
-5. `docs/00-context/engineering/schema.dbml` (read once)
-6. The configured live database (read-only inspection; never mutate data, schema or configuration)
-7. The local Figma snapshot JSON/node data returned by executing `resolve.py` in read-only mode:
-   ```text
-   <python-executable> .codex/skills/resolve-figma-design-dataset/scripts/resolve.py <UC-ID-or-path> --dataset-version <version>
-   ```
-8. The cumulative application source under `finalsource/` (read-only)
-
 ## Phase 3: Author the Coding Prompt Draft
 
-Follow the authoring, synthesis, section-mapping, and placeholder completion instructions defined inside `templates/construction/coding-prompt.template.md` to produce the complete Coding Prompt draft from the 8 inputs read in Phase 2.
+Follow the authoring, synthesis, section-mapping, and placeholder completion instructions defined inside `templates/construction/coding-prompt.template.md` to produce the complete Coding Prompt draft.
+
+Strict LLM Compliance and Authoring Rules:
+- **Strict Template Adherence**: The LLM must strictly and solely follow what the coding prompt template (`templates/construction/coding-prompt.template.md`) instructs. Do not perform any tasks, add any instructions, or generate any content beyond what is explicitly required by the template.
+- **Prohibition of Extrapolation and Invention**: Do not assume, extrapolate, hallucinate, or fabricate any API, data model, UI element, business rule, or constraint. Every populated detail must derive strictly and verifiably from the authorized primary inputs.
+- **Language Requirement**: All synthesized prompt content, field values, and documentation must be written strictly in English, maintaining consistent English terminology and phrasing throughout the draft.
+- **Structural and Boundary Integrity**: Strictly preserve the exact heading hierarchy, section order, frontmatter schema, and responsibility boundaries (Prompts A, B, C, and D) defined in the template without omission, duplication, or alteration.
 
 ## Phase 4: Save Draft, END Timing & Post-Validation (Execute-Only)
 
