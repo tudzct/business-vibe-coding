@@ -22,6 +22,8 @@ The following are the only project-content inputs authorized for this operation.
 7. **The active UC's resolved Figma evidence**: Only the local snapshot JSON/node directory returned by `resolve.py` from the configured frozen dataset.
 8. **The entire current application source**: Read the cumulative source under `finalsource/`, including implementation added by earlier UCs. This operation must not modify source files.
 
+### Technical and Control-Plane Material
+
 Technical and control-plane material may be read only to operate this workflow and must not add product behavior or requirements. Permitted material is `AGENTS.md`, this skill and its own references, [technical stack rules](../../../docs/00-context/engineering/TECHNICAL-STACK-RULES.md), [database policy](../../../docs/00-context/engineering/DATABASE-SCHEMA.md), the [active-run contract](../../../docs/00-context/workflow/WORKFLOW-CONTRACT.md), and output emitted by required execute-only helpers.
 
 ## Content Boundary
@@ -73,7 +75,7 @@ After preflight PASS, read the authorized [Primary Inputs](#primary-inputs) unde
 
 ## Phase 3: Author the Coding Prompt Draft
 
-1. Read `templates/construction/coding-prompt.template.md` in full and follow the instructions declared inside it, using only the authorized read-only inputs from Phase 2.
+1. Read `templates/construction/coding-prompt.template.md` in full and strictly follow the instructions declared inside it.
 2. Author the Coding Prompt Draft at the canonical output path. Do not copy SKILL/reference instructions into the artifact or create any additional content artifact.
 3. If a template instruction cannot be completed because an authorized input is missing, invalid, ambiguous, or contradictory, report the exact input problem and stop. Do not repair an input, modify source or database state, or invent a replacement value.
 

@@ -8,6 +8,20 @@ generated_at: <ISO-8601 timestamp>
 
 # <UC-ID> Business Coding Prompt - <Use case name>
 
+## Source Scope: Prompts A-D
+
+Read the following materials:
+
+- Active Use Case file: `docs/01-inception/use-cases/<ACTIVE-UC-FILE>.md`;
+- API contract files: `docs/01-inception/api-contracts/<RELATED-API-CONTRACT>.md`;
+- Database schema: `docs/00-context/engineering/schema.dbml`;
+- Live database: the configured live database;
+- Figma design dataset: `resource/figma-design-dataset/<DATASET-VERSION>/<SNAPSHOT-DIR>/`;
+- Existing source code: `finalsource/`;
+- Technical and control sources: the `Technical and Control-Plane Material` defined in `.codex/skills/gen-coding-prompt/SKILL.md`.
+
+Use the information obtained from these sources to complete every placeholder in Prompts A-D below.
+
 ## Prompt A: Backend API
 
 ### Objective: Build the API endpoint, business logic, validation, and server-side error handling.
@@ -145,11 +159,17 @@ Backend validation remains authoritative.
 
 Do not call the API when client-side validation fails.
 
+## Source Scope: Prompts E-F
+
+Read the input sources used to complete Prompts A-D.
+
+Additionally, read the Business Rule specification file: `docs/01-inception/business-rules/<ACTIVE-BUSINESS-RULE-FILE>.md`.
+
+Use the information obtained from these sources to complete every placeholder in Prompts E-F below.
+
 ## Prompt E: Business Rules Compliance
 
 ### Objective: Implement the complete frozen Business Rule set for this use case without changing its meaning.
-
-The ordered Rule IDs below MUST exactly match the frozen Business Rule baseline. Every rule appears exactly once in this projection; one implementation control may enforce multiple rules when appropriate.
 
 ### Business Rule: `[BR-ID]`
 
@@ -163,7 +183,7 @@ The ordered Rule IDs below MUST exactly match the frozen Business Rule baseline.
 
 Preserve every Rule ID, OCL expression and authoritative natural-language constraint exactly.
 
-Prompts A and D must reference applicable Rule IDs without redefining them. Backend/database enforcement remains authoritative across trust boundaries; frontend enforcement is an additional user-experience control.
+For each Business Rule, record its applicable enforcement layer, failure behavior, and traceability within Prompt E. Backend/database enforcement remains authoritative across trust boundaries; frontend enforcement is an additional user-experience control.
 
 Do not invent missing thresholds, statuses, ownership, schema, enforcement layers or failure behavior. Record unresolved source information and stop for the researcher when it changes implementation.
 
