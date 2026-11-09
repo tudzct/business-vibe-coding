@@ -11,7 +11,7 @@ Accept one readable `docs/01-inception/use-cases/uc-*.md` path. Optional `--conf
 
 ## Primary Inputs
 
-During this operation, read only the following project-content inputs to author the Coding Prompt. Do not inspect or use any other project-content source.
+The following are the only project-content inputs authorized for this operation. Do not inspect or use any other project-content source.
 
 1. **The configured prompt template**: `templates/construction/coding-prompt.template.md`.
 2. **The single active frozen use case**: The explicit `docs/01-inception/use-cases/uc-*.md` path provided.
@@ -69,17 +69,13 @@ The helper resolves the active rollout and turn internally; never supply or gues
 
 ## Phase 2: Read Authorized Inputs
 
-Read only the 8 primary inputs listed in [Primary Inputs](#primary-inputs):
+After preflight PASS, read the authorized [Primary Inputs](#primary-inputs) under their declared access boundaries. This phase is read-only; persistence is limited to the Draft and required telemetry in Phase 4.
 
 ## Phase 3: Author the Coding Prompt Draft
 
-Follow the authoring, synthesis, section-mapping, and placeholder completion instructions defined inside `templates/construction/coding-prompt.template.md` to produce the complete Coding Prompt draft.
-
-Strict LLM Compliance and Authoring Rules:
-- **Strict Template Adherence**: The LLM must strictly and solely follow what the coding prompt template (`templates/construction/coding-prompt.template.md`) instructs. Do not perform any tasks, add any instructions, or generate any content beyond what is explicitly required by the template.
-- **Prohibition of Extrapolation and Invention**: Do not assume, extrapolate, hallucinate, or fabricate any API, data model, UI element, business rule, or constraint. Every populated detail must derive strictly and verifiably from the authorized primary inputs.
-- **Language Requirement**: All synthesized prompt content, field values, and documentation must be written strictly in English, maintaining consistent English terminology and phrasing throughout the draft.
-- **Structural and Boundary Integrity**: Strictly preserve the exact heading hierarchy, section order, frontmatter schema, and responsibility boundaries (Prompts A, B, C, and D) defined in the template without omission, duplication, or alteration.
+1. Read `templates/construction/coding-prompt.template.md` in full and follow the instructions declared inside it, using only the authorized read-only inputs from Phase 2.
+2. Author the Coding Prompt Draft at the canonical output path. Do not copy SKILL/reference instructions into the artifact or create any additional content artifact.
+3. If a template instruction cannot be completed because an authorized input is missing, invalid, ambiguous, or contradictory, report the exact input problem and stop. Do not repair an input, modify source or database state, or invent a replacement value.
 
 ## Phase 4: Save Draft, END Timing & Post-Validation (Execute-Only)
 

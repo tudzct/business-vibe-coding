@@ -26,7 +26,7 @@ Implement the main logic in `[BUSINESS LOGIC LOCATION]`.
 
 Implement the backend flow for `[USE CASE / API ID]`.
 
-Enforce all backend and database rules specified in Prompt E, including applicable normalization, validation, authorization, persistence, transaction, concurrency, and sensitive-data handling.
+Enforce all applicable backend and database rules, including normalization, validation, authorization, persistence, transaction, concurrency, and sensitive-data handling.
 
 ### Success Response
 
@@ -137,7 +137,7 @@ If the API returns `[STATUS / ERROR CONDITION]`:
 
 ### Client-Side Validation
 
-Before calling the API, enforce every client-applicable validation rule in Prompt E for `[USE CASE / API ID]`.
+Before calling the API, enforce all applicable client-side validation rules for `[USE CASE / API ID]`.
 
 Display validation messages at `[VALIDATION MESSAGE LOCATION]`.
 
