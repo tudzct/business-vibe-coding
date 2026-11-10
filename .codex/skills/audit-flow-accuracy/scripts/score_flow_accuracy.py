@@ -11,10 +11,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from metrics_contract import ROOT, atomic_write, context, digest, epoch, read_json, require, run_lock, writable
 from flow_baseline_contract import flow_type, nonempty, validate_baseline
 from runtime_contract import method, configured_rubric, validate_runtime, complete_chain
-from flow_summary import refresh_report, refresh_summary
+from flow_summary import refresh_summary
 
-OBSERVATION_STATUSES = {"met", "unmet", "not_evaluable"}
-DEFECT_CATEGORIES = {"business_rule", "flow", "technical"}
+OBSERVATION_STATUSES = {"correct", "incorrect", "not_available"}
+DEFECT_CATEGORIES = {"business_rule", "flow", "technical", "ui"}
 DEFECT_STATUSES = {"open", "resolved"}
 
 
@@ -72,6 +72,10 @@ def validate_defects(run, stage=None, source_revision=None, ordered_flow_ids=Non
                 f"{label} business_rule defect needs an affected BR")
         require(defect["category"] != "flow" or affected_flow_ids,
                 f"{label} flow defect needs an affected Flow")
+        require(defect["category"] != "ui" or affected_br_ids or affected_flow_ids,
+                f"{label} functional UI defect needs an affected BR or Flow")
+        require(not defect["blocks_execution"] or defect["category"] in {"technical", "ui"},
+                f"{label} execution blocker must be technical or UI")
         if defect.get("reported_by") is not None or defect.get("researcher_followup_id") is not None:
             require(defect.get("reported_by") == "researcher", f"{label} has invalid researcher attribution")
             followup_id = defect.get("researcher_followup_id")
@@ -123,6 +127,22 @@ def validate_observation(item, label):
     require(isinstance(refs, list) and refs, f"{label} evidence required")
     for ref in refs:
         validate_evidence(ref)
+    causes = item.get("caused_by_defect_ids")
+    unavailable_reason = item.get("unavailable_reason")
+    if item["status"] == "incorrect":
+        require(isinstance(causes, list) and causes and len(causes) == len(set(causes))
+                and all(isinstance(value, str) and value.strip() for value in causes),
+                f"{label} incorrect result needs causing defect IDs")
+        require(unavailable_reason in (None, ""),
+                f"{label} incorrect result cannot carry an unavailable reason")
+    elif item["status"] == "not_available":
+        require(isinstance(unavailable_reason, str) and unavailable_reason.strip(),
+                f"{label} not_available result needs an unavailable reason")
+        require(causes in (None, []),
+                f"{label} not_available result cannot carry causing defect IDs")
+    else:
+        require(causes in (None, []) and unavailable_reason in (None, ""),
+                f"{label} correct result cannot carry cause metadata")
 
 
 def assessment_definitions(supplied, ordered_ids):
@@ -180,13 +200,20 @@ def calculate(data):
         results = [{
             "flow_id": definition["flow_id"], "type": definition["type"],
             "status": "incorrect", "noncritical_deviations": 0,
+            "caused_by_defect_ids": list(blocker_ids),
             "execution_blocker_defect_ids": list(blocker_ids),
             "terminal_outcome": {
-                "text": definition["terminal_outcome"], "status": "unmet",
-                "blocking_defect_ids": list(blocker_ids),
+                "text": definition["terminal_outcome"], "status": "incorrect",
+                "caused_by_defect_ids": list(blocker_ids),
+                "rationale": "A generated-source execution blocker prevents the terminal outcome.",
+                "evidence": ["Execution blocker evidence is recorded by the referenced canonical defects."],
+                "source_findings": [],
             },
-            "steps": [{**step, "status": "not_evaluable",
-                       "blocking_defect_ids": list(blocker_ids)} for step in definition["steps"]],
+            "steps": [{**step, "status": "not_available",
+                       "rationale": "The system-wide generated-source blocker prevented this step from being observed.",
+                       "unavailable_reason": "The system-wide generated-source blocker prevented runtime observation.",
+                       "evidence": ["Execution blocker evidence is recorded by the referenced canonical defects."],
+                       "source_findings": []} for step in definition["steps"]],
         } for definition in definitions]
         return {
             "schema_version": version, "rubric_id": rubric,
@@ -195,7 +222,7 @@ def calculate(data):
             "status": "repair_required",
             "execution_blocked": True,
             "execution_blocker_defect_ids": list(blocker_ids),
-            "counts": {**type_counts, "correct": 0, "incorrect": len(results), "not_evaluable": 0},
+            "counts": {**type_counts, "correct": 0, "incorrect": len(results), "not_available": 0},
             "flow_error_percent": 100.0, "flow_accuracy_percent": 0.0,
             "evaluated_coverage_percent": 100.0,
             "accuracy_lower_bound_percent": 0.0, "accuracy_upper_bound_percent": 0.0,
@@ -219,19 +246,36 @@ def calculate(data):
             validate_observation(step, step_definition["step_id"])
             critical = step_definition["completion_critical"]
             validate_target(step, step_definition["step_id"], definition["flow_id"], critical)
-            blocking_failure = blocking_failure or (critical and step["status"] == "unmet")
-            critical_unknown = critical_unknown or (critical and step["status"] == "not_evaluable")
-            deviations += int(not critical and step["status"] == "unmet")
+            blocking_failure = blocking_failure or (critical and step["status"] == "incorrect")
+            critical_unknown = critical_unknown or (critical and step["status"] == "not_available")
+            deviations += int(not critical and step["status"] == "incorrect")
             computed_steps.append({**step, "completion_critical": critical})
         chain_complete = complete_chain(assessed, definition, attempts)
-        if blocking_failure or outcome["status"] == "unmet":
+        if blocking_failure or outcome["status"] == "incorrect":
             status = "incorrect"
-        elif critical_unknown or outcome["status"] == "not_evaluable" or not chain_complete:
-            status = "not_evaluable"
+        elif critical_unknown or outcome["status"] == "not_available" or not chain_complete:
+            status = "not_available"
         else:
             status = "correct"
-        results.append({"flow_id": definition["flow_id"], "type": definition["type"], "status": status,
-                        "noncritical_deviations": deviations, "terminal_outcome": outcome, "steps": computed_steps})
+        result = {"flow_id": definition["flow_id"], "type": definition["type"], "status": status,
+                  "noncritical_deviations": deviations, "terminal_outcome": outcome,
+                  "steps": computed_steps}
+        if status == "incorrect":
+            causes = []
+            for target in [*computed_steps, outcome]:
+                if target["status"] == "incorrect":
+                    for defect_id in target["caused_by_defect_ids"]:
+                        if defect_id not in causes:
+                            causes.append(defect_id)
+            require(causes, f"{definition['flow_id']} incorrect result needs causing defect IDs")
+            result["caused_by_defect_ids"] = causes
+        elif status == "not_available":
+            reasons = [target["unavailable_reason"] for target in [*computed_steps, outcome]
+                       if target["status"] == "not_available"]
+            if not chain_complete:
+                reasons.append("A connected completion observation is not available.")
+            result["unavailable_reason"] = " ".join(dict.fromkeys(reasons))
+        results.append(result)
 
     total = len(results)
     correct = sum(row["status"] == "correct" for row in results)
@@ -243,11 +287,11 @@ def calculate(data):
         "assessment_id": data["assessment_id"],
         "stage": data["stage"],
         "input_sha256": digest(json.dumps(data, sort_keys=True, separators=(",", ":")).encode()),
-        "status": "not_evaluable" if unknown else ("repair_required" if incorrect else "scored"),
+        "status": "not_available" if unknown else ("repair_required" if incorrect else "scored"),
         "execution_blocked": False,
         "execution_blocker_defect_ids": [],
         "counts": {**type_counts, "correct": correct, "incorrect": incorrect,
-                   "not_evaluable": unknown},
+                   "not_available": unknown},
         "flow_error_percent": round(100 * incorrect / total, 6) if exact else None,
         "flow_accuracy_percent": round(100 * (total - incorrect) / total, 6) if exact else None,
         "evaluated_coverage_percent": round(100 * (total - unknown) / total, 6),
@@ -274,11 +318,14 @@ def markdown(result):
              f"Accuracy bounds: {shown(result['accuracy_lower_bound_percent'])} to "
              f"{shown(result['accuracy_upper_bound_percent'])}", "",
              f"Flows: {counts['correct']} correct, {counts['incorrect']} incorrect, "
-             f"{counts['not_evaluable']} not evaluable, "
+             f"{counts['not_available']} not available, "
              f"{counts['total']} total", "",
-             "| Flow | Type | Status | Noncritical deviations |", "|---|---|---|---:|"]
+             "| Flow | Type | Status | Cause / unavailable reason | Noncritical deviations |",
+             "|---|---|---|---|---:|"]
     for flow in result["flows"]:
-        lines.append(f"| {flow['flow_id']} | {flow['type']} | {flow['status']} | {flow['noncritical_deviations']} |")
+        note = (", ".join(flow.get("caused_by_defect_ids", [])) or
+                flow.get("unavailable_reason", ""))
+        lines.append(f"| {flow['flow_id']} | {flow['type']} | {flow['status']} | {note} | {flow['noncritical_deviations']} |")
     lines.append("")
     for limitation in result["input"]["limitations"]:
         lines.append(json.dumps(limitation, ensure_ascii=False) if isinstance(limitation, dict) else limitation)
@@ -314,7 +361,9 @@ def validate_run_result(run, folder, result):
         require(result.get("execution_blocked") is True
                 and result.get("execution_blocker_defect_ids") == blocker_ids
                 and result["counts"]["incorrect"] == result["counts"]["total"]
-                and all(flow["status"] == "incorrect" for flow in result["flows"]),
+                and all(flow["status"] == "incorrect"
+                        and set(flow.get("caused_by_defect_ids", [])) == set(blocker_ids)
+                        for flow in result["flows"]),
                 "system execution blocking must make the complete frozen flow inventory incorrect")
         require(result["flow_accuracy_percent"] == 0.0 and result["flow_error_percent"] == 100.0,
                 "system execution blocking must score zero accuracy")
@@ -330,11 +379,36 @@ def validate_run_result(run, folder, result):
                 "non-blocked assessments cannot carry execution blockers")
         require(not open_blocker_ids,
                 "an open system-blocking defect requires a complete execution-blocked assessment")
+        by_flow = {flow["flow_id"]: flow for flow in result["flows"]}
         for flow in result["flows"]:
+            causes = flow.get("caused_by_defect_ids", [])
             if flow["status"] == "incorrect":
-                require(any(flow["flow_id"] in defect["affected_flow_ids"]
-                            for defect in open_defects.values()),
-                        f"incorrect Flow lacks a canonical affected defect: {flow['flow_id']}")
+                require(isinstance(causes, list) and causes and set(causes) <= set(open_defects),
+                        f"incorrect Flow lacks valid causing defects: {flow['flow_id']}")
+                require(all(flow["flow_id"] in open_defects[identity]["affected_flow_ids"]
+                            for identity in causes),
+                        f"incorrect Flow cause does not affect target: {flow['flow_id']}")
+                require(flow.get("unavailable_reason") in (None, ""),
+                        f"incorrect Flow cannot carry unavailable reason: {flow['flow_id']}")
+                for target in [*flow["steps"], flow["terminal_outcome"]]:
+                    if target["status"] == "incorrect":
+                        target_causes = target.get("caused_by_defect_ids", [])
+                        require(set(target_causes) <= set(causes)
+                                and all(flow["flow_id"] in open_defects[identity]["affected_flow_ids"]
+                                        for identity in target_causes),
+                                f"incorrect target cause is not valid for Flow: {flow['flow_id']}")
+            elif flow["status"] == "not_available":
+                require(not causes and isinstance(flow.get("unavailable_reason"), str)
+                        and flow["unavailable_reason"].strip(),
+                        f"not_available Flow needs a reason and no defect cause: {flow['flow_id']}")
+            else:
+                require(not causes and flow.get("unavailable_reason") in (None, ""),
+                        f"correct Flow cannot carry cause metadata: {flow['flow_id']}")
+        for identity, defect in open_defects.items():
+            for flow_id in defect["affected_flow_ids"]:
+                require(by_flow[flow_id]["status"] == "incorrect"
+                        and identity in by_flow[flow_id].get("caused_by_defect_ids", []),
+                        f"affected Flow must be incorrect and reference its defect: {flow_id}")
     destination = folder / "flow-accuracy" / result["assessment_id"]
     json_path = destination.with_name(destination.name + ".json")
     md_path = destination.with_name(destination.name + ".md")
@@ -415,7 +489,6 @@ def main():
                 atomic_write(json_path, result)
             if not md_path.exists():
                 atomic_write(md_path, markdown(result), raw=True)
-            refresh_report(path, run)
     version, rubric = method(result["input"])
     if args.dry_run:
         import copy

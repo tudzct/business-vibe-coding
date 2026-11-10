@@ -203,5 +203,3 @@ Priority:
 2. Approved API and database/project contracts
 3. Frozen Figma evidence
 4. Existing source-code conventions
-
-Generate source only. Modify only files required by the use case. Do not create or run tests or test cases. Do not introduce unapproved schema, public API, ownership, dependency or destructive changes.

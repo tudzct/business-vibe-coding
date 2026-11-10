@@ -1,28 +1,34 @@
 ---
 artifact_type: bug-fixing-sub-prompt
-uc_id: <UC-ID>
-run_id: <RUN-ID>
+uc_id: "<UC-ID>"
+run_id: "<RUN-ID>"
 repair_index: <N>
-affected_br_ids: [<BR-ID>]
+defect_id: "<DEFECT-ID>"
+defect_fingerprint: "sha256:<64 lowercase hex characters>"
+source_revision: "sha256:<64 lowercase hex characters>"
 ---
 
 # Repair <N> — <bounded defect>
 
 ## Evidence
 
-`<exact source/build/runtime evidence>`
+- Category: `<defect category>`
+- Source file: `<repository-relative source or evidence path>`
+- Lines: `<start>-<end>` or `N/A`
+- Locator: `<exact locator>`
+- Observed fact: `<exact observed fact>`
+- Defect finding: `<exact evidence-backed finding>`
+- Content: `<relevant source/build/runtime content>`
 
 ## Required correction
 
-Apply the smallest change that corrects this defect while preserving Prompts A-F and unrelated behavior.
+<expected correct behavior after the defect is repaired>
 
 ## Scope
 
-- Allowed files: `<paths>`
-- Affected BRs: `<BR IDs>`
-- Permitted non-test verification: `<lint/typecheck/build/runtime observation>`
-- Prohibited: new features, speculative refactors, schema/public-API/ownership decisions without researcher approval, and all test creation/execution.
+- Known affected files: `<affected files from the handoff, or None>`
+- Affected targets: `<BR IDs, Flow IDs/steps, UI targets, technical targets, or None>`
 
 ## Completion
 
-Record changed files, verification evidence, time/tokens and reassessment of affected BRs. Do not overwrite first-pass evidence.
+Report changed files, verification evidence, and the reassessment of every affected target. Preserve first-pass evidence without overwriting it.

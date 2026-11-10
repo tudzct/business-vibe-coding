@@ -35,24 +35,30 @@ EVIDENCE_FIELDS = {
 }
 CORRECTION_FIELDS = {"mode", "representation", "text", "supporting_definitions"}
 REQUIRED_SCALARS = (
-    "artifact_type", "uc_id", "run_id", "repair_index",
+    "artifact_type", "uc_id", "run_id", "repair_index", "defect_id",
+    "defect_fingerprint", "category", "trigger", "source_revision",
+    "blocks_execution",
 )
 REQUIRED_ARRAYS = (
-    "affected_br_ids",
+    "affected_br_ids", "affected_flow_ids", "affected_flow_step_ids",
+    "affected_files",
 )
-REQUIRED_HEADINGS = ("Evidence", "Required correction", "Scope", "Completion")
-CORRECTION_INSTRUCTION = (
-    "Apply the smallest change that corrects this defect while preserving Prompts A-F "
-    "and unrelated behavior."
+REQUIRED_HEADINGS = ("Defect", "Evidence", "Required correction", "Scope", "Completion")
+INSTRUCTION = (
+    "Read this completed sub-prompt in full and perform its required correction. "
+    "Use only this completed sub-prompt and the current source code under `finalsource/` "
+    "to perform the correction."
 )
 PROHIBITED = (
-    "new features, speculative refactors, schema/public-API/ownership decisions without "
-    "researcher approval, and all test creation/execution."
+    "changing tests, weakening assertions, fabricating evidence, broadening product "
+    "scope, or changing unrelated behavior."
 )
 PLACEHOLDERS = (
-    "<UC-ID>", "<RUN-ID>", "<N>", "<BR-ID>", "<bounded defect>",
-    "<exact source/build/runtime evidence>", "<paths>", "<BR IDs>",
-    "<lint/typecheck/build/runtime observation>",
+    "<UC-ID>", "<RUN-ID>", "<N>", "<DEFECT-ID>", "<64 lowercase hex characters>",
+    "<technical|business_rule|flow>", "<TRIGGER>", "<true|false>", "<BR-ID>",
+    "<FLOW-ID>", "<FLOW-STEP-ID>", "<REPOSITORY-RELATIVE-PATH>",
+    "<bounded defect>", "<exact defect description>", "<exact evidence content>",
+    "<exact required correction text>", "<json|text>", "<ocl|text>",
 )
 
 
@@ -219,8 +225,6 @@ def parse_prompt(path):
                 f"{path}: {key} must contain only strings")
     require(not any(token in text for token in PLACEHOLDERS), f"{path}: unresolved template placeholder")
     body = "\n".join(lines[end + 1:])
-    headings = tuple(re.findall(r"(?m)^##\s+(.+?)\s*$", body))
-    require(headings == REQUIRED_HEADINGS, f"{path}: section headings must match template exactly")
     sections = {}
     for heading in REQUIRED_HEADINGS:
         match = re.search(rf"(?ms)^## {re.escape(heading)}\s*$\n(.*?)(?=^## |\Z)", body)
@@ -228,6 +232,17 @@ def parse_prompt(path):
         sections[heading] = match.group(1).strip()
         require(sections[heading], f"{path}: empty {heading} section")
     return fields, arrays, sections
+
+
+def evidence_blocks(section, expected_count, path):
+    matches = list(re.finditer(r"(?m)^### Evidence (\d+)\s*$", section))
+    require(len(matches) == expected_count, f"{path}: evidence count mismatch")
+    blocks = []
+    for index, match in enumerate(matches):
+        require(int(match.group(1)) == index + 1, f"{path}: evidence indexes must be sequential")
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(section)
+        blocks.append(section[match.end():end].strip())
+    return blocks
 
 
 def expected_content(value):
@@ -238,34 +253,51 @@ def expected_content(value):
     return normalized(json.dumps(value, ensure_ascii=False, indent=2))
 
 
+def fenced_contents_with_language(section):
+    return [(match.group(1), normalized(match.group(2))) for match in
+            re.finditer(r"(?ms)````([A-Za-z0-9_-]*)[ \t]*\n(.*?)\n````", section)]
+
+
 def require_evidence(path, section, evidence):
-    normalized_section = normalized(section)
-    for index, item in enumerate(evidence, 1):
+    for item, block in zip(evidence, evidence_blocks(section, len(evidence), path)):
+        line_text = "N/A" if item["line_start"] is None else f"{item['line_start']}-{item['line_end']}"
         for label, value in (
-            ("original path", item["original_path"]),
-            ("SHA-256", item["sha256"]),
-            ("source revision", item["source_revision"]),
-            ("source file", item["source_file"]),
-            ("locator", item["locator"]),
-            ("observed fact", item["observed_fact"]),
-            ("defect finding", item["defect_finding"]),
+            ("Path", item["original_path"]), ("SHA-256", item["sha256"]),
+            ("Source revision", item["source_revision"]), ("Kind", item["kind"]),
+            ("Media type", item["media_type"]), ("Source file", item["source_file"]),
+            ("Lines", line_text), ("Locator", item["locator"]),
+            ("Observed fact", item["observed_fact"]), ("Defect finding", item["defect_finding"]),
         ):
-            require(normalized(str(value)) in normalized_section,
-                    f"{path}: evidence {index} {label} is missing or changed")
+            require(f"- {label}:" in block and value in block,
+                    f"{path}: Evidence field {label} is missing or changed")
         content = expected_content(item["content"])
-        if content is not None:
-            require(content in normalized_section,
-                    f"{path}: evidence {index} content is missing or changed")
+        if content is None:
+            require(re.search(r"(?m)^#### Content\s*$.*?\bN/A\b", block, re.S),
+                    f"{path}: missing N/A evidence content")
+        else:
+            expected_language = "json" if item["kind"] == "json" else "text"
+            require((expected_language, content) in fenced_contents_with_language(block),
+                    f"{path}: evidence content is missing, changed or uses the wrong fence")
 
 
 def require_correction(path, section, correction):
-    normalized_section = normalized(section)
-    require(CORRECTION_INSTRUCTION in section, f"{path}: correction instruction mismatch")
-    require(normalized(correction["text"]) in normalized_section,
-            f"{path}: exact correction text is missing or changed")
-    for definition in correction["supporting_definitions"]:
-        require(normalized(definition) in normalized_section,
-                f"{path}: supporting definition is missing or changed")
+    require("### Correction text" in section and "### Supporting definitions" in section,
+            f"{path}: correction structure mismatch")
+    require(correction["mode"] in section, f"{path}: correction mode mismatch")
+    require(correction["representation"] in section, f"{path}: correction representation mismatch")
+    expected_language = "ocl" if "ocl" in correction["representation"].lower() else "text"
+    require((expected_language, normalized(correction["text"])) in
+            fenced_contents_with_language(section),
+            f"{path}: exact correction text is missing, changed or uses the wrong fence")
+    definitions = correction["supporting_definitions"]
+    if definitions:
+        for definition in definitions:
+            require(("ocl", normalized(definition)) in fenced_contents_with_language(section),
+                    f"{path}: supporting definition is missing, changed or not fenced as OCL")
+    else:
+        require(re.search(r"(?m)^### Supporting definitions\s*$\n\s*None\.\s*$", section),
+                f"{path}: empty supporting definitions must be recorded as None")
+    require(INSTRUCTION in section, f"{path}: execution instruction mismatch")
 
 
 def validate(handoff_path, prompt_dir):
@@ -287,24 +319,28 @@ def validate(handoff_path, prompt_dir):
         require(fields["uc_id"] == handoff["uc_id"] and fields["run_id"] == handoff["run_id"],
                 f"{path}: handoff identity mismatch")
         require(fields["repair_index"] == str(index), f"{path}: repair_index mismatch")
-        require(defect_id not in seen, f"{path}: duplicate defect identity")
+        require(fields["defect_id"] == defect_id and defect_id not in seen,
+                f"{path}: defect identity mismatch or duplicate")
         seen.add(defect_id)
-        require(arrays["affected_br_ids"] == defect["affected_br_ids"],
-                f"{path}: affected_br_ids mismatch")
+        for field, expected in (
+            ("defect_fingerprint", defect["fingerprint"]), ("category", defect["category"]),
+            ("trigger", defect["trigger"]), ("source_revision", defect["source_revision"]),
+            ("blocks_execution", str(defect["blocks_execution"]).lower()),
+        ):
+            require(fields[field] == expected, f"{path}: {field} mismatch")
+        for field in REQUIRED_ARRAYS:
+            require(arrays[field] == defect[field], f"{path}: {field} mismatch")
+        require(normalized(sections["Defect"]) == normalized(defect["description"]),
+                f"{path}: defect description mismatch")
         require_evidence(path, sections["Evidence"], defect["evidence"])
         require_correction(path, sections["Required correction"], defect["required_correction"])
         for affected_file in defect["affected_files"]:
             require(affected_file in sections["Scope"], f"{path}: affected file missing from Scope")
         if not defect["affected_files"]:
             require("None" in sections["Scope"], f"{path}: empty affected files must be recorded as None")
-        for br_id in defect["affected_br_ids"]:
-            require(br_id in sections["Scope"], f"{path}: affected BR missing from Scope")
         require(PROHIBITED in sections["Scope"], f"{path}: prohibited-change boundary mismatch")
-        require(
-            "Record changed files, verification evidence, time/tokens and reassessment "
-            "of affected BRs. Do not overwrite first-pass evidence." in sections["Completion"],
-            f"{path}: completion contract mismatch",
-        )
+        require("report changed files, verification evidence and the reassessed result" in
+                sections["Completion"], f"{path}: completion contract mismatch")
     return {
         "uc_id": handoff["uc_id"], "run_id": handoff["run_id"],
         "prompt_count": len(files),

@@ -25,9 +25,9 @@ def current_assessment(run):
 
 def pending_details(flow, assessment):
     targets = [{"target_id": s["step_id"], "reason": s["rationale"]}
-               for s in flow["steps"] if s["completion_critical"] and s["status"] == "not_evaluable"]
+               for s in flow["steps"] if s["completion_critical"] and s["status"] == "not_available"]
     outcome = flow["terminal_outcome"]
-    if outcome["status"] == "not_evaluable":
+    if outcome["status"] == "not_available":
         targets.append({"target_id": "terminal_outcome", "reason": outcome["rationale"]})
     if not targets:
         targets.append({"target_id": "completion_observation",
@@ -42,32 +42,46 @@ def pending_details(flow, assessment):
 def summary_from_rows(assessment, flows, pending_inputs, applied):
     total = len(flows)
     require(total > 0 and assessment["counts"]["total"] == total, "flow inventory/count mismatch")
-    require(all(f["status"] in {"correct", "incorrect", "not_evaluable"}
+    require(all(f["status"] in {"correct", "incorrect", "not_available"}
                 for f in flows), "invalid flow status")
+    for flow in flows:
+        causes = flow.get("caused_by_defect_ids", [])
+        unavailable_reason = flow.get("unavailable_reason")
+        if flow["status"] == "incorrect":
+            require(isinstance(causes, list) and causes and len(causes) == len(set(causes)),
+                    f"incorrect Flow lacks unique causing defects: {flow['flow_id']}")
+            require(unavailable_reason in (None, ""),
+                    f"incorrect Flow cannot carry unavailable reason: {flow['flow_id']}")
+        elif flow["status"] == "not_available":
+            require(not causes and isinstance(unavailable_reason, str) and unavailable_reason.strip(),
+                    f"not_available Flow needs a reason: {flow['flow_id']}")
+        else:
+            require(not causes and unavailable_reason in (None, ""),
+                    f"correct Flow cannot carry cause metadata: {flow['flow_id']}")
     correct = sum(f["status"] == "correct" for f in flows)
     incorrect = sum(f["status"] == "incorrect" for f in flows)
-    unknown = sum(f["status"] == "not_evaluable" for f in flows)
+    unknown = sum(f["status"] == "not_available" for f in flows)
     require(correct + incorrect + unknown == total, "flow result counts do not reconcile")
     evaluated = correct + incorrect
     manual = sum(f["result_source"] == "researcher_result"
-                 and f["status"] != "not_evaluable" for f in flows)
-    pending = [pending_details(*pending_inputs[f["flow_id"]]) for f in flows if f["status"] == "not_evaluable"]
+                 and f["status"] != "not_available" for f in flows)
+    pending = [pending_details(*pending_inputs[f["flow_id"]]) for f in flows if f["status"] == "not_available"]
     blocker_ids = list(assessment["input"].get("execution_blocker_defect_ids", []))
     execution_blocked = bool(blocker_ids)
     return {"schema_version": 2, "assessment_id": assessment["assessment_id"], "stage": assessment["stage"],
             "source_revision": assessment["input"]["source_revision"],
             "rubric_id": assessment["input"]["rubric_id"],
             "followup_ids": applied, "status": ("partial" if unknown and evaluated else
-             ("not_evaluable" if unknown else ("repair_required" if incorrect else "scored"))),
+             ("not_available" if unknown else ("repair_required" if incorrect else "scored"))),
             "measurement_status": ("partial" if unknown and evaluated else
-                                   ("not_evaluable" if unknown else "complete")),
+                                   ("not_available" if unknown else "complete")),
             "execution_blocked": execution_blocked,
             "execution_blocker_defect_ids": blocker_ids,
             "has_incorrect_flows": bool(incorrect),
             "result_basis": "includes_researcher_results" if manual else "rubric_evidence",
             "researcher_result_count": manual,
             "counts": {**{k: assessment["counts"][k] for k in ("main", "alternative", "exception", "total")},
-                       "correct": correct, "incorrect": incorrect, "not_evaluable": unknown,
+                       "correct": correct, "incorrect": incorrect, "not_available": unknown,
                        "evaluated": evaluated},
             "flow_accuracy_percent": round(100 * correct / total, 6) if not unknown else None,
             "flow_error_percent": round(100 * incorrect / total, 6) if not unknown else None,
@@ -107,14 +121,29 @@ def accepted_summary(run):
         for result in results:
             flow_id = result["flow_id"]
             previous = selected.get(flow_id)
-            if (result["status"] == "not_evaluable" and previous
+            if (result["status"] == "not_available" and previous
                     and previous["status"] in {"correct", "incorrect"}):
                 continue
             original = next(f for f in evidence["flows"] if f["flow_id"] == flow_id)
-            selected[flow_id] = {"flow_id": flow_id, "type": original["type"], "status": result["status"],
-                                 "result_source": mode, "record_id": identity,
-                                 "assessment_id": evidence["assessment_id"], "stage": evidence["stage"],
-                                 "source_revision": evidence["input"]["source_revision"]}
+            row = {"flow_id": flow_id, "type": original["type"], "status": result["status"],
+                   "result_source": mode, "record_id": identity,
+                   "assessment_id": evidence["assessment_id"], "stage": evidence["stage"],
+                   "source_revision": evidence["input"]["source_revision"]}
+            if result["status"] == "incorrect":
+                causes = list(original.get("caused_by_defect_ids", []))
+                if mode == "researcher_result":
+                    causes = [defect["defect_id"] for defect in run.get("defects", [])
+                              if defect.get("status") == "open"
+                              and defect.get("researcher_followup_id") == identity
+                              and flow_id in defect.get("affected_flow_ids", [])]
+                require(causes, f"incorrect accepted Flow lacks causing defects: {flow_id}")
+                row["caused_by_defect_ids"] = causes
+            elif result["status"] == "not_available":
+                reason = original.get("unavailable_reason")
+                require(isinstance(reason, str) and reason.strip(),
+                        f"not_available accepted Flow lacks a reason: {flow_id}")
+                row["unavailable_reason"] = reason
+            selected[flow_id] = row
             pending_inputs[flow_id] = (original, evidence)
     rows = [selected[flow_id] for flow_id, _ in inventory]
     summary = summary_from_rows(current, rows, pending_inputs, applied)
@@ -130,7 +159,7 @@ def accepted_summary(run):
                    current_source_revision=current["input"]["source_revision"],
                    latest_assessment_status=current["status"], latest_assessment_counts=current["counts"],
                    retained_from_prior_source_count=sum(r["source_revision"] != current["input"]["source_revision"]
-                                                        and r["status"] != "not_evaluable"
+                                                        and r["status"] != "not_available"
                                                         for r in rows))
     return summary
 
@@ -186,7 +215,9 @@ def validate_followups(run, folder):
         require(isinstance(results, list) and results, "nonempty per-flow results required")
         target_ids = [r.get("flow_id") for r in results]
         require(len(target_ids) == len(set(target_ids)) and set(target_ids) <= pending, "results must identify eligible frozen flows exactly once")
-        require(all(r.get("status") in {"correct", "incorrect", "not_evaluable"} for r in results), "invalid flow result")
+        allowed = ({"correct", "incorrect"} if record["mode"] == "researcher_result"
+                   else {"correct", "incorrect", "not_available"})
+        require(all(r.get("status") in allowed for r in results), "invalid flow result")
         if record["mode"] == "researcher_result":
             require(isinstance(record.get("researcher_result"), str) and record["researcher_result"].strip(), "researcher result text required")
             require("runtime_result" not in record, "researcher result must not fabricate runtime evidence")
@@ -246,9 +277,12 @@ def markdown(summary):
              f"Evaluated coverage (%): {shown('evaluated_coverage_percent')}",
              f"Accuracy bounds (%): {shown('accuracy_lower_bound_percent')} to "
              f"{shown('accuracy_upper_bound_percent')}",
-             "", "| Flow | Result | Source | Record |", "|---|---|---|---|"]
+             "", "| Flow | Result | Cause / unavailable reason | Source | Record |",
+             "|---|---|---|---|---|"]
     for flow in summary["flows"]:
-        lines.append(f"| {flow['flow_id']} | {flow['status']} | {flow['result_source']} | {flow['record_id']} |")
+        note = (", ".join(flow.get("caused_by_defect_ids", [])) or
+                flow.get("unavailable_reason", ""))
+        lines.append(f"| {flow['flow_id']} | {flow['status']} | {note} | {flow['result_source']} | {flow['record_id']} |")
     for pending in summary["pending_flows"]:
         lines += ["", f"Pending: {pending['flow_id']}"]
         lines += [f"- {t['target_id']}: {t['reason']}" for t in pending["missing_targets"]]

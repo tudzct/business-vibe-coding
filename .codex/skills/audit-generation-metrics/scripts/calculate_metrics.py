@@ -14,9 +14,9 @@ from score_flow_accuracy import (calculate as calculate_flow, validate_run_resul
 from runtime_contract import method, configured_rubric
 from flow_summary import validate_followups
 
-STATUSES = {"met", "unmet", "not_evaluable"}
-FOLLOWUP_STATUSES = {"met", "unmet", "not_evaluable"}
-FLOW_STATUSES = {"scored", "repair_required", "not_evaluable", "partial"}
+STATUSES = {"correct", "incorrect", "not_available"}
+FOLLOWUP_STATUSES = {"correct", "incorrect", "not_available"}
+FLOW_STATUSES = {"scored", "repair_required", "not_available", "partial"}
 BR_RESULT_POLICY = "accepted-br-audit-results-v1"
 
 
@@ -38,22 +38,25 @@ def validate_snapshot(snapshot, ordered, field):
             raise ValueError(f"{field}.requirements[{index}] needs inspectable evidence")
         if not isinstance(row.get("rationale"), str) or not row["rationale"].strip():
             raise ValueError(f"{field}.requirements[{index}] needs rationale")
-        blockers = row.get("blocking_defect_ids")
-        if blockers not in (None, []):
-            if row["status"] != "unmet":
-                raise ValueError(f"{field}.requirements[{index}] execution blocker must produce unmet")
-            if (not isinstance(blockers, list) or not blockers or len(blockers) != len(set(blockers))
-                    or any(not isinstance(value, str) or not value.strip() for value in blockers)):
-                raise ValueError(f"{field}.requirements[{index}] needs blocking defect IDs")
-            if row.get("runtime_observation_ids") not in (None, []):
-                raise ValueError(f"{field}.requirements[{index}] cannot claim runtime observations while execution is blocked")
-        else:
-            observations = row.get("runtime_observation_ids")
-            if (not isinstance(observations, list) or len(observations) != len(set(observations))
-                    or any(not isinstance(value, str) or not value.strip() for value in observations)):
-                raise ValueError(f"{field}.requirements[{index}] needs runtime observation IDs")
-            if row.get("blocking_defect_ids") not in (None, []):
-                raise ValueError(f"{field}.requirements[{index}] cannot carry execution blockers")
+        observations = row.get("runtime_observation_ids")
+        if (not isinstance(observations, list) or len(observations) != len(set(observations))
+                or any(not isinstance(value, str) or not value.strip() for value in observations)):
+            raise ValueError(f"{field}.requirements[{index}] needs a valid runtime observation ID array")
+        causes = row.get("caused_by_defect_ids")
+        unavailable_reason = row.get("unavailable_reason")
+        if row["status"] == "incorrect":
+            if (not isinstance(causes, list) or not causes or len(causes) != len(set(causes))
+                    or any(not isinstance(value, str) or not value.strip() for value in causes)):
+                raise ValueError(f"{field}.requirements[{index}] incorrect result needs causing defects")
+            if unavailable_reason not in (None, ""):
+                raise ValueError(f"{field}.requirements[{index}] incorrect result cannot be unavailable")
+        elif row["status"] == "not_available":
+            if not isinstance(unavailable_reason, str) or not unavailable_reason.strip():
+                raise ValueError(f"{field}.requirements[{index}] not_available result needs a reason")
+            if causes not in (None, []):
+                raise ValueError(f"{field}.requirements[{index}] not_available result cannot claim a defect")
+        elif causes not in (None, []) or unavailable_reason not in (None, ""):
+            raise ValueError(f"{field}.requirements[{index}] correct result cannot carry cause metadata")
         ids.append(row["br_id"])
         counts[row["status"]] += 1
     if ids != ordered:
@@ -77,27 +80,34 @@ def validate_br_runtime(snapshot, assessment, defects, field, researcher_result_
             raise ValueError(f"{field} execution blockers do not match the runtime assessment")
         if any(not open_defects[value]["blocks_execution"] for value in blocker_ids):
             raise ValueError(f"{field} references a non-blocking defect as an execution blocker")
-        if any(row["status"] != "unmet" for row in snapshot["requirements"]):
-            raise ValueError(f"{field} must mark every frozen BR unmet when execution is blocked")
-    elif any(row.get("blocking_defect_ids") not in (None, []) for row in snapshot["requirements"]):
-        raise ValueError(f"{field} cannot reference execution blockers without an evidenced system blocker")
+        if any(row["status"] != "incorrect"
+               or set(row.get("caused_by_defect_ids", [])) != blocker_ids
+               or row.get("runtime_observation_ids") not in (None, [])
+               for row in snapshot["requirements"]):
+            raise ValueError(f"{field} must mark every frozen BR incorrect with every system blocker")
     for row in snapshot["requirements"]:
-        if row.get("blocking_defect_ids") not in (None, []):
-            if set(row["blocking_defect_ids"]) != blocker_ids:
-                raise ValueError(f"{field}.{row['br_id']} must reference every system execution blocker")
+        causes = row.get("caused_by_defect_ids", [])
+        if blocker_ids:
             continue
         if not set(row["runtime_observation_ids"]) <= observation_ids:
             raise ValueError(f"{field}.{row['br_id']} references an unknown runtime observation")
-        if (row["status"] in {"met", "unmet"} and not row["runtime_observation_ids"]
+        if (row["status"] in {"correct", "incorrect"} and not row["runtime_observation_ids"]
                 and row["br_id"] not in researcher_result_ids):
             raise ValueError(f"{field}.{row['br_id']} conclusive audit verdict needs runtime observation IDs")
-        if row["status"] in {"met", "unmet"} and not (
+        if row["status"] in {"correct", "incorrect"} and not (
                 runtime.get("status") == "ready" and (runtime.get("deployment") or {}).get("verified") is True):
             raise ValueError(f"{field}.{row['br_id']} conclusive verdict needs verified integrated runtime")
-        if row["status"] == "unmet" and row["br_id"] not in researcher_result_ids and not any(
-                row["br_id"] in defect["affected_br_ids"]
-                for defect in open_defects.values()):
-            raise ValueError(f"{field}.{row['br_id']} unmet result lacks a canonical affected defect")
+        if row["status"] == "incorrect":
+            if not set(causes) <= set(open_defects):
+                raise ValueError(f"{field}.{row['br_id']} references an unknown causing defect")
+            if any(row["br_id"] not in open_defects[identity]["affected_br_ids"] for identity in causes):
+                raise ValueError(f"{field}.{row['br_id']} cause does not affect this BR")
+    rows_by_id = {row["br_id"]: row for row in snapshot["requirements"]}
+    for identity, defect in open_defects.items():
+        for br_id in defect["affected_br_ids"]:
+            row = rows_by_id[br_id]
+            if row["status"] != "incorrect" or identity not in row.get("caused_by_defect_ids", []):
+                raise ValueError(f"{field}.{br_id} must be incorrect and reference affected defect {identity}")
 
 
 def br_fingerprint(value):
@@ -144,17 +154,19 @@ def accepted_br_summary(data):
             identity = observation.get("observation_id")
             if isinstance(identity, str) and identity:
                 runtime_observations[identity] = ready
-    selected = {
-        row["br_id"]: {
+    selected = {}
+    for row in initial["requirements"]:
+        projected = {
             "br_id": row["br_id"], "status": row["status"],
             "result_source": "assessment", "record_id": "business_rules.initial",
             "evidence": list(row["evidence"]), "rationale": row["rationale"],
-            **({"blocking_defect_ids": list(row["blocking_defect_ids"])}
-               if row.get("blocking_defect_ids") not in (None, []) else
-               {"runtime_observation_ids": list(row["runtime_observation_ids"])}),
+            "runtime_observation_ids": list(row["runtime_observation_ids"]),
         }
-        for row in initial["requirements"]
-    }
+        if row["status"] == "incorrect":
+            projected["caused_by_defect_ids"] = list(row["caused_by_defect_ids"])
+        elif row["status"] == "not_available":
+            projected["unavailable_reason"] = row["unavailable_reason"]
+        selected[row["br_id"]] = projected
     history = business.get("followups", [])
     if not isinstance(history, list):
         raise ValueError("business_rules.followups must be an array")
@@ -193,8 +205,9 @@ def accepted_br_summary(data):
             raise ValueError("BR follow-up IDs must identify frozen rules exactly once")
         if any(row.get("status") not in FOLLOWUP_STATUSES for row in results):
             raise ValueError("invalid BR follow-up status")
+        system_blocker_ids = set(parent.get("input", {}).get("execution_blocker_defect_ids", []))
         blocked_ids = {row["br_id"] for row in initial["requirements"]
-                       if row.get("blocking_defect_ids") not in (None, [])}
+                       if system_blocker_ids and set(row.get("caused_by_defect_ids", [])) == system_blocker_ids}
         if set(ids) & blocked_ids:
             raise ValueError("audit follow-up cannot overwrite blocker-derived BR verdicts")
         if mode == "researcher_result":
@@ -203,6 +216,8 @@ def accepted_br_summary(data):
                 raise ValueError("researcher BR verdict text required")
             if any(set(row) != {"br_id", "status"} for row in results):
                 raise ValueError("researcher BR verdict must not fabricate evidence")
+            if any(row["status"] not in {"correct", "incorrect"} for row in results):
+                raise ValueError("researcher BR verdict must be correct or incorrect")
         else:
             if "researcher_result" in record:
                 raise ValueError("LLM BR re-audit cannot be researcher-attributed")
@@ -214,17 +229,24 @@ def accepted_br_summary(data):
                     raise ValueError("LLM BR re-audit requires evidence and rationale")
                 observations = row.get("runtime_observation_ids")
                 if (not isinstance(observations, list) or len(observations) != len(set(observations))
-                        or (row["status"] in {"met", "unmet"} and not observations)):
+                        or (row["status"] in {"correct", "incorrect"} and not observations)):
                     raise ValueError("LLM BR re-audit requires runtime observation IDs")
                 if any(value not in runtime_observations for value in observations):
                     raise ValueError("LLM BR re-audit references an unknown runtime observation")
-                if row["status"] in {"met", "unmet"} and any(
+                if row["status"] in {"correct", "incorrect"} and any(
                         not runtime_observations[value] for value in observations):
                     raise ValueError("LLM BR re-audit conclusive verdict needs verified integrated runtime")
+                causes = row.get("caused_by_defect_ids")
+                unavailable_reason = row.get("unavailable_reason")
+                if row["status"] == "incorrect" and (not isinstance(causes, list) or not causes):
+                    raise ValueError("LLM incorrect BR result needs causing defect IDs")
+                if row["status"] == "not_available" and (
+                        not isinstance(unavailable_reason, str) or not unavailable_reason.strip()):
+                    raise ValueError("LLM not_available BR result needs an unavailable reason")
         applied.append(identity)
         for result in results:
             prior = selected[result["br_id"]]
-            if result["status"] == "not_evaluable" and prior["status"] != "not_evaluable":
+            if result["status"] == "not_available" and prior["status"] != "not_available":
                 continue
             if mode == "researcher_result":
                 evidence = [f"Researcher verdict {identity}: {record['researcher_result']}"]
@@ -232,7 +254,7 @@ def accepted_br_summary(data):
             else:
                 evidence = list(result["evidence"])
                 rationale = result["rationale"]
-            selected[result["br_id"]] = {
+            projected = {
                 "br_id": result["br_id"], "status": result["status"],
                 "result_source": mode, "record_id": identity,
                 "evidence": evidence, "rationale": rationale,
@@ -240,6 +262,20 @@ def accepted_br_summary(data):
                                             if mode == "researcher_result"
                                             else list(result["runtime_observation_ids"])),
             }
+            if result["status"] == "incorrect":
+                if mode == "researcher_result":
+                    causes = [defect["defect_id"] for defect in data.get("defects", [])
+                              if defect.get("status") == "open"
+                              and defect.get("researcher_followup_id") == identity
+                              and result["br_id"] in defect.get("affected_br_ids", [])]
+                else:
+                    causes = list(result["caused_by_defect_ids"])
+                if not causes:
+                    raise ValueError("incorrect accepted BR lacks causing defects")
+                projected["caused_by_defect_ids"] = causes
+            elif result["status"] == "not_available":
+                projected["unavailable_reason"] = result["unavailable_reason"]
+            selected[result["br_id"]] = projected
     rows = [selected[br_id] for br_id in ordered]
     counts = {status: sum(row["status"] == status for row in rows) for status in STATUSES}
     return {
@@ -248,7 +284,7 @@ def accepted_br_summary(data):
         "followup_ids": applied,
         "counts": {"total": len(rows), **counts},
         "requirements": rows,
-        "pending_br_ids": [row["br_id"] for row in rows if row["status"] == "not_evaluable"],
+        "pending_br_ids": [row["br_id"] for row in rows if row["status"] == "not_available"],
     }
 
 
@@ -269,15 +305,19 @@ def apply_br_followup(data, record):
 
 
 def br_summary_snapshot(summary):
-    rows = [{"br_id": row["br_id"], "status": row["status"],
-             "evidence": list(row["evidence"]), "rationale": row["rationale"],
-             **({"blocking_defect_ids": list(row["blocking_defect_ids"])}
-                if row.get("blocking_defect_ids") not in (None, []) else
-                {"runtime_observation_ids": list(row["runtime_observation_ids"])})}
-            for row in summary["requirements"]]
+    rows = []
+    for row in summary["requirements"]:
+        projected = {"br_id": row["br_id"], "status": row["status"],
+                     "evidence": list(row["evidence"]), "rationale": row["rationale"],
+                     "runtime_observation_ids": list(row["runtime_observation_ids"])}
+        if row["status"] == "incorrect":
+            projected["caused_by_defect_ids"] = list(row["caused_by_defect_ids"])
+        elif row["status"] == "not_available":
+            projected["unavailable_reason"] = row["unavailable_reason"]
+        rows.append(projected)
     counts = summary["counts"]
-    return {"requirements": rows, "total": counts["total"], "met": counts["met"],
-            "unmet": counts["unmet"], "not_evaluable": counts["not_evaluable"]}
+    return {"requirements": rows, "total": counts["total"], "correct": counts["correct"],
+            "incorrect": counts["incorrect"], "not_available": counts["not_available"]}
 
 
 def validate_flow(data, folder):
@@ -328,7 +368,7 @@ def validate_flow(data, folder):
     counts = effective.get("counts")
     if (not isinstance(counts, dict) or counts.get("total") !=
             counts.get("correct", 0) + counts.get("incorrect", 0)
-            + counts.get("not_evaluable", 0)):
+            + counts.get("not_available", 0)):
         raise ValueError("flow_accuracy counts do not reconcile")
     if data.get("flow_accuracy_percent") != effective.get("flow_accuracy_percent") or data.get("flow_error_percent") != effective.get("flow_error_percent"):
         raise ValueError("flow percentage mismatch")
@@ -453,9 +493,9 @@ def calculate(path_string):
                           if latest_repair_status.get(row["defect_id"]) != "resolved"}
         reported_defects = [row for row in initial_defects if row["defect_id"] in unresolved_ids]
     defect_counts = {category: sum(row["category"] == category for row in reported_defects)
-                     for category in ("business_rule", "flow", "technical")}
+                     for category in ("business_rule", "flow", "technical", "ui")}
     initial_defect_counts = {category: sum(row["category"] == category for row in initial_defects)
-                             for category in ("business_rule", "flow", "technical")}
+                             for category in ("business_rule", "flow", "technical", "ui")}
     resolved_defect_counts = {category: initial_defect_counts[category] - defect_counts[category]
                               for category in initial_defect_counts}
     repair_results = [{

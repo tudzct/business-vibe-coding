@@ -11,6 +11,10 @@ Accept one [approved `*-coding-prompt.md`](../../../docs/02-construction/coding-
 
 The approved coding prompt and the current application source under `finalsource/` are the exclusive implementation inputs for deciding what code to write. Read the prompt in full, inspect the current source as needed and implement the requested change compatibly with that source. Technical and workflow documents authorized below constrain how the operation is performed; they do not add product behavior. If the prompt conflicts with the current source or an immutable technical boundary, report the exact conflict and stop instead of silently inventing a resolution.
 
+## Source-Generation Technical Constraints
+
+Generate source only. Modify only files under `finalsource/` required by the approved prompt. Follow the shared technical rules that prohibit creating or running tests or test cases and prohibit active-run database schema changes. Do not introduce an unapproved public API, ownership model, dependency or destructive change.
+
 This operation adds only the following explicit read prohibitions. This list is exhaustive for this operation: it does not prohibit a repository path that is not listed here, subject to the shared operational constitution.
 
 - Do not open or read any file under `docs/01-inception/`.
