@@ -10,7 +10,7 @@ generated_at: <ISO-8601 timestamp>
 
 ## Source Scope: Prompts A-D
 
-Read the following materials:
+This source scope defines the input materials used to author Prompts A-D. Read the following materials:
 
 - Active Use Case file: `docs/01-inception/use-cases/<ACTIVE-UC-FILE>.md`;
 - API contract files: `docs/01-inception/api-contracts/<RELATED-API-CONTRACT>.md`;
@@ -161,9 +161,10 @@ Do not call the API when client-side validation fails.
 
 ## Source Scope: Prompts E-F
 
-Read the input sources used to complete Prompts A-D.
+This source scope defines the input materials used to author Prompts E-F. Read the following materials:
 
-Additionally, read the Business Rule specification file: `docs/01-inception/business-rules/<ACTIVE-BUSINESS-RULE-FILE>.md`.
+- The input materials declared in Prompts A-D;
+- Business Rule specification file: `docs/01-inception/business-rules/<ACTIVE-BUSINESS-RULE-FILE>.md`.
 
 Use the information obtained from these sources to complete every placeholder in Prompts E-F below.
 

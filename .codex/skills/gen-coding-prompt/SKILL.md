@@ -75,9 +75,10 @@ After preflight PASS, read the authorized [Primary Inputs](#primary-inputs) unde
 
 ## Phase 3: Author the Coding Prompt Draft
 
-1. Read `templates/construction/coding-prompt.template.md` in full and strictly follow the instructions declared inside it.
-2. Author the Coding Prompt Draft at the canonical output path. Do not copy SKILL/reference instructions into the artifact or create any additional content artifact.
-3. If a template instruction cannot be completed because an authorized input is missing, invalid, ambiguous, or contradictory, report the exact input problem and stop. Do not repair an input, modify source or database state, or invent a replacement value.
+1. Read `templates/construction/coding-prompt.template.md` in full and follow the instructions declared inside it.
+2. The prompt template defines the input materials for each section under its Source Scope. Author each section from the materials declared in its respective Source Scope.
+3. Author the Coding Prompt Draft at the canonical output path. Do not copy SKILL/reference instructions into the artifact or create any additional content artifact.
+4. If a template instruction cannot be completed because an authorized input is missing, invalid, ambiguous, or contradictory, report the exact input problem and stop. Do not repair an input, modify source or database state, or invent a replacement value.
 
 ## Phase 4: Save Draft, END Timing & Post-Validation (Execute-Only)
 
