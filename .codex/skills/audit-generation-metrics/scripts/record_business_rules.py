@@ -60,13 +60,27 @@ def build_snapshot(requirements, ordered_br_ids, source_revision, assessed_at=No
         if not isinstance(runtime_obs, list):
             raise ValueError(f"runtime_observation_ids must be a list for {br_id}")
 
-        ordered_rows.append({
+        result = {
             "br_id": br_id,
             "status": status,
             "rationale": rationale,
             "evidence": evidence,
             "runtime_observation_ids": runtime_obs
-        })
+        }
+        causes = row.get("caused_by_defect_ids")
+        unavailable_reason = row.get("unavailable_reason")
+        if status == "incorrect":
+            if (not isinstance(causes, list) or not causes or len(causes) != len(set(causes))
+                    or any(not isinstance(value, str) or not value.strip() for value in causes)):
+                raise ValueError(f"caused_by_defect_ids required for incorrect BR: {br_id}")
+            result["caused_by_defect_ids"] = causes
+        elif status == "not_evaluable":
+            if not isinstance(unavailable_reason, str) or not unavailable_reason.strip():
+                raise ValueError(f"unavailable_reason required for not_evaluable BR: {br_id}")
+            result["unavailable_reason"] = unavailable_reason
+        elif causes not in (None, []) or unavailable_reason not in (None, ""):
+            raise ValueError(f"correct BR cannot carry cause metadata: {br_id}")
+        ordered_rows.append(result)
         counts[status] += 1
 
     assessed_time = assessed_at or datetime.now(timezone.utc).isoformat()
@@ -75,8 +89,8 @@ def build_snapshot(requirements, ordered_br_ids, source_revision, assessed_at=No
         "assessed_at": assessed_time,
         "requirements": ordered_rows,
         "total": len(ordered_br_ids),
-        "met": counts["met"],
-        "unmet": counts["unmet"],
+        "correct": counts["correct"],
+        "incorrect": counts["incorrect"],
         "not_evaluable": counts["not_evaluable"]
     }
 
@@ -149,7 +163,12 @@ def record_business_rules(run_path, stage="initial", requirements_input=None,
         validate_br_runtime(snapshot, matching_assessment, defects, f"business_rules.{stage}")
 
     print(f"Validated business_rules.{stage} successfully:")
-    print(f"  Total: {snapshot['total']} | Met: {snapshot['met']} | Unmet: {snapshot['unmet']} | Not Evaluable: {snapshot['not_evaluable']}")
+    print(f"  Total: {snapshot['total']} | Correct: {snapshot['correct']} | Incorrect: {snapshot['incorrect']} | Not Evaluable: {snapshot['not_evaluable']}")
+    for row in snapshot["requirements"]:
+        if row["status"] == "incorrect":
+            print(f"  {row['br_id']}: incorrect; caused by {', '.join(row['caused_by_defect_ids'])}")
+        elif row["status"] == "not_evaluable":
+            print(f"  {row['br_id']}: not_evaluable; {row['unavailable_reason']}")
 
     if dry_run:
         print("[dry-run] Canonical run JSON was not modified.")

@@ -202,7 +202,23 @@ def validate_runtime(data, definitions, validate_evidence):
                         "target evidence missing from action sequence")
             else:
                 require(ref.get("observation_id") is None, "static evidence cannot claim runtime observation")
-        if item["status"] in {"met", "unmet"}:
+        causes = item.get("caused_by_defect_ids")
+        unavailable_reason = item.get("unavailable_reason")
+        if item["status"] == "incorrect":
+            require(isinstance(causes, list) and causes and len(causes) == len(set(causes))
+                    and all(isinstance(value, str) and value.strip() for value in causes),
+                    "incorrect target needs unique causing defect IDs")
+            require(unavailable_reason in (None, ""),
+                    "incorrect target cannot carry an unavailable reason")
+        elif item["status"] == "not_evaluable":
+            require(isinstance(unavailable_reason, str) and unavailable_reason.strip(),
+                    "not_evaluable target needs an unavailable reason")
+            require(causes in (None, []),
+                    "not_evaluable target cannot claim a causing defect")
+        else:
+            require(causes in (None, []) and unavailable_reason in (None, ""),
+                    "correct target cannot carry defect or unavailable metadata")
+        if item["status"] in {"correct", "incorrect"}:
             oid = item.get("observation_id")
             require(oid in by_id and by_id[oid]["flow_id"] == flow_id,
                     "conclusive target verdict needs a matching runtime observation")
@@ -223,16 +239,16 @@ def validate_runtime(data, definitions, validate_evidence):
             for ref in finding["evidence"]:
                 artifact(ref)
                 require(ref["kind"] == "source" and ref.get("observation_id") is None, "source finding needs static snapshot")
-        if critical and item["status"] == "met":
+        if critical and item["status"] == "correct":
             kinds = item.get("required_runtime_kinds")
-            require(isinstance(kinds, list) and kinds and set(kinds) <= RUNTIME_KINDS, "critical met needs frozen-requirement-derived runtime evidence kinds")
+            require(isinstance(kinds, list) and kinds and set(kinds) <= RUNTIME_KINDS, "critical correct result needs frozen-requirement-derived runtime evidence kinds")
             require(isinstance(item.get("evidence_requirement_rationale"), str) and item["evidence_requirement_rationale"].strip(),
                     "explain required evidence from frozen behavior")
             oid = item.get("observation_id")
-            require(oid in by_id and by_id[oid]["flow_id"] == flow_id, "critical met needs a matching observation")
-            require(runtime["status"] == "ready" and deployment["verified"], "critical met needs verified runtime")
+            require(oid in by_id and by_id[oid]["flow_id"] == flow_id, "critical correct result needs a matching observation")
+            require(runtime["status"] == "ready" and deployment["verified"], "critical correct result needs verified runtime")
             require(set(kinds) <= {r["kind"] for r in item["evidence"] if r.get("observation_id") == oid},
-                    "critical met lacks required runtime evidence")
+                    "critical correct result lacks required runtime evidence")
     return by_id, validate_target
 
 

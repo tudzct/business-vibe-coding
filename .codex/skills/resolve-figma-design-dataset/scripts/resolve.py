@@ -94,9 +94,7 @@ def main() -> int:
     except FileNotFoundError as error:
         print(json.dumps({"status": "no-dataset", "error": str(error)}, ensure_ascii=False), file=sys.stderr)
         return 4
-    manifest_path = dataset / "manifest.json"
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    manifest_sha256 = "sha256:" + digest(manifest_path)
+    manifest = json.loads((dataset / "manifest.json").read_text(encoding="utf-8"))
     try:
         checks = verify(dataset)
     except (ValueError, OSError) as error:
@@ -104,8 +102,7 @@ def main() -> int:
         return 2
     integrity_ok = all(item["ok"] for item in checks)
     if args.validate_all:
-        print(json.dumps({"dataset_id": manifest["dataset_id"], "manifest_sha256": manifest_sha256,
-                          "integrity_ok": integrity_ok, "files": checks}, ensure_ascii=False, indent=2))
+        print(json.dumps({"dataset_id": manifest["dataset_id"], "integrity_ok": integrity_ok, "files": checks}, ensure_ascii=False, indent=2))
         return 0 if integrity_ok else 2
     if not args.target:
         parser.error("target or --validate-all is required")
@@ -119,25 +116,7 @@ def main() -> int:
         print(json.dumps({"error": f"{key} is not in the manifest"}, ensure_ascii=False), file=sys.stderr)
         return 2
     node = manifest["nodes"].get(entry["node_id"]) if entry["node_id"] else None
-    required_node_ids = entry.get("required_node_ids") or ([entry["node_id"]] if entry["node_id"] else [])
-    resolved_nodes = []
-    for node_id in required_node_ids:
-        required_node = manifest["nodes"].get(node_id)
-        if required_node is None or not required_node.get("snapshot_dir"):
-            print(json.dumps({"status": "invalid-manifest",
-                              "error": f"Required node {node_id} has no frozen snapshot"},
-                             ensure_ascii=False), file=sys.stderr)
-            return 2
-        resolved_nodes.append({
-            "node_id": node_id,
-            "frame_name": required_node["frame_name"],
-            "snapshot_dir": str(dataset / required_node["snapshot_dir"]),
-        })
-    output = {"uc_id": key, "status": entry["status"], "dataset_id": manifest["dataset_id"],
-              "manifest_sha256": manifest_sha256, "node_id": entry["node_id"],
-              "required_nodes": resolved_nodes,
-              "snapshot_dirs": [item["snapshot_dir"] for item in resolved_nodes],
-              "integrity_ok": integrity_ok}
+    output = {"uc_id": key, "status": entry["status"], "dataset_id": manifest["dataset_id"], "node_id": entry["node_id"], "integrity_ok": integrity_ok}
     if node:
         output.update({"frame_name": node["frame_name"], "snapshot_dir": str(dataset / node["snapshot_dir"]) if node["snapshot_dir"] else None})
     print(json.dumps(output, ensure_ascii=False, indent=2))

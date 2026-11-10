@@ -10,7 +10,7 @@ Keep these semantic distinctions:
 
 - Initial and final BR/flow/UI assessments are different measurements. Use the header's stage; absent or conflicting stage context yields N/A rather than selecting the better score. Resolve a current assessment from its recorded ID, not the last array element by assumption.
 - For current/final experiment flow results, use stored `flow_accuracy.current_summary` when present. Under `accepted-audit-results-v1`, do not replace accepted results with an inconclusive final-source assessment. Verify per-flow evidence provenance; summary stage `experiment` and null aggregate source are valid. Only headings explicitly requesting raw initial/final-source assessments map to immutable assessments. Evaluated-only rates use evaluated flows; whole-baseline rates stay N/A while accepted rows remain unknown. Preserve selection policy, coverage, pending counts, failures and researcher/LLM provenance. Follow-ups do not change telemetry and export never recalculates scores.
-- `met`, `unmet`, `not_evaluable` and `execution_blocked` are distinct. Interpret a label such as `not_available` as `not_evaluable` only when its context unambiguously means unassessable rules; do not confuse an actual count with missing-data N/A. `execution_blocked` is a recorded audit result, not missing spreadsheet data.
+- `correct`, `incorrect`, `not_evaluable` and `execution_blocked` are distinct. `not_evaluable` is an actual count of unassessable targets, not missing-data N/A. `execution_blocked` is a recorded audit result, not missing spreadsheet data.
 - Repair attempts/sub-prompts and unique defects are not interchangeable. Copy the already recorded count matching the heading; do not derive an error count from `len(repairs)` or count affected rules as errors.
 - Prompt/Source/Repair and Workflow counters stay separate. Input includes cached input; output includes reasoning. Never add those subsets again. Preserve recorded timing semantics; captured execution seconds are not UI Worked-for time. A validated Repair bucket with status `skipped` and a recorded no-repair decision exports its stored zero token/time/turn/tool values. Missing, pending or null values remain N/A, including unavailable model-call counts; never synthesize zeros. Require the canonical timing protocol; never combine incompatible totals.
 - Percent points (0..100) and Excel percent fractions (0..1), seconds/minutes and call counts/currency are different units. Apply only declared representation conversions supported by evidence. Ambiguity yields N/A.
@@ -36,20 +36,20 @@ Generate this from the current three-argument invocation and actual workbook ins
   "workbook_sha256": "sha256:<hash>",
   "sources": ["docs/04-experiments/UC-01/canonical-run-UC-01-model.json"],
   "header_coverage": [
-    {"sheet": "Results", "column": "D", "header": "Final BR met", "status": "mapped", "cells": ["D5"]}
+    {"sheet": "Results", "column": "D", "header": "Final BR correct", "status": "mapped", "cells": ["D5"]}
   ],
   "cells": [
     {
       "sheet": "Results",
       "cell": "D5",
       "identity": {"uc_id": "UC-01", "run_id": "run-1"},
-      "field": "business_rules.final.met",
+      "field": "business_rules.final.correct",
       "type": "integer",
       "conversion": "identity",
       "expected_value": null,
       "overwrite_existing": false,
-      "basis": [{"cell": "D4", "value": "Final BR met"}, {"cell": "A5", "value": "UC-01"}],
-      "semantic_reason": "Final-stage count of met Business Rules, not a percentage or initial count.",
+      "basis": [{"cell": "D4", "value": "Final BR correct"}, {"cell": "A5", "value": "UC-01"}],
+      "semantic_reason": "Final-stage count of correct Business Rules, not a percentage or initial count.",
       "review_range": "A4:F6"
     }
   ],

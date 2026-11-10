@@ -18,7 +18,7 @@ SHA = re.compile(r"sha256:[0-9a-f]{64}")
 SAFE_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]*")
 ROUND_OUTCOMES = {"in_progress", "resolved", "unresolved", "blocked"}
 ATTEMPT_STATUSES = {"resolved", "unresolved"}
-CATEGORIES = {"technical", "business_rule", "flow"}
+CATEGORIES = {"technical", "business_rule", "flow", "ui"}
 
 
 def require(condition, message):
@@ -49,37 +49,36 @@ def validate_evidence(value, label):
 def prompt_inventory(run, prompt_dir, all_defects):
     files = sorted(prompt_dir.glob("repair-*.md")) if prompt_dir.is_dir() else []
     require(files, "validated repair prompt set is required")
-    require(len(files) == len(all_defects),
-            "repair prompt count must match the immutable defect inventory")
     result = {}
     selected = []
-    for expected_index, (path, defect) in enumerate(zip(files, all_defects), 1):
+    by_id = {item["defect_id"]: item for item in all_defects}
+    for expected_index, path in enumerate(files, 1):
         fields, arrays, sections = parse_prompt(path)
-        defect_id = defect["defect_id"]
-        require(defect_id not in result, f"{path}: duplicate defect")
+        defect_id = fields["defect_id"]
+        require(defect_id in by_id and defect_id not in result, f"{path}: unknown or duplicate defect")
+        defect = by_id[defect_id]
         require(fields["repair_index"] == str(expected_index)
                 and path.name == f"repair-{expected_index:03d}-{defect_id}.md",
                 f"{path}: prompt index or filename mismatch")
         require(fields["uc_id"] == run["uc_id"] and fields["run_id"] == run["run_id"],
                 f"{path}: run identity mismatch")
-        require(arrays["affected_br_ids"] == defect["affected_br_ids"],
-                f"{path}: affected BR set differs from the immutable defect")
-        evidence = defect.get("evidence")
-        require(isinstance(evidence, list) and evidence, f"{path}: recorded evidence missing")
-        for reference in evidence:
-            require(isinstance(reference, dict), f"{path}: invalid recorded evidence reference")
-            evidence_path = reference.get("path")
-            evidence_sha = reference.get("sha256")
-            require(isinstance(evidence_path, str) and evidence_path in sections["Evidence"]
-                    and isinstance(evidence_sha, str) and evidence_sha in sections["Evidence"],
-                    f"{path}: recorded evidence differs from fixed prompt")
+        require(fields["defect_fingerprint"] == defect["fingerprint"], f"{path}: fingerprint mismatch")
+        require(fields["source_revision"] == defect["source_revision"], f"{path}: source mismatch")
+        require(all(value in defect["affected_br_ids"] for value in arrays["affected_br_ids"]),
+                f"{path}: affected BR is absent from the immutable defect")
+        require(all(value in defect["affected_flow_ids"] for value in arrays["affected_flow_ids"]),
+                f"{path}: affected Flow is absent from the immutable defect")
+        require(sections["Evidence"], f"{path}: fixed prompt Evidence is empty")
         result[defect_id] = {
             "path": path.relative_to(ROOT).as_posix(),
             "sha256": digest(path),
-            "affected_br_ids": defect["affected_br_ids"],
-            "affected_flow_ids": defect["affected_flow_ids"],
+            "affected_br_ids": arrays["affected_br_ids"],
+            "affected_flow_ids": arrays["affected_flow_ids"],
         }
         selected.append(defect)
+    require(list(result) == [item["defect_id"] for item in all_defects
+                             if item["defect_id"] in result],
+            "prompt files must retain immutable defect order")
     return result, selected
 
 
@@ -99,7 +98,7 @@ def validate(run_path, prompt_dir, final=False):
             and all(isinstance(item, dict) and item.get("stage") == "initial" for item in all_defects),
             "Repair must retain only the immutable initial defect inventory")
     require(all(item.get("category") in CATEGORIES for item in all_defects),
-            "initial defect category must be technical, business_rule or flow")
+            "initial defect category must be technical, business_rule, flow or ui")
     require(all(isinstance(item.get("blocks_execution"), bool) for item in all_defects),
             "initial defects require a Boolean blocks_execution flag")
     require(all(SHA.fullmatch(item.get("fingerprint") or "") for item in all_defects),
@@ -230,9 +229,9 @@ def validate(run_path, prompt_dir, final=False):
             require(status == "completed" and run.get("run_status") == "complete",
                     "resolved Repair needs completed/complete status")
             business = (run.get("business_rules") or {}).get("final") or {}
-            require(business.get("met") == business.get("total") and business.get("unmet") == 0
+            require(business.get("correct") == business.get("total") and business.get("incorrect") == 0
                     and business.get("not_evaluable") == 0,
-                    "completed Repair requires every BR met")
+                    "completed Repair requires every BR correct")
             require(run.get("flow_accuracy_percent") == 100,
                     "completed Repair requires 100% Flow Accuracy")
         elif terminal_outcome != "blocked":

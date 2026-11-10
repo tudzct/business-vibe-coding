@@ -9,7 +9,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from metrics_contract import ROOT, atomic_write, context, read_json, require, run_lock
-from flow_summary import RESULT_POLICY, current_assessment, fingerprint, refresh_report, refresh_summary
+from flow_summary import RESULT_POLICY, current_assessment, fingerprint, refresh_summary
 
 
 def prepare(run, folder, payload=None):
@@ -55,9 +55,12 @@ def prepare(run, folder, payload=None):
         else:
             require(len(defect_followup_ids) == 1 and None not in defect_followup_ids,
                     "researcher defects require one shared follow-up ID")
-            require(all(defect.get("category") == "technical"
+            require(all(defect.get("category") in {"technical", "ui"}
                         and defect.get("blocks_execution") is False for defect in defect_records),
-                    "defect-only follow-up supports non-blocking technical defects only")
+                    "defect-only follow-up supports non-blocking technical/UI defects only")
+            require(all(not defect.get("affected_br_ids") and not defect.get("affected_flow_ids")
+                        for defect in defect_records),
+                    "a defect that affects scored targets requires matching incorrect results")
             followup_id = next(iter(defect_followup_ids))
         require(updated.get("repairs") == [] and updated.get("repair_prompt_directory") is None
                 and updated.get("all_sub_prompt_count") in (None, 0)
@@ -89,7 +92,7 @@ def prepare(run, folder, payload=None):
 
         negative_br_ids = {
             row.get("br_id") for row in (br_record or {}).get("results", [])
-            if row.get("status") == "unmet"
+            if row.get("status") == "incorrect"
         }
         negative_flow_ids = {
             row.get("flow_id") for row in (flow_record or {}).get("results", [])
@@ -103,8 +106,8 @@ def prepare(run, folder, payload=None):
             require(isinstance(flow_record, dict) and isinstance(br_record, dict),
                     "researcher execution blocker requires complete BR and Flow results")
             require({row.get("br_id") for row in br_record.get("results", [])} == set(known_br_ids)
-                    and all(row.get("status") == "unmet" for row in br_record["results"]),
-                    "researcher execution blocker must mark every frozen BR unmet")
+                    and all(row.get("status") == "incorrect" for row in br_record["results"]),
+                    "researcher execution blocker must mark every frozen BR incorrect")
             require({row.get("flow_id") for row in flow_record.get("results", [])} == set(known_flow_ids)
                     and all(row.get("status") == "incorrect" for row in flow_record["results"]),
                     "researcher execution blocker must mark every frozen Flow incorrect")
@@ -113,7 +116,7 @@ def prepare(run, folder, payload=None):
 
     researcher_negative_br_ids = {
         row.get("br_id") for row in (br_record or {}).get("results", [])
-        if (br_record or {}).get("mode") == "researcher_result" and row.get("status") == "unmet"
+        if (br_record or {}).get("mode") == "researcher_result" and row.get("status") == "incorrect"
     }
     researcher_negative_flow_ids = {
         row.get("flow_id") for row in (flow_record or {}).get("results", [])
@@ -126,9 +129,15 @@ def prepare(run, folder, payload=None):
         covered_br_ids = {value for row in initial_defects for value in row.get("affected_br_ids", [])}
         covered_flow_ids = {value for row in initial_defects for value in row.get("affected_flow_ids", [])}
         require(researcher_negative_br_ids <= covered_br_ids,
-                "researcher unmet BR result requires a canonical affected defect")
+                "researcher incorrect BR result requires a canonical affected defect")
         require(researcher_negative_flow_ids <= covered_flow_ids,
                 "researcher incorrect Flow result requires a canonical affected defect")
+        added_affected_br_ids = {value for row in defect_records for value in row.get("affected_br_ids", [])}
+        added_affected_flow_ids = {value for row in defect_records for value in row.get("affected_flow_ids", [])}
+        require(added_affected_br_ids <= researcher_negative_br_ids,
+                "every researcher defect-affected BR must be reported incorrect")
+        require(added_affected_flow_ids <= researcher_negative_flow_ids,
+                "every researcher defect-affected Flow must be reported incorrect")
     if flow_record is not None:
         require(isinstance(flow_record, dict), "flow follow-up must be an object")
         record = copy.deepcopy(flow_record)
@@ -159,7 +168,6 @@ def prepare(run, folder, payload=None):
 def persist(path, run, folder, summary):
     # Follow-ups are validated append-only records in canonical JSON.
     atomic_write(path, run)
-    refresh_report(path, run)
 
 
 def main():

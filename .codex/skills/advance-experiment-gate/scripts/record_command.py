@@ -87,7 +87,7 @@ def prepare(run, folder, action, turn_id):
         business = updated["business_rules"]["initial"]
         counts = validate_flow(updated, folder)["counts"]
         evidence = audit_evidence(updated, folder, "initial")
-        if (business["met"] == business["total"] and counts["correct"] == counts["total"]
+        if (business["correct"] == business["total"] and counts["correct"] == counts["total"]
                 and not evidence["defect_ids"]):
             updated["business_rules"]["final"] = copy.deepcopy(business)
             receipts.append(prepare_transition(updated, folder, "repair_decision", "skipped", turn_id,

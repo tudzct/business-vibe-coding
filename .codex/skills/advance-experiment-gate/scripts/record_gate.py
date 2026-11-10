@@ -161,7 +161,7 @@ def automatic_context(run, folder, followup_id, source_revision):
                 if f["status"] != "not_evaluable"),
             "accepted results belong to older source; inspect current defects first")
     business = accepted_br_summary(run)
-    br_ids = [r["br_id"] for r in business["requirements"] if r["status"] == "unmet"]
+    br_ids = [r["br_id"] for r in business["requirements"] if r["status"] == "incorrect"]
     flow_ids = [r["flow_id"] for r in summary["flows"] if r["status"] == "incorrect"]
     current = next(row for row in run["flow_accuracy"]["assessments"]
                    if row["assessment_id"] == run["flow_accuracy"]["current_assessment_id"])
@@ -169,7 +169,7 @@ def automatic_context(run, folder, followup_id, source_revision):
         validate_defects(run, "initial", source_revision,
                          [flow["flow_id"] for flow in current["flows"]]), br_ids, flow_ids)
     outcome = "authorized" if br_ids or flow_ids or defects else (
-        "skipped" if business["counts"]["met"] == business["counts"]["total"]
+        "skipped" if business["counts"]["correct"] == business["counts"]["total"]
         and summary["counts"]["correct"] == summary["counts"]["total"] else None)
     if summary["counts"].get("not_evaluable", 0) or business["counts"].get("not_evaluable", 0):
         outcome = None
@@ -285,13 +285,13 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
                     "repair requires conclusive accepted results for every frozen BR; save a researcher result or complete re-audit first")
             current = next(row for row in run["flow_accuracy"]["assessments"]
                            if row["assessment_id"] == run["flow_accuracy"]["current_assessment_id"])
-            defect_br_ids = [row["br_id"] for row in br_summary["requirements"] if row["status"] == "unmet"]
+            defect_br_ids = [row["br_id"] for row in br_summary["requirements"] if row["status"] == "incorrect"]
             defect_flow_ids = [row["flow_id"] for row in summary["flows"] if row["status"] == "incorrect"]
             open_defects = actionable_defects(
                 validate_defects(run, "initial", initial_evidence["source_revision"],
                                  [flow["flow_id"] for flow in current["flows"]]),
                 defect_br_ids, defect_flow_ids)
-            require(any(r["status"] == "unmet" for r in br_summary["requirements"])
+            require(any(r["status"] == "incorrect" for r in br_summary["requirements"])
                     or summary["counts"]["incorrect"] > 0 or open_defects,
                     "repair requires an evidenced defect")
         if automatic is not None:
@@ -301,7 +301,7 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
             require(not run.get("repairs"), "cannot skip already executed repair")
             current = next(row for row in run["flow_accuracy"]["assessments"]
                            if row["assessment_id"] == run["flow_accuracy"]["current_assessment_id"])
-            defect_br_ids = [row["br_id"] for row in br_summary["requirements"] if row["status"] == "unmet"]
+            defect_br_ids = [row["br_id"] for row in br_summary["requirements"] if row["status"] == "incorrect"]
             flow_summary = validate_flow(run, folder)
             defect_flow_ids = [row["flow_id"] for row in flow_summary["flows"] if row["status"] == "incorrect"]
             require(not actionable_defects(
@@ -322,7 +322,7 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
             evidence = initial_evidence
             if run.get("run_status") not in {"blocked", "stopped", "repair_declined"}:
                 flow = validate_flow(run, folder)["counts"]
-                verified = (br_summary["counts"]["met"] == br_summary["counts"]["total"]
+                verified = (br_summary["counts"]["correct"] == br_summary["counts"]["total"]
                             and flow["correct"] == flow["total"])
                 run["run_status"] = "complete" if verified else "repair_declined"
         run["repair_authorization"] = {"approved": outcome == "authorized", "turn_id": turn_id}

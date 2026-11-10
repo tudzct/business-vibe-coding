@@ -11,7 +11,7 @@ Accept one readable `docs/01-inception/use-cases/uc-*.md` path. Optional `--conf
 
 ## Primary Inputs
 
-During this operation, read and use only the following project-content inputs to author the Coding Prompt. Do not inspect or use any other project-content source.
+The following are the only project-content inputs authorized for this operation. Do not inspect or use any other project-content source.
 
 1. **The configured prompt template**: `templates/construction/coding-prompt.template.md`.
 2. **The single active frozen use case**: The explicit `docs/01-inception/use-cases/uc-*.md` path provided.
@@ -21,6 +21,8 @@ During this operation, read and use only the following project-content inputs to
 6. **The configured live database**: Read-only inspection is permitted after preflight PASS. Do not insert, update or delete data; execute DDL; run migrations or schema synchronization; or change tables, columns, indexes, constraints, grants or any other database state.
 7. **The active UC's resolved Figma evidence**: Only the local snapshot JSON/node directory returned by `resolve.py` from the configured frozen dataset.
 8. **The entire current application source**: Read the cumulative source under `finalsource/`, including implementation added by earlier UCs. This operation must not modify source files.
+
+### Technical and Control-Plane Material
 
 Technical and control-plane material may be read only to operate this workflow and must not add product behavior or requirements. Permitted material is `AGENTS.md`, this skill and its own references, [technical stack rules](../../../docs/00-context/engineering/TECHNICAL-STACK-RULES.md), [database policy](../../../docs/00-context/engineering/DATABASE-SCHEMA.md), the [active-run contract](../../../docs/00-context/workflow/WORKFLOW-CONTRACT.md), and output emitted by required execute-only helpers.
 
@@ -67,32 +69,15 @@ Capture live prompt START immediately:
 ```
 The helper resolves the active rollout and turn internally; never supply or guess either path or ID.
 
-## Phase 2: Ingest Exclusive Project Inputs
+## Phase 2: Read Authorized Inputs
 
-Ingest the primary inputs listed above:
-1. **Read `templates/construction/coding-prompt.template.md`**: Understand required prompt sections and structure.
-2. **Read the active `docs/01-inception/use-cases/uc-*.md`**: Extract functional specifications, flows, actors, preconditions, postconditions, and UML model.
-3. **Read the active business-rule specification**: Read only the exact `business_rule_path` returned by preflight.
-4. **Read active API contracts**: If `Related API IDs` is non-empty, read only the specified contract paths under `docs/01-inception/api-contracts/`. If `None.`, skip this step completely.
-5. **Resolve Figma evidence**: Execute `resolve.py` in read-only mode:
-   ```text
-   <python-executable> .codex/skills/resolve-figma-design-dataset/scripts/resolve.py <UC-ID-or-path> --dataset-version <version>
-   ```
-   Read only the local snapshot JSON/node data for the resolved target node(s).
-6. **Read DBML once**: Read `docs/00-context/engineering/schema.dbml` once as technical input for exact table, column, and constraint definitions.
-7. **Inspect the configured live database read-only**: Read the active database state needed to understand the prepared input. Do not execute any statement or tool action that mutates data, schema or database configuration.
-8. **Read the entire current application source**: Inspect the cumulative source under `finalsource/`, including implementation added by earlier UCs. Do not mutate source during prompt generation.
+After preflight PASS, read the authorized [Primary Inputs](#primary-inputs) under their declared access boundaries. This phase is read-only; persistence is limited to the Draft and required telemetry in Phase 4.
 
 ## Phase 3: Author the Coding Prompt Draft
 
-1. Reason over the inputs collected in Phase 2.
-2. Author the complete coding prompt draft by populating `templates/construction/coding-prompt.template.md`.
-3. Treat the completed Coding Prompt as a self-contained implementation handoff. For every template placeholder, inline the concrete information that placeholder requests from the applicable validated inputs into the section responsible for it. Do not copy unrelated source content merely because it is available.
-4. Populate every value only with facts directly supported by the validated inputs. Leave no placeholder unresolved. Use `N/A` only when an input explicitly establishes that the item is not applicable. If a required value is missing or ambiguous, report the input gap; never fabricate, assume, generalize or fill it from generic knowledge.
-5. Do not fill a placeholder with only a path, identifier or instruction for a later phase to reopen an original input. The completed value must contain the information requested by that placeholder.
-6. Preserve the configured template's structure, section order and declared responsibilities. Distribute use-case behaviors without altering frozen scope, moving content into a section with a different responsibility or unnecessarily duplicating content across sections.
-7. Treat the template strictly as the output shape. The generated artifact must contain only its frontmatter, UC title and configured Prompt sections. Do not copy these generation instructions into the artifact, add a generation preamble, or create a separate global use-case-context section outside the configured Prompt sections.
-8. Place every implementation-relevant actor, precondition, postcondition, Flow step and terminal outcome into the placeholder of the configured Prompt section responsible for that behavior.
+1. Read `templates/construction/coding-prompt.template.md` in full and strictly follow the instructions declared inside it.
+2. Author the Coding Prompt Draft at the canonical output path. Do not copy SKILL/reference instructions into the artifact or create any additional content artifact.
+3. If a template instruction cannot be completed because an authorized input is missing, invalid, ambiguous, or contradictory, report the exact input problem and stop. Do not repair an input, modify source or database state, or invent a replacement value.
 
 ## Phase 4: Save Draft, END Timing & Post-Validation (Execute-Only)
 

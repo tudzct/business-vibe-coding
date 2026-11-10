@@ -9,7 +9,11 @@ Apply the [shared operational constitution](../../../AGENTS.md#shared-operationa
 
 Accept one [approved `*-coding-prompt.md`](../../../docs/02-construction/coding-prompts/%3CUC-ID%3E-coding-prompt.md) path. Read the [active-run contract](../../../docs/00-context/workflow/WORKFLOW-CONTRACT.md), relevant engineering stack rules and this skill's own references.
 
-The approved coding prompt and the current application source under `finalsource/` are the exclusive implementation inputs for deciding what code to write. Read the prompt in full, inspect the current source as needed and implement the requested change compatibly with that source. Treat the approved coding prompt as an immutable, read-only implementation handoff: do not edit, rewrite, normalize, complete or reinterpret its structure, and do not reopen its template to alter it. If the prompt lacks information required for implementation, report the exact gap and stop instead of changing the prompt or inventing a resolution. Technical and workflow documents authorized below constrain how the operation is performed; they do not add product behavior. If the prompt conflicts with the current source or an immutable technical boundary, report the exact conflict and stop instead of silently inventing a resolution.
+The approved coding prompt and the current application source under `finalsource/` are the exclusive implementation inputs for deciding what code to write. Read the prompt in full, inspect the current source as needed and implement the requested change compatibly with that source. Technical and workflow documents authorized below constrain how the operation is performed; they do not add product behavior. If the prompt conflicts with the current source or an immutable technical boundary, report the exact conflict and stop instead of silently inventing a resolution.
+
+## Source-Generation Technical Constraints
+
+Generate source only. Modify only files under `finalsource/` required by the approved prompt. Follow the shared technical rules that prohibit creating or running tests or test cases and prohibit active-run database schema changes. Do not introduce an unapproved public API, ownership model, dependency or destructive change.
 
 This operation adds only the following explicit read prohibitions. This list is exhaustive for this operation: it does not prohibit a repository path that is not listed here, subject to the shared operational constitution.
 
