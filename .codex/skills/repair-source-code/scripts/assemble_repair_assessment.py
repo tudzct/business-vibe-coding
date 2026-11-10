@@ -335,7 +335,7 @@ def assemble_assessment(run_data, run_dir, assessment_id=None, stage="final", so
                 f"verification step inventory differs for {flow_id}")
         for step in flow["steps"]:
             verdict = step_results[step["step_id"]]
-            require(verdict.get("status") in {"met", "unmet", "not_evaluable"},
+            require(verdict.get("status") in {"correct", "incorrect", "not_evaluable"},
                     f"invalid verification status for {step['step_id']}")
             evidence = [
                 evidence_object(item, source_rev, observation_id, flow_id, now_iso)
@@ -354,7 +354,7 @@ def assemble_assessment(run_data, run_dir, assessment_id=None, stage="final", so
 
         terminal = result.get("terminal_outcome")
         require(isinstance(terminal, dict), f"terminal outcome verification is required for {flow_id}")
-        require(terminal.get("status") in {"met", "unmet", "not_evaluable"},
+        require(terminal.get("status") in {"correct", "incorrect", "not_evaluable"},
                 f"invalid terminal outcome status for {flow_id}")
         terminal_evidence = [
             evidence_object(item, source_rev, observation_id, flow_id, now_iso)
@@ -554,7 +554,7 @@ def update_canonical_repairs(run_json_path, source_rev, changed_files=None, asse
             "verification BR inventory/order differs from the frozen baseline")
     final_requirements = []
     for verdict in br_results:
-        require(verdict.get("status") in {"met", "unmet", "not_evaluable"},
+        require(verdict.get("status") in {"correct", "incorrect", "not_evaluable"},
                 f"invalid verification BR status for {verdict.get('br_id')}")
         evidence_paths = []
         for item in verdict.get("evidence", []):
@@ -582,17 +582,17 @@ def update_canonical_repairs(run_json_path, source_rev, changed_files=None, asse
         "stage": "final",
         "requirements": final_requirements,
         "total": len(final_requirements),
-        "met": sum(item["status"] == "met" for item in final_requirements),
-        "unmet": sum(item["status"] == "unmet" for item in final_requirements),
+        "correct": sum(item["status"] == "correct" for item in final_requirements),
+        "incorrect": sum(item["status"] == "incorrect" for item in final_requirements),
         "not_evaluable": sum(item["status"] == "not_evaluable" for item in final_requirements),
     }
     run_data["business_rules"]["final"] = bf_final
     run_data["business_rules"]["source_revision"] = source_rev
 
-    all_br_met = bf_final["met"] == bf_final["total"]
-    all_flows_met = all(
-        all(step.get("status") == "met" for step in flow.get("steps", []))
-        and flow.get("terminal_outcome", {}).get("status") == "met"
+    all_br_correct = bf_final["correct"] == bf_final["total"]
+    all_flows_correct = all(
+        all(step.get("status") == "correct" for step in flow.get("steps", []))
+        and flow.get("terminal_outcome", {}).get("status") == "correct"
         for flow in verification.get("flows", [])
     )
     round0["outcome"] = verdict["status"]
@@ -612,7 +612,7 @@ def update_canonical_repairs(run_json_path, source_rev, changed_files=None, asse
     if not all_processed:
         run_data["repair_status"] = "in_progress"
         run_data["run_status"] = "active"
-    elif every_defect_resolved and all_br_met and all_flows_met:
+    elif every_defect_resolved and all_br_correct and all_flows_correct:
         run_data["repair_status"] = "completed"
         run_data["run_status"] = "complete"
     else:

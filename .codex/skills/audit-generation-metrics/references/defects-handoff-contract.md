@@ -1,65 +1,81 @@
-# Defects handoff contract
+# Defects Handoff contract
 
-`defects-handoff.json` is a derived Audit artifact. Canonical Run JSON remains the complete authority for assessments, follow-ups, provenance, metrics and defect history. The handoff contains only the accepted, conclusive, currently repairable findings needed by the next authorized operation.
+`defects-handoff.json` is the self-contained defect-information input for `gen-bug-fixing-prompt`. Canonical Run JSON remains authoritative for Audit history and metrics. The Handoff contains the accepted repair facts required to author a sub-prompt without reopening the frozen UC, Business Rule specification, API contracts, Audit evidence files or application source.
 
-Build or rebuild it only for the standalone initial Audit and its authorized follow-ups, before another operation consumes the results. A subordinate verifier and any run with later-operation activity already recorded must not create, replace or enrich it.
-
-Write the artifact only to:
+Use [defects-handoff.template.json](../assets/defects-handoff.template.json) as the exact schema and `scripts/build_defects_handoff.py` as the only writer. Write only to:
 
 ```text
 docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/defects-handoff.json
 ```
 
-Use `assets/defects-handoff.template.json` as the structural example and `scripts/build_defects_handoff.py` as the only writer. The builder validates the canonical run, accepted BR/Flow projections, immutable evidence, checksum-pinned specifications and exact output path. It writes atomically and validates the persisted artifact again.
-
 ## Selection
 
-- Include an open `business_rule` defect only when at least one of its affected BRs has the accepted result `unmet`.
-- Include an open `flow` defect only when at least one of its affected Flows has the accepted result `incorrect`.
-- Include every open `technical` defect.
-- Exclude `met`, `correct`, `not_evaluable` and resolved findings. `not_evaluable` is not a defect.
-- If any accepted BR or Flow remains `not_evaluable`, do not create or replace the handoff.
-- If all results are conclusive and no repairable defects remain, write `status: no_repair_required` with an empty `defects` array.
+- Include one record per open root-cause defect that affects an accepted `incorrect` BR or Flow.
+- Also include open `technical` and functional `ui` defects.
+- One root cause remains one defect even when it affects multiple targets or files.
+- Exclude resolved defects and `correct` results.
+- `not_evaluable` is not a defect. Do not create or replace the Handoff while any accepted BR or Flow remains `not_evaluable`.
+- If no repairable defect remains, write `status: no_repair_required` and an empty `defects` array.
 
-## Audit-supplied enrichment
+## Audit enrichment
 
-Pass enrichment through stdin; do not create an intermediate payload file. The root object contains only `defects`. Each entry may contain:
+Audit supplies one complete English enrichment entry for every selected defect through stdin. Use this exact shape:
 
 ```json
 {
-  "defect_id": "DEFECT-ID",
-  "affected_flow_step_ids": ["BF-1.3", "AF-1.3a", "EF-1.4a"],
-  "affected_files": ["finalsource/path/to/file.ts"],
-  "evidence_annotations": {
-    "path/to/evidence.txt": {
-      "source_file": "finalsource/path/to/file.ts",
-      "line_start": 10,
-      "line_end": 14,
-      "locator": "function name or runtime action",
-      "observed_fact": "direct observation",
-      "defect_finding": "evidence-backed finding"
+  "defects": [
+    {
+      "defect_id": "<DEFECT-ID>",
+      "title": "<bounded defect title>",
+      "description": "<what is wrong and its observed impact>",
+      "reproduction_steps": ["<ordered action>"],
+      "affected_flow_step_ids": ["<FLOW-STEP-ID>"],
+      "affected_api_ids": ["<API-ID>"],
+      "affected_ui_targets": ["<functional UI target>"],
+      "affected_files": ["<repository-relative affected file>"],
+      "evidence_annotations": {
+        "<canonical evidence path>": {
+          "source_file": "<repository-relative source or evidence path>",
+          "line_start": null,
+          "line_end": null,
+          "locator": "<precise source or runtime locator>",
+          "defect_finding": "<evidence-backed defect and cause>",
+          "content": null
+        }
+      },
+      "required_correction": "<observable behavior required after repair>"
     }
-  },
-  "required_correction": {
-    "mode": "evidence_derived",
-    "representation": "observable outcome",
-    "text": "bounded correct outcome",
-    "supporting_definitions": []
-  }
+  ]
 }
 ```
 
-`affected_flow_step_ids` identifies exact steps under the parent IDs in `affected_flow_ids`. Use `BF-1.1` for Basic Flow steps and prefix the source labels of Alternative or Exception Flow steps with their parent, for example `AF-1.3a` and `EF-1.4a`. Keep only parent Flow IDs in `ordered_flow_ids`; step IDs do not change the Audit denominator.
+Use empty arrays when a target type does not apply. Annotate every immutable evidence item exactly once. `content` may be `null` for readable text or JSON evidence because the builder copies the validated evidence content. Binary or image evidence requires a complete textual `content` annotation.
 
-Every `flow` defect must name at least one exact step for every affected parent Flow. If the whole Flow is affected, list all of its steps. A non-blocking `technical` defect that names affected parent Flows follows the same rule. An execution-blocking technical root cause may leave both Flow arrays empty when no precise step can be observed; do not invent step IDs.
+## Required correction
 
-The builder derives exact `verbatim_authoritative` corrections for BR and Flow defects from the checksum-pinned specifications. For a BR it preserves the authoritative rule text and only the referenced shared utility definitions. For a Flow it preserves the exact source lines for every listed step. Audit supplies `evidence_derived` correction text only for technical defects; it states the observable correct outcome and must not prescribe an implementation strategy.
+The builder combines the Audit-supplied post-repair behavior with applicable checksum-pinned authoritative material:
 
-Evidence annotations locate and explain already immutable evidence. Text and JSON evidence content is copied into the handoff, optionally limited by validated line bounds. Images remain referenced by path, hash and media type and carry the confirmed visual observation; they are never embedded as base64.
+- **Business Rule:** affected BR IDs, exact BR/OCL text and every referenced OCL Utility Definition.
+- **Flow:** affected parent Flow IDs, exact step IDs, exact step text and the complete affected Flow definitions that preserve branch and outcome semantics.
+- **API:** affected API IDs and their checksum-pinned contract content.
+- **UI:** functional UI target identifiers and the observable correct interaction/state supplied by Audit. Cosmetic scoring is excluded.
+- **Technical:** the observable correct result supplied by Audit, without prescribing an implementation strategy.
 
-The output deliberately has no `target_ids`, `source`, `basis`, `context_label`, researcher-message history, prompt path, configuration path, model metadata, metrics, gates, repair strategy, permitted-verification list or prohibited-change list. Category plus affected IDs identifies the target; immutable evidence identifies the source; `required_correction` carries only the accepted correction contract.
+When one root cause affects several target types, combine all applicable material in the same `required_correction`. Do not split it into category-specific defects.
 
-Run dry-run first with the same stdin payload, then persist:
+## Evidence
+
+Each evidence record contains only the information required by the fixed sub-prompt template:
+
+- `source_file`
+- `line_start` and `line_end`, or both `null`
+- `locator`
+- `defect_finding`
+- self-contained `content`
+
+Do not add model metadata, token/time data, gates, repair strategy, permitted-verification lists, prompt paths or researcher-message history.
+
+Run dry-run first with identical stdin, then persist:
 
 ```text
 python -B .codex/skills/audit-generation-metrics/scripts/build_defects_handoff.py --run-json <canonical.json> --input - --dry-run

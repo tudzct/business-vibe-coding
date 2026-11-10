@@ -196,7 +196,7 @@ def validate_runtime(data, definitions, validate_evidence):
                 attempt = by_id.get(ref.get("observation_id"))
                 require(attempt is not None and attempt["flow_id"] == flow_id, "missing/wrong observation reference")
                 refs_for([ref], attempt, target)
-                if item["status"] != "not_available":
+                if item["status"] != "not_evaluable":
                     require(runtime["status"] == "ready" and deployment["verified"], "runtime verdict requires verified source/deployment")
                 require(any(target in a["target_ids"] and ref in a["evidence"] for a in attempt["actions"]),
                         "target evidence missing from action sequence")
@@ -210,11 +210,11 @@ def validate_runtime(data, definitions, validate_evidence):
                     "incorrect target needs unique causing defect IDs")
             require(unavailable_reason in (None, ""),
                     "incorrect target cannot carry an unavailable reason")
-        elif item["status"] == "not_available":
+        elif item["status"] == "not_evaluable":
             require(isinstance(unavailable_reason, str) and unavailable_reason.strip(),
-                    "not_available target needs an unavailable reason")
+                    "not_evaluable target needs an unavailable reason")
             require(causes in (None, []),
-                    "not_available target cannot claim a causing defect")
+                    "not_evaluable target cannot claim a causing defect")
         else:
             require(causes in (None, []) and unavailable_reason in (None, ""),
                     "correct target cannot carry defect or unavailable metadata")

@@ -21,7 +21,7 @@ def canonical_hash(value):
 
 def record(handoff_path, prompt_dir):
     handoff_path, handoff = load_handoff(handoff_path)
-    require(handoff["status"] == "ready" and handoff["defect_count"] > 0,
+    require(handoff["status"] == "ready" and len(handoff["defects"]) > 0,
             "no prompt handoff is required")
     run_path = (ROOT / "docs/04-experiments" / handoff["uc_id"] /
                 f"canonical-run-{handoff['run_id']}.json").resolve()

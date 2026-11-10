@@ -13,7 +13,7 @@ from flow_baseline_contract import flow_type, nonempty, validate_baseline
 from runtime_contract import method, configured_rubric, validate_runtime, complete_chain
 from flow_summary import refresh_summary
 
-OBSERVATION_STATUSES = {"correct", "incorrect", "not_available"}
+OBSERVATION_STATUSES = {"correct", "incorrect", "not_evaluable"}
 DEFECT_CATEGORIES = {"business_rule", "flow", "technical", "ui"}
 DEFECT_STATUSES = {"open", "resolved"}
 
@@ -135,11 +135,11 @@ def validate_observation(item, label):
                 f"{label} incorrect result needs causing defect IDs")
         require(unavailable_reason in (None, ""),
                 f"{label} incorrect result cannot carry an unavailable reason")
-    elif item["status"] == "not_available":
+    elif item["status"] == "not_evaluable":
         require(isinstance(unavailable_reason, str) and unavailable_reason.strip(),
-                f"{label} not_available result needs an unavailable reason")
+                f"{label} not_evaluable result needs an unavailable reason")
         require(causes in (None, []),
-                f"{label} not_available result cannot carry causing defect IDs")
+                f"{label} not_evaluable result cannot carry causing defect IDs")
     else:
         require(causes in (None, []) and unavailable_reason in (None, ""),
                 f"{label} correct result cannot carry cause metadata")
@@ -209,7 +209,7 @@ def calculate(data):
                 "evidence": ["Execution blocker evidence is recorded by the referenced canonical defects."],
                 "source_findings": [],
             },
-            "steps": [{**step, "status": "not_available",
+            "steps": [{**step, "status": "not_evaluable",
                        "rationale": "The system-wide generated-source blocker prevented this step from being observed.",
                        "unavailable_reason": "The system-wide generated-source blocker prevented runtime observation.",
                        "evidence": ["Execution blocker evidence is recorded by the referenced canonical defects."],
@@ -222,7 +222,7 @@ def calculate(data):
             "status": "repair_required",
             "execution_blocked": True,
             "execution_blocker_defect_ids": list(blocker_ids),
-            "counts": {**type_counts, "correct": 0, "incorrect": len(results), "not_available": 0},
+            "counts": {**type_counts, "correct": 0, "incorrect": len(results), "not_evaluable": 0},
             "flow_error_percent": 100.0, "flow_accuracy_percent": 0.0,
             "evaluated_coverage_percent": 100.0,
             "accuracy_lower_bound_percent": 0.0, "accuracy_upper_bound_percent": 0.0,
@@ -247,14 +247,14 @@ def calculate(data):
             critical = step_definition["completion_critical"]
             validate_target(step, step_definition["step_id"], definition["flow_id"], critical)
             blocking_failure = blocking_failure or (critical and step["status"] == "incorrect")
-            critical_unknown = critical_unknown or (critical and step["status"] == "not_available")
+            critical_unknown = critical_unknown or (critical and step["status"] == "not_evaluable")
             deviations += int(not critical and step["status"] == "incorrect")
             computed_steps.append({**step, "completion_critical": critical})
         chain_complete = complete_chain(assessed, definition, attempts)
         if blocking_failure or outcome["status"] == "incorrect":
             status = "incorrect"
-        elif critical_unknown or outcome["status"] == "not_available" or not chain_complete:
-            status = "not_available"
+        elif critical_unknown or outcome["status"] == "not_evaluable" or not chain_complete:
+            status = "not_evaluable"
         else:
             status = "correct"
         result = {"flow_id": definition["flow_id"], "type": definition["type"], "status": status,
@@ -269,9 +269,9 @@ def calculate(data):
                             causes.append(defect_id)
             require(causes, f"{definition['flow_id']} incorrect result needs causing defect IDs")
             result["caused_by_defect_ids"] = causes
-        elif status == "not_available":
+        elif status == "not_evaluable":
             reasons = [target["unavailable_reason"] for target in [*computed_steps, outcome]
-                       if target["status"] == "not_available"]
+                       if target["status"] == "not_evaluable"]
             if not chain_complete:
                 reasons.append("A connected completion observation is not available.")
             result["unavailable_reason"] = " ".join(dict.fromkeys(reasons))
@@ -287,11 +287,11 @@ def calculate(data):
         "assessment_id": data["assessment_id"],
         "stage": data["stage"],
         "input_sha256": digest(json.dumps(data, sort_keys=True, separators=(",", ":")).encode()),
-        "status": "not_available" if unknown else ("repair_required" if incorrect else "scored"),
+        "status": "not_evaluable" if unknown else ("repair_required" if incorrect else "scored"),
         "execution_blocked": False,
         "execution_blocker_defect_ids": [],
         "counts": {**type_counts, "correct": correct, "incorrect": incorrect,
-                   "not_available": unknown},
+                   "not_evaluable": unknown},
         "flow_error_percent": round(100 * incorrect / total, 6) if exact else None,
         "flow_accuracy_percent": round(100 * (total - incorrect) / total, 6) if exact else None,
         "evaluated_coverage_percent": round(100 * (total - unknown) / total, 6),
@@ -318,7 +318,7 @@ def markdown(result):
              f"Accuracy bounds: {shown(result['accuracy_lower_bound_percent'])} to "
              f"{shown(result['accuracy_upper_bound_percent'])}", "",
              f"Flows: {counts['correct']} correct, {counts['incorrect']} incorrect, "
-             f"{counts['not_available']} not available, "
+             f"{counts['not_evaluable']} not evaluable, "
              f"{counts['total']} total", "",
              "| Flow | Type | Status | Cause / unavailable reason | Noncritical deviations |",
              "|---|---|---|---|---:|"]
@@ -397,10 +397,10 @@ def validate_run_result(run, folder, result):
                                 and all(flow["flow_id"] in open_defects[identity]["affected_flow_ids"]
                                         for identity in target_causes),
                                 f"incorrect target cause is not valid for Flow: {flow['flow_id']}")
-            elif flow["status"] == "not_available":
+            elif flow["status"] == "not_evaluable":
                 require(not causes and isinstance(flow.get("unavailable_reason"), str)
                         and flow["unavailable_reason"].strip(),
-                        f"not_available Flow needs a reason and no defect cause: {flow['flow_id']}")
+                        f"not_evaluable Flow needs a reason and no defect cause: {flow['flow_id']}")
             else:
                 require(not causes and flow.get("unavailable_reason") in (None, ""),
                         f"correct Flow cannot carry cause metadata: {flow['flow_id']}")

@@ -6,7 +6,7 @@ BR and Flow share this one follow-up operation. The original BR snapshot and Flo
 
 ## Accepted experiment result
 
-`flow_accuracy.selection_policy: accepted-audit-results-v1` selects the latest conclusive (`correct` or `incorrect`) verdict per frozen flow across the run's assessments and follow-ups in evidence/record time order. A later `not_available` attempt records limitations but never erases an earlier accepted conclusive result. A conclusive re-audit can replace an older verdict, including a researcher verdict. Repair and a changed source hash do not reset the experiment result. Preserve the denominator, rubric and individual evidence scores.
+`flow_accuracy.selection_policy: accepted-audit-results-v1` selects the latest conclusive (`correct` or `incorrect`) verdict per frozen flow across the run's assessments and follow-ups in evidence/record time order. A later `not_evaluable` attempt records limitations but never erases an earlier accepted conclusive result. A conclusive re-audit can replace an older verdict, including a researcher verdict. Repair and a changed source hash do not reset the experiment result. Preserve the denominator, rubric and individual evidence scores.
 
 Both paths update `flow_accuracy.current_summary` and top-level flow percentages/status directly in the Canonical Run JSON under `docs/04-experiments/`, in the same response turn without a second save/approval question. Resolve the question's run and evidence context internally. A researcher reply to an earlier question may keep its older evidence parent after repair and still update the experiment result. Do not ask the researcher to repeat accepted verdicts merely because source changed.
 
@@ -55,7 +55,7 @@ Preserve sanitized text in `researcher_result`. Do not fabricate step outcomes, 
 
 Observe requested flows under the original rubric: pending flows by default, or already scored flows when re-audit is requested. Declare scope/time bounds and retain failed attempts. Stop at sufficient evidence, blocker or bound; automatically save validated results and report remaining gaps. No further permission is needed to save authorized evaluation results.
 
-Prepare a fresh full assessment input with ID equal to `followup_id`, matching the current evidence parent's stage/source/baseline, and its own evidence directory. Non-targeted rows remain `not_available` with a not-reassessed limitation; only requested flow IDs enter `results`. Do not splice attempts. Runtime-v2 evidence remains mandatory for LLM `correct`.
+Prepare a fresh full assessment input with ID equal to `followup_id`, matching the current evidence parent's stage/source/baseline, and its own evidence directory. Non-targeted rows remain `not_evaluable` with a not-reassessed limitation; only requested flow IDs enter `results`. Do not splice attempts. Runtime-v2 evidence remains mandatory for LLM `correct`.
 
 ## Internal payload and commands
 
@@ -112,7 +112,7 @@ Use actual identities/timestamps and schema 2 for Flow follow-ups, including cor
 
 `assessment_sha256` uses `flow_summary.fingerprint(parent)`: SHA-256 of UTF-8 JSON with sorted keys and separators `(',', ':')`, matching the existing gate object-hash convention. For `mode: llm_measurement`, replace `researcher_result` with `runtime_assessment` containing the full new assessment input. The helper calculates and persists `runtime_result` itself.
 
-The BR part is tied to the immutable initial BR snapshot and source revision. It uses schema 1, `parent_stage: "initial"`, `snapshot_sha256`, the same UC/run/request identity, `source_unchanged: true`, and nonempty `results`. For a direct verdict, use `mode: "researcher_result"`, preserve the researcher's text, and include only `br_id` and `status` in each result; its `incorrect` cause is derived from the attributed defect. For a requested LLM check, use `mode: "llm_reaudit"` and include inspectable evidence, rationale and required cause/unavailable fields. The latest conclusive `correct` or `incorrect` result is accepted; a later `not_available` attempt does not erase it.
+The BR part is tied to the immutable initial BR snapshot and source revision. It uses schema 1, `parent_stage: "initial"`, `snapshot_sha256`, the same UC/run/request identity, `source_unchanged: true`, and nonempty `results`. For a direct verdict, use `mode: "researcher_result"`, preserve the researcher's text, and include only `br_id` and `status` in each result; its `incorrect` cause is derived from the attributed defect. For a requested LLM check, use `mode: "llm_reaudit"` and include inspectable evidence, rationale and required cause/unavailable fields. The latest conclusive `correct` or `incorrect` result is accepted; a later `not_evaluable` attempt does not erase it.
 
 ```text
 python -B .codex/skills/audit-flow-accuracy/scripts/record_flow_followup.py --run-json <canonical.json> --input - --dry-run
@@ -130,4 +130,4 @@ After a successful Audit follow-up, persist and validate canonical Audit results
 - Whole-baseline `flow_accuracy_percent = C / T * 100` and `flow_error_percent = W / T * 100` only when U is zero; otherwise null.
 - Lower/upper bounds remain `C / T * 100` and `(C + U) / T * 100`.
 
-`measurement_status` is `not_available`, `partial` or `complete`; `has_incorrect_flows` is independent. Summary/top-level status is `partial` when evaluated and unavailable rows coexist, `not_available` when no row is evaluated, otherwise `repair_required` or `scored`. Execution blocking is reported through its Boolean note and blocking defect IDs. Original assessments are immutable, including their statuses and checksums. Refresh the projection only on an explicitly requested audit/follow-up operation; do not rewrite unrelated runs.
+`measurement_status` is `not_evaluable`, `partial` or `complete`; `has_incorrect_flows` is independent. Summary/top-level status is `partial` when evaluated and unavailable rows coexist, `not_evaluable` when no row is evaluated, otherwise `repair_required` or `scored`. Execution blocking is reported through its Boolean note and blocking defect IDs. Original assessments are immutable, including their statuses and checksums. Refresh the projection only on an explicitly requested audit/follow-up operation; do not rewrite unrelated runs.

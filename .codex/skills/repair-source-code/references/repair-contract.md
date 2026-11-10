@@ -8,7 +8,7 @@ Repairs require closed source telemetry, persisted first-pass BR/Flow/defect ass
 
 Repair uses two phase-level execution segments and no defect/attempt timing identity: one segment covers complete sub-prompt generation and one segment covers the complete source-correction invocation, including every defect attempt, integrated BR/Flow/runtime verification and final evidence/hash/status persistence. Open the correction segment immediately before the first source mutation and close it once before the invocation returns, waits for the researcher or resolves an external blocker. Never open per-attempt or overlapping Audit timers, split tokens by prompt/defect/attempt or double-count an interval. Canonical attempt records remain functional evidence only. Persist raw identity/ISO/epoch endpoints and segment references. The reported Repair total combines both whole turns and both execution segments. Captures use `generation_execution_with_repair_audit_v2`.
 
-Canonical summary fields are `repair_round_limit: 10`, `repair_rounds_completed`, `repair_status` (`not_started`, `in_progress`, `completed`, `unresolved` or `blocked`) and `repair_prompt_directory`. `repair_round_limit` is the per-defect attempt limit; `repair_rounds_completed` is the total number of completed per-defect attempts. `all_sub_prompt_count` equals the fixed defect count, never the attempt count. Successful completion requires every fixed defect resolved, every BR `met`, every Flow `correct`, Flow Accuracy `100%`, and no technical/execution blocker. After all prompts have been processed, any defect that exhausted ten attempts remains unresolved and produces `repair_status: unresolved` with terminal `run_status: stopped`; one exhausted defect never prevents later defects from being processed. An authority/input/schema blocker is `repair_status: blocked` with terminal `run_status: blocked`.
+Canonical summary fields are `repair_round_limit: 10`, `repair_rounds_completed`, `repair_status` (`not_started`, `in_progress`, `completed`, `unresolved` or `blocked`) and `repair_prompt_directory`. `repair_round_limit` is the per-defect attempt limit; `repair_rounds_completed` is the total number of completed per-defect attempts. `all_sub_prompt_count` equals the fixed defect count, never the attempt count. Successful completion requires every fixed defect resolved, every BR `correct`, every Flow `correct`, Flow Accuracy `100%`, and no technical/execution blocker. After all prompts have been processed, any defect that exhausted ten attempts remains unresolved and produces `repair_status: unresolved` with terminal `run_status: stopped`; one exhausted defect never prevents later defects from being processed. An authority/input/schema blocker is `repair_status: blocked` with terminal `run_status: blocked`.
 
 Each canonical record uses this shape; records retain prompt order and attempts for one defect remain consecutive:
 
@@ -69,19 +69,19 @@ Each subordinate verification writes one `verification-results.json` under the c
     }],
     "steps": [{
       "step_id": "<STEP-ID>",
-      "status": "met",
+      "status": "correct",
       "rationale": "<EVIDENCE-BASED-RATIONALE>",
       "evidence": [{"path": "<PATH>", "kind": "runtime_trace", "target_ids": ["<STEP-ID>"]}]
     }],
     "terminal_outcome": {
-      "status": "met",
+      "status": "correct",
       "rationale": "<EVIDENCE-BASED-RATIONALE>",
       "evidence": [{"path": "<PATH>", "kind": "runtime_trace", "target_ids": ["terminal_outcome"]}]
     }
   }],
   "business_rules": [{
     "br_id": "<BR-ID>",
-    "status": "met",
+    "status": "correct",
     "rationale": "<EVIDENCE-BASED-RATIONALE>",
     "evidence": ["<PATH>"],
     "runtime_observation_ids": ["<OBSERVATION-ID>"]
@@ -94,8 +94,8 @@ Each subordinate verification writes one `verification-results.json` under the c
 }
 ```
 
-Allowed BR/step/terminal statuses are `met`, `unmet` and `not_evaluable`. Allowed defect statuses are `resolved` and `unresolved`. The assembler validates identities, frozen inventories, evidence existence and hashes; it never supplies a successful default.
+Allowed BR/step/terminal statuses are `correct`, `incorrect` and `not_evaluable`. Allowed defect statuses are `resolved` and `unresolved`. The assembler validates identities, frozen inventories, evidence existence and hashes; it never supplies a successful default.
 
 For a ready runtime, each observation's evidence files stay under `<assessment-id>/<observation-id>/`; its first action covers `entry`, its last action covers `terminal_outcome`, and every recorded step target is linked to an actual action. The `_runtime/deployment.json` record contains the observed Compose major version, project and service identities.
 
-If execution remains blocked, `_runtime/deployment.json` records `status: "BLOCKED"`, `verified: false`, the Compose major version, an empty service list when nothing started, and the actual blocker reason. `execution_blocker_defect_ids` lists the unresolved blocking defects, `flows` preserves the frozen flow-ID order without invented observations, every BR is recorded `unmet`, and the blocking defect remains `unresolved`. The scorer then records every Flow as incorrect without manufacturing runtime evidence.
+If execution remains blocked, `_runtime/deployment.json` records `status: "BLOCKED"`, `verified: false`, the Compose major version, an empty service list when nothing started, and the actual blocker reason. `execution_blocker_defect_ids` lists the unresolved blocking defects, `flows` preserves the frozen flow-ID order without invented observations, every BR is recorded `incorrect`, and the blocking defect remains `unresolved`. The scorer then records every Flow as incorrect without manufacturing runtime evidence.

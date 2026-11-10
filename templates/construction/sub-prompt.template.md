@@ -13,10 +13,11 @@ source_revision: "sha256:<64 lowercase hex characters>"
 ## Evidence
 
 - Category: `<defect category>`
+- Description: `<complete defect description>`
+- Reproduction steps: `<ordered steps required to reproduce the defect>`
 - Source file: `<repository-relative source or evidence path>`
 - Lines: `<start>-<end>` or `N/A`
 - Locator: `<exact locator>`
-- Observed fact: `<exact observed fact>`
 - Defect finding: `<exact evidence-backed finding>`
 - Content: `<relevant source/build/runtime content>`
 

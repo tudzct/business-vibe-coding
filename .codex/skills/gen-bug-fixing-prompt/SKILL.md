@@ -33,12 +33,16 @@ Technical documents required by the active operation may constrain execution but
 
 ## Generation
 
-1. If the validated handoff has `status: no_repair_required` and `defect_count: 0`, report that no prompt is required and stop. Do not create the repairs directory or capture Repair timing.
-2. Otherwise require `status: ready`, a positive `defect_count`, unique defect IDs/fingerprints and only open handoff defects. Preserve handoff order. Create exactly one file per root-cause defect, even when that defect affects multiple BRs, Flows or Flow steps.
-3. Use repair indexes `1..N` and write only to `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/repairs/repair-<NNN>-<DEFECT-ID>.md`. Do not overwrite an existing non-identical artifact.
-4. Fill every template field from the matching handoff defect. Preserve all identifiers, evidence facts, evidence content, authoritative correction text and supporting definitions exactly. Render every evidence item as its own numbered Markdown subsection. Use a `json` or `text` fence for copied content and write `N/A` when handoff content is `null`. Use an `ocl` fence for OCL correction text and each supporting definition; use a `text` fence for Flow, natural-language or technical correction text. Do not dump the handoff as raw JSON and do not paraphrase authoritative text.
-5. `affected_flow_ids` contains parent Flow IDs. `affected_flow_step_ids` contains exact affected step IDs such as `BF-1.1`, `AF-1.3a` or `EF-1.4a`. Copy both arrays unchanged. Copy `affected_files` unchanged; do not inspect those paths.
-6. Do not add `permitted verification`, implementation strategy, inferred requirements, features, evidence, paths or identifiers. The output directory is a write target, not a third content source.
+1. Read `sub-prompt.template.md` in full and strictly follow the instructions declared inside it. Read the supplied Defects Handoff in full as the defect-information source used to complete the template.
+2. If the validated handoff has `status: no_repair_required` and an empty `defects` array, report that no prompt is required and stop. Do not create the repairs directory or capture Repair timing.
+3. Otherwise require `status: ready`, a non-empty `defects` array and unique defect IDs/fingerprints. Preserve handoff order. Create exactly one file per root-cause defect, even when that defect affects multiple BRs, Flows, APIs, UI targets or files.
+4. Use repair indexes `1..N` and write only to `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/repairs/repair-<NNN>-<DEFECT-ID>.md`. Do not overwrite an existing non-identical artifact.
+5. Author each completed sub-prompt with the model from the matching Handoff defect and the template instructions. This is prompt generation, not a mechanical JSON-to-Markdown conversion. The model may organize and phrase the defect information clearly, but it must not invent, omit or contradict Handoff facts.
+6. Preserve every identifier, fingerprint, source revision, evidence fact/content, BR/OCL definition, OCL Utility Definition, Flow/API authoritative text and required behavior. Authoritative material may be surrounded by explanatory prose but must remain verbatim.
+7. Represent every Handoff evidence item in the template's Evidence section. Record category, description and reproduction steps once; repeat the source file, line range, locator, defect finding and content fields for each evidence item. Use `N/A` for a null line range.
+8. Populate Known affected files from `scope.affected_files`. Populate Affected targets from all remaining non-empty scope arrays. Do not inspect any referenced path.
+9. If an instruction or placeholder cannot be completed because the Handoff is missing, invalid, ambiguous or contradictory, report the exact field and stop. Do not repair the Handoff or invent a replacement.
+10. Do not add permitted verification, implementation strategy, inferred requirements, features, evidence, paths or identifiers. Do not dump the Handoff as raw JSON. The output directory is a write target, not a third content source.
 
 ## Control and measurement
 

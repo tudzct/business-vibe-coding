@@ -14,9 +14,9 @@ from score_flow_accuracy import (calculate as calculate_flow, validate_run_resul
 from runtime_contract import method, configured_rubric
 from flow_summary import validate_followups
 
-STATUSES = {"correct", "incorrect", "not_available"}
-FOLLOWUP_STATUSES = {"correct", "incorrect", "not_available"}
-FLOW_STATUSES = {"scored", "repair_required", "not_available", "partial"}
+STATUSES = {"correct", "incorrect", "not_evaluable"}
+FOLLOWUP_STATUSES = {"correct", "incorrect", "not_evaluable"}
+FLOW_STATUSES = {"scored", "repair_required", "not_evaluable", "partial"}
 BR_RESULT_POLICY = "accepted-br-audit-results-v1"
 
 
@@ -50,11 +50,11 @@ def validate_snapshot(snapshot, ordered, field):
                 raise ValueError(f"{field}.requirements[{index}] incorrect result needs causing defects")
             if unavailable_reason not in (None, ""):
                 raise ValueError(f"{field}.requirements[{index}] incorrect result cannot be unavailable")
-        elif row["status"] == "not_available":
+        elif row["status"] == "not_evaluable":
             if not isinstance(unavailable_reason, str) or not unavailable_reason.strip():
-                raise ValueError(f"{field}.requirements[{index}] not_available result needs a reason")
+                raise ValueError(f"{field}.requirements[{index}] not_evaluable result needs a reason")
             if causes not in (None, []):
-                raise ValueError(f"{field}.requirements[{index}] not_available result cannot claim a defect")
+                raise ValueError(f"{field}.requirements[{index}] not_evaluable result cannot claim a defect")
         elif causes not in (None, []) or unavailable_reason not in (None, ""):
             raise ValueError(f"{field}.requirements[{index}] correct result cannot carry cause metadata")
         ids.append(row["br_id"])
@@ -164,7 +164,7 @@ def accepted_br_summary(data):
         }
         if row["status"] == "incorrect":
             projected["caused_by_defect_ids"] = list(row["caused_by_defect_ids"])
-        elif row["status"] == "not_available":
+        elif row["status"] == "not_evaluable":
             projected["unavailable_reason"] = row["unavailable_reason"]
         selected[row["br_id"]] = projected
     history = business.get("followups", [])
@@ -240,13 +240,13 @@ def accepted_br_summary(data):
                 unavailable_reason = row.get("unavailable_reason")
                 if row["status"] == "incorrect" and (not isinstance(causes, list) or not causes):
                     raise ValueError("LLM incorrect BR result needs causing defect IDs")
-                if row["status"] == "not_available" and (
+                if row["status"] == "not_evaluable" and (
                         not isinstance(unavailable_reason, str) or not unavailable_reason.strip()):
-                    raise ValueError("LLM not_available BR result needs an unavailable reason")
+                    raise ValueError("LLM not_evaluable BR result needs an unavailable reason")
         applied.append(identity)
         for result in results:
             prior = selected[result["br_id"]]
-            if result["status"] == "not_available" and prior["status"] != "not_available":
+            if result["status"] == "not_evaluable" and prior["status"] != "not_evaluable":
                 continue
             if mode == "researcher_result":
                 evidence = [f"Researcher verdict {identity}: {record['researcher_result']}"]
@@ -273,7 +273,7 @@ def accepted_br_summary(data):
                 if not causes:
                     raise ValueError("incorrect accepted BR lacks causing defects")
                 projected["caused_by_defect_ids"] = causes
-            elif result["status"] == "not_available":
+            elif result["status"] == "not_evaluable":
                 projected["unavailable_reason"] = result["unavailable_reason"]
             selected[result["br_id"]] = projected
     rows = [selected[br_id] for br_id in ordered]
@@ -284,7 +284,7 @@ def accepted_br_summary(data):
         "followup_ids": applied,
         "counts": {"total": len(rows), **counts},
         "requirements": rows,
-        "pending_br_ids": [row["br_id"] for row in rows if row["status"] == "not_available"],
+        "pending_br_ids": [row["br_id"] for row in rows if row["status"] == "not_evaluable"],
     }
 
 
@@ -312,12 +312,12 @@ def br_summary_snapshot(summary):
                      "runtime_observation_ids": list(row["runtime_observation_ids"])}
         if row["status"] == "incorrect":
             projected["caused_by_defect_ids"] = list(row["caused_by_defect_ids"])
-        elif row["status"] == "not_available":
+        elif row["status"] == "not_evaluable":
             projected["unavailable_reason"] = row["unavailable_reason"]
         rows.append(projected)
     counts = summary["counts"]
     return {"requirements": rows, "total": counts["total"], "correct": counts["correct"],
-            "incorrect": counts["incorrect"], "not_available": counts["not_available"]}
+            "incorrect": counts["incorrect"], "not_evaluable": counts["not_evaluable"]}
 
 
 def validate_flow(data, folder):
@@ -368,7 +368,7 @@ def validate_flow(data, folder):
     counts = effective.get("counts")
     if (not isinstance(counts, dict) or counts.get("total") !=
             counts.get("correct", 0) + counts.get("incorrect", 0)
-            + counts.get("not_available", 0)):
+            + counts.get("not_evaluable", 0)):
         raise ValueError("flow_accuracy counts do not reconcile")
     if data.get("flow_accuracy_percent") != effective.get("flow_accuracy_percent") or data.get("flow_error_percent") != effective.get("flow_error_percent"):
         raise ValueError("flow percentage mismatch")

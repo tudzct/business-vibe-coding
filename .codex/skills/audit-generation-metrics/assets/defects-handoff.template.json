@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "artifact_type": "defects-handoff",
   "uc_id": "<UC-ID>",
   "run_id": "<RUN-ID>",
@@ -7,44 +7,36 @@
   "canonical_defects_sha256": "sha256:<64 lowercase hex characters>",
   "accepted_results_sha256": "sha256:<64 lowercase hex characters>",
   "status": "ready",
-  "defect_count": 1,
   "defects": [
     {
       "defect_id": "<DEFECT-ID>",
       "fingerprint": "sha256:<64 lowercase hex characters>",
-      "stage": "initial",
-      "source_revision": "sha256:<64 lowercase hex characters>",
-      "category": "technical",
-      "trigger": "<observable trigger>",
-      "description": "<defect description>",
-      "status": "open",
-      "blocks_execution": false,
-      "affected_br_ids": [],
-      "affected_flow_ids": [],
-      "affected_flow_step_ids": [],
-      "affected_files": [],
+      "category": "<business_rule | flow | technical | ui>",
+      "title": "<short bounded defect title>",
+      "description": "<complete defect description and observed impact>",
+      "reproduction_steps": [
+        "<first action required to reproduce the defect>",
+        "<next action required to reproduce the defect>"
+      ],
+      "scope": {
+        "affected_br_ids": ["<BR-ID>"],
+        "affected_flow_ids": ["<FLOW-ID>"],
+        "affected_flow_step_ids": ["<FLOW-STEP-ID>"],
+        "affected_api_ids": ["<API-ID>"],
+        "affected_ui_targets": ["<functional UI target>"],
+        "affected_files": ["<repository-relative affected file>"]
+      },
       "evidence": [
         {
-          "original_path": "<repository-relative evidence path>",
-          "sha256": "sha256:<64 lowercase hex characters>",
-          "source_revision": "sha256:<64 lowercase hex characters>",
-          "kind": "text",
-          "media_type": "text/plain",
           "source_file": "<repository-relative source or evidence path>",
           "line_start": null,
           "line_end": null,
-          "locator": "<precise evidence locator>",
-          "content": "<relevant evidence content>",
-          "observed_fact": "<directly observed fact>",
-          "defect_finding": "<evidence-backed finding>"
+          "locator": "<precise source or runtime locator>",
+          "defect_finding": "<evidence-backed explanation of the defect and its cause>",
+          "content": "<self-contained source, build or runtime evidence content>"
         }
       ],
-      "required_correction": {
-        "mode": "evidence_derived",
-        "representation": "observable outcome",
-        "text": "<bounded correct outcome>",
-        "supporting_definitions": []
-      }
+      "required_correction": "<complete ready-to-copy correction containing the affected IDs, exact authoritative BR/OCL and referenced utility definitions, exact Flow/API material when applicable, and the expected observable behavior after repair>"
     }
   ]
 }
