@@ -10,6 +10,14 @@ source_revision: "sha256:<64 lowercase hex characters>"
 
 # Repair <N> — <bounded defect>
 
+## Source Scope
+
+Read the following materials:
+
+- Defects Handoff: `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/defects-handoff.json`.
+
+Use the information obtained from this source to complete every placeholder below.
+
 ## Evidence
 
 - Category: `<defect category>`
