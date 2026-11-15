@@ -15,12 +15,12 @@
 - Use components through JSX; never call component functions directly.
 - Use an effect only to synchronize with an external system. Derive values during render and handle user actions in event handlers.
 - Declare complete hook dependency arrays. Do not silence `react-hooks/exhaustive-deps`; restructure unstable values or callbacks.
-- Prefer controlled form inputs when [the approved prompt](../../../../docs/02-construction/coding-prompts/%3CUC-ID%3E-coding-prompt.md) requires field-level state/errors. Prevent duplicate submissions explicitly.
+- Prefer controlled form inputs when [the approved prompt](../../../../docs/02-construction/coding-prompts/%3CUC-ID%3E-coding-prompt.md) requires field-level state/errors.
 
 ## State and UI behavior
 
 - Keep local/transient state local. Promote state to Context/Zustand only when multiple distant consumers need it.
-- Model async UI explicitly: idle, loading, success/empty, safe error. Ignore stale responses and updates after unmount.
+- When the approved prompt requires asynchronous UI behavior, represent only its required states explicitly. Ignore stale responses and updates after unmount.
 - Preserve semantic HTML, label/control association, keyboard operation, focus feedback and meaningful alternative text.
 - Render untrusted strings as text. Raw HTML requires an approved sanitizer and explicit technical rationale.
 
