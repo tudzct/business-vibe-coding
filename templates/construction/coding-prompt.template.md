@@ -10,17 +10,31 @@ generated_at: <ISO-8601 timestamp>
 
 ## Source Scope: Prompts A-D
 
-Read the following materials:
+Read the following materials before populating Prompts A-D:
 
 - Active Use Case file: `docs/01-inception/use-cases/<ACTIVE-UC-FILE>.md`;
-- API contract files: `docs/01-inception/api-contracts/<RELATED-API-CONTRACT>.md`;
+- API contract files: `docs/01-inception/api-contracts/<RELATED-API-CONTRACT>.md` (if the UC explicitly declares no related API, treat API inventory as empty);
 - Database schema: `docs/00-context/engineering/schema.dbml`;
 - Live database: the configured live database;
-- Figma design dataset: `resource/figma-design-dataset/<DATASET-VERSION>/<SNAPSHOT-DIR>/`;
+- Figma design dataset: `resource/figma-design-dataset/<DATASET-VERSION>/<SNAPSHOT-DIR>/` (read `manifest.json`, `design-context.md`, `native-design.json`, `asset-map.json`, and `assets/*.svg` during prompt generation);
 - Existing source code: `finalsource/`;
 - Technical and control sources: the `Technical and Control-Plane Material` defined in `.codex/skills/gen-coding-prompt/SKILL.md`.
 
-Use the information obtained from these sources to complete every placeholder in Prompts A-D below.
+Use the information obtained from these sources to follow every instruction below and complete every placeholder in the YAML frontmatter, title, and Prompts A-D:
+
+1. Replace 100% of `<...>` and `[...]` placeholders with concrete, source-backed values. Never fabricate undocumented requirements, thresholds, endpoints, or rules.
+2. **Prompts A, C, D (API vs. client-local):**
+   - If the active use case has related API contract(s), fill all endpoint, auth, Request Format, Logic, Success Response, Error Handling, Request Payload, Loading State, API Error, and Client-Side Validation sections concretely grounded in the UC, API contracts, DBML, and existing `finalsource/` conventions.
+   - If the active use case explicitly declares no related API (`api_contracts: []`), adapt Prompts A, C, and D to specify the client-local boundary and local/browser state behavior instead of leaving REST/HTTP placeholders (`[HTTP METHOD] [API PATH]`, `[API PATH FROM PROMPT A]`), and remove unused API sub-blocks.
+3. **Prompt B (Figma reading & inline embedding):**
+   - Inspect the checksum-valid frozen Figma dataset (`manifest.json`, `design-context.md`, `native-design.json`, `asset-map.json`, and `assets/*.svg`) to identify all frames relevant to the active use case using the UC name, purpose, application-user actions, screen titles, visible UI text, and semantically related terms.
+   - If relevant frames cannot be identified unambiguously, stop during prompt generation and report the matching candidates instead of selecting/inventing a frame or emitting an incomplete prompt.
+   - Extract and embed all target frame metadata (frame names, node IDs, native-design SHA-256 hashes), viewport scope (desktop-only vs. responsive per UC), layout dimensions, design tokens, component/modal/menu/fallback states, exact copy, and inline `<svg>...</svg>` markup (or CSS/HTML equivalents) directly into Prompt B. Never instruct downstream source generation to read or copy files from `resource/figma-design-dataset/...`.
+4. **Cleanup when completing the coding prompt (MANDATORY):**
+   - Delete ALL prompt-filling instructions once the coding prompt is completed, including:
+     - this entire `## Source Scope: Prompts A-D` section and `## Source Scope: Prompts E-F` section;
+     - any template meta-instructions or conditional generation directives (e.g., "Read the following materials...", "Use the information obtained...", "If relevant frames cannot be identified unambiguously, stop...", "Replace 100% of placeholders...").
+   - Keep ONLY the completed YAML frontmatter (`status: Draft` for initial generation or `Approved` upon approval), `# <UC-ID> Business Coding Prompt - <Use case name>`, and the populated `## Prompt A` through `## Prompt F` sections with zero unfilled placeholders.
 
 ## Prompt A: Backend API
 
@@ -69,51 +83,44 @@ The component MUST display:
 - `[UI ELEMENT 1]`
 - `[UI ELEMENT 2]`
 - `[UI ELEMENT 3]`
-- `[...]`
 
-### Figma Design Scope
+**Target Frames & Design Provenance:** `[IDENTIFIED FIGMA FRAME NAMES, NODE IDS, AND NATIVE-DESIGN SHA-256 HASHES]`
 
-Frozen Figma dataset and target: `[DATASET / FRAME / NODE / CHECKSUM or N/A]`
+**Layout & Dimensions:** `[VIEWPORT SCOPE (DESKTOP-ONLY / RESPONSIVE), CONTAINER SIZES, PADDING, GAPS, ALIGNMENT, POSITIONING]`
 
-Use the checksum-valid frozen Figma dataset to identify all frames relevant to the active use case.
+**Design Tokens (Colors, Typography, Radii, Borders):** `[HEX/ALPHA COLORS, FONT FAMILY/SIZES/WEIGHTS/LINE-HEIGHTS/LETTER-SPACING, BORDER RADII, BORDERS, SCRIMS]`
 
-Determine relevant frames using the use case name, purpose, application-user actions, screen titles, visible UI text, and semantically related terms.
+**Component & State Specifications:** `[EXACT COPY, PLACEHOLDERS, ENABLED/DISABLED/MUTED/ACTIVE/LOADING/MODAL/MENU STATES, AND FALLBACK TREATMENTS]`
 
-Record the exact names and node IDs of all identified target frames:
-
-- `[IDENTIFIED FIGMA FRAME NAME AND NODE ID 1]`
-- `[IDENTIFIED FIGMA FRAME NAME AND NODE ID 2]`
-- `[...]`
-
-If the relevant frames cannot be identified unambiguously, stop and report the matching candidates instead of selecting or inventing a frame.
+**Embedded Inline SVG Assets:** `[INLINE <svg>...</svg> MARKUP FOR EVERY ICON/GRAPHIC EXTRACTED FROM ASSET-MAP / ASSETS, OR PURE CSS EQUIVALENTS]`
 
 ### Implementation Requirements
 
-STRICTLY follow the frozen Figma design at `[DATASET / FRAME / NODE / CHECKSUM]`.
+STRICTLY implement the embedded UI specification and inline SVG assets above.
 
-Ensure the layout, spacing, typography, colors, components, states, and responsive behavior match the design.
+Ensure the layout, spacing, typography, colors, components, states, and responsive scope match the embedded specification.
 
-Use the project's existing styling system and component conventions. UC-backed controls are functional; design-only controls remain visual unless a source defines behavior. If a UC-required control is absent, add the smallest design-consistent element and record the mapping decision.
+Use the project's existing styling system and component conventions. UC-backed controls are functional; design-only controls remain visual unless a source defines behavior. If a UC-required control is absent, add the smallest design-consistent element and state the mapping decision explicitly.
 
 ## Prompt C: Frontend Logic and API Integration
 
-### Objective: Connect the frontend component to the API and implement the successful flow.
+### Objective: Connect the frontend component to `[THE API / LOCAL STATE & BROWSER INTEGRATION]` and implement the successful flow.
 
 Continue working on `[COMPONENT NAME]`.
 
 Add the required state using `[STATE / FORM MANAGEMENT APPROACH]`.
 
-Implement the asynchronous function `[FUNCTION NAME]` to send a `[HTTP METHOD]` request to `[API PATH FROM PROMPT A]`.
+Implement the asynchronous function `[FUNCTION NAME]` to `[SEND HTTP REQUEST TO API PATH FROM PROMPT A / EXECUTE LOCAL FLOW]`.
 
 ### Request Payload
 
-`[REQUEST PAYLOAD]`
+`[REQUEST PAYLOAD OR LOCAL COMMAND STATE]`
 
 Use the project's existing API client or request approach.
 
 ### Success Response
 
-`[SUCCESS RESPONSE FROM PROMPT A]`
+`[SUCCESS RESPONSE FROM PROMPT A OR LOCAL STATE OUTCOME]`
 
 Read the domain payload from the normalized response data.
 
@@ -130,7 +137,7 @@ Normalize date/timezone and precision-sensitive numeric values according to the 
 
 ## Prompt D: Validation and Error Handling
 
-### Objective: Complete client-side validation, loading state, and API error handling.
+### Objective: Complete client-side validation, loading state, and error handling.
 
 Refine `[FUNCTION NAME]` in `[COMPONENT NAME]`.
 
@@ -138,26 +145,26 @@ Refine `[FUNCTION NAME]` in `[COMPONENT NAME]`.
 
 When `[LOADING STATE]` is true:
 
-- Disable `[SUBMIT BUTTON]`.
+- Disable `[SUBMIT / ACTION BUTTON]`.
 - Display `[SPINNER / LOADING TEXT]`.
 - Prevent duplicate submissions.
 
 ### API Error
 
-If the API returns `[STATUS / ERROR CONDITION]`:
+If `[THE API RETURNS ERROR CONDITION / BROWSER OR LOCAL OPERATION FAILS]`:
 
 - Display `[ERROR MESSAGE]`.
 - Display the message at `[ERROR DISPLAY LOCATION]`.
 
 ### Client-Side Validation
 
-Before calling the API, enforce all applicable client-side validation rules for `[USE CASE / API ID]`.
+Before calling `[THE API / OPERATION]`, enforce all applicable client-side validation rules for `[USE CASE / API ID]`.
 
 Display validation messages at `[VALIDATION MESSAGE LOCATION]`.
 
-Backend validation remains authoritative.
+Backend validation remains authoritative where backend endpoints apply.
 
-Do not call the API when client-side validation fails.
+Do not proceed with `[API CALL / OPERATION]` when client-side validation fails.
 
 ## Source Scope: Prompts E-F
 
@@ -165,7 +172,13 @@ Read the input sources used to complete Prompts A-D.
 
 Additionally, read the Business Rule specification file: `docs/01-inception/business-rules/<ACTIVE-BUSINESS-RULE-FILE>.md`.
 
-Use the information obtained from these sources to complete every placeholder in Prompts E-F below.
+Use the information obtained from these sources to follow every instruction below and complete every placeholder in Prompts E-F:
+
+1. Replace 100% of placeholders in Prompts E-F with concrete, source-backed values.
+2. Produce one `### Business Rule: [BR-ID]` block for every frozen Business Rule belonging to the active use case, preserving every Rule ID, OCL expression, and authoritative natural-language constraint verbatim without changing its meaning.
+3. Do not invent missing thresholds, statuses, ownership, schema, enforcement layers, or failure behavior; if critical source information is unresolved and changes implementation, stop and record the unresolved evidence for the researcher instead of guessing.
+4. Ensure Prompt F references the embedded Figma UI specification and inline SVG assets in Prompt B (and frozen Figma evidence only where explicitly authorized).
+5. **Cleanup when completing the coding prompt (MANDATORY):** Remove this entire `## Source Scope: Prompts E-F` section and all prompt-filling instructions when the coding prompt is completed, leaving only the populated `## Prompt E` and `## Prompt F` sections.
 
 ## Prompt E: Business Rules Compliance
 
@@ -185,7 +198,7 @@ Preserve every Rule ID, OCL expression and authoritative natural-language constr
 
 For each Business Rule, record its applicable enforcement layer, failure behavior, and traceability within Prompt E. Backend/database enforcement remains authoritative across trust boundaries; frontend enforcement is an additional user-experience control.
 
-Do not invent missing thresholds, statuses, ownership, schema, enforcement layers or failure behavior. Record unresolved source information and stop for the researcher when it changes implementation.
+Do not invent missing thresholds, statuses, ownership, schema, enforcement layers or failure behavior.
 
 ## Prompt F: Implementation Context
 
@@ -194,12 +207,12 @@ Use every prompt present in this approved artifact together with:
 - project rules and target manifests/lockfiles;
 - approved database contract;
 - approved API contract;
-- checksum-valid frozen Figma evidence when applicable;
+- embedded Figma UI specification and inline SVG assets in Prompt B (and frozen Figma evidence only where explicitly authorized);
 - existing source-code conventions.
 
 Priority:
 
 1. Requirements explicitly present in this approved prompt
 2. Approved API and database/project contracts
-3. Frozen Figma evidence
+3. Embedded Figma UI specification and frozen design evidence
 4. Existing source-code conventions
