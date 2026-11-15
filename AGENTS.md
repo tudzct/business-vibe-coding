@@ -40,8 +40,6 @@ Operations exchange information only through their validated handoff artifacts. 
 
 During run-scoped operations, all repository helper scripts, including skill-owned and shared helpers, are execute-only. Do not open or read their source code; only execute them as required and read their returned output.
 
-Project inputs differ from skill instructions. An active skill may inspect project inputs that its own contract permits. Do not add a global prohibition against autonomous discovery of permitted project inputs, and do not use shared documentation to direct attention toward particular requirement categories or evaluation criteria.
-
 During run-scoped work, do not open, compare or use configurations, results, reports or other artifacts belonging to another UC, run or model. If encountered incidentally, disregard them. `finalsource` is the permitted cumulative application codebase and is not treated as a prior result artifact.
 
 Use only the current working tree and current `HEAD` during run-scoped work. Do not enumerate, open, compare or infer context from other branches, tags, remote refs, reflog, commit messages or repository history unless the operator explicitly requests a repository review outside the run.
