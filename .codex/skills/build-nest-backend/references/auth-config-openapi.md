@@ -2,11 +2,11 @@
 
 ## Authentication and authorization
 
-- Keep authentication in Passport/JWT guards/strategies according to the existing architecture.
-- Extract subject identity only from the verified JWT; never trust a client-provided owner/user ID.
-- Validate JWT algorithm, expiry and approved issuer/audience policy. Load signing secrets from validated configuration; never use fallback secrets.
-- Return generic authentication failures that do not reveal account existence.
-- Hash passwords with the existing bcrypt package and an approved cost. Compare through bcrypt; never decrypt, truncate or pre-hash passwords insecurely.
+- Keep authentication mechanisms required by the approved prompt consistent with the current architecture.
+- Use the identity source required by the approved prompt and current source. When JWT is required, extract its subject only from a verified token.
+- When JWT is required, validate its algorithm, expiry and approved issuer/audience policy. Load signing secrets from validated configuration; never use fallback secrets.
+- Use the authentication failure behavior required by the approved prompt or already established in the current source, without exposing sensitive internal details.
+- When password hashing is required and bcrypt is already approved by the prompt or current source, use the existing package and approved cost. Compare through bcrypt; never decrypt, truncate or pre-hash passwords insecurely.
 
 ## Configuration
 
