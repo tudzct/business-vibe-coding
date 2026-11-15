@@ -10,9 +10,9 @@
 ## Axios 1.x
 
 - Use one configured Axios instance with typed request/response functions in `src/api`.
-- Centralize base URL, safe headers and common response/401 behavior. Do not register interceptors repeatedly during component renders.
+- Centralize base URL and safe headers. Preserve shared response or 401 behavior only when it is required by the approved prompt or already established in the current source; do not invent new response, redirect, logout or refresh-token behavior. Do not register interceptors repeatedly during component renders.
 - Keep interceptor logging free of tokens, credentials and sensitive response bodies.
-- Narrow errors with Axios helpers and map them to a stable, safe UI error model.
+- When the approved prompt or current source requires UI error handling, narrow errors with Axios helpers and preserve the required safe error model.
 - Use `AbortController`/`signal` for cancellation; do not introduce deprecated `CancelToken`.
 
 ## Context and Zustand 4
