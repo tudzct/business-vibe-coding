@@ -56,7 +56,7 @@ Preserve the source status and message through `{ "success": false, "statusCode"
 
 Follow the existing project architecture. Do not introduce new architectural layers or dependencies.
 
-Handle relevant ownership, transaction, concurrency, idempotency, date/timezone, and monetary-rounding rules. Use existing ORM mappings and migration conventions. Do not alter the schema without an explicit source requirement and researcher-approved schema proposal.
+Handle relevant ownership, transaction, concurrency, idempotency, date/timezone, and numeric precision and rounding rules. Use existing ORM mappings and migration conventions. Do not alter the schema without an explicit source requirement and researcher-approved schema proposal.
 
 ## Prompt B: Frontend UI
 
@@ -126,7 +126,7 @@ When successful:
 
 Preserve API request idempotency where applicable.
 
-Normalize date/timezone and monetary values according to the API contract and existing project conventions.
+Normalize date/timezone and precision-sensitive numeric values according to the API contract and existing project conventions.
 
 ## Prompt D: Validation and Error Handling
 
