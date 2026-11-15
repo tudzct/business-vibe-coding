@@ -19,9 +19,8 @@ Load only the references required by the active change areas:
 - Existing database/entity mapping: [references/database-schema-template.md](references/database-schema-template.md)
 - JWT, Passport, bcrypt, configuration or OpenAPI: [references/auth-config-openapi.md](references/auth-config-openapi.md)
 
-- Keep controllers thin; enforce ownership and other specified rules in services and persistence constraints where explicitly required.
+- Keep controllers thin.
 - Use validated DTOs, injected repositories, standard response/error handling and existing authentication/configuration mechanisms.
 - Read the [database contract](../../../docs/00-context/engineering/DATABASE-SCHEMA.md) for technical policy. Use only database structure information available through implementation inputs authorized by the owning operation. Map entities compatibly with the current application source. Use `synchronize: false` and application `migrationsRun: false`. Missing necessary structure blocks work under the database policy's restart procedure; no schema proposal or approval gate exists.
-- Preserve application controls required by the approved prompt and current application source, including authentication, hashing, ownership, validation, secrets, safe errors and transactions.
 - Do not invent endpoints, rules, dependencies, schema or policies.
 - Run only permitted non-test lint/typecheck/build checks.

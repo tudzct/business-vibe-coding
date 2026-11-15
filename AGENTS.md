@@ -1,12 +1,6 @@
 # Repository agent contract
 
-Work only inside this repository unless the operator explicitly expands scope. On an explicit setup or repository-review request, read `CODEX_SETUP_GUIDE.md`. For run-scoped work, follow only the skill explicitly invoked in the current turn and the technical inputs that skill authorizes.
-
-## Authoritative project inputs
-
-Files under `docs/01-inception/` are frozen, read-only project specifications. `docs/00-context/FIGMA-LINK-REVIEW.md` is the mapping authority for approved Figma capture targets. `docs/00-context/engineering/schema.dbml` and the configured live database describe the database structure available to the active run. The clean source archive is integrity-pinned by `.codex/skills/restore-source-baseline/assets/source-baseline.sha256`.
-
-Never alter a frozen input, baseline, configuration or recorded result to make an operation pass. When an authorized project input is ambiguous or conflicts with another pinned input, report the exact location and stop for operator resolution. A changed frozen input requires refreshed dependent checksums and a new compatible run configuration.
+Work only inside this repository unless the operator explicitly expands scope. On an explicit setup or repository-review request, read `CODEX_SETUP_GUIDE.md`. For run-scoped work, execute only the skill explicitly invoked in the current turn.
 
 ## Shared operational constitution
 
@@ -20,17 +14,15 @@ At the start of every repository skill invocation, before executing helpers, ins
 - `docs/00-context/engineering/DATABASE-SCHEMA.md`;
 - `docs/00-context/workflow/WORKFLOW-CONTRACT.md`.
 
-These documents provide shared technical and operational constraints only. They do not add, replace or alter product requirements; expand the project-content inputs permitted by the active skill; or authorize reading any instruction, template, reference, context document or artifact owned by another skill. Skill-specific context remains private to its owning skill and may be read only when that skill is the explicitly invoked operation or the active skill explicitly authorizes it as a subordinate skill.
+These documents provide shared technical and operational constraints only. They do not add, replace or alter product requirements or authorize reading any instruction, template, reference, context document or artifact owned by another skill. Skill-specific context remains private to its owning skill and may be read only when that skill is the explicitly invoked operation or the active skill explicitly authorizes it as a subordinate skill.
 
 Execute a top-level operation only when the operator explicitly invokes that operation in the current turn. The invocation authorizes the active skill and only subordinate skills that its own contract explicitly requires to finish the same operation. It does not authorize any other skill.
 
-Read only:
+Use the following materials:
 
 - the active skill;
 - references explicitly required by the active skill for the requested operation;
-- explicitly authorized subordinate skills;
-- the current application codebase;
-- exact active-run inputs and handoff artifacts required by the active skill.
+- explicitly authorized subordinate skills.
 
 Do not search for, list, open, preload, summarize or infer the instructions, templates, references or scripts of another operation. Do not inspect an operation merely because its name, directory or short description is visible. Do not read an overall command roadmap. End after the requested operation is complete; never prepare or execute another top-level operation automatically.
 
@@ -40,9 +32,7 @@ Operations exchange information only through their validated handoff artifacts. 
 
 During run-scoped operations, all repository helper scripts, including skill-owned and shared helpers, are execute-only. Do not open or read their source code; only execute them as required and read their returned output.
 
-Project inputs differ from skill instructions. An active skill may inspect project inputs that its own contract permits. Do not add a global prohibition against autonomous discovery of permitted project inputs, and do not use shared documentation to direct attention toward particular requirement categories or evaluation criteria.
-
-During run-scoped work, do not open, compare or use configurations, results, reports or other artifacts belonging to another UC, run or model. If encountered incidentally, disregard them. `finalsource` is the permitted cumulative application codebase and is not treated as a prior result artifact.
+During run-scoped work, do not open, compare or use configurations, results, reports or other artifacts belonging to another UC, run or model. If encountered incidentally, disregard them.
 
 Use only the current working tree and current `HEAD` during run-scoped work. Do not enumerate, open, compare or infer context from other branches, tags, remote refs, reflog, commit messages or repository history unless the operator explicitly requests a repository review outside the run.
 

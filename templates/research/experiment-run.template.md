@@ -21,7 +21,7 @@ Explicit close/finalize commands supply canonical `metrics` through the telemetr
 
 | BR ID | Initial | Final | Evidence |
 |---|---|---|---|
-| `<BR-ID>` | `met/unmet/not_evaluable` | `met/unmet/not_evaluable` | `<runtime observations or blocking defects>` |
+| `<BR-ID>` | `correct/incorrect/not_evaluable` | `correct/incorrect/not_evaluable` | `<runtime observations or blocking defects>` |
 
 ## Flow accuracy
 

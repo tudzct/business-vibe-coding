@@ -11,14 +11,7 @@ Invoke this skill as `$gen-bug-fixing-prompt <path-to-defects-handoff.json>`. Th
 
 ## Content boundary
 
-The completed prompt content has exactly two input sources:
-
-1. the explicitly supplied `defects-handoff.json`;
-2. [sub-prompt.template.md](../../../templates/construction/sub-prompt.template.md).
-
-Read both in full. The handoff must identify one UC/run, pass `scripts/validate_sub_prompts.py --handoff <path> --check-handoff-only`, and have the exact canonical location declared by its own `uc_id` and `run_id`.
-
-Do not read any other file for prompt content. The following operation-specific prohibitions apply:
+The following operation-specific read prohibitions apply:
 
 - do not read any file under `finalsource/` or `docs/01-inception/`;
 - do not read `docs/00-context/FIGMA-LINK-REVIEW.md`, `docs/00-context/engineering/schema.dbml`, or any file under `resource/figma-design-dataset/`;
@@ -33,16 +26,11 @@ Technical documents required by the active operation may constrain execution but
 
 ## Generation
 
-1. Read `sub-prompt.template.md` in full and strictly follow the instructions declared inside it. Read the supplied Defects Handoff in full as the defect-information source used to complete the template.
+1. Read `templates/construction/sub-prompt.template.md` in full and follow its instructions.
 2. If the validated handoff has `status: no_repair_required` and an empty `defects` array, report that no prompt is required and stop. Do not create the repairs directory or capture Repair timing.
 3. Otherwise require `status: ready`, a non-empty `defects` array and unique defect IDs/fingerprints. Preserve handoff order. Create exactly one file per root-cause defect, even when that defect affects multiple BRs, Flows, APIs, UI targets or files.
 4. Use repair indexes `1..N` and write only to `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/repairs/repair-<NNN>-<DEFECT-ID>.md`. Do not overwrite an existing non-identical artifact.
-5. Author each completed sub-prompt with the model from the matching Handoff defect and the template instructions. This is prompt generation, not a mechanical JSON-to-Markdown conversion. The model may organize and phrase the defect information clearly, but it must not invent, omit or contradict Handoff facts.
-6. Preserve every identifier, fingerprint, source revision, evidence fact/content, BR/OCL definition, OCL Utility Definition, Flow/API authoritative text and required behavior. Authoritative material may be surrounded by explanatory prose but must remain verbatim.
-7. Represent every Handoff evidence item in the template's Evidence section. Record category, description and reproduction steps once; repeat the source file, line range, locator, defect finding and content fields for each evidence item. Use `N/A` for a null line range.
-8. Populate Known affected files from `scope.affected_files`. Populate Affected targets from all remaining non-empty scope arrays. Do not inspect any referenced path.
-9. If an instruction or placeholder cannot be completed because the Handoff is missing, invalid, ambiguous or contradictory, report the exact field and stop. Do not repair the Handoff or invent a replacement.
-10. Do not add permitted verification, implementation strategy, inferred requirements, features, evidence, paths or identifiers. Do not dump the Handoff as raw JSON. The output directory is a write target, not a third content source.
+5. If generation cannot proceed because the validated Handoff or required template material is missing, invalid, ambiguous or contradictory, report the exact problem and stop. Do not repair the Handoff or invent a replacement.
 
 ## Control and measurement
 

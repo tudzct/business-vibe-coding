@@ -10,7 +10,7 @@ generated_at: <ISO-8601 timestamp>
 
 ## Source Scope: Prompts A-D
 
-This source scope defines the input materials used to author Prompts A-D. Read the following materials:
+Read the following materials:
 
 - Active Use Case file: `docs/01-inception/use-cases/<ACTIVE-UC-FILE>.md`;
 - API contract files: `docs/01-inception/api-contracts/<RELATED-API-CONTRACT>.md`;
@@ -56,7 +56,7 @@ Preserve the source status and message through `{ "success": false, "statusCode"
 
 Follow the existing project architecture. Do not introduce new architectural layers or dependencies.
 
-Handle relevant ownership, transaction, concurrency, idempotency, date/timezone, and monetary-rounding rules. Use existing ORM mappings and migration conventions. Do not alter the schema without an explicit source requirement and researcher-approved schema proposal.
+Handle relevant ownership, transaction, concurrency, idempotency, date/timezone, and numeric precision and rounding rules. Use existing ORM mappings and migration conventions. Do not alter the schema without an explicit source requirement and researcher-approved schema proposal.
 
 ## Prompt B: Frontend UI
 
@@ -126,7 +126,7 @@ When successful:
 
 Preserve API request idempotency where applicable.
 
-Normalize date/timezone and monetary values according to the API contract and existing project conventions.
+Normalize date/timezone and precision-sensitive numeric values according to the API contract and existing project conventions.
 
 ## Prompt D: Validation and Error Handling
 
@@ -161,10 +161,9 @@ Do not call the API when client-side validation fails.
 
 ## Source Scope: Prompts E-F
 
-This source scope defines the input materials used to author Prompts E-F. Read the following materials:
+Read the input sources used to complete Prompts A-D.
 
-- The input materials declared in Prompts A-D;
-- Business Rule specification file: `docs/01-inception/business-rules/<ACTIVE-BUSINESS-RULE-FILE>.md`.
+Additionally, read the Business Rule specification file: `docs/01-inception/business-rules/<ACTIVE-BUSINESS-RULE-FILE>.md`.
 
 Use the information obtained from these sources to complete every placeholder in Prompts E-F below.
 
