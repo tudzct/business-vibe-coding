@@ -6,7 +6,6 @@
 - Map nullability, uniqueness, precision/scale, length, relation ownership and `onDelete` from implementation inputs authorized by the owning operation and the current application source. Do not invent or broaden cascades.
 - Inject the entity repository using established Nest patterns. Use repository/find options or QueryBuilder parameters, never SQL string interpolation.
 - Map DTO fields explicitly. Do not pass untrusted request objects directly into `save`/`update`.
-- Scope owned-resource queries by both resource identifier and authenticated owner identifier where possible.
 - Select only required columns and constrain pagination, sort columns and relation loading.
 
 ## Transactions and concurrency

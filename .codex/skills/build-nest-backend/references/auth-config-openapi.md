@@ -2,7 +2,7 @@
 
 ## Authentication and authorization
 
-- Keep authentication in Passport/JWT guards/strategies and authorization/ownership in guards or services according to the existing architecture.
+- Keep authentication in Passport/JWT guards/strategies according to the existing architecture.
 - Extract subject identity only from the verified JWT; never trust a client-provided owner/user ID.
 - Validate JWT algorithm, expiry and approved issuer/audience policy. Load signing secrets from validated configuration; never use fallback secrets.
 - Return generic authentication failures that do not reveal account existence.
