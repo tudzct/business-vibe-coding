@@ -277,24 +277,44 @@ def validate_prompt(path, index, handoff, defect):
                              ("locator", item["locator"]),
                              ("defect finding", item["defect_finding"]),
                              ("content", item["content"])):
-            require_value(evidence_section, value,
-                          f"{path}: Evidence {evidence_index} {label} is missing or changed")
+            if normalized(str(value)) not in normalized(evidence_section):
+                if normalized(str(value)) in normalized(full_text):
+                    raise ValueError(
+                        f"{path}: Evidence {evidence_index} {label} is missing from "
+                        "'## Evidence' (found elsewhere in the file; keep all evidence "
+                        "entries under '## Evidence' using '### ' subheadings without "
+                        "introducing another '## ' heading)"
+                    )
+                raise ValueError(
+                    f"{path}: Evidence {evidence_index} {label} is missing or changed "
+                    "inside '## Evidence' (must match the Handoff verbatim)"
+                )
     correction_section = sections["Required correction"]
     require(expected_behavior(defect["required_correction"]) in normalized(correction_section),
-            f"{path}: required observable behavior is missing or changed")
+            f"{path}: required observable behavior is missing or changed inside "
+            "'## Required correction' (copy the text after 'Required observable "
+            "behavior after repair:' verbatim from the Handoff)")
     for block in authoritative_blocks(defect["required_correction"]):
         require(block in normalized(correction_section),
-                f"{path}: authoritative correction content is missing or changed")
+                f"{path}: authoritative correction content is missing or changed "
+                "inside '## Required correction' (copy every fenced code block "
+                "from the Handoff's required_correction verbatim)")
     scope = defect["scope"]
     scope_section = sections["Scope"]
     for field in ("affected_br_ids", "affected_flow_ids", "affected_flow_step_ids",
                   "affected_api_ids", "affected_ui_targets", "affected_files"):
         for value in scope[field]:
-            require_value(scope_section, value, f"{path}: Scope omits {field} value {value}")
+            require_value(
+                scope_section,
+                value,
+                f"{path}: Scope omits or altered {field} value {value!r} "
+                "(copy Handoff scope values verbatim)",
+            )
     if not any(scope.values()):
         require("None" in scope_section, f"{path}: empty Scope must be recorded as None")
     require(normalized(sections["Completion"]) == COMPLETION,
-            f"{path}: Completion contract mismatch")
+            f"{path}: Completion contract mismatch (keep the exact template "
+            "Completion sentence verbatim without defect-specific edits)")
     require(set(arrays["affected_br_ids"]) == set(scope["affected_br_ids"]),
             f"{path}: Scope BR inventory mismatch")
     require(set(arrays["affected_flow_ids"]) == set(scope["affected_flow_ids"]),

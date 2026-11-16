@@ -29,8 +29,14 @@ Technical documents required by the active operation may constrain execution but
 1. Read `templates/construction/sub-prompt.template.md` in full and follow its instructions.
 2. If the validated handoff has `status: no_repair_required` and an empty `defects` array, report that no prompt is required and stop. Do not create the repairs directory or capture Repair timing.
 3. Otherwise require `status: ready`, a non-empty `defects` array and unique defect IDs/fingerprints. Preserve handoff order. Create exactly one file per root-cause defect, even when that defect affects multiple BRs, Flows, APIs, UI targets or files.
-4. Use repair indexes `1..N` and write only to `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/repairs/repair-<NNN>-<DEFECT-ID>.md`. Do not overwrite an existing non-identical artifact.
-5. If generation cannot proceed because the validated Handoff or required template material is missing, invalid, ambiguous or contradictory, report the exact problem and stop. Do not repair the Handoff or invent a replacement.
+4. Use repair indexes `1..N` and write only to `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/repairs/repair-<NNN>-<DEFECT-ID>.md`. Do not overwrite an existing non-identical artifact from a prior completed handoff or run.
+5. Preserve section boundaries and Handoff values verbatim in UTF-8:
+   - Use only the template's top-level `## ` headings (`## Source Scope`, `## Evidence`, `## Required correction`, `## Scope`, `## Completion`); never add another `## ` heading (such as `## Evidence content`), because validation ends each section at the next `## ` heading.
+   - Inside `## Evidence`, include `Category`, a non-empty `Description`, every `reproduction_steps` item verbatim, and one `### Evidence <k>` subsection per entry in `defect.evidence` containing verbatim `source_file`, line range (`<line_start>-<line_end>` or `N/A`), `locator`, `defect_finding`, and raw `content` (place multi-line content in a fenced code block inside `### Evidence <k>`, never outside `## Evidence`).
+   - Inside `## Required correction`, copy verbatim every fenced code block from `defect.required_correction` plus the verbatim text following `Required observable behavior after repair:` (or the entire `required_correction` if that marker is absent).
+   - Inside `## Scope`, copy every item from `scope.affected_br_ids`, `affected_flow_ids`, `affected_flow_step_ids`, `affected_api_ids`, `affected_ui_targets`, and `affected_files` verbatim without adding extra BR/Flow/Flow-step/API IDs; record `None` when all six arrays are empty.
+   - Keep `## Completion` identical to the template sentence verbatim without defect-specific edits.
+6. If generation cannot proceed because the validated Handoff or required template material is missing, invalid, ambiguous or contradictory, report the exact problem and stop. Do not repair the Handoff or invent a replacement.
 
 ## Control and measurement
 
@@ -38,10 +44,10 @@ Immediately before the first prompt-artifact write, derive the active Canonical 
 
 After the complete set is written:
 
-1. execute `scripts/validate_sub_prompts.py --handoff <path> --prompt-dir <repairs-directory>`;
+1. execute `scripts/validate_sub_prompts.py --handoff <path> --prompt-dir <repairs-directory>`; if validation reports formatting or verbatim-content errors on the drafts just created in this invocation (before `record_prompt_handoff.py` and END capture), fix those draft files and re-run `scripts/validate_sub_prompts.py`;
 2. execute `scripts/record_prompt_handoff.py --handoff <path> --prompt-dir <repairs-directory>` to persist only `repair_prompt_directory`, `all_sub_prompt_count`, per-defect `repair_round_limit: 10`, total `repair_rounds_completed: 0` and `repair_status: not_started`;
 3. capture Repair END with the same shared helper, segment ID and `repair_activity`.
 
-Helpers are execute-only. Use only their exit status and emitted result; do not inspect their source or the files they manage. If generation fails after START, capture END before responding and preserve the actual failed work.
+Helpers are execute-only. Use only their exit status and emitted result; do not inspect their source or the files they manage. If generation fails after START and cannot be resolved by fixing the current drafts, capture END before responding and preserve the actual failed work.
 
 Report the prompt count and every generated path, then stop. Do not modify `finalsource/`, invoke Repair, or invoke another top-level operation. Do not create or run tests.
