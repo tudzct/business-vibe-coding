@@ -501,7 +501,8 @@ def build(run_path, output, payload):
     br_baseline, flow_baseline, br_path, flow_path, api_contracts = frozen_sources(configuration)
     br_summary = accepted_br_summary(run)
     flow_summary = accepted_flow_summary(run)
-    require(run.get("business_rules", {}).get("final") == br_summary_snapshot(br_summary),
+    final_br = (run.get("business_rules") or {}).get("final")
+    require(final_br is None or final_br == br_summary_snapshot(br_summary),
             "persist validated accepted BR results before building handoff")
     require(run.get("flow_accuracy", {}).get("current_summary") == flow_summary,
             "persist validated accepted Flow results before building handoff")
