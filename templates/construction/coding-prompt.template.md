@@ -16,7 +16,7 @@ Read the following materials before populating Prompts A-D:
 - API contract files: `docs/01-inception/api-contracts/<RELATED-API-CONTRACT>.md` (if the UC explicitly declares no related API, treat API inventory as empty);
 - Database schema: `docs/00-context/engineering/schema.dbml`;
 - Live database: the configured live database;
-- Figma design dataset: `resource/figma-design-dataset/<DATASET-VERSION>/<SNAPSHOT-DIR>/` (read `manifest.json`, `design-context.md`, `native-design.json`, `asset-map.json`, and `assets/*.svg` during prompt generation);
+- Figma design dataset: `resource/figma-design-dataset/<DATASET-VERSION>/<SNAPSHOT-DIR>/`
 - Existing source code: `finalsource/`;
 - Technical and control sources: the `Technical and Control-Plane Material` defined in `.codex/skills/gen-coding-prompt/SKILL.md`.
 
@@ -32,9 +32,8 @@ Use the information obtained from these sources to follow every instruction belo
    - Extract and embed all target frame metadata (frame names, node IDs, native-design SHA-256 hashes), viewport scope (desktop-only vs. responsive per UC), layout dimensions, design tokens, component/modal/menu/fallback states, exact copy, and inline `<svg>...</svg>` markup (or CSS/HTML equivalents) directly into Prompt B. Never instruct downstream source generation to read or copy files from `resource/figma-design-dataset/...`.
 4. **Cleanup when completing the coding prompt (MANDATORY):**
    - Delete ALL prompt-filling instructions once the coding prompt is completed, including:
-     - this entire `## Source Scope: Prompts A-D` section and `## Source Scope: Prompts E-F` section;
+     - this entire `## Source Scope: Prompts A-D` section;
      - any template meta-instructions or conditional generation directives (e.g., "Read the following materials...", "Use the information obtained...", "If relevant frames cannot be identified unambiguously, stop...", "Replace 100% of placeholders...").
-   - Keep ONLY the completed YAML frontmatter (`status: Draft` for initial generation or `Approved` upon approval), `# <UC-ID> Business Coding Prompt - <Use case name>`, and the populated `## Prompt A` through `## Prompt F` sections with zero unfilled placeholders.
 
 ## Prompt A: Backend API
 
@@ -165,54 +164,3 @@ Display validation messages at `[VALIDATION MESSAGE LOCATION]`.
 Backend validation remains authoritative where backend endpoints apply.
 
 Do not proceed with `[API CALL / OPERATION]` when client-side validation fails.
-
-## Source Scope: Prompts E-F
-
-Read the input sources used to complete Prompts A-D.
-
-Additionally, read the Business Rule specification file: `docs/01-inception/business-rules/<ACTIVE-BUSINESS-RULE-FILE>.md`.
-
-Use the information obtained from these sources to follow every instruction below and complete every placeholder in Prompts E-F:
-
-1. Replace 100% of placeholders in Prompts E-F with concrete, source-backed values.
-2. Produce one `### Business Rule: [BR-ID]` block for every frozen Business Rule belonging to the active use case, preserving every Rule ID, OCL expression, and authoritative natural-language constraint verbatim without changing its meaning.
-3. Do not invent missing thresholds, statuses, ownership, schema, enforcement layers, or failure behavior; if critical source information is unresolved and changes implementation, stop and record the unresolved evidence for the researcher instead of guessing.
-4. Ensure Prompt F references the embedded Figma UI specification and inline SVG assets in Prompt B (and frozen Figma evidence only where explicitly authorized).
-5. **Cleanup when completing the coding prompt (MANDATORY):** Remove this entire `## Source Scope: Prompts E-F` section and all prompt-filling instructions when the coding prompt is completed, leaving only the populated `## Prompt E` and `## Prompt F` sections.
-
-## Prompt E: Business Rules Compliance
-
-### Objective: Implement the complete frozen Business Rule set for this use case without changing its meaning.
-
-### Business Rule: `[BR-ID]`
-
-- **Name:** `[rule name]`
-- **Representation:** `OCL invariant | OCL precondition | OCL postcondition | natural language`
-- **Expression / authoritative text:** `[verbatim Sheet-derived content]`
-- **Context:** `[OCL context/class/operation or business scope]`
-- **Enforcement layer:** `[frontend | backend | database | multiple]`
-- **Failure behavior:** `[source-backed status/message/state, or unresolved]`
-- **Traceability:** `[UC step/API/UI/source range]`
-
-Preserve every Rule ID, OCL expression and authoritative natural-language constraint exactly.
-
-For each Business Rule, record its applicable enforcement layer, failure behavior, and traceability within Prompt E. Backend/database enforcement remains authoritative across trust boundaries; frontend enforcement is an additional user-experience control.
-
-Do not invent missing thresholds, statuses, ownership, schema, enforcement layers or failure behavior.
-
-## Prompt F: Implementation Context
-
-Use every prompt present in this approved artifact together with:
-
-- project rules and target manifests/lockfiles;
-- approved database contract;
-- approved API contract;
-- embedded Figma UI specification and inline SVG assets in Prompt B (and frozen Figma evidence only where explicitly authorized);
-- existing source-code conventions.
-
-Priority:
-
-1. Requirements explicitly present in this approved prompt
-2. Approved API and database/project contracts
-3. Embedded Figma UI specification and frozen design evidence
-4. Existing source-code conventions
