@@ -22,7 +22,8 @@ Use the information obtained from these sources to follow every instruction belo
 1. Understand the selected defect as a whole and complete every placeholder below.
 2. Generate a clear, self-contained repair prompt. Do not invent, omit, or change defect information. Synthesize the prompt from the complete defect rather than transcribing the Handoff field by field.
 3. Represent every Handoff evidence entry as a sequential `### Evidence <index>` subsection inside `## Evidence`. Use the evidence to communicate the defect clearly; do not mechanically copy each Handoff field.
-4. After completing the sub-prompt, remove this entire `## Instruction for Sub-prompt` section so the generated artifact contains only the completed repair prompt.
+4. Do not include input-source references or provenance in the completed sub-prompt; references to final source and its technical conventions remain permitted.
+5. After completing the sub-prompt, remove this entire `## Instruction for Sub-prompt` section so the generated artifact contains only the completed repair prompt.
 
 ## Evidence
 
