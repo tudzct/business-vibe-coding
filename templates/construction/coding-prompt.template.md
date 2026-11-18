@@ -30,7 +30,8 @@ Use the information obtained from these sources to follow every instruction belo
    - Inspect the checksum-valid frozen Figma dataset to identify all frames relevant to the active use case using the UC name, purpose, application-user actions, screen titles, visible UI text, and semantically related terms.
    - If relevant frames cannot be identified unambiguously, stop during prompt generation and report the matching candidates instead of selecting/inventing a frame or emitting an incomplete prompt.
    - Extract and embed the implementation-ready UI specification—including viewport scope (desktop-only vs. responsive per UC), layout dimensions, design tokens, component/modal/menu/fallback states, exact copy, and inline `<svg>...</svg>` markup (or CSS/HTML equivalents)—directly into Prompt B.
-4. **Cleanup when completing the coding prompt (MANDATORY):**
+4. Do not include input-source references or provenance in the completed coding prompt; references to final source and its technical conventions remain permitted.
+5. **Cleanup when completing the coding prompt (MANDATORY):**
    - Delete ALL prompt-filling instructions once the coding prompt is completed, including:
      - this entire `## Instruction for Prompts A-D` section;
      - any template meta-instructions or conditional generation directives (e.g., "Read the following materials...", "Use the information obtained...", "If relevant frames cannot be identified unambiguously, stop...", "Replace 100% of placeholders...").
