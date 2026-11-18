@@ -29,7 +29,7 @@ Use the information obtained from these sources to follow every instruction belo
 3. **Prompt B (Figma reading & inline embedding):**
    - Inspect the checksum-valid frozen Figma dataset to identify all frames relevant to the active use case using the UC name, purpose, application-user actions, screen titles, visible UI text, and semantically related terms.
    - If relevant frames cannot be identified unambiguously, stop during prompt generation and report the matching candidates instead of selecting/inventing a frame or emitting an incomplete prompt.
-   - Extract and embed all target frame metadata (frame names, node IDs, native-design SHA-256 hashes), viewport scope (desktop-only vs. responsive per UC), layout dimensions, design tokens, component/modal/menu/fallback states, exact copy, and inline `<svg>...</svg>` markup (or CSS/HTML equivalents) directly into Prompt B. Never instruct downstream source generation to read or copy files from `resource/figma-design-dataset/...`.
+   - Extract and embed the implementation-ready UI specification—including viewport scope (desktop-only vs. responsive per UC), layout dimensions, design tokens, component/modal/menu/fallback states, exact copy, and inline `<svg>...</svg>` markup (or CSS/HTML equivalents)—directly into Prompt B.
 4. **Cleanup when completing the coding prompt (MANDATORY):**
    - Delete ALL prompt-filling instructions once the coding prompt is completed, including:
      - this entire `## Instruction for Prompts A-D` section;
@@ -174,7 +174,7 @@ Use the information obtained from these sources to follow every instruction belo
 1. Replace 100% of placeholders in Prompts E-F with concrete values.
 2. Produce one `### Business Rule: [BR-ID]` block for every frozen Business Rule belonging to the active use case, preserving every Rule ID, OCL expression, and authoritative natural-language constraint verbatim without changing its meaning.
 3. Do not invent missing thresholds, statuses, ownership, schema, enforcement layers, or failure behavior; if critical source information is unresolved and changes implementation, stop and record the unresolved evidence for the researcher instead of guessing.
-4. Ensure Prompt F references the embedded Figma UI specification and inline SVG assets in Prompt B and the frozen Figma evidence.
+4. Ensure Prompt F references the UI specification and inline SVG assets embedded in Prompt B.
 5. **Cleanup when completing the coding prompt (MANDATORY):** Remove this entire `## Instruction for Prompts E-F` section and all prompt-filling instructions when the coding prompt is completed, leaving only the populated `## Prompt E` and `## Prompt F` sections.
 
 ## Prompt E: Business Rules Compliance
