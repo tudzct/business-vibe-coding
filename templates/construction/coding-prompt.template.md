@@ -73,7 +73,7 @@ Handle relevant ownership, transaction, concurrency, idempotency, date/timezone,
 
 ## Prompt B: Frontend UI
 
-### Objective: Build the user interface according to the Figma design.
+### Objective: Build the user interface specified below.
 
 Create `[COMPONENT NAME]` using `[FRONTEND TECHNOLOGIES]`.
 
@@ -83,15 +83,13 @@ The component MUST display:
 - `[UI ELEMENT 2]`
 - `[UI ELEMENT 3]`
 
-**Target Frames & Design Provenance:** `[IDENTIFIED FIGMA FRAME NAMES, NODE IDS, AND NATIVE-DESIGN SHA-256 HASHES]`
-
 **Layout & Dimensions:** `[VIEWPORT SCOPE (DESKTOP-ONLY / RESPONSIVE), CONTAINER SIZES, PADDING, GAPS, ALIGNMENT, POSITIONING]`
 
 **Design Tokens (Colors, Typography, Radii, Borders):** `[HEX/ALPHA COLORS, FONT FAMILY/SIZES/WEIGHTS/LINE-HEIGHTS/LETTER-SPACING, BORDER RADII, BORDERS, SCRIMS]`
 
 **Component & State Specifications:** `[EXACT COPY, PLACEHOLDERS, ENABLED/DISABLED/MUTED/ACTIVE/LOADING/MODAL/MENU STATES, AND FALLBACK TREATMENTS]`
 
-**Embedded Inline SVG Assets:** `[INLINE <svg>...</svg> MARKUP FOR EVERY ICON/GRAPHIC EXTRACTED FROM ASSET-MAP / ASSETS, OR PURE CSS EQUIVALENTS]`
+**Embedded Inline SVG Assets:** `[INLINE <svg>...</svg> MARKUP FOR EVERY REQUIRED ICON/GRAPHIC, OR PURE CSS EQUIVALENTS]`
 
 ### Implementation Requirements
 
@@ -132,7 +130,7 @@ When successful:
 
 Preserve API request idempotency where applicable.
 
-Normalize date/timezone and precision-sensitive numeric values according to the API contract and existing project conventions.
+Normalize date/timezone and precision-sensitive numeric values according to the specified API requirements and existing project conventions.
 
 ## Prompt D: Validation and Error Handling
 
@@ -181,17 +179,17 @@ Use the information obtained from these sources to follow every instruction belo
 
 ## Prompt E: Business Rules Compliance
 
-### Objective: Implement the complete frozen Business Rule set for this use case without changing its meaning.
+### Objective: Implement the complete Business Rule set specified below without changing its meaning.
 
 ### Business Rule: `[BR-ID]`
 
 - **Name:** `[rule name]`
 - **Representation:** `OCL invariant | OCL precondition | OCL postcondition | natural language`
-- **Expression / authoritative text:** `[verbatim Sheet-derived content]`
+- **Expression / authoritative text:** `[verbatim rule content]`
 - **Context:** `[OCL context/class/operation or business scope]`
 - **Enforcement layer:** `[frontend | backend | database | multiple]`
 - **Failure behavior:** `[status/message/state, or unresolved]`
-- **Traceability:** `[UC step/API/UI/source range]`
+- **Traceability:** `[UC step/API/UI]`
 
 Preserve every Rule ID, OCL expression and authoritative natural-language constraint exactly.
 
@@ -204,14 +202,14 @@ Do not invent missing thresholds, statuses, ownership, schema, enforcement layer
 Use every prompt present in this approved artifact together with:
 
 - project rules and target manifests/lockfiles;
-- approved database contract;
-- approved API contract;
-- embedded Figma UI specification and inline SVG assets in Prompt B and frozen Figma evidence;
+- database requirements specified across Prompts A-E in this approved artifact;
+- API requirements specified across Prompts A-E in this approved artifact;
+- embedded UI specification and inline SVG assets in Prompt B;
 - existing source-code conventions.
 
 Priority:
 
 1. Requirements explicitly present in this approved prompt
-2. Approved API and database/project contracts
-3. Embedded Figma UI specification and frozen design evidence
+2. API and database requirements specified across Prompts A-E
+3. Embedded UI specification in Prompt B
 4. Existing source-code conventions
