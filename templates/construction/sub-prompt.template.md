@@ -10,21 +10,23 @@ source_revision: "sha256:<64 lowercase hex characters>"
 
 # Repair <N> — <bounded defect>
 
-## Source Scope
+## Instruction for Sub-prompt
 
 Read the following materials:
 
 - Defects Handoff: `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/defects-handoff.json`.
+- Technical and control sources: the `Technical and Control-Plane Material` defined in `.codex/skills/gen-bug-fixing-prompt/SKILL.md`.
 
-Use the information obtained from this source to complete every placeholder below while preserving exact Handoff values:
+Use the information obtained from these sources to follow every instruction below and complete the sub-prompt:
 
-- Keep only the template's top-level `## ` headings (`Source Scope`, `Evidence`, `Required correction`, `Scope`, `Completion`). Never introduce another `## ` heading (such as `## Evidence content`), because section validation stops at the next `## ` heading.
-- Inside `## Evidence`, represent every item in `defect.evidence` using `### Evidence 1`, `### Evidence 2`, ... subheadings and copy each `reproduction_steps` item plus `source_file`, line range (`<start>-<end>` or `N/A`), `locator`, `defect_finding`, and raw `content` verbatim in UTF-8 (use fenced code blocks inside `### Evidence <k>` for multi-line content).
-- Inside `## Required correction`, copy every fenced code block from `defect.required_correction` and the exact text after `Required observable behavior after repair:` verbatim (or the full `required_correction` when that marker is absent).
-- Inside `## Scope`, copy every value from `scope.affected_*` verbatim (or `None` when all scope arrays are empty), without introducing extra BR/Flow/Flow-step/API IDs.
-- Keep the `## Completion` paragraph verbatim; do not customize it.
+1. Understand the selected defect as a whole and complete every placeholder below.
+2. Generate a clear, self-contained repair prompt. Do not invent, omit, or change defect information. Synthesize the prompt from the complete defect rather than transcribing the Handoff field by field.
+3. Represent every Handoff evidence entry as a sequential `### Evidence <index>` subsection inside `## Evidence`. Use the evidence to communicate the defect clearly; do not mechanically copy each Handoff field.
+4. After completing the sub-prompt, remove this entire `## Instruction for Sub-prompt` section so the generated artifact contains only the completed repair prompt.
 
 ## Evidence
+
+### Defect Summary
 
 - Category: `<defect category>`
 - Description: `<complete defect description>`
@@ -37,8 +39,6 @@ Use the information obtained from this source to complete every placeholder belo
 - Locator: `<exact locator>`
 - Defect finding: `<exact evidence-backed finding>`
 - Content: `<relevant source/build/runtime content>`
-
-(Repeat `### Evidence <index>` inside `## Evidence` for each remaining entry in `defect.evidence`; do not create a separate `## ` section.)
 
 ## Required correction
 

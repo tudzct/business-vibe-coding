@@ -502,7 +502,7 @@ def build(run_path, output, payload):
     br_summary = accepted_br_summary(run)
     flow_summary = accepted_flow_summary(run)
     final_br = (run.get("business_rules") or {}).get("final")
-    require(final_br is None or final_br == br_summary_snapshot(br_summary),
+    require(final_br == br_summary_snapshot(br_summary),
             "persist validated accepted BR results before building handoff")
     require(run.get("flow_accuracy", {}).get("current_summary") == flow_summary,
             "persist validated accepted Flow results before building handoff")
