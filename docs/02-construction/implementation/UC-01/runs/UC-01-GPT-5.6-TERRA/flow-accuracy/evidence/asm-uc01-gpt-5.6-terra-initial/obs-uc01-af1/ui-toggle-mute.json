@@ -1,0 +1,11 @@
+{
+  "flow_id": "AF-1",
+  "action": "toggle_camera_off_and_mic_off",
+  "state": {
+    "cameraEnabled": false,
+    "microphoneEnabled": false,
+    "micBadge": "Microphone off",
+    "avatarVisible": true
+  },
+  "captured_at": "2026-11-19T03:37:15Z"
+}

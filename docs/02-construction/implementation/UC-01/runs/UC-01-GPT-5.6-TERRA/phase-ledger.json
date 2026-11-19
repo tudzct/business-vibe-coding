@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "uc_id": "UC-01",
+  "run_id": "UC-01-GPT-5.6-TERRA",
+  "session_id": "01a1f1c2-27b4-75b2-b14b-794ab1f667d0",
+  "phases": {
+    "prompt_generation": {
+      "status": "closed",
+      "first_turn_id": "01a1f1c2-3044-7b72-88c6-a4aa9a0d9a80",
+      "measurement_turn_id": "01a1f1c9-2a0f-70e0-a81e-ea1bd4aec264"
+    },
+    "source_generation": {
+      "status": "closed",
+      "first_turn_id": "01a1f1d8-2c6a-71a2-8947-8491c8faf032",
+      "measurement_turn_id": "01a1f1dd-7e74-7a21-9a41-1857bf4c6859"
+    },
+    "repair": {
+      "status": "open",
+      "first_turn_id": "01a1f1fb-fcdf-7211-b9c3-ae4a5da8c7eb"
+    }
+  },
+  "segments": [
+    {
+      "start": {
+        "at": "2026-11-19T10:05:03.120+07:00",
+        "epoch_ms": 1795057503121,
+        "timing_protocol": "generation_execution_with_repair_audit_v2",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA",
+        "session_id": "01a1f1c2-27b4-75b2-b14b-794ab1f667d0",
+        "turn_id": "01a1f1c2-3044-7b72-88c6-a4aa9a0d9a80",
+        "phase": "prompt_generation",
+        "event": "start",
+        "segment_id": "6cc9daf2-7e00-4cf0-b8e9-829a8841c5dd",
+        "source_revision": "sha256:6af9412beb28f169137a5914b8fed36eb06b78c576f9c417d48a35153e935095"
+      },
+      "end": {
+        "at": "2026-11-19T10:08:42.138+07:00",
+        "epoch_ms": 1795057722139,
+        "timing_protocol": "generation_execution_with_repair_audit_v2",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA",
+        "session_id": "01a1f1c2-27b4-75b2-b14b-794ab1f667d0",
+        "turn_id": "01a1f1c2-3044-7b72-88c6-a4aa9a0d9a80",
+        "phase": "prompt_generation",
+        "event": "end",
+        "segment_id": "6cc9daf2-7e00-4cf0-b8e9-829a8841c5dd",
+        "source_revision": "sha256:6af9412beb28f169137a5914b8fed36eb06b78c576f9c417d48a35153e935095"
+      }
+    },
+    {
+      "start": {
+        "at": "2026-11-19T10:28:52.055+07:00",
+        "epoch_ms": 1795058932056,
+        "timing_protocol": "generation_execution_with_repair_audit_v2",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA",
+        "session_id": "01a1f1c2-27b4-75b2-b14b-794ab1f667d0",
+        "turn_id": "01a1f1d8-2c6a-71a2-8947-8491c8faf032",
+        "phase": "source_generation",
+        "event": "start",
+        "segment_id": "cebcc9cf-0d87-4ae7-9c2d-b752da1e67b0",
+        "source_revision": "sha256:6af9412beb28f169137a5914b8fed36eb06b78c576f9c417d48a35153e935095"
+      },
+      "end": {
+        "at": "2026-11-19T10:31:38.562+07:00",
+        "epoch_ms": 1795059098563,
+        "timing_protocol": "generation_execution_with_repair_audit_v2",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA",
+        "session_id": "01a1f1c2-27b4-75b2-b14b-794ab1f667d0",
+        "turn_id": "01a1f1d8-2c6a-71a2-8947-8491c8faf032",
+        "phase": "source_generation",
+        "event": "end",
+        "segment_id": "cebcc9cf-0d87-4ae7-9c2d-b752da1e67b0",
+        "source_revision": "sha256:0cfc7b852c800553fc977c2557a6682316697e7b3d8f3e6dcb536ae7bcb60181"
+      }
+    },
+    {
+      "start": {
+        "at": "2026-11-19T11:07:02.353+07:00",
+        "epoch_ms": 1795061222353,
+        "timing_protocol": "generation_execution_with_repair_audit_v2",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA",
+        "session_id": "01a1f1c2-27b4-75b2-b14b-794ab1f667d0",
+        "turn_id": "01a1f1fb-fcdf-7211-b9c3-ae4a5da8c7eb",
+        "phase": "repair",
+        "event": "start",
+        "segment_id": "0fce1f4d-1920-48ac-9a34-4f4a72e4d5c1",
+        "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+        "repair_activity": "sub_prompt_generation"
+      },
+      "end": {
+        "at": "2026-11-19T11:08:12.849+07:00",
+        "epoch_ms": 1795061292850,
+        "timing_protocol": "generation_execution_with_repair_audit_v2",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA",
+        "session_id": "01a1f1c2-27b4-75b2-b14b-794ab1f667d0",
+        "turn_id": "01a1f1fb-fcdf-7211-b9c3-ae4a5da8c7eb",
+        "phase": "repair",
+        "event": "end",
+        "segment_id": "0fce1f4d-1920-48ac-9a34-4f4a72e4d5c1",
+        "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+        "repair_activity": "sub_prompt_generation"
+      }
+    },
+    {
+      "start": {
+        "at": "2026-11-19T11:38:22.984+07:00",
+        "epoch_ms": 1795063102984,
+        "timing_protocol": "generation_execution_with_repair_audit_v2",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA",
+        "session_id": "01a1f1c2-27b4-75b2-b14b-794ab1f667d0",
+        "turn_id": "01a1f217-e5b7-71e2-8aed-cb2357c4a110",
+        "phase": "repair",
+        "event": "start",
+        "segment_id": "48f8c0e4-ae40-4b7b-9925-7ebb3df29a68",
+        "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+        "repair_activity": "source_correction"
+      },
+      "end": {
+        "at": "2026-11-19T11:42:28.642+07:00",
+        "epoch_ms": 1795063348642,
+        "timing_protocol": "generation_execution_with_repair_audit_v2",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA",
+        "session_id": "01a1f1c2-27b4-75b2-b14b-794ab1f667d0",
+        "turn_id": "01a1f217-e5b7-71e2-8aed-cb2357c4a110",
+        "phase": "repair",
+        "event": "end",
+        "segment_id": "48f8c0e4-ae40-4b7b-9925-7ebb3df29a68",
+        "source_revision": "sha256:f1a5fe799e519d5e85638564b6f6cfa1045bd7498a8738a5263d030a1d099ef8",
+        "repair_activity": "source_correction"
+      }
+    }
+  ],
+  "observations": [
+    {
+      "measurement_turn_id": "01a1f1c9-2a0f-70e0-a81e-ea1bd4aec264",
+      "action": "close-phase:prompt_generation",
+      "last_turn_id": "01a1f1c2-3044-7b72-88c6-a4aa9a0d9a80",
+      "evidence_sha256": "sha256:7938602791615418beb590ede88ea47945739be9417eaadfdc75a74e05543001"
+    },
+    {
+      "measurement_turn_id": "01a1f1dd-7e74-7a21-9a41-1857bf4c6859",
+      "action": "close-phase:source_generation",
+      "last_turn_id": "01a1f1d8-2c6a-71a2-8947-8491c8faf032",
+      "evidence_sha256": "sha256:9aec08b615f37770be4ece50ea971d0d5aac16f1a0fd9ba82444f7c13e370b18"
+    }
+  ],
+  "workflow_status": "open",
+  "timing_protocol": "generation_execution_with_repair_audit_v2"
+}

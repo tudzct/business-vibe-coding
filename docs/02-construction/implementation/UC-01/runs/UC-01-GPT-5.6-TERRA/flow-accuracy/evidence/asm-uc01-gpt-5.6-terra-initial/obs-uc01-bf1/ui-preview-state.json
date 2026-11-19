@@ -1,0 +1,40 @@
+{
+  "elements": [
+    {
+      "role": "heading",
+      "name": "Get Started",
+      "visible": true
+    },
+    {
+      "role": "status",
+      "text": "You are the first to join",
+      "visible": true
+    },
+    {
+      "role": "video",
+      "aria-label": "Camera preview",
+      "visible": true
+    },
+    {
+      "role": "button",
+      "name": "Turn camera off",
+      "visible": true
+    },
+    {
+      "role": "button",
+      "name": "Turn microphone off",
+      "visible": true
+    },
+    {
+      "role": "textbox",
+      "name": "Name",
+      "value": ""
+    },
+    {
+      "role": "button",
+      "name": "Go Live",
+      "disabled": true
+    }
+  ],
+  "captured_at": "2026-11-19T03:37:05Z"
+}

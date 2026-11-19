@@ -1,0 +1,13 @@
+{
+  "flow_id": "EF-1",
+  "action": "permission_denied",
+  "dialog": {
+    "visible": true,
+    "role": "dialog",
+    "aria-labelledby": "permission-title",
+    "title": "Camera or microphone access is blocked",
+    "recovery_button": "Try again",
+    "dismiss_button": "Dismiss"
+  },
+  "captured_at": "2026-11-19T03:37:25Z"
+}

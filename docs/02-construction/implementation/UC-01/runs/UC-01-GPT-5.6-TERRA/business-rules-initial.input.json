@@ -1,0 +1,88 @@
+{
+  "requirements": [
+    {
+      "br_id": "BR-RJPP-01",
+      "status": "correct",
+      "rationale": "PreJoinPreview component correctly initializes media state to disabled (requestCamera=false, requestMicrophone=false) and strictly enforces that camera and microphone are only enabled when permission status is GRANTED, devices are available, and access has been explicitly requested.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json"
+      ],
+      "runtime_observation_ids": [
+        "obs-uc01-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-RJPP-02",
+      "status": "incorrect",
+      "rationale": "PreJoinPreview component does not expose role as a component prop and hardcodes internal state to BROADCASTER, preventing caller from supplying VIEWER role to verify viewer muting.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json"
+      ],
+      "runtime_observation_ids": [
+        "obs-uc01-bf1"
+      ],
+      "caused_by_defect_ids": [
+        "DEFECT-UC01-001"
+      ]
+    },
+    {
+      "br_id": "BR-RJPP-03",
+      "status": "correct",
+      "rationale": "PreJoinPreview evaluates isReadyToJoin purely based on displayName trimming and length constraint (displayName.trim().length > 0 and displayName.trim().length <= 50) without requiring active media tracks, keeping Join disabled until a valid name is entered.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json"
+      ],
+      "runtime_observation_ids": [
+        "obs-uc01-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-RJPP-04",
+      "status": "incorrect",
+      "rationale": "Component generates a random UUID (crypto.randomUUID()) for participantKey instead of accepting and preserving command.participantKey from input command props.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json"
+      ],
+      "runtime_observation_ids": [
+        "obs-uc01-bf1"
+      ],
+      "caused_by_defect_ids": [
+        "DEFECT-UC01-002"
+      ]
+    },
+    {
+      "br_id": "BR-RJPP-05",
+      "status": "correct",
+      "rationale": "cameraEnabled is defined as (!isViewer and requestCamera and cameraAvailable and cameraPermission is GRANTED), ensuring camera remains disabled whenever permission is DENIED or not GRANTED.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/ui-permission-denied.json"
+      ],
+      "runtime_observation_ids": [
+        "obs-uc01-ef1"
+      ]
+    },
+    {
+      "br_id": "BR-RJPP-06",
+      "status": "correct",
+      "rationale": "microphoneEnabled is defined as (!isViewer and requestMicrophone and microphoneAvailable and microphonePermission is GRANTED), ensuring microphone remains disabled whenever permission is DENIED or not GRANTED.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/ui-permission-denied.json"
+      ],
+      "runtime_observation_ids": [
+        "obs-uc01-ef1"
+      ]
+    },
+    {
+      "br_id": "BR-RJPP-07",
+      "status": "correct",
+      "rationale": "Component preview state is strictly local client React state; no backend API mutations or database calls occur during preview review.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/runtime-trace.json"
+      ],
+      "runtime_observation_ids": [
+        "obs-uc01-bf1",
+        "obs-uc01-af1"
+      ]
+    }
+  ]
+}

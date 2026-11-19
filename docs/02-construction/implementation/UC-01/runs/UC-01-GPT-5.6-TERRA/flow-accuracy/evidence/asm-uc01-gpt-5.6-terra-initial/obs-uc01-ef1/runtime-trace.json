@@ -1,0 +1,18 @@
+{
+  "flow_id": "EF-1",
+  "trace": [
+    {
+      "step": "EF-1.4a",
+      "action": "permission_denied",
+      "target": "getUserMedia_rejected",
+      "result": "status_denied"
+    },
+    {
+      "step": "EF-1.4b",
+      "action": "render_denied_dialog",
+      "target": "dialog_and_recovery",
+      "result": "denied_dialog_shown"
+    }
+  ],
+  "captured_at": "2026-11-19T03:37:20Z"
+}

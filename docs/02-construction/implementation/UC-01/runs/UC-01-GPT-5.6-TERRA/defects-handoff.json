@@ -1,0 +1,84 @@
+{
+  "schema_version": 2,
+  "artifact_type": "defects-handoff",
+  "uc_id": "UC-01",
+  "run_id": "UC-01-GPT-5.6-TERRA",
+  "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+  "canonical_defects_sha256": "sha256:6a2254e127f1169b09a1a2351dad9e9829f57eb14de88cc4c3f71a1837b8ab6d",
+  "accepted_results_sha256": "sha256:40008f5cd561609c0a219280f7bef662a6e7f7fe3d4181465ed624ce20bfa7f6",
+  "status": "ready",
+  "defects": [
+    {
+      "defect_id": "DEFECT-UC01-001",
+      "fingerprint": "sha256:0baa4fc957d41e3440b4779ea6b06b96e80ceef7478673ab3cac85416eb1256a",
+      "category": "business_rule",
+      "title": "Missing role prop to support and enforce VIEWER role muting",
+      "description": "PreJoinPreview does not expose role as a component prop and hardcodes internal state to BROADCASTER, preventing caller from supplying VIEWER role to enforce muted media preview.",
+      "reproduction_steps": [
+        "Attempt to pass role=VIEWER to PreJoinPreview component.",
+        "Observe that component does not accept role prop and remains BROADCASTER."
+      ],
+      "scope": {
+        "affected_br_ids": [
+          "BR-RJPP-02"
+        ],
+        "affected_flow_ids": [],
+        "affected_flow_step_ids": [],
+        "affected_api_ids": [],
+        "affected_ui_targets": [
+          "media-controls"
+        ],
+        "affected_files": [
+          "finalsource/fe/src/components/PreJoinPreview.tsx"
+        ]
+      },
+      "evidence": [
+        {
+          "source_file": "finalsource/fe/src/components/PreJoinPreview.tsx",
+          "line_start": null,
+          "line_end": null,
+          "locator": "PreJoinPreview.tsx:1-260",
+          "defect_finding": "Component lacks role prop in function signature and uses useState BROADCASTER.",
+          "content": "{\n  \"path\": \"finalsource/fe/src/components/PreJoinPreview.tsx\",\n  \"locator\": \"L1-L260\",\n  \"source_revision\": \"sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad\",\n  \"sanitized\": true,\n  \"description\": \"RQ3 PreJoinPreview component generated without Prompt E business rules.\"\n}"
+        }
+      ],
+      "required_correction": "Affected Business Rule IDs: BR-RJPP-02.\n\nAuthoritative Business Rule definitions:\n\n```ocl\nBR-RJPP-02 - Viewer Preview Muted\ncontext PreviewService::prepare(command: PreviewCommand): PreviewState\npost BR_RJPP_02_ViewerPreviewMuted:\n  command.role = ParticipantRole::VIEWER implies not result.cameraEnabled and not result.microphoneEnabled\n```\n\nAffected functional UI targets: media-controls.\n\nRequired observable behavior after repair:\n\nAdd props interface to PreJoinPreview accepting optional role: ParticipantRole (default BROADCASTER). When role is VIEWER, enforce cameraEnabled=false and microphoneEnabled=false and disable toggles."
+    },
+    {
+      "defect_id": "DEFECT-UC01-002",
+      "fingerprint": "sha256:3b3f8a645dd53f0f897e1bebefcba4c95639b6628e1f84110dff3d49462558c6",
+      "category": "business_rule",
+      "title": "ParticipantKey generated randomly instead of using command context",
+      "description": "Component generates a random UUID (crypto.randomUUID()) for participantKey instead of accepting and preserving command.participantKey from props.",
+      "reproduction_steps": [
+        "Inspect local participantKey used in preview state.",
+        "Verify that participantKey is randomly generated rather than taken from command props."
+      ],
+      "scope": {
+        "affected_br_ids": [
+          "BR-RJPP-04"
+        ],
+        "affected_flow_ids": [],
+        "affected_flow_step_ids": [],
+        "affected_api_ids": [],
+        "affected_ui_targets": [
+          "preview-state"
+        ],
+        "affected_files": [
+          "finalsource/fe/src/components/PreJoinPreview.tsx"
+        ]
+      },
+      "evidence": [
+        {
+          "source_file": "finalsource/fe/src/components/PreJoinPreview.tsx",
+          "line_start": null,
+          "line_end": null,
+          "locator": "PreJoinPreview.tsx:1-260",
+          "defect_finding": "Line 6 calls crypto.randomUUID() instead of reading command.participantKey.",
+          "content": "{\n  \"path\": \"finalsource/fe/src/components/PreJoinPreview.tsx\",\n  \"locator\": \"L1-L260\",\n  \"source_revision\": \"sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad\",\n  \"sanitized\": true,\n  \"description\": \"RQ3 PreJoinPreview component generated without Prompt E business rules.\"\n}"
+        }
+      ],
+      "required_correction": "Affected Business Rule IDs: BR-RJPP-04.\n\nAuthoritative Business Rule definitions:\n\n```ocl\nBR-RJPP-04 - Preview Key\ncontext PreviewService::prepare(command: PreviewCommand): PreviewState\npost BR_RJPP_04_PreviewKey:\n  result.participantKey = command.participantKey\n```\n\nAffected functional UI targets: preview-state.\n\nRequired observable behavior after repair:\n\nAccept participantKey?: string in component props and use it as the local participantKey draft identifier."
+    }
+  ]
+}

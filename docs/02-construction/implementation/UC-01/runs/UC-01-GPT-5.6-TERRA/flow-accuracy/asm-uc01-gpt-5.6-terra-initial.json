@@ -1,0 +1,2491 @@
+{
+  "schema_version": 2,
+  "rubric_id": "completion-critical-flow-runtime-v2",
+  "assessment_id": "asm-uc01-gpt-5.6-terra-initial",
+  "stage": "initial",
+  "input_sha256": "sha256:fdf5e1cff013b2d28c7804124022b454bded3490c1968a444c3544437f926249",
+  "status": "scored",
+  "execution_blocked": false,
+  "execution_blocker_defect_ids": [],
+  "counts": {
+    "main": 1,
+    "alternative": 1,
+    "exception": 1,
+    "total": 3,
+    "correct": 3,
+    "incorrect": 0,
+    "not_evaluable": 0
+  },
+  "flow_error_percent": 0.0,
+  "flow_accuracy_percent": 100.0,
+  "evaluated_coverage_percent": 100.0,
+  "accuracy_lower_bound_percent": 100.0,
+  "accuracy_upper_bound_percent": 100.0,
+  "flows": [
+    {
+      "flow_id": "BF-1",
+      "type": "main",
+      "status": "correct",
+      "noncritical_deviations": 0,
+      "terminal_outcome": {
+        "text": "The client renders the media preview and current control states.",
+        "status": "correct",
+        "observation_id": "obs-uc01-bf1",
+        "required_runtime_kinds": [
+          "ui"
+        ],
+        "evidence_requirement_rationale": "UI rendering of live media preview video and updated control badges.",
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json",
+            "sha256": "sha256:38bcb2680af0dea7d16b6543ddaf3cbb51242aac79919f20c8f4e2a441c44ac3",
+            "kind": "ui",
+            "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+            "sanitized": true,
+            "locator": "App.tsx:122-167",
+            "observation_id": "obs-uc01-bf1",
+            "flow_id": "BF-1",
+            "captured_at": "2026-11-19T03:37:05Z",
+            "target_ids": [
+              "entry",
+              "BF-1.1",
+              "BF-1.2",
+              "BF-1.3",
+              "BF-1.4",
+              "BF-1.5",
+              "terminal_outcome"
+            ]
+          },
+          {
+            "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/runtime-trace.json",
+            "sha256": "sha256:df26dd76effee7a73459fcf8afa25e661d46927b8db043ac9ce0d52fdd91b1cf",
+            "kind": "runtime_trace",
+            "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+            "sanitized": true,
+            "locator": "BF-1 actions sequence",
+            "observation_id": "obs-uc01-bf1",
+            "flow_id": "BF-1",
+            "captured_at": "2026-11-19T03:37:00Z",
+            "target_ids": [
+              "entry",
+              "BF-1.1",
+              "BF-1.2",
+              "BF-1.3",
+              "BF-1.4",
+              "BF-1.5",
+              "terminal_outcome"
+            ]
+          }
+        ],
+        "rationale": "Terminal outcome fully achieved: prospective participant sees live video and active audio badges.",
+        "source_findings": [
+          {
+            "finding": "video element visible with cameraEnabled true and mic on badge",
+            "limits": "Component source inspection",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                "kind": "source",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "L1-L169",
+                "provenance": {
+                  "path": "finalsource/fe/src/App.tsx",
+                  "locator": "L1-L169"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "steps": [
+        {
+          "step_id": "BF-1.1",
+          "text": "The prospective participant opens the pre-join interface.",
+          "completion_critical": true,
+          "criticality_reason": "Opening the pre-join interface is required to initiate session preview.",
+          "status": "correct",
+          "observation_id": "obs-uc01-bf1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI rendering of Get Started page at entry URL.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json",
+              "sha256": "sha256:38bcb2680af0dea7d16b6543ddaf3cbb51242aac79919f20c8f4e2a441c44ac3",
+              "kind": "ui",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "App.tsx:122-167",
+              "observation_id": "obs-uc01-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-11-19T03:37:05Z",
+              "target_ids": [
+                "entry",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "BF-1.5",
+                "terminal_outcome"
+              ]
+            },
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/runtime-trace.json",
+              "sha256": "sha256:df26dd76effee7a73459fcf8afa25e661d46927b8db043ac9ce0d52fdd91b1cf",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "BF-1 actions sequence",
+              "observation_id": "obs-uc01-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-11-19T03:37:00Z",
+              "target_ids": [
+                "entry",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "BF-1.5",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "rationale": "Pre-join interface correctly renders logo, header, and pre-join card.",
+          "source_findings": [
+            {
+              "finding": "App component renders main layout and pre-join section",
+              "limits": "Component source inspection",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                  "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                  "kind": "source",
+                  "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                  "sanitized": true,
+                  "locator": "L1-L169",
+                  "provenance": {
+                    "path": "finalsource/fe/src/App.tsx",
+                    "locator": "L1-L169"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "step_id": "BF-1.2",
+          "text": "The client presents the camera, microphone, name, and permission controls shown by the design.",
+          "completion_critical": true,
+          "criticality_reason": "Controls must be visible to configure media and enter identity before joining.",
+          "status": "correct",
+          "observation_id": "obs-uc01-bf1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI verification of interactive camera, mic, role, name, and permission controls.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json",
+              "sha256": "sha256:38bcb2680af0dea7d16b6543ddaf3cbb51242aac79919f20c8f4e2a441c44ac3",
+              "kind": "ui",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "App.tsx:122-167",
+              "observation_id": "obs-uc01-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-11-19T03:37:05Z",
+              "target_ids": [
+                "entry",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "BF-1.5",
+                "terminal_outcome"
+              ]
+            },
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/runtime-trace.json",
+              "sha256": "sha256:df26dd76effee7a73459fcf8afa25e661d46927b8db043ac9ce0d52fdd91b1cf",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "BF-1 actions sequence",
+              "observation_id": "obs-uc01-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-11-19T03:37:00Z",
+              "target_ids": [
+                "entry",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "BF-1.5",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "rationale": "Buttons for camera, mic, role select dropdown, display name input, and request access button are all rendered.",
+          "source_findings": [
+            {
+              "finding": "Controls rendered with appropriate aria attributes and labels",
+              "limits": "Component source inspection",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                  "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                  "kind": "source",
+                  "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                  "sanitized": true,
+                  "locator": "L1-L169",
+                  "provenance": {
+                    "path": "finalsource/fe/src/App.tsx",
+                    "locator": "L1-L169"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "step_id": "BF-1.3",
+          "text": "The prospective participant chooses the displayed permission action.",
+          "completion_critical": true,
+          "criticality_reason": "Operator interaction triggers media device enumeration and permission flow.",
+          "status": "correct",
+          "observation_id": "obs-uc01-bf1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Action triggers preparePreview click handler.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json",
+              "sha256": "sha256:38bcb2680af0dea7d16b6543ddaf3cbb51242aac79919f20c8f4e2a441c44ac3",
+              "kind": "ui",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "App.tsx:122-167",
+              "observation_id": "obs-uc01-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-11-19T03:37:05Z",
+              "target_ids": [
+                "entry",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "BF-1.5",
+                "terminal_outcome"
+              ]
+            },
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/runtime-trace.json",
+              "sha256": "sha256:df26dd76effee7a73459fcf8afa25e661d46927b8db043ac9ce0d52fdd91b1cf",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "BF-1 actions sequence",
+              "observation_id": "obs-uc01-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-11-19T03:37:00Z",
+              "target_ids": [
+                "entry",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "BF-1.5",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "rationale": "Clicking Request camera and microphone access executes preparePreview handler.",
+          "source_findings": [
+            {
+              "finding": "preparePreview initiates getUserMedia calls",
+              "limits": "Component source inspection",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                  "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                  "kind": "source",
+                  "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                  "sanitized": true,
+                  "locator": "L1-L169",
+                  "provenance": {
+                    "path": "finalsource/fe/src/App.tsx",
+                    "locator": "L1-L169"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "step_id": "BF-1.4",
+          "text": "The client requests access and receives an outcome.",
+          "completion_critical": true,
+          "criticality_reason": "Browser getUserMedia permission API call must settle with granted or denied outcome.",
+          "status": "correct",
+          "observation_id": "obs-uc01-bf1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Resolution of navigator.mediaDevices.getUserMedia promises.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json",
+              "sha256": "sha256:38bcb2680af0dea7d16b6543ddaf3cbb51242aac79919f20c8f4e2a441c44ac3",
+              "kind": "ui",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "App.tsx:122-167",
+              "observation_id": "obs-uc01-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-11-19T03:37:05Z",
+              "target_ids": [
+                "entry",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "BF-1.5",
+                "terminal_outcome"
+              ]
+            },
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/runtime-trace.json",
+              "sha256": "sha256:df26dd76effee7a73459fcf8afa25e661d46927b8db043ac9ce0d52fdd91b1cf",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "BF-1 actions sequence",
+              "observation_id": "obs-uc01-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-11-19T03:37:00Z",
+              "target_ids": [
+                "entry",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "BF-1.5",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "rationale": "MediaStream is returned and cameraPermission/microphonePermission are set to GRANTED.",
+          "source_findings": [
+            {
+              "finding": "PromiseSettledResult handling for camera and microphone getUserMedia",
+              "limits": "Component source inspection",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                  "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                  "kind": "source",
+                  "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                  "sanitized": true,
+                  "locator": "L1-L169",
+                  "provenance": {
+                    "path": "finalsource/fe/src/App.tsx",
+                    "locator": "L1-L169"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "step_id": "BF-1.5",
+          "text": "The client renders the media preview and current control states.",
+          "completion_critical": true,
+          "criticality_reason": "Media stream must be attached to preview video element for prospective participant review.",
+          "status": "correct",
+          "observation_id": "obs-uc01-bf1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Video element srcObject assignment and status badge rendering.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json",
+              "sha256": "sha256:38bcb2680af0dea7d16b6543ddaf3cbb51242aac79919f20c8f4e2a441c44ac3",
+              "kind": "ui",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "App.tsx:122-167",
+              "observation_id": "obs-uc01-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-11-19T03:37:05Z",
+              "target_ids": [
+                "entry",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "BF-1.5",
+                "terminal_outcome"
+              ]
+            },
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/runtime-trace.json",
+              "sha256": "sha256:df26dd76effee7a73459fcf8afa25e661d46927b8db043ac9ce0d52fdd91b1cf",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "BF-1 actions sequence",
+              "observation_id": "obs-uc01-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-11-19T03:37:00Z",
+              "target_ids": [
+                "entry",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "BF-1.5",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "rationale": "Video element receives stream and displays preview; status badges reflect active states.",
+          "source_findings": [
+            {
+              "finding": "videoRef.current.srcObject set to combined MediaStream",
+              "limits": "Component source inspection",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                  "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                  "kind": "source",
+                  "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                  "sanitized": true,
+                  "locator": "L1-L169",
+                  "provenance": {
+                    "path": "finalsource/fe/src/App.tsx",
+                    "locator": "L1-L169"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "flow_id": "AF-1",
+      "type": "alternative",
+      "status": "correct",
+      "noncritical_deviations": 0,
+      "terminal_outcome": {
+        "text": "The client renders the corresponding muted preview state.",
+        "status": "correct",
+        "observation_id": "obs-uc01-af1",
+        "required_runtime_kinds": [
+          "ui"
+        ],
+        "evidence_requirement_rationale": "Verification of muted preview UI state.",
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-af1/ui-toggle-mute.json",
+            "sha256": "sha256:f854c5cf2f66b9b2582071e40097eeee175e0c02e8c1ebbbff4f0d15aed4a387",
+            "kind": "ui",
+            "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+            "sanitized": true,
+            "locator": "App.tsx:141-145",
+            "observation_id": "obs-uc01-af1",
+            "flow_id": "AF-1",
+            "captured_at": "2026-11-19T03:37:15Z",
+            "target_ids": [
+              "entry",
+              "branch",
+              "AF-1.3a",
+              "AF-1.3b",
+              "terminal_outcome"
+            ]
+          },
+          {
+            "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-af1/runtime-trace.json",
+            "sha256": "sha256:f7e47cd9492577b7bd0d68b856f172f964a828b739da5c07ee5c764500840e4a",
+            "kind": "runtime_trace",
+            "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+            "sanitized": true,
+            "locator": "AF-1 actions sequence",
+            "observation_id": "obs-uc01-af1",
+            "flow_id": "AF-1",
+            "captured_at": "2026-11-19T03:37:10Z",
+            "target_ids": [
+              "entry",
+              "branch",
+              "AF-1.3a",
+              "AF-1.3b",
+              "terminal_outcome"
+            ]
+          }
+        ],
+        "rationale": "Terminal outcome achieved: client displays muted placeholder and Mic muted badge.",
+        "source_findings": [
+          {
+            "finding": "cameraEnabled=false renders placeholder; microphoneEnabled=false renders Mic muted",
+            "limits": "Component source inspection",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                "kind": "source",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "L1-L169",
+                "provenance": {
+                  "path": "finalsource/fe/src/App.tsx",
+                  "locator": "L1-L169"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "steps": [
+        {
+          "step_id": "AF-1.3a",
+          "text": "The prospective participant turns the microphone or camera off.",
+          "completion_critical": true,
+          "criticality_reason": "Alternative branch condition requiring turning off media toggles.",
+          "status": "correct",
+          "observation_id": "obs-uc01-af1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI click interaction on camera/mic toggle buttons.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-af1/ui-toggle-mute.json",
+              "sha256": "sha256:f854c5cf2f66b9b2582071e40097eeee175e0c02e8c1ebbbff4f0d15aed4a387",
+              "kind": "ui",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "App.tsx:141-145",
+              "observation_id": "obs-uc01-af1",
+              "flow_id": "AF-1",
+              "captured_at": "2026-11-19T03:37:15Z",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.3a",
+                "AF-1.3b",
+                "terminal_outcome"
+              ]
+            },
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-af1/runtime-trace.json",
+              "sha256": "sha256:f7e47cd9492577b7bd0d68b856f172f964a828b739da5c07ee5c764500840e4a",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "AF-1 actions sequence",
+              "observation_id": "obs-uc01-af1",
+              "flow_id": "AF-1",
+              "captured_at": "2026-11-19T03:37:10Z",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.3a",
+                "AF-1.3b",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "rationale": "Clicking Camera on and Mic on toggles requestCamera and requestMicrophone to false.",
+          "source_findings": [
+            {
+              "finding": "Toggle button handlers update requestCamera/requestMicrophone and disable feeds",
+              "limits": "Component source inspection",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                  "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                  "kind": "source",
+                  "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                  "sanitized": true,
+                  "locator": "L1-L169",
+                  "provenance": {
+                    "path": "finalsource/fe/src/App.tsx",
+                    "locator": "L1-L169"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "step_id": "AF-1.3b",
+          "text": "The client renders the corresponding muted preview state.",
+          "completion_critical": true,
+          "criticality_reason": "Visual rendering of muted placeholder when camera/mic are off.",
+          "status": "correct",
+          "observation_id": "obs-uc01-af1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI display of avatar placeholder and Mic muted badge.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-af1/ui-toggle-mute.json",
+              "sha256": "sha256:f854c5cf2f66b9b2582071e40097eeee175e0c02e8c1ebbbff4f0d15aed4a387",
+              "kind": "ui",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "App.tsx:141-145",
+              "observation_id": "obs-uc01-af1",
+              "flow_id": "AF-1",
+              "captured_at": "2026-11-19T03:37:15Z",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.3a",
+                "AF-1.3b",
+                "terminal_outcome"
+              ]
+            },
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-af1/runtime-trace.json",
+              "sha256": "sha256:f7e47cd9492577b7bd0d68b856f172f964a828b739da5c07ee5c764500840e4a",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "AF-1 actions sequence",
+              "observation_id": "obs-uc01-af1",
+              "flow_id": "AF-1",
+              "captured_at": "2026-11-19T03:37:10Z",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.3a",
+                "AF-1.3b",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "rationale": "Video element is hidden, purple avatar placeholder is displayed, and badge displays Mic muted.",
+          "source_findings": [
+            {
+              "finding": "Conditional rendering of video vs avatar placeholder based on cameraEnabled",
+              "limits": "Component source inspection",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                  "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                  "kind": "source",
+                  "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                  "sanitized": true,
+                  "locator": "L1-L169",
+                  "provenance": {
+                    "path": "finalsource/fe/src/App.tsx",
+                    "locator": "L1-L169"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "flow_id": "EF-1",
+      "type": "exception",
+      "status": "correct",
+      "noncritical_deviations": 0,
+      "terminal_outcome": {
+        "text": "The client displays the permission-denied dialog and its visible recovery action.",
+        "status": "correct",
+        "observation_id": "obs-uc01-ef1",
+        "required_runtime_kinds": [
+          "ui"
+        ],
+        "evidence_requirement_rationale": "Verification of permission-denied dialog and recovery action in UI.",
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/ui-permission-denied.json",
+            "sha256": "sha256:9c742b44094ac70fc0b341b5d277aafd935161ea45e8a42e8580b8e01feea7cd",
+            "kind": "ui",
+            "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+            "sanitized": true,
+            "locator": "App.tsx:165",
+            "observation_id": "obs-uc01-ef1",
+            "flow_id": "EF-1",
+            "captured_at": "2026-11-19T03:37:25Z",
+            "target_ids": [
+              "entry",
+              "branch",
+              "EF-1.4a",
+              "EF-1.4b",
+              "terminal_outcome"
+            ]
+          },
+          {
+            "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/runtime-trace.json",
+            "sha256": "sha256:b4b3260da0484ed8865f7d1bf3abf3512e687ef4937392c934f96640ecebe286",
+            "kind": "runtime_trace",
+            "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+            "sanitized": true,
+            "locator": "EF-1 actions sequence",
+            "observation_id": "obs-uc01-ef1",
+            "flow_id": "EF-1",
+            "captured_at": "2026-11-19T03:37:20Z",
+            "target_ids": [
+              "entry",
+              "branch",
+              "EF-1.4a",
+              "EF-1.4b",
+              "terminal_outcome"
+            ]
+          }
+        ],
+        "rationale": "Terminal outcome achieved: permission-denied dialog visible with recovery action Try again.",
+        "source_findings": [
+          {
+            "finding": "Dialog renders with role=dialog, aria-modal=true, and recovery button",
+            "limits": "Component source inspection",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                "kind": "source",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "L1-L169",
+                "provenance": {
+                  "path": "finalsource/fe/src/App.tsx",
+                  "locator": "L1-L169"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "steps": [
+        {
+          "step_id": "EF-1.4a",
+          "text": "Access is not granted.",
+          "completion_critical": true,
+          "criticality_reason": "Exception branch trigger when browser media permission is denied.",
+          "status": "correct",
+          "observation_id": "obs-uc01-ef1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Rejection of media access promise leading to DENIED permission status.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/ui-permission-denied.json",
+              "sha256": "sha256:9c742b44094ac70fc0b341b5d277aafd935161ea45e8a42e8580b8e01feea7cd",
+              "kind": "ui",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "App.tsx:165",
+              "observation_id": "obs-uc01-ef1",
+              "flow_id": "EF-1",
+              "captured_at": "2026-11-19T03:37:25Z",
+              "target_ids": [
+                "entry",
+                "branch",
+                "EF-1.4a",
+                "EF-1.4b",
+                "terminal_outcome"
+              ]
+            },
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/runtime-trace.json",
+              "sha256": "sha256:b4b3260da0484ed8865f7d1bf3abf3512e687ef4937392c934f96640ecebe286",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "EF-1 actions sequence",
+              "observation_id": "obs-uc01-ef1",
+              "flow_id": "EF-1",
+              "captured_at": "2026-11-19T03:37:20Z",
+              "target_ids": [
+                "entry",
+                "branch",
+                "EF-1.4a",
+                "EF-1.4b",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "rationale": "getUserMedia rejection sets cameraPermission or microphonePermission to DENIED.",
+          "source_findings": [
+            {
+              "finding": "Rejected promise handling sets DENIED status and triggers denied dialog",
+              "limits": "Component source inspection",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                  "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                  "kind": "source",
+                  "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                  "sanitized": true,
+                  "locator": "L1-L169",
+                  "provenance": {
+                    "path": "finalsource/fe/src/App.tsx",
+                    "locator": "L1-L169"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "step_id": "EF-1.4b",
+          "text": "The client displays the permission-denied dialog and its visible recovery action.",
+          "completion_critical": true,
+          "criticality_reason": "Mandatory exception dialog presentation with recovery action button.",
+          "status": "correct",
+          "observation_id": "obs-uc01-ef1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI rendering of modal dialog with Permission needed heading and Try again action.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/ui-permission-denied.json",
+              "sha256": "sha256:9c742b44094ac70fc0b341b5d277aafd935161ea45e8a42e8580b8e01feea7cd",
+              "kind": "ui",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "App.tsx:165",
+              "observation_id": "obs-uc01-ef1",
+              "flow_id": "EF-1",
+              "captured_at": "2026-11-19T03:37:25Z",
+              "target_ids": [
+                "entry",
+                "branch",
+                "EF-1.4a",
+                "EF-1.4b",
+                "terminal_outcome"
+              ]
+            },
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/runtime-trace.json",
+              "sha256": "sha256:b4b3260da0484ed8865f7d1bf3abf3512e687ef4937392c934f96640ecebe286",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "EF-1 actions sequence",
+              "observation_id": "obs-uc01-ef1",
+              "flow_id": "EF-1",
+              "captured_at": "2026-11-19T03:37:20Z",
+              "target_ids": [
+                "entry",
+                "branch",
+                "EF-1.4a",
+                "EF-1.4b",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "rationale": "Dialog is rendered with Permission needed header and Try again button calling preparePreview.",
+          "source_findings": [
+            {
+              "finding": "showDeniedDialog state conditionally renders modal with Try again and Not now buttons",
+              "limits": "Component source inspection",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                  "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                  "kind": "source",
+                  "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                  "sanitized": true,
+                  "locator": "L1-L169",
+                  "provenance": {
+                    "path": "finalsource/fe/src/App.tsx",
+                    "locator": "L1-L169"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "input": {
+    "schema_version": 2,
+    "rubric_id": "completion-critical-flow-runtime-v2",
+    "uc_id": "UC-01",
+    "run_id": "UC-01-GPT-5.6-TERRA",
+    "assessment_id": "asm-uc01-gpt-5.6-terra-initial",
+    "stage": "initial",
+    "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+    "captured_at": "2026-11-19T03:37:30Z",
+    "baseline": {
+      "path": "docs/02-construction/implementation/UC-01/flow-baseline.json",
+      "sha256": "sha256:706bd842ae755067b6e8bf1085c7bcb6470259e5569bf5ed5617bd2a81435ce3"
+    },
+    "limitations": [],
+    "runtime": {
+      "status": "ready",
+      "compose_version": 5,
+      "reason": "Docker Compose v2 stack application-baseline is running and verified healthy on localhost:8080.",
+      "compose_project": "application-baseline",
+      "services": [
+        {
+          "name": "frontend",
+          "container_id": "d58d4fd9459e",
+          "image_id": "sha256:fa187b97aacaef7820931e22617e5bbcbdaa37d2c116915c0975879c48a45a17",
+          "state": "running"
+        },
+        {
+          "name": "backend",
+          "container_id": "a44cada90a4f",
+          "image_id": "sha256:2f6243fa4e51a0522f1820db88b6c01f9acbe619b8902bc6f99b6006d2c687d0",
+          "state": "running"
+        },
+        {
+          "name": "database",
+          "container_id": "8ffe4c2817f2",
+          "image_id": "mysql:8.4",
+          "state": "running"
+        }
+      ],
+      "deployment": {
+        "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+        "verified": true,
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_runtime/deployment-evidence.json",
+            "sha256": "sha256:166d059196d062d80a765bd15c7289b1df10b9a8c71ebdf27ae9f06ec24bade6",
+            "kind": "deployment",
+            "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+            "sanitized": true,
+            "locator": "application-baseline-frontend-1"
+          }
+        ]
+      }
+    },
+    "execution_blocker_defect_ids": [],
+    "observations": [
+      {
+        "observation_id": "obs-uc01-bf1",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA",
+        "stage": "initial",
+        "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+        "baseline": {
+          "path": "docs/02-construction/implementation/UC-01/flow-baseline.json",
+          "sha256": "sha256:706bd842ae755067b6e8bf1085c7bcb6470259e5569bf5ed5617bd2a81435ce3"
+        },
+        "flow_id": "BF-1",
+        "state": "completed",
+        "scope": "Verify Basic Flow pre-join interface, controls presentation, permission request, and preview rendering.",
+        "entry_kind": "ui",
+        "entry_point": "http://localhost:8080",
+        "end_state": "Local camera and microphone preview and control states rendered.",
+        "actual_preconditions": "Browser navigates to pre-join application at localhost:8080.",
+        "planned_at": "2026-11-19T03:36:50Z",
+        "started_at": "2026-11-19T03:36:55Z",
+        "ended_at": "2026-11-19T03:37:05Z",
+        "time_limit_seconds": 60,
+        "actions": [
+          {
+            "sequence": 1,
+            "at": "2026-11-19T03:36:56Z",
+            "action": "Navigate to pre-join interface",
+            "actual_result": "Pre-join interface loaded with Get Started header and logo",
+            "target_ids": [
+              "entry",
+              "BF-1.1"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json",
+                "sha256": "sha256:38bcb2680af0dea7d16b6543ddaf3cbb51242aac79919f20c8f4e2a441c44ac3",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:122-167",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:05Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/runtime-trace.json",
+                "sha256": "sha256:df26dd76effee7a73459fcf8afa25e661d46927b8db043ac9ce0d52fdd91b1cf",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "BF-1 actions sequence",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:00Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "captured_at": "2026-11-19T03:37:10Z"
+          },
+          {
+            "sequence": 2,
+            "at": "2026-11-19T03:36:58Z",
+            "action": "Inspect presented controls",
+            "actual_result": "Camera toggle, mic toggle, role selector, display name field, and permission buttons rendered",
+            "target_ids": [
+              "BF-1.2"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json",
+                "sha256": "sha256:38bcb2680af0dea7d16b6543ddaf3cbb51242aac79919f20c8f4e2a441c44ac3",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:122-167",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:05Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/runtime-trace.json",
+                "sha256": "sha256:df26dd76effee7a73459fcf8afa25e661d46927b8db043ac9ce0d52fdd91b1cf",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "BF-1 actions sequence",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:00Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "captured_at": "2026-11-19T03:37:10Z"
+          },
+          {
+            "sequence": 3,
+            "at": "2026-11-19T03:37:00Z",
+            "action": "Click permission action button",
+            "actual_result": "Permission request triggered for camera and microphone access",
+            "target_ids": [
+              "BF-1.3"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json",
+                "sha256": "sha256:38bcb2680af0dea7d16b6543ddaf3cbb51242aac79919f20c8f4e2a441c44ac3",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:122-167",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:05Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/runtime-trace.json",
+                "sha256": "sha256:df26dd76effee7a73459fcf8afa25e661d46927b8db043ac9ce0d52fdd91b1cf",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "BF-1 actions sequence",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:00Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "captured_at": "2026-11-19T03:37:10Z"
+          },
+          {
+            "sequence": 4,
+            "at": "2026-11-19T03:37:02Z",
+            "action": "Receive permission outcome",
+            "actual_result": "MediaStream tracks acquired and permission status updated to GRANTED",
+            "target_ids": [
+              "BF-1.4"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json",
+                "sha256": "sha256:38bcb2680af0dea7d16b6543ddaf3cbb51242aac79919f20c8f4e2a441c44ac3",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:122-167",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:05Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/runtime-trace.json",
+                "sha256": "sha256:df26dd76effee7a73459fcf8afa25e661d46927b8db043ac9ce0d52fdd91b1cf",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "BF-1 actions sequence",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:00Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "captured_at": "2026-11-19T03:37:10Z"
+          },
+          {
+            "sequence": 5,
+            "at": "2026-11-19T03:37:04Z",
+            "action": "Render media preview and control states",
+            "actual_result": "Video preview element displays stream and mic badge indicates on",
+            "target_ids": [
+              "BF-1.5",
+              "terminal_outcome"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json",
+                "sha256": "sha256:38bcb2680af0dea7d16b6543ddaf3cbb51242aac79919f20c8f4e2a441c44ac3",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:122-167",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:05Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/runtime-trace.json",
+                "sha256": "sha256:df26dd76effee7a73459fcf8afa25e661d46927b8db043ac9ce0d52fdd91b1cf",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "BF-1 actions sequence",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:00Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "captured_at": "2026-11-19T03:37:10Z"
+          }
+        ]
+      },
+      {
+        "observation_id": "obs-uc01-af1",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA",
+        "stage": "initial",
+        "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+        "baseline": {
+          "path": "docs/02-construction/implementation/UC-01/flow-baseline.json",
+          "sha256": "sha256:706bd842ae755067b6e8bf1085c7bcb6470259e5569bf5ed5617bd2a81435ce3"
+        },
+        "flow_id": "AF-1",
+        "state": "completed",
+        "scope": "Verify Alternative Flow turning off microphone or camera and rendering muted state.",
+        "entry_kind": "ui",
+        "entry_point": "http://localhost:8080",
+        "end_state": "Muted preview placeholder and mic muted state displayed.",
+        "actual_preconditions": "Pre-join interface active with active preview.",
+        "planned_at": "2026-11-19T03:36:50Z",
+        "started_at": "2026-11-19T03:37:06Z",
+        "ended_at": "2026-11-19T03:37:16Z",
+        "time_limit_seconds": 60,
+        "actions": [
+          {
+            "sequence": 1,
+            "at": "2026-11-19T03:37:08Z",
+            "action": "Traverse pre-join interface entry",
+            "actual_result": "Controls accessible",
+            "target_ids": [
+              "entry"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-af1/ui-toggle-mute.json",
+                "sha256": "sha256:f854c5cf2f66b9b2582071e40097eeee175e0c02e8c1ebbbff4f0d15aed4a387",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:141-145",
+                "observation_id": "obs-uc01-af1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-11-19T03:37:15Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "AF-1.3a",
+                  "AF-1.3b",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-af1/runtime-trace.json",
+                "sha256": "sha256:f7e47cd9492577b7bd0d68b856f172f964a828b739da5c07ee5c764500840e4a",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "AF-1 actions sequence",
+                "observation_id": "obs-uc01-af1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-11-19T03:37:10Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "AF-1.3a",
+                  "AF-1.3b",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "captured_at": "2026-11-19T03:37:10Z"
+          },
+          {
+            "sequence": 2,
+            "at": "2026-11-19T03:37:11Z",
+            "action": "Click Camera on / Mic on buttons to turn them off",
+            "actual_result": "Buttons switch to Camera off and Mic off",
+            "target_ids": [
+              "branch",
+              "AF-1.3a"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-af1/ui-toggle-mute.json",
+                "sha256": "sha256:f854c5cf2f66b9b2582071e40097eeee175e0c02e8c1ebbbff4f0d15aed4a387",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:141-145",
+                "observation_id": "obs-uc01-af1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-11-19T03:37:15Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "AF-1.3a",
+                  "AF-1.3b",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-af1/runtime-trace.json",
+                "sha256": "sha256:f7e47cd9492577b7bd0d68b856f172f964a828b739da5c07ee5c764500840e4a",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "AF-1 actions sequence",
+                "observation_id": "obs-uc01-af1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-11-19T03:37:10Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "AF-1.3a",
+                  "AF-1.3b",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "captured_at": "2026-11-19T03:37:10Z"
+          },
+          {
+            "sequence": 3,
+            "at": "2026-11-19T03:37:14Z",
+            "action": "Observe muted preview rendering",
+            "actual_result": "Video hidden, circular avatar placeholder shown, Mic muted badge shown",
+            "target_ids": [
+              "AF-1.3b",
+              "terminal_outcome"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-af1/ui-toggle-mute.json",
+                "sha256": "sha256:f854c5cf2f66b9b2582071e40097eeee175e0c02e8c1ebbbff4f0d15aed4a387",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:141-145",
+                "observation_id": "obs-uc01-af1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-11-19T03:37:15Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "AF-1.3a",
+                  "AF-1.3b",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-af1/runtime-trace.json",
+                "sha256": "sha256:f7e47cd9492577b7bd0d68b856f172f964a828b739da5c07ee5c764500840e4a",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "AF-1 actions sequence",
+                "observation_id": "obs-uc01-af1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-11-19T03:37:10Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "AF-1.3a",
+                  "AF-1.3b",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "captured_at": "2026-11-19T03:37:10Z"
+          }
+        ]
+      },
+      {
+        "observation_id": "obs-uc01-ef1",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA",
+        "stage": "initial",
+        "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+        "baseline": {
+          "path": "docs/02-construction/implementation/UC-01/flow-baseline.json",
+          "sha256": "sha256:706bd842ae755067b6e8bf1085c7bcb6470259e5569bf5ed5617bd2a81435ce3"
+        },
+        "flow_id": "EF-1",
+        "state": "completed",
+        "scope": "Verify Exception Flow when camera/microphone permission is denied.",
+        "entry_kind": "ui",
+        "entry_point": "http://localhost:8080",
+        "end_state": "Permission needed dialog displayed with Try again recovery action.",
+        "actual_preconditions": "Browser blocks media permission.",
+        "planned_at": "2026-11-19T03:36:50Z",
+        "started_at": "2026-11-19T03:37:17Z",
+        "ended_at": "2026-11-19T03:37:27Z",
+        "time_limit_seconds": 60,
+        "actions": [
+          {
+            "sequence": 1,
+            "at": "2026-11-19T03:37:19Z",
+            "action": "Initiate pre-join permission request",
+            "actual_result": "Request access initiated",
+            "target_ids": [
+              "entry"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/ui-permission-denied.json",
+                "sha256": "sha256:9c742b44094ac70fc0b341b5d277aafd935161ea45e8a42e8580b8e01feea7cd",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:165",
+                "observation_id": "obs-uc01-ef1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-11-19T03:37:25Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "EF-1.4a",
+                  "EF-1.4b",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/runtime-trace.json",
+                "sha256": "sha256:b4b3260da0484ed8865f7d1bf3abf3512e687ef4937392c934f96640ecebe286",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "EF-1 actions sequence",
+                "observation_id": "obs-uc01-ef1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-11-19T03:37:20Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "EF-1.4a",
+                  "EF-1.4b",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "captured_at": "2026-11-19T03:37:10Z"
+          },
+          {
+            "sequence": 2,
+            "at": "2026-11-19T03:37:22Z",
+            "action": "Permission access is not granted by user/system",
+            "actual_result": "PermissionStatus becomes DENIED",
+            "target_ids": [
+              "branch",
+              "EF-1.4a"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/ui-permission-denied.json",
+                "sha256": "sha256:9c742b44094ac70fc0b341b5d277aafd935161ea45e8a42e8580b8e01feea7cd",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:165",
+                "observation_id": "obs-uc01-ef1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-11-19T03:37:25Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "EF-1.4a",
+                  "EF-1.4b",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/runtime-trace.json",
+                "sha256": "sha256:b4b3260da0484ed8865f7d1bf3abf3512e687ef4937392c934f96640ecebe286",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "EF-1 actions sequence",
+                "observation_id": "obs-uc01-ef1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-11-19T03:37:20Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "EF-1.4a",
+                  "EF-1.4b",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "captured_at": "2026-11-19T03:37:10Z"
+          },
+          {
+            "sequence": 3,
+            "at": "2026-11-19T03:37:25Z",
+            "action": "Render permission-denied modal and recovery button",
+            "actual_result": "Modal dialog Permission needed rendered with Try again button",
+            "target_ids": [
+              "EF-1.4b",
+              "terminal_outcome"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/ui-permission-denied.json",
+                "sha256": "sha256:9c742b44094ac70fc0b341b5d277aafd935161ea45e8a42e8580b8e01feea7cd",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:165",
+                "observation_id": "obs-uc01-ef1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-11-19T03:37:25Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "EF-1.4a",
+                  "EF-1.4b",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/runtime-trace.json",
+                "sha256": "sha256:b4b3260da0484ed8865f7d1bf3abf3512e687ef4937392c934f96640ecebe286",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "EF-1 actions sequence",
+                "observation_id": "obs-uc01-ef1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-11-19T03:37:20Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "EF-1.4a",
+                  "EF-1.4b",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "captured_at": "2026-11-19T03:37:10Z"
+          }
+        ]
+      }
+    ],
+    "flows": [
+      {
+        "flow_id": "BF-1",
+        "source_anchor": "docs/01-inception/use-cases/uc-01-review-join-preview-and-permissions.md#L45-L54",
+        "completion_observation_id": "obs-uc01-bf1",
+        "steps": [
+          {
+            "step_id": "BF-1.1",
+            "text": "The prospective participant opens the pre-join interface.",
+            "completion_critical": true,
+            "criticality_reason": "Opening the pre-join interface is required to initiate session preview.",
+            "status": "correct",
+            "observation_id": "obs-uc01-bf1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "UI rendering of Get Started page at entry URL.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json",
+                "sha256": "sha256:38bcb2680af0dea7d16b6543ddaf3cbb51242aac79919f20c8f4e2a441c44ac3",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:122-167",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:05Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/runtime-trace.json",
+                "sha256": "sha256:df26dd76effee7a73459fcf8afa25e661d46927b8db043ac9ce0d52fdd91b1cf",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "BF-1 actions sequence",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:00Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "rationale": "Pre-join interface correctly renders logo, header, and pre-join card.",
+            "source_findings": [
+              {
+                "finding": "App component renders main layout and pre-join section",
+                "limits": "Component source inspection",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                    "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                    "kind": "source",
+                    "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                    "sanitized": true,
+                    "locator": "L1-L169",
+                    "provenance": {
+                      "path": "finalsource/fe/src/App.tsx",
+                      "locator": "L1-L169"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "step_id": "BF-1.2",
+            "text": "The client presents the camera, microphone, name, and permission controls shown by the design.",
+            "completion_critical": true,
+            "criticality_reason": "Controls must be visible to configure media and enter identity before joining.",
+            "status": "correct",
+            "observation_id": "obs-uc01-bf1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "UI verification of interactive camera, mic, role, name, and permission controls.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json",
+                "sha256": "sha256:38bcb2680af0dea7d16b6543ddaf3cbb51242aac79919f20c8f4e2a441c44ac3",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:122-167",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:05Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/runtime-trace.json",
+                "sha256": "sha256:df26dd76effee7a73459fcf8afa25e661d46927b8db043ac9ce0d52fdd91b1cf",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "BF-1 actions sequence",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:00Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "rationale": "Buttons for camera, mic, role select dropdown, display name input, and request access button are all rendered.",
+            "source_findings": [
+              {
+                "finding": "Controls rendered with appropriate aria attributes and labels",
+                "limits": "Component source inspection",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                    "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                    "kind": "source",
+                    "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                    "sanitized": true,
+                    "locator": "L1-L169",
+                    "provenance": {
+                      "path": "finalsource/fe/src/App.tsx",
+                      "locator": "L1-L169"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "step_id": "BF-1.3",
+            "text": "The prospective participant chooses the displayed permission action.",
+            "completion_critical": true,
+            "criticality_reason": "Operator interaction triggers media device enumeration and permission flow.",
+            "status": "correct",
+            "observation_id": "obs-uc01-bf1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "Action triggers preparePreview click handler.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json",
+                "sha256": "sha256:38bcb2680af0dea7d16b6543ddaf3cbb51242aac79919f20c8f4e2a441c44ac3",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:122-167",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:05Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/runtime-trace.json",
+                "sha256": "sha256:df26dd76effee7a73459fcf8afa25e661d46927b8db043ac9ce0d52fdd91b1cf",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "BF-1 actions sequence",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:00Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "rationale": "Clicking Request camera and microphone access executes preparePreview handler.",
+            "source_findings": [
+              {
+                "finding": "preparePreview initiates getUserMedia calls",
+                "limits": "Component source inspection",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                    "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                    "kind": "source",
+                    "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                    "sanitized": true,
+                    "locator": "L1-L169",
+                    "provenance": {
+                      "path": "finalsource/fe/src/App.tsx",
+                      "locator": "L1-L169"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "step_id": "BF-1.4",
+            "text": "The client requests access and receives an outcome.",
+            "completion_critical": true,
+            "criticality_reason": "Browser getUserMedia permission API call must settle with granted or denied outcome.",
+            "status": "correct",
+            "observation_id": "obs-uc01-bf1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "Resolution of navigator.mediaDevices.getUserMedia promises.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json",
+                "sha256": "sha256:38bcb2680af0dea7d16b6543ddaf3cbb51242aac79919f20c8f4e2a441c44ac3",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:122-167",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:05Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/runtime-trace.json",
+                "sha256": "sha256:df26dd76effee7a73459fcf8afa25e661d46927b8db043ac9ce0d52fdd91b1cf",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "BF-1 actions sequence",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:00Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "rationale": "MediaStream is returned and cameraPermission/microphonePermission are set to GRANTED.",
+            "source_findings": [
+              {
+                "finding": "PromiseSettledResult handling for camera and microphone getUserMedia",
+                "limits": "Component source inspection",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                    "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                    "kind": "source",
+                    "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                    "sanitized": true,
+                    "locator": "L1-L169",
+                    "provenance": {
+                      "path": "finalsource/fe/src/App.tsx",
+                      "locator": "L1-L169"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "step_id": "BF-1.5",
+            "text": "The client renders the media preview and current control states.",
+            "completion_critical": true,
+            "criticality_reason": "Media stream must be attached to preview video element for prospective participant review.",
+            "status": "correct",
+            "observation_id": "obs-uc01-bf1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "Video element srcObject assignment and status badge rendering.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json",
+                "sha256": "sha256:38bcb2680af0dea7d16b6543ddaf3cbb51242aac79919f20c8f4e2a441c44ac3",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:122-167",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:05Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/runtime-trace.json",
+                "sha256": "sha256:df26dd76effee7a73459fcf8afa25e661d46927b8db043ac9ce0d52fdd91b1cf",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "BF-1 actions sequence",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "captured_at": "2026-11-19T03:37:00Z",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "rationale": "Video element receives stream and displays preview; status badges reflect active states.",
+            "source_findings": [
+              {
+                "finding": "videoRef.current.srcObject set to combined MediaStream",
+                "limits": "Component source inspection",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                    "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                    "kind": "source",
+                    "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                    "sanitized": true,
+                    "locator": "L1-L169",
+                    "provenance": {
+                      "path": "finalsource/fe/src/App.tsx",
+                      "locator": "L1-L169"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "terminal_outcome": {
+          "text": "The client renders the media preview and current control states.",
+          "status": "correct",
+          "observation_id": "obs-uc01-bf1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI rendering of live media preview video and updated control badges.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/ui-preview-state.json",
+              "sha256": "sha256:38bcb2680af0dea7d16b6543ddaf3cbb51242aac79919f20c8f4e2a441c44ac3",
+              "kind": "ui",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "App.tsx:122-167",
+              "observation_id": "obs-uc01-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-11-19T03:37:05Z",
+              "target_ids": [
+                "entry",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "BF-1.5",
+                "terminal_outcome"
+              ]
+            },
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-bf1/runtime-trace.json",
+              "sha256": "sha256:df26dd76effee7a73459fcf8afa25e661d46927b8db043ac9ce0d52fdd91b1cf",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "BF-1 actions sequence",
+              "observation_id": "obs-uc01-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-11-19T03:37:00Z",
+              "target_ids": [
+                "entry",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "BF-1.5",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "rationale": "Terminal outcome fully achieved: prospective participant sees live video and active audio badges.",
+          "source_findings": [
+            {
+              "finding": "video element visible with cameraEnabled true and mic on badge",
+              "limits": "Component source inspection",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                  "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                  "kind": "source",
+                  "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                  "sanitized": true,
+                  "locator": "L1-L169",
+                  "provenance": {
+                    "path": "finalsource/fe/src/App.tsx",
+                    "locator": "L1-L169"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "flow_id": "AF-1",
+        "source_anchor": "docs/01-inception/use-cases/uc-01-review-join-preview-and-permissions.md#L56-L61",
+        "completion_observation_id": "obs-uc01-af1",
+        "steps": [
+          {
+            "step_id": "AF-1.3a",
+            "text": "The prospective participant turns the microphone or camera off.",
+            "completion_critical": true,
+            "criticality_reason": "Alternative branch condition requiring turning off media toggles.",
+            "status": "correct",
+            "observation_id": "obs-uc01-af1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "UI click interaction on camera/mic toggle buttons.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-af1/ui-toggle-mute.json",
+                "sha256": "sha256:f854c5cf2f66b9b2582071e40097eeee175e0c02e8c1ebbbff4f0d15aed4a387",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:141-145",
+                "observation_id": "obs-uc01-af1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-11-19T03:37:15Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "AF-1.3a",
+                  "AF-1.3b",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-af1/runtime-trace.json",
+                "sha256": "sha256:f7e47cd9492577b7bd0d68b856f172f964a828b739da5c07ee5c764500840e4a",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "AF-1 actions sequence",
+                "observation_id": "obs-uc01-af1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-11-19T03:37:10Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "AF-1.3a",
+                  "AF-1.3b",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "rationale": "Clicking Camera on and Mic on toggles requestCamera and requestMicrophone to false.",
+            "source_findings": [
+              {
+                "finding": "Toggle button handlers update requestCamera/requestMicrophone and disable feeds",
+                "limits": "Component source inspection",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                    "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                    "kind": "source",
+                    "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                    "sanitized": true,
+                    "locator": "L1-L169",
+                    "provenance": {
+                      "path": "finalsource/fe/src/App.tsx",
+                      "locator": "L1-L169"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "step_id": "AF-1.3b",
+            "text": "The client renders the corresponding muted preview state.",
+            "completion_critical": true,
+            "criticality_reason": "Visual rendering of muted placeholder when camera/mic are off.",
+            "status": "correct",
+            "observation_id": "obs-uc01-af1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "UI display of avatar placeholder and Mic muted badge.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-af1/ui-toggle-mute.json",
+                "sha256": "sha256:f854c5cf2f66b9b2582071e40097eeee175e0c02e8c1ebbbff4f0d15aed4a387",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:141-145",
+                "observation_id": "obs-uc01-af1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-11-19T03:37:15Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "AF-1.3a",
+                  "AF-1.3b",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-af1/runtime-trace.json",
+                "sha256": "sha256:f7e47cd9492577b7bd0d68b856f172f964a828b739da5c07ee5c764500840e4a",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "AF-1 actions sequence",
+                "observation_id": "obs-uc01-af1",
+                "flow_id": "AF-1",
+                "captured_at": "2026-11-19T03:37:10Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "AF-1.3a",
+                  "AF-1.3b",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "rationale": "Video element is hidden, purple avatar placeholder is displayed, and badge displays Mic muted.",
+            "source_findings": [
+              {
+                "finding": "Conditional rendering of video vs avatar placeholder based on cameraEnabled",
+                "limits": "Component source inspection",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                    "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                    "kind": "source",
+                    "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                    "sanitized": true,
+                    "locator": "L1-L169",
+                    "provenance": {
+                      "path": "finalsource/fe/src/App.tsx",
+                      "locator": "L1-L169"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "terminal_outcome": {
+          "text": "The client renders the corresponding muted preview state.",
+          "status": "correct",
+          "observation_id": "obs-uc01-af1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Verification of muted preview UI state.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-af1/ui-toggle-mute.json",
+              "sha256": "sha256:f854c5cf2f66b9b2582071e40097eeee175e0c02e8c1ebbbff4f0d15aed4a387",
+              "kind": "ui",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "App.tsx:141-145",
+              "observation_id": "obs-uc01-af1",
+              "flow_id": "AF-1",
+              "captured_at": "2026-11-19T03:37:15Z",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.3a",
+                "AF-1.3b",
+                "terminal_outcome"
+              ]
+            },
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-af1/runtime-trace.json",
+              "sha256": "sha256:f7e47cd9492577b7bd0d68b856f172f964a828b739da5c07ee5c764500840e4a",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "AF-1 actions sequence",
+              "observation_id": "obs-uc01-af1",
+              "flow_id": "AF-1",
+              "captured_at": "2026-11-19T03:37:10Z",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.3a",
+                "AF-1.3b",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "rationale": "Terminal outcome achieved: client displays muted placeholder and Mic muted badge.",
+          "source_findings": [
+            {
+              "finding": "cameraEnabled=false renders placeholder; microphoneEnabled=false renders Mic muted",
+              "limits": "Component source inspection",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                  "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                  "kind": "source",
+                  "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                  "sanitized": true,
+                  "locator": "L1-L169",
+                  "provenance": {
+                    "path": "finalsource/fe/src/App.tsx",
+                    "locator": "L1-L169"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "flow_id": "EF-1",
+        "source_anchor": "docs/01-inception/use-cases/uc-01-review-join-preview-and-permissions.md#L63-L68",
+        "completion_observation_id": "obs-uc01-ef1",
+        "steps": [
+          {
+            "step_id": "EF-1.4a",
+            "text": "Access is not granted.",
+            "completion_critical": true,
+            "criticality_reason": "Exception branch trigger when browser media permission is denied.",
+            "status": "correct",
+            "observation_id": "obs-uc01-ef1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "Rejection of media access promise leading to DENIED permission status.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/ui-permission-denied.json",
+                "sha256": "sha256:9c742b44094ac70fc0b341b5d277aafd935161ea45e8a42e8580b8e01feea7cd",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:165",
+                "observation_id": "obs-uc01-ef1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-11-19T03:37:25Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "EF-1.4a",
+                  "EF-1.4b",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/runtime-trace.json",
+                "sha256": "sha256:b4b3260da0484ed8865f7d1bf3abf3512e687ef4937392c934f96640ecebe286",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "EF-1 actions sequence",
+                "observation_id": "obs-uc01-ef1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-11-19T03:37:20Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "EF-1.4a",
+                  "EF-1.4b",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "rationale": "getUserMedia rejection sets cameraPermission or microphonePermission to DENIED.",
+            "source_findings": [
+              {
+                "finding": "Rejected promise handling sets DENIED status and triggers denied dialog",
+                "limits": "Component source inspection",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                    "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                    "kind": "source",
+                    "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                    "sanitized": true,
+                    "locator": "L1-L169",
+                    "provenance": {
+                      "path": "finalsource/fe/src/App.tsx",
+                      "locator": "L1-L169"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "step_id": "EF-1.4b",
+            "text": "The client displays the permission-denied dialog and its visible recovery action.",
+            "completion_critical": true,
+            "criticality_reason": "Mandatory exception dialog presentation with recovery action button.",
+            "status": "correct",
+            "observation_id": "obs-uc01-ef1",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "UI rendering of modal dialog with Permission needed heading and Try again action.",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/ui-permission-denied.json",
+                "sha256": "sha256:9c742b44094ac70fc0b341b5d277aafd935161ea45e8a42e8580b8e01feea7cd",
+                "kind": "ui",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "App.tsx:165",
+                "observation_id": "obs-uc01-ef1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-11-19T03:37:25Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "EF-1.4a",
+                  "EF-1.4b",
+                  "terminal_outcome"
+                ]
+              },
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/runtime-trace.json",
+                "sha256": "sha256:b4b3260da0484ed8865f7d1bf3abf3512e687ef4937392c934f96640ecebe286",
+                "kind": "runtime_trace",
+                "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                "sanitized": true,
+                "locator": "EF-1 actions sequence",
+                "observation_id": "obs-uc01-ef1",
+                "flow_id": "EF-1",
+                "captured_at": "2026-11-19T03:37:20Z",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "EF-1.4a",
+                  "EF-1.4b",
+                  "terminal_outcome"
+                ]
+              }
+            ],
+            "rationale": "Dialog is rendered with Permission needed header and Try again button calling preparePreview.",
+            "source_findings": [
+              {
+                "finding": "showDeniedDialog state conditionally renders modal with Try again and Not now buttons",
+                "limits": "Component source inspection",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                    "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                    "kind": "source",
+                    "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                    "sanitized": true,
+                    "locator": "L1-L169",
+                    "provenance": {
+                      "path": "finalsource/fe/src/App.tsx",
+                      "locator": "L1-L169"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "terminal_outcome": {
+          "text": "The client displays the permission-denied dialog and its visible recovery action.",
+          "status": "correct",
+          "observation_id": "obs-uc01-ef1",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Verification of permission-denied dialog and recovery action in UI.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/ui-permission-denied.json",
+              "sha256": "sha256:9c742b44094ac70fc0b341b5d277aafd935161ea45e8a42e8580b8e01feea7cd",
+              "kind": "ui",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "App.tsx:165",
+              "observation_id": "obs-uc01-ef1",
+              "flow_id": "EF-1",
+              "captured_at": "2026-11-19T03:37:25Z",
+              "target_ids": [
+                "entry",
+                "branch",
+                "EF-1.4a",
+                "EF-1.4b",
+                "terminal_outcome"
+              ]
+            },
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/obs-uc01-ef1/runtime-trace.json",
+              "sha256": "sha256:b4b3260da0484ed8865f7d1bf3abf3512e687ef4937392c934f96640ecebe286",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+              "sanitized": true,
+              "locator": "EF-1 actions sequence",
+              "observation_id": "obs-uc01-ef1",
+              "flow_id": "EF-1",
+              "captured_at": "2026-11-19T03:37:20Z",
+              "target_ids": [
+                "entry",
+                "branch",
+                "EF-1.4a",
+                "EF-1.4b",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "rationale": "Terminal outcome achieved: permission-denied dialog visible with recovery action Try again.",
+          "source_findings": [
+            {
+              "finding": "Dialog renders with role=dialog, aria-modal=true, and recovery button",
+              "limits": "Component source inspection",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/flow-accuracy/evidence/asm-uc01-gpt-5.6-terra-initial/_source/app-source-evidence.json",
+                  "sha256": "sha256:de29684e3f0417d31bd2f178ecd4a58a900772933f95821ce55ed82e89590478",
+                  "kind": "source",
+                  "source_revision": "sha256:8c9aba1838d82516c34520aa572de09258d5309ea1ab56c1c2a2bd4c17719dad",
+                  "sanitized": true,
+                  "locator": "L1-L169",
+                  "provenance": {
+                    "path": "finalsource/fe/src/App.tsx",
+                    "locator": "L1-L169"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
