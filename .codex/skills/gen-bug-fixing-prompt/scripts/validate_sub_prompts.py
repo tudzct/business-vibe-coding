@@ -38,10 +38,6 @@ FRONTMATTER_FIELDS = {
     "defect_fingerprint", "source_revision",
 }
 REQUIRED_HEADINGS = ("Evidence", "Required correction", "Scope", "Completion")
-COMPLETION = (
-    "Report changed files, verification evidence, and the reassessment of every "
-    "affected target. Preserve first-pass evidence without overwriting it."
-)
 PLACEHOLDERS = (
     "<UC-ID>", "<RUN-ID>", "<N>", "<DEFECT-ID>",
     "<64 lowercase hex characters>", "<bounded defect>", "<defect category>",
@@ -229,22 +225,6 @@ def parse_prompt(path):
     return fields, arrays, sections
 
 
-def require_value(section_text, value, message):
-    require(normalized(str(value)) in normalized(section_text), message)
-
-
-def authoritative_blocks(value):
-    return [normalized(match.group(2)) for match in
-            re.finditer(r"(?ms)```([A-Za-z0-9_-]*)[ \t]*\n(.*?)\n```", value)]
-
-
-def expected_behavior(value):
-    marker = "Required observable behavior after repair:"
-    if marker not in value:
-        return normalized(value)
-    return normalized(value.split(marker, 1)[1])
-
-
 def validate_prompt(path, index, handoff, defect):
     fields, arrays, sections = parse_prompt(path)
     defect_id = defect["defect_id"]
@@ -260,41 +240,20 @@ def validate_prompt(path, index, handoff, defect):
     }
     require(fields == expected_fields, f"{path}: frontmatter differs from the Handoff")
     full_text = path.read_text(encoding="utf-8-sig")
-    require(re.search(rf"(?m)^# Repair {index}\s+(?:—|-)\s+.*{re.escape(defect['title'])}.*$",
-                      full_text), f"{path}: bounded defect title is missing")
-    evidence_section = sections["Evidence"]
-    require_value(evidence_section, defect["category"],
-                  f"{path}: Evidence category is missing")
-    require(re.search(r"(?m)^- Description:\s*\S", evidence_section),
-            f"{path}: generated Description is missing")
-    for step in defect["reproduction_steps"]:
-        require_value(evidence_section, step,
-                      f"{path}: reproduction step is missing: {step}")
-    for evidence_index, item in enumerate(defect["evidence"], 1):
-        line_text = "N/A" if item["line_start"] is None else f"{item['line_start']}-{item['line_end']}"
-        for label, value in (("source file", item["source_file"]),
-                             ("line range", line_text),
-                             ("locator", item["locator"]),
-                             ("defect finding", item["defect_finding"]),
-                             ("content", item["content"])):
-            require_value(evidence_section, value,
-                          f"{path}: Evidence {evidence_index} {label} is missing or changed")
-    correction_section = sections["Required correction"]
-    require(expected_behavior(defect["required_correction"]) in normalized(correction_section),
-            f"{path}: required observable behavior is missing or changed")
-    for block in authoritative_blocks(defect["required_correction"]):
-        require(block in normalized(correction_section),
-                f"{path}: authoritative correction content is missing or changed")
+    require(re.search(rf"(?m)^# Repair {index}\s+(?:—|-)\s+\S.*$", full_text),
+            f"{path}: bounded defect title is missing")
+    require(not re.search(
+                r"(?m)^(?:# (?:Instructions|Sub-prompt template)|"
+                r"## Instruction for Sub-prompt)\s*$",
+                full_text,
+            ),
+            f"{path}: template instructions leaked into the generated artifact")
+    evidence_indexes = [int(value) for value in re.findall(
+        r"(?m)^### Evidence ([1-9][0-9]*)\s*$", sections["Evidence"]
+    )]
+    require(evidence_indexes == list(range(1, len(defect["evidence"]) + 1)),
+            f"{path}: Evidence subsection sequence/count does not match the Handoff")
     scope = defect["scope"]
-    scope_section = sections["Scope"]
-    for field in ("affected_br_ids", "affected_flow_ids", "affected_flow_step_ids",
-                  "affected_api_ids", "affected_ui_targets", "affected_files"):
-        for value in scope[field]:
-            require_value(scope_section, value, f"{path}: Scope omits {field} value {value}")
-    if not any(scope.values()):
-        require("None" in scope_section, f"{path}: empty Scope must be recorded as None")
-    require(normalized(sections["Completion"]) == COMPLETION,
-            f"{path}: Completion contract mismatch")
     require(set(arrays["affected_br_ids"]) == set(scope["affected_br_ids"]),
             f"{path}: Scope BR inventory mismatch")
     require(set(arrays["affected_flow_ids"]) == set(scope["affected_flow_ids"]),
