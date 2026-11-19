@@ -22,16 +22,15 @@ Read the following materials before populating Prompts A-D:
 
 Use the information obtained from these sources to follow every instruction below and complete every placeholder in the YAML frontmatter, title, and Prompts A-D:
 
-1. Replace 100% of `<...>` and `[...]` placeholders with concrete values. Never fabricate undocumented requirements, thresholds, endpoints, or rules.
+1. Replace 100% of `<...>` and `[...]` placeholders with concrete, source-backed values. Never fabricate undocumented requirements, thresholds, endpoints, or rules.
 2. **Prompts A, C, D (API vs. client-local):**
-   - If the active use case has related API contract(s), fill all endpoint, auth, Request Format, Logic, Success Response, Error Handling, Request Payload, Loading State, API Error, and Client-Side Validation sections with concrete implementation details.
+   - If the active use case has related API contract(s), fill all endpoint, auth, Request Format, Logic, Success Response, Error Handling, Request Payload, Loading State, API Error, and Client-Side Validation sections concretely grounded in the UC, API contracts, DBML, and existing `finalsource/` conventions.
    - If the active use case explicitly declares no related API (`api_contracts: []`), adapt Prompts A, C, and D to specify the client-local boundary and local/browser state behavior instead of leaving REST/HTTP placeholders (`[HTTP METHOD] [API PATH]`, `[API PATH FROM PROMPT A]`), and remove unused API sub-blocks.
 3. **Prompt B (Figma reading & inline embedding):**
    - Inspect the checksum-valid frozen Figma dataset to identify all frames relevant to the active use case using the UC name, purpose, application-user actions, screen titles, visible UI text, and semantically related terms.
    - If relevant frames cannot be identified unambiguously, stop during prompt generation and report the matching candidates instead of selecting/inventing a frame or emitting an incomplete prompt.
-   - Extract and embed the implementation-ready UI specification—including viewport scope (desktop-only vs. responsive per UC), layout dimensions, design tokens, component/modal/menu/fallback states, exact copy, and inline `<svg>...</svg>` markup (or CSS/HTML equivalents)—directly into Prompt B.
-4. Do not include input-source references or provenance in the completed coding prompt; references to final source and its technical conventions remain permitted.
-5. **Cleanup when completing the coding prompt (MANDATORY):**
+   - Extract and embed all target frame metadata (frame names, node IDs, native-design SHA-256 hashes), viewport scope (desktop-only vs. responsive per UC), layout dimensions, design tokens, component/modal/menu/fallback states, exact copy, and inline `<svg>...</svg>` markup (or CSS/HTML equivalents) directly into Prompt B. Never instruct downstream source generation to read or copy files from `resource/figma-design-dataset/...`.
+4. **Cleanup when completing the coding prompt (MANDATORY):**
    - Delete ALL prompt-filling instructions once the coding prompt is completed, including:
      - this entire `## Instruction for Prompts A-D` section;
      - any template meta-instructions or conditional generation directives (e.g., "Read the following materials...", "Use the information obtained...", "If relevant frames cannot be identified unambiguously, stop...", "Replace 100% of placeholders...").
@@ -74,7 +73,7 @@ Handle relevant ownership, transaction, concurrency, idempotency, date/timezone,
 
 ## Prompt B: Frontend UI
 
-### Objective: Build the user interface specified below.
+### Objective: Build the user interface according to the Figma design.
 
 Create `[COMPONENT NAME]` using `[FRONTEND TECHNOLOGIES]`.
 
@@ -84,13 +83,15 @@ The component MUST display:
 - `[UI ELEMENT 2]`
 - `[UI ELEMENT 3]`
 
+**Target Frames & Design Provenance:** `[IDENTIFIED FIGMA FRAME NAMES, NODE IDS, AND NATIVE-DESIGN SHA-256 HASHES]`
+
 **Layout & Dimensions:** `[VIEWPORT SCOPE (DESKTOP-ONLY / RESPONSIVE), CONTAINER SIZES, PADDING, GAPS, ALIGNMENT, POSITIONING]`
 
 **Design Tokens (Colors, Typography, Radii, Borders):** `[HEX/ALPHA COLORS, FONT FAMILY/SIZES/WEIGHTS/LINE-HEIGHTS/LETTER-SPACING, BORDER RADII, BORDERS, SCRIMS]`
 
 **Component & State Specifications:** `[EXACT COPY, PLACEHOLDERS, ENABLED/DISABLED/MUTED/ACTIVE/LOADING/MODAL/MENU STATES, AND FALLBACK TREATMENTS]`
 
-**Embedded Inline SVG Assets:** `[INLINE <svg>...</svg> MARKUP FOR EVERY REQUIRED ICON/GRAPHIC, OR PURE CSS EQUIVALENTS]`
+**Embedded Inline SVG Assets:** `[INLINE <svg>...</svg> MARKUP FOR EVERY ICON/GRAPHIC EXTRACTED FROM ASSET-MAP / ASSETS, OR PURE CSS EQUIVALENTS]`
 
 ### Implementation Requirements
 
@@ -131,7 +132,7 @@ When successful:
 
 Preserve API request idempotency where applicable.
 
-Normalize date/timezone and precision-sensitive numeric values according to the specified API requirements and existing project conventions.
+Normalize date/timezone and precision-sensitive numeric values according to the API contract and existing project conventions.
 
 ## Prompt D: Validation and Error Handling
 
@@ -172,25 +173,25 @@ Additionally, read the Business Rule specification file: `docs/01-inception/busi
 
 Use the information obtained from these sources to follow every instruction below and complete every placeholder in Prompts E-F:
 
-1. Replace 100% of placeholders in Prompts E-F with concrete values.
+1. Replace 100% of placeholders in Prompts E-F with concrete, source-backed values.
 2. Produce one `### Business Rule: [BR-ID]` block for every frozen Business Rule belonging to the active use case, preserving every Rule ID, OCL expression, and authoritative natural-language constraint verbatim without changing its meaning.
 3. Do not invent missing thresholds, statuses, ownership, schema, enforcement layers, or failure behavior; if critical source information is unresolved and changes implementation, stop and record the unresolved evidence for the researcher instead of guessing.
-4. Ensure Prompt F references the UI specification and inline SVG assets embedded in Prompt B.
+4. Ensure Prompt F references the embedded Figma UI specification and inline SVG assets in Prompt B (and frozen Figma evidence only where explicitly authorized).
 5. **Cleanup when completing the coding prompt (MANDATORY):** Remove this entire `## Instruction for Prompts E-F` section and all prompt-filling instructions when the coding prompt is completed, leaving only the populated `## Prompt E` and `## Prompt F` sections.
 
 ## Prompt E: Business Rules Compliance
 
-### Objective: Implement the complete Business Rule set specified below without changing its meaning.
+### Objective: Implement the complete frozen Business Rule set for this use case without changing its meaning.
 
 ### Business Rule: `[BR-ID]`
 
 - **Name:** `[rule name]`
 - **Representation:** `OCL invariant | OCL precondition | OCL postcondition | natural language`
-- **Expression / authoritative text:** `[verbatim rule content]`
+- **Expression / authoritative text:** `[verbatim Sheet-derived content]`
 - **Context:** `[OCL context/class/operation or business scope]`
 - **Enforcement layer:** `[frontend | backend | database | multiple]`
-- **Failure behavior:** `[status/message/state, or unresolved]`
-- **Traceability:** `[UC step/API/UI]`
+- **Failure behavior:** `[source-backed status/message/state, or unresolved]`
+- **Traceability:** `[UC step/API/UI/source range]`
 
 Preserve every Rule ID, OCL expression and authoritative natural-language constraint exactly.
 
@@ -203,14 +204,14 @@ Do not invent missing thresholds, statuses, ownership, schema, enforcement layer
 Use every prompt present in this approved artifact together with:
 
 - project rules and target manifests/lockfiles;
-- database requirements specified across Prompts A-E in this approved artifact;
-- API requirements specified across Prompts A-E in this approved artifact;
-- embedded UI specification and inline SVG assets in Prompt B;
+- approved database contract;
+- approved API contract;
+- embedded Figma UI specification and inline SVG assets in Prompt B (and frozen Figma evidence only where explicitly authorized);
 - existing source-code conventions.
 
 Priority:
 
 1. Requirements explicitly present in this approved prompt
-2. API and database requirements specified across Prompts A-E
-3. Embedded UI specification in Prompt B
+2. Approved API and database/project contracts
+3. Embedded Figma UI specification and frozen design evidence
 4. Existing source-code conventions
