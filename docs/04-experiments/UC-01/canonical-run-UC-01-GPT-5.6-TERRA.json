@@ -26,7 +26,7 @@
     "current": "prompt",
     "history": []
   },
-  "metrics_schema_version": 3,
+  "metrics_schema_version": 4,
   "metrics": null,
   "repair_authorization": {
     "approved": false,

@@ -7,7 +7,7 @@ description: Generate one complete bug-fixing sub-prompt per repairable defect f
 
 Apply the [shared operational constitution](../../../AGENTS.md#shared-operational-constitution).
 
-Invoke this skill as `$gen-bug-fixing-prompt <path-to-defects-handoff.json>`. This operation generates prompt artifacts only and belongs to the existing `repair` measurement bucket.
+Invoke this skill as `$gen-bug-fixing-prompt <path-to-defects-handoff.json>`. This operation generates prompt artifacts only and owns the independent `sub_prompt_generation` measurement phase. It never performs source Repair.
 
 ## Technical and Control-Plane Material
 
@@ -28,24 +28,27 @@ The following operation-specific read prohibitions apply:
 
 Execute-only helpers may inspect exact active-run configuration, handoff, output-directory and telemetry state internally. Use only their exit status and emitted results; a managed path emitted by a helper does not authorize reading that file.
 
-## Generation
+## Phase 1: Read-only Preflight & START
+
+Before START, execute `scripts/validate_sub_prompts.py --handoff <path> --check-handoff-only`. Use its bounded identity/status/count result without opening additional control-plane files. If the validated handoff has `status: no_repair_required` and an empty `defects` array, report that no prompt is required and stop. Do not create the repairs directory or capture Sub-prompt Generation timing. Otherwise require `status: ready`, a non-empty defect inventory and an exact active-run identity.
+
+Once preflight passes, derive the active Canonical Run path from that validated identity and capture live Sub-prompt Generation START immediately with `.codex/scripts/capture_timestamp.py --run-json <derived-canonical-path> --phase sub_prompt_generation --event start --segment-id <one-unique-segment-id> --source-revision <handoff-source-revision>`. The helper resolves rollout/turn information internally. Do not supply or guess either value and do not read the helper or Canonical Run.
+
+## Phase 2: Generate the complete sub-prompt set
 
 1. Read `templates/construction/sub-prompt.template.md` in full and follow its instructions.
-2. If the validated handoff has `status: no_repair_required` and an empty `defects` array, report that no prompt is required and stop. Do not create the repairs directory or capture Repair timing.
-3. Otherwise require `status: ready`, a non-empty `defects` array and unique defect IDs/fingerprints. Preserve handoff order. Create exactly one file per root-cause defect, even when that defect affects multiple BRs, Flows, APIs, UI targets or files.
-4. Use repair indexes `1..N` and write only to `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/repairs/repair-<NNN>-<DEFECT-ID>.md`. Do not overwrite an existing non-identical artifact from a prior completed handoff or run.
-5. If generation cannot proceed because the validated Handoff or required template material is missing, invalid, ambiguous or contradictory, report the exact problem and stop. Do not repair the Handoff or invent a replacement.
+2. Preserve handoff order and unique defect IDs/fingerprints. Create exactly one file per root-cause defect, even when that defect affects multiple BRs, Flows, APIs, UI targets or files.
+3. Use repair indexes `1..N` and write only to `docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/repairs/repair-<NNN>-<DEFECT-ID>.md`. Do not overwrite an existing non-identical artifact from a prior completed handoff or run.
+4. If generation cannot proceed because the validated Handoff or required template material is missing, invalid, ambiguous or contradictory, report the exact problem and stop. Do not repair the Handoff or invent a replacement.
 
-## Control and measurement
-
-Immediately before the first prompt-artifact write, derive the active Canonical Run path from the validated handoff identity and execute `.codex/scripts/capture_timestamp.py --run-json <derived-canonical-path> --phase repair --event start --repair-activity sub_prompt_generation --segment-id <one-unique-segment-id> --source-revision <handoff-source-revision>`. The helper resolves rollout/turn information internally. Do not supply or guess either value and do not read the helper or Canonical Run.
+## Phase 3: Validate, persist & END
 
 After the complete set is written:
 
 1. execute `scripts/validate_sub_prompts.py --handoff <path> --prompt-dir <repairs-directory>`; if validation reports structural, identity, scope-inventory, or unresolved-placeholder errors on the drafts just created in this invocation (before `record_prompt_handoff.py` and END capture), fix those draft files and re-run `scripts/validate_sub_prompts.py`;
 2. execute `scripts/record_prompt_handoff.py --handoff <path> --prompt-dir <repairs-directory>` to persist only `repair_prompt_directory`, `all_sub_prompt_count`, per-defect `repair_round_limit: 10`, total `repair_rounds_completed: 0` and `repair_status: not_started`;
-3. capture Repair END with the same shared helper, segment ID and `repair_activity`.
+3. capture Sub-prompt Generation END with `.codex/scripts/capture_timestamp.py --run-json <derived-canonical-path> --phase sub_prompt_generation --event end --segment-id <same-segment-id> --source-revision <handoff-source-revision>`.
 
 Helpers are execute-only. Use only their exit status and emitted result; do not inspect their source or the files they manage. If generation fails after START and cannot be resolved by fixing the current drafts, capture END before responding and preserve the actual failed work.
 
-Report the prompt count and every generated path, then stop. Do not modify `finalsource/`, invoke Repair, or invoke another top-level operation. Do not create or run tests.
+Report the prompt count and every generated path, then stop. The next top-level operation is `$measure-uc-workflow close-phase sub_prompt_generation`; do not invoke it or Repair in this turn. Do not modify `finalsource/` or create/run tests.

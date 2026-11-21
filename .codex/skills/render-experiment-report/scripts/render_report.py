@@ -133,7 +133,7 @@ def main():
     lines.extend(optional_ui_lines(data))
     if data.get("metrics") is not None:
         lines.append(metrics_markdown(data["metrics"]))
-    elif data.get("metrics_schema_version") == 3:
+    elif data.get("metrics_schema_version") == 4:
         lines.extend(["Metrics pending: run the requested telemetry command after work completion.", ""])
     else:
         raise ValueError("unsupported metrics schema")

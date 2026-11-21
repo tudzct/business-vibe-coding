@@ -18,8 +18,6 @@ def main():
     parser.add_argument("--event", choices=("start", "end", "abandon"), required=True)
     parser.add_argument("--segment-id", required=True)
     parser.add_argument("--source-revision", required=True)
-    parser.add_argument("--repair-activity", choices=("sub_prompt_generation", "source_correction"),
-                        help="Required for Repair timing; source correction covers the complete Repair invocation")
     parser.add_argument("--reason", help="Required for abandoning a missing endpoint after interruption")
     args = parser.parse_args()
     _, run, folder = context(args.run_json)
@@ -37,17 +35,15 @@ def main():
         state = journal(run, folder)
         require(state.get("timing_protocol") == TIMING_PROTOCOL,
                 "unsupported timing protocol")
-        if args.phase == "repair":
-            require(args.repair_activity is not None, "repair timing requires --repair-activity")
+        if args.phase in {"sub_prompt_generation", "repair"}:
             if args.event == "start":
-                require(not any(segment["start"].get("phase") == "repair" and
-                                segment["start"].get("repair_activity") == args.repair_activity
+                require(not any(segment["start"].get("phase") == args.phase
                                 for segment in state["segments"]),
-                        "each Repair activity permits one execution segment per run")
-                if args.repair_activity == "source_correction":
+                        f"{args.phase} permits one execution segment per run")
+                if args.phase == "repair":
                     require(run.get("repair_status") == "in_progress",
                             "prepare the first Repair verification attempt before source-correction START")
-            elif args.event == "end" and args.repair_activity == "source_correction":
+            elif args.event == "end" and args.phase == "repair":
                 repair_status = run.get("repair_status")
                 require(repair_status in {"completed", "unresolved", "blocked"},
                         "source-correction END requires terminal Repair status; recoverable verification "
@@ -58,8 +54,6 @@ def main():
                 else:
                     require(run.get("repair_rounds_completed", 0) > 0,
                             "completed or unresolved Repair requires at least one recorded attempt before END")
-        else:
-            require(args.repair_activity is None, "repair activity applies only to Repair timing")
         require(state["workflow_status"] == "open", "workflow is finalized")
         require(state["session_id"] in (None, session["session_id"]), "session identity mismatch")
         state["session_id"] = session["session_id"]
@@ -73,8 +67,6 @@ def main():
             require(original["completed"] and original["turn_id"] != turn_id,
                     "abandon is only for an earlier terminal turn with a missing endpoint")
             require(matches[0]["start"]["phase"] == args.phase, "abandon phase mismatch")
-            require(matches[0]["start"].get("repair_activity") == args.repair_activity,
-                    "abandon repair activity mismatch")
             matches[0]["timing_unavailable_reason"] = args.reason
             matches[0]["abandoned_in_turn_id"] = turn_id
             save_journal(folder, state)
@@ -99,13 +91,15 @@ def main():
                     require(receipt.get("status") == "Confirmed" and receipt.get("artifact_type") == "run-activation",
                             "existing run activation must be Confirmed")
             state["phases"][args.phase] = {"status": "open", "first_turn_id": turn_id}
-        if args.phase == "repair" and args.event == "start":
+        if args.phase in {"sub_prompt_generation", "repair"} and args.event == "start":
             require(run.get("business_rules", {}).get("initial", {}).get("requirements"),
-                    "repair requires persisted first-pass BR assessment")
+                    f"{args.phase} requires persisted first-pass BR assessment")
             current_gate = run.get("gates", {}).get("current")
-            if args.repair_activity == "sub_prompt_generation":
+            if args.phase == "sub_prompt_generation":
                 require(current_gate == "repair_decision", "sub-prompt generation requires the Repair Decision gate")
                 require(not run.get("repairs"), "sub-prompt generation must precede correction rounds")
+                require(run.get("repair_prompt_directory") in (None, ""),
+                        "sub-prompt generation cannot overwrite an already recorded prompt set")
             else:
                 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "skills/advance-experiment-gate/scripts"))
                 from record_gate import validate_repair_authorization
@@ -129,8 +123,6 @@ def main():
                  "uc_id": run["uc_id"], "run_id": run["run_id"], "session_id": session["session_id"],
                  "turn_id": turn_id, "phase": args.phase, "event": args.event,
                  "segment_id": args.segment_id, "source_revision": args.source_revision}
-        if args.phase == "repair":
-            value["repair_activity"] = args.repair_activity
         if args.event == "start":
             require(not matches, "segment ID already exists; timestamps are immutable")
             require(all("end" in s or s.get("timing_unavailable_reason") for s in segments),
@@ -140,8 +132,6 @@ def main():
             require(len(matches) == 1 and "end" not in matches[0], "missing/already ended segment")
             require(all(matches[0]["start"][k] == value[k] for k in ("turn_id", "phase", "session_id")),
                     "end must match start identity in the same turn")
-            require(matches[0]["start"].get("repair_activity") == value.get("repair_activity"),
-                    "repair activity differs from start")
             matches[0]["end"] = value
         save_journal(folder, state)
         import json

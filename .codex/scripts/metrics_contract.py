@@ -8,13 +8,13 @@ from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 
-CORE = ("prompt_generation", "source_generation", "repair")
+CORE = ("prompt_generation", "source_generation", "sub_prompt_generation", "repair")
 AUX = ("configuration_and_approval", "dataset_resolution",
        "runtime_verification", "finalization", "uc_setup")
 USAGE = ("input_tokens", "cached_input_tokens", "output_tokens",
          "reasoning_output_tokens", "total_tokens")
 METHOD = "system_timestamp_delta"
-TIMING_PROTOCOL = "generation_execution_with_repair_audit_v2"
+TIMING_PROTOCOL = "generation_execution_with_separate_sub_prompt_and_repair_v3"
 ROOT = Path(__file__).resolve().parents[2]
 
 
@@ -152,7 +152,6 @@ def duration(segment):
     start, end = segment["start"], segment["end"]
     for key in ("uc_id", "run_id", "session_id", "turn_id", "phase", "segment_id"):
         require(start.get(key) == end.get(key), f"timestamp {key} mismatch")
-    require(start.get("repair_activity") == end.get("repair_activity"), "timestamp repair activity mismatch")
     require(start["event"] == "start" and end["event"] == "end", "invalid timestamp events")
     a, b = endpoint(start), endpoint(end)
     require(b >= a, "negative duration")
@@ -229,11 +228,11 @@ def validate_core_token_phase(phase, segments):
     core_phases = {s["start"]["phase"] for s in segments if s["start"]["phase"] in CORE}
     require(len(core_phases) <= 1, "one core execution phase per turn required")
     require(not core_phases or phase in core_phases,
-            "token label must match captured core execution phase; integrated repair audit belongs to repair")
+            "token label must match the captured core execution phase")
 
 
 def validate_metrics(metrics):
-    require(metrics.get("schema_version") == 3, "unsupported metrics schema")
+    require(metrics.get("schema_version") == 4, "unsupported metrics schema")
     protocol = metrics.get("timing_protocol")
     require(protocol == TIMING_PROTOCOL, "unsupported timing protocol")
     require(metrics.get("token_attribution_method") == "semantic_primary_phase_per_turn",
@@ -269,12 +268,11 @@ def validate_metrics(metrics):
             if "end" in segment:
                 require(segment["end"].get("timing_protocol") == protocol, "end timing protocol mismatch")
                 duration(segment)
-            if segment["start"]["phase"] == "repair":
-                activity = segment["start"].get("repair_activity")
-                require(activity in {"sub_prompt_generation", "source_correction"},
-                        "repair segment needs a valid activity")
+            if segment["start"]["phase"] in {"sub_prompt_generation", "repair"}:
+                require(segment["start"].get("repair_activity") is None,
+                        "separate sub-prompt and Repair phases do not use repair_activity")
                 require(segment["start"].get("repair_id") is None,
-                        "Repair timing is phase-level, never defect/round-level")
+                        "sub-prompt and Repair timing are phase-level, never defect/round-level")
         for segment in segments:
             require(all(segment["start"].get(k) == metrics[k] for k in ("uc_id", "run_id")),
                     "segment UC/run mismatch")
@@ -288,15 +286,16 @@ def validate_metrics(metrics):
     require(metrics.get("token_phase_breakdown") == token_breakdown(rows), "token phase breakdown mismatch")
     require(not {r["turn_id"] for r in rows}.intersection(e["turn_id"] for e in metrics.get("excluded_turns", [])),
             "a selected turn cannot also be excluded")
-    require(set(metrics["phases"]) == set(CORE), "exactly three metric phases required")
+    require(set(metrics["phases"]) == set(CORE), "exactly four metric phases required")
     for phase in CORE:
         item = metrics["phases"][phase]
         if item["status"] in ("closed", "skipped"):
             expected = execution_phase_aggregate(rows, phase)
             require(item["values"] == expected, f"{phase} metrics mismatch")
             if item["status"] == "skipped":
-                require(phase == "repair" and bool(item.get("reason")) and not any(r["phase"] == phase for r in rows),
-                        "skipped repair must have a decision and no work turns")
+                require(phase in {"sub_prompt_generation", "repair"} and bool(item.get("reason"))
+                        and not any(r["phase"] == phase for r in rows),
+                        "skipped sub-prompt/Repair phase must have a decision and no work turns")
         else:
             require(item["values"] is None, "unclosed phase cannot report final values")
     intervals = sorted((s["start"]["epoch_ms"], s["end"]["epoch_ms"])
@@ -333,15 +332,17 @@ def metrics_markdown(metrics):
         lines.append(f"| {row['turn_id']} | {row['phase']} | {row['timing_phase']} | {core} | {row['wall_clock_seconds']} | {reason} |")
     lines.append("")
     lines += [f"Timing protocol: `{metrics['timing_protocol']}`.", "",
-              ("Repair seconds include sub-prompt generation, integrated BR/flow/runtime verification and final evidence persistence. "
-               "A turn with core execution must retain that core token label."), "",
-              "Workflow duration seconds = Prompt execution + first-pass Source execution + the two Repair activities. "
+              ("Sub-prompt Generation seconds cover the complete fixed prompt set. Repair seconds cover source correction, "
+               "integrated BR/flow/runtime verification and final evidence persistence. A turn with core execution must retain "
+               "that core token label."), "",
+              "Workflow duration seconds = Prompt execution + first-pass Source execution + Sub-prompt Generation + Repair. "
               "Configuration, approvals, dataset resolution, separate audit/runtime and reporting are excluded from duration seconds. "
               "Eligible auxiliary turns contribute tokens and wall-clock time to workflow. "
               "Pending/missing duration seconds are N/A, not zero. Workflow wall-clock covers selected completed turns to date; "
               "it is final only when workflow status is finalized.", ""]
-    if metrics["phases"]["repair"]["status"] == "skipped":
-        lines += ["Repair skipped: " + metrics["phases"]["repair"]["reason"], ""]
+    for phase, label in (("sub_prompt_generation", "Sub-prompt Generation"), ("repair", "Repair")):
+        if metrics["phases"][phase]["status"] == "skipped":
+            lines += [f"{label} skipped: " + metrics["phases"][phase]["reason"], ""]
     for row in metrics["turns"]:
         if row["duration_seconds"] is None:
             lines.append(f"- Timing unavailable for `{row['turn_id']}`: {row['timing_unavailable_reason']}")

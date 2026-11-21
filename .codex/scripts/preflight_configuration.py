@@ -99,7 +99,7 @@ def select_canonical(uc_id, run_id=None, configuration=None, run_json=None):
 def check_canonical(run, config, assignment, uc, stage):
     for field in ("run_status", "metrics", "coding_prompt", "repair_authorization"):
         require(field in run, f"canonical {field} missing")
-    require(run.get("metrics_schema_version") == 3, "canonical metrics_schema_version must be 3")
+    require(run.get("metrics_schema_version") == 4, "canonical metrics_schema_version must be 4")
     require(isinstance(run.get("uc_name"), str) and run["uc_name"].strip(), "canonical uc_name missing")
     for field in ("replicate_index", "run_order"):
         require(type(run.get(field)) is int and run[field] == assignment[field], f"canonical {field} mismatch")

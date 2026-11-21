@@ -6,7 +6,7 @@ This file documents shared storage and integrity rules only. It does not define 
 
 The active Canonical Run JSON is the authority for stored results and telemetry. Select it by exact UC/run identity and repository-relative path, never by recency or filename similarity. Preserve its pinned configuration identity and checksum.
 
-`metrics_schema_version` is `3`. The `metrics` field is `null` before telemetry is recorded and otherwise contains the schema-valid object written by the authorized telemetry operation. Consumers validate stored data and do not recompute, reinterpret or silently fill missing values.
+`metrics_schema_version` is `4`. The `metrics` field is `null` before telemetry is recorded and otherwise contains the schema-valid object written by the authorized telemetry operation. Schema 4 stores Prompt Generation, Source Generation, Sub-prompt Generation and Repair as four distinct core phases. Consumers validate stored data and do not recompute, reinterpret or silently fill missing values.
 
 ## Integrity
 

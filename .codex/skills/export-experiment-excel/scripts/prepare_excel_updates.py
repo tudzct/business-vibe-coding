@@ -42,7 +42,7 @@ def resolve_value(record, field, kind, conversion, source_unit=None):
     parts = path_parts(field)
     if parts[0] == "metrics":
         metrics = record.get("metrics")
-        require(isinstance(metrics, dict) and metrics.get("schema_version") == 3, "no phase-aware finalized metrics")
+        require(isinstance(metrics, dict) and metrics.get("schema_version") == 4, "no phase-aware finalized metrics")
         validate_metrics(metrics)
         require(metrics.get("uc_id") == record.get("uc_id") and metrics.get("run_id") == record.get("run_id"),
                 "metrics/run identity mismatch")
@@ -50,7 +50,8 @@ def resolve_value(record, field, kind, conversion, source_unit=None):
         if len(parts) >= 4 and parts[1] == "phases" and parts[3] == "values":
             phase = metrics["phases"][parts[2]]
             require(phase.get("status") == "closed" or
-                    (parts[2] == "repair" and phase.get("status") == "skipped"),
+                    (parts[2] in {"sub_prompt_generation", "repair"}
+                     and phase.get("status") == "skipped"),
                     phase.get("reason") or "phase is not closed")
     value = lookup(record, field)
     require(value is not None, f"null/unavailable source value: {field}")

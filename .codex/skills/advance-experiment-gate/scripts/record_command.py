@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 
 from record_gate import (ROOT, atomic_write, context, digest, prepare_transition,
                          read_json, require, run_lock, validate_prompt, writable,
-                         validate_flow, audit_evidence, validate_repair_authorization)
+                         validate_flow, audit_evidence, closed_phase, validate_repair_authorization)
 
 
 def approve_prompt(run, path, prompt, dry_run):
@@ -68,6 +68,7 @@ def prepare(run, folder, action, turn_id):
             validate_repair_authorization(updated)
         return updated, {"action": action, "status": "already_recorded", "receipts": []}
     if action == "repair":
+        closed_phase(updated, "sub_prompt_generation")
         initial_defects = [row for row in updated.get("defects", [])
                            if isinstance(row, dict) and row.get("stage") == "initial"
                            and row.get("status") == "open"]

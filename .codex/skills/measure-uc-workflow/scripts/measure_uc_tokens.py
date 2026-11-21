@@ -17,14 +17,23 @@ from rollout_contract import analyze_session, classified_phase, find_turn, publi
 
 
 def close_repair_and_finalize(state, run, rows, selection, measurement_turn_id):
-    """Close/skip Repair and finalize the ledger as one validated operation."""
+    """Close/skip Repair and finalize the four-phase ledger as one validated operation."""
     require(all(state["phases"].get(p, {}).get("status") == "closed" for p in CORE[:2]),
             "prompt/source phases must be closed")
     require(run.get("run_status") in ("complete", "blocked", "stopped", "repair_declined"),
             "workflow requires an explicit terminal run status")
+    skip_reason = run.get("repair_skip_reason") or selection.get("repair_skip_reason")
+    sub_prompt = state["phases"].get("sub_prompt_generation")
+    if not sub_prompt:
+        require(not run.get("repairs") and not run.get("repair_prompt_directory") and bool(skip_reason)
+                and run.get("gates", {}).get("current") == "final_metrics",
+                "unperformed sub-prompt generation needs the persisted no-repair decision")
+        state["phases"]["sub_prompt_generation"] = {"status": "skipped", "reason": skip_reason}
+    else:
+        require(sub_prompt["status"] == "closed",
+                "sub-prompt generation must be measured and closed before finalization")
     repair = state["phases"].get("repair")
     if not repair:
-        skip_reason = run.get("repair_skip_reason") or selection.get("repair_skip_reason")
         require(not run.get("repairs") and bool(skip_reason)
                 and run.get("gates", {}).get("current") == "final_metrics",
                 "unperformed repair needs the persisted all-passing/no-repair decision")
@@ -43,16 +52,18 @@ def close_repair_and_finalize(state, run, rows, selection, measurement_turn_id):
         require(repair["status"] in {"closed", "skipped"},
                 "repair phase must be open, closed or skipped")
     if run.get("repair_status") in {"completed", "unresolved"}:
-        segments = [segment for row in rows for segment in row.get("timing_segments", [])
-                    if segment["start"]["phase"] == "repair"]
-        activities = [segment["start"].get("repair_activity") for segment in segments]
-        require(activities.count("sub_prompt_generation") == 1 and
-                activities.count("source_correction") == 1 and len(activities) == 2,
-                "completed Repair needs one sub-prompt segment and one complete source-correction segment")
-        timed_turns = {segment["start"]["turn_id"] for segment in segments}
-        selected_turns = {row["turn_id"] for row in rows if row["phase"] == "repair"}
-        require(timed_turns == selected_turns and len(selected_turns) == 2,
-                "Repair metrics must contain exactly the sub-prompt turn and complete correction turn")
+        sub_segments = [segment for row in rows for segment in row.get("timing_segments", [])
+                        if segment["start"]["phase"] == "sub_prompt_generation"]
+        repair_segments = [segment for row in rows for segment in row.get("timing_segments", [])
+                           if segment["start"]["phase"] == "repair"]
+        require(len(sub_segments) == 1 and len(repair_segments) == 1,
+                "performed correction needs one complete Sub-prompt Generation segment and one Repair segment")
+        require({segment["start"]["turn_id"] for segment in sub_segments}
+                == {row["turn_id"] for row in rows if row["phase"] == "sub_prompt_generation"},
+                "Sub-prompt Generation metrics must contain exactly its complete work turn")
+        require({segment["start"]["turn_id"] for segment in repair_segments}
+                == {row["turn_id"] for row in rows if row["phase"] == "repair"},
+                "Repair metrics must contain exactly its complete source-correction turn")
     state["workflow_status"] = "finalized"
 
 
@@ -107,7 +118,7 @@ def measure(args):
         require(run["uc_id"].casefold() in selected[0]["message"].casefold(), "first workflow message must identify UC")
         old_metrics = run.get("metrics")
         if old_metrics:
-            require(old_metrics.get("schema_version") == 3 and old_metrics.get("timing_protocol") == TIMING_PROTOCOL,
+            require(old_metrics.get("schema_version") == 4 and old_metrics.get("timing_protocol") == TIMING_PROTOCOL,
                     "unsupported metrics schema or timing protocol")
             require(old_metrics["session"]["session_id"] == session["session_id"], "metrics session mismatch")
             old_ids = [r["turn_id"] for r in old_metrics["turns"]]
@@ -191,7 +202,7 @@ def measure(args):
         if not existing:
             state["observations"].append({"measurement_turn_id": args.measurement_turn_id,
                 "action": action, "last_turn_id": rows[-1]["turn_id"], "evidence_sha256": evidence_sha})
-        metrics = {"schema_version": 3, "provenance_class": "observed_post_run", "timing_method": METHOD,
+        metrics = {"schema_version": 4, "provenance_class": "observed_post_run", "timing_method": METHOD,
                    "timing_protocol": TIMING_PROTOCOL,
                    "token_attribution_method": "semantic_primary_phase_per_turn",
                    "uc_id": run["uc_id"], "run_id": run["run_id"], "status": state["workflow_status"],
@@ -207,7 +218,7 @@ def measure(args):
         # Finalize pre-validates both internal transitions and commits them with
         # telemetry in one canonical write. Ledger/mirrors remain recoverable.
         run = read_json(path)
-        run["metrics_schema_version"] = 3
+        run["metrics_schema_version"] = 4
         run["metrics"] = metrics
         finalize_committed = args.command == "finalize-workflow"
         if finalize_committed:
@@ -233,12 +244,13 @@ def measure(args):
     if not finalize_committed:
         sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "advance-experiment-gate/scripts"))
         from record_command import prepare, commit
-        action = {"prompt_generation": "prompt-close", "source_generation": "source-close"}[args.phase]
-        with run_lock(folder):
-            current = read_json(path)
-            updated, _ = prepare(current, folder, action, args.measurement_turn_id)
-            if updated != current or action == "prompt-close":
-                commit(path, updated, folder, action, args.measurement_turn_id)
+        action = {"prompt_generation": "prompt-close", "source_generation": "source-close"}.get(args.phase)
+        if action:
+            with run_lock(folder):
+                current = read_json(path)
+                updated, _ = prepare(current, folder, action, args.measurement_turn_id)
+                if updated != current or action == "prompt-close":
+                    commit(path, updated, folder, action, args.measurement_turn_id)
 
 
 def main():
@@ -251,7 +263,8 @@ def main():
         sub.add_argument("--selection", type=Path, required=True)
         sub.add_argument("--measurement-turn-id", required=True)
         if command == "close-phase":
-            sub.add_argument("--phase", choices=("prompt_generation", "source_generation"), required=True)
+            sub.add_argument("--phase", choices=("prompt_generation", "source_generation",
+                                                  "sub_prompt_generation"), required=True)
     args = parser.parse_args()
     if args.command == "list":
         session = analyze_session()
