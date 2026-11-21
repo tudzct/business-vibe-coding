@@ -4,8 +4,10 @@
 import argparse
 import hashlib
 import json
+import os
 import subprocess
 import sys
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -20,6 +22,19 @@ def require(condition, message):
 def digest(path_or_bytes):
     raw = path_or_bytes.read_bytes() if isinstance(path_or_bytes, Path) else path_or_bytes
     return "sha256:" + hashlib.sha256(raw).hexdigest()
+
+
+def atomic_json(path, payload):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as handle:
+            json.dump(payload, handle, indent=2, ensure_ascii=False)
+            handle.write("\n")
+        os.replace(temporary, path)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
 
 
 def run_cmd(cmd, cwd=ROOT):
@@ -98,6 +113,126 @@ def configured_flow_ids(run_data, run_dir, explicit=None):
     raise ValueError("Could not resolve the active UC flow inventory from baseline or initial assessment")
 
 
+def initial_assessment(run_dir):
+    candidates = sorted((run_dir / "flow-accuracy").glob("assessment-*-initial.json"))
+    if not candidates:
+        candidates = sorted((run_dir / "flow-accuracy").glob("*initial*.json"))
+    require(len(candidates) == 1,
+            f"Expected one initial assessment in {run_dir / 'flow-accuracy'}, found {len(candidates)}")
+    with open(candidates[0], "r", encoding="utf-8") as handle:
+        payload = json.load(handle)
+    if isinstance(payload.get("input"), dict) and isinstance(payload["input"].get("flows"), list):
+        payload = payload["input"]
+    require(isinstance(payload.get("flows"), list), "initial assessment requires a flows array")
+    return payload
+
+
+def verification_flow_definition(flow):
+    return {
+        "flow_id": flow["flow_id"],
+        "source_anchor": flow.get("source_anchor"),
+        "steps": [{
+            "step_id": step["step_id"],
+            "text": step.get("text"),
+            "completion_critical": step.get("completion_critical"),
+            "criticality_reason": step.get("criticality_reason")
+        } for step in flow.get("steps", [])],
+        "terminal_outcome": {
+            "text": (flow.get("terminal_outcome") or {}).get("text")
+        }
+    }
+
+
+def verification_flow_skeleton(flow):
+    return {
+        "flow_id": flow["flow_id"],
+        "observation_id": None,
+        "entry_point": None,
+        "entry_kind": None,
+        "actual_preconditions": None,
+        "end_state": None,
+        "state": None,
+        "actions": [],
+        "steps": [{
+            "step_id": step["step_id"],
+            "status": None,
+            "rationale": None,
+            "evidence": []
+        } for step in flow.get("steps", [])],
+        "terminal_outcome": {
+            "status": None,
+            "rationale": None,
+            "evidence": []
+        }
+    }
+
+
+def prepare_verification(run_path, run_data, run_dir, evidence_root, assessment_id,
+                         flow_ids, defect_id):
+    require(run_data.get("run_status") not in {"complete", "blocked", "stopped", "repair_declined"},
+            "terminal runs cannot prepare another Repair attempt")
+    require(run_data.get("gates", {}).get("current") == "repair",
+            "Repair verification preparation requires the active Repair gate")
+    require(run_data.get("repair_authorization", {}).get("approved") is True,
+            "Repair verification preparation requires recorded researcher authorization")
+    require(run_data.get("repair_status") in {"not_started", "in_progress"},
+            "Repair verification may be prepared only while Repair is not started or in progress")
+    initial_defects = {
+        item.get("defect_id") for item in run_data.get("defects", [])
+        if item.get("stage") == "initial"
+    }
+    require(defect_id in initial_defects, "--defect-id must identify one immutable initial defect")
+
+    assessment = initial_assessment(run_dir)
+    flows = assessment["flows"]
+    require([item.get("flow_id") for item in flows] == flow_ids,
+            "initial assessment flow inventory/order differs from the active flow baseline")
+    ordered_br_ids = run_data.get("business_rules", {}).get("ordered_br_ids")
+    require(isinstance(ordered_br_ids, list), "canonical ordered BR inventory is required")
+
+    plan = {
+        "artifact_type": "repair-verification-plan",
+        "uc_id": run_data["uc_id"],
+        "run_id": run_data["run_id"],
+        "assessment_id": assessment_id,
+        "defect_id": defect_id,
+        "flows": [verification_flow_definition(flow) for flow in flows],
+        "ordered_br_ids": ordered_br_ids
+    }
+    results = {
+        "uc_id": run_data["uc_id"],
+        "run_id": run_data["run_id"],
+        "assessment_id": assessment_id,
+        "captured_at": None,
+        "limitations": [],
+        "execution_blocker_defect_ids": [],
+        "flows": [verification_flow_skeleton(flow) for flow in flows],
+        "business_rules": [{
+            "br_id": br_id,
+            "status": None,
+            "rationale": None,
+            "evidence": [],
+            "runtime_observation_ids": []
+        } for br_id in ordered_br_ids],
+        "defects": [{
+            "defect_id": defect_id,
+            "status": None,
+            "evidence": []
+        }]
+    }
+
+    plan_path = evidence_root / "verification-plan.json"
+    results_path = evidence_root / "verification-results.json"
+    require(not plan_path.exists() and not results_path.exists(),
+            "Repair verification artifacts already exist for this assessment; use a new assessment ID")
+    atomic_json(plan_path, plan)
+    atomic_json(results_path, results)
+    run_data["repair_status"] = "in_progress"
+    run_data["run_status"] = "active"
+    atomic_json(run_path, run_data)
+    return plan_path, results_path
+
+
 def validate_verification_results(path, run_data, assessment_id, flow_ids, defect_id):
     require(path.is_file(), f"Repair verification results not found: {path}")
     with open(path, "r", encoding="utf-8") as handle:
@@ -107,9 +242,14 @@ def validate_verification_results(path, run_data, assessment_id, flow_ids, defec
     require(data.get("assessment_id") == assessment_id, "verification assessment identity mismatch")
     recorded = [item.get("flow_id") for item in data.get("flows", [])]
     require(recorded == flow_ids,
-            "verification flow inventory/order must exactly match the active flow baseline")
-    require(isinstance(data.get("business_rules"), list),
-            "verification business_rules results must be an array")
+            "verification flow inventory/order must exactly match verification-plan.json; "
+            "restore the prepared inventory and retry this attempt")
+    business_rules = data.get("business_rules")
+    require(isinstance(business_rules, list), "verification business_rules results must be an array")
+    ordered_br_ids = run_data.get("business_rules", {}).get("ordered_br_ids", [])
+    require([item.get("br_id") for item in business_rules] == ordered_br_ids,
+            "verification BR inventory/order must exactly match verification-plan.json; "
+            "restore the prepared inventory and retry this attempt")
     require(isinstance(data.get("defects"), list)
             and [item.get("defect_id") for item in data["defects"]] == [defect_id],
             "verification defects must contain exactly the current fixed defect")
@@ -127,6 +267,8 @@ def main():
                         help="Explicit list of changed source files in finalsource")
     parser.add_argument("--flow-ids", nargs="*", default=None,
                         help="Exact flow inventory; defaults to the frozen baseline")
+    parser.add_argument("--prepare", action="store_true",
+                        help="Create the bounded verification plan and full results skeleton")
     args = parser.parse_args()
 
     run_path = args.run_json.resolve()
@@ -138,10 +280,22 @@ def main():
     assessment_id = args.assessment_id
     run_dir = ROOT / "docs/02-construction/implementation" / uc_id / "runs" / run_id
     evidence_root = run_dir / "flow-accuracy" / "evidence" / assessment_id
-    require(evidence_root.is_dir(), f"Repair evidence directory not found: {evidence_root}")
-
-    now_iso = datetime.now(timezone.utc).astimezone().isoformat()
     flow_ids = configured_flow_ids(run_data, run_dir, args.flow_ids)
+    if args.prepare:
+        require(args.verification_results is None,
+                "--verification-results cannot be combined with --prepare")
+        require(args.changed_files is None,
+                "--changed-files cannot be combined with --prepare")
+        evidence_root.mkdir(parents=True, exist_ok=True)
+        plan_path, results_path = prepare_verification(
+            run_path, run_data, run_dir, evidence_root, assessment_id, flow_ids, args.defect_id
+        )
+        print(f"Prepared bounded Repair verification plan: {plan_path.relative_to(ROOT)}")
+        print(f"Prepared full verification results skeleton: {results_path.relative_to(ROOT)}")
+        return
+
+    require(evidence_root.is_dir(), f"Repair evidence directory not found: {evidence_root}")
+    now_iso = datetime.now(timezone.utc).astimezone().isoformat()
     results_path = (args.verification_results.resolve() if args.verification_results
                     else evidence_root / "verification-results.json")
     validate_verification_results(results_path, run_data, assessment_id, flow_ids, args.defect_id)

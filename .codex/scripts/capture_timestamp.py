@@ -44,6 +44,20 @@ def main():
                                 segment["start"].get("repair_activity") == args.repair_activity
                                 for segment in state["segments"]),
                         "each Repair activity permits one execution segment per run")
+                if args.repair_activity == "source_correction":
+                    require(run.get("repair_status") == "in_progress",
+                            "prepare the first Repair verification attempt before source-correction START")
+            elif args.event == "end" and args.repair_activity == "source_correction":
+                repair_status = run.get("repair_status")
+                require(repair_status in {"completed", "unresolved", "blocked"},
+                        "source-correction END requires terminal Repair status; recoverable verification "
+                        "errors must be corrected within the open interval")
+                if repair_status == "blocked":
+                    require(run.get("run_status") == "blocked",
+                            "blocked Repair must persist terminal blocked run status before END")
+                else:
+                    require(run.get("repair_rounds_completed", 0) > 0,
+                            "completed or unresolved Repair requires at least one recorded attempt before END")
         else:
             require(args.repair_activity is None, "repair activity applies only to Repair timing")
         require(state["workflow_status"] == "open", "workflow is finalized")
