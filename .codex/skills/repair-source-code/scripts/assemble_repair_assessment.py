@@ -470,12 +470,12 @@ def update_canonical_repairs(run_json_path, source_rev, changed_files=None, asse
     require(isinstance(defect_results, list), "verification defects must be an array")
     require([item.get("defect_id") for item in defect_results] == [defect_id],
             "verification must contain exactly the current fixed defect")
-    verdict = defect_results[0]
+    defect_verdict = defect_results[0]
     pfile = prompts[defect_id]["path"]
-    require(verdict.get("status") in {"resolved", "unresolved"},
+    require(defect_verdict.get("status") in {"resolved", "unresolved"},
             f"invalid verification defect status for {defect_id}")
     verdict_evidence = []
-    for item in verdict.get("evidence", []):
+    for item in defect_verdict.get("evidence", []):
         path_value = item.get("path") if isinstance(item, dict) else item
         require(path_value, f"verification defect evidence path is required for {defect_id}")
         path = ROOT / path_value
@@ -488,7 +488,7 @@ def update_canonical_repairs(run_json_path, source_rev, changed_files=None, asse
         "defect_fingerprint": target_defect["fingerprint"],
         "prompt_path": pfile.relative_to(ROOT).as_posix(),
         "prompt_sha256": digest(pfile),
-        "status": verdict["status"],
+        "status": defect_verdict["status"],
         "evidence": verdict_evidence
     }]
 
@@ -555,26 +555,26 @@ def update_canonical_repairs(run_json_path, source_rev, changed_files=None, asse
     require([item.get("br_id") for item in br_results] == ordered_br_ids,
             "verification BR inventory/order differs from the frozen baseline")
     final_requirements = []
-    for verdict in br_results:
-        require(verdict.get("status") in {"correct", "incorrect", "not_evaluable"},
-                f"invalid verification BR status for {verdict.get('br_id')}")
+    for br_verdict in br_results:
+        require(br_verdict.get("status") in {"correct", "incorrect", "not_evaluable"},
+                f"invalid verification BR status for {br_verdict.get('br_id')}")
         evidence_paths = []
-        for item in verdict.get("evidence", []):
+        for item in br_verdict.get("evidence", []):
             path_value = item.get("path") if isinstance(item, dict) else item
-            require(path_value, f"verification BR evidence path is required for {verdict['br_id']}")
+            require(path_value, f"verification BR evidence path is required for {br_verdict['br_id']}")
             path = ROOT / path_value
             require(path.is_file(), f"verification BR evidence not found: {path_value}")
             evidence_paths.append(path.relative_to(ROOT).as_posix())
-        require(evidence_paths, f"verification BR evidence is required for {verdict['br_id']}")
+        require(evidence_paths, f"verification BR evidence is required for {br_verdict['br_id']}")
         row = {
-            "br_id": verdict["br_id"],
-            "status": verdict["status"],
-            "rationale": verdict.get("rationale", ""),
+            "br_id": br_verdict["br_id"],
+            "status": br_verdict["status"],
+            "rationale": br_verdict.get("rationale", ""),
             "evidence": evidence_paths,
-            "runtime_observation_ids": verdict.get("runtime_observation_ids", []),
+            "runtime_observation_ids": br_verdict.get("runtime_observation_ids", []),
         }
-        if verdict.get("blocking_defect_ids"):
-            row["blocking_defect_ids"] = verdict["blocking_defect_ids"]
+        if br_verdict.get("blocking_defect_ids"):
+            row["blocking_defect_ids"] = br_verdict["blocking_defect_ids"]
         final_requirements.append(row)
 
     bf_final = {
@@ -597,10 +597,10 @@ def update_canonical_repairs(run_json_path, source_rev, changed_files=None, asse
         and flow.get("terminal_outcome", {}).get("status") == "correct"
         for flow in verification.get("flows", [])
     )
-    round0["outcome"] = verdict["status"]
+    round0["outcome"] = defect_verdict["status"]
     run_data["repair_rounds_completed"] = len(run_data["repairs"])
     attempt_counts[defect_id] = next_attempt_index
-    if verdict["status"] == "resolved":
+    if defect_verdict["status"] == "resolved":
         terminal_results[defect_id] = "resolved"
         current_position += 1
     elif next_attempt_index == 10:
