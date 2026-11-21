@@ -144,9 +144,11 @@ def assemble_assessment(run_data, run_dir, assessment_id=None, stage="final", so
     # Locate initial assessment input
     initial_path = run_dir / "flow-accuracy" / f"assessment-{uc_lower}-initial.json"
     if not initial_path.is_file():
-        initial_candidates = list((run_dir / "flow-accuracy").glob("assessment-*-initial.json"))
+        initial_candidates = [p for p in (run_dir / "flow-accuracy").glob("assessment-*-initial.json")
+                              if not p.name.endswith(".input.json") and not p.name.endswith("-input.json")]
         if not initial_candidates:
-            initial_candidates = list((run_dir / "flow-accuracy").glob("*initial*.json"))
+            initial_candidates = [p for p in (run_dir / "flow-accuracy").glob("*initial*.json")
+                                  if not p.name.endswith(".input.json") and not p.name.endswith("-input.json")]
         require(len(initial_candidates) == 1,
                 f"Expected one initial assessment in {run_dir / 'flow-accuracy'}, found {len(initial_candidates)}")
         initial_path = initial_candidates[0]

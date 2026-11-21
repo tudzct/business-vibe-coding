@@ -103,7 +103,9 @@ def configured_flow_ids(run_data, run_dir, explicit=None):
         if values:
             return list(dict.fromkeys(values))
 
-    for candidate in sorted((run_dir / "flow-accuracy").glob("*initial*.json")):
+    candidates = [p for p in sorted((run_dir / "flow-accuracy").glob("*initial*.json"))
+                  if not p.name.endswith(".input.json") and not p.name.endswith("-input.json")]
+    for candidate in candidates:
         with open(candidate, "r", encoding="utf-8") as handle:
             payload = json.load(handle)
         flows = payload.get("flows") or payload.get("input", {}).get("flows") or []
@@ -114,9 +116,11 @@ def configured_flow_ids(run_data, run_dir, explicit=None):
 
 
 def initial_assessment(run_dir):
-    candidates = sorted((run_dir / "flow-accuracy").glob("assessment-*-initial.json"))
+    candidates = [p for p in sorted((run_dir / "flow-accuracy").glob("assessment-*-initial.json"))
+                  if not p.name.endswith(".input.json") and not p.name.endswith("-input.json")]
     if not candidates:
-        candidates = sorted((run_dir / "flow-accuracy").glob("*initial*.json"))
+        candidates = [p for p in sorted((run_dir / "flow-accuracy").glob("*initial*.json"))
+                      if not p.name.endswith(".input.json") and not p.name.endswith("-input.json")]
     require(len(candidates) == 1,
             f"Expected one initial assessment in {run_dir / 'flow-accuracy'}, found {len(candidates)}")
     with open(candidates[0], "r", encoding="utf-8") as handle:
