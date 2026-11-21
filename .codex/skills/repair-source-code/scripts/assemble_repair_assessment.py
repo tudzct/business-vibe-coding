@@ -381,10 +381,10 @@ def assemble_assessment(run_data, run_dir, assessment_id=None, stage="final", so
     return data, source_rev, changed_files
 
 
-def update_canonical_repairs(run_json_path, source_rev, changed_files=None, assessment_id=None,
-                             verification_results_path=None, defect_id=None):
-    with open(run_json_path, "r", encoding="utf-8") as f:
-        run_data = json.load(f)
+def build_canonical_repair_update(run_data, source_rev, changed_files=None, assessment_id=None,
+                                  verification_results_path=None, defect_id=None):
+    """Build one candidate canonical Repair update without mutating the run file."""
+    run_data = copy.deepcopy(run_data)
 
     uc_lower = run_data["uc_id"].lower().replace("-", "")
     if not assessment_id:
@@ -621,8 +621,7 @@ def update_canonical_repairs(run_json_path, source_rev, changed_files=None, asse
         run_data["repair_status"] = "unresolved"
         run_data["run_status"] = "stopped"
 
-    with open(run_json_path, "w", encoding="utf-8") as f:
-        json.dump(run_data, f, indent=2, ensure_ascii=False)
+    return run_data
 
 
 def main():
@@ -636,8 +635,13 @@ def main():
                         help="The one fixed defect verified by this Repair attempt")
     parser.add_argument("--changed-files", nargs="*", default=None)
     parser.add_argument("--update-repairs", action="store_true",
-                        help="Also update canonical run repairs array and business_rules.final")
+                        help="Deprecated and rejected; use run_repair_cycle.py for transactional updates")
     args = parser.parse_args()
+    if args.update_repairs:
+        raise ValueError(
+            "direct --update-repairs is disabled because it can commit before Flow validation; "
+            "use run_repair_cycle.py for transactional validation and persistence"
+        )
 
     with open(args.run_json, "r", encoding="utf-8") as f:
         run_data = json.load(f)
@@ -655,12 +659,6 @@ def main():
     print(f"Assembled final assessment at: {out_path.relative_to(ROOT)}")
     print(f"Audited source revision: {source_rev}")
 
-    if args.update_repairs:
-        update_canonical_repairs(
-            args.run_json, source_rev, changed_files, assessment["assessment_id"],
-            verification_results_path=args.verification_results, defect_id=args.defect_id
-        )
-        print("Updated canonical run repairs array and final BR snapshot.")
 
 
 if __name__ == "__main__":

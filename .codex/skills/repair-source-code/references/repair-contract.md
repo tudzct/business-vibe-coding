@@ -40,7 +40,7 @@ Each canonical record uses this shape; records retain prompt order and attempts 
 }
 ```
 
-Each record contains exactly one `defect_attempts` member. Create the record as `outcome: in_progress` and set `repair_status: in_progress` before correction. Atomically complete the evidence, source revision and outcome, and increment `repair_rounds_completed` only for a completed attempt. The single phase-level Repair timer remains open across all records. Validate the full sequence with `scripts/validate_repair_rounds.py`; never infer a missing record after the turn.
+Each record contains exactly one `defect_attempts` member. Set `repair_status: in_progress` before correction. After runtime evidence is captured, `run_repair_cycle.py` builds the completed Repair/BR candidate and final Flow assessment in memory, validates both together, and commits them only after every validator passes. A failed candidate consumes no attempt, changes no canonical Repair/BR/Flow result and remains recoverable within the open Repair interval. Increment `repair_rounds_completed` only for a committed completed attempt. The single phase-level Repair timer remains open across all records. Validate the full sequence with `scripts/validate_repair_rounds.py`; never infer a missing record after the turn.
 
 ## Verification results handoff
 
@@ -66,8 +66,8 @@ Each subordinate verification completes the helper-prepared `verification-result
       "sequence": 1,
       "action": "<ACTION-PERFORMED>",
       "actual_result": "<OBSERVED-RESULT>",
-      "target_ids": ["<STEP-ID>"],
-      "evidence": [{"path": "<PATH>", "kind": "runtime_trace", "target_ids": ["<STEP-ID>"]}]
+      "target_ids": ["entry"],
+      "evidence": [{"path": "<UI-EVIDENCE-PATH>", "kind": "ui", "target_ids": ["entry"]}]
     }],
     "steps": [{
       "step_id": "<STEP-ID>",
@@ -98,6 +98,6 @@ Each subordinate verification completes the helper-prepared `verification-result
 
 Allowed BR/step/terminal statuses are `correct`, `incorrect` and `not_evaluable`. Allowed defect statuses are `resolved` and `unresolved`. The assembler validates identities, frozen inventories, evidence existence and hashes; it never supplies a successful default.
 
-For a ready runtime, each observation's evidence files stay under `<assessment-id>/<observation-id>/`; its first action covers `entry`, its last action covers `terminal_outcome`, and every recorded step target is linked to an actual action. The `_runtime/deployment.json` record contains the observed Compose major version, project and service identities.
+For a ready runtime, every Flow uses a unique observation ID and its evidence files stay under `<assessment-id>/<observation-id>/`. The first action covers `entry`; when `entry_kind` is `ui`, that action includes evidence with `kind: ui`. The last action covers `terminal_outcome`, every recorded step target is linked to an actual action, and every Alternative or Exception Flow includes an observed `branch` target in its action sequence. The `_runtime/deployment.json` record contains the observed Compose major version, project and service identities.
 
 If execution remains blocked, `_runtime/deployment.json` records `status: "BLOCKED"`, `verified: false`, the Compose major version, an empty service list when nothing started, and the actual blocker reason. `execution_blocker_defect_ids` lists the unresolved blocking defects, `flows` preserves the frozen flow-ID order without invented observations, every BR is recorded `incorrect`, and the blocking defect remains `unresolved`. The scorer then records every Flow as incorrect without manufacturing runtime evidence.

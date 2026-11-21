@@ -82,8 +82,7 @@ def prompt_inventory(run, prompt_dir, all_defects):
     return result, selected
 
 
-def validate(run_path, prompt_dir, final=False):
-    run = json.loads(run_path.read_text(encoding="utf-8-sig"))
+def validate_data(run, prompt_dir, final=False):
     require(isinstance(run, dict), "canonical run must be an object")
     for key in ("uc_id", "run_id"):
         require(isinstance(run.get(key), str) and SAFE_ID.fullmatch(run[key]),
@@ -243,6 +242,11 @@ def validate(run_path, prompt_dir, final=False):
             "attempts_completed": completed_attempts, "repair_status": status,
             "attempts_by_defect": attempt_counts,
             "unresolved_defect_ids": unresolved_ids}
+
+
+def validate(run_path, prompt_dir, final=False):
+    run = json.loads(run_path.read_text(encoding="utf-8-sig"))
+    return validate_data(run, prompt_dir, final)
 
 
 def main():

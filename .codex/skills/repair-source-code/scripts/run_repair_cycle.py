@@ -12,6 +12,17 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[4]
+sys.path.insert(0, str(ROOT / ".codex/scripts"))
+from metrics_contract import atomic_write, read_json, run_lock  # noqa: E402
+
+sys.path.insert(0, str(ROOT / ".codex/skills/audit-flow-accuracy/scripts"))
+from score_flow_accuracy import (calculate as calculate_flow_accuracy,  # noqa: E402
+                                 integrate_result as integrate_flow_result,
+                                 markdown as flow_markdown)
+
+from assemble_repair_assessment import (assemble_assessment,  # noqa: E402
+                                        build_canonical_repair_update)
+from validate_repair_rounds import validate_data as validate_repair_data  # noqa: E402
 
 
 def require(condition, message):
@@ -257,6 +268,28 @@ def validate_verification_results(path, run_data, assessment_id, flow_ids, defec
     require(isinstance(data.get("defects"), list)
             and [item.get("defect_id") for item in data["defects"]] == [defect_id],
             "verification defects must contain exactly the current fixed defect")
+    observation_ids = set()
+    for flow in data["flows"]:
+        flow_id = flow["flow_id"]
+        observation_id = flow.get("observation_id")
+        require(isinstance(observation_id, str) and observation_id.strip(),
+                f"{flow_id} requires an observation_id")
+        require(observation_id not in observation_ids,
+                f"duplicate observation_id: {observation_id}")
+        observation_ids.add(observation_id)
+        actions = flow.get("actions")
+        require(isinstance(actions, list) and actions,
+                f"{flow_id} requires an actual runtime action sequence")
+        first_targets = actions[0].get("target_ids", [])
+        require("entry" in first_targets,
+                f"{flow_id} first action must include the entry target")
+        if flow.get("entry_kind") == "ui":
+            evidence = actions[0].get("evidence", [])
+            require(any(isinstance(item, dict) and item.get("kind") == "ui" for item in evidence),
+                    f"{flow_id} UI entry requires UI evidence on its first action")
+        if flow_id.startswith(("AF-", "EF-")):
+            require(any("branch" in action.get("target_ids", []) for action in actions),
+                    f"{flow_id} requires an observed branch action")
     return data
 
 
@@ -317,53 +350,54 @@ def main():
         cp = ROOT / c if not Path(c).is_absolute() else Path(c)
         if cp.is_file():
             manifest_files.append({"path": cp.relative_to(ROOT).as_posix(), "sha256": digest(cp)})
-    (source_dir / "repair-source-manifest.json").write_text(json.dumps({"captured_at": now_iso, "files": manifest_files}, indent=2), encoding="utf-8")
+    manifest_path = source_dir / "repair-source-manifest.json"
+    if manifest_path.exists():
+        existing_manifest = read_json(manifest_path)
+        require(existing_manifest.get("files") == manifest_files,
+                "Repair source changed after this attempt manifest was captured; use a new assessment ID")
+    else:
+        atomic_json(manifest_path, {"captured_at": now_iso, "files": manifest_files})
     print(f"=== Running Repair Verification for {run_id} ===")
     print(f"1. Verified evidence-backed results for {len(flow_ids)} configured flows.")
     print("2. Saved the Repair source manifest.")
 
-    # Run assemble_repair_assessment.py
-    print("3. Assembling Schema v2 assessment and updating repairs array...")
-    assemble_script = ROOT / ".codex/skills/repair-source-code/scripts/assemble_repair_assessment.py"
-    assemble_cmd = [
-        sys.executable, str(assemble_script),
-        "--run-json", str(run_path),
-        "--assessment-id", assessment_id,
-        "--verification-results", str(results_path),
-        "--defect-id", args.defect_id,
-        "--update-repairs"
-    ]
-    if changed_files:
-        assemble_cmd.extend(["--changed-files", *changed_files])
-    run_cmd(assemble_cmd)
-
-    # Run score_flow_accuracy.py
+    # Build and validate the complete canonical candidate before any run-state write.
+    print("3. Assembling and validating the complete Repair candidate...")
     uc_lower = uc_id.lower().replace("-", "")
     final_assessment_path = run_dir / "flow-accuracy" / f"assessment-{uc_lower}-final.json"
-    print(f"4. Scoring flow accuracy ({final_assessment_path.name})...")
-    scorer_script = ROOT / ".codex/skills/audit-flow-accuracy/scripts/score_flow_accuracy.py"
-    score_out = run_cmd([
-        sys.executable, str(scorer_script),
-        "--run-json", str(run_path),
-        "--assessment", str(final_assessment_path)
-    ])
-    print("   Scorer output:", score_out)
-
-    # Validate per-defect Repair attempts
     prompt_dir = run_dir / "repairs"
-    print("5. Validating the recorded per-defect Repair attempt...")
-    val_script = ROOT / ".codex/skills/repair-source-code/scripts/validate_repair_rounds.py"
-    with open(run_path, "r", encoding="utf-8") as handle:
-        updated_run = json.load(handle)
-    validation_cmd = [
-        sys.executable, str(val_script),
-        "--run-json", str(run_path),
-        "--prompt-dir", str(prompt_dir)
-    ]
-    if updated_run.get("repair_status") in {"completed", "unresolved", "blocked"}:
-        validation_cmd.append("--final")
-    val_out = run_cmd(validation_cmd)
-    print("   Validation result:", val_out)
+    with run_lock(run_dir):
+        current_run = read_json(run_path)
+        require(current_run == run_data,
+                "Canonical Run changed during Repair verification; retry against the current state")
+        assessment, source_revision, assembled_changed_files = assemble_assessment(
+            current_run, run_dir, assessment_id, "final", changed_files=changed_files,
+            verification_results_path=results_path
+        )
+        candidate_run = build_canonical_repair_update(
+            current_run, source_revision, assembled_changed_files, assessment["assessment_id"],
+            verification_results_path=results_path, defect_id=args.defect_id
+        )
+        flow_result = calculate_flow_accuracy(assessment)
+        candidate_run, flow_summary = integrate_flow_result(candidate_run, run_dir, flow_result)
+        terminal = candidate_run.get("repair_status") in {"completed", "unresolved", "blocked"}
+        repair_validation = validate_repair_data(candidate_run, prompt_dir, terminal)
+
+        # Persist derived artifacts first. Canonical Run is the final commit point.
+        result_path = run_dir / "flow-accuracy" / f"{flow_result['assessment_id']}.json"
+        result_md_path = run_dir / "flow-accuracy" / f"{flow_result['assessment_id']}.md"
+        atomic_write(final_assessment_path, assessment)
+        if not result_path.exists():
+            atomic_write(result_path, flow_result)
+        if not result_md_path.exists():
+            atomic_write(result_md_path, flow_markdown(flow_result), raw=True)
+        atomic_write(run_path, candidate_run)
+
+    print("4. Flow assessment validated and integrated:",
+          json.dumps(flow_summary, ensure_ascii=False))
+    print("5. Repair attempt validated:",
+          json.dumps(repair_validation, ensure_ascii=False))
+    updated_run = candidate_run
     if updated_run.get("repair_status") in {"completed", "unresolved", "blocked"}:
         metrics_script = ROOT / ".codex/skills/audit-generation-metrics/scripts/calculate_metrics.py"
         summary_out = run_cmd([sys.executable, str(metrics_script), str(run_path)])

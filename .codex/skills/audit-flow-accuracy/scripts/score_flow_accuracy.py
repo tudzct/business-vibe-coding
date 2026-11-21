@@ -2,6 +2,7 @@
 """Validate flow observations, calculate completion accuracy, and persist evidence."""
 
 import argparse
+import copy
 import json
 import re
 import sys
@@ -445,6 +446,35 @@ def validate_run_result(run, folder, result):
                     "new final assessments require fresh observations")
 
 
+def integrate_result(run, folder, result):
+    """Validate and apply one assessment to an in-memory Canonical Run candidate."""
+    validate_run_result(run, folder, result)
+    updated = copy.deepcopy(run)
+    version, rubric = method(result["input"])
+    if updated.get("flow_accuracy") is None:
+        updated["flow_accuracy"] = {"schema_version": version, "rubric_id": rubric, "assessments": []}
+    block = updated["flow_accuracy"]
+    require(method(block) == (version, rubric), "unknown flow schema")
+    history = block.get("assessments")
+    require(isinstance(history, list), "invalid flow history")
+    previous = next((row for row in history if row.get("assessment_id") == result["assessment_id"]), None)
+    if previous:
+        require(previous == result, "assessment ID is immutable")
+    else:
+        require(result["stage"] != "initial" or not history, "initial assessment must be first")
+        require(result["stage"] != "final" or (history and history[0].get("stage") == "initial"),
+                "final assessment requires an immutable initial assessment")
+        if history:
+            require(history[0]["input"]["baseline"] == result["input"]["baseline"], "flow baseline changed")
+        history.append(result)
+        block["current_assessment_id"] = result["assessment_id"]
+        updated["flow_accuracy_percent"] = result["flow_accuracy_percent"]
+        updated["flow_error_percent"] = result["flow_error_percent"]
+        updated["flow_accuracy_status"] = result["status"]
+    summary = refresh_summary(updated, folder)
+    return updated, summary
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-json", required=True, type=Path)
@@ -458,48 +488,18 @@ def main():
     if not args.dry_run:
         with run_lock(folder):
             run = read_json(path)
-            validate_run_result(run, folder, result)
-            version, rubric = method(result["input"])
+            run, summary = integrate_result(run, folder, result)
             destination = folder / "flow-accuracy" / result["assessment_id"]
             json_path = destination.with_name(destination.name + ".json")
             md_path = destination.with_name(destination.name + ".md")
-            if run.get("flow_accuracy") is None:
-                run["flow_accuracy"] = {"schema_version": version, "rubric_id": rubric, "assessments": []}
-            block = run["flow_accuracy"]
-            require(method(block) == (version, rubric), "unknown flow schema")
-            history = block.get("assessments")
-            require(isinstance(history, list), "invalid flow history")
-            previous = next((row for row in history if row.get("assessment_id") == result["assessment_id"]), None)
-            if previous:
-                require(previous == result, "assessment ID is immutable")
-            else:
-                require(result["stage"] != "initial" or not history, "initial assessment must be first")
-                require(result["stage"] != "final" or (history and history[0].get("stage") == "initial"),
-                        "final assessment requires an immutable initial assessment")
-                if history:
-                    require(history[0]["input"]["baseline"] == result["input"]["baseline"], "flow baseline changed")
-                history.append(result)
-                block["current_assessment_id"] = result["assessment_id"]
-                run["flow_accuracy_percent"] = result["flow_accuracy_percent"]
-                run["flow_error_percent"] = result["flow_error_percent"]
-                run["flow_accuracy_status"] = result["status"]
-            summary = refresh_summary(run, folder)
-            atomic_write(path, run)
             if not json_path.exists():
                 atomic_write(json_path, result)
             if not md_path.exists():
                 atomic_write(md_path, markdown(result), raw=True)
+            atomic_write(path, run)
     version, rubric = method(result["input"])
     if args.dry_run:
-        import copy
-        preview = copy.deepcopy(run)
-        block = preview.setdefault("flow_accuracy", None)
-        if block is None:
-            block = preview["flow_accuracy"] = {"schema_version": version, "rubric_id": rubric, "assessments": []}
-        if not any(a["assessment_id"] == result["assessment_id"] for a in block["assessments"]):
-            block["assessments"].append(result)
-            block["current_assessment_id"] = result["assessment_id"]
-        summary = refresh_summary(preview, folder)
+        _, summary = integrate_result(run, folder, result)
     print(json.dumps({"schema_version": version, "rubric_id": rubric,
                       **{key: value for key, value in result.items() if key != "input"},
                       "current_summary": summary},
