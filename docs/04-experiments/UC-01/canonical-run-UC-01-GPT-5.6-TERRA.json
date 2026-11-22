@@ -24,9 +24,9 @@
     "effective_snapshot": null,
     "codex_client_version": null
   },
-  "run_status": "draft",
+  "run_status": "complete",
   "gates": {
-    "current": "first_pass_audit",
+    "current": "final_metrics",
     "history": [
       {
         "gate": "prompt",
@@ -53,6 +53,51 @@
         },
         "command_action": "source-close",
         "recorded_at": "2026-11-22T11:28:33.218850Z"
+      },
+      {
+        "gate": "first_pass_audit",
+        "outcome": "confirmed",
+        "turn_id": "audit-turn-uc01-gpt56-terra",
+        "evidence": {
+          "business_rules_sha256": "sha256:7c11d6d317aba9732fbec6497f940f4dc90d691c82472509cf33132c8d317738",
+          "flow_assessment_id": "initial-audit",
+          "flow_assessment_sha256": "sha256:22d1737199efe113614e72961a8c96c50532ed9238bb07a660a2d7247b49509d",
+          "source_revision": "sha256:5a821689cb5f7b674ba1528933602aabf04d97c385cfe885fcb8138b00e4b48f",
+          "defect_ids": [],
+          "defects_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "flow_progress_sha256": "sha256:ed9ac2d4af46f6889c3cc83b0fbdb446759afb682fc129bd378b1e9d0ada94b9",
+          "flow_followup_ids": [],
+          "flow_result_basis": "rubric_evidence",
+          "flow_selection_policy": "accepted-audit-results-v1",
+          "flow_assessment_ids": [
+            "initial-audit"
+          ]
+        },
+        "command_action": "audit",
+        "recorded_at": "2026-11-22T12:35:31.341906Z"
+      },
+      {
+        "gate": "repair_decision",
+        "outcome": "skipped",
+        "turn_id": "audit-turn-uc01-gpt56-terra",
+        "evidence": {
+          "business_rules_sha256": "sha256:7c11d6d317aba9732fbec6497f940f4dc90d691c82472509cf33132c8d317738",
+          "flow_assessment_id": "initial-audit",
+          "flow_assessment_sha256": "sha256:22d1737199efe113614e72961a8c96c50532ed9238bb07a660a2d7247b49509d",
+          "source_revision": "sha256:5a821689cb5f7b674ba1528933602aabf04d97c385cfe885fcb8138b00e4b48f",
+          "defect_ids": [],
+          "defects_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "flow_progress_sha256": "sha256:ed9ac2d4af46f6889c3cc83b0fbdb446759afb682fc129bd378b1e9d0ada94b9",
+          "flow_followup_ids": [],
+          "flow_result_basis": "rubric_evidence",
+          "flow_selection_policy": "accepted-audit-results-v1",
+          "flow_assessment_ids": [
+            "initial-audit"
+          ]
+        },
+        "reason": "All frozen BRs and flows pass; repair unnecessary.",
+        "command_action": "audit",
+        "recorded_at": "2026-11-22T12:35:31.381050Z"
       }
     ]
   },
@@ -392,11 +437,11 @@
   },
   "repair_authorization": {
     "approved": false,
-    "turn_id": null
+    "turn_id": "audit-turn-uc01-gpt56-terra"
   },
   "business_rules": {
     "baseline": "docs/02-construction/implementation/UC-01/business-rule-baseline.json",
-    "source_revision": null,
+    "source_revision": "sha256:5a821689cb5f7b674ba1528933602aabf04d97c385cfe885fcb8138b00e4b48f",
     "ordered_br_ids": [
       "BR-RJPP-01",
       "BR-RJPP-02",
@@ -406,8 +451,79 @@
       "BR-RJPP-06",
       "BR-RJPP-07"
     ],
-    "initial": null,
-    "final": null
+    "initial": {
+      "requirements": [
+        {
+          "br_id": "BR-RJPP-01",
+          "status": "correct"
+        },
+        {
+          "br_id": "BR-RJPP-02",
+          "status": "correct"
+        },
+        {
+          "br_id": "BR-RJPP-03",
+          "status": "correct"
+        },
+        {
+          "br_id": "BR-RJPP-04",
+          "status": "correct"
+        },
+        {
+          "br_id": "BR-RJPP-05",
+          "status": "correct"
+        },
+        {
+          "br_id": "BR-RJPP-06",
+          "status": "correct"
+        },
+        {
+          "br_id": "BR-RJPP-07",
+          "status": "correct"
+        }
+      ],
+      "total": 7,
+      "correct": 7,
+      "not_evaluable": 0,
+      "incorrect": 0
+    },
+    "final": {
+      "requirements": [
+        {
+          "br_id": "BR-RJPP-01",
+          "status": "correct"
+        },
+        {
+          "br_id": "BR-RJPP-02",
+          "status": "correct"
+        },
+        {
+          "br_id": "BR-RJPP-03",
+          "status": "correct"
+        },
+        {
+          "br_id": "BR-RJPP-04",
+          "status": "correct"
+        },
+        {
+          "br_id": "BR-RJPP-05",
+          "status": "correct"
+        },
+        {
+          "br_id": "BR-RJPP-06",
+          "status": "correct"
+        },
+        {
+          "br_id": "BR-RJPP-07",
+          "status": "correct"
+        }
+      ],
+      "total": 7,
+      "correct": 7,
+      "not_evaluable": 0,
+      "incorrect": 0
+    },
+    "followups": []
   },
   "defects": [],
   "repairs": [],
@@ -423,10 +539,228 @@
   "ui_accuracy_evidence": null,
   "ui_accuracy_recorded_by": null,
   "ui_accuracy_recorded_at": null,
-  "flow_accuracy_percent": null,
-  "flow_error_percent": null,
-  "flow_accuracy_status": "not_evaluated",
-  "flow_accuracy": null,
+  "flow_accuracy_percent": 100.0,
+  "flow_error_percent": 0.0,
+  "flow_accuracy_status": "scored",
+  "flow_accuracy": {
+    "schema_version": 2,
+    "rubric_id": "completion-critical-flow-runtime-v2",
+    "selection_policy": "accepted-audit-results-v1",
+    "current_assessment_id": "initial-audit",
+    "repair_blueprint": {
+      "schema_version": 2,
+      "rubric_id": "completion-critical-flow-runtime-v2",
+      "baseline": {
+        "path": "docs/02-construction/implementation/UC-01/flow-baseline.json",
+        "sha256": "sha256:706bd842ae755067b6e8bf1085c7bcb6470259e5569bf5ed5617bd2a81435ce3"
+      },
+      "flows": [
+        {
+          "flow_id": "BF-1",
+          "source_anchor": "docs/01-inception/use-cases/uc-01-review-join-preview-and-permissions.md#L45-L54",
+          "steps": [
+            {
+              "step_id": "BF-1.1",
+              "text": "The prospective participant opens the pre-join interface.",
+              "completion_critical": true,
+              "criticality_reason": "Entry step required to load the pre-join interface."
+            },
+            {
+              "step_id": "BF-1.2",
+              "text": "The client presents the camera, microphone, name, and permission controls shown by the design.",
+              "completion_critical": true,
+              "criticality_reason": "Required controls must be presented before the user can configure preview and request permission."
+            },
+            {
+              "step_id": "BF-1.3",
+              "text": "The prospective participant chooses the displayed permission action.",
+              "completion_critical": true,
+              "criticality_reason": "Choosing the permission action initiates media access."
+            },
+            {
+              "step_id": "BF-1.4",
+              "text": "The client requests access and receives an outcome.",
+              "completion_critical": true,
+              "criticality_reason": "Browser permission request and outcome reception are required to enable media preview."
+            },
+            {
+              "step_id": "BF-1.5",
+              "text": "The client renders the media preview and current control states.",
+              "completion_critical": true,
+              "criticality_reason": "Accurate rendering of the media preview and current control states is the primary functional goal of BF-1."
+            }
+          ],
+          "terminal_outcome": {
+            "text": "POST-1: The client displays the selected camera and microphone state. POST-2: The client displays the returned permission outcome when permission is requested."
+          }
+        },
+        {
+          "flow_id": "AF-1",
+          "source_anchor": "docs/01-inception/use-cases/uc-01-review-join-preview-and-permissions.md#L55-L61",
+          "steps": [
+            {
+              "step_id": "AF-1.3a",
+              "text": "The prospective participant turns the microphone or camera off.",
+              "completion_critical": true,
+              "criticality_reason": "Branch trigger step for AF-1."
+            },
+            {
+              "step_id": "AF-1.3b",
+              "text": "The client renders the corresponding muted preview state.",
+              "completion_critical": true,
+              "criticality_reason": "Rendering the muted preview state is the core response of AF-1."
+            }
+          ],
+          "terminal_outcome": {
+            "text": "POST-1: The client displays the selected camera and microphone state. POST-2: The client displays the returned permission outcome when permission is requested."
+          }
+        },
+        {
+          "flow_id": "EF-1",
+          "source_anchor": "docs/01-inception/use-cases/uc-01-review-join-preview-and-permissions.md#L62-L68",
+          "steps": [
+            {
+              "step_id": "EF-1.4a",
+              "text": "Access is not granted.",
+              "completion_critical": true,
+              "criticality_reason": "Branch condition for EF-1."
+            },
+            {
+              "step_id": "EF-1.4b",
+              "text": "The client displays the permission-denied dialog and its visible recovery action.",
+              "completion_critical": true,
+              "criticality_reason": "Displaying the permission-denied dialog and recovery action is the required exception handling."
+            }
+          ],
+          "terminal_outcome": {
+            "text": "POST-1: The client displays the selected camera and microphone state. POST-2: The client displays the returned permission outcome when permission is requested."
+          }
+        }
+      ]
+    },
+    "assessments": [
+      {
+        "assessment_id": "initial-audit",
+        "stage": "initial",
+        "status": "scored",
+        "counts": {
+          "main": 1,
+          "alternative": 1,
+          "exception": 1,
+          "total": 3,
+          "correct": 3,
+          "incorrect": 0,
+          "not_evaluable": 0
+        },
+        "flow_accuracy_percent": 100.0,
+        "flow_error_percent": 0.0,
+        "source_revision": "sha256:5a821689cb5f7b674ba1528933602aabf04d97c385cfe885fcb8138b00e4b48f",
+        "captured_at": "2026-11-22T11:36:00Z",
+        "observation_ids": [
+          "obs-bf1-1",
+          "obs-af1-1",
+          "obs-ef1-1"
+        ],
+        "flows": [
+          {
+            "flow_id": "BF-1",
+            "status": "correct",
+            "type": "main"
+          },
+          {
+            "flow_id": "AF-1",
+            "status": "correct",
+            "type": "alternative"
+          },
+          {
+            "flow_id": "EF-1",
+            "status": "correct",
+            "type": "exception"
+          }
+        ]
+      }
+    ],
+    "current_summary": {
+      "schema_version": 2,
+      "assessment_id": "initial-audit",
+      "stage": "experiment",
+      "source_revision": null,
+      "rubric_id": "completion-critical-flow-runtime-v2",
+      "followup_ids": [],
+      "status": "scored",
+      "measurement_status": "complete",
+      "execution_blocked": false,
+      "execution_blocker_defect_ids": [],
+      "has_incorrect_flows": false,
+      "result_basis": "rubric_evidence",
+      "researcher_result_count": 0,
+      "counts": {
+        "main": 1,
+        "alternative": 1,
+        "exception": 1,
+        "total": 3,
+        "correct": 3,
+        "incorrect": 0,
+        "not_evaluable": 0,
+        "evaluated": 3
+      },
+      "flow_accuracy_percent": 100.0,
+      "flow_error_percent": 0.0,
+      "evaluated_accuracy_percent": 100.0,
+      "evaluated_error_percent": 0.0,
+      "evaluated_coverage_percent": 100.0,
+      "accuracy_lower_bound_percent": 100.0,
+      "accuracy_upper_bound_percent": 100.0,
+      "flows": [
+        {
+          "flow_id": "BF-1",
+          "status": "correct",
+          "type": "main",
+          "result_source": "assessment",
+          "record_id": "initial-audit",
+          "assessment_id": "initial-audit",
+          "stage": "initial",
+          "source_revision": "sha256:5a821689cb5f7b674ba1528933602aabf04d97c385cfe885fcb8138b00e4b48f"
+        },
+        {
+          "flow_id": "AF-1",
+          "status": "correct",
+          "type": "alternative",
+          "result_source": "assessment",
+          "record_id": "initial-audit",
+          "assessment_id": "initial-audit",
+          "stage": "initial",
+          "source_revision": "sha256:5a821689cb5f7b674ba1528933602aabf04d97c385cfe885fcb8138b00e4b48f"
+        },
+        {
+          "flow_id": "EF-1",
+          "status": "correct",
+          "type": "exception",
+          "result_source": "assessment",
+          "record_id": "initial-audit",
+          "assessment_id": "initial-audit",
+          "stage": "initial",
+          "source_revision": "sha256:5a821689cb5f7b674ba1528933602aabf04d97c385cfe885fcb8138b00e4b48f"
+        }
+      ],
+      "pending_flows": [],
+      "selection_policy": "accepted-audit-results-v1",
+      "result_scope": "experiment_accepted_audit",
+      "current_source_revision": "sha256:5a821689cb5f7b674ba1528933602aabf04d97c385cfe885fcb8138b00e4b48f",
+      "latest_assessment_status": "scored",
+      "latest_assessment_counts": {
+        "main": 1,
+        "alternative": 1,
+        "exception": 1,
+        "total": 3,
+        "correct": 3,
+        "incorrect": 0,
+        "not_evaluable": 0
+      },
+      "retained_from_prior_source_count": 0
+    },
+    "followups": []
+  },
   "complexity": {
     "actors": 0,
     "main_flow_steps": 0,
@@ -435,5 +769,57 @@
     "integrations": 0,
     "business_rules": 0,
     "ui_states": 0
-  }
+  },
+  "audit_result_format": "compact-v1",
+  "audit_handoff_defect_ids": [],
+  "audit_accepted_results": {
+    "business_rules": [
+      {
+        "br_id": "BR-RJPP-01",
+        "status": "correct"
+      },
+      {
+        "br_id": "BR-RJPP-02",
+        "status": "correct"
+      },
+      {
+        "br_id": "BR-RJPP-03",
+        "status": "correct"
+      },
+      {
+        "br_id": "BR-RJPP-04",
+        "status": "correct"
+      },
+      {
+        "br_id": "BR-RJPP-05",
+        "status": "correct"
+      },
+      {
+        "br_id": "BR-RJPP-06",
+        "status": "correct"
+      },
+      {
+        "br_id": "BR-RJPP-07",
+        "status": "correct"
+      }
+    ],
+    "flows": [
+      {
+        "flow_id": "BF-1",
+        "status": "correct"
+      },
+      {
+        "flow_id": "AF-1",
+        "status": "correct"
+      },
+      {
+        "flow_id": "EF-1",
+        "status": "correct"
+      }
+    ],
+    "execution_blocked": false
+  },
+  "audit_initial_flow_progress_sha256": "sha256:ed9ac2d4af46f6889c3cc83b0fbdb446759afb682fc129bd378b1e9d0ada94b9",
+  "audit_handoff_sha256": "sha256:bd14fb33b128f5180e2ef87bd1a8ae5175dee70026e3326d0ec8748fefb2646c",
+  "repair_skip_reason": "All frozen BRs and flows pass; repair unnecessary."
 }
