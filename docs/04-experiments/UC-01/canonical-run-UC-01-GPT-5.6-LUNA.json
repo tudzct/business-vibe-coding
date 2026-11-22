@@ -19,7 +19,7 @@
   "audit_protocol": "fixed",
   "generation_model": {
     "requested_model_id": "gpt-5.6-luna",
-    "requested_reasoning_effort": "medium",
+    "requested_reasoning_effort": "low",
     "effective_model_id": null,
     "effective_snapshot": null,
     "codex_client_version": null

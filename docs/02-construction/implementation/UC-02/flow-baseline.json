@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "artifact_type": "flow-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-02",
+  "use_case_path": "docs/01-inception/use-cases/uc-02-join-a-session.md",
+  "use_case_sha256": "sha256:00d409b5786d9656f81eac908aa764e9d058dfedf9693c4d4c0d7f00e42eb14f",
+  "ordered_flow_ids": [
+    "BF-1",
+    "AF-1",
+    "EF-1"
+  ],
+  "frozen_at": "2026-10-17T22:39:53+07:00"
+}

@@ -1,0 +1,89 @@
+{
+  "run_id": "UC-02-GPT-5.6-LUNA",
+  "coding_prompt": null,
+  "experiment_configuration": {
+    "configuration_id": "CFG-UC-02-GPT-5.6-LUNA",
+    "comparison_group_id": "CG-100MS-01",
+    "researcher_id": "researcher-khanh",
+    "artifact": "docs/04-experiments/configurations/CFG-UC-02-GPT-5.6-LUNA.json",
+    "checksum": "sha256:b884695139820eae811b06b2457f69c76c253eb556f86117a690c1be99e180d0",
+    "run_activation": null
+  },
+  "uc_id": "UC-02",
+  "uc_name": "Join a Session",
+  "replicate_index": 1,
+  "run_order": 1,
+  "audit_protocol": "fixed",
+  "generation_model": {
+    "requested_model_id": "gpt-5.6-luna",
+    "requested_reasoning_effort": "low",
+    "effective_model_id": null,
+    "effective_snapshot": null,
+    "codex_client_version": null
+  },
+  "run_status": "draft",
+  "gates": {
+    "current": "prompt",
+    "history": []
+  },
+  "metrics_schema_version": 4,
+  "metrics": null,
+  "repair_authorization": {
+    "approved": false,
+    "turn_id": null
+  },
+  "business_rules": {
+    "baseline": "docs/02-construction/implementation/UC-02/business-rule-baseline.json",
+    "source_revision": null,
+    "ordered_br_ids": [
+      "BR-JS-01",
+      "BR-JS-02",
+      "BR-JS-03",
+      "BR-JS-04",
+      "BR-JS-05",
+      "BR-JS-06",
+      "BR-JS-07",
+      "BR-JS-08",
+      "BR-JS-09",
+      "BR-JS-10",
+      "BR-JS-11",
+      "BR-JS-12",
+      "BR-JS-13",
+      "BR-JS-14",
+      "BR-JS-15",
+      "BR-JS-16",
+      "BR-JS-17",
+      "BR-JS-18",
+      "BR-JS-19"
+    ],
+    "initial": null,
+    "final": null
+  },
+  "defects": [],
+  "repairs": [],
+  "repair_round_limit": 10,
+  "repair_rounds_completed": 0,
+  "repair_status": "not_started",
+  "repair_prompt_directory": null,
+  "all_sub_prompt_count": 0,
+  "manual_estimates_minutes": [],
+  "ui_accuracy_percent": null,
+  "ui_accuracy_status": "researcher_managed",
+  "ui_accuracy_source": "manual",
+  "ui_accuracy_evidence": null,
+  "ui_accuracy_recorded_by": null,
+  "ui_accuracy_recorded_at": null,
+  "flow_accuracy_percent": null,
+  "flow_error_percent": null,
+  "flow_accuracy_status": "not_evaluated",
+  "flow_accuracy": null,
+  "complexity": {
+    "actors": 0,
+    "main_flow_steps": 0,
+    "alternate_exception_flows": 0,
+    "data_entities": 0,
+    "integrations": 0,
+    "business_rules": 0,
+    "ui_states": 0
+  }
+}
