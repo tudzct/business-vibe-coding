@@ -90,13 +90,13 @@
     "uc_id": "UC-02",
     "run_id": "UC-02-GPT-5.6-LUNA",
     "status": "open",
-    "measured_at": "2026-11-22T13:51:27.828704+00:00",
+    "measured_at": "2026-11-22T14:45:06.408491+00:00",
     "session": {
       "session_id": "01a2037c-0dcc-7582-b63c-2947cdf0239f",
       "file_name": "rollout-2026-11-22T20-39-51-01a2037c-0dcc-7582-b63c-2947cdf0239f.jsonl",
-      "sha256": "sha256:43657085d0fc6d9a029eb52bc9e77498be86e841f5a3e3ba9e13b79ea8c813c2"
+      "sha256": "sha256:7f275b267e86be2f8afcc70f971a09630c3977ae97f23b9170e6ebba492a0a7f"
     },
-    "selection_evidence_sha256": "sha256:a4f5c67202f6156f90d534c9d6095f1e9b973c478a0014ff0b0de68ddb2a8b09",
+    "selection_evidence_sha256": "sha256:90b0b911aa7f9b1b275844e9dd4cef3ef721c721bd081073a6da6f31dfa3938a",
     "extractor_sha256": "sha256:06fd6799ba7cfb6a7f161988af6389a0592da5effcf4192639d6590eb46ae5c3",
     "phases": {
       "prompt_generation": {
@@ -140,8 +140,24 @@
         }
       },
       "sub_prompt_generation": {
-        "status": "not_started",
-        "values": null
+        "status": "closed",
+        "values": {
+          "tokens": {
+            "input_tokens": 1801999,
+            "cached_input_tokens": 1781248,
+            "output_tokens": 3839,
+            "reasoning_output_tokens": 941,
+            "total_tokens": 1805838
+          },
+          "token_unavailable_reasons": {},
+          "duration_seconds": 79.113,
+          "wall_clock_seconds": 106.101,
+          "timing_unavailable_reason": null,
+          "workflow_turn_count": 1,
+          "tool_call_count": 10,
+          "model_call_count": null,
+          "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+        }
       },
       "repair": {
         "status": "not_started",
@@ -150,18 +166,18 @@
     },
     "workflow": {
       "tokens": {
-        "input_tokens": 3079090,
-        "cached_input_tokens": 2957568,
-        "output_tokens": 17748,
-        "reasoning_output_tokens": 2883,
-        "total_tokens": 3096838
+        "input_tokens": 4881089,
+        "cached_input_tokens": 4738816,
+        "output_tokens": 21587,
+        "reasoning_output_tokens": 3824,
+        "total_tokens": 4902676
       },
       "token_unavailable_reasons": {},
       "duration_seconds": null,
-      "wall_clock_seconds": 480.536,
+      "wall_clock_seconds": 586.637,
       "timing_unavailable_reason": "Generation phase timing pending or unavailable; see phases",
-      "workflow_turn_count": 3,
-      "tool_call_count": 33,
+      "workflow_turn_count": 4,
+      "tool_call_count": 43,
       "model_call_count": null,
       "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
     },
@@ -310,6 +326,64 @@
             }
           }
         ]
+      },
+      {
+        "turn_id": "01a203b4-e46a-7792-be4b-1cb84fed0891",
+        "turn_number": 7,
+        "started_at": "2026-11-22T14:41:56.423Z",
+        "ended_at": "2026-11-22T14:43:42.524Z",
+        "completed": true,
+        "model": "gpt-5.6-luna",
+        "tokens": {
+          "input_tokens": 1801999,
+          "cached_input_tokens": 1781248,
+          "output_tokens": 3839,
+          "reasoning_output_tokens": 941,
+          "total_tokens": 1805838
+        },
+        "tool_call_count": 10,
+        "prefix_bytes": 1948108,
+        "prefix_sha256": "sha256:a6ca32db5f6a4ee4e4058dcb75c80d3a428d6fa68b62395aed16add12a1a9be9",
+        "terminal_event": "task_complete",
+        "message_sha256": "sha256:d14010ca3497bbb3deed373e4be6a21b4a05c7c45fe68d1ac916f63585964e34",
+        "session_id": "01a2037c-0dcc-7582-b63c-2947cdf0239f",
+        "phase": "sub_prompt_generation",
+        "timing_phase": "sub_prompt_generation",
+        "reason": "Generated and validated the complete UC-02 repair sub-prompt set",
+        "duration_seconds": 79.113,
+        "wall_clock_seconds": 106.101,
+        "timing_unavailable_reason": null,
+        "timing_exclusion_reason": null,
+        "timing_segments": [
+          {
+            "start": {
+              "at": "2026-11-22T21:42:19.701+07:00",
+              "epoch_ms": 1795358539701,
+              "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-LUNA",
+              "session_id": "01a2037c-0dcc-7582-b63c-2947cdf0239f",
+              "turn_id": "01a203b4-e46a-7792-be4b-1cb84fed0891",
+              "phase": "sub_prompt_generation",
+              "event": "start",
+              "segment_id": "sub-prompt-generation-uc02-20261122-1",
+              "source_revision": "sha256:ca45922a07940bb7054c7ec8db3c867a895948fb3f15a0b9bd8ad1518a46deba"
+            },
+            "end": {
+              "at": "2026-11-22T21:43:38.813+07:00",
+              "epoch_ms": 1795358618814,
+              "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-LUNA",
+              "session_id": "01a2037c-0dcc-7582-b63c-2947cdf0239f",
+              "turn_id": "01a203b4-e46a-7792-be4b-1cb84fed0891",
+              "phase": "sub_prompt_generation",
+              "event": "end",
+              "segment_id": "sub-prompt-generation-uc02-20261122-1",
+              "source_revision": "sha256:5610c8c9c08a3f2bf34e3e485790b84c67b69a0e151b30895045d9b551713298"
+            }
+          }
+        ]
       }
     ],
     "token_phase_breakdown": {
@@ -351,6 +425,19 @@
         "wall_clock_seconds": 196.661,
         "workflow_turn_count": 1,
         "tool_call_count": 12
+      },
+      "sub_prompt_generation": {
+        "tokens": {
+          "input_tokens": 1801999,
+          "cached_input_tokens": 1781248,
+          "output_tokens": 3839,
+          "reasoning_output_tokens": 941,
+          "total_tokens": 1805838
+        },
+        "token_unavailable_reasons": {},
+        "wall_clock_seconds": 106.101,
+        "workflow_turn_count": 1,
+        "tool_call_count": 10
       }
     },
     "excluded_turns": [
@@ -364,6 +451,10 @@
       },
       {
         "turn_id": "01a20386-1e61-7ce3-aa5c-394709d34e32",
+        "reason": "measurement/report turn"
+      },
+      {
+        "turn_id": "01a203b7-0042-7691-8093-9396d41cf268",
         "reason": "measurement/report turn"
       }
     ],
@@ -382,6 +473,11 @@
           "status": "closed",
           "first_turn_id": "01a20383-09b5-7b30-b9fc-e53bc7c906d6",
           "measurement_turn_id": "01a20386-1e61-7ce3-aa5c-394709d34e32"
+        },
+        "sub_prompt_generation": {
+          "status": "closed",
+          "first_turn_id": "01a203b4-e46a-7792-be4b-1cb84fed0891",
+          "measurement_turn_id": "01a203b7-0042-7691-8093-9396d41cf268"
         }
       },
       "segments": [
@@ -440,6 +536,34 @@
             "segment_id": "source-generation-uc02-20261122-1",
             "source_revision": "sha256:ca45922a07940bb7054c7ec8db3c867a895948fb3f15a0b9bd8ad1518a46deba"
           }
+        },
+        {
+          "start": {
+            "at": "2026-11-22T21:42:19.701+07:00",
+            "epoch_ms": 1795358539701,
+            "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+            "uc_id": "UC-02",
+            "run_id": "UC-02-GPT-5.6-LUNA",
+            "session_id": "01a2037c-0dcc-7582-b63c-2947cdf0239f",
+            "turn_id": "01a203b4-e46a-7792-be4b-1cb84fed0891",
+            "phase": "sub_prompt_generation",
+            "event": "start",
+            "segment_id": "sub-prompt-generation-uc02-20261122-1",
+            "source_revision": "sha256:ca45922a07940bb7054c7ec8db3c867a895948fb3f15a0b9bd8ad1518a46deba"
+          },
+          "end": {
+            "at": "2026-11-22T21:43:38.813+07:00",
+            "epoch_ms": 1795358618814,
+            "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+            "uc_id": "UC-02",
+            "run_id": "UC-02-GPT-5.6-LUNA",
+            "session_id": "01a2037c-0dcc-7582-b63c-2947cdf0239f",
+            "turn_id": "01a203b4-e46a-7792-be4b-1cb84fed0891",
+            "phase": "sub_prompt_generation",
+            "event": "end",
+            "segment_id": "sub-prompt-generation-uc02-20261122-1",
+            "source_revision": "sha256:5610c8c9c08a3f2bf34e3e485790b84c67b69a0e151b30895045d9b551713298"
+          }
         }
       ],
       "observations": [
@@ -454,6 +578,12 @@
           "action": "close-phase:source_generation",
           "last_turn_id": "01a20383-09b5-7b30-b9fc-e53bc7c906d6",
           "evidence_sha256": "sha256:a4f5c67202f6156f90d534c9d6095f1e9b973c478a0014ff0b0de68ddb2a8b09"
+        },
+        {
+          "measurement_turn_id": "01a203b7-0042-7691-8093-9396d41cf268",
+          "action": "close-phase:sub_prompt_generation",
+          "last_turn_id": "01a203b4-e46a-7792-be4b-1cb84fed0891",
+          "evidence_sha256": "sha256:90b0b911aa7f9b1b275844e9dd4cef3ef721c721bd081073a6da6f31dfa3938a"
         }
       ],
       "workflow_status": "open",
@@ -813,8 +943,8 @@
   "repair_round_limit": 10,
   "repair_rounds_completed": 0,
   "repair_status": "not_started",
-  "repair_prompt_directory": null,
-  "all_sub_prompt_count": 0,
+  "repair_prompt_directory": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/repairs",
+  "all_sub_prompt_count": 1,
   "manual_estimates_minutes": [],
   "ui_accuracy_percent": null,
   "ui_accuracy_status": "researcher_managed",

@@ -13,6 +13,11 @@
       "status": "closed",
       "first_turn_id": "01a20383-09b5-7b30-b9fc-e53bc7c906d6",
       "measurement_turn_id": "01a20386-1e61-7ce3-aa5c-394709d34e32"
+    },
+    "sub_prompt_generation": {
+      "status": "closed",
+      "first_turn_id": "01a203b4-e46a-7792-be4b-1cb84fed0891",
+      "measurement_turn_id": "01a203b7-0042-7691-8093-9396d41cf268"
     }
   },
   "segments": [
@@ -71,6 +76,34 @@
         "segment_id": "source-generation-uc02-20261122-1",
         "source_revision": "sha256:ca45922a07940bb7054c7ec8db3c867a895948fb3f15a0b9bd8ad1518a46deba"
       }
+    },
+    {
+      "start": {
+        "at": "2026-11-22T21:42:19.701+07:00",
+        "epoch_ms": 1795358539701,
+        "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+        "uc_id": "UC-02",
+        "run_id": "UC-02-GPT-5.6-LUNA",
+        "session_id": "01a2037c-0dcc-7582-b63c-2947cdf0239f",
+        "turn_id": "01a203b4-e46a-7792-be4b-1cb84fed0891",
+        "phase": "sub_prompt_generation",
+        "event": "start",
+        "segment_id": "sub-prompt-generation-uc02-20261122-1",
+        "source_revision": "sha256:ca45922a07940bb7054c7ec8db3c867a895948fb3f15a0b9bd8ad1518a46deba"
+      },
+      "end": {
+        "at": "2026-11-22T21:43:38.813+07:00",
+        "epoch_ms": 1795358618814,
+        "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+        "uc_id": "UC-02",
+        "run_id": "UC-02-GPT-5.6-LUNA",
+        "session_id": "01a2037c-0dcc-7582-b63c-2947cdf0239f",
+        "turn_id": "01a203b4-e46a-7792-be4b-1cb84fed0891",
+        "phase": "sub_prompt_generation",
+        "event": "end",
+        "segment_id": "sub-prompt-generation-uc02-20261122-1",
+        "source_revision": "sha256:5610c8c9c08a3f2bf34e3e485790b84c67b69a0e151b30895045d9b551713298"
+      }
     }
   ],
   "observations": [
@@ -85,6 +118,12 @@
       "action": "close-phase:source_generation",
       "last_turn_id": "01a20383-09b5-7b30-b9fc-e53bc7c906d6",
       "evidence_sha256": "sha256:a4f5c67202f6156f90d534c9d6095f1e9b973c478a0014ff0b0de68ddb2a8b09"
+    },
+    {
+      "measurement_turn_id": "01a203b7-0042-7691-8093-9396d41cf268",
+      "action": "close-phase:sub_prompt_generation",
+      "last_turn_id": "01a203b4-e46a-7792-be4b-1cb84fed0891",
+      "evidence_sha256": "sha256:90b0b911aa7f9b1b275844e9dd4cef3ef721c721bd081073a6da6f31dfa3938a"
     }
   ],
   "workflow_status": "open",
