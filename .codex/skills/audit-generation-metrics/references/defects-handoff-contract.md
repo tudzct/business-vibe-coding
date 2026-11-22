@@ -1,8 +1,8 @@
 # Defects Handoff contract
 
-`defects-handoff.json` is the self-contained defect-information input for `gen-bug-fixing-prompt`. Canonical Run JSON remains authoritative for Audit history and metrics. The Handoff contains the accepted repair facts required to author a sub-prompt without reopening the frozen UC, Business Rule specification, API contracts, Audit evidence files or application source.
+`defects-handoff.json` is the self-contained defect-information input for `gen-bug-fixing-prompt`. Canonical Run JSON records accepted per-ID verdicts, counts, percentages, source identity, telemetry and minimal defect links. The Handoff contains the accepted repair facts required to author a sub-prompt without reopening the frozen UC, Business Rule specification, API contracts, Audit evidence files or application source.
 
-Use [defects-handoff.template.json](../assets/defects-handoff.template.json) as the exact schema and `scripts/build_defects_handoff.py` as the only writer. Write only to:
+Use [defects-handoff.template.json](../assets/defects-handoff.template.json) as the exact schema. `scripts/build_defects_handoff.py` writes the complete defect records; `scripts/finalize_audit_outputs.py` updates only the canonical defect-link checksum after the canonical record is compacted. Write only to:
 
 ```text
 docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/defects-handoff.json

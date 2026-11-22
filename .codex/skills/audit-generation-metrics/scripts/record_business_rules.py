@@ -127,7 +127,7 @@ def record_business_rules(run_path, stage="initial", requirements_input=None,
             f"valid sha256 source_revision required (got: {source_revision})")
 
     # Preserve existing assessed_at if not explicitly passed
-    existing = br_block.get(stage, {})
+    existing = br_block.get(stage) or {}
     if assessed_at is None and existing.get("assessed_at"):
         assessed_at = existing["assessed_at"]
 

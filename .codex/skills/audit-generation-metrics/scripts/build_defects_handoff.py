@@ -492,6 +492,8 @@ def validate_handoff(value, expected_uc=None, expected_run=None):
 
 def build(run_path, output, payload):
     _, run, folder = context(run_path)
+    require(run.get("audit_result_format") is None,
+            "Audit handoff is finalized and must not be rebuilt")
     require(not run.get("repairs") and run.get("repair_rounds_completed", 0) == 0,
             "defects handoff is frozen once correction activity starts")
     require(run.get("repair_prompt_directory") in (None, "")

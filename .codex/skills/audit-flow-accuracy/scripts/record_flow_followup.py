@@ -13,6 +13,8 @@ from flow_summary import RESULT_POLICY, current_assessment, fingerprint, refresh
 
 
 def prepare(run, folder, payload=None):
+    require(run.get("audit_result_format") is None,
+            "accepted Audit handoff is finalized; follow-up requires a new Audit run")
     # Audit validation is read-only here, including the prior immutable assessments.
     sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-generation-metrics/scripts"))
     from calculate_metrics import accepted_br_summary, apply_br_followup, validate_flow

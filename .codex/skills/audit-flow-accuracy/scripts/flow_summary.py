@@ -99,6 +99,8 @@ def accepted_summary(run):
     An inconclusive later attempt remains evidence but cannot erase a verdict.
     Stage/source on every selected row identifies the actual observed revision.
     """
+    if run.get("audit_result_format") == "compact-v1":
+        return compact_summary(run)
     block = run["flow_accuracy"]
     current = current_assessment(run)
     inventory = [(f["flow_id"], f["type"]) for f in current["flows"]]
@@ -164,6 +166,69 @@ def accepted_summary(run):
     return summary
 
 
+def compact_summary(run):
+    """Project Repair verdicts over the compact accepted Audit scores."""
+    block = run["flow_accuracy"]
+    base = json.loads(json.dumps(block["current_summary"]))
+    current = current_assessment(run)
+    if current["stage"] == "initial":
+        return base
+    previous = {row["flow_id"]: row for row in base["flows"]}
+    rows = []
+    for flow in current["flows"]:
+        identity = flow["flow_id"]
+        if flow["status"] == "not_evaluable" and previous[identity]["status"] != "not_evaluable":
+            rows.append(previous[identity])
+            continue
+        row = {"flow_id": identity, "type": flow["type"], "status": flow["status"],
+               "result_source": "assessment", "record_id": current["assessment_id"],
+               "assessment_id": current["assessment_id"], "stage": "final",
+               "source_revision": current["input"]["source_revision"]}
+        if row["status"] == "incorrect":
+            row["caused_by_defect_ids"] = list(flow["caused_by_defect_ids"])
+        elif row["status"] == "not_evaluable":
+            row["unavailable_reason"] = flow["unavailable_reason"]
+        rows.append(row)
+    total = len(rows)
+    correct = sum(row["status"] == "correct" for row in rows)
+    incorrect = sum(row["status"] == "incorrect" for row in rows)
+    unknown = total - correct - incorrect
+    evaluated = correct + incorrect
+    base["assessment_id"] = current["assessment_id"]
+    base["stage"] = "experiment"
+    base["source_revision"] = None
+    base["current_source_revision"] = current["input"]["source_revision"]
+    base["latest_assessment_status"] = current["status"]
+    base["latest_assessment_counts"] = current["counts"]
+    base["execution_blocked"] = current["execution_blocked"]
+    base["execution_blocker_defect_ids"] = list(current["execution_blocker_defect_ids"])
+    base["status"] = ("partial" if unknown and evaluated else
+                      ("not_evaluable" if unknown else ("repair_required" if incorrect else "scored")))
+    base["measurement_status"] = "partial" if unknown and evaluated else ("not_evaluable" if unknown else "complete")
+    base["has_incorrect_flows"] = bool(incorrect)
+    base["counts"].update(total=total, correct=correct, incorrect=incorrect,
+                          not_evaluable=unknown, evaluated=evaluated)
+    base["flow_accuracy_percent"] = round(100 * correct / total, 6) if not unknown else None
+    base["flow_error_percent"] = round(100 * incorrect / total, 6) if not unknown else None
+    base["evaluated_accuracy_percent"] = round(100 * correct / evaluated, 6) if evaluated else None
+    base["evaluated_error_percent"] = round(100 * incorrect / evaluated, 6) if evaluated else None
+    base["evaluated_coverage_percent"] = round(100 * evaluated / total, 6)
+    base["accuracy_lower_bound_percent"] = round(100 * correct / total, 6)
+    base["accuracy_upper_bound_percent"] = round(100 * (correct + unknown) / total, 6)
+    base["retained_from_prior_source_count"] = sum(
+        row.get("source_revision") != current["input"]["source_revision"] for row in rows)
+    base["researcher_result_count"] = sum(
+        row.get("result_source") == "researcher_result" and row["status"] != "not_evaluable"
+        for row in rows)
+    base["result_basis"] = ("includes_researcher_results"
+                            if base["researcher_result_count"] else "rubric_evidence")
+    base["flows"] = rows
+    base["pending_flows"] = [{"flow_id": row["flow_id"],
+                              "reason": row.get("unavailable_reason")}
+                             for row in rows if row["status"] == "not_evaluable"]
+    return base
+
+
 def refresh_report(path, run):
     """Refresh an existing derived report after the canonical write; retry is safe."""
     import subprocess
@@ -176,6 +241,8 @@ def refresh_report(path, run):
 
 
 def validate_followups(run, folder):
+    if run.get("audit_result_format") == "compact-v1":
+        return compact_summary(run)
     # Lazy imports avoid a scorer/projection import cycle.
     from score_flow_accuracy import calculate, validate_evidence
     from runtime_contract import configured_rubric, method

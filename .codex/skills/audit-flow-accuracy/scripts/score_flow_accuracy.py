@@ -55,8 +55,9 @@ def validate_defects(run, stage=None, source_revision=None, ordered_flow_ids=Non
         require(isinstance(revision, str) and
                 re.fullmatch(r"sha256:[0-9a-f]{64}", revision), f"{label} has invalid source_revision")
         require(defect.get("category") in DEFECT_CATEGORIES, f"{label} has invalid category")
-        require(nonempty(defect.get("trigger")) and nonempty(defect.get("description")),
-                f"{label} needs trigger and description")
+        if run.get("audit_result_format") != "compact-v1" or defect.get("stage") != "initial":
+            require(nonempty(defect.get("trigger")) and nonempty(defect.get("description")),
+                    f"{label} needs trigger and description")
         require(defect.get("status") in DEFECT_STATUSES, f"{label} has invalid status")
         if defect["stage"] == "initial":
             require(defect["status"] == "open", "initial defects are immutable first-pass findings")
@@ -83,11 +84,12 @@ def validate_defects(run, stage=None, source_revision=None, ordered_flow_ids=Non
             require(isinstance(followup_id, str) and
                     re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]*", followup_id),
                     f"{label} has invalid researcher follow-up ID")
-        evidence = defect.get("evidence")
-        require(isinstance(evidence, list) and evidence, f"{label} needs evidence")
-        for ref in evidence:
-            validate_evidence(ref)
-            require(ref.get("source_revision") == revision, f"{label} evidence source revision mismatch")
+        if run.get("audit_result_format") != "compact-v1" or defect.get("stage") != "initial":
+            evidence = defect.get("evidence")
+            require(isinstance(evidence, list) and evidence, f"{label} needs evidence")
+            for ref in evidence:
+                validate_evidence(ref)
+                require(ref.get("source_revision") == revision, f"{label} evidence source revision mismatch")
         if (stage is None or defect["stage"] == stage) and (
                 source_revision is None or revision == source_revision):
             selected.append(defect)
@@ -417,6 +419,31 @@ def validate_run_result(run, folder, result):
         require(read_json(json_path) == result, "assessment artifact is immutable")
     if md_path.exists():
         require(md_path.read_text(encoding="utf-8") == markdown(result), "assessment report is immutable")
+    if run.get("audit_result_format") == "compact-v1":
+        block = run.get("flow_accuracy") or {}
+        history = block.get("assessments") or []
+        require(result["stage"] == "final" and history and history[0]["stage"] == "initial",
+                "compact Audit accepts only a subsequent final Repair assessment")
+        require(result["input"]["baseline"] == block["repair_blueprint"]["baseline"],
+                "Repair Flow baseline differs from compact Audit")
+        previous = next((row for row in history
+                         if row["assessment_id"] == result["assessment_id"]), None)
+        if previous is not None:
+            require(previous == result, "Repair assessment ID is immutable")
+            return
+        prior_end = max(epoch(row["input"]["captured_at"])
+                        if "input" in row else epoch(row["captured_at"])
+                        for row in history)
+        require(epoch(result["input"]["captured_at"]) > prior_end,
+                "Repair assessment must follow the prior Audit capture")
+        old_ids = {item["observation_id"] for row in history if "input" in row
+                   for item in row["input"].get("observations", [])}
+        old_ids.update(identity for row in history for identity in row.get("observation_ids", []))
+        require(all(item["observation_id"] not in old_ids
+                    and epoch(item["started_at"]) > prior_end
+                    for item in result["input"]["observations"]),
+                "Repair assessment needs fresh observations")
+        return
     block = run.get("flow_accuracy")
     history = []
     if block is not None:
@@ -464,7 +491,7 @@ def integrate_result(run, folder, result):
         require(result["stage"] != "initial" or not history, "initial assessment must be first")
         require(result["stage"] != "final" or (history and history[0].get("stage") == "initial"),
                 "final assessment requires an immutable initial assessment")
-        if history:
+        if history and updated.get("audit_result_format") != "compact-v1":
             require(history[0]["input"]["baseline"] == result["input"]["baseline"], "flow baseline changed")
         history.append(result)
         block["current_assessment_id"] = result["assessment_id"]

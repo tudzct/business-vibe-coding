@@ -126,7 +126,12 @@ def configured_flow_ids(run_data, run_dir, explicit=None):
     raise ValueError("Could not resolve the active UC flow inventory from baseline or initial assessment")
 
 
-def initial_assessment(run_dir):
+def initial_assessment(run_data, run_dir):
+    if run_data.get("audit_result_format") == "compact-v1":
+        blueprint = run_data.get("flow_accuracy", {}).get("repair_blueprint")
+        require(isinstance(blueprint, dict) and isinstance(blueprint.get("flows"), list),
+                "compact Audit requires its frozen Repair Flow blueprint")
+        return blueprint
     candidates = [p for p in sorted((run_dir / "flow-accuracy").glob("assessment-*-initial.json"))
                   if not p.name.endswith(".input.json") and not p.name.endswith("-input.json")]
     if not candidates:
@@ -198,7 +203,7 @@ def prepare_verification(run_path, run_data, run_dir, evidence_root, assessment_
     }
     require(defect_id in initial_defects, "--defect-id must identify one immutable initial defect")
 
-    assessment = initial_assessment(run_dir)
+    assessment = initial_assessment(run_data, run_dir)
     flows = assessment["flows"]
     require([item.get("flow_id") for item in flows] == flow_ids,
             "initial assessment flow inventory/order differs from the active flow baseline")
@@ -400,7 +405,7 @@ def main():
     updated_run = candidate_run
     if updated_run.get("repair_status") in {"completed", "unresolved", "blocked"}:
         metrics_script = ROOT / ".codex/skills/audit-generation-metrics/scripts/calculate_metrics.py"
-        summary_out = run_cmd([sys.executable, str(metrics_script), str(run_path)])
+        summary_out = run_cmd([sys.executable, "-B", str(metrics_script), str(run_path)])
         print("6. Final pre/post-Repair summary:", summary_out)
     print("\n=== REPAIR DEFECT ATTEMPT RECORDED ===")
 

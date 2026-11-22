@@ -72,11 +72,14 @@ def main():
         f"- Canonical input: `{args.input}`",
         f"- Input SHA-256: `{hashlib.sha256(raw).hexdigest()}`", "",
         "## Final Business Rule assessment", "",
-        "| BR ID | Status | Evidence |", "|---|---|---|"
+        "| BR ID | Status | Defect IDs |" if data.get("audit_result_format") == "compact-v1"
+        else "| BR ID | Status | Evidence |", "|---|---|---|"
     ]
     for row in rows:
-        evidence = "; ".join(row.get("evidence", [])).replace("|", "\\|")
-        lines.append(f"| {row.get('br_id', '')} | {row.get('status', '')} | {evidence} |")
+        detail = (", ".join(row.get("caused_by_defect_ids", []))
+                  if data.get("audit_result_format") == "compact-v1"
+                  else "; ".join(row.get("evidence", []))).replace("|", "\\|")
+        lines.append(f"| {row.get('br_id', '')} | {row.get('status', '')} | {detail} |")
     lines.extend(["", (f"BR counts: {final.get('correct', 0)} correct, {final.get('incorrect', 0)} incorrect, "
                         f"{final.get('not_evaluable', 0)} not evaluable, "
                         f"{final.get('total', 0)} total"), ""])
@@ -117,15 +120,19 @@ def main():
                           f"Known incorrect flows: {current['counts']['incorrect']}",
                           "Supplemental records: " + (", ".join(current['followup_ids']) or "none"), ""])
             for pending in current["pending_flows"]:
-                lines.append(f"Pending {pending['flow_id']}: " + "; ".join(
-                    f"{target['target_id']}: {target['reason']}" for target in pending["missing_targets"]))
+                if "missing_targets" in pending:
+                    detail = "; ".join(f"{target['target_id']}: {target['reason']}"
+                                       for target in pending["missing_targets"])
+                else:
+                    detail = pending.get("reason", "Pending researcher resolution")
+                lines.append(f"Pending {pending['flow_id']}: {detail}")
             if current["pending_flows"]:
                 lines.extend(["", "Researcher chooses: supply per-flow results for the LLM to record, or ask the LLM to continue measurement.",
                               "Flow evaluation never changes application source. Existing metrics remain saved.", ""])
     defects = data.get("defects", [])
     if defects:
         categories = {name: sum(row.get("category") == name for row in defects)
-                      for name in ("business_rule", "flow", "technical")}
+                       for name in ("business_rule", "flow", "technical", "ui")}
         lines.extend(["## Defects", "",
                       f"Total: {len(defects)}; open: {sum(row.get('status') == 'open' for row in defects)}; "
                       f"execution blocking: {sum(row.get('status') == 'open' and row.get('blocks_execution') is True for row in defects)}.",

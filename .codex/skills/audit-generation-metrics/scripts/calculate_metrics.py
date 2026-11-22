@@ -26,6 +26,14 @@ def validate_snapshot(snapshot, ordered, field):
     rows = snapshot.get("requirements")
     if not isinstance(rows, list):
         raise ValueError(f"{field}.requirements must be an array")
+    if rows and "evidence" not in rows[0]:
+        ids = [row.get("br_id") for row in rows]
+        if ids != ordered or any(row.get("status") not in STATUSES for row in rows):
+            raise ValueError(f"{field} compact BR inventory/status mismatch")
+        counts = {status: sum(row["status"] == status for row in rows) for status in STATUSES}
+        if snapshot.get("total") != len(rows) or any(snapshot.get(k) != v for k, v in counts.items()):
+            raise ValueError(f"{field} compact BR counts mismatch")
+        return
     ids = []
     counts = {status: 0 for status in STATUSES}
     for index, row in enumerate(rows):
@@ -128,6 +136,13 @@ def initial_br_parent(data):
 def accepted_br_summary(data):
     """Project immutable first-pass BR evidence plus append-only audit follow-ups."""
     business = data.get("business_rules") or {}
+    if data.get("audit_result_format") == "compact-v1":
+        final = business.get("final") or {}
+        return {"source_revision": business.get("source_revision"),
+                "counts": {key: final.get(key) for key in ("total", "correct", "incorrect", "not_evaluable")},
+                "requirements": final.get("requirements", []),
+                "pending_br_ids": [row["br_id"] for row in final.get("requirements", [])
+                                   if row["status"] == "not_evaluable"]}
     ordered = business.get("ordered_br_ids")
     if not isinstance(ordered, list) or not ordered or len(ordered) != len(set(ordered)):
         raise ValueError("ordered_br_ids must be a non-empty unique array")
@@ -305,6 +320,10 @@ def apply_br_followup(data, record):
 
 
 def br_summary_snapshot(summary):
+    if summary["requirements"] and "evidence" not in summary["requirements"][0]:
+        counts = summary["counts"]
+        return {"requirements": summary["requirements"],
+                **{key: counts[key] for key in ("total", "correct", "incorrect", "not_evaluable")}}
     rows = []
     for row in summary["requirements"]:
         projected = {"br_id": row["br_id"], "status": row["status"],
@@ -321,6 +340,9 @@ def br_summary_snapshot(summary):
 
 
 def validate_flow(data, folder):
+    if data.get("audit_result_format") == "compact-v1":
+        from compact_audit_contract import validate as validate_compact_audit
+        return validate_compact_audit(data, folder)
     block = data.get("flow_accuracy")
     if not isinstance(block, dict):
         raise ValueError("Audit requires a persisted flow assessment")
@@ -393,6 +415,15 @@ def validate_unchanged_initial(data, current):
 def terminal_assessment_stage(data):
     """Choose existing terminal evidence, never demand a separate audit turn."""
     block = data.get("flow_accuracy") or {}
+    if data.get("audit_result_format") == "compact-v1":
+        current = next((a for a in block.get("assessments", [])
+                        if a.get("assessment_id") == block.get("current_assessment_id")), None)
+        if current is None:
+            raise ValueError("terminal Flow assessment missing")
+        if current.get("stage") != "final":
+            if data.get("repairs") or not data.get("repair_skip_reason"):
+                raise ValueError("repaired source requires its integrated final assessment")
+        return current["stage"]
     matches = [a for a in block.get("assessments", [])
                if a.get("assessment_id") == block.get("current_assessment_id")]
     if len(matches) != 1:
@@ -403,6 +434,69 @@ def terminal_assessment_stage(data):
     return current["stage"]
 
 
+def calculate_compact(path, data, folder):
+    """Aggregate accepted scores and Repair counts without replaying Audit traces."""
+    summary = validate_flow(data, folder)
+    business = data["business_rules"]
+    initial = business["initial"]
+    final = business["final"]
+    defects = [row for row in data["defects"] if row["stage"] == "initial"]
+    initial_ids = {row["defect_id"] for row in defects}
+    repairs = data.get("repairs", [])
+    if not isinstance(repairs, list):
+        raise ValueError("repairs must be an array")
+    attempts = {}
+    latest = {}
+    for index, repair in enumerate(repairs):
+        entries = repair.get("defect_attempts") if isinstance(repair, dict) else None
+        if not isinstance(entries, list) or len(entries) != 1:
+            raise ValueError(f"repairs[{index}] must contain one defect attempt")
+        attempt = entries[0]
+        identity = attempt.get("defect_id")
+        if identity not in initial_ids:
+            raise ValueError("Repair attempt references an unknown initial defect")
+        count = attempts.get(identity, 0) + 1
+        if attempt.get("attempt_index") != count:
+            raise ValueError("Repair attempt indexes must be consecutive")
+        attempts[identity] = count
+        if attempt.get("status") in {"resolved", "unresolved"}:
+            latest[identity] = attempt["status"]
+    unresolved = [row for row in defects if latest.get(row["defect_id"]) != "resolved"]
+    categories = ("business_rule", "flow", "technical", "ui")
+    def by_category(rows):
+        return {category: sum(row["category"] == category for row in rows)
+                for category in categories}
+    initial_categories = by_category(defects)
+    remaining_categories = by_category(unresolved)
+    data["all_sub_prompt_count"] = len(defects) if data.get("repair_prompt_directory") else 0
+    atomic_write(path, data)
+    first = data["flow_accuracy"]["assessments"][0]
+    output = {
+        "run_id": data.get("run_id"),
+        "before_repair": {
+            "business_rules": initial,
+            "flow_accuracy": {key: first.get(key) for key in
+                              ("status", "counts", "flow_accuracy_percent", "flow_error_percent")},
+            "defects": {"total": len(defects), "by_category": initial_categories,
+                        "execution_blocking": sum(row["blocks_execution"] for row in defects)},
+        },
+        "after_repair": {
+            "business_rules": final,
+            "flow_accuracy": summary,
+            "defects": {"total": len(unresolved), "by_category": remaining_categories,
+                        "resolved_by_category": {key: initial_categories[key] - remaining_categories[key]
+                                                 for key in categories},
+                        "execution_blocking": sum(row["blocks_execution"] for row in unresolved)},
+        },
+        "repair": {"status": data.get("repair_status"), "total_attempts": len(repairs),
+                   "by_defect": [{"defect_id": row["defect_id"],
+                                  "attempts": attempts.get(row["defect_id"], 0),
+                                  "status": latest.get(row["defect_id"], "not_attempted")}
+                                 for row in defects]},
+    }
+    print(json.dumps(output, ensure_ascii=False, indent=2))
+
+
 def calculate(path_string):
     path = Path(path_string)
     data = json.loads(path.read_text(encoding="utf-8"))
@@ -411,6 +505,10 @@ def calculate(path_string):
         validate_metrics(data["metrics"])
         if any(data["metrics"].get(k) != data.get(k) for k in ("uc_id", "run_id")):
             raise ValueError("metrics UC/run identity mismatch")
+    if data.get("audit_result_format") == "compact-v1":
+        _, _, folder = context(path)
+        calculate_compact(path, data, folder)
+        return
     business = data.get("business_rules")
     if not isinstance(business, dict):
         raise ValueError("business_rules must be an object")

@@ -73,6 +73,37 @@ def closed_phase(run, phase):
 
 
 def audit_evidence(run, folder, stage):
+    if run.get("audit_result_format") == "compact-v1":
+        business = run.get("business_rules") or {}
+        snapshot = business.get(stage)
+        validated = copy.deepcopy(snapshot)
+        validate_snapshot(validated, business["ordered_br_ids"], f"business_rules.{stage}")
+        require(validated == snapshot, "persist compact BR counts before Audit Gate")
+        summary = validate_flow(run, folder)
+        block = run["flow_accuracy"]
+        current = next((row for row in block["assessments"]
+                        if row["assessment_id"] == block["current_assessment_id"]), None)
+        require(current is not None and current["stage"] == stage,
+                f"gate requires {stage} Flow assessment")
+        source = current.get("source_revision") or current.get("input", {}).get("source_revision")
+        require(re.fullmatch(r"sha256:[0-9a-f]{64}", source), "audited source hash required")
+        if stage == "final":
+            require(source == business["source_revision"], "final BR/Flow source hash mismatch")
+        defects = verification_defects(run, stage, source,
+                                       [row["flow_id"] for row in current["flows"]])
+        evidence = {"business_rules_sha256": snapshot_hash(snapshot),
+                    "flow_assessment_id": current["assessment_id"],
+                    "flow_assessment_sha256": snapshot_hash(current),
+                    "source_revision": source,
+                    "defect_ids": [row["defect_id"] for row in defects],
+                    "defects_sha256": snapshot_hash(defects),
+                    "flow_progress_sha256": snapshot_hash(summary),
+                    "flow_followup_ids": summary.get("followup_ids", []),
+                    "flow_result_basis": summary.get("result_basis")}
+        if summary.get("selection_policy"):
+            evidence["flow_selection_policy"] = summary["selection_policy"]
+            evidence["flow_assessment_ids"] = [row["assessment_id"] for row in block["assessments"]]
+        return evidence
     business = run.get("business_rules") or {}
     ordered = business.get("ordered_br_ids")
     require(isinstance(ordered, list) and ordered and len(ordered) == len(set(ordered)), "BR baseline IDs required")
@@ -269,11 +300,18 @@ def prepare_transition(run, folder, gate, outcome, turn_id, reason=None, automat
             require([a["assessment_id"] for a in assessments] == assessment_ids, "gate-pinned flow assessments changed")
             frozen = {"flow_accuracy": {"assessments": assessments, "followups": retained,
                                        "current_assessment_id": parent["assessment_id"]}}
-            projection = accepted_summary(frozen)
-            require(projection["selection_policy"] == pinned["flow_selection_policy"], "gate flow policy changed")
-            require(snapshot_hash(projection) == pinned["flow_progress_sha256"]
-                    or json_normalized_hash(projection) == pinned["flow_progress_sha256"],
-                    "gate-pinned flow progress changed")
+            if run.get("audit_result_format") == "compact-v1":
+                expected_progress = (run.get("audit_initial_flow_progress_sha256")
+                                     if parent["stage"] == "initial"
+                                     else snapshot_hash(block["current_summary"]))
+                require(expected_progress == pinned["flow_progress_sha256"],
+                        "gate-pinned Flow progress changed")
+            else:
+                projection = accepted_summary(frozen)
+                require(projection["selection_policy"] == pinned["flow_selection_policy"], "gate flow policy changed")
+                require(snapshot_hash(projection) == pinned["flow_progress_sha256"]
+                        or json_normalized_hash(projection) == pinned["flow_progress_sha256"],
+                        "gate-pinned flow progress changed")
     if gate == "repair_decision":
         initial_evidence = audit_evidence(run, folder, "initial")
         br_summary = accepted_br_summary(run)

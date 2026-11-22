@@ -141,23 +141,25 @@ def assemble_assessment(run_data, run_dir, assessment_id=None, stage="final", so
     if not assessment_id:
         assessment_id = f"asm-{uc_lower}-{stage}"
 
-    # Locate initial assessment input
-    initial_path = run_dir / "flow-accuracy" / f"assessment-{uc_lower}-initial.json"
-    if not initial_path.is_file():
-        initial_candidates = [p for p in (run_dir / "flow-accuracy").glob("assessment-*-initial.json")
-                              if not p.name.endswith(".input.json") and not p.name.endswith("-input.json")]
-        if not initial_candidates:
-            initial_candidates = [p for p in (run_dir / "flow-accuracy").glob("*initial*.json")
+    if run_data.get("audit_result_format") == "compact-v1":
+        data = copy.deepcopy(run_data["flow_accuracy"]["repair_blueprint"])
+        require(isinstance(data.get("flows"), list) and data["flows"],
+                "compact Audit requires its frozen Repair Flow blueprint")
+    else:
+        initial_path = run_dir / "flow-accuracy" / f"assessment-{uc_lower}-initial.json"
+        if not initial_path.is_file():
+            initial_candidates = [p for p in (run_dir / "flow-accuracy").glob("assessment-*-initial.json")
                                   if not p.name.endswith(".input.json") and not p.name.endswith("-input.json")]
-        require(len(initial_candidates) == 1,
-                f"Expected one initial assessment in {run_dir / 'flow-accuracy'}, found {len(initial_candidates)}")
-        initial_path = initial_candidates[0]
-
-    with open(initial_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    if "input" in data and isinstance(data["input"], dict) and "flows" in data["input"]:
-        data = copy.deepcopy(data["input"])
+            if not initial_candidates:
+                initial_candidates = [p for p in (run_dir / "flow-accuracy").glob("*initial*.json")
+                                      if not p.name.endswith(".input.json") and not p.name.endswith("-input.json")]
+            require(len(initial_candidates) == 1,
+                    f"Expected one initial assessment in {run_dir / 'flow-accuracy'}, found {len(initial_candidates)}")
+            initial_path = initial_candidates[0]
+        with open(initial_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if "input" in data and isinstance(data["input"], dict) and "flows" in data["input"]:
+            data = copy.deepcopy(data["input"])
 
     evidence_root = run_dir / "flow-accuracy" / "evidence" / assessment_id
     require(evidence_root.is_dir(), f"Evidence directory not found: {evidence_root}")
@@ -353,6 +355,14 @@ def assemble_assessment(run_data, run_dir, assessment_id=None, stage="final", so
             )
             step["evidence"] = evidence
             step["source_findings"] = verdict.get("source_findings", [])
+            if verdict["status"] == "incorrect" and verdict.get("caused_by_defect_ids"):
+                step["caused_by_defect_ids"] = list(verdict["caused_by_defect_ids"])
+            else:
+                step.pop("caused_by_defect_ids", None)
+            if verdict["status"] == "not_evaluable" and verdict.get("unavailable_reason"):
+                step["unavailable_reason"] = verdict["unavailable_reason"]
+            else:
+                step.pop("unavailable_reason", None)
 
         terminal = result.get("terminal_outcome")
         require(isinstance(terminal, dict), f"terminal outcome verification is required for {flow_id}")
@@ -375,6 +385,14 @@ def assemble_assessment(run_data, run_dir, assessment_id=None, stage="final", so
             ),
             "source_findings": terminal.get("source_findings", []),
         })
+        if terminal["status"] == "incorrect" and terminal.get("caused_by_defect_ids"):
+            flow["terminal_outcome"]["caused_by_defect_ids"] = list(terminal["caused_by_defect_ids"])
+        else:
+            flow["terminal_outcome"].pop("caused_by_defect_ids", None)
+        if terminal["status"] == "not_evaluable" and terminal.get("unavailable_reason"):
+            flow["terminal_outcome"]["unavailable_reason"] = terminal["unavailable_reason"]
+        else:
+            flow["terminal_outcome"].pop("unavailable_reason", None)
 
     data["observations"] = observations
 
@@ -509,17 +527,30 @@ def build_canonical_repair_update(run_data, source_rev, changed_files=None, asse
                 or (initial_defects[0].get("source_revision") if initial_defects else None)
                 or run_data.get("source_revision")
             )
-            initial_dirs = [
-                item for item in (run_dir / "flow-accuracy" / "evidence").iterdir()
-                if item.is_dir() and "initial" in item.name.lower()
-            ]
-            require(len(initial_dirs) == 1,
-                    f"Expected one initial evidence directory, found {len(initial_dirs)}")
-            ev_before = [
-                {"path": item.relative_to(ROOT).as_posix(), "sha256": digest(item)}
-                for item in sorted(initial_dirs[0].rglob("*"))
-                if item.is_file() and not item.name.startswith(".")
-            ]
+            if run_data.get("audit_result_format") == "compact-v1":
+                handoff_path = run_dir / "defects-handoff.json"
+                require(handoff_path.is_file(),
+                        f"Compact Audit requires fixed Defects Handoff: {handoff_path}")
+                handoff_sha = digest(handoff_path)
+                if run_data.get("audit_handoff_sha256"):
+                    require(handoff_sha == run_data["audit_handoff_sha256"],
+                            "Audit Defects Handoff checksum changed before Repair")
+                ev_before = [{
+                    "path": handoff_path.relative_to(ROOT).as_posix(),
+                    "sha256": handoff_sha,
+                }]
+            else:
+                initial_dirs = [
+                    item for item in (run_dir / "flow-accuracy" / "evidence").iterdir()
+                    if item.is_dir() and "initial" in item.name.lower()
+                ]
+                require(len(initial_dirs) == 1,
+                        f"Expected one initial evidence directory, found {len(initial_dirs)}")
+                ev_before = [
+                    {"path": item.relative_to(ROOT).as_posix(), "sha256": digest(item)}
+                    for item in sorted(initial_dirs[0].rglob("*"))
+                    if item.is_file() and not item.name.startswith(".")
+                ]
         require(source_before, "Could not determine source_revision_before for Repair attempt")
         require(ev_before, "Could not determine evidence_before for Repair attempt")
         model_id = (
@@ -573,6 +604,10 @@ def build_canonical_repair_update(run_data, source_rev, changed_files=None, asse
             "evidence": evidence_paths,
             "runtime_observation_ids": br_verdict.get("runtime_observation_ids", []),
         }
+        if br_verdict["status"] == "incorrect" and br_verdict.get("caused_by_defect_ids"):
+            row["caused_by_defect_ids"] = list(br_verdict["caused_by_defect_ids"])
+        elif br_verdict["status"] == "not_evaluable" and br_verdict.get("unavailable_reason"):
+            row["unavailable_reason"] = br_verdict["unavailable_reason"]
         if br_verdict.get("blocking_defect_ids"):
             row["blocking_defect_ids"] = br_verdict["blocking_defect_ids"]
         final_requirements.append(row)
