@@ -26,7 +26,7 @@
   },
   "run_status": "draft",
   "gates": {
-    "current": "first_pass_audit",
+    "current": "repair_decision",
     "history": [
       {
         "gate": "prompt",
@@ -53,6 +53,30 @@
         },
         "command_action": "source-close",
         "recorded_at": "2026-11-22T13:51:27.964469Z"
+      },
+      {
+        "gate": "first_pass_audit",
+        "outcome": "confirmed",
+        "turn_id": "audit-uc02-01",
+        "evidence": {
+          "business_rules_sha256": "sha256:e572cd09624605a54d146de12e6a8096266ad8aeb6d90427b852e4860ace3d91",
+          "flow_assessment_id": "initial-audit-01",
+          "flow_assessment_sha256": "sha256:d8cb18ea1c5d6f982699f8b349ca0fc7dcf2c047ffaf951e93a2760a6fec5be5",
+          "source_revision": "sha256:5610c8c9c08a3f2bf34e3e485790b84c67b69a0e151b30895045d9b551713298",
+          "defect_ids": [
+            "DEF-UC02-TECH-01"
+          ],
+          "defects_sha256": "sha256:d0736c84f0955e7a02eb7d1561c3032b7754da26459c139c12574845fd603758",
+          "flow_progress_sha256": "sha256:9625f1ccf0340413c82e9bef2fe61afef75a283de5707c449fb8ea182186e523",
+          "flow_followup_ids": [],
+          "flow_result_basis": "rubric_evidence",
+          "flow_selection_policy": "accepted-audit-results-v1",
+          "flow_assessment_ids": [
+            "initial-audit-01"
+          ]
+        },
+        "command_action": "audit",
+        "recorded_at": "2026-11-22T14:29:50.214463Z"
       }
     ]
   },
@@ -442,7 +466,7 @@
   },
   "business_rules": {
     "baseline": "docs/02-construction/implementation/UC-02/business-rule-baseline.json",
-    "source_revision": null,
+    "source_revision": "sha256:5610c8c9c08a3f2bf34e3e485790b84c67b69a0e151b30895045d9b551713298",
     "ordered_br_ids": [
       "BR-JS-01",
       "BR-JS-02",
@@ -464,10 +488,327 @@
       "BR-JS-18",
       "BR-JS-19"
     ],
-    "initial": null,
-    "final": null
+    "initial": {
+      "requirements": [
+        {
+          "br_id": "BR-JS-01",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-02",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-03",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-04",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-05",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-06",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-07",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-08",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-09",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-10",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-11",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-12",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-13",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-14",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-15",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-16",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-17",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-18",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-19",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        }
+      ],
+      "total": 19,
+      "correct": 0,
+      "incorrect": 19,
+      "not_evaluable": 0
+    },
+    "final": {
+      "requirements": [
+        {
+          "br_id": "BR-JS-01",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-02",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-03",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-04",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-05",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-06",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-07",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-08",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-09",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-10",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-11",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-12",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-13",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-14",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-15",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-16",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-17",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-18",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-19",
+          "status": "incorrect",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        }
+      ],
+      "total": 19,
+      "correct": 0,
+      "incorrect": 19,
+      "not_evaluable": 0
+    },
+    "followups": []
   },
-  "defects": [],
+  "defects": [
+    {
+      "defect_id": "DEF-UC02-TECH-01",
+      "fingerprint": "sha256:f1fa0cfbbbf407c63698d5aab859c85b9cb2a98a5674fe4c5465b6ac1979970f",
+      "category": "technical",
+      "affected_br_ids": [
+        "BR-JS-01",
+        "BR-JS-02",
+        "BR-JS-03",
+        "BR-JS-04",
+        "BR-JS-05",
+        "BR-JS-06",
+        "BR-JS-07",
+        "BR-JS-08",
+        "BR-JS-09",
+        "BR-JS-10",
+        "BR-JS-11",
+        "BR-JS-12",
+        "BR-JS-13",
+        "BR-JS-14",
+        "BR-JS-15",
+        "BR-JS-16",
+        "BR-JS-17",
+        "BR-JS-18",
+        "BR-JS-19"
+      ],
+      "affected_flow_ids": [
+        "BF-1",
+        "AF-1",
+        "EF-1"
+      ],
+      "blocks_execution": true,
+      "source_revision": "sha256:5610c8c9c08a3f2bf34e3e485790b84c67b69a0e151b30895045d9b551713298",
+      "stage": "initial",
+      "status": "open"
+    }
+  ],
   "repairs": [],
   "repair_round_limit": 10,
   "repair_rounds_completed": 0,
@@ -481,10 +822,9 @@
   "ui_accuracy_evidence": null,
   "ui_accuracy_recorded_by": null,
   "ui_accuracy_recorded_at": null,
-  "flow_accuracy_percent": null,
-  "flow_error_percent": null,
-  "flow_accuracy_status": "not_evaluated",
-  "flow_accuracy": null,
+  "flow_accuracy_percent": 0.0,
+  "flow_error_percent": 100.0,
+  "flow_accuracy_status": "repair_required",
   "complexity": {
     "actors": 0,
     "main_flow_steps": 0,
@@ -493,5 +833,335 @@
     "integrations": 0,
     "business_rules": 0,
     "ui_states": 0
-  }
+  },
+  "flow_accuracy": {
+    "schema_version": 2,
+    "rubric_id": "completion-critical-flow-runtime-v2",
+    "selection_policy": "accepted-audit-results-v1",
+    "current_assessment_id": "initial-audit-01",
+    "repair_blueprint": {
+      "schema_version": 2,
+      "rubric_id": "completion-critical-flow-runtime-v2",
+      "baseline": {
+        "path": "docs/02-construction/implementation/UC-02/flow-baseline.json",
+        "sha256": "sha256:d348336ea5c96e6cb3737cfe7f0b4105bbb01bc335f201f864349ef3e7a85524"
+      },
+      "flows": [
+        {
+          "flow_id": "BF-1",
+          "source_anchor": "docs/01-inception/use-cases/uc-02-join-a-session.md#basic-flow",
+          "steps": [
+            {
+              "step_id": "BF-1.1",
+              "text": "The participant enters a display name and chooses Join.",
+              "completion_critical": true,
+              "criticality_reason": "Entry action required to initiate join."
+            },
+            {
+              "step_id": "BF-1.2",
+              "text": "The client submits the join request.",
+              "completion_critical": true,
+              "criticality_reason": "Client must submit join request to backend."
+            },
+            {
+              "step_id": "BF-1.3",
+              "text": "The system returns the joined participant and session summary.",
+              "completion_critical": true,
+              "criticality_reason": "Server must return joined participant and session summary."
+            },
+            {
+              "step_id": "BF-1.4",
+              "text": "The client renders the active session and participant tile.",
+              "completion_critical": true,
+              "criticality_reason": "Client must render active session and participant tile."
+            }
+          ],
+          "terminal_outcome": {
+            "text": "The participant is joined and the client renders the active session and participant tile."
+          }
+        },
+        {
+          "flow_id": "AF-1",
+          "source_anchor": "docs/01-inception/use-cases/uc-02-join-a-session.md#alternative-flow",
+          "steps": [
+            {
+              "step_id": "AF-1.1a",
+              "text": "The participant changes a preview control before choosing Join.",
+              "completion_critical": true,
+              "criticality_reason": "Preview control change is the alternative branch trigger."
+            },
+            {
+              "step_id": "AF-1.1b",
+              "text": "The client submits the updated selections with the join request.",
+              "completion_critical": true,
+              "criticality_reason": "Updated selections must be submitted with join request."
+            }
+          ],
+          "terminal_outcome": {
+            "text": "The join request reflects the updated preview selections."
+          }
+        },
+        {
+          "flow_id": "EF-1",
+          "source_anchor": "docs/01-inception/use-cases/uc-02-join-a-session.md#exception-flow",
+          "steps": [
+            {
+              "step_id": "EF-1.3a",
+              "text": "The system returns that the session cannot be joined.",
+              "completion_critical": true,
+              "criticality_reason": "System must return session-cannot-be-joined error."
+            },
+            {
+              "step_id": "EF-1.3b",
+              "text": "The client displays the returned recovery state while preserving the preview context.",
+              "completion_critical": true,
+              "criticality_reason": "Client must display recovery state and preserve preview context."
+            }
+          ],
+          "terminal_outcome": {
+            "text": "The client displays the returned recovery state while preserving the preview context."
+          }
+        }
+      ]
+    },
+    "assessments": [
+      {
+        "assessment_id": "initial-audit-01",
+        "stage": "initial",
+        "status": "repair_required",
+        "counts": {
+          "main": 1,
+          "alternative": 1,
+          "exception": 1,
+          "total": 3,
+          "correct": 0,
+          "incorrect": 3,
+          "not_evaluable": 0
+        },
+        "flow_accuracy_percent": 0.0,
+        "flow_error_percent": 100.0,
+        "source_revision": "sha256:5610c8c9c08a3f2bf34e3e485790b84c67b69a0e151b30895045d9b551713298",
+        "captured_at": "2026-11-22T21:14:00+07:00",
+        "observation_ids": [],
+        "flows": [
+          {
+            "flow_id": "BF-1",
+            "status": "incorrect",
+            "type": "main",
+            "caused_by_defect_ids": [
+              "DEF-UC02-TECH-01"
+            ]
+          },
+          {
+            "flow_id": "AF-1",
+            "status": "incorrect",
+            "type": "alternative",
+            "caused_by_defect_ids": [
+              "DEF-UC02-TECH-01"
+            ]
+          },
+          {
+            "flow_id": "EF-1",
+            "status": "incorrect",
+            "type": "exception",
+            "caused_by_defect_ids": [
+              "DEF-UC02-TECH-01"
+            ]
+          }
+        ]
+      }
+    ],
+    "current_summary": {
+      "schema_version": 2,
+      "assessment_id": "initial-audit-01",
+      "stage": "experiment",
+      "source_revision": null,
+      "rubric_id": "completion-critical-flow-runtime-v2",
+      "followup_ids": [],
+      "status": "repair_required",
+      "measurement_status": "complete",
+      "execution_blocked": true,
+      "execution_blocker_defect_ids": [
+        "DEF-UC02-TECH-01"
+      ],
+      "has_incorrect_flows": true,
+      "result_basis": "rubric_evidence",
+      "researcher_result_count": 0,
+      "counts": {
+        "main": 1,
+        "alternative": 1,
+        "exception": 1,
+        "total": 3,
+        "correct": 0,
+        "incorrect": 3,
+        "not_evaluable": 0,
+        "evaluated": 3
+      },
+      "flow_accuracy_percent": 0.0,
+      "flow_error_percent": 100.0,
+      "evaluated_accuracy_percent": 0.0,
+      "evaluated_error_percent": 100.0,
+      "evaluated_coverage_percent": 100.0,
+      "accuracy_lower_bound_percent": 0.0,
+      "accuracy_upper_bound_percent": 0.0,
+      "flows": [
+        {
+          "flow_id": "BF-1",
+          "status": "incorrect",
+          "type": "main",
+          "result_source": "assessment",
+          "record_id": "initial-audit-01",
+          "assessment_id": "initial-audit-01",
+          "stage": "initial",
+          "source_revision": "sha256:5610c8c9c08a3f2bf34e3e485790b84c67b69a0e151b30895045d9b551713298",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "flow_id": "AF-1",
+          "status": "incorrect",
+          "type": "alternative",
+          "result_source": "assessment",
+          "record_id": "initial-audit-01",
+          "assessment_id": "initial-audit-01",
+          "stage": "initial",
+          "source_revision": "sha256:5610c8c9c08a3f2bf34e3e485790b84c67b69a0e151b30895045d9b551713298",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        },
+        {
+          "flow_id": "EF-1",
+          "status": "incorrect",
+          "type": "exception",
+          "result_source": "assessment",
+          "record_id": "initial-audit-01",
+          "assessment_id": "initial-audit-01",
+          "stage": "initial",
+          "source_revision": "sha256:5610c8c9c08a3f2bf34e3e485790b84c67b69a0e151b30895045d9b551713298",
+          "caused_by_defect_ids": [
+            "DEF-UC02-TECH-01"
+          ]
+        }
+      ],
+      "pending_flows": [],
+      "selection_policy": "accepted-audit-results-v1",
+      "result_scope": "experiment_accepted_audit",
+      "current_source_revision": "sha256:5610c8c9c08a3f2bf34e3e485790b84c67b69a0e151b30895045d9b551713298",
+      "latest_assessment_status": "repair_required",
+      "latest_assessment_counts": {
+        "main": 1,
+        "alternative": 1,
+        "exception": 1,
+        "total": 3,
+        "correct": 0,
+        "incorrect": 3,
+        "not_evaluable": 0
+      },
+      "retained_from_prior_source_count": 0
+    },
+    "followups": []
+  },
+  "audit_result_format": "compact-v1",
+  "audit_handoff_defect_ids": [
+    "DEF-UC02-TECH-01"
+  ],
+  "audit_accepted_results": {
+    "business_rules": [
+      {
+        "br_id": "BR-JS-01",
+        "status": "incorrect"
+      },
+      {
+        "br_id": "BR-JS-02",
+        "status": "incorrect"
+      },
+      {
+        "br_id": "BR-JS-03",
+        "status": "incorrect"
+      },
+      {
+        "br_id": "BR-JS-04",
+        "status": "incorrect"
+      },
+      {
+        "br_id": "BR-JS-05",
+        "status": "incorrect"
+      },
+      {
+        "br_id": "BR-JS-06",
+        "status": "incorrect"
+      },
+      {
+        "br_id": "BR-JS-07",
+        "status": "incorrect"
+      },
+      {
+        "br_id": "BR-JS-08",
+        "status": "incorrect"
+      },
+      {
+        "br_id": "BR-JS-09",
+        "status": "incorrect"
+      },
+      {
+        "br_id": "BR-JS-10",
+        "status": "incorrect"
+      },
+      {
+        "br_id": "BR-JS-11",
+        "status": "incorrect"
+      },
+      {
+        "br_id": "BR-JS-12",
+        "status": "incorrect"
+      },
+      {
+        "br_id": "BR-JS-13",
+        "status": "incorrect"
+      },
+      {
+        "br_id": "BR-JS-14",
+        "status": "incorrect"
+      },
+      {
+        "br_id": "BR-JS-15",
+        "status": "incorrect"
+      },
+      {
+        "br_id": "BR-JS-16",
+        "status": "incorrect"
+      },
+      {
+        "br_id": "BR-JS-17",
+        "status": "incorrect"
+      },
+      {
+        "br_id": "BR-JS-18",
+        "status": "incorrect"
+      },
+      {
+        "br_id": "BR-JS-19",
+        "status": "incorrect"
+      }
+    ],
+    "flows": [
+      {
+        "flow_id": "BF-1",
+        "status": "incorrect"
+      },
+      {
+        "flow_id": "AF-1",
+        "status": "incorrect"
+      },
+      {
+        "flow_id": "EF-1",
+        "status": "incorrect"
+      }
+    ],
+    "execution_blocked": true
+  },
+  "audit_initial_flow_progress_sha256": "sha256:9625f1ccf0340413c82e9bef2fe61afef75a283de5707c449fb8ea182186e523",
+  "audit_handoff_sha256": "sha256:ba5e0f7c4039e0c3617d787704f20f395e171e306af8a1d4a8f8db6e28dc1a69"
 }
