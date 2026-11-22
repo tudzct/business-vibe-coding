@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { joinSession } from './api/session';
 
 type ParticipantRole = 'HOST' | 'BROADCASTER' | 'VIEWER' | 'STAGE_PARTICIPANT';
 type PermissionStatus = 'UNKNOWN' | 'GRANTED' | 'DENIED';
@@ -38,6 +39,8 @@ export default function App() {
   const [showDenied, setShowDenied] = useState(false);
   const [openMenu, setOpenMenu] = useState<'camera' | 'microphone' | null>(null);
   const [error, setError] = useState('');
+  const [joined, setJoined] = useState(false);
+  const [joinResult, setJoinResult] = useState('');
 
   const isReadyToJoin = useMemo(() => {
     const trimmed = displayName.trim();
@@ -100,6 +103,25 @@ export default function App() {
   };
 
   const nameInvalid = displayName.length > 0 && !isReadyToJoin;
+  const join = async () => {
+    const trimmed = displayName.trim();
+    if (!trimmed || trimmed.length > 50 || busy) return;
+    setBusy(true);
+    setError('');
+    try {
+      const sessionId = window.location.pathname.split('/').filter(Boolean).pop() ?? '00000000-0000-4000-8000-000000000000';
+      const result = await joinSession(sessionId, { displayName: trimmed, microphoneEnabled, cameraEnabled, microphoneDeviceId: null, cameraDeviceId: null, speakerDeviceId: null, virtualBackgroundId: null }, import.meta.env.VITE_SESSION_ACCESS_TOKEN ?? '');
+      setJoined(true);
+      setJoinResult(result.message);
+      setCameraEnabled(result.data.participant.cameraEnabled);
+      setMicrophoneEnabled(result.data.participant.microphoneEnabled);
+    } catch (caught) {
+      const message = caught instanceof Error ? caught.message : 'The session could not be joined.';
+      setError(message);
+    } finally {
+      setBusy(false);
+    }
+  };
   const previewState: PreviewState = {
     participantKey,
     cameraPermission,
@@ -156,8 +178,10 @@ export default function App() {
             <input id="display-name" value={displayName} maxLength={51} onChange={(event) => setDisplayName(event.target.value)} placeholder="Enter name" aria-invalid={nameInvalid} />
             {nameInvalid && <span className="validation-message">Enter 1–50 characters.</span>}
           </div>
-          <button type="button" className="go-live" disabled={!isReadyToJoin || busy} onClick={() => undefined}>➜ <span>Go Live</span></button>
+          <button type="button" className="go-live" disabled={!isReadyToJoin || busy || joined} onClick={() => void join()}>➜ <span>{busy ? 'Joining…' : joined ? 'Joined' : 'Join'}</span></button>
         </div>
+        {joinResult && <p role="status" className="join-success">{joinResult}</p>}
+        {error && !showDenied && <p role="alert" className="join-error">{error}</p>}
         <button type="button" className="permission-action" disabled={busy} onClick={() => void preparePreview()}>{busy ? 'Requesting access…' : 'Allow microphone and camera'}</button>
       </section>
 

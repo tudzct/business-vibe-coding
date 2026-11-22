@@ -41,6 +41,8 @@ button:disabled { cursor: not-allowed; opacity: .55; }
 .go-live { height: 48px; padding: 8px 16px; border: 0; border-radius: 8px; background: #004299; color: #84aaff; font-weight: 600; white-space: nowrap; }
 .go-live:not(:disabled) { background: #538dff; color: #fff; }
 .permission-action { border: 0; background: transparent; color: #84aaff; font-size: 14px; }
+.join-success { margin: -8px 0 0; color: #8dd7a8; font-size: 14px; }
+.join-error { margin: -8px 0 0; color: #ff9b9b; font-size: 14px; text-align: center; }
 .scrim { position: fixed; inset: 0; z-index: 10; display: grid; place-items: center; padding: 24px; background: #000b; }
 .dialog { width: min(380px, 100%); padding: 24px; border-radius: 16px; background: #191b23; border: 1px solid #272a31; box-shadow: 0 24px 60px #0009; }
 .dialog h2 { margin: 0; font-size: 22px; line-height: 28px; }

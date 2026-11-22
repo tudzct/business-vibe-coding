@@ -11,7 +11,7 @@ async function bootstrap(): Promise<void> {
 
   app.enableCors({ origin: allowedOrigins, credentials: true });
   app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, transform: true }),
+    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }),
   );
 
   await app.listen(Number(process.env.PORT ?? 3000));

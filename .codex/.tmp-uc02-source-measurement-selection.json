@@ -1,0 +1,41 @@
+{
+  "uc_id": "UC-02",
+  "run_id": "UC-02-GPT-5.6-LUNA",
+  "turns": [
+    {
+      "turn_id": "01a2037c-1003-7203-bbb3-fef71f4882ce",
+      "phase": "prompt_generation",
+      "reason": "Generated and persisted the UC-02 coding prompt Draft"
+    },
+    {
+      "turn_id": "01a20381-dba0-76a3-a1f0-086c79148797",
+      "phase": "configuration_and_approval",
+      "reason": "Source-generation request was blocked by a non-current gate before execution"
+    },
+    {
+      "turn_id": "01a20383-09b5-7b30-b9fc-e53bc7c906d6",
+      "phase": "source_generation",
+      "reason": "Implemented the UC-02 approved coding prompt under finalsource"
+    }
+  ],
+  "excluded_turns": [
+    {
+      "turn_id": "01a20380-7b20-7e40-8334-80ca96336e27",
+      "reason": "measurement/report turn"
+    },
+    {
+      "turn_id": "01a20382-e938-76c3-9f66-280a49fdc220",
+      "reason": "aborted source-generation retry before execution"
+    }
+  ],
+  "workflow_evidence": {
+    "start": {
+      "turn_id": "01a2037c-1003-7203-bbb3-fef71f4882ce",
+      "required_terms": ["UC-02"]
+    },
+    "terminal": {
+      "turn_id": "01a20383-09b5-7b30-b9fc-e53bc7c906d6",
+      "required_terms": ["UC-02", "source"]
+    }
+  }
+}
