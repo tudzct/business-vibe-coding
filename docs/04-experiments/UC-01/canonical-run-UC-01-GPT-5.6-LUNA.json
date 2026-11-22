@@ -1,12 +1,12 @@
 {
-  "run_id": "UC-01-GPT-5.6-TERRA",
+  "run_id": "UC-01-GPT-5.6-LUNA",
   "coding_prompt": null,
   "experiment_configuration": {
-    "configuration_id": "CFG-UC-01-GPT-5.6-TERRA",
+    "configuration_id": "CFG-UC-01-GPT-5.6-LUNA",
     "comparison_group_id": "CG-100MS-01",
     "researcher_id": "researcher-khanh",
-    "artifact": "docs/04-experiments/configurations/CFG-UC-01-GPT-5.6-TERRA.json",
-    "checksum": "sha256:c972b51c4d3ea1a70831ba336c54a3f2dbc0c627efcee38d653398e240c2fd46",
+    "artifact": "docs/04-experiments/configurations/CFG-UC-01-GPT-5.6-LUNA.json",
+    "checksum": "sha256:7117da1e4a3250cc0cad8bb7eecca3b30175345f419352d678d63798dcf91f92",
     "run_activation": null
   },
   "uc_id": "UC-01",
@@ -15,8 +15,8 @@
   "run_order": 1,
   "audit_protocol": "fixed",
   "generation_model": {
-    "requested_model_id": "gpt-5.6-terra",
-    "requested_reasoning_effort": "medium",
+    "requested_model_id": "gpt-5.6-luna",
+    "requested_reasoning_effort": "low",
     "effective_model_id": null,
     "effective_snapshot": null,
     "codex_client_version": null
