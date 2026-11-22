@@ -6,12 +6,12 @@
   "token_attribution_method": "semantic_primary_phase_per_turn",
   "uc_id": "UC-01",
   "run_id": "UC-01-GPT-5.6-TERRA",
-  "status": "open",
-  "measured_at": "2026-11-22T11:28:33.060923+00:00",
+  "status": "finalized",
+  "measured_at": "2026-11-22T12:48:10.861180+00:00",
   "session": {
     "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
     "file_name": "rollout-2026-11-22T18-12-49-01a202f5-6fb8-78a2-a937-634c9c6c26e7.jsonl",
-    "sha256": "sha256:ec3779979ef792d39b9354183675cb108fee09f4fbe8e2ab0b87500fba48b2d0"
+    "sha256": "sha256:55f9aecddb25185e593536e4197e793356e34c201521acbcb24b8091e97958f5"
   },
   "selection_evidence_sha256": "sha256:e0682e6ff995b7b7727f244dd8531322e80fa8d1453a327586cd333b0d98357b",
   "extractor_sha256": "sha256:06fd6799ba7cfb6a7f161988af6389a0592da5effcf4192639d6590eb46ae5c3",
@@ -57,12 +57,46 @@
       }
     },
     "sub_prompt_generation": {
-      "status": "not_started",
-      "values": null
+      "status": "skipped",
+      "values": {
+        "tokens": {
+          "input_tokens": 0,
+          "cached_input_tokens": 0,
+          "output_tokens": 0,
+          "reasoning_output_tokens": 0,
+          "total_tokens": 0
+        },
+        "token_unavailable_reasons": {},
+        "duration_seconds": 0,
+        "wall_clock_seconds": 0,
+        "timing_unavailable_reason": null,
+        "workflow_turn_count": 0,
+        "tool_call_count": 0,
+        "model_call_count": null,
+        "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+      },
+      "reason": "All frozen BRs and flows pass; repair unnecessary."
     },
     "repair": {
-      "status": "not_started",
-      "values": null
+      "status": "skipped",
+      "values": {
+        "tokens": {
+          "input_tokens": 0,
+          "cached_input_tokens": 0,
+          "output_tokens": 0,
+          "reasoning_output_tokens": 0,
+          "total_tokens": 0
+        },
+        "token_unavailable_reasons": {},
+        "duration_seconds": 0,
+        "wall_clock_seconds": 0,
+        "timing_unavailable_reason": null,
+        "workflow_turn_count": 0,
+        "tool_call_count": 0,
+        "model_call_count": null,
+        "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+      },
+      "reason": "All frozen BRs and flows pass; repair unnecessary."
     }
   },
   "workflow": {
@@ -74,9 +108,9 @@
       "total_tokens": 3954853
     },
     "token_unavailable_reasons": {},
-    "duration_seconds": null,
+    "duration_seconds": 345.133,
     "wall_clock_seconds": 610.026,
-    "timing_unavailable_reason": "Generation phase timing pending or unavailable; see phases",
+    "timing_unavailable_reason": null,
     "workflow_turn_count": 2,
     "tool_call_count": 43,
     "model_call_count": null,
@@ -236,6 +270,10 @@
     {
       "turn_id": "01a20303-6fb0-7f90-92e7-6d57188edde0",
       "reason": "measurement/report turn"
+    },
+    {
+      "turn_id": "01a2034c-3a4b-7692-9967-ded7210c92a5",
+      "reason": "measurement/report turn"
     }
   ],
   "phase_ledger": {
@@ -253,6 +291,14 @@
         "status": "closed",
         "first_turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
         "measurement_turn_id": "01a20303-6fb0-7f90-92e7-6d57188edde0"
+      },
+      "sub_prompt_generation": {
+        "status": "skipped",
+        "reason": "All frozen BRs and flows pass; repair unnecessary."
+      },
+      "repair": {
+        "status": "skipped",
+        "reason": "All frozen BRs and flows pass; repair unnecessary."
       }
     },
     "segments": [
@@ -325,9 +371,15 @@
         "action": "close-phase:source_generation",
         "last_turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
         "evidence_sha256": "sha256:e0682e6ff995b7b7727f244dd8531322e80fa8d1453a327586cd333b0d98357b"
+      },
+      {
+        "measurement_turn_id": "01a2034c-3a4b-7692-9967-ded7210c92a5",
+        "action": "finalize-workflow",
+        "last_turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
+        "evidence_sha256": "sha256:e0682e6ff995b7b7727f244dd8531322e80fa8d1453a327586cd333b0d98357b"
       }
     ],
-    "workflow_status": "open",
+    "workflow_status": "finalized",
     "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3"
   }
 }

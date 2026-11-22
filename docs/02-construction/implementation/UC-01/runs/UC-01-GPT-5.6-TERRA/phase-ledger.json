@@ -13,6 +13,14 @@
       "status": "closed",
       "first_turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
       "measurement_turn_id": "01a20303-6fb0-7f90-92e7-6d57188edde0"
+    },
+    "sub_prompt_generation": {
+      "status": "skipped",
+      "reason": "All frozen BRs and flows pass; repair unnecessary."
+    },
+    "repair": {
+      "status": "skipped",
+      "reason": "All frozen BRs and flows pass; repair unnecessary."
     }
   },
   "segments": [
@@ -85,8 +93,14 @@
       "action": "close-phase:source_generation",
       "last_turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
       "evidence_sha256": "sha256:e0682e6ff995b7b7727f244dd8531322e80fa8d1453a327586cd333b0d98357b"
+    },
+    {
+      "measurement_turn_id": "01a2034c-3a4b-7692-9967-ded7210c92a5",
+      "action": "finalize-workflow",
+      "last_turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
+      "evidence_sha256": "sha256:e0682e6ff995b7b7727f244dd8531322e80fa8d1453a327586cd333b0d98357b"
     }
   ],
-  "workflow_status": "open",
+  "workflow_status": "finalized",
   "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3"
 }

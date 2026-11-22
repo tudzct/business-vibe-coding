@@ -1,0 +1,16 @@
+{
+  "uc_id": "UC-01",
+  "run_id": "UC-01-GPT-5.6-TERRA",
+  "turns": [
+    {"turn_id": "01a202f5-72ee-7722-89c2-8281b248426e", "phase": "prompt_generation", "reason": "Generated and persisted the UC-01 coding prompt draft."},
+    {"turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae", "phase": "source_generation", "reason": "Implemented the approved UC-01 prompt in finalsource and persisted source evidence."}
+  ],
+  "excluded_turns": [
+    {"turn_id": "01a202fc-bbaf-7af1-afd8-d727d465cf36", "reason": "measurement/report turn"},
+    {"turn_id": "01a20303-6fb0-7f90-92e7-6d57188edde0", "reason": "measurement/report turn"}
+  ],
+  "workflow_evidence": {
+    "start": {"turn_id": "01a202f5-72ee-7722-89c2-8281b248426e", "required_terms": ["UC-01"]},
+    "terminal": {"turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae", "required_terms": ["UC-01"]}
+  }
+}
