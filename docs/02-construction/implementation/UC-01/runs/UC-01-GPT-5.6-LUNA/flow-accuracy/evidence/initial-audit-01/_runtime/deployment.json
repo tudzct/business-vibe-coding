@@ -1,0 +1,20 @@
+{
+  "status": "ready",
+  "compose_version": 2,
+  "compose_project": "application-baseline",
+  "verified": true,
+  "services": [
+    {
+      "name": "backend",
+      "container_id": "application-baseline-backend-1",
+      "image_id": "application-baseline-backend:latest",
+      "state": "running"
+    },
+    {
+      "name": "frontend",
+      "container_id": "application-baseline-frontend-1",
+      "image_id": "application-baseline-frontend:latest",
+      "state": "running"
+    }
+  ]
+}

@@ -1,0 +1,1137 @@
+{
+  "schema_version": 2,
+  "rubric_id": "completion-critical-flow-runtime-v2",
+  "assessment_id": "initial-audit-01",
+  "stage": "initial",
+  "input_sha256": "sha256:76f32f58b4901f8e57b892b3a0989df6ebba448547397d6e5422ce4b877ad108",
+  "status": "not_evaluable",
+  "execution_blocked": false,
+  "execution_blocker_defect_ids": [],
+  "counts": {
+    "main": 1,
+    "alternative": 1,
+    "exception": 1,
+    "total": 3,
+    "correct": 2,
+    "incorrect": 0,
+    "not_evaluable": 1
+  },
+  "flow_error_percent": null,
+  "flow_accuracy_percent": null,
+  "evaluated_coverage_percent": 66.666667,
+  "accuracy_lower_bound_percent": 66.666667,
+  "accuracy_upper_bound_percent": 100.0,
+  "flows": [
+    {
+      "flow_id": "BF-1",
+      "type": "main",
+      "status": "correct",
+      "noncritical_deviations": 0,
+      "terminal_outcome": {
+        "text": "Preview and controls rendered",
+        "status": "correct",
+        "observation_id": "obs-uc01-bf1",
+        "rationale": "Observed at runtime",
+        "required_runtime_kinds": [
+          "ui"
+        ],
+        "evidence_requirement_rationale": "UI runtime evidence",
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt",
+            "sha256": "sha256:03d0f4bf7a76b9e68cca9cee906774340d092c36931c770ed362aa6ff0d64e7e",
+            "kind": "ui",
+            "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+            "sanitized": true,
+            "locator": "obs-uc01-bf1/ui-preview.txt",
+            "observation_id": "obs-uc01-bf1",
+            "flow_id": "BF-1",
+            "target_ids": [
+              "entry",
+              "BF-1.1",
+              "BF-1.2",
+              "BF-1.3",
+              "BF-1.4",
+              "BF-1.5",
+              "terminal_outcome"
+            ],
+            "captured_at": "2026-11-22T23:57:26.434304+07:00"
+          }
+        ],
+        "source_findings": []
+      },
+      "steps": [
+        {
+          "step_id": "BF-1.1",
+          "text": "Step BF-1.1",
+          "completion_critical": true,
+          "criticality_reason": "Required for BF-1",
+          "status": "correct",
+          "observation_id": "obs-uc01-bf1",
+          "rationale": "Observed at runtime",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI runtime evidence",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt",
+              "sha256": "sha256:03d0f4bf7a76b9e68cca9cee906774340d092c36931c770ed362aa6ff0d64e7e",
+              "kind": "ui",
+              "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+              "sanitized": true,
+              "locator": "obs-uc01-bf1/ui-preview.txt",
+              "observation_id": "obs-uc01-bf1",
+              "flow_id": "BF-1",
+              "target_ids": [
+                "entry",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "BF-1.5",
+                "terminal_outcome"
+              ],
+              "captured_at": "2026-11-22T23:57:26.434304+07:00"
+            }
+          ],
+          "source_findings": []
+        },
+        {
+          "step_id": "BF-1.2",
+          "text": "Step BF-1.2",
+          "completion_critical": true,
+          "criticality_reason": "Required for BF-1",
+          "status": "correct",
+          "observation_id": "obs-uc01-bf1",
+          "rationale": "Observed at runtime",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI runtime evidence",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt",
+              "sha256": "sha256:03d0f4bf7a76b9e68cca9cee906774340d092c36931c770ed362aa6ff0d64e7e",
+              "kind": "ui",
+              "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+              "sanitized": true,
+              "locator": "obs-uc01-bf1/ui-preview.txt",
+              "observation_id": "obs-uc01-bf1",
+              "flow_id": "BF-1",
+              "target_ids": [
+                "entry",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "BF-1.5",
+                "terminal_outcome"
+              ],
+              "captured_at": "2026-11-22T23:57:26.434304+07:00"
+            }
+          ],
+          "source_findings": []
+        },
+        {
+          "step_id": "BF-1.3",
+          "text": "Step BF-1.3",
+          "completion_critical": true,
+          "criticality_reason": "Required for BF-1",
+          "status": "correct",
+          "observation_id": "obs-uc01-bf1",
+          "rationale": "Observed at runtime",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI runtime evidence",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt",
+              "sha256": "sha256:03d0f4bf7a76b9e68cca9cee906774340d092c36931c770ed362aa6ff0d64e7e",
+              "kind": "ui",
+              "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+              "sanitized": true,
+              "locator": "obs-uc01-bf1/ui-preview.txt",
+              "observation_id": "obs-uc01-bf1",
+              "flow_id": "BF-1",
+              "target_ids": [
+                "entry",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "BF-1.5",
+                "terminal_outcome"
+              ],
+              "captured_at": "2026-11-22T23:57:26.434304+07:00"
+            }
+          ],
+          "source_findings": []
+        },
+        {
+          "step_id": "BF-1.4",
+          "text": "Step BF-1.4",
+          "completion_critical": true,
+          "criticality_reason": "Required for BF-1",
+          "status": "correct",
+          "observation_id": "obs-uc01-bf1",
+          "rationale": "Observed at runtime",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI runtime evidence",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt",
+              "sha256": "sha256:03d0f4bf7a76b9e68cca9cee906774340d092c36931c770ed362aa6ff0d64e7e",
+              "kind": "ui",
+              "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+              "sanitized": true,
+              "locator": "obs-uc01-bf1/ui-preview.txt",
+              "observation_id": "obs-uc01-bf1",
+              "flow_id": "BF-1",
+              "target_ids": [
+                "entry",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "BF-1.5",
+                "terminal_outcome"
+              ],
+              "captured_at": "2026-11-22T23:57:26.434304+07:00"
+            }
+          ],
+          "source_findings": []
+        },
+        {
+          "step_id": "BF-1.5",
+          "text": "Step BF-1.5",
+          "completion_critical": true,
+          "criticality_reason": "Required for BF-1",
+          "status": "correct",
+          "observation_id": "obs-uc01-bf1",
+          "rationale": "Observed at runtime",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI runtime evidence",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt",
+              "sha256": "sha256:03d0f4bf7a76b9e68cca9cee906774340d092c36931c770ed362aa6ff0d64e7e",
+              "kind": "ui",
+              "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+              "sanitized": true,
+              "locator": "obs-uc01-bf1/ui-preview.txt",
+              "observation_id": "obs-uc01-bf1",
+              "flow_id": "BF-1",
+              "target_ids": [
+                "entry",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "BF-1.5",
+                "terminal_outcome"
+              ],
+              "captured_at": "2026-11-22T23:57:26.434304+07:00"
+            }
+          ],
+          "source_findings": []
+        }
+      ]
+    },
+    {
+      "flow_id": "AF-1",
+      "type": "alternative",
+      "status": "correct",
+      "noncritical_deviations": 0,
+      "terminal_outcome": {
+        "text": "Muted preview state rendered",
+        "status": "correct",
+        "observation_id": "obs-uc01-af1",
+        "rationale": "Observed at runtime",
+        "required_runtime_kinds": [
+          "ui"
+        ],
+        "evidence_requirement_rationale": "UI runtime evidence",
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-af1/ui-muted.txt",
+            "sha256": "sha256:4bc94c78b3e2ee458423286132d03ff3be20d0968135ae6980398117d6fcb949",
+            "kind": "ui",
+            "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+            "sanitized": true,
+            "locator": "obs-uc01-af1/ui-muted.txt",
+            "observation_id": "obs-uc01-af1",
+            "flow_id": "AF-1",
+            "target_ids": [
+              "entry",
+              "branch",
+              "AF-1.3a",
+              "AF-1.3b",
+              "terminal_outcome"
+            ],
+            "captured_at": "2026-11-22T23:57:26.434304+07:00"
+          }
+        ],
+        "source_findings": []
+      },
+      "steps": [
+        {
+          "step_id": "AF-1.3a",
+          "text": "Step AF-1.3a",
+          "completion_critical": true,
+          "criticality_reason": "Required for AF-1",
+          "status": "correct",
+          "observation_id": "obs-uc01-af1",
+          "rationale": "Observed at runtime",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI runtime evidence",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-af1/ui-muted.txt",
+              "sha256": "sha256:4bc94c78b3e2ee458423286132d03ff3be20d0968135ae6980398117d6fcb949",
+              "kind": "ui",
+              "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+              "sanitized": true,
+              "locator": "obs-uc01-af1/ui-muted.txt",
+              "observation_id": "obs-uc01-af1",
+              "flow_id": "AF-1",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.3a",
+                "AF-1.3b",
+                "terminal_outcome"
+              ],
+              "captured_at": "2026-11-22T23:57:26.434304+07:00"
+            }
+          ],
+          "source_findings": []
+        },
+        {
+          "step_id": "AF-1.3b",
+          "text": "Step AF-1.3b",
+          "completion_critical": true,
+          "criticality_reason": "Required for AF-1",
+          "status": "correct",
+          "observation_id": "obs-uc01-af1",
+          "rationale": "Observed at runtime",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI runtime evidence",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-af1/ui-muted.txt",
+              "sha256": "sha256:4bc94c78b3e2ee458423286132d03ff3be20d0968135ae6980398117d6fcb949",
+              "kind": "ui",
+              "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+              "sanitized": true,
+              "locator": "obs-uc01-af1/ui-muted.txt",
+              "observation_id": "obs-uc01-af1",
+              "flow_id": "AF-1",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.3a",
+                "AF-1.3b",
+                "terminal_outcome"
+              ],
+              "captured_at": "2026-11-22T23:57:26.434304+07:00"
+            }
+          ],
+          "source_findings": []
+        }
+      ]
+    },
+    {
+      "flow_id": "EF-1",
+      "type": "exception",
+      "status": "not_evaluable",
+      "noncritical_deviations": 0,
+      "terminal_outcome": {
+        "text": "Permission-denied dialog displayed",
+        "status": "not_evaluable",
+        "unavailable_reason": "Automated browser harness auto-grants media permissions",
+        "observation_id": "obs-uc01-ef1",
+        "rationale": "Not observable in harness",
+        "required_runtime_kinds": [
+          "ui"
+        ],
+        "evidence_requirement_rationale": "Limitation evidence",
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-ef1/ui-permission-denied.txt",
+            "sha256": "sha256:32b7374fd7f6a88e9e0ab30a4789d374a7820a9e227ee257bbb69992419cd800",
+            "kind": "ui",
+            "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+            "sanitized": true,
+            "locator": "obs-uc01-ef1/ui-permission-denied.txt",
+            "observation_id": "obs-uc01-ef1",
+            "flow_id": "EF-1",
+            "target_ids": [
+              "entry",
+              "branch",
+              "EF-1.4a",
+              "EF-1.4b",
+              "terminal_outcome"
+            ],
+            "captured_at": "2026-11-22T23:57:26.434304+07:00"
+          }
+        ],
+        "source_findings": []
+      },
+      "steps": [
+        {
+          "step_id": "EF-1.4a",
+          "text": "Step EF-1.4a",
+          "completion_critical": true,
+          "criticality_reason": "Required for EF-1",
+          "status": "not_evaluable",
+          "unavailable_reason": "Automated browser harness auto-grants media permissions",
+          "observation_id": "obs-uc01-ef1",
+          "rationale": "Not observable in harness",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Limitation evidence",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-ef1/ui-permission-denied.txt",
+              "sha256": "sha256:32b7374fd7f6a88e9e0ab30a4789d374a7820a9e227ee257bbb69992419cd800",
+              "kind": "ui",
+              "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+              "sanitized": true,
+              "locator": "obs-uc01-ef1/ui-permission-denied.txt",
+              "observation_id": "obs-uc01-ef1",
+              "flow_id": "EF-1",
+              "target_ids": [
+                "entry",
+                "branch",
+                "EF-1.4a",
+                "EF-1.4b",
+                "terminal_outcome"
+              ],
+              "captured_at": "2026-11-22T23:57:26.434304+07:00"
+            }
+          ],
+          "source_findings": []
+        },
+        {
+          "step_id": "EF-1.4b",
+          "text": "Step EF-1.4b",
+          "completion_critical": true,
+          "criticality_reason": "Required for EF-1",
+          "status": "not_evaluable",
+          "unavailable_reason": "Automated browser harness auto-grants media permissions",
+          "observation_id": "obs-uc01-ef1",
+          "rationale": "Not observable in harness",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Limitation evidence",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-ef1/ui-permission-denied.txt",
+              "sha256": "sha256:32b7374fd7f6a88e9e0ab30a4789d374a7820a9e227ee257bbb69992419cd800",
+              "kind": "ui",
+              "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+              "sanitized": true,
+              "locator": "obs-uc01-ef1/ui-permission-denied.txt",
+              "observation_id": "obs-uc01-ef1",
+              "flow_id": "EF-1",
+              "target_ids": [
+                "entry",
+                "branch",
+                "EF-1.4a",
+                "EF-1.4b",
+                "terminal_outcome"
+              ],
+              "captured_at": "2026-11-22T23:57:26.434304+07:00"
+            }
+          ],
+          "source_findings": []
+        }
+      ],
+      "unavailable_reason": "Automated browser harness auto-grants media permissions"
+    }
+  ],
+  "input": {
+    "uc_id": "UC-01",
+    "run_id": "UC-01-GPT-5.6-LUNA",
+    "assessment_id": "initial-audit-01",
+    "stage": "initial",
+    "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+    "captured_at": "2026-11-22T23:57:26.434304+07:00",
+    "baseline": {
+      "path": "docs/02-construction/implementation/UC-01/flow-baseline.json",
+      "sha256": "sha256:706bd842ae755067b6e8bf1085c7bcb6470259e5569bf5ed5617bd2a81435ce3"
+    },
+    "limitations": [],
+    "execution_blocker_defect_ids": [],
+    "runtime": {
+      "status": "ready",
+      "compose_version": 2,
+      "compose_project": "application-baseline",
+      "services": [
+        {
+          "name": "backend",
+          "container_id": "application-baseline-backend-1",
+          "image_id": "application-baseline-backend:latest",
+          "state": "running"
+        },
+        {
+          "name": "frontend",
+          "container_id": "application-baseline-frontend-1",
+          "image_id": "application-baseline-frontend:latest",
+          "state": "running"
+        }
+      ],
+      "deployment": {
+        "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+        "verified": true,
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/_runtime/deployment.json",
+            "sha256": "sha256:ae8b74899c3dc28829b73de96998db02a907e3368089bd11756feb24c178a389",
+            "kind": "deployment",
+            "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+            "sanitized": true,
+            "locator": "_runtime/deployment.json",
+            "observation_id": null,
+            "flow_id": null,
+            "target_ids": [
+              "runtime"
+            ],
+            "captured_at": "2026-11-22T23:57:26.434304+07:00"
+          }
+        ],
+        "captured_at": "2026-11-22T23:57:26.434304+07:00"
+      },
+      "reason": "Docker Compose v2 backend and frontend containers are running and healthy.",
+      "captured_at": "2026-11-22T23:57:26.434304+07:00"
+    },
+    "observations": [
+      {
+        "observation_id": "obs-uc01-bf1",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-LUNA",
+        "stage": "initial",
+        "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+        "baseline": {
+          "path": "docs/02-construction/implementation/UC-01/flow-baseline.json",
+          "sha256": "sha256:706bd842ae755067b6e8bf1085c7bcb6470259e5569bf5ed5617bd2a81435ce3"
+        },
+        "flow_id": "BF-1",
+        "planned_at": "2026-11-22T23:57:26.434304+07:00",
+        "started_at": "2026-11-22T23:57:26.434304+07:00",
+        "ended_at": "2026-11-22T23:57:26.434304+07:00",
+        "time_limit_seconds": 180,
+        "scope": "BF-1 pre-join preview and permission grant",
+        "actual_preconditions": "Docker Compose v2 ready",
+        "entry_point": "http://localhost:8080/",
+        "entry_kind": "ui",
+        "end_state": "Live preview and Go Live ready",
+        "state": "completed",
+        "actions": [
+          {
+            "sequence": 1,
+            "at": "2026-11-22T23:57:26.434304+07:00",
+            "action": "Open http://localhost:8080/, test name validation, request permissions",
+            "actual_result": "Pre-join UI rendered, permissions granted, live preview active",
+            "target_ids": [
+              "entry",
+              "BF-1.1",
+              "BF-1.2",
+              "BF-1.3",
+              "BF-1.4",
+              "BF-1.5",
+              "terminal_outcome"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt",
+                "sha256": "sha256:03d0f4bf7a76b9e68cca9cee906774340d092c36931c770ed362aa6ff0d64e7e",
+                "kind": "ui",
+                "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+                "sanitized": true,
+                "locator": "obs-uc01-bf1/ui-preview.txt",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ],
+                "captured_at": "2026-11-22T23:57:26.434304+07:00"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "observation_id": "obs-uc01-af1",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-LUNA",
+        "stage": "initial",
+        "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+        "baseline": {
+          "path": "docs/02-construction/implementation/UC-01/flow-baseline.json",
+          "sha256": "sha256:706bd842ae755067b6e8bf1085c7bcb6470259e5569bf5ed5617bd2a81435ce3"
+        },
+        "flow_id": "AF-1",
+        "planned_at": "2026-11-22T23:57:26.434304+07:00",
+        "started_at": "2026-11-22T23:57:26.434304+07:00",
+        "ended_at": "2026-11-22T23:57:26.434304+07:00",
+        "time_limit_seconds": 180,
+        "scope": "AF-1 turn off camera/mic",
+        "actual_preconditions": "Permissions granted",
+        "entry_point": "http://localhost:8080/",
+        "entry_kind": "ui",
+        "end_state": "Camera off and mic muted",
+        "state": "completed",
+        "actions": [
+          {
+            "sequence": 1,
+            "at": "2026-11-22T23:57:26.434304+07:00",
+            "action": "Click Turn camera off and Mute microphone",
+            "actual_result": "Preview returned to avatar fallback and Microphone muted badge",
+            "target_ids": [
+              "entry",
+              "branch",
+              "AF-1.3a",
+              "AF-1.3b",
+              "terminal_outcome"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-af1/ui-muted.txt",
+                "sha256": "sha256:4bc94c78b3e2ee458423286132d03ff3be20d0968135ae6980398117d6fcb949",
+                "kind": "ui",
+                "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+                "sanitized": true,
+                "locator": "obs-uc01-af1/ui-muted.txt",
+                "observation_id": "obs-uc01-af1",
+                "flow_id": "AF-1",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "AF-1.3a",
+                  "AF-1.3b",
+                  "terminal_outcome"
+                ],
+                "captured_at": "2026-11-22T23:57:26.434304+07:00"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "observation_id": "obs-uc01-ef1",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-LUNA",
+        "stage": "initial",
+        "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+        "baseline": {
+          "path": "docs/02-construction/implementation/UC-01/flow-baseline.json",
+          "sha256": "sha256:706bd842ae755067b6e8bf1085c7bcb6470259e5569bf5ed5617bd2a81435ce3"
+        },
+        "flow_id": "EF-1",
+        "planned_at": "2026-11-22T23:57:26.434304+07:00",
+        "started_at": "2026-11-22T23:57:26.434304+07:00",
+        "ended_at": "2026-11-22T23:57:26.434304+07:00",
+        "time_limit_seconds": 180,
+        "scope": "EF-1 permission denied",
+        "actual_preconditions": "Automated browser harness auto-grants media permissions",
+        "entry_point": "http://localhost:8080/",
+        "entry_kind": "ui",
+        "end_state": "Not evaluable due to auto-grant",
+        "state": "completed",
+        "actions": [
+          {
+            "sequence": 1,
+            "at": "2026-11-22T23:57:26.434304+07:00",
+            "action": "Attempt to trigger permission denial",
+            "actual_result": "Harness auto-granted permissions; denial unobservable",
+            "target_ids": [
+              "entry",
+              "branch",
+              "EF-1.4a",
+              "EF-1.4b",
+              "terminal_outcome"
+            ],
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-ef1/ui-permission-denied.txt",
+                "sha256": "sha256:32b7374fd7f6a88e9e0ab30a4789d374a7820a9e227ee257bbb69992419cd800",
+                "kind": "ui",
+                "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+                "sanitized": true,
+                "locator": "obs-uc01-ef1/ui-permission-denied.txt",
+                "observation_id": "obs-uc01-ef1",
+                "flow_id": "EF-1",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "EF-1.4a",
+                  "EF-1.4b",
+                  "terminal_outcome"
+                ],
+                "captured_at": "2026-11-22T23:57:26.434304+07:00"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "flows": [
+      {
+        "flow_id": "BF-1",
+        "source_anchor": "Basic Flow BF-1",
+        "completion_observation_id": "obs-uc01-bf1",
+        "steps": [
+          {
+            "step_id": "BF-1.1",
+            "text": "Step BF-1.1",
+            "completion_critical": true,
+            "criticality_reason": "Required for BF-1",
+            "status": "correct",
+            "observation_id": "obs-uc01-bf1",
+            "rationale": "Observed at runtime",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "UI runtime evidence",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt",
+                "sha256": "sha256:03d0f4bf7a76b9e68cca9cee906774340d092c36931c770ed362aa6ff0d64e7e",
+                "kind": "ui",
+                "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+                "sanitized": true,
+                "locator": "obs-uc01-bf1/ui-preview.txt",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ],
+                "captured_at": "2026-11-22T23:57:26.434304+07:00"
+              }
+            ],
+            "source_findings": []
+          },
+          {
+            "step_id": "BF-1.2",
+            "text": "Step BF-1.2",
+            "completion_critical": true,
+            "criticality_reason": "Required for BF-1",
+            "status": "correct",
+            "observation_id": "obs-uc01-bf1",
+            "rationale": "Observed at runtime",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "UI runtime evidence",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt",
+                "sha256": "sha256:03d0f4bf7a76b9e68cca9cee906774340d092c36931c770ed362aa6ff0d64e7e",
+                "kind": "ui",
+                "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+                "sanitized": true,
+                "locator": "obs-uc01-bf1/ui-preview.txt",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ],
+                "captured_at": "2026-11-22T23:57:26.434304+07:00"
+              }
+            ],
+            "source_findings": []
+          },
+          {
+            "step_id": "BF-1.3",
+            "text": "Step BF-1.3",
+            "completion_critical": true,
+            "criticality_reason": "Required for BF-1",
+            "status": "correct",
+            "observation_id": "obs-uc01-bf1",
+            "rationale": "Observed at runtime",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "UI runtime evidence",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt",
+                "sha256": "sha256:03d0f4bf7a76b9e68cca9cee906774340d092c36931c770ed362aa6ff0d64e7e",
+                "kind": "ui",
+                "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+                "sanitized": true,
+                "locator": "obs-uc01-bf1/ui-preview.txt",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ],
+                "captured_at": "2026-11-22T23:57:26.434304+07:00"
+              }
+            ],
+            "source_findings": []
+          },
+          {
+            "step_id": "BF-1.4",
+            "text": "Step BF-1.4",
+            "completion_critical": true,
+            "criticality_reason": "Required for BF-1",
+            "status": "correct",
+            "observation_id": "obs-uc01-bf1",
+            "rationale": "Observed at runtime",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "UI runtime evidence",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt",
+                "sha256": "sha256:03d0f4bf7a76b9e68cca9cee906774340d092c36931c770ed362aa6ff0d64e7e",
+                "kind": "ui",
+                "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+                "sanitized": true,
+                "locator": "obs-uc01-bf1/ui-preview.txt",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ],
+                "captured_at": "2026-11-22T23:57:26.434304+07:00"
+              }
+            ],
+            "source_findings": []
+          },
+          {
+            "step_id": "BF-1.5",
+            "text": "Step BF-1.5",
+            "completion_critical": true,
+            "criticality_reason": "Required for BF-1",
+            "status": "correct",
+            "observation_id": "obs-uc01-bf1",
+            "rationale": "Observed at runtime",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "UI runtime evidence",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt",
+                "sha256": "sha256:03d0f4bf7a76b9e68cca9cee906774340d092c36931c770ed362aa6ff0d64e7e",
+                "kind": "ui",
+                "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+                "sanitized": true,
+                "locator": "obs-uc01-bf1/ui-preview.txt",
+                "observation_id": "obs-uc01-bf1",
+                "flow_id": "BF-1",
+                "target_ids": [
+                  "entry",
+                  "BF-1.1",
+                  "BF-1.2",
+                  "BF-1.3",
+                  "BF-1.4",
+                  "BF-1.5",
+                  "terminal_outcome"
+                ],
+                "captured_at": "2026-11-22T23:57:26.434304+07:00"
+              }
+            ],
+            "source_findings": []
+          }
+        ],
+        "terminal_outcome": {
+          "text": "Preview and controls rendered",
+          "status": "correct",
+          "observation_id": "obs-uc01-bf1",
+          "rationale": "Observed at runtime",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI runtime evidence",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt",
+              "sha256": "sha256:03d0f4bf7a76b9e68cca9cee906774340d092c36931c770ed362aa6ff0d64e7e",
+              "kind": "ui",
+              "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+              "sanitized": true,
+              "locator": "obs-uc01-bf1/ui-preview.txt",
+              "observation_id": "obs-uc01-bf1",
+              "flow_id": "BF-1",
+              "target_ids": [
+                "entry",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "BF-1.5",
+                "terminal_outcome"
+              ],
+              "captured_at": "2026-11-22T23:57:26.434304+07:00"
+            }
+          ],
+          "source_findings": []
+        }
+      },
+      {
+        "flow_id": "AF-1",
+        "source_anchor": "Alternative Flow AF-1",
+        "completion_observation_id": "obs-uc01-af1",
+        "steps": [
+          {
+            "step_id": "AF-1.3a",
+            "text": "Step AF-1.3a",
+            "completion_critical": true,
+            "criticality_reason": "Required for AF-1",
+            "status": "correct",
+            "observation_id": "obs-uc01-af1",
+            "rationale": "Observed at runtime",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "UI runtime evidence",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-af1/ui-muted.txt",
+                "sha256": "sha256:4bc94c78b3e2ee458423286132d03ff3be20d0968135ae6980398117d6fcb949",
+                "kind": "ui",
+                "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+                "sanitized": true,
+                "locator": "obs-uc01-af1/ui-muted.txt",
+                "observation_id": "obs-uc01-af1",
+                "flow_id": "AF-1",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "AF-1.3a",
+                  "AF-1.3b",
+                  "terminal_outcome"
+                ],
+                "captured_at": "2026-11-22T23:57:26.434304+07:00"
+              }
+            ],
+            "source_findings": []
+          },
+          {
+            "step_id": "AF-1.3b",
+            "text": "Step AF-1.3b",
+            "completion_critical": true,
+            "criticality_reason": "Required for AF-1",
+            "status": "correct",
+            "observation_id": "obs-uc01-af1",
+            "rationale": "Observed at runtime",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "UI runtime evidence",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-af1/ui-muted.txt",
+                "sha256": "sha256:4bc94c78b3e2ee458423286132d03ff3be20d0968135ae6980398117d6fcb949",
+                "kind": "ui",
+                "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+                "sanitized": true,
+                "locator": "obs-uc01-af1/ui-muted.txt",
+                "observation_id": "obs-uc01-af1",
+                "flow_id": "AF-1",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "AF-1.3a",
+                  "AF-1.3b",
+                  "terminal_outcome"
+                ],
+                "captured_at": "2026-11-22T23:57:26.434304+07:00"
+              }
+            ],
+            "source_findings": []
+          }
+        ],
+        "terminal_outcome": {
+          "text": "Muted preview state rendered",
+          "status": "correct",
+          "observation_id": "obs-uc01-af1",
+          "rationale": "Observed at runtime",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "UI runtime evidence",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-af1/ui-muted.txt",
+              "sha256": "sha256:4bc94c78b3e2ee458423286132d03ff3be20d0968135ae6980398117d6fcb949",
+              "kind": "ui",
+              "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+              "sanitized": true,
+              "locator": "obs-uc01-af1/ui-muted.txt",
+              "observation_id": "obs-uc01-af1",
+              "flow_id": "AF-1",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.3a",
+                "AF-1.3b",
+                "terminal_outcome"
+              ],
+              "captured_at": "2026-11-22T23:57:26.434304+07:00"
+            }
+          ],
+          "source_findings": []
+        }
+      },
+      {
+        "flow_id": "EF-1",
+        "source_anchor": "Exception Flow EF-1",
+        "completion_observation_id": "obs-uc01-ef1",
+        "steps": [
+          {
+            "step_id": "EF-1.4a",
+            "text": "Step EF-1.4a",
+            "completion_critical": true,
+            "criticality_reason": "Required for EF-1",
+            "status": "not_evaluable",
+            "unavailable_reason": "Automated browser harness auto-grants media permissions",
+            "observation_id": "obs-uc01-ef1",
+            "rationale": "Not observable in harness",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "Limitation evidence",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-ef1/ui-permission-denied.txt",
+                "sha256": "sha256:32b7374fd7f6a88e9e0ab30a4789d374a7820a9e227ee257bbb69992419cd800",
+                "kind": "ui",
+                "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+                "sanitized": true,
+                "locator": "obs-uc01-ef1/ui-permission-denied.txt",
+                "observation_id": "obs-uc01-ef1",
+                "flow_id": "EF-1",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "EF-1.4a",
+                  "EF-1.4b",
+                  "terminal_outcome"
+                ],
+                "captured_at": "2026-11-22T23:57:26.434304+07:00"
+              }
+            ],
+            "source_findings": []
+          },
+          {
+            "step_id": "EF-1.4b",
+            "text": "Step EF-1.4b",
+            "completion_critical": true,
+            "criticality_reason": "Required for EF-1",
+            "status": "not_evaluable",
+            "unavailable_reason": "Automated browser harness auto-grants media permissions",
+            "observation_id": "obs-uc01-ef1",
+            "rationale": "Not observable in harness",
+            "required_runtime_kinds": [
+              "ui"
+            ],
+            "evidence_requirement_rationale": "Limitation evidence",
+            "evidence": [
+              {
+                "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-ef1/ui-permission-denied.txt",
+                "sha256": "sha256:32b7374fd7f6a88e9e0ab30a4789d374a7820a9e227ee257bbb69992419cd800",
+                "kind": "ui",
+                "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+                "sanitized": true,
+                "locator": "obs-uc01-ef1/ui-permission-denied.txt",
+                "observation_id": "obs-uc01-ef1",
+                "flow_id": "EF-1",
+                "target_ids": [
+                  "entry",
+                  "branch",
+                  "EF-1.4a",
+                  "EF-1.4b",
+                  "terminal_outcome"
+                ],
+                "captured_at": "2026-11-22T23:57:26.434304+07:00"
+              }
+            ],
+            "source_findings": []
+          }
+        ],
+        "terminal_outcome": {
+          "text": "Permission-denied dialog displayed",
+          "status": "not_evaluable",
+          "unavailable_reason": "Automated browser harness auto-grants media permissions",
+          "observation_id": "obs-uc01-ef1",
+          "rationale": "Not observable in harness",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Limitation evidence",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-ef1/ui-permission-denied.txt",
+              "sha256": "sha256:32b7374fd7f6a88e9e0ab30a4789d374a7820a9e227ee257bbb69992419cd800",
+              "kind": "ui",
+              "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+              "sanitized": true,
+              "locator": "obs-uc01-ef1/ui-permission-denied.txt",
+              "observation_id": "obs-uc01-ef1",
+              "flow_id": "EF-1",
+              "target_ids": [
+                "entry",
+                "branch",
+                "EF-1.4a",
+                "EF-1.4b",
+                "terminal_outcome"
+              ],
+              "captured_at": "2026-11-22T23:57:26.434304+07:00"
+            }
+          ],
+          "source_findings": []
+        }
+      }
+    ],
+    "schema_version": 2,
+    "rubric_id": "completion-critical-flow-runtime-v2"
+  }
+}

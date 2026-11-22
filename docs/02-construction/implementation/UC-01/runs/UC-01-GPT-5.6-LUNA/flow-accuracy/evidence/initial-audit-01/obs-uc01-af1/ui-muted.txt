@@ -1,0 +1,1 @@
+AF-1: Toggled Turn camera off (avatar fallback) and Mute microphone (Microphone muted badge).

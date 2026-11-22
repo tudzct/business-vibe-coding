@@ -1,0 +1,1 @@
+UC-01 frontend built cleanly (tsc -b && vite build) in Docker Compose v2.

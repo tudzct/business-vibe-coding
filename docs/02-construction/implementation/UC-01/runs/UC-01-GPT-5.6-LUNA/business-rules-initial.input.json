@@ -1,0 +1,87 @@
+{
+  "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+  "assessed_at": "2026-11-23T00:00:57.721843+07:00",
+  "requirements": [
+    {
+      "br_id": "BR-RJPP-01",
+      "status": "correct",
+      "rationale": "Observed: camera/mic controls disabled before grant and enabled after grant.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt"
+      ],
+      "runtime_observation_ids": [
+        "obs-uc01-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-RJPP-02",
+      "status": "not_evaluable",
+      "rationale": "No VIEWER role selector in pre-join UI.",
+      "unavailable_reason": "Pre-join UI has no role selector to observe VIEWER role at runtime.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt"
+      ],
+      "runtime_observation_ids": [
+        "obs-uc01-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-RJPP-03",
+      "status": "correct",
+      "rationale": "Observed: whitespace-only disabled Go Live; 1-50 chars enabled Go Live; 51+ chars showed error and disabled Go Live.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt"
+      ],
+      "runtime_observation_ids": [
+        "obs-uc01-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-RJPP-04",
+      "status": "not_evaluable",
+      "rationale": "Client-local participantKey is internal state not exposed in UI.",
+      "unavailable_reason": "Internal participantKey is not observable in UI.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt"
+      ],
+      "runtime_observation_ids": [
+        "obs-uc01-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-RJPP-05",
+      "status": "not_evaluable",
+      "rationale": "Permission denied could not be triggered in automated browser.",
+      "unavailable_reason": "Automated browser harness auto-grants media permissions.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-ef1/ui-permission-denied.txt"
+      ],
+      "runtime_observation_ids": [
+        "obs-uc01-ef1"
+      ]
+    },
+    {
+      "br_id": "BR-RJPP-06",
+      "status": "not_evaluable",
+      "rationale": "Permission denied could not be triggered in automated browser.",
+      "unavailable_reason": "Automated browser harness auto-grants media permissions.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-ef1/ui-permission-denied.txt"
+      ],
+      "runtime_observation_ids": [
+        "obs-uc01-ef1"
+      ]
+    },
+    {
+      "br_id": "BR-RJPP-07",
+      "status": "correct",
+      "rationale": "Observed: 0 backend network requests during preview preparation; client-local only.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt"
+      ],
+      "runtime_observation_ids": [
+        "obs-uc01-bf1"
+      ]
+    }
+  ]
+}

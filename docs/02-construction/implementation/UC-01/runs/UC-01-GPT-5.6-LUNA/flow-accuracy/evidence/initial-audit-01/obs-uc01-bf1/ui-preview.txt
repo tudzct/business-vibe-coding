@@ -1,0 +1,1 @@
+BF-1: Pre-join preview rendered, name validation (whitespace/50-char) and Go Live readiness verified, camera/mic permissions granted and live preview rendered.
