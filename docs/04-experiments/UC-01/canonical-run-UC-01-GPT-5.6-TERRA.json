@@ -26,7 +26,7 @@
   },
   "run_status": "draft",
   "gates": {
-    "current": "source",
+    "current": "first_pass_audit",
     "history": [
       {
         "gate": "prompt",
@@ -40,6 +40,19 @@
         },
         "command_action": "prompt-close",
         "recorded_at": "2026-11-22T11:21:49.405913Z"
+      },
+      {
+        "gate": "source",
+        "outcome": "confirmed",
+        "turn_id": "01a20303-6fb0-7f90-92e7-6d57188edde0",
+        "evidence": {
+          "coding_prompt": {
+            "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/approved-prompt/UC-01-coding-prompt.md",
+            "sha256": "sha256:f31b168c808c05153f1fc5d42d0d56420fa6bca7da0d7bb0defac90d2f2d43bc"
+          }
+        },
+        "command_action": "source-close",
+        "recorded_at": "2026-11-22T11:28:33.218850Z"
       }
     ]
   },
@@ -53,13 +66,13 @@
     "uc_id": "UC-01",
     "run_id": "UC-01-GPT-5.6-TERRA",
     "status": "open",
-    "measured_at": "2026-11-22T11:21:49.274612+00:00",
+    "measured_at": "2026-11-22T11:28:33.060923+00:00",
     "session": {
       "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
       "file_name": "rollout-2026-11-22T18-12-49-01a202f5-6fb8-78a2-a937-634c9c6c26e7.jsonl",
-      "sha256": "sha256:76f7d6ef25c0b68274c31beb207bb4e5c062d16292008859854eae2bcbf1c692"
+      "sha256": "sha256:ec3779979ef792d39b9354183675cb108fee09f4fbe8e2ab0b87500fba48b2d0"
     },
-    "selection_evidence_sha256": "sha256:82bb62f66d5f46040d7fc3432908446c90ce4e591a1974b6155d3898d73a5e10",
+    "selection_evidence_sha256": "sha256:e0682e6ff995b7b7727f244dd8531322e80fa8d1453a327586cd333b0d98357b",
     "extractor_sha256": "sha256:06fd6799ba7cfb6a7f161988af6389a0592da5effcf4192639d6590eb46ae5c3",
     "phases": {
       "prompt_generation": {
@@ -83,8 +96,24 @@
         }
       },
       "source_generation": {
-        "status": "not_started",
-        "values": null
+        "status": "closed",
+        "values": {
+          "tokens": {
+            "input_tokens": 2085723,
+            "cached_input_tokens": 2065792,
+            "output_tokens": 8327,
+            "reasoning_output_tokens": 607,
+            "total_tokens": 2094050
+          },
+          "token_unavailable_reasons": {},
+          "duration_seconds": 116.189,
+          "wall_clock_seconds": 212.289,
+          "timing_unavailable_reason": null,
+          "workflow_turn_count": 1,
+          "tool_call_count": 15,
+          "model_call_count": null,
+          "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+        }
       },
       "sub_prompt_generation": {
         "status": "not_started",
@@ -97,18 +126,18 @@
     },
     "workflow": {
       "tokens": {
-        "input_tokens": 1848809,
-        "cached_input_tokens": 1733376,
-        "output_tokens": 11994,
-        "reasoning_output_tokens": 3357,
-        "total_tokens": 1860803
+        "input_tokens": 3934532,
+        "cached_input_tokens": 3799168,
+        "output_tokens": 20321,
+        "reasoning_output_tokens": 3964,
+        "total_tokens": 3954853
       },
       "token_unavailable_reasons": {},
       "duration_seconds": null,
-      "wall_clock_seconds": 397.737,
+      "wall_clock_seconds": 610.026,
       "timing_unavailable_reason": "Generation phase timing pending or unavailable; see phases",
-      "workflow_turn_count": 1,
-      "tool_call_count": 28,
+      "workflow_turn_count": 2,
+      "tool_call_count": 43,
       "model_call_count": null,
       "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
     },
@@ -170,6 +199,64 @@
             }
           }
         ]
+      },
+      {
+        "turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
+        "turn_number": 3,
+        "started_at": "2026-11-22T11:24:01.308Z",
+        "ended_at": "2026-11-22T11:27:33.597Z",
+        "completed": true,
+        "model": "gpt-5.6-luna",
+        "tokens": {
+          "input_tokens": 2085723,
+          "cached_input_tokens": 2065792,
+          "output_tokens": 8327,
+          "reasoning_output_tokens": 607,
+          "total_tokens": 2094050
+        },
+        "tool_call_count": 15,
+        "prefix_bytes": 1466166,
+        "prefix_sha256": "sha256:c2aef3ba276a4a30246be0e5fe1c13bf948b3498e53a7c7993789fb5743939b1",
+        "terminal_event": "task_complete",
+        "message_sha256": "sha256:de9de96a4a7d9c7a48c23fec29e0297cf22f6949bd513bc8e87e29f3a0531914",
+        "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
+        "phase": "source_generation",
+        "timing_phase": "source_generation",
+        "reason": "Implemented the approved UC-01 prompt in finalsource and persisted source evidence.",
+        "duration_seconds": 116.189,
+        "wall_clock_seconds": 212.289,
+        "timing_unavailable_reason": null,
+        "timing_exclusion_reason": null,
+        "timing_segments": [
+          {
+            "start": {
+              "at": "2026-11-22T18:24:49.508+07:00",
+              "epoch_ms": 1795346689509,
+              "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+              "uc_id": "UC-01",
+              "run_id": "UC-01-GPT-5.6-TERRA",
+              "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
+              "turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
+              "phase": "source_generation",
+              "event": "start",
+              "segment_id": "8c1fd9c1-1b0a-4e62-a13a-3f8a26f4edc0",
+              "source_revision": "sha256:1e15d7c3867cac090a3a43282f80c58061bf0a7839712ae5e354b89792e6b791"
+            },
+            "end": {
+              "at": "2026-11-22T18:26:45.697+07:00",
+              "epoch_ms": 1795346805698,
+              "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+              "uc_id": "UC-01",
+              "run_id": "UC-01-GPT-5.6-TERRA",
+              "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
+              "turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
+              "phase": "source_generation",
+              "event": "end",
+              "segment_id": "8c1fd9c1-1b0a-4e62-a13a-3f8a26f4edc0",
+              "source_revision": "sha256:8c5a14cc8f1fb0f29b04d060f0ed92840bc9378e3e34c28a8e7f419790b1dd37"
+            }
+          }
+        ]
       }
     ],
     "token_phase_breakdown": {
@@ -185,11 +272,28 @@
         "wall_clock_seconds": 397.737,
         "workflow_turn_count": 1,
         "tool_call_count": 28
+      },
+      "source_generation": {
+        "tokens": {
+          "input_tokens": 2085723,
+          "cached_input_tokens": 2065792,
+          "output_tokens": 8327,
+          "reasoning_output_tokens": 607,
+          "total_tokens": 2094050
+        },
+        "token_unavailable_reasons": {},
+        "wall_clock_seconds": 212.289,
+        "workflow_turn_count": 1,
+        "tool_call_count": 15
       }
     },
     "excluded_turns": [
       {
         "turn_id": "01a202fc-bbaf-7af1-afd8-d727d465cf36",
+        "reason": "measurement/report turn"
+      },
+      {
+        "turn_id": "01a20303-6fb0-7f90-92e7-6d57188edde0",
         "reason": "measurement/report turn"
       }
     ],
@@ -203,6 +307,11 @@
           "status": "closed",
           "first_turn_id": "01a202f5-72ee-7722-89c2-8281b248426e",
           "measurement_turn_id": "01a202fc-bbaf-7af1-afd8-d727d465cf36"
+        },
+        "source_generation": {
+          "status": "closed",
+          "first_turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
+          "measurement_turn_id": "01a20303-6fb0-7f90-92e7-6d57188edde0"
         }
       },
       "segments": [
@@ -233,6 +342,34 @@
             "segment_id": "6aae43e5-50a5-41da-9504-ea406249f4ab",
             "source_revision": "sha256:1e15d7c3867cac090a3a43282f80c58061bf0a7839712ae5e354b89792e6b791"
           }
+        },
+        {
+          "start": {
+            "at": "2026-11-22T18:24:49.508+07:00",
+            "epoch_ms": 1795346689509,
+            "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+            "uc_id": "UC-01",
+            "run_id": "UC-01-GPT-5.6-TERRA",
+            "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
+            "turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
+            "phase": "source_generation",
+            "event": "start",
+            "segment_id": "8c1fd9c1-1b0a-4e62-a13a-3f8a26f4edc0",
+            "source_revision": "sha256:1e15d7c3867cac090a3a43282f80c58061bf0a7839712ae5e354b89792e6b791"
+          },
+          "end": {
+            "at": "2026-11-22T18:26:45.697+07:00",
+            "epoch_ms": 1795346805698,
+            "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+            "uc_id": "UC-01",
+            "run_id": "UC-01-GPT-5.6-TERRA",
+            "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
+            "turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
+            "phase": "source_generation",
+            "event": "end",
+            "segment_id": "8c1fd9c1-1b0a-4e62-a13a-3f8a26f4edc0",
+            "source_revision": "sha256:8c5a14cc8f1fb0f29b04d060f0ed92840bc9378e3e34c28a8e7f419790b1dd37"
+          }
         }
       ],
       "observations": [
@@ -241,6 +378,12 @@
           "action": "close-phase:prompt_generation",
           "last_turn_id": "01a202f5-72ee-7722-89c2-8281b248426e",
           "evidence_sha256": "sha256:82bb62f66d5f46040d7fc3432908446c90ce4e591a1974b6155d3898d73a5e10"
+        },
+        {
+          "measurement_turn_id": "01a20303-6fb0-7f90-92e7-6d57188edde0",
+          "action": "close-phase:source_generation",
+          "last_turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
+          "evidence_sha256": "sha256:e0682e6ff995b7b7727f244dd8531322e80fa8d1453a327586cd333b0d98357b"
         }
       ],
       "workflow_status": "open",

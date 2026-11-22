@@ -8,6 +8,11 @@
       "status": "closed",
       "first_turn_id": "01a202f5-72ee-7722-89c2-8281b248426e",
       "measurement_turn_id": "01a202fc-bbaf-7af1-afd8-d727d465cf36"
+    },
+    "source_generation": {
+      "status": "closed",
+      "first_turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
+      "measurement_turn_id": "01a20303-6fb0-7f90-92e7-6d57188edde0"
     }
   },
   "segments": [
@@ -38,6 +43,34 @@
         "segment_id": "6aae43e5-50a5-41da-9504-ea406249f4ab",
         "source_revision": "sha256:1e15d7c3867cac090a3a43282f80c58061bf0a7839712ae5e354b89792e6b791"
       }
+    },
+    {
+      "start": {
+        "at": "2026-11-22T18:24:49.508+07:00",
+        "epoch_ms": 1795346689509,
+        "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA",
+        "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
+        "turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
+        "phase": "source_generation",
+        "event": "start",
+        "segment_id": "8c1fd9c1-1b0a-4e62-a13a-3f8a26f4edc0",
+        "source_revision": "sha256:1e15d7c3867cac090a3a43282f80c58061bf0a7839712ae5e354b89792e6b791"
+      },
+      "end": {
+        "at": "2026-11-22T18:26:45.697+07:00",
+        "epoch_ms": 1795346805698,
+        "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+        "uc_id": "UC-01",
+        "run_id": "UC-01-GPT-5.6-TERRA",
+        "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
+        "turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
+        "phase": "source_generation",
+        "event": "end",
+        "segment_id": "8c1fd9c1-1b0a-4e62-a13a-3f8a26f4edc0",
+        "source_revision": "sha256:8c5a14cc8f1fb0f29b04d060f0ed92840bc9378e3e34c28a8e7f419790b1dd37"
+      }
     }
   ],
   "observations": [
@@ -46,6 +79,12 @@
       "action": "close-phase:prompt_generation",
       "last_turn_id": "01a202f5-72ee-7722-89c2-8281b248426e",
       "evidence_sha256": "sha256:82bb62f66d5f46040d7fc3432908446c90ce4e591a1974b6155d3898d73a5e10"
+    },
+    {
+      "measurement_turn_id": "01a20303-6fb0-7f90-92e7-6d57188edde0",
+      "action": "close-phase:source_generation",
+      "last_turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
+      "evidence_sha256": "sha256:e0682e6ff995b7b7727f244dd8531322e80fa8d1453a327586cd333b0d98357b"
     }
   ],
   "workflow_status": "open",

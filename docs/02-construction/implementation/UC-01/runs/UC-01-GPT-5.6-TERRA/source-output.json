@@ -1,0 +1,19 @@
+{
+  "uc_id": "UC-01",
+  "run_id": "UC-01-GPT-5.6-TERRA",
+  "status": "generated",
+  "changed_files": [
+    "finalsource/fe/src/App.tsx",
+    "finalsource/fe/src/index.css"
+  ],
+  "source_sha256": "sha256:8c5a14cc8f1fb0f29b04d060f0ed92840bc9378e3e34c28a8e7f419790b1dd37",
+  "source_generation": {
+    "segment_id": "8c1fd9c1-1b0a-4e62-a13a-3f8a26f4edc0",
+    "start_revision": "sha256:1e15d7c3867cac090a3a43282f80c58061bf0a7839712ae5e354b89792e6b791",
+    "end_revision": "sha256:8c5a14cc8f1fb0f29b04d060f0ed92840bc9378e3e34c28a8e7f419790b1dd37"
+  },
+  "verification": {
+    "lint": "blocked: eslint executable unavailable because frontend dependencies are not installed",
+    "build": "blocked: tsc executable unavailable because frontend dependencies are not installed"
+  }
+}
