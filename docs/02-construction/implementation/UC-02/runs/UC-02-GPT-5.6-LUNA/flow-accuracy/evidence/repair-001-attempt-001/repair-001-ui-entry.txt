@@ -1,0 +1,2 @@
+Observed at http://localhost:8080/ after the repaired frontend container started healthy.
+Initial UI rendered the Pre-join preview, Get Started heading, display-name field, disabled Join button, camera/microphone controls, effects/settings controls, and Allow microphone and camera action.

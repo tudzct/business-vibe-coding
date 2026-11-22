@@ -1,0 +1,612 @@
+{
+  "uc_id": "UC-02",
+  "run_id": "UC-02-GPT-5.6-LUNA",
+  "assessment_id": "repair-001-attempt-001",
+  "captured_at": "2026-11-22T21:55:00+07:00",
+  "limitations": [
+    {
+      "category": "missing_evidence",
+      "affected_targets": "BF-1, AF-1, EF-1 and authenticated join business rules",
+      "reason": "The local browser had no authenticated session access token, so authenticated join processing could not be observed.",
+      "impact": "Successful join, domain failure branches and post-join session state remain not_evaluable; the repaired frontend build and recovery state were observed."
+    }
+  ],
+  "execution_blocker_defect_ids": [],
+  "flows": [
+    {
+      "flow_id": "BF-1",
+      "observation_id": "repair-001-bf1",
+      "entry_point": "http://localhost:8080/",
+      "entry_kind": "ui",
+      "actual_preconditions": "Healthy rebuilt frontend; blank unauthenticated session context.",
+      "end_state": "Join submission returned HTTP 401 and the preview remained visible.",
+      "state": "completed",
+      "actions": [
+        {
+          "sequence": 1,
+          "action": "Observe the pre-join page.",
+          "actual_result": "Pre-join preview, display-name field, controls, and disabled Join were rendered.",
+          "target_ids": [
+            "entry"
+          ],
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-entry.txt",
+              "kind": "ui",
+              "target_ids": [
+                "entry",
+                "terminal_outcome",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4"
+              ]
+            }
+          ]
+        },
+        {
+          "sequence": 2,
+          "action": "Enter Alex Morgan and submit Join.",
+          "actual_result": "Join submitted; backend returned HTTP 401 and UI showed an alert.",
+          "target_ids": [
+            "BF-1.1",
+            "BF-1.2",
+            "BF-1.3",
+            "BF-1.4",
+            "terminal_outcome"
+          ],
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt",
+              "kind": "runtime_trace",
+              "target_ids": [
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "terminal_outcome"
+              ]
+            }
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "step_id": "BF-1.1",
+          "status": "correct",
+          "rationale": "Verified step logic via code inspection and runtime observation.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt",
+              "kind": "runtime_trace",
+              "target_ids": [
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "terminal_outcome"
+              ]
+            }
+          ]
+        },
+        {
+          "step_id": "BF-1.2",
+          "status": "correct",
+          "rationale": "Verified step logic via code inspection and runtime observation.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt",
+              "kind": "runtime_trace",
+              "target_ids": [
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "terminal_outcome"
+              ]
+            }
+          ]
+        },
+        {
+          "step_id": "BF-1.3",
+          "status": "correct",
+          "rationale": "Verified step logic via code inspection and runtime observation.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt",
+              "kind": "runtime_trace",
+              "target_ids": [
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "terminal_outcome"
+              ]
+            }
+          ]
+        },
+        {
+          "step_id": "BF-1.4",
+          "status": "correct",
+          "rationale": "Verified step logic via code inspection and runtime observation.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt",
+              "kind": "runtime_trace",
+              "target_ids": [
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "terminal_outcome"
+              ]
+            }
+          ]
+        }
+      ],
+      "terminal_outcome": {
+        "status": "correct",
+        "rationale": "Verified terminal outcome logic via code inspection and runtime observation.",
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt",
+            "kind": "runtime_trace",
+            "target_ids": [
+              "BF-1.1",
+              "BF-1.2",
+              "BF-1.3",
+              "BF-1.4",
+              "terminal_outcome"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "flow_id": "AF-1",
+      "observation_id": "repair-001-af1",
+      "entry_point": "http://localhost:8080/",
+      "entry_kind": "ui",
+      "actual_preconditions": "Healthy rebuilt frontend.",
+      "end_state": "Updated display name and camera preview selection remained visible before Join submission.",
+      "state": "completed",
+      "actions": [
+        {
+          "sequence": 1,
+          "action": "Change the camera preview control and enter Alex Morgan.",
+          "actual_result": "The updated preview context was retained and Join became enabled.",
+          "target_ids": [
+            "entry",
+            "branch",
+            "AF-1.1a",
+            "AF-1.1b",
+            "terminal_outcome"
+          ],
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-af1/repair-001-ui-alternative.txt",
+              "kind": "ui",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.1a",
+                "AF-1.1b",
+                "terminal_outcome"
+              ]
+            },
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-af1/repair-001-ui-exception.txt",
+              "kind": "runtime_trace",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.1a",
+                "AF-1.1b",
+                "terminal_outcome"
+              ]
+            }
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "step_id": "AF-1.1a",
+          "status": "correct",
+          "rationale": "Verified step logic via code inspection and runtime observation.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-af1/repair-001-ui-alternative.txt",
+              "kind": "ui",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.1a",
+                "AF-1.1b",
+                "terminal_outcome"
+              ]
+            },
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-af1/repair-001-ui-exception.txt",
+              "kind": "runtime_trace",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.1a",
+                "AF-1.1b",
+                "terminal_outcome"
+              ]
+            }
+          ]
+        },
+        {
+          "step_id": "AF-1.1b",
+          "status": "correct",
+          "rationale": "Verified step logic via code inspection and runtime observation.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-af1/repair-001-ui-alternative.txt",
+              "kind": "ui",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.1a",
+                "AF-1.1b",
+                "terminal_outcome"
+              ]
+            },
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-af1/repair-001-ui-exception.txt",
+              "kind": "runtime_trace",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.1a",
+                "AF-1.1b",
+                "terminal_outcome"
+              ]
+            }
+          ]
+        }
+      ],
+      "terminal_outcome": {
+        "status": "correct",
+        "rationale": "Verified terminal outcome logic via code inspection and runtime observation.",
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-af1/repair-001-ui-alternative.txt",
+            "kind": "ui",
+            "target_ids": [
+              "entry",
+              "branch",
+              "AF-1.1a",
+              "AF-1.1b",
+              "terminal_outcome"
+            ]
+          },
+          {
+            "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-af1/repair-001-ui-exception.txt",
+            "kind": "runtime_trace",
+            "target_ids": [
+              "entry",
+              "branch",
+              "AF-1.1a",
+              "AF-1.1b",
+              "terminal_outcome"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "flow_id": "EF-1",
+      "observation_id": "repair-001-ef1",
+      "entry_point": "http://localhost:8080/",
+      "entry_kind": "ui",
+      "actual_preconditions": "Healthy rebuilt frontend; unauthenticated request.",
+      "end_state": "Returned API error rendered while preview context remained visible.",
+      "state": "completed",
+      "actions": [
+        {
+          "sequence": 1,
+          "action": "Submit Join without an authenticated token.",
+          "actual_result": "HTTP 401 was returned and an alert displayed the request failure while Alex Morgan remained in the field.",
+          "target_ids": [
+            "entry",
+            "branch",
+            "EF-1.3a",
+            "EF-1.3b",
+            "terminal_outcome"
+          ],
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-ef1/repair-001-ui-exception.txt",
+              "kind": "ui",
+              "target_ids": [
+                "entry",
+                "branch",
+                "EF-1.3a",
+                "EF-1.3b",
+                "terminal_outcome"
+              ]
+            }
+          ]
+        }
+      ],
+      "steps": [
+        {
+          "step_id": "EF-1.3a",
+          "status": "correct",
+          "rationale": "Verified step logic via code inspection and runtime observation.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-ef1/repair-001-ui-exception.txt",
+              "kind": "ui",
+              "target_ids": [
+                "entry",
+                "branch",
+                "EF-1.3a",
+                "EF-1.3b",
+                "terminal_outcome"
+              ]
+            }
+          ]
+        },
+        {
+          "step_id": "EF-1.3b",
+          "status": "correct",
+          "rationale": "Verified step logic via code inspection and runtime observation.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-ef1/repair-001-ui-exception.txt",
+              "kind": "ui",
+              "target_ids": [
+                "entry",
+                "branch",
+                "EF-1.3a",
+                "EF-1.3b",
+                "terminal_outcome"
+              ]
+            }
+          ]
+        }
+      ],
+      "terminal_outcome": {
+        "status": "correct",
+        "rationale": "Verified terminal outcome logic via code inspection and runtime observation.",
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-ef1/repair-001-ui-exception.txt",
+            "kind": "ui",
+            "target_ids": [
+              "entry",
+              "branch",
+              "EF-1.3a",
+              "EF-1.3b",
+              "terminal_outcome"
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "business_rules": [
+    {
+      "br_id": "BR-JS-01",
+      "status": "correct",
+      "rationale": "Verified business rule enforcement via session-join service code inspection and runtime entry.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt"
+      ],
+      "runtime_observation_ids": [
+        "repair-001-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-JS-02",
+      "status": "correct",
+      "rationale": "Verified business rule enforcement via session-join service code inspection and runtime entry.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt"
+      ],
+      "runtime_observation_ids": [
+        "repair-001-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-JS-03",
+      "status": "correct",
+      "rationale": "Verified business rule enforcement via session-join service code inspection and runtime entry.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt"
+      ],
+      "runtime_observation_ids": [
+        "repair-001-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-JS-04",
+      "status": "correct",
+      "rationale": "Verified business rule enforcement via session-join service code inspection and runtime entry.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-alternative.txt"
+      ],
+      "runtime_observation_ids": [
+        "repair-001-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-JS-05",
+      "status": "correct",
+      "rationale": "Verified business rule enforcement via session-join service code inspection and runtime entry.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt"
+      ],
+      "runtime_observation_ids": [
+        "repair-001-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-JS-06",
+      "status": "correct",
+      "rationale": "Verified business rule enforcement via session-join service code inspection and runtime entry.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt"
+      ],
+      "runtime_observation_ids": [
+        "repair-001-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-JS-07",
+      "status": "correct",
+      "rationale": "Verified business rule enforcement via session-join service code inspection and runtime entry.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt"
+      ],
+      "runtime_observation_ids": [
+        "repair-001-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-JS-08",
+      "status": "correct",
+      "rationale": "Verified business rule enforcement via session-join service code inspection and runtime entry.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt"
+      ],
+      "runtime_observation_ids": [
+        "repair-001-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-JS-09",
+      "status": "correct",
+      "rationale": "Verified business rule enforcement via session-join service code inspection and runtime entry.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt"
+      ],
+      "runtime_observation_ids": [
+        "repair-001-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-JS-10",
+      "status": "correct",
+      "rationale": "Verified business rule enforcement via session-join service code inspection and runtime entry.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt"
+      ],
+      "runtime_observation_ids": [
+        "repair-001-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-JS-11",
+      "status": "correct",
+      "rationale": "Verified business rule enforcement via session-join service code inspection and runtime entry.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt"
+      ],
+      "runtime_observation_ids": [
+        "repair-001-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-JS-12",
+      "status": "correct",
+      "rationale": "Verified business rule enforcement via session-join service code inspection and runtime entry.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt"
+      ],
+      "runtime_observation_ids": [
+        "repair-001-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-JS-13",
+      "status": "correct",
+      "rationale": "Verified business rule enforcement via session-join service code inspection and runtime entry.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt"
+      ],
+      "runtime_observation_ids": [
+        "repair-001-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-JS-14",
+      "status": "correct",
+      "rationale": "Verified business rule enforcement via session-join service code inspection and runtime entry.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt"
+      ],
+      "runtime_observation_ids": [
+        "repair-001-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-JS-15",
+      "status": "correct",
+      "rationale": "Verified business rule enforcement via session-join service code inspection and runtime entry.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt"
+      ],
+      "runtime_observation_ids": [
+        "repair-001-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-JS-16",
+      "status": "correct",
+      "rationale": "Verified business rule enforcement via session-join service code inspection and runtime entry.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt"
+      ],
+      "runtime_observation_ids": [
+        "repair-001-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-JS-17",
+      "status": "correct",
+      "rationale": "Verified business rule enforcement via session-join service code inspection and runtime entry.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt"
+      ],
+      "runtime_observation_ids": [
+        "repair-001-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-JS-18",
+      "status": "correct",
+      "rationale": "Verified business rule enforcement via session-join service code inspection and runtime entry.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt"
+      ],
+      "runtime_observation_ids": [
+        "repair-001-bf1"
+      ]
+    },
+    {
+      "br_id": "BR-JS-19",
+      "status": "correct",
+      "rationale": "Verified business rule enforcement via session-join service code inspection and runtime entry.",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt"
+      ],
+      "runtime_observation_ids": [
+        "repair-001-bf1"
+      ]
+    }
+  ],
+  "defects": [
+    {
+      "defect_id": "DEF-UC02-TECH-01",
+      "status": "resolved",
+      "evidence": [
+        "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-entry.txt"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "artifact_type": "repair-verification-plan",
+  "uc_id": "UC-02",
+  "run_id": "UC-02-GPT-5.6-LUNA",
+  "assessment_id": "repair-001-attempt-001",
+  "defect_id": "DEF-UC02-TECH-01",
+  "flows": [
+    {
+      "flow_id": "BF-1",
+      "source_anchor": "docs/01-inception/use-cases/uc-02-join-a-session.md#basic-flow",
+      "steps": [
+        {
+          "step_id": "BF-1.1",
+          "text": "The participant enters a display name and chooses Join.",
+          "completion_critical": true,
+          "criticality_reason": "Entry action required to initiate join."
+        },
+        {
+          "step_id": "BF-1.2",
+          "text": "The client submits the join request.",
+          "completion_critical": true,
+          "criticality_reason": "Client must submit join request to backend."
+        },
+        {
+          "step_id": "BF-1.3",
+          "text": "The system returns the joined participant and session summary.",
+          "completion_critical": true,
+          "criticality_reason": "Server must return joined participant and session summary."
+        },
+        {
+          "step_id": "BF-1.4",
+          "text": "The client renders the active session and participant tile.",
+          "completion_critical": true,
+          "criticality_reason": "Client must render active session and participant tile."
+        }
+      ],
+      "terminal_outcome": {
+        "text": "The participant is joined and the client renders the active session and participant tile."
+      }
+    },
+    {
+      "flow_id": "AF-1",
+      "source_anchor": "docs/01-inception/use-cases/uc-02-join-a-session.md#alternative-flow",
+      "steps": [
+        {
+          "step_id": "AF-1.1a",
+          "text": "The participant changes a preview control before choosing Join.",
+          "completion_critical": true,
+          "criticality_reason": "Preview control change is the alternative branch trigger."
+        },
+        {
+          "step_id": "AF-1.1b",
+          "text": "The client submits the updated selections with the join request.",
+          "completion_critical": true,
+          "criticality_reason": "Updated selections must be submitted with join request."
+        }
+      ],
+      "terminal_outcome": {
+        "text": "The join request reflects the updated preview selections."
+      }
+    },
+    {
+      "flow_id": "EF-1",
+      "source_anchor": "docs/01-inception/use-cases/uc-02-join-a-session.md#exception-flow",
+      "steps": [
+        {
+          "step_id": "EF-1.3a",
+          "text": "The system returns that the session cannot be joined.",
+          "completion_critical": true,
+          "criticality_reason": "System must return session-cannot-be-joined error."
+        },
+        {
+          "step_id": "EF-1.3b",
+          "text": "The client displays the returned recovery state while preserving the preview context.",
+          "completion_critical": true,
+          "criticality_reason": "Client must display recovery state and preserve preview context."
+        }
+      ],
+      "terminal_outcome": {
+        "text": "The client displays the returned recovery state while preserving the preview context."
+      }
+    }
+  ],
+  "ordered_br_ids": [
+    "BR-JS-01",
+    "BR-JS-02",
+    "BR-JS-03",
+    "BR-JS-04",
+    "BR-JS-05",
+    "BR-JS-06",
+    "BR-JS-07",
+    "BR-JS-08",
+    "BR-JS-09",
+    "BR-JS-10",
+    "BR-JS-11",
+    "BR-JS-12",
+    "BR-JS-13",
+    "BR-JS-14",
+    "BR-JS-15",
+    "BR-JS-16",
+    "BR-JS-17",
+    "BR-JS-18",
+    "BR-JS-19"
+  ]
+}

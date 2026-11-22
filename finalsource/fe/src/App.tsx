@@ -27,8 +27,8 @@ export default function App() {
   const streamRef = useRef<MediaStream | null>(null);
   const [role] = useState<ParticipantRole>('HOST');
   const [displayName, setDisplayName] = useState('');
-  const [cameraRequested, setCameraRequested] = useState(true);
-  const [microphoneRequested, setMicrophoneRequested] = useState(true);
+  const [cameraRequested] = useState(true);
+  const [microphoneRequested] = useState(true);
   const [cameraPermission, setCameraPermission] = useState<PermissionStatus>('UNKNOWN');
   const [microphonePermission, setMicrophonePermission] = useState<PermissionStatus>('UNKNOWN');
   const [cameraAvailable, setCameraAvailable] = useState(false);

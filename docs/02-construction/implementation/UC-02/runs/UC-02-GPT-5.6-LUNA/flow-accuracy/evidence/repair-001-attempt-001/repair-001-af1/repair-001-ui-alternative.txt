@@ -1,0 +1,1 @@
+Entered display name Alex Morgan and activated the Toggle camera control. The Join button became enabled and the display-name value remained visible, confirming the updated preview context was retained before submission.

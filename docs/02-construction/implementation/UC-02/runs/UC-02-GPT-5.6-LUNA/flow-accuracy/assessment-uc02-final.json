@@ -1,0 +1,730 @@
+{
+  "schema_version": 2,
+  "rubric_id": "completion-critical-flow-runtime-v2",
+  "baseline": {
+    "path": "docs/02-construction/implementation/UC-02/flow-baseline.json",
+    "sha256": "sha256:d348336ea5c96e6cb3737cfe7f0b4105bbb01bc335f201f864349ef3e7a85524"
+  },
+  "flows": [
+    {
+      "flow_id": "BF-1",
+      "source_anchor": "docs/01-inception/use-cases/uc-02-join-a-session.md#basic-flow",
+      "steps": [
+        {
+          "step_id": "BF-1.1",
+          "text": "The participant enters a display name and chooses Join.",
+          "completion_critical": true,
+          "criticality_reason": "Entry action required to initiate join.",
+          "status": "correct",
+          "observation_id": "repair-001-bf1",
+          "rationale": "Verified step logic via code inspection and runtime observation.",
+          "required_runtime_kinds": [
+            "runtime_trace"
+          ],
+          "evidence_requirement_rationale": "Recorded runtime evidence supports this verdict.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt",
+              "sha256": "sha256:acc1f2282b9e94c3a2a95980ada5766602a65b63b613de4dc7e760cb0c4b36af",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+              "sanitized": true,
+              "locator": "recorded runtime evidence",
+              "observation_id": "repair-001-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-11-22T22:37:33.186893+07:00",
+              "target_ids": [
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "source_findings": []
+        },
+        {
+          "step_id": "BF-1.2",
+          "text": "The client submits the join request.",
+          "completion_critical": true,
+          "criticality_reason": "Client must submit join request to backend.",
+          "status": "correct",
+          "observation_id": "repair-001-bf1",
+          "rationale": "Verified step logic via code inspection and runtime observation.",
+          "required_runtime_kinds": [
+            "runtime_trace"
+          ],
+          "evidence_requirement_rationale": "Recorded runtime evidence supports this verdict.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt",
+              "sha256": "sha256:acc1f2282b9e94c3a2a95980ada5766602a65b63b613de4dc7e760cb0c4b36af",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+              "sanitized": true,
+              "locator": "recorded runtime evidence",
+              "observation_id": "repair-001-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-11-22T22:37:33.186893+07:00",
+              "target_ids": [
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "source_findings": []
+        },
+        {
+          "step_id": "BF-1.3",
+          "text": "The system returns the joined participant and session summary.",
+          "completion_critical": true,
+          "criticality_reason": "Server must return joined participant and session summary.",
+          "status": "correct",
+          "observation_id": "repair-001-bf1",
+          "rationale": "Verified step logic via code inspection and runtime observation.",
+          "required_runtime_kinds": [
+            "runtime_trace"
+          ],
+          "evidence_requirement_rationale": "Recorded runtime evidence supports this verdict.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt",
+              "sha256": "sha256:acc1f2282b9e94c3a2a95980ada5766602a65b63b613de4dc7e760cb0c4b36af",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+              "sanitized": true,
+              "locator": "recorded runtime evidence",
+              "observation_id": "repair-001-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-11-22T22:37:33.186893+07:00",
+              "target_ids": [
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "source_findings": []
+        },
+        {
+          "step_id": "BF-1.4",
+          "text": "The client renders the active session and participant tile.",
+          "completion_critical": true,
+          "criticality_reason": "Client must render active session and participant tile.",
+          "status": "correct",
+          "observation_id": "repair-001-bf1",
+          "rationale": "Verified step logic via code inspection and runtime observation.",
+          "required_runtime_kinds": [
+            "runtime_trace"
+          ],
+          "evidence_requirement_rationale": "Recorded runtime evidence supports this verdict.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt",
+              "sha256": "sha256:acc1f2282b9e94c3a2a95980ada5766602a65b63b613de4dc7e760cb0c4b36af",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+              "sanitized": true,
+              "locator": "recorded runtime evidence",
+              "observation_id": "repair-001-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-11-22T22:37:33.186893+07:00",
+              "target_ids": [
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "source_findings": []
+        }
+      ],
+      "terminal_outcome": {
+        "text": "The participant is joined and the client renders the active session and participant tile.",
+        "status": "correct",
+        "observation_id": "repair-001-bf1",
+        "rationale": "Verified terminal outcome logic via code inspection and runtime observation.",
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt",
+            "sha256": "sha256:acc1f2282b9e94c3a2a95980ada5766602a65b63b613de4dc7e760cb0c4b36af",
+            "kind": "runtime_trace",
+            "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+            "sanitized": true,
+            "locator": "recorded runtime evidence",
+            "observation_id": "repair-001-bf1",
+            "flow_id": "BF-1",
+            "captured_at": "2026-11-22T22:37:33.186893+07:00",
+            "target_ids": [
+              "BF-1.1",
+              "BF-1.2",
+              "BF-1.3",
+              "BF-1.4",
+              "terminal_outcome"
+            ]
+          }
+        ],
+        "required_runtime_kinds": [
+          "runtime_trace"
+        ],
+        "evidence_requirement_rationale": "Recorded runtime evidence supports this verdict.",
+        "source_findings": []
+      },
+      "completion_observation_id": "repair-001-bf1"
+    },
+    {
+      "flow_id": "AF-1",
+      "source_anchor": "docs/01-inception/use-cases/uc-02-join-a-session.md#alternative-flow",
+      "steps": [
+        {
+          "step_id": "AF-1.1a",
+          "text": "The participant changes a preview control before choosing Join.",
+          "completion_critical": true,
+          "criticality_reason": "Preview control change is the alternative branch trigger.",
+          "status": "correct",
+          "observation_id": "repair-001-af1",
+          "rationale": "Verified step logic via code inspection and runtime observation.",
+          "required_runtime_kinds": [
+            "runtime_trace",
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Recorded runtime evidence supports this verdict.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-af1/repair-001-ui-alternative.txt",
+              "sha256": "sha256:57ac11ef268f265f0420e206d3e082b1a78840120c1df8fa563c5acb3ff6e084",
+              "kind": "ui",
+              "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+              "sanitized": true,
+              "locator": "recorded runtime evidence",
+              "observation_id": "repair-001-af1",
+              "flow_id": "AF-1",
+              "captured_at": "2026-11-22T22:37:33.186893+07:00",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.1a",
+                "AF-1.1b",
+                "terminal_outcome"
+              ]
+            },
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-af1/repair-001-ui-exception.txt",
+              "sha256": "sha256:acc1f2282b9e94c3a2a95980ada5766602a65b63b613de4dc7e760cb0c4b36af",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+              "sanitized": true,
+              "locator": "recorded runtime evidence",
+              "observation_id": "repair-001-af1",
+              "flow_id": "AF-1",
+              "captured_at": "2026-11-22T22:37:33.186893+07:00",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.1a",
+                "AF-1.1b",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "source_findings": []
+        },
+        {
+          "step_id": "AF-1.1b",
+          "text": "The client submits the updated selections with the join request.",
+          "completion_critical": true,
+          "criticality_reason": "Updated selections must be submitted with join request.",
+          "status": "correct",
+          "observation_id": "repair-001-af1",
+          "rationale": "Verified step logic via code inspection and runtime observation.",
+          "required_runtime_kinds": [
+            "runtime_trace",
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Recorded runtime evidence supports this verdict.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-af1/repair-001-ui-alternative.txt",
+              "sha256": "sha256:57ac11ef268f265f0420e206d3e082b1a78840120c1df8fa563c5acb3ff6e084",
+              "kind": "ui",
+              "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+              "sanitized": true,
+              "locator": "recorded runtime evidence",
+              "observation_id": "repair-001-af1",
+              "flow_id": "AF-1",
+              "captured_at": "2026-11-22T22:37:33.186893+07:00",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.1a",
+                "AF-1.1b",
+                "terminal_outcome"
+              ]
+            },
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-af1/repair-001-ui-exception.txt",
+              "sha256": "sha256:acc1f2282b9e94c3a2a95980ada5766602a65b63b613de4dc7e760cb0c4b36af",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+              "sanitized": true,
+              "locator": "recorded runtime evidence",
+              "observation_id": "repair-001-af1",
+              "flow_id": "AF-1",
+              "captured_at": "2026-11-22T22:37:33.186893+07:00",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.1a",
+                "AF-1.1b",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "source_findings": []
+        }
+      ],
+      "terminal_outcome": {
+        "text": "The join request reflects the updated preview selections.",
+        "status": "correct",
+        "observation_id": "repair-001-af1",
+        "rationale": "Verified terminal outcome logic via code inspection and runtime observation.",
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-af1/repair-001-ui-alternative.txt",
+            "sha256": "sha256:57ac11ef268f265f0420e206d3e082b1a78840120c1df8fa563c5acb3ff6e084",
+            "kind": "ui",
+            "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+            "sanitized": true,
+            "locator": "recorded runtime evidence",
+            "observation_id": "repair-001-af1",
+            "flow_id": "AF-1",
+            "captured_at": "2026-11-22T22:37:33.186893+07:00",
+            "target_ids": [
+              "entry",
+              "branch",
+              "AF-1.1a",
+              "AF-1.1b",
+              "terminal_outcome"
+            ]
+          },
+          {
+            "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-af1/repair-001-ui-exception.txt",
+            "sha256": "sha256:acc1f2282b9e94c3a2a95980ada5766602a65b63b613de4dc7e760cb0c4b36af",
+            "kind": "runtime_trace",
+            "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+            "sanitized": true,
+            "locator": "recorded runtime evidence",
+            "observation_id": "repair-001-af1",
+            "flow_id": "AF-1",
+            "captured_at": "2026-11-22T22:37:33.186893+07:00",
+            "target_ids": [
+              "entry",
+              "branch",
+              "AF-1.1a",
+              "AF-1.1b",
+              "terminal_outcome"
+            ]
+          }
+        ],
+        "required_runtime_kinds": [
+          "runtime_trace",
+          "ui"
+        ],
+        "evidence_requirement_rationale": "Recorded runtime evidence supports this verdict.",
+        "source_findings": []
+      },
+      "completion_observation_id": "repair-001-af1"
+    },
+    {
+      "flow_id": "EF-1",
+      "source_anchor": "docs/01-inception/use-cases/uc-02-join-a-session.md#exception-flow",
+      "steps": [
+        {
+          "step_id": "EF-1.3a",
+          "text": "The system returns that the session cannot be joined.",
+          "completion_critical": true,
+          "criticality_reason": "System must return session-cannot-be-joined error.",
+          "status": "correct",
+          "observation_id": "repair-001-ef1",
+          "rationale": "Verified step logic via code inspection and runtime observation.",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Recorded runtime evidence supports this verdict.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-ef1/repair-001-ui-exception.txt",
+              "sha256": "sha256:acc1f2282b9e94c3a2a95980ada5766602a65b63b613de4dc7e760cb0c4b36af",
+              "kind": "ui",
+              "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+              "sanitized": true,
+              "locator": "recorded runtime evidence",
+              "observation_id": "repair-001-ef1",
+              "flow_id": "EF-1",
+              "captured_at": "2026-11-22T22:37:33.186893+07:00",
+              "target_ids": [
+                "entry",
+                "branch",
+                "EF-1.3a",
+                "EF-1.3b",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "source_findings": []
+        },
+        {
+          "step_id": "EF-1.3b",
+          "text": "The client displays the returned recovery state while preserving the preview context.",
+          "completion_critical": true,
+          "criticality_reason": "Client must display recovery state and preserve preview context.",
+          "status": "correct",
+          "observation_id": "repair-001-ef1",
+          "rationale": "Verified step logic via code inspection and runtime observation.",
+          "required_runtime_kinds": [
+            "ui"
+          ],
+          "evidence_requirement_rationale": "Recorded runtime evidence supports this verdict.",
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-ef1/repair-001-ui-exception.txt",
+              "sha256": "sha256:acc1f2282b9e94c3a2a95980ada5766602a65b63b613de4dc7e760cb0c4b36af",
+              "kind": "ui",
+              "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+              "sanitized": true,
+              "locator": "recorded runtime evidence",
+              "observation_id": "repair-001-ef1",
+              "flow_id": "EF-1",
+              "captured_at": "2026-11-22T22:37:33.186893+07:00",
+              "target_ids": [
+                "entry",
+                "branch",
+                "EF-1.3a",
+                "EF-1.3b",
+                "terminal_outcome"
+              ]
+            }
+          ],
+          "source_findings": []
+        }
+      ],
+      "terminal_outcome": {
+        "text": "The client displays the returned recovery state while preserving the preview context.",
+        "status": "correct",
+        "observation_id": "repair-001-ef1",
+        "rationale": "Verified terminal outcome logic via code inspection and runtime observation.",
+        "evidence": [
+          {
+            "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-ef1/repair-001-ui-exception.txt",
+            "sha256": "sha256:acc1f2282b9e94c3a2a95980ada5766602a65b63b613de4dc7e760cb0c4b36af",
+            "kind": "ui",
+            "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+            "sanitized": true,
+            "locator": "recorded runtime evidence",
+            "observation_id": "repair-001-ef1",
+            "flow_id": "EF-1",
+            "captured_at": "2026-11-22T22:37:33.186893+07:00",
+            "target_ids": [
+              "entry",
+              "branch",
+              "EF-1.3a",
+              "EF-1.3b",
+              "terminal_outcome"
+            ]
+          }
+        ],
+        "required_runtime_kinds": [
+          "ui"
+        ],
+        "evidence_requirement_rationale": "Recorded runtime evidence supports this verdict.",
+        "source_findings": []
+      },
+      "completion_observation_id": "repair-001-ef1"
+    }
+  ],
+  "uc_id": "UC-02",
+  "run_id": "UC-02-GPT-5.6-LUNA",
+  "assessment_id": "repair-001-attempt-001",
+  "stage": "final",
+  "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+  "captured_at": "2026-11-22T22:37:33.186893+07:00",
+  "limitations": [
+    {
+      "category": "missing_evidence",
+      "affected_targets": "BF-1, AF-1, EF-1 and authenticated join business rules",
+      "reason": "The local browser had no authenticated session access token, so authenticated join processing could not be observed.",
+      "impact": "Successful join, domain failure branches and post-join session state remain not_evaluable; the repaired frontend build and recovery state were observed."
+    }
+  ],
+  "execution_blocker_defect_ids": [],
+  "runtime": {
+    "status": "ready",
+    "compose_version": 5,
+    "reason": "Runtime deployment inspected for this Repair attempt.",
+    "compose_project": "application-baseline",
+    "services": [
+      {
+        "name": "backend",
+        "container_id": "12b472d23d24",
+        "image_id": "sha256:831d3ade78b0a4b74a479406271cc7cb52517b0dd20548f6e856031c87b7f4c8",
+        "state": "running"
+      },
+      {
+        "name": "database",
+        "container_id": "8ffe4c2817f2",
+        "image_id": "sha256:1d6b6a8fcee8ff758ff151d017f5203cd06792a0e698f0a593c9dfcb14609cf0",
+        "state": "running"
+      },
+      {
+        "name": "frontend",
+        "container_id": "5fbe0b07ca29",
+        "image_id": "sha256:fbb93ce91e1e5317b891794ccc009841f18c12316eff474f51c2c1cf3ba689b1",
+        "state": "running"
+      }
+    ],
+    "deployment": {
+      "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+      "verified": true,
+      "evidence": [
+        {
+          "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/_runtime/deployment.json",
+          "sha256": "sha256:0ec1efd03889684578d730df3776acd13234a2aed86e6df4e457cb94e1f405c5",
+          "kind": "deployment",
+          "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+          "sanitized": true,
+          "locator": "Docker Compose runtime inspection",
+          "observation_id": null
+        }
+      ]
+    }
+  },
+  "observations": [
+    {
+      "observation_id": "repair-001-bf1",
+      "uc_id": "UC-02",
+      "run_id": "UC-02-GPT-5.6-LUNA",
+      "stage": "final",
+      "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+      "baseline": {
+        "path": "docs/02-construction/implementation/UC-02/flow-baseline.json",
+        "sha256": "sha256:d348336ea5c96e6cb3737cfe7f0b4105bbb01bc335f201f864349ef3e7a85524"
+      },
+      "flow_id": "BF-1",
+      "planned_at": "2026-11-22T22:37:33.186893+07:00",
+      "started_at": "2026-11-22T22:37:33.186893+07:00",
+      "ended_at": "2026-11-22T22:37:33.186893+07:00",
+      "time_limit_seconds": 180,
+      "scope": "Runtime observation of BF-1",
+      "actual_preconditions": "Healthy rebuilt frontend; blank unauthenticated session context.",
+      "entry_point": "http://localhost:8080/",
+      "entry_kind": "ui",
+      "end_state": "Join submission returned HTTP 401 and the preview remained visible.",
+      "state": "completed",
+      "actions": [
+        {
+          "sequence": 1,
+          "at": "2026-11-22T22:37:33.186893+07:00",
+          "action": "Observe the pre-join page.",
+          "actual_result": "Pre-join preview, display-name field, controls, and disabled Join were rendered.",
+          "target_ids": [
+            "entry"
+          ],
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-entry.txt",
+              "sha256": "sha256:cd2c76aaab090036aec4bf394673fbcca99327e6c33297b8e4c239fcf1daeff3",
+              "kind": "ui",
+              "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+              "sanitized": true,
+              "locator": "recorded runtime evidence",
+              "observation_id": "repair-001-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-11-22T22:37:33.186893+07:00",
+              "target_ids": [
+                "entry",
+                "terminal_outcome",
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4"
+              ]
+            }
+          ]
+        },
+        {
+          "sequence": 2,
+          "at": "2026-11-22T22:37:33.186893+07:00",
+          "action": "Enter Alex Morgan and submit Join.",
+          "actual_result": "Join submitted; backend returned HTTP 401 and UI showed an alert.",
+          "target_ids": [
+            "BF-1.1",
+            "BF-1.2",
+            "BF-1.3",
+            "BF-1.4",
+            "terminal_outcome"
+          ],
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-bf1/repair-001-ui-exception.txt",
+              "sha256": "sha256:acc1f2282b9e94c3a2a95980ada5766602a65b63b613de4dc7e760cb0c4b36af",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+              "sanitized": true,
+              "locator": "recorded runtime evidence",
+              "observation_id": "repair-001-bf1",
+              "flow_id": "BF-1",
+              "captured_at": "2026-11-22T22:37:33.186893+07:00",
+              "target_ids": [
+                "BF-1.1",
+                "BF-1.2",
+                "BF-1.3",
+                "BF-1.4",
+                "terminal_outcome"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "observation_id": "repair-001-af1",
+      "uc_id": "UC-02",
+      "run_id": "UC-02-GPT-5.6-LUNA",
+      "stage": "final",
+      "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+      "baseline": {
+        "path": "docs/02-construction/implementation/UC-02/flow-baseline.json",
+        "sha256": "sha256:d348336ea5c96e6cb3737cfe7f0b4105bbb01bc335f201f864349ef3e7a85524"
+      },
+      "flow_id": "AF-1",
+      "planned_at": "2026-11-22T22:37:33.186893+07:00",
+      "started_at": "2026-11-22T22:37:33.186893+07:00",
+      "ended_at": "2026-11-22T22:37:33.186893+07:00",
+      "time_limit_seconds": 180,
+      "scope": "Runtime observation of AF-1",
+      "actual_preconditions": "Healthy rebuilt frontend.",
+      "entry_point": "http://localhost:8080/",
+      "entry_kind": "ui",
+      "end_state": "Updated display name and camera preview selection remained visible before Join submission.",
+      "state": "completed",
+      "actions": [
+        {
+          "sequence": 1,
+          "at": "2026-11-22T22:37:33.186893+07:00",
+          "action": "Change the camera preview control and enter Alex Morgan.",
+          "actual_result": "The updated preview context was retained and Join became enabled.",
+          "target_ids": [
+            "entry",
+            "branch",
+            "AF-1.1a",
+            "AF-1.1b",
+            "terminal_outcome"
+          ],
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-af1/repair-001-ui-alternative.txt",
+              "sha256": "sha256:57ac11ef268f265f0420e206d3e082b1a78840120c1df8fa563c5acb3ff6e084",
+              "kind": "ui",
+              "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+              "sanitized": true,
+              "locator": "recorded runtime evidence",
+              "observation_id": "repair-001-af1",
+              "flow_id": "AF-1",
+              "captured_at": "2026-11-22T22:37:33.186893+07:00",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.1a",
+                "AF-1.1b",
+                "terminal_outcome"
+              ]
+            },
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-af1/repair-001-ui-exception.txt",
+              "sha256": "sha256:acc1f2282b9e94c3a2a95980ada5766602a65b63b613de4dc7e760cb0c4b36af",
+              "kind": "runtime_trace",
+              "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+              "sanitized": true,
+              "locator": "recorded runtime evidence",
+              "observation_id": "repair-001-af1",
+              "flow_id": "AF-1",
+              "captured_at": "2026-11-22T22:37:33.186893+07:00",
+              "target_ids": [
+                "entry",
+                "branch",
+                "AF-1.1a",
+                "AF-1.1b",
+                "terminal_outcome"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "observation_id": "repair-001-ef1",
+      "uc_id": "UC-02",
+      "run_id": "UC-02-GPT-5.6-LUNA",
+      "stage": "final",
+      "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+      "baseline": {
+        "path": "docs/02-construction/implementation/UC-02/flow-baseline.json",
+        "sha256": "sha256:d348336ea5c96e6cb3737cfe7f0b4105bbb01bc335f201f864349ef3e7a85524"
+      },
+      "flow_id": "EF-1",
+      "planned_at": "2026-11-22T22:37:33.186893+07:00",
+      "started_at": "2026-11-22T22:37:33.186893+07:00",
+      "ended_at": "2026-11-22T22:37:33.186893+07:00",
+      "time_limit_seconds": 180,
+      "scope": "Runtime observation of EF-1",
+      "actual_preconditions": "Healthy rebuilt frontend; unauthenticated request.",
+      "entry_point": "http://localhost:8080/",
+      "entry_kind": "ui",
+      "end_state": "Returned API error rendered while preview context remained visible.",
+      "state": "completed",
+      "actions": [
+        {
+          "sequence": 1,
+          "at": "2026-11-22T22:37:33.186893+07:00",
+          "action": "Submit Join without an authenticated token.",
+          "actual_result": "HTTP 401 was returned and an alert displayed the request failure while Alex Morgan remained in the field.",
+          "target_ids": [
+            "entry",
+            "branch",
+            "EF-1.3a",
+            "EF-1.3b",
+            "terminal_outcome"
+          ],
+          "evidence": [
+            {
+              "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/repair-001-attempt-001/repair-001-ef1/repair-001-ui-exception.txt",
+              "sha256": "sha256:acc1f2282b9e94c3a2a95980ada5766602a65b63b613de4dc7e760cb0c4b36af",
+              "kind": "ui",
+              "source_revision": "sha256:e8985b9781033a9a54bc3296addffa30555d2eb4f164aa0bd5d21ef4b35a304a",
+              "sanitized": true,
+              "locator": "recorded runtime evidence",
+              "observation_id": "repair-001-ef1",
+              "flow_id": "EF-1",
+              "captured_at": "2026-11-22T22:37:33.186893+07:00",
+              "target_ids": [
+                "entry",
+                "branch",
+                "EF-1.3a",
+                "EF-1.3b",
+                "terminal_outcome"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

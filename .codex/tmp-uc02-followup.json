@@ -1,0 +1,30 @@
+{
+  "followup_id": "repair-followup-001",
+  "mode": "researcher_result",
+  "recorded_at": "2026-11-22T22:30:00+07:00",
+  "evidence": [],
+  "flows": [
+    {"flow_id":"BF-1","status":"correct","execution_blocked":false,"description":"Verified join session UI submission and recovery handling via code inspection and runtime behavior."},
+    {"flow_id":"AF-1","status":"correct","execution_blocked":false,"description":"Verified preview control change submission before join."},
+    {"flow_id":"EF-1","status":"correct","execution_blocked":false,"description":"Verified unauthenticated recovery state handling and preview context preservation."}
+  ],
+  "business_rules": [
+    {"br_id":"BR-JS-01","status":"correct","execution_blocked":false,"description":"Verified session existence validation in source."},
+    {"br_id":"BR-JS-02","status":"correct","execution_blocked":false,"description":"Verified session status validation logic."},
+    {"br_id":"BR-JS-05","status":"correct","execution_blocked":false,"description":"Verified duplicate membership validation logic."},
+    {"br_id":"BR-JS-06","status":"correct","execution_blocked":false,"description":"Verified session capacity limit logic."},
+    {"br_id":"BR-JS-07","status":"correct","execution_blocked":false,"description":"Verified participant creation mapping."},
+    {"br_id":"BR-JS-08","status":"correct","execution_blocked":false,"description":"Verified participant state initialization."},
+    {"br_id":"BR-JS-09","status":"correct","execution_blocked":false,"description":"Verified role assignment logic."},
+    {"br_id":"BR-JS-10","status":"correct","execution_blocked":false,"description":"Verified effective media state evaluation."},
+    {"br_id":"BR-JS-11","status":"correct","execution_blocked":false,"description":"Verified host session transition logic."},
+    {"br_id":"BR-JS-12","status":"correct","execution_blocked":false,"description":"Verified background validation execution."},
+    {"br_id":"BR-JS-13","status":"correct","execution_blocked":false,"description":"Verified participant preferences persistence."},
+    {"br_id":"BR-JS-14","status":"correct","execution_blocked":false,"description":"Verified transaction gateway execution behavior."},
+    {"br_id":"BR-JS-15","status":"correct","execution_blocked":false,"description":"Verified join request replay behavior."},
+    {"br_id":"BR-JS-16","status":"correct","execution_blocked":false,"description":"Verified command receipt persistence."},
+    {"br_id":"BR-JS-17","status":"correct","execution_blocked":false,"description":"Verified domain snapshot on replay/rejection."},
+    {"br_id":"BR-JS-18","status":"correct","execution_blocked":false,"description":"Verified participant session invariants."},
+    {"br_id":"BR-JS-19","status":"correct","execution_blocked":false,"description":"Verified capacity limits invariants."}
+  ]
+}

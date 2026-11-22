@@ -18,6 +18,10 @@
       "status": "closed",
       "first_turn_id": "01a203b4-e46a-7792-be4b-1cb84fed0891",
       "measurement_turn_id": "01a203b7-0042-7691-8093-9396d41cf268"
+    },
+    "repair": {
+      "status": "open",
+      "first_turn_id": "01a203be-1795-7712-b654-014f51369e6d"
     }
   },
   "segments": [
@@ -102,6 +106,21 @@
         "phase": "sub_prompt_generation",
         "event": "end",
         "segment_id": "sub-prompt-generation-uc02-20261122-1",
+        "source_revision": "sha256:5610c8c9c08a3f2bf34e3e485790b84c67b69a0e151b30895045d9b551713298"
+      }
+    },
+    {
+      "start": {
+        "at": "2026-11-22T21:52:42.087+07:00",
+        "epoch_ms": 1795359162088,
+        "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+        "uc_id": "UC-02",
+        "run_id": "UC-02-GPT-5.6-LUNA",
+        "session_id": "01a2037c-0dcc-7582-b63c-2947cdf0239f",
+        "turn_id": "01a203be-1795-7712-b654-014f51369e6d",
+        "phase": "repair",
+        "event": "start",
+        "segment_id": "repair-uc02-20261122-1",
         "source_revision": "sha256:5610c8c9c08a3f2bf34e3e485790b84c67b69a0e151b30895045d9b551713298"
       }
     }

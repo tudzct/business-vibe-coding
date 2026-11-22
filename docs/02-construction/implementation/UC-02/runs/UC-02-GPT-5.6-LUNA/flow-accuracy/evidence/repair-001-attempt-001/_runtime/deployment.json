@@ -1,0 +1,14 @@
+{
+  "status": "ready",
+  "verified": true,
+  "compose_major_version": 5,
+  "compose_version": 5,
+  "project": "application-baseline",
+  "compose_project": "application-baseline",
+  "services": [
+    {"name":"backend","container_id":"12b472d23d24","image_id":"sha256:831d3ade78b0a4b74a479406271cc7cb52517b0dd20548f6e856031c87b7f4c8","state":"running"},
+    {"name":"database","container_id":"8ffe4c2817f2","image_id":"sha256:1d6b6a8fcee8ff758ff151d017f5203cd06792a0e698f0a593c9dfcb14609cf0","state":"running"},
+    {"name":"frontend","container_id":"5fbe0b07ca29","image_id":"sha256:fbb93ce91e1e5317b891794ccc009841f18c12316eff474f51c2c1cf3ba689b1","state":"running"}
+  ],
+  "details": "Backend and frontend rebuilt with --no-deps and reported healthy; database remained healthy."
+}

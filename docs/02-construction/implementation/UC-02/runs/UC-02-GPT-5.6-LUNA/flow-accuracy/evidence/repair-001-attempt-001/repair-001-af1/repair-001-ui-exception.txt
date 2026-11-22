@@ -1,0 +1,1 @@
+Submitted Join from the repaired frontend. The local backend returned HTTP 401 because no authenticated session access token was configured in the browser. The UI preserved Alex Morgan and the preview controls and rendered an alert with the returned request failure.

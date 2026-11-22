@@ -9,7 +9,7 @@ Machine authority: phase-ledger.json. Each turn belongs to one phase.
 | prompt_generation | closed | 01a2037c-1003-7203-bbb3-fef71f4882ce | 01a20380-7b20-7e40-8334-80ca96336e27 |
 | source_generation | closed | 01a20383-09b5-7b30-b9fc-e53bc7c906d6 | 01a20386-1e61-7ce3-aa5c-394709d34e32 |
 | sub_prompt_generation | closed | 01a203b4-e46a-7792-be4b-1cb84fed0891 | 01a203b7-0042-7691-8093-9396d41cf268 |
-| repair | not_started |  |  |
+| repair | open | 01a203be-1795-7712-b654-014f51369e6d |  |
 
 Workflow: open
 
