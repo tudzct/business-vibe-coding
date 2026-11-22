@@ -1,0 +1,203 @@
+{
+  "schema_version": 4,
+  "provenance_class": "observed_post_run",
+  "timing_method": "system_timestamp_delta",
+  "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+  "token_attribution_method": "semantic_primary_phase_per_turn",
+  "uc_id": "UC-01",
+  "run_id": "UC-01-GPT-5.6-TERRA",
+  "status": "open",
+  "measured_at": "2026-11-22T11:21:49.274612+00:00",
+  "session": {
+    "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
+    "file_name": "rollout-2026-11-22T18-12-49-01a202f5-6fb8-78a2-a937-634c9c6c26e7.jsonl",
+    "sha256": "sha256:76f7d6ef25c0b68274c31beb207bb4e5c062d16292008859854eae2bcbf1c692"
+  },
+  "selection_evidence_sha256": "sha256:82bb62f66d5f46040d7fc3432908446c90ce4e591a1974b6155d3898d73a5e10",
+  "extractor_sha256": "sha256:06fd6799ba7cfb6a7f161988af6389a0592da5effcf4192639d6590eb46ae5c3",
+  "phases": {
+    "prompt_generation": {
+      "status": "closed",
+      "values": {
+        "tokens": {
+          "input_tokens": 1848809,
+          "cached_input_tokens": 1733376,
+          "output_tokens": 11994,
+          "reasoning_output_tokens": 3357,
+          "total_tokens": 1860803
+        },
+        "token_unavailable_reasons": {},
+        "duration_seconds": 228.944,
+        "wall_clock_seconds": 397.737,
+        "timing_unavailable_reason": null,
+        "workflow_turn_count": 1,
+        "tool_call_count": 28,
+        "model_call_count": null,
+        "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+      }
+    },
+    "source_generation": {
+      "status": "not_started",
+      "values": null
+    },
+    "sub_prompt_generation": {
+      "status": "not_started",
+      "values": null
+    },
+    "repair": {
+      "status": "not_started",
+      "values": null
+    }
+  },
+  "workflow": {
+    "tokens": {
+      "input_tokens": 1848809,
+      "cached_input_tokens": 1733376,
+      "output_tokens": 11994,
+      "reasoning_output_tokens": 3357,
+      "total_tokens": 1860803
+    },
+    "token_unavailable_reasons": {},
+    "duration_seconds": null,
+    "wall_clock_seconds": 397.737,
+    "timing_unavailable_reason": "Generation phase timing pending or unavailable; see phases",
+    "workflow_turn_count": 1,
+    "tool_call_count": 28,
+    "model_call_count": null,
+    "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+  },
+  "turns": [
+    {
+      "turn_id": "01a202f5-72ee-7722-89c2-8281b248426e",
+      "turn_number": 1,
+      "started_at": "2026-11-22T11:12:50.280Z",
+      "ended_at": "2026-11-22T11:19:28.017Z",
+      "completed": true,
+      "model": "gpt-5.6-terra",
+      "tokens": {
+        "input_tokens": 1848809,
+        "cached_input_tokens": 1733376,
+        "output_tokens": 11994,
+        "reasoning_output_tokens": 3357,
+        "total_tokens": 1860803
+      },
+      "tool_call_count": 28,
+      "prefix_bytes": 1048946,
+      "prefix_sha256": "sha256:9281fc14964cc48ae0039516723f5192198bc0a80f67aa6c833e4e16edc1cae5",
+      "terminal_event": "task_complete",
+      "message_sha256": "sha256:4eec1462dc705506efa98b887b08ac32604bc8606f1136b50837ff774eb68211",
+      "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
+      "phase": "prompt_generation",
+      "timing_phase": "prompt_generation",
+      "reason": "Generated and persisted the UC-01 coding prompt draft.",
+      "duration_seconds": 228.944,
+      "wall_clock_seconds": 397.737,
+      "timing_unavailable_reason": null,
+      "timing_exclusion_reason": null,
+      "timing_segments": [
+        {
+          "start": {
+            "at": "2026-11-22T18:15:14.419+07:00",
+            "epoch_ms": 1795346114419,
+            "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+            "uc_id": "UC-01",
+            "run_id": "UC-01-GPT-5.6-TERRA",
+            "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
+            "turn_id": "01a202f5-72ee-7722-89c2-8281b248426e",
+            "phase": "prompt_generation",
+            "event": "start",
+            "segment_id": "6aae43e5-50a5-41da-9504-ea406249f4ab",
+            "source_revision": "sha256:1e15d7c3867cac090a3a43282f80c58061bf0a7839712ae5e354b89792e6b791"
+          },
+          "end": {
+            "at": "2026-11-22T18:19:03.363+07:00",
+            "epoch_ms": 1795346343363,
+            "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+            "uc_id": "UC-01",
+            "run_id": "UC-01-GPT-5.6-TERRA",
+            "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
+            "turn_id": "01a202f5-72ee-7722-89c2-8281b248426e",
+            "phase": "prompt_generation",
+            "event": "end",
+            "segment_id": "6aae43e5-50a5-41da-9504-ea406249f4ab",
+            "source_revision": "sha256:1e15d7c3867cac090a3a43282f80c58061bf0a7839712ae5e354b89792e6b791"
+          }
+        }
+      ]
+    }
+  ],
+  "token_phase_breakdown": {
+    "prompt_generation": {
+      "tokens": {
+        "input_tokens": 1848809,
+        "cached_input_tokens": 1733376,
+        "output_tokens": 11994,
+        "reasoning_output_tokens": 3357,
+        "total_tokens": 1860803
+      },
+      "token_unavailable_reasons": {},
+      "wall_clock_seconds": 397.737,
+      "workflow_turn_count": 1,
+      "tool_call_count": 28
+    }
+  },
+  "excluded_turns": [
+    {
+      "turn_id": "01a202fc-bbaf-7af1-afd8-d727d465cf36",
+      "reason": "measurement/report turn"
+    }
+  ],
+  "phase_ledger": {
+    "schema_version": 1,
+    "uc_id": "UC-01",
+    "run_id": "UC-01-GPT-5.6-TERRA",
+    "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
+    "phases": {
+      "prompt_generation": {
+        "status": "closed",
+        "first_turn_id": "01a202f5-72ee-7722-89c2-8281b248426e",
+        "measurement_turn_id": "01a202fc-bbaf-7af1-afd8-d727d465cf36"
+      }
+    },
+    "segments": [
+      {
+        "start": {
+          "at": "2026-11-22T18:15:14.419+07:00",
+          "epoch_ms": 1795346114419,
+          "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+          "uc_id": "UC-01",
+          "run_id": "UC-01-GPT-5.6-TERRA",
+          "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
+          "turn_id": "01a202f5-72ee-7722-89c2-8281b248426e",
+          "phase": "prompt_generation",
+          "event": "start",
+          "segment_id": "6aae43e5-50a5-41da-9504-ea406249f4ab",
+          "source_revision": "sha256:1e15d7c3867cac090a3a43282f80c58061bf0a7839712ae5e354b89792e6b791"
+        },
+        "end": {
+          "at": "2026-11-22T18:19:03.363+07:00",
+          "epoch_ms": 1795346343363,
+          "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+          "uc_id": "UC-01",
+          "run_id": "UC-01-GPT-5.6-TERRA",
+          "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
+          "turn_id": "01a202f5-72ee-7722-89c2-8281b248426e",
+          "phase": "prompt_generation",
+          "event": "end",
+          "segment_id": "6aae43e5-50a5-41da-9504-ea406249f4ab",
+          "source_revision": "sha256:1e15d7c3867cac090a3a43282f80c58061bf0a7839712ae5e354b89792e6b791"
+        }
+      }
+    ],
+    "observations": [
+      {
+        "measurement_turn_id": "01a202fc-bbaf-7af1-afd8-d727d465cf36",
+        "action": "close-phase:prompt_generation",
+        "last_turn_id": "01a202f5-72ee-7722-89c2-8281b248426e",
+        "evidence_sha256": "sha256:82bb62f66d5f46040d7fc3432908446c90ce4e591a1974b6155d3898d73a5e10"
+      }
+    ],
+    "workflow_status": "open",
+    "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3"
+  }
+}
