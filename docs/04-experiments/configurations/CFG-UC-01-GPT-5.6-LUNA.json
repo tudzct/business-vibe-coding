@@ -2,7 +2,7 @@
   "schema_version": "2.4",
   "artifact_type": "experiment-configuration",
   "status": "Confirmed",
-  "configuration_id": "CFG-UC-01-GPT-5.6-TERRA",
+  "configuration_id": "CFG-UC-01-GPT-5.6-LUNA",
   "comparison_group_id": "CG-100MS-01",
   "researcher_id": "researcher-khanh",
   "decided_at": "2026-10-17T22:39:53+07:00",
@@ -21,8 +21,8 @@
   "audit_design": {
     "protocol": "fixed",
     "fixed_auditor": {
-      "requested_label": "GPT-5.6-TERRA",
-      "requested_model_id": "gpt-5.6-terra",
+      "requested_label": "GPT-5.6-LUNA",
+      "requested_model_id": "gpt-5.6-luna",
       "requested_reasoning_effort": "medium",
       "requested_reasoning_mode": "standard"
     }
@@ -35,11 +35,11 @@
   },
   "runs": [
     {
-      "run_id": "UC-01-GPT-5.6-TERRA",
+      "run_id": "UC-01-GPT-5.6-LUNA",
       "uc_id": "UC-01",
-      "requested_label": "GPT-5.6-TERRA",
-      "requested_model_id": "gpt-5.6-terra",
-      "requested_reasoning_effort": "medium",
+      "requested_label": "GPT-5.6-LUNA",
+      "requested_model_id": "gpt-5.6-luna",
+      "requested_reasoning_effort": "low",
       "requested_reasoning_mode": "standard",
       "replicate_index": 1,
       "run_order": 1,

@@ -1,6 +1,6 @@
 {
   "uc_id": "UC-01",
-  "run_id": "UC-01-GPT-5.6-TERRA",
+  "run_id": "UC-01-GPT-5.6-LUNA",
   "status": "generated",
   "changed_files": [
     "finalsource/fe/src/App.tsx",

@@ -1,6 +1,6 @@
 # UC phase ledger
 
-UC: `UC-01`; run: `UC-01-GPT-5.6-TERRA`
+UC: `UC-01`; run: `UC-01-GPT-5.6-LUNA`
 
 Machine authority: phase-ledger.json. Each turn belongs to one phase.
 

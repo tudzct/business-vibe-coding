@@ -1,12 +1,12 @@
 {
   "uc_id": "UC-01",
-  "run_id": "UC-01-GPT-5.6-TERRA",
-  "configuration_id": "CFG-UC-01-GPT-5.6-TERRA",
+  "run_id": "UC-01-GPT-5.6-LUNA",
+  "configuration_id": "CFG-UC-01-GPT-5.6-LUNA",
   "prompt": {
     "path": "docs/02-construction/coding-prompts/UC-01-coding-prompt.md",
     "sha256": "sha256:0ea466090218a377808a89a4699a1e1243c2c033fe44f5b2ad9f1bcc7511a515"
   },
-  "model": "gpt-5.6-terra",
+  "model": "gpt-5.6-luna",
   "replicate": 1,
   "order": 1,
   "current_source_sha256": "sha256:1e15d7c3867cac090a3a43282f80c58061bf0a7839712ae5e354b89792e6b791",

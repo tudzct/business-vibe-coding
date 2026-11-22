@@ -1,16 +1,16 @@
 {
-  "run_id": "UC-01-GPT-5.6-TERRA",
+  "run_id": "UC-01-GPT-5.6-LUNA",
   "coding_prompt": {
-    "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/approved-prompt/UC-01-coding-prompt.md",
+    "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/approved-prompt/UC-01-coding-prompt.md",
     "sha256": "sha256:f31b168c808c05153f1fc5d42d0d56420fa6bca7da0d7bb0defac90d2f2d43bc"
   },
   "experiment_configuration": {
-    "configuration_id": "CFG-UC-01-GPT-5.6-TERRA",
+    "configuration_id": "CFG-UC-01-GPT-5.6-LUNA",
     "comparison_group_id": "CG-100MS-01",
     "researcher_id": "researcher-khanh",
-    "artifact": "docs/04-experiments/configurations/CFG-UC-01-GPT-5.6-TERRA.json",
-    "checksum": "sha256:c972b51c4d3ea1a70831ba336c54a3f2dbc0c627efcee38d653398e240c2fd46",
-    "run_activation": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/run-activation.json"
+    "artifact": "docs/04-experiments/configurations/CFG-UC-01-GPT-5.6-LUNA.json",
+    "checksum": "sha256:2b40d48c8f0a02bc119bbfeeb55f17cbe7522a6fcef07f39410a3b903bdeb856",
+    "run_activation": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/run-activation.json"
   },
   "uc_id": "UC-01",
   "uc_name": "Review Join Preview and Permissions",
@@ -18,7 +18,7 @@
   "run_order": 1,
   "audit_protocol": "fixed",
   "generation_model": {
-    "requested_model_id": "gpt-5.6-terra",
+    "requested_model_id": "gpt-5.6-luna",
     "requested_reasoning_effort": "medium",
     "effective_model_id": null,
     "effective_snapshot": null,
@@ -34,7 +34,7 @@
         "turn_id": "01a202fc-bbaf-7af1-afd8-d727d465cf36",
         "evidence": {
           "coding_prompt": {
-            "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/approved-prompt/UC-01-coding-prompt.md",
+            "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/approved-prompt/UC-01-coding-prompt.md",
             "sha256": "sha256:f31b168c808c05153f1fc5d42d0d56420fa6bca7da0d7bb0defac90d2f2d43bc"
           }
         },
@@ -47,7 +47,7 @@
         "turn_id": "01a20303-6fb0-7f90-92e7-6d57188edde0",
         "evidence": {
           "coding_prompt": {
-            "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-TERRA/approved-prompt/UC-01-coding-prompt.md",
+            "path": "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/approved-prompt/UC-01-coding-prompt.md",
             "sha256": "sha256:f31b168c808c05153f1fc5d42d0d56420fa6bca7da0d7bb0defac90d2f2d43bc"
           }
         },
@@ -57,7 +57,7 @@
       {
         "gate": "first_pass_audit",
         "outcome": "confirmed",
-        "turn_id": "audit-turn-uc01-gpt56-terra",
+        "turn_id": "audit-turn-uc01-gpt56-luna",
         "evidence": {
           "business_rules_sha256": "sha256:7c11d6d317aba9732fbec6497f940f4dc90d691c82472509cf33132c8d317738",
           "flow_assessment_id": "initial-audit",
@@ -79,7 +79,7 @@
       {
         "gate": "repair_decision",
         "outcome": "skipped",
-        "turn_id": "audit-turn-uc01-gpt56-terra",
+        "turn_id": "audit-turn-uc01-gpt56-luna",
         "evidence": {
           "business_rules_sha256": "sha256:7c11d6d317aba9732fbec6497f940f4dc90d691c82472509cf33132c8d317738",
           "flow_assessment_id": "initial-audit",
@@ -131,7 +131,7 @@
     "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
     "token_attribution_method": "semantic_primary_phase_per_turn",
     "uc_id": "UC-01",
-    "run_id": "UC-01-GPT-5.6-TERRA",
+    "run_id": "UC-01-GPT-5.6-LUNA",
     "status": "finalized",
     "measured_at": "2026-11-22T12:48:10.861180+00:00",
     "session": {
@@ -249,7 +249,7 @@
         "started_at": "2026-11-22T11:12:50.280Z",
         "ended_at": "2026-11-22T11:19:28.017Z",
         "completed": true,
-        "model": "gpt-5.6-terra",
+        "model": "gpt-5.6-luna",
         "tokens": {
           "input_tokens": 1848809,
           "cached_input_tokens": 1733376,
@@ -277,7 +277,7 @@
               "epoch_ms": 1795346114419,
               "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
               "uc_id": "UC-01",
-              "run_id": "UC-01-GPT-5.6-TERRA",
+              "run_id": "UC-01-GPT-5.6-LUNA",
               "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
               "turn_id": "01a202f5-72ee-7722-89c2-8281b248426e",
               "phase": "prompt_generation",
@@ -290,7 +290,7 @@
               "epoch_ms": 1795346343363,
               "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
               "uc_id": "UC-01",
-              "run_id": "UC-01-GPT-5.6-TERRA",
+              "run_id": "UC-01-GPT-5.6-LUNA",
               "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
               "turn_id": "01a202f5-72ee-7722-89c2-8281b248426e",
               "phase": "prompt_generation",
@@ -335,7 +335,7 @@
               "epoch_ms": 1795346689509,
               "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
               "uc_id": "UC-01",
-              "run_id": "UC-01-GPT-5.6-TERRA",
+              "run_id": "UC-01-GPT-5.6-LUNA",
               "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
               "turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
               "phase": "source_generation",
@@ -348,7 +348,7 @@
               "epoch_ms": 1795346805698,
               "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
               "uc_id": "UC-01",
-              "run_id": "UC-01-GPT-5.6-TERRA",
+              "run_id": "UC-01-GPT-5.6-LUNA",
               "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
               "turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
               "phase": "source_generation",
@@ -405,7 +405,7 @@
     "phase_ledger": {
       "schema_version": 1,
       "uc_id": "UC-01",
-      "run_id": "UC-01-GPT-5.6-TERRA",
+      "run_id": "UC-01-GPT-5.6-LUNA",
       "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
       "phases": {
         "prompt_generation": {
@@ -434,7 +434,7 @@
             "epoch_ms": 1795346114419,
             "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
             "uc_id": "UC-01",
-            "run_id": "UC-01-GPT-5.6-TERRA",
+            "run_id": "UC-01-GPT-5.6-LUNA",
             "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
             "turn_id": "01a202f5-72ee-7722-89c2-8281b248426e",
             "phase": "prompt_generation",
@@ -447,7 +447,7 @@
             "epoch_ms": 1795346343363,
             "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
             "uc_id": "UC-01",
-            "run_id": "UC-01-GPT-5.6-TERRA",
+            "run_id": "UC-01-GPT-5.6-LUNA",
             "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
             "turn_id": "01a202f5-72ee-7722-89c2-8281b248426e",
             "phase": "prompt_generation",
@@ -462,7 +462,7 @@
             "epoch_ms": 1795346689509,
             "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
             "uc_id": "UC-01",
-            "run_id": "UC-01-GPT-5.6-TERRA",
+            "run_id": "UC-01-GPT-5.6-LUNA",
             "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
             "turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
             "phase": "source_generation",
@@ -475,7 +475,7 @@
             "epoch_ms": 1795346805698,
             "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
             "uc_id": "UC-01",
-            "run_id": "UC-01-GPT-5.6-TERRA",
+            "run_id": "UC-01-GPT-5.6-LUNA",
             "session_id": "01a202f5-6fb8-78a2-a937-634c9c6c26e7",
             "turn_id": "01a202ff-b15a-7ba2-a6c9-6697b54158ae",
             "phase": "source_generation",
@@ -511,7 +511,7 @@
   },
   "repair_authorization": {
     "approved": false,
-    "turn_id": "audit-turn-uc01-gpt56-terra"
+    "turn_id": "audit-turn-uc01-gpt56-luna"
   },
   "business_rules": {
     "baseline": "docs/02-construction/implementation/UC-01/business-rule-baseline.json",
@@ -894,6 +894,6 @@
     "execution_blocked": false
   },
   "audit_initial_flow_progress_sha256": "sha256:ed9ac2d4af46f6889c3cc83b0fbdb446759afb682fc129bd378b1e9d0ada94b9",
-  "audit_handoff_sha256": "sha256:bd14fb33b128f5180e2ef87bd1a8ae5175dee70026e3326d0ec8748fefb2646c",
+  "audit_handoff_sha256": "sha256:553c9b347c29f2494db2233a1898df82ac41433568dae3997380a7d70b98b716",
   "repair_skip_reason": "All frozen BRs and flows pass; repair unnecessary."
 }
