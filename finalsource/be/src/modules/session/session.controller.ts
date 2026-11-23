@@ -14,6 +14,8 @@ import { SendChatMessageDto } from './dto/send-chat-message.dto';
 import { ChatMessageService } from './chat-message.service';
 import { ReactionService } from './reaction.service';
 import { SendReactionDto } from './dto/send-reaction.dto';
+import { LiveStreamService } from './live-stream.service';
+import { LiveStreamCommandDto } from './dto/live-stream-command.dto';
 
 @Controller('/api/v1/sessions')
 export class SessionController {
@@ -26,6 +28,7 @@ export class SessionController {
     private readonly config: ConfigService,
     private readonly chatMessageService: ChatMessageService,
     private readonly reactionService: ReactionService,
+    private readonly liveStreamService: LiveStreamService,
   ) {}
 
   @Post('demo')
@@ -50,6 +53,13 @@ export class SessionController {
   async readState(@Param('sessionId') sessionId: string, @Query('reactionCursor') reactionCursor: string | undefined, @Req() request: Request) {
     const data = await this.sessionStateService.readState(sessionId, reactionCursor, request.sessionPrincipal!);
     return { success: true, message: 'Session state loaded', data };
+  }
+
+  @Post(':sessionId/live-stream/commands')
+  @UseGuards(SessionAuthGuard)
+  async controlLiveStream(@Param('sessionId') sessionId: string, @Headers('idempotency-key') idempotencyKey: string | undefined, @Body() dto: LiveStreamCommandDto, @Req() request: Request) {
+    const data = await this.liveStreamService.control(sessionId, idempotencyKey, dto, request.sessionPrincipal!);
+    return { success: true, message: 'Live stream command accepted', data };
   }
 
   @Get(':sessionId/participants')

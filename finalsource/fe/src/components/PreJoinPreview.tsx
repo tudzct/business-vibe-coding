@@ -5,6 +5,7 @@ import ChatPanel from './ChatPanel';
 import SessionParticipantsPanel from './SessionParticipantsPanel';
 import ReactionPicker from './ReactionPicker';
 import type { ReactionEvent } from '../api/reactions';
+import LiveSession from './LiveSession';
 
 export type ParticipantRole = 'HOST' | 'BROADCASTER' | 'VIEWER' | 'STAGE_PARTICIPANT';
 export type PermissionStatus = 'UNKNOWN' | 'GRANTED' | 'DENIED';
@@ -169,6 +170,7 @@ export default function PreJoinPreview() {
   void initialState;
 
   if (joined && joinResult && activeCreds) {
+    if (joinResult.session.kind === 'LIVE_STREAM' || String(joinResult.participant.role) === 'HOST') return <LiveSession sessionId={activeCreds.sessionId} accessToken={activeCreds.accessToken} />;
     return (
       <main className="flex min-h-screen w-full flex-col bg-[#08090e] text-[#eff0fa] font-sans">
         <header className="flex items-center justify-between border-b border-[#272a31] bg-[#11131a] px-6 py-4">

@@ -50,7 +50,10 @@ export class SessionStateService {
     return {
       session,
       selfParticipant,
-      stream: null,
+      stream: (await this.dataSource.query(
+        'SELECT id, session_id AS sessionId, status, version, started_at AS startedAt, ended_at AS endedAt FROM live_streams WHERE session_id = ?',
+        [sessionId],
+      ))[0] ?? null,
       recording: null,
       share: null,
       media: mediaRows[0] ?? null,

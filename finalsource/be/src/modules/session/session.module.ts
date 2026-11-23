@@ -8,10 +8,11 @@ import { ParticipantListService } from './participant-list.service';
 import { SessionStateService } from './session-state.service';
 import { ChatMessageService } from './chat-message.service';
 import { ReactionService } from './reaction.service';
+import { LiveStreamService } from './live-stream.service';
 
 @Module({
   imports: [ConfigModule, JwtModule.register({})],
   controllers: [SessionController],
-  providers: [SessionJoinService, ParticipantListService, SessionStateService, ChatMessageService, ReactionService, SessionAuthGuard],
+  providers: [SessionJoinService, ParticipantListService, SessionStateService, ChatMessageService, ReactionService, LiveStreamService, SessionAuthGuard],
 })
 export class SessionModule {}

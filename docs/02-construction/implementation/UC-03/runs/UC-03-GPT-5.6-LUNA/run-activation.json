@@ -1,0 +1,16 @@
+{
+  "artifact_type": "run-activation",
+  "gate_version": 5,
+  "uc_id": "UC-03",
+  "run_id": "UC-03-GPT-5.6-LUNA",
+  "configuration_artifact": "docs/04-experiments/configurations/CFG-UC-03-GPT-5.6-LUNA.json",
+  "configuration_checksum": "sha256:2ccec9e520970dc67a9ec5530d67044709eaa4b76f58af156f867ba1b4f105df",
+  "activated_at": "2026-11-23T09:11:12.824393Z",
+  "status": "Confirmed",
+  "approved_prompt": {
+    "path": "docs/02-construction/implementation/UC-03/runs/UC-03-GPT-5.6-LUNA/approved-prompt/UC-03-coding-prompt.md",
+    "sha256": "sha256:3df31ba9380bb4c7962c65b258ce887657e323e2ff52aa3ecd32ad1d70eaa233"
+  },
+  "created_by": "measure_prompt_close",
+  "prompt_close_turn_id": "01a207aa-fafb-7ec3-ba96-f95ba12f6a29"
+}

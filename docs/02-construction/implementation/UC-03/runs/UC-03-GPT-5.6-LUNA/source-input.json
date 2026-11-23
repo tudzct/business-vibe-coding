@@ -1,0 +1,14 @@
+{
+  "artifact_type": "source-generation-input",
+  "uc_id": "UC-03",
+  "run_id": "UC-03-GPT-5.6-LUNA",
+  "configuration_id": "CFG-UC-03-GPT-5.6-LUNA",
+  "configuration_checksum": "sha256:2ccec9e520970dc67a9ec5530d67044709eaa4b76f58af156f867ba1b4f105df",
+  "prompt": "docs/02-construction/coding-prompts/UC-03-coding-prompt.md",
+  "prompt_sha256": "sha256:c6174f0305b969362a7aa80e84b22aa1aca0b05ea9afa7f3c7aa9942327b2466",
+  "model": "gpt-5.6-luna",
+  "replicate": 1,
+  "order": 1,
+  "source_revision_before": "sha256:b0277c6cb50dc615ec677457a8527cc326bacefa5f6ce76f0a574c75ae0d1fa9",
+  "predecessor_source_hash": "sha256:b0277c6cb50dc615ec677457a8527cc326bacefa5f6ce76f0a574c75ae0d1fa9"
+}

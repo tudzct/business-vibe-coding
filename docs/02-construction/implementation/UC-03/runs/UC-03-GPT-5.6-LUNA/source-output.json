@@ -1,0 +1,21 @@
+{
+  "artifact_type": "source-generation-output",
+  "uc_id": "UC-03",
+  "run_id": "UC-03-GPT-5.6-LUNA",
+  "status": "generated",
+  "source_revision_after": "sha256:78ba2072bf599c4162076829f6a8faee5f290cd59e71ce8694028d2a9435ae2b",
+  "changed_files": [
+    "finalsource/be/src/modules/session/dto/live-stream-command.dto.ts",
+    "finalsource/be/src/modules/session/live-stream.service.ts",
+    "finalsource/be/src/modules/session/session.controller.ts",
+    "finalsource/be/src/modules/session/session.module.ts",
+    "finalsource/be/src/modules/session/session-state.service.ts",
+    "finalsource/fe/src/api/liveStream.ts",
+    "finalsource/fe/src/components/LiveSession.tsx",
+    "finalsource/fe/src/components/PreJoinPreview.tsx"
+  ],
+  "checks": {
+    "backend_lint": "blocked: eslint executable unavailable",
+    "backend_build": "blocked: nest executable unavailable"
+  }
+}
