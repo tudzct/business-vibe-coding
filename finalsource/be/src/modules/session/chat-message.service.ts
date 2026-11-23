@@ -16,6 +16,12 @@ export class ChatMessageService {
   async list(sessionId: string, query: ListChatMessagesDto, principal: SessionPrincipal): Promise<{ items: ChatMessage[]; nextCursor: string }> {
     this.validateSessionId(sessionId);
     this.requireSessionPrincipal(sessionId, principal);
+    const sessionRows = await this.dataSource.query('SELECT id, status FROM sessions WHERE id = ?', [sessionId]);
+    const session = sessionRows[0] as { id: string; status: string } | undefined;
+    if (!session) throw new NotFoundException('Session not found');
+    if (session.status === 'ENDED') throw new UnprocessableEntityException('Session is no longer active');
+    const membershipRows = await this.dataSource.query("SELECT id FROM participants WHERE session_id = ? AND principal_id = ? AND status = 'JOINED'", [sessionId, principal.principalId]);
+    if (!membershipRows[0]) throw new ForbiddenException('Session access denied');
     const cursor = this.decodeCursor(query.cursor, sessionId);
     try {
       const rows = await this.dataSource.query('SELECT id, session_id AS sessionId, sender_participant_id AS senderParticipantId, body, sent_at AS sentAt, sequence FROM chat_messages WHERE session_id = ? AND sequence > ? ORDER BY sequence ASC LIMIT ?', [sessionId, cursor?.sequence ?? 0, query.pageSize + 1]) as ChatMessage[];

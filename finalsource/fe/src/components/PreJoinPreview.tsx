@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
 import { joinSession, type JoinResponse } from '../api/sessionJoin';
+import ChatPanel from './ChatPanel';
 import SessionParticipantsPanel from './SessionParticipantsPanel';
 
 export type ParticipantRole = 'HOST' | 'BROADCASTER' | 'VIEWER' | 'STAGE_PARTICIPANT';
@@ -78,6 +79,8 @@ export default function PreJoinPreview() {
   const [joining, setJoining] = useState(false);
   const [joinError, setJoinError] = useState('');
   const [joinResult, setJoinResult] = useState<JoinResponse | null>(null);
+  const [activeCreds, setActiveCreds] = useState<{ sessionId: string; accessToken: string } | null>(null);
+  const [sidePanel, setSidePanel] = useState<'participants' | 'chat' | null>('participants');
   const [participantsOpen, setParticipantsOpen] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -145,6 +148,7 @@ export default function PreJoinPreview() {
         speakerDeviceId: null,
         virtualBackgroundId: null,
       });
+      setActiveCreds({ sessionId: activeSessionId, accessToken: activeToken });
       setJoinResult(result);
       setJoined(true);
     } catch (error: unknown) {
@@ -160,6 +164,35 @@ export default function PreJoinPreview() {
 
   const initialState = preparePreview({ participantKey, role, displayName, requestCamera: true, requestMicrophone: true });
   void initialState;
+
+  if (joined && joinResult && activeCreds) {
+    return (
+      <main className="flex min-h-screen w-full flex-col bg-[#08090e] text-[#eff0fa] font-sans">
+        <header className="flex items-center justify-between border-b border-[#272a31] bg-[#11131a] px-6 py-4">
+          <div className="flex items-center gap-3">
+            <span className="h-3 w-3 rounded-full bg-emerald-400" />
+            <h1 className="text-base font-semibold">Live Session</h1>
+            <span className="rounded bg-[#191b23] px-2 py-0.5 text-xs text-[#c5c6d0]">{joinResult.participant.displayName} ({joinResult.participant.role})</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button type="button" onClick={() => setSidePanel((p) => (p === 'participants' ? null : 'participants'))} className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${sidePanel === 'participants' ? 'bg-[#538dff] text-black' : 'bg-[#191b23] text-[#eff0fa] hover:bg-[#272a31]'}`}>Participants</button>
+            <button type="button" onClick={() => setSidePanel((p) => (p === 'chat' ? null : 'chat'))} className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${sidePanel === 'chat' ? 'bg-[#538dff] text-black' : 'bg-[#191b23] text-[#eff0fa] hover:bg-[#272a31]'}`}>Chat</button>
+          </div>
+        </header>
+        <div className="flex flex-1 gap-6 p-6">
+          <section className="flex flex-1 items-center justify-center rounded-2xl border border-[#272a31] bg-[#11131a] p-6">
+            <div className="flex flex-col items-center gap-3">
+              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[#7e47eb] text-2xl font-bold">{joinResult.participant.displayName.slice(0, 2).toUpperCase()}</div>
+              <p className="text-lg font-semibold">{joinResult.participant.displayName}</p>
+              <p className="text-sm text-[#c5c6d0]">{joinResult.participant.role}</p>
+            </div>
+          </section>
+          {sidePanel === 'participants' && <SessionParticipantsPanel sessionId={activeCreds.sessionId} accessToken={activeCreds.accessToken} onClose={() => setSidePanel(null)} />}
+          {sidePanel === 'chat' && <ChatPanel sessionId={activeCreds.sessionId} accessToken={activeCreds.accessToken} onClose={() => setSidePanel(null)} />}
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen overflow-auto bg-black px-6 py-10 text-[#eff0fa]">
