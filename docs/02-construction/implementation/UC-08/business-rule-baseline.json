@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "artifact_type": "business-rule-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-08",
+  "business_rule_path": "docs/01-inception/business-rules/uc-08-view-session-participants-business-rules.md",
+  "business_rule_sha256": "sha256:6cd477a773ce3389fb695981f02cc16815e76ea609276046426f4c5111376bad",
+  "ordered_br_ids": [
+    "BR-VSP-01",
+    "BR-VSP-02",
+    "BR-VSP-03",
+    "BR-VSP-04",
+    "BR-VSP-05",
+    "BR-VSP-06",
+    "BR-VSP-07"
+  ],
+  "frozen_at": "2026-10-17T22:39:53+07:00"
+}
