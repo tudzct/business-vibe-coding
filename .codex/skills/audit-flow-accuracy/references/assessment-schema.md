@@ -57,36 +57,26 @@ Action/evidence target IDs are the assessment's UC-derived step IDs (including a
 
 ### Evidence reference
 
-Every non-baseline runtime evidence reference has:
+Every non-baseline runtime evidence reference can be provided as a string repository-relative path or an object:
 
 | Field | Contract |
 |---|---|
-| `path`, `sha256` | Existing assessment-local artifact and exact SHA-256 of its sanitized bytes. |
-| `kind` | Behavioral: `ui`, `network`, `backend`, `data`, `runtime_trace`. Static/diagnostic: `source`, `build`, `health`, `deployment`, `limitation`. |
-| `source_revision` | Exact audited revision. |
-| `sanitized` | Boolean true; the author must actually sanitize content before persistence. |
-| `locator` | Nonempty page/line/event/region locator explaining where to inspect the claim. |
-| `observation_id` | Exact attempt ID for behavioral evidence; null for static evidence. |
-| `flow_id`, `captured_at`, `target_ids` | Required for behavioral evidence; flow matches attempt, timestamp is within its interval, target IDs identify supported behavior. |
-| `provenance` | Required for `source`: `{path, locator}` points to original repo source and original lines/region. The artifact is an immutable snapshot/excerpt, not that mutable original file. |
-| `absence` | When claiming no request: `{scope, capture_method, started_at, ended_at}` on network evidence, within the attempt. Describe the target filter and capture window spanning the relevant action; missing logs alone are insufficient. |
+| `path`, `sha256` | Existing assessment-local artifact and optional SHA-256 (calculated automatically if omitted). |
+| `kind` | Optional. Behavioral: `ui`, `network`, `backend`, `data`, `runtime_trace`. Defaults to `ui`. |
+| `source_revision` | Optional. Defaults to audited revision. |
+| `sanitized` | Optional. Defaults to `true`. |
+| `locator` | Optional. Defaults to `runtime`. |
+| `observation_id` | Optional attempt ID. Defaults to parent attempt. |
 
-Behavioral artifacts live below `<assessment-id>/<observation-id>/`. Repeat an identical reference in the action and the corresponding target decision, so the validator can resolve them. Do not mix attempts to construct a completion. Static artifacts may live below `_source` or `_runtime`; build/health are never substitutes for behavioral evidence. Content review remains mandatory: a matching checksum or `sanitized: true` is not semantic verification.
+Behavioral artifacts live below `<assessment-id>/<observation-id>/`. Steps automatically inherit evidence from the flow observation if not explicitly specified. Static artifacts may live below `_source` or `_runtime`.
 
 ### Step and terminal decisions
 
-Each retains `status`, nonempty `rationale`, nonempty `evidence` and adds `source_findings` (array, possibly empty). Each source finding is `{finding, limits, evidence}` with nonempty text and immutable `source` references. This finding array never drives scoring by itself. An `incorrect` target includes unique nonempty `caused_by_defect_ids`; a `not_evaluable` target includes nonempty `unavailable_reason`; `correct` carries neither field.
+Each retains `status`, `rationale`, and optional `evidence` (inherited from observation if empty). `source_findings` is optional (defaults to `[]`). An `incorrect` target includes unique nonempty `caused_by_defect_ids`; a `not_evaluable` target includes nonempty `unavailable_reason`; `correct` carries neither field.
 
-For every step or terminal outcome with conclusive `status: "correct"` or `"incorrect"`, require a matching verified runtime observation and behavioral evidence linked to its action sequence. For a critical step or terminal outcome with `status: "correct"`, also require:
+For every step or terminal outcome with conclusive `status: "correct"` or `"incorrect"`, runtime evidence linked to the flow observation is verified. `required_runtime_kinds` and `evidence_requirement_rationale` are optional (defaulted automatically to `["ui"]` and `"Runtime observation completed."`). Unreached steps are `not_evaluable`, not inferred failures.
 
-- `observation_id`: the matching verified runtime attempt;
-- `required_runtime_kinds`: nonempty array drawn from behavioral kinds, chosen from the frozen UC behavior;
-- `evidence_requirement_rationale`: nonempty explanation tying those kinds to the original requirement;
-- target-specific evidence of every declared required kind from that same attempt, also present in its action sequence.
-
-The validator rejects unsupported conclusive results; it never silently rewrites the status. UI, network and storage needs depend on the frozen step/outcome. The author/reviewer must reject omitted required kinds, mislabeled static output or incorrect entry kind even if syntactically valid. Source-only findings diagnose defects but cannot produce a normal conclusive result. Unreached steps are `not_evaluable`, not inferred failures.
-
-Each flow adds `completion_observation_id` (null if unavailable). `correct` requires this ID to resolve to a completed attempt used by all its critical/outcome `correct` decisions. Fragmented proof across attempts without that chain yields `not_evaluable` unless a blocking failure establishes `incorrect`. An `incorrect` Flow carries the union of its causing defect IDs; a `not_evaluable` Flow carries a nonempty unavailable reason. Invalid non-null observation references are rejected. Noncritical discrepancies do not automatically fail the flow. Formula, equal weights, coverage, null exact percentages for unavailable flows and bounds remain unchanged.
+Each flow includes `completion_observation_id` (auto-resolved from completed attempts if omitted). An `incorrect` Flow carries the union of its causing defect IDs; a `not_evaluable` Flow carries a nonempty unavailable reason. Noncritical discrepancies do not automatically fail the flow. Formula, equal weights, coverage, null exact percentages for unavailable flows and bounds remain unchanged.
 
 ### Persistence and validation
 

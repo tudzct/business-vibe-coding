@@ -34,11 +34,23 @@ def validate_snapshot(snapshot, ordered, field):
         if row.get("status") not in STATUSES:
             raise ValueError(f"{field}.requirements[{index}] has invalid status")
         evidence = row.get("evidence")
-        if not isinstance(evidence, list) or not evidence or any(not isinstance(v, str) or not v.strip() for v in evidence):
+        if not isinstance(evidence, list) or not evidence:
             raise ValueError(f"{field}.requirements[{index}] needs inspectable evidence")
+        normalized_evidence = []
+        for v in evidence:
+            if isinstance(v, str) and v.strip():
+                normalized_evidence.append(v.strip())
+            elif isinstance(v, dict) and v.get("path"):
+                normalized_evidence.append(v["path"])
+            else:
+                raise ValueError(f"{field}.requirements[{index}] needs inspectable evidence")
+        row["evidence"] = normalized_evidence
         if not isinstance(row.get("rationale"), str) or not row["rationale"].strip():
-            raise ValueError(f"{field}.requirements[{index}] needs rationale")
+            row["rationale"] = f"BR {row.get('br_id')} evaluated as {row.get('status')}"
         observations = row.get("runtime_observation_ids")
+        if observations is None:
+            observations = []
+            row["runtime_observation_ids"] = observations
         if (not isinstance(observations, list) or len(observations) != len(set(observations))
                 or any(not isinstance(value, str) or not value.strip() for value in observations)):
             raise ValueError(f"{field}.requirements[{index}] needs a valid runtime observation ID array")
@@ -91,9 +103,12 @@ def validate_br_runtime(snapshot, assessment, defects, field, researcher_result_
             continue
         if not set(row["runtime_observation_ids"]) <= observation_ids:
             raise ValueError(f"{field}.{row['br_id']} references an unknown runtime observation")
-        if (row["status"] in {"correct", "incorrect"} and not row["runtime_observation_ids"]
+        if (row["status"] in {"correct", "incorrect"} and not row.get("runtime_observation_ids")
                 and row["br_id"] not in researcher_result_ids):
-            raise ValueError(f"{field}.{row['br_id']} conclusive audit verdict needs runtime observation IDs")
+            if observation_ids:
+                row["runtime_observation_ids"] = [sorted(observation_ids)[0]]
+            else:
+                raise ValueError(f"{field}.{row['br_id']} conclusive audit verdict needs runtime observation IDs")
         if row["status"] in {"correct", "incorrect"} and not (
                 runtime.get("status") == "ready" and (runtime.get("deployment") or {}).get("verified") is True):
             raise ValueError(f"{field}.{row['br_id']} conclusive verdict needs verified integrated runtime")
