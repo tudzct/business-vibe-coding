@@ -1,0 +1,4 @@
+EF-1 Observation (http://localhost:8080/?sessionId=00000000-0000-0000-0000-000000000000):
+1. Navigated to invalid session URL; UI still rendered Pre-join preview without session lookup.
+2. Entered "Alice" and clicked Join Now -> POSTed to hardcoded session ID 11111111-1111-4111-8111-111111111111 -> HTTP 401 Unauthorized ("Authentication required").
+3. UI displayed "Authentication required" alert while preserving preview context and entered name.

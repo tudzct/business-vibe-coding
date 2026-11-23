@@ -1,0 +1,268 @@
+[
+  {
+    "br_id": "BR-JS-01",
+    "status": "incorrect",
+    "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+    "evidence": [
+      "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+    ],
+    "runtime_observation_ids": [
+      "obs-bf1"
+    ],
+    "caused_by_defect_ids": [
+      "DEF-UC02-AUTH-01"
+    ]
+  },
+  {
+    "br_id": "BR-JS-02",
+    "status": "incorrect",
+    "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+    "evidence": [
+      "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+    ],
+    "runtime_observation_ids": [
+      "obs-bf1"
+    ],
+    "caused_by_defect_ids": [
+      "DEF-UC02-AUTH-01"
+    ]
+  },
+  {
+    "br_id": "BR-JS-03",
+    "status": "incorrect",
+    "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+    "evidence": [
+      "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+    ],
+    "runtime_observation_ids": [
+      "obs-bf1"
+    ],
+    "caused_by_defect_ids": [
+      "DEF-UC02-AUTH-01"
+    ]
+  },
+  {
+    "br_id": "BR-JS-04",
+    "status": "incorrect",
+    "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+    "evidence": [
+      "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+    ],
+    "runtime_observation_ids": [
+      "obs-bf1"
+    ],
+    "caused_by_defect_ids": [
+      "DEF-UC02-AUTH-01"
+    ]
+  },
+  {
+    "br_id": "BR-JS-05",
+    "status": "incorrect",
+    "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+    "evidence": [
+      "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+    ],
+    "runtime_observation_ids": [
+      "obs-bf1"
+    ],
+    "caused_by_defect_ids": [
+      "DEF-UC02-AUTH-01"
+    ]
+  },
+  {
+    "br_id": "BR-JS-06",
+    "status": "incorrect",
+    "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+    "evidence": [
+      "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+    ],
+    "runtime_observation_ids": [
+      "obs-bf1"
+    ],
+    "caused_by_defect_ids": [
+      "DEF-UC02-AUTH-01"
+    ]
+  },
+  {
+    "br_id": "BR-JS-07",
+    "status": "incorrect",
+    "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+    "evidence": [
+      "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+    ],
+    "runtime_observation_ids": [
+      "obs-bf1"
+    ],
+    "caused_by_defect_ids": [
+      "DEF-UC02-AUTH-01"
+    ]
+  },
+  {
+    "br_id": "BR-JS-08",
+    "status": "incorrect",
+    "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+    "evidence": [
+      "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+    ],
+    "runtime_observation_ids": [
+      "obs-bf1"
+    ],
+    "caused_by_defect_ids": [
+      "DEF-UC02-AUTH-01"
+    ]
+  },
+  {
+    "br_id": "BR-JS-09",
+    "status": "incorrect",
+    "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+    "evidence": [
+      "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+    ],
+    "runtime_observation_ids": [
+      "obs-bf1"
+    ],
+    "caused_by_defect_ids": [
+      "DEF-UC02-AUTH-01"
+    ]
+  },
+  {
+    "br_id": "BR-JS-10",
+    "status": "incorrect",
+    "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+    "evidence": [
+      "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+    ],
+    "runtime_observation_ids": [
+      "obs-bf1"
+    ],
+    "caused_by_defect_ids": [
+      "DEF-UC02-AUTH-01"
+    ]
+  },
+  {
+    "br_id": "BR-JS-11",
+    "status": "incorrect",
+    "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+    "evidence": [
+      "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+    ],
+    "runtime_observation_ids": [
+      "obs-bf1"
+    ],
+    "caused_by_defect_ids": [
+      "DEF-UC02-AUTH-01"
+    ]
+  },
+  {
+    "br_id": "BR-JS-12",
+    "status": "incorrect",
+    "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+    "evidence": [
+      "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+    ],
+    "runtime_observation_ids": [
+      "obs-bf1"
+    ],
+    "caused_by_defect_ids": [
+      "DEF-UC02-AUTH-01"
+    ]
+  },
+  {
+    "br_id": "BR-JS-13",
+    "status": "incorrect",
+    "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+    "evidence": [
+      "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+    ],
+    "runtime_observation_ids": [
+      "obs-bf1"
+    ],
+    "caused_by_defect_ids": [
+      "DEF-UC02-AUTH-01"
+    ]
+  },
+  {
+    "br_id": "BR-JS-14",
+    "status": "incorrect",
+    "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+    "evidence": [
+      "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+    ],
+    "runtime_observation_ids": [
+      "obs-bf1"
+    ],
+    "caused_by_defect_ids": [
+      "DEF-UC02-AUTH-01"
+    ]
+  },
+  {
+    "br_id": "BR-JS-15",
+    "status": "incorrect",
+    "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+    "evidence": [
+      "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+    ],
+    "runtime_observation_ids": [
+      "obs-bf1"
+    ],
+    "caused_by_defect_ids": [
+      "DEF-UC02-AUTH-01"
+    ]
+  },
+  {
+    "br_id": "BR-JS-16",
+    "status": "incorrect",
+    "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+    "evidence": [
+      "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+    ],
+    "runtime_observation_ids": [
+      "obs-bf1"
+    ],
+    "caused_by_defect_ids": [
+      "DEF-UC02-AUTH-01"
+    ]
+  },
+  {
+    "br_id": "BR-JS-17",
+    "status": "incorrect",
+    "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+    "evidence": [
+      "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+    ],
+    "runtime_observation_ids": [
+      "obs-bf1"
+    ],
+    "caused_by_defect_ids": [
+      "DEF-UC02-AUTH-01"
+    ]
+  },
+  {
+    "br_id": "BR-JS-18",
+    "status": "incorrect",
+    "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+    "evidence": [
+      "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+    ],
+    "runtime_observation_ids": [
+      "obs-bf1"
+    ],
+    "caused_by_defect_ids": [
+      "DEF-UC02-AUTH-01"
+    ]
+  },
+  {
+    "br_id": "BR-JS-19",
+    "status": "incorrect",
+    "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+    "evidence": [
+      "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+    ],
+    "runtime_observation_ids": [
+      "obs-bf1"
+    ],
+    "caused_by_defect_ids": [
+      "DEF-UC02-AUTH-01"
+    ]
+  }
+]

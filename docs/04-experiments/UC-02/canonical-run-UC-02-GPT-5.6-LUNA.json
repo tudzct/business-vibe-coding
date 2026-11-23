@@ -396,7 +396,7 @@
   },
   "business_rules": {
     "baseline": "docs/02-construction/implementation/UC-02/business-rule-baseline.json",
-    "source_revision": null,
+    "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
     "ordered_br_ids": [
       "BR-JS-01",
       "BR-JS-02",
@@ -418,10 +418,329 @@
       "BR-JS-18",
       "BR-JS-19"
     ],
-    "initial": null,
+    "initial": {
+      "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+      "assessed_at": "2026-11-23T13:26:30+07:00",
+      "requirements": [
+        {
+          "br_id": "BR-JS-01",
+          "status": "incorrect",
+          "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ],
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-02",
+          "status": "incorrect",
+          "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ],
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-03",
+          "status": "incorrect",
+          "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ],
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-04",
+          "status": "incorrect",
+          "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ],
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-05",
+          "status": "incorrect",
+          "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ],
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-06",
+          "status": "incorrect",
+          "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ],
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-07",
+          "status": "incorrect",
+          "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ],
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-08",
+          "status": "incorrect",
+          "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ],
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-09",
+          "status": "incorrect",
+          "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ],
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-10",
+          "status": "incorrect",
+          "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ],
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-11",
+          "status": "incorrect",
+          "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ],
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-12",
+          "status": "incorrect",
+          "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ],
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-13",
+          "status": "incorrect",
+          "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ],
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-14",
+          "status": "incorrect",
+          "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ],
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-15",
+          "status": "incorrect",
+          "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ],
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-16",
+          "status": "incorrect",
+          "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ],
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-17",
+          "status": "incorrect",
+          "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ],
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-18",
+          "status": "incorrect",
+          "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ],
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "br_id": "BR-JS-19",
+          "status": "incorrect",
+          "rationale": "Join session request failed with HTTP 401 Unauthorized (DEF-UC02-AUTH-01), preventing verification of business rule.",
+          "evidence": [
+            "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt"
+          ],
+          "runtime_observation_ids": [
+            "obs-bf1"
+          ],
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        }
+      ],
+      "total": 19,
+      "correct": 0,
+      "incorrect": 19,
+      "not_evaluable": 0
+    },
     "final": null
   },
-  "defects": [],
+  "defects": [
+    {
+      "defect_id": "DEF-UC02-AUTH-01",
+      "fingerprint": "sha256:43866456aae9f761cc1c191db6175e99b8f5eb75fb550e00e7a20b00085d5d2b",
+      "stage": "initial",
+      "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+      "category": "technical",
+      "trigger": "Clicking Join Now in Pre-join preview sends POST /api/v1/sessions/11111111-1111-4111-8111-111111111111/participants without authentication.",
+      "description": "Join session request fails with HTTP 401 Unauthorized (Authentication required) because no authenticated principal/session is provided, preventing session join completion.",
+      "status": "open",
+      "blocks_execution": false,
+      "affected_br_ids": [
+        "BR-JS-01",
+        "BR-JS-02",
+        "BR-JS-03",
+        "BR-JS-04",
+        "BR-JS-05",
+        "BR-JS-06",
+        "BR-JS-07",
+        "BR-JS-08",
+        "BR-JS-09",
+        "BR-JS-10",
+        "BR-JS-11",
+        "BR-JS-12",
+        "BR-JS-13",
+        "BR-JS-14",
+        "BR-JS-15",
+        "BR-JS-16",
+        "BR-JS-17",
+        "BR-JS-18",
+        "BR-JS-19"
+      ],
+      "affected_flow_ids": [
+        "BF-1",
+        "AF-1"
+      ],
+      "evidence": [
+        {
+          "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt",
+          "sha256": "sha256:cbd2ad35d5c3d79d41644850cd826fda0436c887808229c3a9d099be8209e9c2",
+          "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6"
+        }
+      ]
+    }
+  ],
   "repairs": [],
   "repair_round_limit": 10,
   "repair_rounds_completed": 0,
@@ -435,10 +754,922 @@
   "ui_accuracy_evidence": null,
   "ui_accuracy_recorded_by": null,
   "ui_accuracy_recorded_at": null,
-  "flow_accuracy_percent": null,
-  "flow_error_percent": null,
-  "flow_accuracy_status": "not_evaluated",
-  "flow_accuracy": null,
+  "flow_accuracy_percent": 33.333333,
+  "flow_error_percent": 66.666667,
+  "flow_accuracy_status": "repair_required",
+  "flow_accuracy": {
+    "schema_version": 2,
+    "rubric_id": "completion-critical-flow-runtime-v2",
+    "assessments": [
+      {
+        "schema_version": 2,
+        "rubric_id": "completion-critical-flow-runtime-v2",
+        "assessment_id": "initial-audit-01",
+        "stage": "initial",
+        "input_sha256": "sha256:2fc69ebe9903968e3642f57efe0b040c87752c0a9742d1b9b88562ed0b8126c4",
+        "status": "repair_required",
+        "execution_blocked": false,
+        "execution_blocker_defect_ids": [],
+        "counts": {
+          "main": 1,
+          "alternative": 1,
+          "exception": 1,
+          "total": 3,
+          "correct": 1,
+          "incorrect": 2,
+          "not_evaluable": 0
+        },
+        "flow_error_percent": 66.666667,
+        "flow_accuracy_percent": 33.333333,
+        "evaluated_coverage_percent": 100.0,
+        "accuracy_lower_bound_percent": 33.333333,
+        "accuracy_upper_bound_percent": 33.333333,
+        "flows": [
+          {
+            "flow_id": "BF-1",
+            "type": "main",
+            "status": "incorrect",
+            "noncritical_deviations": 0,
+            "terminal_outcome": {
+              "text": "POST-1 & POST-2: Active session and participant tile rendered.",
+              "status": "incorrect",
+              "observation_id": "obs-bf1",
+              "caused_by_defect_ids": [
+                "DEF-UC02-AUTH-01"
+              ],
+              "rationale": "Session join failed with 401 Unauthorized.",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt",
+                  "sha256": "sha256:cbd2ad35d5c3d79d41644850cd826fda0436c887808229c3a9d099be8209e9c2",
+                  "kind": "ui",
+                  "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                  "sanitized": true,
+                  "locator": "runtime",
+                  "observation_id": "obs-bf1",
+                  "flow_id": "BF-1"
+                }
+              ],
+              "source_findings": []
+            },
+            "steps": [
+              {
+                "step_id": "BF-1.1",
+                "text": "The participant enters a display name and chooses Join.",
+                "completion_critical": true,
+                "criticality_reason": "Entry action",
+                "status": "correct",
+                "observation_id": "obs-bf1",
+                "rationale": "Display name entered and Join Now clicked.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt",
+                    "sha256": "sha256:cbd2ad35d5c3d79d41644850cd826fda0436c887808229c3a9d099be8209e9c2",
+                    "kind": "ui",
+                    "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                    "sanitized": true,
+                    "locator": "runtime",
+                    "observation_id": "obs-bf1",
+                    "flow_id": "BF-1"
+                  }
+                ],
+                "source_findings": [],
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Runtime observation completed."
+              },
+              {
+                "step_id": "BF-1.2",
+                "text": "The client submits the join request.",
+                "completion_critical": true,
+                "criticality_reason": "API submission",
+                "status": "correct",
+                "observation_id": "obs-bf1",
+                "rationale": "POST request submitted.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt",
+                    "sha256": "sha256:cbd2ad35d5c3d79d41644850cd826fda0436c887808229c3a9d099be8209e9c2",
+                    "kind": "ui",
+                    "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                    "sanitized": true,
+                    "locator": "runtime",
+                    "observation_id": "obs-bf1",
+                    "flow_id": "BF-1"
+                  }
+                ],
+                "source_findings": [],
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Runtime observation completed."
+              },
+              {
+                "step_id": "BF-1.3",
+                "text": "The system returns the joined participant and session summary.",
+                "completion_critical": true,
+                "criticality_reason": "Join response",
+                "status": "incorrect",
+                "observation_id": "obs-bf1",
+                "caused_by_defect_ids": [
+                  "DEF-UC02-AUTH-01"
+                ],
+                "rationale": "Returned 401 Unauthorized instead of joined participant.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt",
+                    "sha256": "sha256:cbd2ad35d5c3d79d41644850cd826fda0436c887808229c3a9d099be8209e9c2",
+                    "kind": "ui",
+                    "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                    "sanitized": true,
+                    "locator": "runtime",
+                    "observation_id": "obs-bf1",
+                    "flow_id": "BF-1"
+                  }
+                ],
+                "source_findings": []
+              },
+              {
+                "step_id": "BF-1.4",
+                "text": "The client renders the active session and participant tile.",
+                "completion_critical": true,
+                "criticality_reason": "UI completion",
+                "status": "not_evaluable",
+                "unavailable_reason": "Blocked by 401 on step BF-1.3.",
+                "rationale": "Unreached due to 401.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt",
+                    "sha256": "sha256:cbd2ad35d5c3d79d41644850cd826fda0436c887808229c3a9d099be8209e9c2",
+                    "kind": "ui",
+                    "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                    "sanitized": true,
+                    "locator": "runtime",
+                    "observation_id": "obs-bf1",
+                    "flow_id": "BF-1"
+                  }
+                ],
+                "source_findings": []
+              }
+            ],
+            "caused_by_defect_ids": [
+              "DEF-UC02-AUTH-01"
+            ]
+          },
+          {
+            "flow_id": "AF-1",
+            "type": "alternative",
+            "status": "incorrect",
+            "noncritical_deviations": 0,
+            "terminal_outcome": {
+              "text": "Updated selections reflected in joined session.",
+              "status": "incorrect",
+              "observation_id": "obs-af1",
+              "caused_by_defect_ids": [
+                "DEF-UC02-AUTH-01"
+              ],
+              "rationale": "Join failed with 401 Unauthorized.",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-af1/ui-preview-controls.txt",
+                  "sha256": "sha256:bfe0ffb24c5c448e9b8ea650a25fccf4e56c4363a607bd364b4c73e54dbd3dbb",
+                  "kind": "ui",
+                  "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                  "sanitized": true,
+                  "locator": "runtime",
+                  "observation_id": "obs-af1",
+                  "flow_id": "AF-1"
+                }
+              ],
+              "source_findings": []
+            },
+            "steps": [
+              {
+                "step_id": "AF-1.1a",
+                "text": "The participant changes a preview control before choosing Join.",
+                "completion_critical": true,
+                "criticality_reason": "Preview control change",
+                "status": "correct",
+                "observation_id": "obs-af1",
+                "rationale": "Preview menu opened and permission requested.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-af1/ui-preview-controls.txt",
+                    "sha256": "sha256:bfe0ffb24c5c448e9b8ea650a25fccf4e56c4363a607bd364b4c73e54dbd3dbb",
+                    "kind": "ui",
+                    "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                    "sanitized": true,
+                    "locator": "runtime",
+                    "observation_id": "obs-af1",
+                    "flow_id": "AF-1"
+                  }
+                ],
+                "source_findings": [],
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Runtime observation completed."
+              },
+              {
+                "step_id": "AF-1.1b",
+                "text": "The client submits the updated selections with the join request.",
+                "completion_critical": true,
+                "criticality_reason": "Updated join submission",
+                "status": "incorrect",
+                "observation_id": "obs-af1",
+                "caused_by_defect_ids": [
+                  "DEF-UC02-AUTH-01"
+                ],
+                "rationale": "Join request failed with 401 Unauthorized.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-af1/ui-preview-controls.txt",
+                    "sha256": "sha256:bfe0ffb24c5c448e9b8ea650a25fccf4e56c4363a607bd364b4c73e54dbd3dbb",
+                    "kind": "ui",
+                    "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                    "sanitized": true,
+                    "locator": "runtime",
+                    "observation_id": "obs-af1",
+                    "flow_id": "AF-1"
+                  }
+                ],
+                "source_findings": []
+              }
+            ],
+            "caused_by_defect_ids": [
+              "DEF-UC02-AUTH-01"
+            ]
+          },
+          {
+            "flow_id": "EF-1",
+            "type": "exception",
+            "status": "correct",
+            "noncritical_deviations": 0,
+            "terminal_outcome": {
+              "text": "Recovery state displayed while preserving preview context.",
+              "status": "correct",
+              "observation_id": "obs-ef1",
+              "rationale": "Exception handling completed cleanly.",
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-ef1/ui-invalid-session.txt",
+                  "sha256": "sha256:426eb59aa0cf278a94595c6ccaa50d43807185c1b1ddb6a8c52f4637ee920a7e",
+                  "kind": "ui",
+                  "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                  "sanitized": true,
+                  "locator": "runtime",
+                  "observation_id": "obs-ef1",
+                  "flow_id": "EF-1"
+                }
+              ],
+              "source_findings": [],
+              "required_runtime_kinds": [
+                "ui"
+              ],
+              "evidence_requirement_rationale": "Runtime observation completed."
+            },
+            "steps": [
+              {
+                "step_id": "EF-1.3a",
+                "text": "The system returns that the session cannot be joined.",
+                "completion_critical": true,
+                "criticality_reason": "Failure response",
+                "status": "correct",
+                "observation_id": "obs-ef1",
+                "rationale": "System rejected join request.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-ef1/ui-invalid-session.txt",
+                    "sha256": "sha256:426eb59aa0cf278a94595c6ccaa50d43807185c1b1ddb6a8c52f4637ee920a7e",
+                    "kind": "ui",
+                    "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                    "sanitized": true,
+                    "locator": "runtime",
+                    "observation_id": "obs-ef1",
+                    "flow_id": "EF-1"
+                  }
+                ],
+                "source_findings": [],
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Runtime observation completed."
+              },
+              {
+                "step_id": "EF-1.3b",
+                "text": "The client displays the returned recovery state while preserving the preview context.",
+                "completion_critical": true,
+                "criticality_reason": "Recovery UI",
+                "status": "correct",
+                "observation_id": "obs-ef1",
+                "rationale": "Error alert displayed and preview context preserved.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-ef1/ui-invalid-session.txt",
+                    "sha256": "sha256:426eb59aa0cf278a94595c6ccaa50d43807185c1b1ddb6a8c52f4637ee920a7e",
+                    "kind": "ui",
+                    "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                    "sanitized": true,
+                    "locator": "runtime",
+                    "observation_id": "obs-ef1",
+                    "flow_id": "EF-1"
+                  }
+                ],
+                "source_findings": [],
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Runtime observation completed."
+              }
+            ]
+          }
+        ],
+        "input": {
+          "schema_version": 2,
+          "rubric_id": "completion-critical-flow-runtime-v2",
+          "uc_id": "UC-02",
+          "run_id": "UC-02-GPT-5.6-LUNA",
+          "assessment_id": "initial-audit-01",
+          "stage": "initial",
+          "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+          "captured_at": "2026-11-23T13:26:30+07:00",
+          "baseline": {
+            "path": "docs/02-construction/implementation/UC-02/flow-baseline.json",
+            "sha256": "sha256:d348336ea5c96e6cb3737cfe7f0b4105bbb01bc335f201f864349ef3e7a85524"
+          },
+          "limitations": [],
+          "execution_blocker_defect_ids": [],
+          "runtime": {
+            "status": "ready",
+            "compose_version": 2,
+            "reason": "Docker Compose services frontend, backend, database are running and healthy.",
+            "compose_project": "application-baseline",
+            "services": [
+              {
+                "name": "frontend",
+                "container_id": "dccb07ce676d",
+                "image_id": "application-baseline-frontend",
+                "state": "healthy"
+              },
+              {
+                "name": "backend",
+                "container_id": "6ab3eef766a1",
+                "image_id": "application-baseline-backend",
+                "state": "healthy"
+              },
+              {
+                "name": "database",
+                "container_id": "8ffe4c2817f2",
+                "image_id": "mysql:8.4",
+                "state": "healthy"
+              }
+            ],
+            "deployment": {
+              "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+              "verified": true,
+              "evidence": [
+                {
+                  "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/_runtime/deployment.json",
+                  "sha256": "sha256:6d22cb332b5bcfb4cf7fe9adac5de2e4e4ecfcba396c4d197599bcecba59c6ca",
+                  "kind": "deployment",
+                  "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                  "sanitized": true,
+                  "locator": "runtime",
+                  "observation_id": null,
+                  "flow_id": null
+                }
+              ]
+            }
+          },
+          "observations": [
+            {
+              "observation_id": "obs-bf1",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-LUNA",
+              "stage": "initial",
+              "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+              "baseline": {
+                "path": "docs/02-construction/implementation/UC-02/flow-baseline.json",
+                "sha256": "sha256:d348336ea5c96e6cb3737cfe7f0b4105bbb01bc335f201f864349ef3e7a85524"
+              },
+              "flow_id": "BF-1",
+              "planned_at": "2026-11-23T13:24:45+07:00",
+              "started_at": "2026-11-23T13:25:00+07:00",
+              "ended_at": "2026-11-23T13:25:20+07:00",
+              "time_limit_seconds": 60,
+              "scope": "BF-1 Join a Session via UI",
+              "actual_preconditions": "Pre-join preview loaded on http://localhost:8080/",
+              "entry_point": "http://localhost:8080/",
+              "end_state": "Remained on Pre-join preview with Authentication required alert",
+              "entry_kind": "ui",
+              "state": "incomplete",
+              "actions": [
+                {
+                  "sequence": 1,
+                  "at": "2026-11-23T13:25:10+07:00",
+                  "action": "Enter display name Alice and click Join Now",
+                  "actual_result": "POST /api/v1/sessions/11111111-1111-4111-8111-111111111111/participants returned 401 Unauthorized",
+                  "target_ids": [
+                    "entry",
+                    "BF-1.1",
+                    "BF-1.2"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt",
+                      "sha256": "sha256:cbd2ad35d5c3d79d41644850cd826fda0436c887808229c3a9d099be8209e9c2",
+                      "kind": "ui",
+                      "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                      "sanitized": true,
+                      "locator": "runtime",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "observation_id": "obs-af1",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-LUNA",
+              "stage": "initial",
+              "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+              "baseline": {
+                "path": "docs/02-construction/implementation/UC-02/flow-baseline.json",
+                "sha256": "sha256:d348336ea5c96e6cb3737cfe7f0b4105bbb01bc335f201f864349ef3e7a85524"
+              },
+              "flow_id": "AF-1",
+              "planned_at": "2026-11-23T13:25:21+07:00",
+              "started_at": "2026-11-23T13:25:25+07:00",
+              "ended_at": "2026-11-23T13:25:45+07:00",
+              "time_limit_seconds": 60,
+              "scope": "AF-1 Change preview selections before joining",
+              "actual_preconditions": "Pre-join preview loaded on http://localhost:8080/",
+              "entry_point": "http://localhost:8080/",
+              "end_state": "Remained on Pre-join preview with Authentication required alert",
+              "entry_kind": "ui",
+              "state": "incomplete",
+              "actions": [
+                {
+                  "sequence": 1,
+                  "at": "2026-11-23T13:25:35+07:00",
+                  "action": "Open preview menu, click Request permissions, click Join Now",
+                  "actual_result": "Media toggles remained disabled; Join Now returned 401 Unauthorized",
+                  "target_ids": [
+                    "entry",
+                    "AF-1.1a",
+                    "AF-1.1b"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-af1/ui-preview-controls.txt",
+                      "sha256": "sha256:bfe0ffb24c5c448e9b8ea650a25fccf4e56c4363a607bd364b4c73e54dbd3dbb",
+                      "kind": "ui",
+                      "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                      "sanitized": true,
+                      "locator": "runtime",
+                      "observation_id": "obs-af1",
+                      "flow_id": "AF-1"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "observation_id": "obs-ef1",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-LUNA",
+              "stage": "initial",
+              "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+              "baseline": {
+                "path": "docs/02-construction/implementation/UC-02/flow-baseline.json",
+                "sha256": "sha256:d348336ea5c96e6cb3737cfe7f0b4105bbb01bc335f201f864349ef3e7a85524"
+              },
+              "flow_id": "EF-1",
+              "planned_at": "2026-11-23T13:25:46+07:00",
+              "started_at": "2026-11-23T13:25:50+07:00",
+              "ended_at": "2026-11-23T13:26:10+07:00",
+              "time_limit_seconds": 60,
+              "scope": "EF-1 Session cannot be joined",
+              "actual_preconditions": "Navigated to http://localhost:8080/?sessionId=00000000-0000-0000-0000-000000000000",
+              "entry_point": "http://localhost:8080/?sessionId=00000000-0000-0000-0000-000000000000",
+              "end_state": "Displayed Authentication required alert while preserving preview context",
+              "entry_kind": "ui",
+              "state": "completed",
+              "actions": [
+                {
+                  "sequence": 1,
+                  "at": "2026-11-23T13:26:00+07:00",
+                  "action": "Enter display name Alice and click Join Now on invalid session URL",
+                  "actual_result": "System rejected join and displayed error alert while preserving preview context",
+                  "target_ids": [
+                    "entry",
+                    "branch",
+                    "EF-1.3a",
+                    "EF-1.3b",
+                    "terminal_outcome"
+                  ],
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-ef1/ui-invalid-session.txt",
+                      "sha256": "sha256:426eb59aa0cf278a94595c6ccaa50d43807185c1b1ddb6a8c52f4637ee920a7e",
+                      "kind": "ui",
+                      "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                      "sanitized": true,
+                      "locator": "runtime",
+                      "observation_id": "obs-ef1",
+                      "flow_id": "EF-1"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "flows": [
+            {
+              "flow_id": "BF-1",
+              "source_anchor": "docs/01-inception/use-cases/uc-02-join-a-session.md#L47-L52",
+              "completion_observation_id": "obs-bf1",
+              "steps": [
+                {
+                  "step_id": "BF-1.1",
+                  "text": "The participant enters a display name and chooses Join.",
+                  "completion_critical": true,
+                  "criticality_reason": "Entry action",
+                  "status": "correct",
+                  "observation_id": "obs-bf1",
+                  "rationale": "Display name entered and Join Now clicked.",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt",
+                      "sha256": "sha256:cbd2ad35d5c3d79d41644850cd826fda0436c887808229c3a9d099be8209e9c2",
+                      "kind": "ui",
+                      "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                      "sanitized": true,
+                      "locator": "runtime",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1"
+                    }
+                  ],
+                  "source_findings": [],
+                  "required_runtime_kinds": [
+                    "ui"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation completed."
+                },
+                {
+                  "step_id": "BF-1.2",
+                  "text": "The client submits the join request.",
+                  "completion_critical": true,
+                  "criticality_reason": "API submission",
+                  "status": "correct",
+                  "observation_id": "obs-bf1",
+                  "rationale": "POST request submitted.",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt",
+                      "sha256": "sha256:cbd2ad35d5c3d79d41644850cd826fda0436c887808229c3a9d099be8209e9c2",
+                      "kind": "ui",
+                      "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                      "sanitized": true,
+                      "locator": "runtime",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1"
+                    }
+                  ],
+                  "source_findings": [],
+                  "required_runtime_kinds": [
+                    "ui"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation completed."
+                },
+                {
+                  "step_id": "BF-1.3",
+                  "text": "The system returns the joined participant and session summary.",
+                  "completion_critical": true,
+                  "criticality_reason": "Join response",
+                  "status": "incorrect",
+                  "observation_id": "obs-bf1",
+                  "caused_by_defect_ids": [
+                    "DEF-UC02-AUTH-01"
+                  ],
+                  "rationale": "Returned 401 Unauthorized instead of joined participant.",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt",
+                      "sha256": "sha256:cbd2ad35d5c3d79d41644850cd826fda0436c887808229c3a9d099be8209e9c2",
+                      "kind": "ui",
+                      "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                      "sanitized": true,
+                      "locator": "runtime",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1"
+                    }
+                  ],
+                  "source_findings": []
+                },
+                {
+                  "step_id": "BF-1.4",
+                  "text": "The client renders the active session and participant tile.",
+                  "completion_critical": true,
+                  "criticality_reason": "UI completion",
+                  "status": "not_evaluable",
+                  "unavailable_reason": "Blocked by 401 on step BF-1.3.",
+                  "rationale": "Unreached due to 401.",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt",
+                      "sha256": "sha256:cbd2ad35d5c3d79d41644850cd826fda0436c887808229c3a9d099be8209e9c2",
+                      "kind": "ui",
+                      "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                      "sanitized": true,
+                      "locator": "runtime",
+                      "observation_id": "obs-bf1",
+                      "flow_id": "BF-1"
+                    }
+                  ],
+                  "source_findings": []
+                }
+              ],
+              "terminal_outcome": {
+                "text": "POST-1 & POST-2: Active session and participant tile rendered.",
+                "status": "incorrect",
+                "observation_id": "obs-bf1",
+                "caused_by_defect_ids": [
+                  "DEF-UC02-AUTH-01"
+                ],
+                "rationale": "Session join failed with 401 Unauthorized.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt",
+                    "sha256": "sha256:cbd2ad35d5c3d79d41644850cd826fda0436c887808229c3a9d099be8209e9c2",
+                    "kind": "ui",
+                    "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                    "sanitized": true,
+                    "locator": "runtime",
+                    "observation_id": "obs-bf1",
+                    "flow_id": "BF-1"
+                  }
+                ],
+                "source_findings": []
+              }
+            },
+            {
+              "flow_id": "AF-1",
+              "source_anchor": "docs/01-inception/use-cases/uc-02-join-a-session.md#L56-L59",
+              "completion_observation_id": "obs-af1",
+              "steps": [
+                {
+                  "step_id": "AF-1.1a",
+                  "text": "The participant changes a preview control before choosing Join.",
+                  "completion_critical": true,
+                  "criticality_reason": "Preview control change",
+                  "status": "correct",
+                  "observation_id": "obs-af1",
+                  "rationale": "Preview menu opened and permission requested.",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-af1/ui-preview-controls.txt",
+                      "sha256": "sha256:bfe0ffb24c5c448e9b8ea650a25fccf4e56c4363a607bd364b4c73e54dbd3dbb",
+                      "kind": "ui",
+                      "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                      "sanitized": true,
+                      "locator": "runtime",
+                      "observation_id": "obs-af1",
+                      "flow_id": "AF-1"
+                    }
+                  ],
+                  "source_findings": [],
+                  "required_runtime_kinds": [
+                    "ui"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation completed."
+                },
+                {
+                  "step_id": "AF-1.1b",
+                  "text": "The client submits the updated selections with the join request.",
+                  "completion_critical": true,
+                  "criticality_reason": "Updated join submission",
+                  "status": "incorrect",
+                  "observation_id": "obs-af1",
+                  "caused_by_defect_ids": [
+                    "DEF-UC02-AUTH-01"
+                  ],
+                  "rationale": "Join request failed with 401 Unauthorized.",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-af1/ui-preview-controls.txt",
+                      "sha256": "sha256:bfe0ffb24c5c448e9b8ea650a25fccf4e56c4363a607bd364b4c73e54dbd3dbb",
+                      "kind": "ui",
+                      "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                      "sanitized": true,
+                      "locator": "runtime",
+                      "observation_id": "obs-af1",
+                      "flow_id": "AF-1"
+                    }
+                  ],
+                  "source_findings": []
+                }
+              ],
+              "terminal_outcome": {
+                "text": "Updated selections reflected in joined session.",
+                "status": "incorrect",
+                "observation_id": "obs-af1",
+                "caused_by_defect_ids": [
+                  "DEF-UC02-AUTH-01"
+                ],
+                "rationale": "Join failed with 401 Unauthorized.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-af1/ui-preview-controls.txt",
+                    "sha256": "sha256:bfe0ffb24c5c448e9b8ea650a25fccf4e56c4363a607bd364b4c73e54dbd3dbb",
+                    "kind": "ui",
+                    "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                    "sanitized": true,
+                    "locator": "runtime",
+                    "observation_id": "obs-af1",
+                    "flow_id": "AF-1"
+                  }
+                ],
+                "source_findings": []
+              }
+            },
+            {
+              "flow_id": "EF-1",
+              "source_anchor": "docs/01-inception/use-cases/uc-02-join-a-session.md#L63-L66",
+              "completion_observation_id": "obs-ef1",
+              "steps": [
+                {
+                  "step_id": "EF-1.3a",
+                  "text": "The system returns that the session cannot be joined.",
+                  "completion_critical": true,
+                  "criticality_reason": "Failure response",
+                  "status": "correct",
+                  "observation_id": "obs-ef1",
+                  "rationale": "System rejected join request.",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-ef1/ui-invalid-session.txt",
+                      "sha256": "sha256:426eb59aa0cf278a94595c6ccaa50d43807185c1b1ddb6a8c52f4637ee920a7e",
+                      "kind": "ui",
+                      "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                      "sanitized": true,
+                      "locator": "runtime",
+                      "observation_id": "obs-ef1",
+                      "flow_id": "EF-1"
+                    }
+                  ],
+                  "source_findings": [],
+                  "required_runtime_kinds": [
+                    "ui"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation completed."
+                },
+                {
+                  "step_id": "EF-1.3b",
+                  "text": "The client displays the returned recovery state while preserving the preview context.",
+                  "completion_critical": true,
+                  "criticality_reason": "Recovery UI",
+                  "status": "correct",
+                  "observation_id": "obs-ef1",
+                  "rationale": "Error alert displayed and preview context preserved.",
+                  "evidence": [
+                    {
+                      "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-ef1/ui-invalid-session.txt",
+                      "sha256": "sha256:426eb59aa0cf278a94595c6ccaa50d43807185c1b1ddb6a8c52f4637ee920a7e",
+                      "kind": "ui",
+                      "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                      "sanitized": true,
+                      "locator": "runtime",
+                      "observation_id": "obs-ef1",
+                      "flow_id": "EF-1"
+                    }
+                  ],
+                  "source_findings": [],
+                  "required_runtime_kinds": [
+                    "ui"
+                  ],
+                  "evidence_requirement_rationale": "Runtime observation completed."
+                }
+              ],
+              "terminal_outcome": {
+                "text": "Recovery state displayed while preserving preview context.",
+                "status": "correct",
+                "observation_id": "obs-ef1",
+                "rationale": "Exception handling completed cleanly.",
+                "evidence": [
+                  {
+                    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-ef1/ui-invalid-session.txt",
+                    "sha256": "sha256:426eb59aa0cf278a94595c6ccaa50d43807185c1b1ddb6a8c52f4637ee920a7e",
+                    "kind": "ui",
+                    "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+                    "sanitized": true,
+                    "locator": "runtime",
+                    "observation_id": "obs-ef1",
+                    "flow_id": "EF-1"
+                  }
+                ],
+                "source_findings": [],
+                "required_runtime_kinds": [
+                  "ui"
+                ],
+                "evidence_requirement_rationale": "Runtime observation completed."
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "current_assessment_id": "initial-audit-01",
+    "selection_policy": "accepted-audit-results-v1",
+    "current_summary": {
+      "schema_version": 2,
+      "assessment_id": "initial-audit-01",
+      "stage": "experiment",
+      "source_revision": null,
+      "rubric_id": "completion-critical-flow-runtime-v2",
+      "followup_ids": [],
+      "status": "repair_required",
+      "measurement_status": "complete",
+      "execution_blocked": false,
+      "execution_blocker_defect_ids": [],
+      "has_incorrect_flows": true,
+      "result_basis": "rubric_evidence",
+      "researcher_result_count": 0,
+      "counts": {
+        "main": 1,
+        "alternative": 1,
+        "exception": 1,
+        "total": 3,
+        "correct": 1,
+        "incorrect": 2,
+        "not_evaluable": 0,
+        "evaluated": 3
+      },
+      "flow_accuracy_percent": 33.333333,
+      "flow_error_percent": 66.666667,
+      "evaluated_accuracy_percent": 33.333333,
+      "evaluated_error_percent": 66.666667,
+      "evaluated_coverage_percent": 100.0,
+      "accuracy_lower_bound_percent": 33.333333,
+      "accuracy_upper_bound_percent": 33.333333,
+      "flows": [
+        {
+          "flow_id": "BF-1",
+          "type": "main",
+          "status": "incorrect",
+          "result_source": "assessment",
+          "record_id": "initial-audit-01",
+          "assessment_id": "initial-audit-01",
+          "stage": "initial",
+          "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "flow_id": "AF-1",
+          "type": "alternative",
+          "status": "incorrect",
+          "result_source": "assessment",
+          "record_id": "initial-audit-01",
+          "assessment_id": "initial-audit-01",
+          "stage": "initial",
+          "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+          "caused_by_defect_ids": [
+            "DEF-UC02-AUTH-01"
+          ]
+        },
+        {
+          "flow_id": "EF-1",
+          "type": "exception",
+          "status": "correct",
+          "result_source": "assessment",
+          "record_id": "initial-audit-01",
+          "assessment_id": "initial-audit-01",
+          "stage": "initial",
+          "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6"
+        }
+      ],
+      "pending_flows": [],
+      "selection_policy": "accepted-audit-results-v1",
+      "result_scope": "experiment_accepted_audit",
+      "current_source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+      "latest_assessment_status": "repair_required",
+      "latest_assessment_counts": {
+        "main": 1,
+        "alternative": 1,
+        "exception": 1,
+        "total": 3,
+        "correct": 1,
+        "incorrect": 2,
+        "not_evaluable": 0
+      },
+      "retained_from_prior_source_count": 0
+    }
+  },
   "complexity": {
     "actors": 0,
     "main_flow_steps": 0,

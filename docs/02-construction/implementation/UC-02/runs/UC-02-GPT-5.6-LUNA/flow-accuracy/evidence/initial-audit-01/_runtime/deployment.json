@@ -1,0 +1,24 @@
+{
+  "compose_project": "application-baseline",
+  "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+  "services": [
+    {
+      "name": "frontend",
+      "container_id": "dccb07ce676d",
+      "image_id": "application-baseline-frontend",
+      "state": "Up (healthy)"
+    },
+    {
+      "name": "backend",
+      "container_id": "6ab3eef766a1",
+      "image_id": "application-baseline-backend",
+      "state": "Up (healthy)"
+    },
+    {
+      "name": "database",
+      "container_id": "8ffe4c2817f2",
+      "image_id": "mysql:8.4",
+      "state": "Up (healthy)"
+    }
+  ]
+}
