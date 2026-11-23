@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "uc_id": "UC-10",
+  "run_id": "UC-10-GPT-5.6-LUNA",
+  "session_id": "01a20797-a35c-70d2-858a-19973282706e",
+  "phases": {
+    "prompt_generation": {
+      "status": "closed",
+      "first_turn_id": "01a20797-a543-7111-8893-52a704595aa7",
+      "measurement_turn_id": "01a2079b-7a1e-7d13-a1d8-58bb046d1c7e"
+    },
+    "source_generation": {
+      "status": "closed",
+      "first_turn_id": "01a2079c-9caa-78c3-8a84-553f2a0ccd9d",
+      "measurement_turn_id": "01a207a0-ff44-7860-bd43-29d54fdd6276"
+    }
+  },
+  "segments": [
+    {
+      "start": {
+        "at": "2026-11-23T15:49:34.694+07:00",
+        "epoch_ms": 1795423774695,
+        "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+        "uc_id": "UC-10",
+        "run_id": "UC-10-GPT-5.6-LUNA",
+        "session_id": "01a20797-a35c-70d2-858a-19973282706e",
+        "turn_id": "01a20797-a543-7111-8893-52a704595aa7",
+        "phase": "prompt_generation",
+        "event": "start",
+        "segment_id": "UC-10-prompt-generation-start-20261123T",
+        "source_revision": "sha256:6b781513eaf382c09b2827584deaac1e6563b13a094e48929c2ad05c73cf6039"
+      },
+      "end": {
+        "at": "2026-11-23T15:52:27.206+07:00",
+        "epoch_ms": 1795423947206,
+        "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+        "uc_id": "UC-10",
+        "run_id": "UC-10-GPT-5.6-LUNA",
+        "session_id": "01a20797-a35c-70d2-858a-19973282706e",
+        "turn_id": "01a20797-a543-7111-8893-52a704595aa7",
+        "phase": "prompt_generation",
+        "event": "end",
+        "segment_id": "UC-10-prompt-generation-start-20261123T",
+        "source_revision": "sha256:6b781513eaf382c09b2827584deaac1e6563b13a094e48929c2ad05c73cf6039"
+      }
+    },
+    {
+      "start": {
+        "at": "2026-11-23T15:55:10.321+07:00",
+        "epoch_ms": 1795424110322,
+        "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+        "uc_id": "UC-10",
+        "run_id": "UC-10-GPT-5.6-LUNA",
+        "session_id": "01a20797-a35c-70d2-858a-19973282706e",
+        "turn_id": "01a2079c-9caa-78c3-8a84-553f2a0ccd9d",
+        "phase": "source_generation",
+        "event": "start",
+        "segment_id": "UC-10-source-generation-20261123T",
+        "source_revision": "sha256:6b781513eaf382c09b2827584deaac1e6563b13a094e48929c2ad05c73cf6039"
+      },
+      "end": {
+        "at": "2026-11-23T15:58:23.412+07:00",
+        "epoch_ms": 1795424303413,
+        "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+        "uc_id": "UC-10",
+        "run_id": "UC-10-GPT-5.6-LUNA",
+        "session_id": "01a20797-a35c-70d2-858a-19973282706e",
+        "turn_id": "01a2079c-9caa-78c3-8a84-553f2a0ccd9d",
+        "phase": "source_generation",
+        "event": "end",
+        "segment_id": "UC-10-source-generation-20261123T",
+        "source_revision": "sha256:6b781513eaf382c09b2827584deaac1e6563b13a094e48929c2ad05c73cf6039"
+      }
+    }
+  ],
+  "observations": [
+    {
+      "measurement_turn_id": "01a2079b-7a1e-7d13-a1d8-58bb046d1c7e",
+      "action": "close-phase:prompt_generation",
+      "last_turn_id": "01a20797-a543-7111-8893-52a704595aa7",
+      "evidence_sha256": "sha256:baa53a6f93e96e57675d58bc2b9a5c03ce27ac66773698d0505ee7700851f68a"
+    },
+    {
+      "measurement_turn_id": "01a207a0-ff44-7860-bd43-29d54fdd6276",
+      "action": "close-phase:source_generation",
+      "last_turn_id": "01a2079c-9caa-78c3-8a84-553f2a0ccd9d",
+      "evidence_sha256": "sha256:811b4bdf17b18e1e7554fef5b9794bd24e89bc0006d3bca274f8b3f560a9e389"
+    }
+  ],
+  "workflow_status": "open",
+  "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3"
+}

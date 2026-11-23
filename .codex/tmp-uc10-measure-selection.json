@@ -1,0 +1,32 @@
+{
+  "uc_id": "UC-10",
+  "run_id": "UC-10-GPT-5.6-LUNA",
+  "turns": [
+    {
+      "turn_id": "01a20797-a543-7111-8893-52a704595aa7",
+      "phase": "prompt_generation",
+      "reason": "Generated and validated the UC-10 coding prompt draft."
+    },
+    {
+      "turn_id": "01a2079c-9caa-78c3-8a84-553f2a0ccd9d",
+      "phase": "source_generation",
+      "reason": "Implemented the approved UC-10 coding prompt under finalsource."
+    }
+  ],
+  "excluded_turns": [
+    {
+      "turn_id": "01a2079b-7a1e-7d13-a1d8-58bb046d1c7e",
+      "reason": "measurement/report turn"
+    }
+  ],
+  "workflow_evidence": {
+    "start": {
+      "turn_id": "01a20797-a543-7111-8893-52a704595aa7",
+      "required_terms": ["UC-10"]
+    },
+    "terminal": {
+      "turn_id": "01a2079c-9caa-78c3-8a84-553f2a0ccd9d",
+      "required_terms": ["gen-source-code", "UC-10"]
+    }
+  }
+}

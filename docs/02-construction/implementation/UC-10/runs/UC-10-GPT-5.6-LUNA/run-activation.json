@@ -1,0 +1,16 @@
+{
+  "artifact_type": "run-activation",
+  "gate_version": 5,
+  "uc_id": "UC-10",
+  "run_id": "UC-10-GPT-5.6-LUNA",
+  "configuration_artifact": "docs/04-experiments/configurations/CFG-UC-10-GPT-5.6-LUNA.json",
+  "configuration_checksum": "sha256:05727f9778ce051319fb7e1eef074939904b0952a27e35d0a5db296e159938e6",
+  "activated_at": "2026-11-23T08:53:46.110162Z",
+  "status": "Confirmed",
+  "approved_prompt": {
+    "path": "docs/02-construction/implementation/UC-10/runs/UC-10-GPT-5.6-LUNA/approved-prompt/UC-10-coding-prompt.md",
+    "sha256": "sha256:745a36342a6f2b1a2cb2bc01679808d383b88a0335c44bf155902957e97a26ce"
+  },
+  "created_by": "measure_prompt_close",
+  "prompt_close_turn_id": "01a2079b-7a1e-7d13-a1d8-58bb046d1c7e"
+}

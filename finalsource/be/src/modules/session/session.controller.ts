@@ -12,6 +12,8 @@ import { ListParticipantsDto } from './dto/list-participants.dto';
 import { ListChatMessagesDto } from './dto/list-chat-messages.dto';
 import { SendChatMessageDto } from './dto/send-chat-message.dto';
 import { ChatMessageService } from './chat-message.service';
+import { ReactionService } from './reaction.service';
+import { SendReactionDto } from './dto/send-reaction.dto';
 
 @Controller('/api/v1/sessions')
 export class SessionController {
@@ -23,6 +25,7 @@ export class SessionController {
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
     private readonly chatMessageService: ChatMessageService,
+    private readonly reactionService: ReactionService,
   ) {}
 
   @Post('demo')
@@ -75,5 +78,12 @@ export class SessionController {
   async sendChatMessage(@Param('sessionId') sessionId: string, @Headers('idempotency-key') idempotencyKey: string | undefined, @Body() dto: SendChatMessageDto, @Req() request: Request) {
     const data = await this.chatMessageService.send(sessionId, idempotencyKey, dto, request.sessionPrincipal!);
     return { success: true, message: 'Chat message created', data };
+  }
+
+  @Post(':sessionId/reactions')
+  @UseGuards(SessionAuthGuard)
+  async sendReaction(@Param('sessionId') sessionId: string, @Headers('idempotency-key') idempotencyKey: string | undefined, @Body() dto: SendReactionDto, @Req() request: Request) {
+    const data = await this.reactionService.send(sessionId, idempotencyKey, dto, request.sessionPrincipal!);
+    return { success: true, message: 'Reaction created', data };
   }
 }

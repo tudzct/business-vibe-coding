@@ -3,6 +3,8 @@ import axios from 'axios';
 import { joinSession, type JoinResponse } from '../api/sessionJoin';
 import ChatPanel from './ChatPanel';
 import SessionParticipantsPanel from './SessionParticipantsPanel';
+import ReactionPicker from './ReactionPicker';
+import type { ReactionEvent } from '../api/reactions';
 
 export type ParticipantRole = 'HOST' | 'BROADCASTER' | 'VIEWER' | 'STAGE_PARTICIPANT';
 export type PermissionStatus = 'UNKNOWN' | 'GRANTED' | 'DENIED';
@@ -83,6 +85,7 @@ export default function PreJoinPreview() {
   const [sidePanel, setSidePanel] = useState<'participants' | 'chat' | null>('participants');
   const [participantsOpen, setParticipantsOpen] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const [reactions, setReactions] = useState<ReactionEvent[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
   const participantKey = useMemo(() => crypto.randomUUID(), []);
   const nameError = displayName.length > 0 && displayName.trim().length > 50 ? 'Name must be 50 characters or fewer.' : displayName.length > 0 && displayName.trim().length === 0 ? 'Enter a name to continue.' : '';
@@ -179,13 +182,15 @@ export default function PreJoinPreview() {
             <button type="button" onClick={() => setSidePanel((p) => (p === 'chat' ? null : 'chat'))} className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${sidePanel === 'chat' ? 'bg-[#538dff] text-black' : 'bg-[#191b23] text-[#eff0fa] hover:bg-[#272a31]'}`}>Chat</button>
           </div>
         </header>
+        {reactions.length > 0 && <div className="pointer-events-none fixed bottom-24 left-1/2 z-20 flex -translate-x-1/2 gap-2" aria-live="polite">{reactions.slice(-5).map((reaction) => <span key={reaction.id} className="rounded-full bg-[#2e3038] px-3 py-2 text-2xl shadow-lg">{({ LIKE: '👍', CLAP: '👏', HEART: '❤️', CELEBRATE: '🎉', HAND: '✋', SURPRISE: '😮' } as const)[reaction.reaction]}</span>)}</div>}
         <div className="flex flex-1 gap-6 p-6">
-          <section className="flex flex-1 items-center justify-center rounded-2xl border border-[#272a31] bg-[#11131a] p-6">
+          <section className="relative flex flex-1 items-center justify-center rounded-2xl border border-[#272a31] bg-[#11131a] p-6">
             <div className="flex flex-col items-center gap-3">
               <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[#7e47eb] text-2xl font-bold">{joinResult.participant.displayName.slice(0, 2).toUpperCase()}</div>
               <p className="text-lg font-semibold">{joinResult.participant.displayName}</p>
               <p className="text-sm text-[#c5c6d0]">{joinResult.participant.role}</p>
             </div>
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2"><ReactionPicker sessionId={activeCreds.sessionId} accessToken={activeCreds.accessToken} onReaction={(reaction) => setReactions((current) => current.some((item) => item.id === reaction.id) ? current : [...current, reaction])} /></div>
           </section>
           {sidePanel === 'participants' && <SessionParticipantsPanel sessionId={activeCreds.sessionId} accessToken={activeCreds.accessToken} onClose={() => setSidePanel(null)} />}
           {sidePanel === 'chat' && <ChatPanel sessionId={activeCreds.sessionId} accessToken={activeCreds.accessToken} onClose={() => setSidePanel(null)} />}
