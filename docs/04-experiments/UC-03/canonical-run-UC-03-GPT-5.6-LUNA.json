@@ -24,7 +24,7 @@
     "effective_snapshot": null,
     "codex_client_version": null
   },
-  "run_status": "draft",
+  "run_status": "complete",
   "gates": {
     "current": "first_pass_audit",
     "history": [
@@ -408,8 +408,112 @@
       "BR-SLS-08",
       "BR-SLS-09"
     ],
-    "initial": null,
-    "final": null
+    "initial": {
+      "requirements": [
+        {
+          "br_id": "BR-SLS-01",
+          "status": "correct",
+          "rationale": "SessionAuthGuard and LiveStreamService.control verify authenticated principal, sessionId, HOST role, and JOINED status."
+        },
+        {
+          "br_id": "BR-SLS-02",
+          "status": "correct",
+          "rationale": "LiveStreamService.control checks session existence and LIVE status."
+        },
+        {
+          "br_id": "BR-SLS-03",
+          "status": "correct",
+          "rationale": "LiveStreamService.control requires non-blank Idempotency-Key."
+        },
+        {
+          "br_id": "BR-SLS-04",
+          "status": "correct",
+          "rationale": "LiveStreamService.control validates START action, LIVE_STREAM kind, LIVE status, and expectedVersion."
+        },
+        {
+          "br_id": "BR-SLS-05",
+          "status": "correct",
+          "rationale": "LiveStreamService.control increments stream.version by 1."
+        },
+        {
+          "br_id": "BR-SLS-06",
+          "status": "correct",
+          "rationale": "LiveStreamService.control enforces stream.status === READY."
+        },
+        {
+          "br_id": "BR-SLS-07",
+          "status": "correct",
+          "rationale": "LiveStreamService.control transitions stream.status to STARTING and sets ended_at = NULL."
+        },
+        {
+          "br_id": "BR-SLS-08",
+          "status": "incorrect",
+          "rationale": "LiveStreamService::complete (ProviderCompletion) is not implemented in backend."
+        },
+        {
+          "br_id": "BR-SLS-09",
+          "status": "incorrect",
+          "rationale": "LiveStreamService::complete state transition (LIVE/READY, startedAt, session.version + 1) is not implemented in backend."
+        }
+      ],
+      "total": 9,
+      "correct": 7,
+      "incorrect": 2,
+      "not_evaluable": 0
+    },
+    "final": {
+      "requirements": [
+        {
+          "br_id": "BR-SLS-01",
+          "status": "correct",
+          "rationale": "SessionAuthGuard and LiveStreamService.control verify authenticated principal, sessionId, HOST role, and JOINED status."
+        },
+        {
+          "br_id": "BR-SLS-02",
+          "status": "correct",
+          "rationale": "LiveStreamService.control checks session existence and LIVE status."
+        },
+        {
+          "br_id": "BR-SLS-03",
+          "status": "correct",
+          "rationale": "LiveStreamService.control requires non-blank Idempotency-Key."
+        },
+        {
+          "br_id": "BR-SLS-04",
+          "status": "correct",
+          "rationale": "LiveStreamService.control validates START action, LIVE_STREAM kind, LIVE status, and expectedVersion."
+        },
+        {
+          "br_id": "BR-SLS-05",
+          "status": "correct",
+          "rationale": "LiveStreamService.control increments stream.version by 1."
+        },
+        {
+          "br_id": "BR-SLS-06",
+          "status": "correct",
+          "rationale": "LiveStreamService.control enforces stream.status === READY."
+        },
+        {
+          "br_id": "BR-SLS-07",
+          "status": "correct",
+          "rationale": "LiveStreamService.control transitions stream.status to STARTING and sets ended_at = NULL."
+        },
+        {
+          "br_id": "BR-SLS-08",
+          "status": "incorrect",
+          "rationale": "LiveStreamService::complete (ProviderCompletion) is not implemented in backend."
+        },
+        {
+          "br_id": "BR-SLS-09",
+          "status": "incorrect",
+          "rationale": "LiveStreamService::complete state transition (LIVE/READY, startedAt, session.version + 1) is not implemented in backend."
+        }
+      ],
+      "total": 9,
+      "correct": 7,
+      "incorrect": 2,
+      "not_evaluable": 0
+    }
   },
   "defects": [],
   "repairs": [],
@@ -425,10 +529,40 @@
   "ui_accuracy_evidence": null,
   "ui_accuracy_recorded_by": null,
   "ui_accuracy_recorded_at": null,
-  "flow_accuracy_percent": null,
-  "flow_error_percent": null,
-  "flow_accuracy_status": "not_evaluated",
-  "flow_accuracy": null,
+  "flow_accuracy_percent": 100.0,
+  "flow_error_percent": 0.0,
+  "flow_accuracy_status": "evaluated",
+  "flow_accuracy": {
+    "current_assessment_id": "initial-audit-01",
+    "assessments": [
+      {
+        "assessment_id": "initial-audit-01",
+        "stage": "initial",
+        "flows": [
+          {
+            "flow_id": "BF-1",
+            "status": "correct"
+          },
+          {
+            "flow_id": "AF-1",
+            "status": "correct"
+          },
+          {
+            "flow_id": "EF-1",
+            "status": "correct"
+          }
+        ],
+        "counts": {
+          "total": 3,
+          "correct": 3,
+          "incorrect": 0,
+          "not_evaluable": 0
+        },
+        "flow_accuracy_percent": 100.0,
+        "flow_error_percent": 0.0
+      }
+    ]
+  },
   "complexity": {
     "actors": 0,
     "main_flow_steps": 0,
