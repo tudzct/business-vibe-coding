@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "artifact_type": "flow-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-09",
+  "use_case_path": "docs/01-inception/use-cases/uc-09-send-a-chat-message.md",
+  "use_case_sha256": "sha256:e5dcf5f8a97681a622b6138038e1c25f35ce294bcac520d50c9cb609bf5ee066",
+  "ordered_flow_ids": [
+    "BF-1",
+    "AF-1",
+    "EF-1"
+  ],
+  "frozen_at": "2026-10-17T22:39:53+07:00"
+}

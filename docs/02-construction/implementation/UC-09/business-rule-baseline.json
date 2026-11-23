@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "artifact_type": "business-rule-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-09",
+  "business_rule_path": "docs/01-inception/business-rules/uc-09-send-a-chat-message-business-rules.md",
+  "business_rule_sha256": "sha256:d972a7029fa62b24f9838ccb2306f99435b4caa2273ecc17d292ee8f03d43b7c",
+  "ordered_br_ids": [
+    "BR-SCM-01",
+    "BR-SCM-02",
+    "BR-SCM-03",
+    "BR-SCM-04",
+    "BR-SCM-05",
+    "BR-SCM-06",
+    "BR-SCM-07",
+    "BR-SCM-08",
+    "BR-SCM-09"
+  ],
+  "frozen_at": "2026-10-17T22:39:53+07:00"
+}

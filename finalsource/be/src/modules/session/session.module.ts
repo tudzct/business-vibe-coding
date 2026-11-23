@@ -5,10 +5,11 @@ import { SessionController } from './session.controller';
 import { SessionJoinService } from './session-join.service';
 import { SessionAuthGuard } from './session-auth.guard';
 import { ParticipantListService } from './participant-list.service';
+import { SessionStateService } from './session-state.service';
 
 @Module({
   imports: [ConfigModule, JwtModule.register({})],
   controllers: [SessionController],
-  providers: [SessionJoinService, ParticipantListService, SessionAuthGuard],
+  providers: [SessionJoinService, ParticipantListService, SessionStateService, SessionAuthGuard],
 })
 export class SessionModule {}

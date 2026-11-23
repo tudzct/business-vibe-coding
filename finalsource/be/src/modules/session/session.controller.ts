@@ -7,6 +7,7 @@ import { JoinSessionDto } from './dto/join-session.dto';
 import { SessionAuthGuard } from './session-auth.guard';
 import { SessionJoinService } from './session-join.service';
 import { ParticipantListService } from './participant-list.service';
+import { SessionStateService } from './session-state.service';
 import { ListParticipantsDto } from './dto/list-participants.dto';
 
 @Controller('/api/v1/sessions')
@@ -14,6 +15,7 @@ export class SessionController {
   constructor(
     private readonly joinService: SessionJoinService,
     private readonly participantListService: ParticipantListService,
+    private readonly sessionStateService: SessionStateService,
     private readonly dataSource: DataSource,
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
@@ -34,6 +36,13 @@ export class SessionController {
       { secret: this.config.getOrThrow<string>('JWT_SECRET') },
     );
     return { success: true, data: { sessionId, accessToken } };
+  }
+
+  @Get(':sessionId/state')
+  @UseGuards(SessionAuthGuard)
+  async readState(@Param('sessionId') sessionId: string, @Query('reactionCursor') reactionCursor: string | undefined, @Req() request: Request) {
+    const data = await this.sessionStateService.readState(sessionId, reactionCursor, request.sessionPrincipal!);
+    return { success: true, message: 'Session state loaded', data };
   }
 
   @Get(':sessionId/participants')
