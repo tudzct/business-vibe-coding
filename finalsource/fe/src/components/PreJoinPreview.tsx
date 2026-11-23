@@ -127,13 +127,16 @@ export default function PreJoinPreview() {
     const trimmedName = displayName.trim();
     if (!trimmedName || trimmedName.length > 50 || joining) return;
     setJoinError('');
-    if (!sessionId || !accessToken) {
-      setJoinError('This session is not ready to accept joins.');
-      return;
-    }
     setJoining(true);
     try {
-      const result = await joinSession(sessionId, accessToken, crypto.randomUUID(), {
+      let activeSessionId = sessionId;
+      let activeToken = accessToken;
+      if (!activeSessionId || !activeToken) {
+        const demoRes = await axios.post<{ data: { sessionId: string; accessToken: string } }>('/api/v1/sessions/demo');
+        activeSessionId = demoRes.data.data.sessionId;
+        activeToken = demoRes.data.data.accessToken;
+      }
+      const result = await joinSession(activeSessionId, activeToken, crypto.randomUUID(), {
         displayName: trimmedName,
         microphoneEnabled,
         cameraEnabled,

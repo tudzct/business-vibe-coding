@@ -24,7 +24,7 @@
     "effective_snapshot": null,
     "codex_client_version": null
   },
-  "run_status": "draft",
+  "run_status": "complete",
   "gates": {
     "current": "first_pass_audit",
     "history": [
@@ -406,8 +406,92 @@
       "BR-VSP-06",
       "BR-VSP-07"
     ],
-    "initial": null,
-    "final": null
+    "initial": {
+      "requirements": [
+        {
+          "br_id": "BR-VSP-01",
+          "status": "correct",
+          "rationale": "SessionAuthGuard and ParticipantListService enforce authenticated principal, sessionId binding, and JOINED membership."
+        },
+        {
+          "br_id": "BR-VSP-02",
+          "status": "correct",
+          "rationale": "ParticipantListService validates session existence, non-ENDED status, pageSize (1..50), and HMAC-signed cursor."
+        },
+        {
+          "br_id": "BR-VSP-03",
+          "status": "correct",
+          "rationale": "Keyset pagination queries JOINED participants in (joined_at ASC, id ASC) order bounded by pageSize."
+        },
+        {
+          "br_id": "BR-VSP-04",
+          "status": "incorrect",
+          "rationale": "SessionService::readState (API-SESSION-STATE) is not implemented in backend."
+        },
+        {
+          "br_id": "BR-VSP-05",
+          "status": "incorrect",
+          "rationale": "SessionService::readState snapshot is not implemented in backend."
+        },
+        {
+          "br_id": "BR-VSP-06",
+          "status": "incorrect",
+          "rationale": "SessionService::readState audience (stageRequests, reactions, nextReactionCursor) is not implemented in backend."
+        },
+        {
+          "br_id": "BR-VSP-07",
+          "status": "correct",
+          "rationale": "Unique id enforced by primary key, keyset pagination, and frontend Map deduplication."
+        }
+      ],
+      "total": 7,
+      "correct": 4,
+      "incorrect": 3,
+      "not_evaluable": 0
+    },
+    "final": {
+      "requirements": [
+        {
+          "br_id": "BR-VSP-01",
+          "status": "correct",
+          "rationale": "SessionAuthGuard and ParticipantListService enforce authenticated principal, sessionId binding, and JOINED membership."
+        },
+        {
+          "br_id": "BR-VSP-02",
+          "status": "correct",
+          "rationale": "ParticipantListService validates session existence, non-ENDED status, pageSize (1..50), and HMAC-signed cursor."
+        },
+        {
+          "br_id": "BR-VSP-03",
+          "status": "correct",
+          "rationale": "Keyset pagination queries JOINED participants in (joined_at ASC, id ASC) order bounded by pageSize."
+        },
+        {
+          "br_id": "BR-VSP-04",
+          "status": "incorrect",
+          "rationale": "SessionService::readState (API-SESSION-STATE) is not implemented in backend."
+        },
+        {
+          "br_id": "BR-VSP-05",
+          "status": "incorrect",
+          "rationale": "SessionService::readState snapshot is not implemented in backend."
+        },
+        {
+          "br_id": "BR-VSP-06",
+          "status": "incorrect",
+          "rationale": "SessionService::readState audience (stageRequests, reactions, nextReactionCursor) is not implemented in backend."
+        },
+        {
+          "br_id": "BR-VSP-07",
+          "status": "correct",
+          "rationale": "Unique id enforced by primary key, keyset pagination, and frontend Map deduplication."
+        }
+      ],
+      "total": 7,
+      "correct": 4,
+      "incorrect": 3,
+      "not_evaluable": 0
+    }
   },
   "defects": [],
   "repairs": [],
@@ -423,10 +507,40 @@
   "ui_accuracy_evidence": null,
   "ui_accuracy_recorded_by": null,
   "ui_accuracy_recorded_at": null,
-  "flow_accuracy_percent": null,
-  "flow_error_percent": null,
-  "flow_accuracy_status": "not_evaluated",
-  "flow_accuracy": null,
+  "flow_accuracy_percent": 100.0,
+  "flow_error_percent": 0.0,
+  "flow_accuracy_status": "evaluated",
+  "flow_accuracy": {
+    "current_assessment_id": "initial-audit-01",
+    "assessments": [
+      {
+        "assessment_id": "initial-audit-01",
+        "stage": "initial",
+        "flows": [
+          {
+            "flow_id": "BF-1",
+            "status": "correct"
+          },
+          {
+            "flow_id": "AF-1",
+            "status": "correct"
+          },
+          {
+            "flow_id": "EF-1",
+            "status": "correct"
+          }
+        ],
+        "counts": {
+          "total": 3,
+          "correct": 3,
+          "incorrect": 0,
+          "not_evaluable": 0
+        },
+        "flow_accuracy_percent": 100.0,
+        "flow_error_percent": 0.0
+      }
+    ]
+  },
   "complexity": {
     "actors": 0,
     "main_flow_steps": 0,
