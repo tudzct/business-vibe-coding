@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "artifact_type": "business-rule-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-10",
+  "business_rule_path": "docs/01-inception/business-rules/uc-10-send-an-emoji-reaction-business-rules.md",
+  "business_rule_sha256": "sha256:af52ffb474918ca219f5908f5a5a53ddfb12eee45dd78abc50c8c56490d4ddb8",
+  "ordered_br_ids": [
+    "BR-SER-01",
+    "BR-SER-02",
+    "BR-SER-03",
+    "BR-SER-04",
+    "BR-SER-05",
+    "BR-SER-06",
+    "BR-SER-07"
+  ],
+  "frozen_at": "2026-10-17T22:39:53+07:00"
+}

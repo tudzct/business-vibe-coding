@@ -1,0 +1,60 @@
+{
+  "schema_version": "2.4",
+  "artifact_type": "experiment-configuration",
+  "status": "Confirmed",
+  "configuration_id": "CFG-UC-10-GPT-5.6-LUNA",
+  "comparison_group_id": "CG-100MS-01",
+  "researcher_id": "researcher-khanh",
+  "decided_at": "2026-10-17T22:39:53+07:00",
+  "timing_method": "system_timestamp_delta",
+  "flow_audit_rubric": "completion-critical-flow-runtime-v2",
+  "database_baseline": {
+    "migration_head": "InitialSchema1792195200000",
+    "dbml_sha256": "sha256:54f54924829fd6c4a81398b5ed201e8fa48bb0a15383f59301720c526a93ce7a",
+    "schema_fingerprint_sha256": "sha256:44e07e0b06287cf6d87c95aebedcc92b562e9bd364f637f7f389c4e7022a4e60"
+  },
+  "figma_dataset": {
+    "dataset_version": "100ms-2026-10-02-001",
+    "manifest_path": "resource/figma-design-dataset/100ms-2026-10-02-001/manifest.json",
+    "manifest_sha256": "sha256:ead5b6aa248f3c132950dc533b5b3392052cfdcfec6efc029c3fb01e6845c298"
+  },
+  "audit_design": {
+    "protocol": "fixed",
+    "fixed_auditor": {
+      "requested_label": "GPT-5.6-LUNA",
+      "requested_model_id": "gpt-5.6-luna",
+      "requested_reasoning_effort": "medium",
+      "requested_reasoning_mode": "standard"
+    }
+  },
+  "use_case": {
+    "uc_id": "UC-10",
+    "business_rule_baseline": "docs/02-construction/implementation/UC-10/business-rule-baseline.json",
+    "flow_baseline": "docs/02-construction/implementation/UC-10/flow-baseline.json",
+    "api_contracts": [
+      {
+        "api_id": "API-REACTION-CREATE",
+        "path": "docs/01-inception/api-contracts/api-reaction-create.md",
+        "sha256": "sha256:a7f18e5c17d16308505cb9e3fd9c89a2525f0ea649c9263b2739e5a8a4f5ec54"
+      },
+      {
+        "api_id": "API-SESSION-STATE",
+        "path": "docs/01-inception/api-contracts/api-session-state.md",
+        "sha256": "sha256:7a901fb1f634e0713e5fd22011daccd7080791c8a28c7c8a4710f7444bc9ffdb"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "run_id": "UC-10-GPT-5.6-LUNA",
+      "uc_id": "UC-10",
+      "requested_label": "GPT-5.6-LUNA",
+      "requested_model_id": "gpt-5.6-luna",
+      "requested_reasoning_effort": "low",
+      "requested_reasoning_mode": "standard",
+      "replicate_index": 1,
+      "run_order": 5,
+      "auditor_assignment": "fixed-auditor"
+    }
+  ]
+}

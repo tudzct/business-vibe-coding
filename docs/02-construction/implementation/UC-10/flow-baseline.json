@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "artifact_type": "flow-baseline",
+  "status": "Frozen",
+  "uc_id": "UC-10",
+  "use_case_path": "docs/01-inception/use-cases/uc-10-send-an-emoji-reaction.md",
+  "use_case_sha256": "sha256:07156e4b1ccfd9abd5141daf599a58b12103382b3e7afb63ee6f5da758a5fd06",
+  "ordered_flow_ids": [
+    "BF-1",
+    "AF-1",
+    "EF-1"
+  ],
+  "frozen_at": "2026-10-17T22:39:53+07:00"
+}
