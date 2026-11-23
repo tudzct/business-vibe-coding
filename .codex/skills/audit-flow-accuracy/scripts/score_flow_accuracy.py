@@ -121,6 +121,13 @@ def verification_defects(run, stage, source_revision, ordered_flow_ids):
     return [by_id[identity] for identity in unresolved_ids]
 
 
+def stage_runtime_defects(defects, stage):
+    """Exclude researcher follow-up defects when validating immutable initial audit snapshots."""
+    if stage != "initial":
+        return list(defects)
+    return [row for row in defects if not row.get("researcher_followup_id")]
+
+
 def validate_observation(item, label):
     require(isinstance(item, dict) and item.get("status") in OBSERVATION_STATUSES, f"invalid {label} status")
     require(nonempty(item.get("rationale")), f"{label} rationale required")
@@ -350,8 +357,10 @@ def validate_run_result(run, folder, result):
     require(configured_rubric(run, folder, validate_evidence, result["input"]["baseline"]) == rubric,
             "assessment differs from frozen configuration rubric")
     flow_ids = [flow["flow_id"] for flow in result["flows"]]
-    stage_defects = verification_defects(
-        run, result["stage"], result["input"]["source_revision"], flow_ids)
+    stage_defects = stage_runtime_defects(
+        verification_defects(run, result["stage"], result["input"]["source_revision"], flow_ids),
+        result["stage"],
+    )
     open_defects = {item["defect_id"]: item for item in stage_defects if item["status"] == "open"}
     open_blocker_ids = {identity for identity, item in open_defects.items() if item["blocks_execution"]}
     blocker_ids = result["input"].get("execution_blocker_defect_ids", [])
