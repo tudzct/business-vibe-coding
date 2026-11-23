@@ -1,13 +1,16 @@
 {
   "run_id": "UC-02-GPT-5.6-LUNA",
-  "coding_prompt": null,
+  "coding_prompt": {
+    "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/approved-prompt/UC-02-coding-prompt.md",
+    "sha256": "sha256:5f4f7acea7e2ca09ea727f7be8bee9a310d34042fe8d6cebcf72ec5e215acab8"
+  },
   "experiment_configuration": {
     "configuration_id": "CFG-UC-02-GPT-5.6-LUNA",
     "comparison_group_id": "CG-100MS-01",
     "researcher_id": "researcher-khanh",
     "artifact": "docs/04-experiments/configurations/CFG-UC-02-GPT-5.6-LUNA.json",
     "checksum": "sha256:c9f568f4f15c8b75ce2c88e94b422997014ed76b5d3deb35a648b3da9b4d3650",
-    "run_activation": null
+    "run_activation": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/run-activation.json"
   },
   "uc_id": "UC-02",
   "uc_name": "Join a Session",
@@ -23,11 +26,370 @@
   },
   "run_status": "draft",
   "gates": {
-    "current": "prompt",
-    "history": []
+    "current": "first_pass_audit",
+    "history": [
+      {
+        "gate": "prompt",
+        "outcome": "confirmed",
+        "turn_id": "01a20708-c2c3-7743-9074-e888ef43b799",
+        "evidence": {
+          "coding_prompt": {
+            "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/approved-prompt/UC-02-coding-prompt.md",
+            "sha256": "sha256:5f4f7acea7e2ca09ea727f7be8bee9a310d34042fe8d6cebcf72ec5e215acab8"
+          }
+        },
+        "command_action": "prompt-close",
+        "recorded_at": "2026-11-23T06:13:40.879325Z"
+      },
+      {
+        "gate": "source",
+        "outcome": "confirmed",
+        "turn_id": "01a2070f-34bd-7041-ac9b-a14570db71db",
+        "evidence": {
+          "coding_prompt": {
+            "path": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/approved-prompt/UC-02-coding-prompt.md",
+            "sha256": "sha256:5f4f7acea7e2ca09ea727f7be8bee9a310d34042fe8d6cebcf72ec5e215acab8"
+          }
+        },
+        "command_action": "source-close",
+        "recorded_at": "2026-11-23T06:20:32.309492Z"
+      }
+    ]
   },
   "metrics_schema_version": 4,
-  "metrics": null,
+  "metrics": {
+    "schema_version": 4,
+    "provenance_class": "observed_post_run",
+    "timing_method": "system_timestamp_delta",
+    "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+    "token_attribution_method": "semantic_primary_phase_per_turn",
+    "uc_id": "UC-02",
+    "run_id": "UC-02-GPT-5.6-LUNA",
+    "status": "open",
+    "measured_at": "2026-11-23T06:20:32.187912+00:00",
+    "session": {
+      "session_id": "01a20704-5f25-7400-a061-b8952b610b71",
+      "file_name": "rollout-2026-11-23T13-07-36-01a20704-5f25-7400-a061-b8952b610b71.jsonl",
+      "sha256": "sha256:0c8beb58a5b962b56256f593b2e65352beda950c8372887c58873117dc179f4b"
+    },
+    "selection_evidence_sha256": "sha256:8a3478e334ee695892221457c3ff8daafe5bb25acfa3a2b0411ac72df66bbbfb",
+    "extractor_sha256": "sha256:06fd6799ba7cfb6a7f161988af6389a0592da5effcf4192639d6590eb46ae5c3",
+    "phases": {
+      "prompt_generation": {
+        "status": "closed",
+        "values": {
+          "tokens": {
+            "input_tokens": 1112685,
+            "cached_input_tokens": 1030016,
+            "output_tokens": 10396,
+            "reasoning_output_tokens": 1914,
+            "total_tokens": 1123081
+          },
+          "token_unavailable_reasons": {},
+          "duration_seconds": 175.196,
+          "wall_clock_seconds": 273.372,
+          "timing_unavailable_reason": null,
+          "workflow_turn_count": 1,
+          "tool_call_count": 18,
+          "model_call_count": null,
+          "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+        }
+      },
+      "source_generation": {
+        "status": "closed",
+        "values": {
+          "tokens": {
+            "input_tokens": 1739827,
+            "cached_input_tokens": 1699328,
+            "output_tokens": 6459,
+            "reasoning_output_tokens": 2127,
+            "total_tokens": 1746286
+          },
+          "token_unavailable_reasons": {},
+          "duration_seconds": 55.769,
+          "wall_clock_seconds": 176.166,
+          "timing_unavailable_reason": null,
+          "workflow_turn_count": 1,
+          "tool_call_count": 13,
+          "model_call_count": null,
+          "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+        }
+      },
+      "sub_prompt_generation": {
+        "status": "not_started",
+        "values": null
+      },
+      "repair": {
+        "status": "not_started",
+        "values": null
+      }
+    },
+    "workflow": {
+      "tokens": {
+        "input_tokens": 2852512,
+        "cached_input_tokens": 2729344,
+        "output_tokens": 16855,
+        "reasoning_output_tokens": 4041,
+        "total_tokens": 2869367
+      },
+      "token_unavailable_reasons": {},
+      "duration_seconds": null,
+      "wall_clock_seconds": 449.538,
+      "timing_unavailable_reason": "Generation phase timing pending or unavailable; see phases",
+      "workflow_turn_count": 2,
+      "tool_call_count": 31,
+      "model_call_count": null,
+      "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+    },
+    "turns": [
+      {
+        "turn_id": "01a20704-60fc-7d23-8d07-1f93b12b52ef",
+        "turn_number": 1,
+        "started_at": "2026-11-23T06:07:37.411Z",
+        "ended_at": "2026-11-23T06:12:10.783Z",
+        "completed": true,
+        "model": "gpt-5.6-luna",
+        "tokens": {
+          "input_tokens": 1112685,
+          "cached_input_tokens": 1030016,
+          "output_tokens": 10396,
+          "reasoning_output_tokens": 1914,
+          "total_tokens": 1123081
+        },
+        "tool_call_count": 18,
+        "prefix_bytes": 910084,
+        "prefix_sha256": "sha256:b127935eb9224e6bc366f60e3f57bf5753859f4f3d514cc0de88134d29655cb9",
+        "terminal_event": "task_complete",
+        "message_sha256": "sha256:c955a11a18d0fbba310d8a0bc720b0e4032b9fcab0d5892a223e332ea03a1bdb",
+        "session_id": "01a20704-5f25-7400-a061-b8952b610b71",
+        "phase": "prompt_generation",
+        "timing_phase": "prompt_generation",
+        "reason": "Generated and validated the UC-02 coding prompt Draft.",
+        "duration_seconds": 175.196,
+        "wall_clock_seconds": 273.372,
+        "timing_unavailable_reason": null,
+        "timing_exclusion_reason": null,
+        "timing_segments": [
+          {
+            "start": {
+              "at": "2026-11-23T13:08:52.817+07:00",
+              "epoch_ms": 1795414132817,
+              "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-LUNA",
+              "session_id": "01a20704-5f25-7400-a061-b8952b610b71",
+              "turn_id": "01a20704-60fc-7d23-8d07-1f93b12b52ef",
+              "phase": "prompt_generation",
+              "event": "start",
+              "segment_id": "prompt-generation-uc02-2bef90a9-0009-449e-b008-dbc910760f3f",
+              "source_revision": "sha256:67d76f1dc02bb322acf16e1338045eaacfcbd3408f292f2384b8febcbbd05f30"
+            },
+            "end": {
+              "at": "2026-11-23T13:11:48.013+07:00",
+              "epoch_ms": 1795414308013,
+              "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-LUNA",
+              "session_id": "01a20704-5f25-7400-a061-b8952b610b71",
+              "turn_id": "01a20704-60fc-7d23-8d07-1f93b12b52ef",
+              "phase": "prompt_generation",
+              "event": "end",
+              "segment_id": "prompt-generation-uc02-2bef90a9-0009-449e-b008-dbc910760f3f",
+              "source_revision": "sha256:67d76f1dc02bb322acf16e1338045eaacfcbd3408f292f2384b8febcbbd05f30"
+            }
+          }
+        ]
+      },
+      {
+        "turn_id": "01a2070c-4734-7b31-91a4-a4652315a6e8",
+        "turn_number": 3,
+        "started_at": "2026-11-23T06:16:14.963Z",
+        "ended_at": "2026-11-23T06:19:11.129Z",
+        "completed": true,
+        "model": "gpt-5.6-luna",
+        "tokens": {
+          "input_tokens": 1739827,
+          "cached_input_tokens": 1699328,
+          "output_tokens": 6459,
+          "reasoning_output_tokens": 2127,
+          "total_tokens": 1746286
+        },
+        "tool_call_count": 13,
+        "prefix_bytes": 1590673,
+        "prefix_sha256": "sha256:bf259d9396ebb7a31c18f94571a5cc09d86bd43dd2ba5eb28c26778c6b220cb0",
+        "terminal_event": "task_complete",
+        "message_sha256": "sha256:bd01b41d5640dd628f26f9fb6ec51588124e11dad1a7d2da085003b99ad53efb",
+        "session_id": "01a20704-5f25-7400-a061-b8952b610b71",
+        "phase": "source_generation",
+        "timing_phase": "source_generation",
+        "reason": "Implemented the approved UC-02 source changes and captured source-generation timing.",
+        "duration_seconds": 55.769,
+        "wall_clock_seconds": 176.166,
+        "timing_unavailable_reason": null,
+        "timing_exclusion_reason": null,
+        "timing_segments": [
+          {
+            "start": {
+              "at": "2026-11-23T13:17:40.126+07:00",
+              "epoch_ms": 1795414660127,
+              "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-LUNA",
+              "session_id": "01a20704-5f25-7400-a061-b8952b610b71",
+              "turn_id": "01a2070c-4734-7b31-91a4-a4652315a6e8",
+              "phase": "source_generation",
+              "event": "start",
+              "segment_id": "source-generation-uc02-b8befab8-8a72-47ba-8dd5-440d51ee5053",
+              "source_revision": "sha256:5f4f7acea7e2ca09ea727f7be8bee9a310d34042fe8d6cebcf72ec5e215acab8"
+            },
+            "end": {
+              "at": "2026-11-23T13:18:35.895+07:00",
+              "epoch_ms": 1795414715896,
+              "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+              "uc_id": "UC-02",
+              "run_id": "UC-02-GPT-5.6-LUNA",
+              "session_id": "01a20704-5f25-7400-a061-b8952b610b71",
+              "turn_id": "01a2070c-4734-7b31-91a4-a4652315a6e8",
+              "phase": "source_generation",
+              "event": "end",
+              "segment_id": "source-generation-uc02-b8befab8-8a72-47ba-8dd5-440d51ee5053",
+              "source_revision": "sha256:90bea19b8c329909ef579051894e7e49d6fb5c576188c7ef3ebb0b8acc731467"
+            }
+          }
+        ]
+      }
+    ],
+    "token_phase_breakdown": {
+      "prompt_generation": {
+        "tokens": {
+          "input_tokens": 1112685,
+          "cached_input_tokens": 1030016,
+          "output_tokens": 10396,
+          "reasoning_output_tokens": 1914,
+          "total_tokens": 1123081
+        },
+        "token_unavailable_reasons": {},
+        "wall_clock_seconds": 273.372,
+        "workflow_turn_count": 1,
+        "tool_call_count": 18
+      },
+      "source_generation": {
+        "tokens": {
+          "input_tokens": 1739827,
+          "cached_input_tokens": 1699328,
+          "output_tokens": 6459,
+          "reasoning_output_tokens": 2127,
+          "total_tokens": 1746286
+        },
+        "token_unavailable_reasons": {},
+        "wall_clock_seconds": 176.166,
+        "workflow_turn_count": 1,
+        "tool_call_count": 13
+      }
+    },
+    "excluded_turns": [
+      {
+        "turn_id": "01a20708-c2c3-7743-9074-e888ef43b799",
+        "reason": "measurement/report turn"
+      },
+      {
+        "turn_id": "01a2070f-34bd-7041-ac9b-a14570db71db",
+        "reason": "measurement/report turn"
+      }
+    ],
+    "phase_ledger": {
+      "schema_version": 1,
+      "uc_id": "UC-02",
+      "run_id": "UC-02-GPT-5.6-LUNA",
+      "session_id": "01a20704-5f25-7400-a061-b8952b610b71",
+      "phases": {
+        "prompt_generation": {
+          "status": "closed",
+          "first_turn_id": "01a20704-60fc-7d23-8d07-1f93b12b52ef",
+          "measurement_turn_id": "01a20708-c2c3-7743-9074-e888ef43b799"
+        },
+        "source_generation": {
+          "status": "closed",
+          "first_turn_id": "01a2070c-4734-7b31-91a4-a4652315a6e8",
+          "measurement_turn_id": "01a2070f-34bd-7041-ac9b-a14570db71db"
+        }
+      },
+      "segments": [
+        {
+          "start": {
+            "at": "2026-11-23T13:08:52.817+07:00",
+            "epoch_ms": 1795414132817,
+            "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+            "uc_id": "UC-02",
+            "run_id": "UC-02-GPT-5.6-LUNA",
+            "session_id": "01a20704-5f25-7400-a061-b8952b610b71",
+            "turn_id": "01a20704-60fc-7d23-8d07-1f93b12b52ef",
+            "phase": "prompt_generation",
+            "event": "start",
+            "segment_id": "prompt-generation-uc02-2bef90a9-0009-449e-b008-dbc910760f3f",
+            "source_revision": "sha256:67d76f1dc02bb322acf16e1338045eaacfcbd3408f292f2384b8febcbbd05f30"
+          },
+          "end": {
+            "at": "2026-11-23T13:11:48.013+07:00",
+            "epoch_ms": 1795414308013,
+            "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+            "uc_id": "UC-02",
+            "run_id": "UC-02-GPT-5.6-LUNA",
+            "session_id": "01a20704-5f25-7400-a061-b8952b610b71",
+            "turn_id": "01a20704-60fc-7d23-8d07-1f93b12b52ef",
+            "phase": "prompt_generation",
+            "event": "end",
+            "segment_id": "prompt-generation-uc02-2bef90a9-0009-449e-b008-dbc910760f3f",
+            "source_revision": "sha256:67d76f1dc02bb322acf16e1338045eaacfcbd3408f292f2384b8febcbbd05f30"
+          }
+        },
+        {
+          "start": {
+            "at": "2026-11-23T13:17:40.126+07:00",
+            "epoch_ms": 1795414660127,
+            "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+            "uc_id": "UC-02",
+            "run_id": "UC-02-GPT-5.6-LUNA",
+            "session_id": "01a20704-5f25-7400-a061-b8952b610b71",
+            "turn_id": "01a2070c-4734-7b31-91a4-a4652315a6e8",
+            "phase": "source_generation",
+            "event": "start",
+            "segment_id": "source-generation-uc02-b8befab8-8a72-47ba-8dd5-440d51ee5053",
+            "source_revision": "sha256:5f4f7acea7e2ca09ea727f7be8bee9a310d34042fe8d6cebcf72ec5e215acab8"
+          },
+          "end": {
+            "at": "2026-11-23T13:18:35.895+07:00",
+            "epoch_ms": 1795414715896,
+            "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+            "uc_id": "UC-02",
+            "run_id": "UC-02-GPT-5.6-LUNA",
+            "session_id": "01a20704-5f25-7400-a061-b8952b610b71",
+            "turn_id": "01a2070c-4734-7b31-91a4-a4652315a6e8",
+            "phase": "source_generation",
+            "event": "end",
+            "segment_id": "source-generation-uc02-b8befab8-8a72-47ba-8dd5-440d51ee5053",
+            "source_revision": "sha256:90bea19b8c329909ef579051894e7e49d6fb5c576188c7ef3ebb0b8acc731467"
+          }
+        }
+      ],
+      "observations": [
+        {
+          "measurement_turn_id": "01a20708-c2c3-7743-9074-e888ef43b799",
+          "action": "close-phase:prompt_generation",
+          "last_turn_id": "01a20704-60fc-7d23-8d07-1f93b12b52ef",
+          "evidence_sha256": "sha256:48b7575dd3990ca32ab41bc7490f572664920484006a54bdf9ba785ca10e1a04"
+        },
+        {
+          "measurement_turn_id": "01a2070f-34bd-7041-ac9b-a14570db71db",
+          "action": "close-phase:source_generation",
+          "last_turn_id": "01a2070c-4734-7b31-91a4-a4652315a6e8",
+          "evidence_sha256": "sha256:8a3478e334ee695892221457c3ff8daafe5bb25acfa3a2b0411ac72df66bbbfb"
+        }
+      ],
+      "workflow_status": "open",
+      "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3"
+    }
+  },
   "repair_authorization": {
     "approved": false,
     "turn_id": null

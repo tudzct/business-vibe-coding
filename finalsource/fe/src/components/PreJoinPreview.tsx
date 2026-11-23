@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import axios from 'axios';
+import { joinSession, type JoinResponse } from '../api/sessionJoin';
 
 export type ParticipantRole = 'HOST' | 'BROADCASTER' | 'VIEWER' | 'STAGE_PARTICIPANT';
 export type PermissionStatus = 'UNKNOWN' | 'GRANTED' | 'DENIED';
@@ -72,11 +74,16 @@ export default function PreJoinPreview() {
   const [permissionDialog, setPermissionDialog] = useState<'camera' | 'microphone' | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [joined, setJoined] = useState(false);
+  const [joining, setJoining] = useState(false);
+  const [joinError, setJoinError] = useState('');
+  const [joinResult, setJoinResult] = useState<JoinResponse | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const participantKey = useMemo(() => crypto.randomUUID(), []);
   const nameError = displayName.length > 0 && displayName.trim().length > 50 ? 'Name must be 50 characters or fewer.' : displayName.length > 0 && displayName.trim().length === 0 ? 'Enter a name to continue.' : '';
   const isReadyToJoin = displayName.trim().length > 0 && displayName.trim().length <= 50;
+  const sessionId = import.meta.env.VITE_SESSION_ID ?? '';
+  const accessToken = import.meta.env.VITE_SESSION_ACCESS_TOKEN ?? '';
 
   useEffect(() => {
     if (videoRef.current && stream) videoRef.current.srcObject = stream;
@@ -113,6 +120,38 @@ export default function PreJoinPreview() {
     if (device === 'camera' && cameraPermission === 'GRANTED' && cameraAvailable) setCameraEnabled((enabled) => !enabled);
     if (device === 'microphone' && microphonePermission === 'GRANTED' && microphoneAvailable) setMicrophoneEnabled((enabled) => !enabled);
   };
+
+  const submitJoin = useCallback(async () => {
+    const trimmedName = displayName.trim();
+    if (!trimmedName || trimmedName.length > 50 || joining) return;
+    setJoinError('');
+    if (!sessionId || !accessToken) {
+      setJoinError('This session is not ready to accept joins.');
+      return;
+    }
+    setJoining(true);
+    try {
+      const result = await joinSession(sessionId, accessToken, crypto.randomUUID(), {
+        displayName: trimmedName,
+        microphoneEnabled,
+        cameraEnabled,
+        microphoneDeviceId: null,
+        cameraDeviceId: null,
+        speakerDeviceId: null,
+        virtualBackgroundId: null,
+      });
+      setJoinResult(result);
+      setJoined(true);
+    } catch (error: unknown) {
+      if (axios.isAxiosError<{ message?: string }>(error)) {
+        setJoinError(error.response?.data?.message ?? 'The session could not be joined.');
+      } else {
+        setJoinError('The session could not be joined. Check your connection and try again.');
+      }
+    } finally {
+      setJoining(false);
+    }
+  }, [accessToken, cameraEnabled, displayName, joining, microphoneEnabled, sessionId]);
 
   const initialState = preparePreview({ participantKey, role, displayName, requestCamera: true, requestMicrophone: true });
   void initialState;
@@ -153,12 +192,13 @@ export default function PreJoinPreview() {
               <input id="display-name" value={displayName} maxLength={60} onChange={(event) => setDisplayName(event.target.value)} placeholder="Enter name" aria-invalid={Boolean(nameError)} aria-describedby={nameError ? 'name-error' : undefined} className="h-12 w-full rounded-lg bg-[#191b23] px-4 py-3 text-base leading-6 tracking-[0.5px] text-[#eff0fa] outline-none placeholder:text-[#8f9099] focus:ring-2 focus:ring-[#538dff]" />
               {nameError && <p id="name-error" className="mt-2 text-sm text-[#ff9a9a]">{nameError}</p>}
             </div>
-            <button type="button" disabled={!isReadyToJoin} onClick={() => setJoined(true)} className="flex h-12 items-center gap-2 rounded-lg bg-[#004299] px-4 py-2 text-base font-semibold leading-6 tracking-[0.5px] text-[#84aaff] transition hover:bg-[#538dff] disabled:cursor-not-allowed disabled:opacity-70" aria-label="Go live"><Icon name="arrow" className="h-6 w-6" />Go Live</button>
+            <button type="button" disabled={!isReadyToJoin || joining} onClick={() => void submitJoin()} className="flex h-12 items-center gap-2 rounded-lg bg-[#004299] px-4 py-2 text-base font-semibold leading-6 tracking-[0.5px] text-[#84aaff] transition hover:bg-[#538dff] disabled:cursor-not-allowed disabled:opacity-70" aria-label="Join session"><Icon name="arrow" className="h-6 w-6" />{joining ? 'Joining…' : 'Go Live'}</button>
           </div>
+          {joinError && <p role="alert" className="text-sm text-[#ff9a9a]">{joinError}</p>}
         </div>
       </section>
 
-      {joined && <div className="fixed inset-0 flex items-center justify-center bg-black/70 p-6" role="dialog" aria-modal="true" aria-label="Ready to join"><div className="w-full max-w-md rounded-2xl border border-[#272a31] bg-[#191b23] p-6"><div className="flex items-start justify-between"><div><h2 className="text-xl font-semibold">Ready to join</h2><p className="mt-2 text-[#c5c6d0]">Your preview is prepared locally.</p></div><button type="button" className="rounded p-1 hover:bg-[#2e3038]" aria-label="Close ready dialog" onClick={() => setJoined(false)}><Icon name="close" /></button></div></div></div>}
+      {joined && <div className="fixed inset-0 flex items-center justify-center bg-black/70 p-6" role="dialog" aria-modal="true" aria-label="Ready to join"><div className="w-full max-w-md rounded-2xl border border-[#272a31] bg-[#191b23] p-6"><div className="flex items-start justify-between"><div><h2 className="text-xl font-semibold">Ready to join</h2><p className="mt-2 text-[#c5c6d0]">{joinResult ? `Joined as ${joinResult.participant.displayName}.` : 'Your preview is prepared locally.'}</p></div><button type="button" className="rounded p-1 hover:bg-[#2e3038]" aria-label="Close ready dialog" onClick={() => setJoined(false)}><Icon name="close" /></button></div></div></div>}
 
       {permissionDialog && <div className="fixed inset-0 flex items-center justify-center bg-black/70 p-6" role="dialog" aria-modal="true" aria-label="Permission denied"><div className="w-full max-w-md rounded-2xl border border-[#272a31] bg-[#191b23] p-6"><div className="flex items-start justify-between"><div><div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#293042] text-[#538dff]"><Icon name="permission" /></div><h2 className="text-xl font-semibold">Allow camera and microphone access</h2><p className="mt-2 text-[#c5c6d0]">{permissionText(permissionDialog === 'camera' ? cameraPermission : microphonePermission)}. Enable access in your browser settings, then try again.</p></div><button type="button" className="rounded p-1 hover:bg-[#2e3038]" aria-label="Close permission dialog" onClick={() => setPermissionDialog(null)}><Icon name="close" /></button></div><div className="mt-6 flex justify-end gap-3"><button type="button" className="rounded-lg border border-[#272a31] px-4 py-2 text-sm font-semibold hover:bg-[#2e3038]" onClick={() => setPermissionDialog(null)}>Continue muted</button><button type="button" className="rounded-lg bg-[#538dff] px-4 py-2 text-sm font-semibold text-black hover:bg-[#84aaff]" onClick={() => void requestPermissions()}>Try again</button></div></div></div>}
     </main>
