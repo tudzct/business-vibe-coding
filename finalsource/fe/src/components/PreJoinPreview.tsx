@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import axios from 'axios';
 import { joinSession, type JoinResponse } from '../api/sessionJoin';
+import SessionParticipantsPanel from './SessionParticipantsPanel';
 
 export type ParticipantRole = 'HOST' | 'BROADCASTER' | 'VIEWER' | 'STAGE_PARTICIPANT';
 export type PermissionStatus = 'UNKNOWN' | 'GRANTED' | 'DENIED';
@@ -77,6 +78,7 @@ export default function PreJoinPreview() {
   const [joining, setJoining] = useState(false);
   const [joinError, setJoinError] = useState('');
   const [joinResult, setJoinResult] = useState<JoinResponse | null>(null);
+  const [participantsOpen, setParticipantsOpen] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const participantKey = useMemo(() => crypto.randomUUID(), []);
@@ -199,6 +201,9 @@ export default function PreJoinPreview() {
       </section>
 
       {joined && <div className="fixed inset-0 flex items-center justify-center bg-black/70 p-6" role="dialog" aria-modal="true" aria-label="Ready to join"><div className="w-full max-w-md rounded-2xl border border-[#272a31] bg-[#191b23] p-6"><div className="flex items-start justify-between"><div><h2 className="text-xl font-semibold">Ready to join</h2><p className="mt-2 text-[#c5c6d0]">{joinResult ? `Joined as ${joinResult.participant.displayName}.` : 'Your preview is prepared locally.'}</p></div><button type="button" className="rounded p-1 hover:bg-[#2e3038]" aria-label="Close ready dialog" onClick={() => setJoined(false)}><Icon name="close" /></button></div></div></div>}
+
+      {joined && joinResult && <button type="button" onClick={() => setParticipantsOpen(true)} className="fixed bottom-6 right-6 z-10 rounded-lg bg-[#538dff] px-4 py-3 text-base font-semibold text-black shadow-lg hover:bg-[#84aaff]">View participants</button>}
+      {participantsOpen && joinResult && <div className="fixed inset-0 z-20 flex justify-end bg-black/60 p-6"><SessionParticipantsPanel sessionId={String(joinResult.session.id ?? sessionId)} accessToken={accessToken} onClose={() => setParticipantsOpen(false)} /></div>}
 
       {permissionDialog && <div className="fixed inset-0 flex items-center justify-center bg-black/70 p-6" role="dialog" aria-modal="true" aria-label="Permission denied"><div className="w-full max-w-md rounded-2xl border border-[#272a31] bg-[#191b23] p-6"><div className="flex items-start justify-between"><div><div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#293042] text-[#538dff]"><Icon name="permission" /></div><h2 className="text-xl font-semibold">Allow camera and microphone access</h2><p className="mt-2 text-[#c5c6d0]">{permissionText(permissionDialog === 'camera' ? cameraPermission : microphonePermission)}. Enable access in your browser settings, then try again.</p></div><button type="button" className="rounded p-1 hover:bg-[#2e3038]" aria-label="Close permission dialog" onClick={() => setPermissionDialog(null)}><Icon name="close" /></button></div><div className="mt-6 flex justify-end gap-3"><button type="button" className="rounded-lg border border-[#272a31] px-4 py-2 text-sm font-semibold hover:bg-[#2e3038]" onClick={() => setPermissionDialog(null)}>Continue muted</button><button type="button" className="rounded-lg bg-[#538dff] px-4 py-2 text-sm font-semibold text-black hover:bg-[#84aaff]" onClick={() => void requestPermissions()}>Try again</button></div></div></div>}
     </main>

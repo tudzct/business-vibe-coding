@@ -1,0 +1,22 @@
+{
+  "uc_id": "UC-08",
+  "run_id": "UC-08-GPT-5.6-LUNA",
+  "turns": [
+    {
+      "turn_id": "01a20762-fb3a-7011-b532-07ceca0e6bbd",
+      "phase": "prompt_generation",
+      "reason": "Generated and validated the UC-08 coding prompt Draft."
+    }
+  ],
+  "excluded_turns": [],
+  "workflow_evidence": {
+    "start": {
+      "turn_id": "01a20762-fb3a-7011-b532-07ceca0e6bbd",
+      "required_terms": ["UC-08"]
+    },
+    "terminal": {
+      "turn_id": "01a20762-fb3a-7011-b532-07ceca0e6bbd",
+      "required_terms": ["gen-coding-prompt"]
+    }
+  }
+}

@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import type { Request } from 'express';
 
-export type SessionPrincipal = { principalId: string; userId: string; sessionId: string };
+export type SessionPrincipal = { principalId: string; userId: string; sessionId: string; participantId?: string };
 
 declare module 'express-serve-static-core' {
   interface Request {
