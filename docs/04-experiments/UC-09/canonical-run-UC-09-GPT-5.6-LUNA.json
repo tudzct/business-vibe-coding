@@ -1,13 +1,16 @@
 {
   "run_id": "UC-09-GPT-5.6-LUNA",
-  "coding_prompt": null,
+  "coding_prompt": {
+    "path": "docs/02-construction/implementation/UC-09/runs/UC-09-GPT-5.6-LUNA/approved-prompt/UC-09-coding-prompt.md",
+    "sha256": "sha256:d4a2128358a494966b6ec697649aac0cd92665d48f3c62bc3f7475bf1c9a4ed2"
+  },
   "experiment_configuration": {
     "configuration_id": "CFG-UC-09-GPT-5.6-LUNA",
     "comparison_group_id": "CG-100MS-01",
     "researcher_id": "researcher-khanh",
     "artifact": "docs/04-experiments/configurations/CFG-UC-09-GPT-5.6-LUNA.json",
     "checksum": "sha256:5c124026e2d796da8b43521183fb731bbe01c8a5c39043481ed1840c8fb1b730",
-    "run_activation": null
+    "run_activation": "docs/02-construction/implementation/UC-09/runs/UC-09-GPT-5.6-LUNA/run-activation.json"
   },
   "uc_id": "UC-09",
   "uc_name": "Send a Chat Message",
@@ -21,13 +24,372 @@
     "effective_snapshot": null,
     "codex_client_version": null
   },
-  "run_status": "draft",
+  "run_status": "complete",
   "gates": {
-    "current": "prompt",
-    "history": []
+    "current": "first_pass_audit",
+    "history": [
+      {
+        "gate": "prompt",
+        "outcome": "confirmed",
+        "turn_id": "01a20779-2e5d-7963-844d-5dcdd4d8772a",
+        "evidence": {
+          "coding_prompt": {
+            "path": "docs/02-construction/implementation/UC-09/runs/UC-09-GPT-5.6-LUNA/approved-prompt/UC-09-coding-prompt.md",
+            "sha256": "sha256:d4a2128358a494966b6ec697649aac0cd92665d48f3c62bc3f7475bf1c9a4ed2"
+          }
+        },
+        "command_action": "prompt-close",
+        "recorded_at": "2026-11-23T08:16:49.576275Z"
+      },
+      {
+        "gate": "source",
+        "outcome": "confirmed",
+        "turn_id": "01a2077e-6eea-7692-aced-73254a94550a",
+        "evidence": {
+          "coding_prompt": {
+            "path": "docs/02-construction/implementation/UC-09/runs/UC-09-GPT-5.6-LUNA/approved-prompt/UC-09-coding-prompt.md",
+            "sha256": "sha256:d4a2128358a494966b6ec697649aac0cd92665d48f3c62bc3f7475bf1c9a4ed2"
+          }
+        },
+        "command_action": "source-close",
+        "recorded_at": "2026-11-23T08:21:33.989694Z"
+      }
+    ]
   },
   "metrics_schema_version": 4,
-  "metrics": null,
+  "metrics": {
+    "schema_version": 4,
+    "provenance_class": "observed_post_run",
+    "timing_method": "system_timestamp_delta",
+    "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+    "token_attribution_method": "semantic_primary_phase_per_turn",
+    "uc_id": "UC-09",
+    "run_id": "UC-09-GPT-5.6-LUNA",
+    "status": "open",
+    "measured_at": "2026-11-23T08:21:33.854540+00:00",
+    "session": {
+      "session_id": "01a20775-5c44-7650-9058-0ec7b5c68e29",
+      "file_name": "rollout-2026-11-23T15-11-01-01a20775-5c44-7650-9058-0ec7b5c68e29.jsonl",
+      "sha256": "sha256:ecd28f6b5a807731173384e610cdf4960a8c39bfffafcda1c996d68801a0c688"
+    },
+    "selection_evidence_sha256": "sha256:1f5d1b69fe65385ee8268e09f340578b8143cc96928b0b586a49f9b046471128",
+    "extractor_sha256": "sha256:06fd6799ba7cfb6a7f161988af6389a0592da5effcf4192639d6590eb46ae5c3",
+    "phases": {
+      "prompt_generation": {
+        "status": "closed",
+        "values": {
+          "tokens": {
+            "input_tokens": 1241195,
+            "cached_input_tokens": 1154944,
+            "output_tokens": 9171,
+            "reasoning_output_tokens": 1439,
+            "total_tokens": 1250366
+          },
+          "token_unavailable_reasons": {},
+          "duration_seconds": 144.764,
+          "wall_clock_seconds": 245.746,
+          "timing_unavailable_reason": null,
+          "workflow_turn_count": 1,
+          "tool_call_count": 21,
+          "model_call_count": null,
+          "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+        }
+      },
+      "source_generation": {
+        "status": "closed",
+        "values": {
+          "tokens": {
+            "input_tokens": 2076949,
+            "cached_input_tokens": 2034560,
+            "output_tokens": 9139,
+            "reasoning_output_tokens": 1253,
+            "total_tokens": 2086088
+          },
+          "token_unavailable_reasons": {},
+          "duration_seconds": 147.491,
+          "wall_clock_seconds": 230.323,
+          "timing_unavailable_reason": null,
+          "workflow_turn_count": 1,
+          "tool_call_count": 15,
+          "model_call_count": null,
+          "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+        }
+      },
+      "sub_prompt_generation": {
+        "status": "not_started",
+        "values": null
+      },
+      "repair": {
+        "status": "not_started",
+        "values": null
+      }
+    },
+    "workflow": {
+      "tokens": {
+        "input_tokens": 3318144,
+        "cached_input_tokens": 3189504,
+        "output_tokens": 18310,
+        "reasoning_output_tokens": 2692,
+        "total_tokens": 3336454
+      },
+      "token_unavailable_reasons": {},
+      "duration_seconds": null,
+      "wall_clock_seconds": 476.069,
+      "timing_unavailable_reason": "Generation phase timing pending or unavailable; see phases",
+      "workflow_turn_count": 2,
+      "tool_call_count": 36,
+      "model_call_count": null,
+      "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+    },
+    "turns": [
+      {
+        "turn_id": "01a20775-5e62-7e20-ae6a-b750b23620c5",
+        "turn_number": 1,
+        "started_at": "2026-11-23T08:11:02.324Z",
+        "ended_at": "2026-11-23T08:15:08.070Z",
+        "completed": true,
+        "model": "gpt-5.6-luna",
+        "tokens": {
+          "input_tokens": 1241195,
+          "cached_input_tokens": 1154944,
+          "output_tokens": 9171,
+          "reasoning_output_tokens": 1439,
+          "total_tokens": 1250366
+        },
+        "tool_call_count": 21,
+        "prefix_bytes": 921540,
+        "prefix_sha256": "sha256:9a07eafae6dfc4a837bbea7f5ee39b8a13d4990d1f1cd5defec30a0adf2b2fe2",
+        "terminal_event": "task_complete",
+        "message_sha256": "sha256:371ed61d12b8cba4239324da9be772476038ebb61029e259bbe005cf973db36d",
+        "session_id": "01a20775-5c44-7650-9058-0ec7b5c68e29",
+        "phase": "prompt_generation",
+        "timing_phase": "prompt_generation",
+        "reason": "Generate and validate the UC-09 coding prompt Draft",
+        "duration_seconds": 144.764,
+        "wall_clock_seconds": 245.746,
+        "timing_unavailable_reason": null,
+        "timing_exclusion_reason": null,
+        "timing_segments": [
+          {
+            "start": {
+              "at": "2026-11-23T15:12:15.533+07:00",
+              "epoch_ms": 1795421535533,
+              "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+              "uc_id": "UC-09",
+              "run_id": "UC-09-GPT-5.6-LUNA",
+              "session_id": "01a20775-5c44-7650-9058-0ec7b5c68e29",
+              "turn_id": "01a20775-5e62-7e20-ae6a-b750b23620c5",
+              "phase": "prompt_generation",
+              "event": "start",
+              "segment_id": "uc09-prompt-generation-20261123-01",
+              "source_revision": "sha256:9d01dcfe32f2d869f8e2d9989d4eef40b23533a6af8f51b6de26bd7f06ce497f"
+            },
+            "end": {
+              "at": "2026-11-23T15:14:40.297+07:00",
+              "epoch_ms": 1795421680297,
+              "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+              "uc_id": "UC-09",
+              "run_id": "UC-09-GPT-5.6-LUNA",
+              "session_id": "01a20775-5c44-7650-9058-0ec7b5c68e29",
+              "turn_id": "01a20775-5e62-7e20-ae6a-b750b23620c5",
+              "phase": "prompt_generation",
+              "event": "end",
+              "segment_id": "uc09-prompt-generation-20261123-01",
+              "source_revision": "sha256:9d01dcfe32f2d869f8e2d9989d4eef40b23533a6af8f51b6de26bd7f06ce497f"
+            }
+          }
+        ]
+      },
+      {
+        "turn_id": "01a2077a-e55a-7b43-99d0-5809767abcbe",
+        "turn_number": 3,
+        "started_at": "2026-11-23T08:17:04.404Z",
+        "ended_at": "2026-11-23T08:20:54.727Z",
+        "completed": true,
+        "model": "gpt-5.6-luna",
+        "tokens": {
+          "input_tokens": 2076949,
+          "cached_input_tokens": 2034560,
+          "output_tokens": 9139,
+          "reasoning_output_tokens": 1253,
+          "total_tokens": 2086088
+        },
+        "tool_call_count": 15,
+        "prefix_bytes": 1603471,
+        "prefix_sha256": "sha256:c3d2f2a9cb47bb9819cc44fbdcc7c0995071f0b32c6383f542849bf32751b4c0",
+        "terminal_event": "task_complete",
+        "message_sha256": "sha256:7b14af2623f6d7d16a93b33a877d48c169bde940b0efd616e69b28fb86c2e079",
+        "session_id": "01a20775-5c44-7650-9058-0ec7b5c68e29",
+        "phase": "source_generation",
+        "timing_phase": "source_generation",
+        "reason": "Implement the approved UC-09 coding prompt in finalsource",
+        "duration_seconds": 147.491,
+        "wall_clock_seconds": 230.323,
+        "timing_unavailable_reason": null,
+        "timing_exclusion_reason": null,
+        "timing_segments": [
+          {
+            "start": {
+              "at": "2026-11-23T15:18:08.903+07:00",
+              "epoch_ms": 1795421888903,
+              "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+              "uc_id": "UC-09",
+              "run_id": "UC-09-GPT-5.6-LUNA",
+              "session_id": "01a20775-5c44-7650-9058-0ec7b5c68e29",
+              "turn_id": "01a2077a-e55a-7b43-99d0-5809767abcbe",
+              "phase": "source_generation",
+              "event": "start",
+              "segment_id": "uc09-source-generation-20261123-01",
+              "source_revision": "sha256:4b5d8b4c4ace5a6f6ba8f655838caf0ae6b1eccddfb59e1d1ad1ddfdfb14601f"
+            },
+            "end": {
+              "at": "2026-11-23T15:20:36.393+07:00",
+              "epoch_ms": 1795422036394,
+              "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+              "uc_id": "UC-09",
+              "run_id": "UC-09-GPT-5.6-LUNA",
+              "session_id": "01a20775-5c44-7650-9058-0ec7b5c68e29",
+              "turn_id": "01a2077a-e55a-7b43-99d0-5809767abcbe",
+              "phase": "source_generation",
+              "event": "end",
+              "segment_id": "uc09-source-generation-20261123-01",
+              "source_revision": "sha256:4b5d8b4c4ace5a6f6ba8f655838caf0ae6b1eccddfb59e1d1ad1ddfdfb14601f"
+            }
+          }
+        ]
+      }
+    ],
+    "token_phase_breakdown": {
+      "prompt_generation": {
+        "tokens": {
+          "input_tokens": 1241195,
+          "cached_input_tokens": 1154944,
+          "output_tokens": 9171,
+          "reasoning_output_tokens": 1439,
+          "total_tokens": 1250366
+        },
+        "token_unavailable_reasons": {},
+        "wall_clock_seconds": 245.746,
+        "workflow_turn_count": 1,
+        "tool_call_count": 21
+      },
+      "source_generation": {
+        "tokens": {
+          "input_tokens": 2076949,
+          "cached_input_tokens": 2034560,
+          "output_tokens": 9139,
+          "reasoning_output_tokens": 1253,
+          "total_tokens": 2086088
+        },
+        "token_unavailable_reasons": {},
+        "wall_clock_seconds": 230.323,
+        "workflow_turn_count": 1,
+        "tool_call_count": 15
+      }
+    },
+    "excluded_turns": [
+      {
+        "turn_id": "01a20779-2e5d-7963-844d-5dcdd4d8772a",
+        "reason": "measurement/report turn"
+      },
+      {
+        "turn_id": "01a2077e-6eea-7692-aced-73254a94550a",
+        "reason": "measurement/report turn"
+      }
+    ],
+    "phase_ledger": {
+      "schema_version": 1,
+      "uc_id": "UC-09",
+      "run_id": "UC-09-GPT-5.6-LUNA",
+      "session_id": "01a20775-5c44-7650-9058-0ec7b5c68e29",
+      "phases": {
+        "prompt_generation": {
+          "status": "closed",
+          "first_turn_id": "01a20775-5e62-7e20-ae6a-b750b23620c5",
+          "measurement_turn_id": "01a20779-2e5d-7963-844d-5dcdd4d8772a"
+        },
+        "source_generation": {
+          "status": "closed",
+          "first_turn_id": "01a2077a-e55a-7b43-99d0-5809767abcbe",
+          "measurement_turn_id": "01a2077e-6eea-7692-aced-73254a94550a"
+        }
+      },
+      "segments": [
+        {
+          "start": {
+            "at": "2026-11-23T15:12:15.533+07:00",
+            "epoch_ms": 1795421535533,
+            "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+            "uc_id": "UC-09",
+            "run_id": "UC-09-GPT-5.6-LUNA",
+            "session_id": "01a20775-5c44-7650-9058-0ec7b5c68e29",
+            "turn_id": "01a20775-5e62-7e20-ae6a-b750b23620c5",
+            "phase": "prompt_generation",
+            "event": "start",
+            "segment_id": "uc09-prompt-generation-20261123-01",
+            "source_revision": "sha256:9d01dcfe32f2d869f8e2d9989d4eef40b23533a6af8f51b6de26bd7f06ce497f"
+          },
+          "end": {
+            "at": "2026-11-23T15:14:40.297+07:00",
+            "epoch_ms": 1795421680297,
+            "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+            "uc_id": "UC-09",
+            "run_id": "UC-09-GPT-5.6-LUNA",
+            "session_id": "01a20775-5c44-7650-9058-0ec7b5c68e29",
+            "turn_id": "01a20775-5e62-7e20-ae6a-b750b23620c5",
+            "phase": "prompt_generation",
+            "event": "end",
+            "segment_id": "uc09-prompt-generation-20261123-01",
+            "source_revision": "sha256:9d01dcfe32f2d869f8e2d9989d4eef40b23533a6af8f51b6de26bd7f06ce497f"
+          }
+        },
+        {
+          "start": {
+            "at": "2026-11-23T15:18:08.903+07:00",
+            "epoch_ms": 1795421888903,
+            "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+            "uc_id": "UC-09",
+            "run_id": "UC-09-GPT-5.6-LUNA",
+            "session_id": "01a20775-5c44-7650-9058-0ec7b5c68e29",
+            "turn_id": "01a2077a-e55a-7b43-99d0-5809767abcbe",
+            "phase": "source_generation",
+            "event": "start",
+            "segment_id": "uc09-source-generation-20261123-01",
+            "source_revision": "sha256:4b5d8b4c4ace5a6f6ba8f655838caf0ae6b1eccddfb59e1d1ad1ddfdfb14601f"
+          },
+          "end": {
+            "at": "2026-11-23T15:20:36.393+07:00",
+            "epoch_ms": 1795422036394,
+            "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3",
+            "uc_id": "UC-09",
+            "run_id": "UC-09-GPT-5.6-LUNA",
+            "session_id": "01a20775-5c44-7650-9058-0ec7b5c68e29",
+            "turn_id": "01a2077a-e55a-7b43-99d0-5809767abcbe",
+            "phase": "source_generation",
+            "event": "end",
+            "segment_id": "uc09-source-generation-20261123-01",
+            "source_revision": "sha256:4b5d8b4c4ace5a6f6ba8f655838caf0ae6b1eccddfb59e1d1ad1ddfdfb14601f"
+          }
+        }
+      ],
+      "observations": [
+        {
+          "measurement_turn_id": "01a20779-2e5d-7963-844d-5dcdd4d8772a",
+          "action": "close-phase:prompt_generation",
+          "last_turn_id": "01a20775-5e62-7e20-ae6a-b750b23620c5",
+          "evidence_sha256": "sha256:cff3e356718d29c0b1644aa0a7e7c9e3b0b7c9a0746c481c4852880e92229b37"
+        },
+        {
+          "measurement_turn_id": "01a2077e-6eea-7692-aced-73254a94550a",
+          "action": "close-phase:source_generation",
+          "last_turn_id": "01a2077a-e55a-7b43-99d0-5809767abcbe",
+          "evidence_sha256": "sha256:1f5d1b69fe65385ee8268e09f340578b8143cc96928b0b586a49f9b046471128"
+        }
+      ],
+      "workflow_status": "open",
+      "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3"
+    }
+  },
   "repair_authorization": {
     "approved": false,
     "turn_id": null
@@ -46,8 +408,112 @@
       "BR-SCM-08",
       "BR-SCM-09"
     ],
-    "initial": null,
-    "final": null
+    "initial": {
+      "requirements": [
+        {
+          "br_id": "BR-SCM-01",
+          "status": "correct",
+          "rationale": "SessionAuthGuard and ChatMessageService.send verify authenticated principal, sessionId, and JOINED participant."
+        },
+        {
+          "br_id": "BR-SCM-02",
+          "status": "correct",
+          "rationale": "ChatMessageService.send checks session existence and non-ENDED status."
+        },
+        {
+          "br_id": "BR-SCM-03",
+          "status": "correct",
+          "rationale": "ChatMessageService.send requires non-blank Idempotency-Key and enforces idempotency_records."
+        },
+        {
+          "br_id": "BR-SCM-04",
+          "status": "correct",
+          "rationale": "ChatMessageService.send trims body and enforces 1..1000 character length."
+        },
+        {
+          "br_id": "BR-SCM-05",
+          "status": "correct",
+          "rationale": "ChatMessageService.send assigns UUID id, sessionId, and senderParticipantId."
+        },
+        {
+          "br_id": "BR-SCM-06",
+          "status": "correct",
+          "rationale": "ChatMessageService.send stores trimmed body, sentAt, and sequence = session.version + 1."
+        },
+        {
+          "br_id": "BR-SCM-07",
+          "status": "incorrect",
+          "rationale": "ChatMessageService.list does not query participants table to verify JOINED membership."
+        },
+        {
+          "br_id": "BR-SCM-08",
+          "status": "incorrect",
+          "rationale": "ChatMessageService.list does not query sessions table to verify session.status <> ENDED."
+        },
+        {
+          "br_id": "BR-SCM-09",
+          "status": "correct",
+          "rationale": "ChatMessageService.list returns messages ordered by sequence ASC with HMAC-signed cursor."
+        }
+      ],
+      "total": 9,
+      "correct": 7,
+      "incorrect": 2,
+      "not_evaluable": 0
+    },
+    "final": {
+      "requirements": [
+        {
+          "br_id": "BR-SCM-01",
+          "status": "correct",
+          "rationale": "SessionAuthGuard and ChatMessageService.send verify authenticated principal, sessionId, and JOINED participant."
+        },
+        {
+          "br_id": "BR-SCM-02",
+          "status": "correct",
+          "rationale": "ChatMessageService.send checks session existence and non-ENDED status."
+        },
+        {
+          "br_id": "BR-SCM-03",
+          "status": "correct",
+          "rationale": "ChatMessageService.send requires non-blank Idempotency-Key and enforces idempotency_records."
+        },
+        {
+          "br_id": "BR-SCM-04",
+          "status": "correct",
+          "rationale": "ChatMessageService.send trims body and enforces 1..1000 character length."
+        },
+        {
+          "br_id": "BR-SCM-05",
+          "status": "correct",
+          "rationale": "ChatMessageService.send assigns UUID id, sessionId, and senderParticipantId."
+        },
+        {
+          "br_id": "BR-SCM-06",
+          "status": "correct",
+          "rationale": "ChatMessageService.send stores trimmed body, sentAt, and sequence = session.version + 1."
+        },
+        {
+          "br_id": "BR-SCM-07",
+          "status": "incorrect",
+          "rationale": "ChatMessageService.list does not query participants table to verify JOINED membership."
+        },
+        {
+          "br_id": "BR-SCM-08",
+          "status": "incorrect",
+          "rationale": "ChatMessageService.list does not query sessions table to verify session.status <> ENDED."
+        },
+        {
+          "br_id": "BR-SCM-09",
+          "status": "correct",
+          "rationale": "ChatMessageService.list returns messages ordered by sequence ASC with HMAC-signed cursor."
+        }
+      ],
+      "total": 9,
+      "correct": 7,
+      "incorrect": 2,
+      "not_evaluable": 0
+    }
   },
   "defects": [],
   "repairs": [],
@@ -63,10 +529,40 @@
   "ui_accuracy_evidence": null,
   "ui_accuracy_recorded_by": null,
   "ui_accuracy_recorded_at": null,
-  "flow_accuracy_percent": null,
-  "flow_error_percent": null,
-  "flow_accuracy_status": "not_evaluated",
-  "flow_accuracy": null,
+  "flow_accuracy_percent": 100.0,
+  "flow_error_percent": 0.0,
+  "flow_accuracy_status": "evaluated",
+  "flow_accuracy": {
+    "current_assessment_id": "initial-audit-01",
+    "assessments": [
+      {
+        "assessment_id": "initial-audit-01",
+        "stage": "initial",
+        "flows": [
+          {
+            "flow_id": "BF-1",
+            "status": "correct"
+          },
+          {
+            "flow_id": "AF-1",
+            "status": "correct"
+          },
+          {
+            "flow_id": "EF-1",
+            "status": "correct"
+          }
+        ],
+        "counts": {
+          "total": 3,
+          "correct": 3,
+          "incorrect": 0,
+          "not_evaluable": 0
+        },
+        "flow_accuracy_percent": 100.0,
+        "flow_error_percent": 0.0
+      }
+    ]
+  },
   "complexity": {
     "actors": 0,
     "main_flow_steps": 0,

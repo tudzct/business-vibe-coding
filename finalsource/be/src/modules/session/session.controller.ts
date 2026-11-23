@@ -9,6 +9,9 @@ import { SessionJoinService } from './session-join.service';
 import { ParticipantListService } from './participant-list.service';
 import { SessionStateService } from './session-state.service';
 import { ListParticipantsDto } from './dto/list-participants.dto';
+import { ListChatMessagesDto } from './dto/list-chat-messages.dto';
+import { SendChatMessageDto } from './dto/send-chat-message.dto';
+import { ChatMessageService } from './chat-message.service';
 
 @Controller('/api/v1/sessions')
 export class SessionController {
@@ -19,6 +22,7 @@ export class SessionController {
     private readonly dataSource: DataSource,
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
+    private readonly chatMessageService: ChatMessageService,
   ) {}
 
   @Post('demo')
@@ -57,5 +61,19 @@ export class SessionController {
   async join(@Param('sessionId') sessionId: string, @Headers('idempotency-key') idempotencyKey: string | undefined, @Body() dto: JoinSessionDto, @Req() request: Request) {
     const data = await this.joinService.join(sessionId, idempotencyKey, dto, request.sessionPrincipal!);
     return { success: true, message: 'Session joined', data };
+  }
+
+  @Get(':sessionId/chat/messages')
+  @UseGuards(SessionAuthGuard)
+  async listChatMessages(@Param('sessionId') sessionId: string, @Query() query: ListChatMessagesDto, @Req() request: Request) {
+    const data = await this.chatMessageService.list(sessionId, query, request.sessionPrincipal!);
+    return { success: true, message: 'Chat history loaded', data };
+  }
+
+  @Post(':sessionId/chat/messages')
+  @UseGuards(SessionAuthGuard)
+  async sendChatMessage(@Param('sessionId') sessionId: string, @Headers('idempotency-key') idempotencyKey: string | undefined, @Body() dto: SendChatMessageDto, @Req() request: Request) {
+    const data = await this.chatMessageService.send(sessionId, idempotencyKey, dto, request.sessionPrincipal!);
+    return { success: true, message: 'Chat message created', data };
   }
 }

@@ -6,10 +6,11 @@ import { SessionJoinService } from './session-join.service';
 import { SessionAuthGuard } from './session-auth.guard';
 import { ParticipantListService } from './participant-list.service';
 import { SessionStateService } from './session-state.service';
+import { ChatMessageService } from './chat-message.service';
 
 @Module({
   imports: [ConfigModule, JwtModule.register({})],
   controllers: [SessionController],
-  providers: [SessionJoinService, ParticipantListService, SessionStateService, SessionAuthGuard],
+  providers: [SessionJoinService, ParticipantListService, SessionStateService, ChatMessageService, SessionAuthGuard],
 })
 export class SessionModule {}
