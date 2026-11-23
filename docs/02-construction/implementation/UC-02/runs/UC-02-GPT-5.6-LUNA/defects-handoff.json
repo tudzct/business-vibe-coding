@@ -1,0 +1,68 @@
+{
+  "schema_version": 2,
+  "artifact_type": "defects-handoff",
+  "uc_id": "UC-02",
+  "run_id": "UC-02-GPT-5.6-LUNA",
+  "source_revision": "sha256:6f0ef4ddf5b41e3b8225c510e56c50e49f9780d15c5c8baf16254c6fb245abe6",
+  "canonical_defects_sha256": "sha256:6f49b46eb11de30c1d2c66f459f4f7d3999273704084e76fa878cb3a5f2bb39e",
+  "accepted_results_sha256": "sha256:71f4f244a63aa8d03178b79b88613ce7b1c9f5c4b3f190111ae930fc5151c9a6",
+  "status": "ready",
+  "defects": [
+    {
+      "defect_id": "DEF-UC02-AUTH-01",
+      "fingerprint": "sha256:43866456aae9f761cc1c191db6175e99b8f5eb75fb550e00e7a20b00085d5d2b",
+      "category": "technical",
+      "title": "Session join fails with 401 Unauthorized (Authentication required)",
+      "description": "Clicking Join Now in Pre-join preview sends POST /api/v1/sessions/11111111-1111-4111-8111-111111111111/participants without an authenticated session/principal, causing backend to reject with HTTP 401 Unauthorized.",
+      "reproduction_steps": [
+        "Open http://localhost:8080/",
+        "Enter display name Alice",
+        "Click Join Now and observe HTTP 401 Unauthorized response"
+      ],
+      "scope": {
+        "affected_br_ids": [
+          "BR-JS-01",
+          "BR-JS-02",
+          "BR-JS-03",
+          "BR-JS-04",
+          "BR-JS-05",
+          "BR-JS-06",
+          "BR-JS-07",
+          "BR-JS-08",
+          "BR-JS-09",
+          "BR-JS-10",
+          "BR-JS-11",
+          "BR-JS-12",
+          "BR-JS-13",
+          "BR-JS-14",
+          "BR-JS-15",
+          "BR-JS-16",
+          "BR-JS-17",
+          "BR-JS-18",
+          "BR-JS-19"
+        ],
+        "affected_flow_ids": [
+          "BF-1",
+          "AF-1"
+        ],
+        "affected_flow_step_ids": [
+          "BF-1.3"
+        ],
+        "affected_api_ids": [],
+        "affected_ui_targets": [],
+        "affected_files": []
+      },
+      "evidence": [
+        {
+          "source_file": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt",
+          "line_start": null,
+          "line_end": null,
+          "locator": "docs/02-construction/implementation/UC-02/runs/UC-02-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-bf1/ui-join-401.txt",
+          "defect_finding": "Join session request fails with HTTP 401 Unauthorized (Authentication required) because no authenticated principal/session is provided, preventing session join completion.",
+          "content": "BF-1 Observation (http://localhost:8080/):\n1. Loaded Pre-join preview UI (HTTP 200).\n2. Entered display name \"Alice\" and clicked \"Join Now\".\n3. POST http://localhost:8080/api/v1/sessions/11111111-1111-4111-8111-111111111111/participants returned HTTP 401 Unauthorized: {\"success\":false,\"message\":\"Authentication required\"}.\n4. UI displayed \"Authentication required\" alert and remained on Pre-join preview; did not transition to active session or render participant tile."
+        }
+      ],
+      "required_correction": "Affected Business Rule IDs: BR-JS-01, BR-JS-02, BR-JS-03, BR-JS-04, BR-JS-05, BR-JS-06, BR-JS-07, BR-JS-08, BR-JS-09, BR-JS-10, BR-JS-11, BR-JS-12, BR-JS-13, BR-JS-14, BR-JS-15, BR-JS-16, BR-JS-17, BR-JS-18, BR-JS-19.\n\nAuthoritative Business Rule definitions:\n\n```ocl\nBR-JS-01 - Trusted Join Principal\ncontext SessionJoinService::join(command: JoinCommand, session: Session): Participant\npre BR_JS_01_TrustedJoinPrincipal:\n  RequestContext::authenticated and command.sessionId = RequestContext::sessionId and\n  command.principalId = RequestContext::principalId and\n  Principal.allInstances()->exists(p | p.id = command.principalId and p.userId = command.userId)\n\nBR-JS-02 - Target Session\ncontext SessionJoinService::join(command: JoinCommand, session: Session): Participant\npre BR_JS_02_TargetSession:\n  command.sessionId = session.id and session.status <> SessionStatus::ENDED\n\nBR-JS-03 - Command Key\ncontext SessionJoinService::join(command: JoinCommand, session: Session): Participant\npre BR_JS_03_CommandKey:\n  command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0\n\nBR-JS-04 - Name\ncontext SessionJoinService::join(command: JoinCommand, session: Session): Participant\npre BR_JS_04_Name:\n  command.displayName <> null and command.displayName.trim().size() > 0 and command.displayName.trim().size() <= 50\n\nBR-JS-05 - No Duplicate Membership\ncontext SessionJoinService::join(command: JoinCommand, session: Session): Participant\npre BR_JS_05_NoDuplicateMembership:\n  not session.participants->exists(p | p.principalId = command.principalId and p.status = ParticipantStatus::JOINED)\n\nBR-JS-06 - Capacity\ncontext SessionJoinService::join(command: JoinCommand, session: Session): Participant\npre BR_JS_06_Capacity:\n  let count : Integer = session.participants->select(p | p.status = ParticipantStatus::JOINED)->size() in\n  (session.kind = SessionKind::VIDEO_CONFERENCE implies count < 100) and\n  (session.kind = SessionKind::LIVE_STREAM implies count < 1000)\n\nBR-JS-07 - Created Identity\ncontext SessionJoinService::join(command: JoinCommand, session: Session): Participant\npost BR_JS_07_CreatedIdentity:\n  result.oclIsNew() and result.id <> null and result.sessionId = command.sessionId and result.principalId = command.principalId and result.userId = command.userId\n\nBR-JS-08 - Joined Participant\ncontext SessionJoinService::join(command: JoinCommand, session: Session): Participant\npost BR_JS_08_JoinedParticipant:\n  result.status = ParticipantStatus::JOINED and result.displayName = command.displayName.trim() and\n  result.joinedAt <> null and result.leftAt = null and result.version = 1 and\n  session.participants = session.participants@pre->including(result)\n\nBR-JS-09 - Exclusive Role\ncontext SessionJoinService::join(command: JoinCommand, session: Session): Participant\npost BR_JS_09_ExclusiveRole:\n  result.role = if command.principalId = session.designatedHostPrincipalId\n    then ParticipantRole::HOST\n    else if session.kind = SessionKind::LIVE_STREAM then ParticipantRole::VIEWER\n      else ParticipantRole::BROADCASTER endif endif\n\nBR-JS-10 - Effective Media\ncontext SessionJoinService::join(command: JoinCommand, session: Session): Participant\npost BR_JS_10_EffectiveMedia:\n  result.microphoneEnabled = (result.role <> ParticipantRole::VIEWER and command.microphoneEnabled) and\n  result.cameraEnabled = (result.role <> ParticipantRole::VIEWER and command.cameraEnabled)\n\nBR-JS-11 - Host Opens Session\ncontext SessionJoinService::join(command: JoinCommand, session: Session): Participant\npost BR_JS_11_HostOpensSession:\n  if result.role = ParticipantRole::HOST then\n    session.hostParticipantId = result.id and session.status = SessionStatus::LIVE\n  else session.hostParticipantId = session.hostParticipantId@pre and session.status = session.status@pre endif\n\nBR-JS-12 - Draft Background\ncontext SessionJoinService::join(command: JoinCommand, session: Session): Participant\npre BR_JS_12_DraftBackground:\n  command.virtualBackgroundId = null or VirtualBackground.allInstances()->exists(b | b.id = command.virtualBackgroundId and b.active)\n\nBR-JS-13 - Initialize Preferences\ncontext SessionJoinService::join(command: JoinCommand, session: Session): Participant\npost BR_JS_13_InitializePreferences:\n  MediaPreference.allInstances()->one(m | m.participantId = result.id and m.oclIsNew() and\n    m.microphoneDeviceId = command.microphoneDeviceId and m.cameraDeviceId = command.cameraDeviceId and\n    m.speakerDeviceId = command.speakerDeviceId and m.virtualBackgroundId = command.virtualBackgroundId and m.updatedAt <> null) and\n  ViewPreference.allInstances()->one(v | v.participantId = result.id and v.oclIsNew() and\n    v.layout = LayoutMode::EQUAL_PROMINENCE and v.focusedParticipantId = null and v.sidePanel = null and\n    not v.pictureInPicture and v.updatedAt <> null)\n\nBR-JS-14 - Gateway Identity And Transaction\ncontext MutationGateway::execute(command: MutationEnvelope, session: Session): MutationReceipt\npre BR_JS_14_GatewayIdentityAndTransaction:\n  RequestContext::authenticated and command.principalId = RequestContext::principalId and\n  command.sessionId = RequestContext::sessionId and command.sessionId = session.id and\n  TransactionContext::lockedSessionId = session.id and TransactionContext::isolation = IsolationLevel::SERIALIZABLE and\n  TransactionContext::atomicCommit and command.idempotencyKey <> null and command.idempotencyKey.trim().size() > 0\n\nBR-JS-15 - Replay Or Dispatch\ncontext MutationGateway::execute(command: MutationEnvelope, session: Session): MutationReceipt\npost BR_JS_15_ReplayOrDispatch:\n  let previous : Set(IdempotencyRecord) = IdempotencyRecord.allInstances()@pre->select(r |\n    r.principalId = command.principalId and r.sessionId = command.sessionId and r.operation = command.operation and\n    r.idempotencyKey = command.idempotencyKey and DateTime::isAfter(r.expiresAt, DateTime::now())) in\n  if previous->notEmpty() then\n    result.dispatchCount = 0 and session.version = session.version@pre and\n    if previous->any(true).payloadHash = command.payloadHash then\n      result.outcome = MutationOutcome::COMPLETED and result.responseReference = previous->any(true).responseReference\n    else result.outcome = MutationOutcome::REJECTED endif\n  else\n    result.dispatchCount = 1 and\n    if result.outcome = MutationOutcome::COMPLETED then session.version = session.version@pre + 1\n    else session.version = session.version@pre endif\n  endif\n\nBR-JS-16 - Persist Receipt\ncontext MutationGateway::execute(command: MutationEnvelope, session: Session): MutationReceipt\npost BR_JS_16_PersistReceipt:\n  (result.dispatchCount = 1 and result.outcome = MutationOutcome::COMPLETED) implies\n  IdempotencyRecord.allInstances()->one(r | r.principalId = command.principalId and r.sessionId = command.sessionId and\n    r.operation = command.operation and r.idempotencyKey = command.idempotencyKey and\n    r.payloadHash = command.payloadHash and r.responseReference = result.responseReference and\n    r.completedAt = result.completedAt and r.expiresAt = DateTime::addHours(r.completedAt, 24))\n\nBR-JS-17 - No Effects On Replay Or Rejection\ncontext MutationGateway::execute(command: MutationEnvelope, session: Session): MutationReceipt\npost BR_JS_17_NoEffectsOnReplayOrRejection:\n  (result.dispatchCount = 0 or result.outcome = MutationOutcome::REJECTED) implies\n  DomainState::snapshot(session.id) = DomainState::snapshot@pre(session.id)\n\nBR-JS-18 - Session Participant Bindings\ncontext Session\ninv BR_JS_18_SessionParticipantBindings:\n  self.participants = Participant.allInstances()->select(p | p.sessionId = self.id) and\n  self.participants->select(p | p.status = ParticipantStatus::JOINED)->isUnique(principalId) and\n  self.participants->select(p | p.status = ParticipantStatus::JOINED and p.role = ParticipantRole::HOST)->size() <= 1\n\nBR-JS-19 - Session Capacity Invariant\ncontext Session\ninv BR_JS_19_SessionCapacityInvariant:\n  let joined : Set(Participant) = self.participants->select(p | p.status = ParticipantStatus::JOINED) in\n  (self.kind = SessionKind::VIDEO_CONFERENCE implies joined->size() <= 100) and\n  (self.kind = SessionKind::LIVE_STREAM implies joined->size() <= 1000 and\n    joined->select(p | p.role <> ParticipantRole::VIEWER)->size() <= 10)\n```\n\nReferenced OCL Utility Definitions:\n\n```ocl\nString.trim(): String\n- Removes leading and trailing whitespace; internal whitespace is unchanged.\n\nDateTime::now(): DateTime\n- Returns the transaction-clock instant.\n\nDateTime::addHours(value: DateTime, hours: Integer): DateTime\n- Returns the instant after the specified number of elapsed hours.\n\nDateTime::isAfter(value: DateTime, other: DateTime): Boolean\n- True when value is later than other as an instant.\n\nDomainState::snapshot(sessionId: String): String\n- Canonically serializes the session and all session-owned domain rows.\n- Excludes the command journal and immutable response storage; equality checks detect domain effects on replay or rejection.\n```\n\nAffected Flow IDs: BF-1, AF-1.\n\nAffected Flow step IDs: BF-1.3.\n\nAuthoritative affected Flow steps:\n\n```text\nBF-1.3: The system returns the joined participant and session summary.\n```\n\nComplete affected Flow definitions and outcome semantics:\n\n```text\nBF-1.1: The participant enters a display name and chooses Join.\nBF-1.2: The client submits the join request.\nBF-1.3: The system returns the joined participant and session summary.\nBF-1.4: The client renders the active session and participant tile.\n\nAF-1: Change preview selections before joining\n\n1a : The participant changes a preview control before choosing Join.\n1b : The client submits the updated selections with the join request.\n```\n\nRequired observable behavior after repair:\n\nEstablish/provide authenticated principal context for session join or align frontend/backend auth flow so joining a session succeeds."
+    }
+  ]
+}
