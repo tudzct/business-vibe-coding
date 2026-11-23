@@ -9,7 +9,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from metrics_contract import atomic_write, validate_metrics, context, run_lock, epoch, digest
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-flow-accuracy" / "scripts"))
-from score_flow_accuracy import (calculate as calculate_flow, validate_run_result,
+from score_flow_accuracy import (calculate as calculate_flow, stage_runtime_defects, validate_run_result,
                                  validate_evidence, validate_defects, verification_defects)
 from runtime_contract import method, configured_rubric
 from flow_summary import validate_followups
@@ -431,7 +431,8 @@ def calculate(path_string):
     if initial_assessment is None:
         raise ValueError("initial runtime assessment is required")
     initial_defects = validate_defects(data, "initial", initial_assessment["input"]["source_revision"], flow_ids)
-    validate_br_runtime(business["initial"], initial_assessment, initial_defects, "business_rules.initial")
+    validate_br_runtime(business["initial"], initial_assessment,
+                        stage_runtime_defects(initial_defects, "initial"), "business_rules.initial")
     final_assessment = by_stage.get("final")
     if final_assessment is None:
         if data.get("repairs") or business["final"] != business["initial"]:

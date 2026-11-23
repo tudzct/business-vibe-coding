@@ -21,6 +21,7 @@ AUDIT_SCRIPTS = ROOT / ".codex" / "skills" / "audit-generation-metrics" / "scrip
 sys.path.insert(0, str(AUDIT_SCRIPTS))
 from calculate_metrics import (
     STATUSES,
+    stage_runtime_defects,
     validate_snapshot,
     validate_br_runtime,
     verification_defects
@@ -159,7 +160,7 @@ def record_business_rules(run_path, stage="initial", requirements_input=None,
 
     if matching_assessment:
         flow_ids = [row["flow_id"] for row in matching_assessment.get("flows", [])]
-        defects = verification_defects(data, stage, source_revision, flow_ids)
+        defects = stage_runtime_defects(verification_defects(data, stage, source_revision, flow_ids), stage)
         validate_br_runtime(snapshot, matching_assessment, defects, f"business_rules.{stage}")
 
     print(f"Validated business_rules.{stage} successfully:")
