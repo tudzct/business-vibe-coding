@@ -6,7 +6,7 @@
     "comparison_group_id": "CG-100MS-01",
     "researcher_id": "researcher-khanh",
     "artifact": "docs/04-experiments/configurations/CFG-UC-02-GPT-5.6-LUNA.json",
-    "checksum": "sha256:96f57534d5eef19df3b70dc6972fd7f2d7a5dab4514a0747a5c33984ca47c8db",
+    "checksum": "sha256:c9f568f4f15c8b75ce2c88e94b422997014ed76b5d3deb35a648b3da9b4d3650",
     "run_activation": null
   },
   "uc_id": "UC-02",
