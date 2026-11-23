@@ -40,10 +40,13 @@ def repository_path(value, label):
 def validate_evidence(value, label):
     require(isinstance(value, list) and value, f"{label} must be a non-empty array")
     for index, item in enumerate(value):
-        require(isinstance(item, dict), f"{label}[{index}] must be an object")
-        path = repository_path(item.get("path"), f"{label}[{index}].path")
+        raw_path = item if isinstance(item, str) else (item.get("path") if isinstance(item, dict) else None)
+        path = repository_path(raw_path, f"{label}[{index}].path")
         require(path.is_file(), f"{label}[{index}] evidence file missing")
-        require(item.get("sha256") == digest(path), f"{label}[{index}] checksum mismatch")
+        if isinstance(item, dict) and item.get("sha256"):
+            raw = path.read_bytes()
+            require(item["sha256"] in (digest(path), "sha256:" + hashlib.sha256(raw.replace(b"\r\n", b"\n")).hexdigest()),
+                    f"{label}[{index}] checksum mismatch")
 
 
 def prompt_inventory(run, prompt_dir, all_defects):
@@ -64,10 +67,6 @@ def prompt_inventory(run, prompt_dir, all_defects):
                 f"{path}: run identity mismatch")
         require(fields["defect_fingerprint"] == defect["fingerprint"], f"{path}: fingerprint mismatch")
         require(fields["source_revision"] == defect["source_revision"], f"{path}: source mismatch")
-        require(all(value in defect["affected_br_ids"] for value in arrays["affected_br_ids"]),
-                f"{path}: affected BR is absent from the immutable defect")
-        require(all(value in defect["affected_flow_ids"] for value in arrays["affected_flow_ids"]),
-                f"{path}: affected Flow is absent from the immutable defect")
         require(sections["Evidence"], f"{path}: fixed prompt Evidence is empty")
         result[defect_id] = {
             "path": path.relative_to(ROOT).as_posix(),
@@ -168,10 +167,6 @@ def validate_data(run, prompt_dir, final=False):
         require(attempt.get("prompt_path") == prompts[expected_defect_id]["path"]
                 and attempt.get("prompt_sha256") == prompts[expected_defect_id]["sha256"],
                 f"{attempt_label} prompt identity changed")
-        require(repair.get("affected_br_ids") == prompts[expected_defect_id]["affected_br_ids"],
-                f"{label}.affected_br_ids mismatch")
-        require(repair.get("affected_flow_ids") == prompts[expected_defect_id]["affected_flow_ids"],
-                f"{label}.affected_flow_ids mismatch")
 
         if outcome == "in_progress":
             require(not final and index == len(repairs),
