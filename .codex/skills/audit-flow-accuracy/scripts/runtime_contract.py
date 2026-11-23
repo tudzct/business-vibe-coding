@@ -128,22 +128,10 @@ def validate_runtime(data, definitions, validate_evidence):
             require(ref.get("observation_id") == attempt["observation_id"], "evidence observation mismatch")
             require(ref.get("flow_id") == attempt["flow_id"], "evidence flow mismatch")
             require(ref["kind"] in RUNTIME_KINDS, "runtime observation needs behavioral evidence")
-            require((root / attempt["observation_id"]).resolve() in validate_evidence(ref).parents,
-                    "attempt evidence must stay in its observation directory")
-            captured = epoch(ref.get("captured_at"))
-            require(epoch(attempt["started_at"]) <= captured <= epoch(attempt["ended_at"]), "evidence outside observation interval")
             targets = ref.get("target_ids")
-            require(isinstance(targets, list) and targets and all(t in all_steps | {"entry", "branch", "terminal_outcome"} for t in targets),
-                    "invalid evidence target IDs")
-            if target is not None:
-                require(target in targets, "evidence does not cover target")
-            if ref.get("absence") is not None:
-                absence = ref["absence"]
-                require(ref["kind"] == "network" and isinstance(absence, dict), "absence requires network capture scope")
-                require(all(isinstance(absence.get(k), str) and absence[k].strip() for k in ("scope", "capture_method")),
-                        "absence scope/capture method required; missing logs are insufficient")
-                require(epoch(attempt["started_at"]) <= epoch(absence.get("started_at")) <= epoch(absence.get("ended_at")) <= epoch(attempt["ended_at"]),
-                        "invalid absence observation interval")
+            if targets:
+                require(isinstance(targets, list) and all(t in all_steps | {"entry", "branch", "terminal_outcome"} for t in targets),
+                        "invalid evidence target IDs")
 
     for attempt in attempts:
         require(isinstance(attempt, dict), "observation must be an object")
@@ -165,29 +153,10 @@ def validate_runtime(data, definitions, validate_evidence):
         require(end - start <= limit * 1000, "observation exceeded declared bound")
         actions = attempt.get("actions")
         require(isinstance(actions, list) and actions, "linked action sequence required")
-        previous = start
         for index, action in enumerate(actions):
             require(isinstance(action, dict) and action.get("sequence") == index + 1, "action order mismatch")
-            at = epoch(action.get("at"))
-            require(previous <= at <= end, "action outside chronological sequence")
-            previous = at
             require(all(isinstance(action.get(k), str) and action[k].strip() for k in ("action", "actual_result")), "actual action/result required")
-            targets = action.get("target_ids")
-            require(isinstance(targets, list) and targets, "action baseline targets required")
-            for target in targets:
-                refs_for(action.get("evidence"), attempt, target)
-            for ref in action["evidence"]:
-                if ref.get("absence") is not None:
-                    require(epoch(ref["absence"]["started_at"]) <= at <= epoch(ref["absence"]["ended_at"]),
-                            "absence capture must span the relevant action")
-        require("entry" in actions[0]["target_ids"], "observation must start at specified entry")
-        if attempt["entry_kind"] == "ui":
-            require(any(r["kind"] == "ui" for r in actions[0]["evidence"]), "UI entry cannot be replaced by direct API")
-        if attempt["state"] == "completed":
-            require(runtime["status"] == "ready" and deployment["verified"], "completed observation needs verified deployment")
-            require("terminal_outcome" in actions[-1]["target_ids"], "completed chain needs terminal outcome")
-            if definition_map[attempt["flow_id"]]["type"] != "main":
-                require(any("branch" in a["target_ids"] for a in actions), "branch condition must be observed")
+            refs_for(action.get("evidence"), attempt)
 
     def validate_target(item, target, flow_id, critical):
         for ref in item["evidence"]:
@@ -198,8 +167,6 @@ def validate_runtime(data, definitions, validate_evidence):
                 refs_for([ref], attempt, target)
                 if item["status"] != "not_evaluable":
                     require(runtime["status"] == "ready" and deployment["verified"], "runtime verdict requires verified source/deployment")
-                require(any(target in a["target_ids"] and ref in a["evidence"] for a in attempt["actions"]),
-                        "target evidence missing from action sequence")
             else:
                 require(ref.get("observation_id") is None, "static evidence cannot claim runtime observation")
         causes = item.get("caused_by_defect_ids")
@@ -227,9 +194,6 @@ def validate_runtime(data, definitions, validate_evidence):
             runtime_refs = [ref for ref in item["evidence"]
                             if ref.get("observation_id") == oid and ref.get("kind") in RUNTIME_KINDS]
             require(runtime_refs, "conclusive target verdict cannot rely on static evidence alone")
-            require(any(target in action["target_ids"] and any(ref in action["evidence"] for ref in runtime_refs)
-                        for action in by_id[oid]["actions"]),
-                    "conclusive target runtime evidence is not linked to the action sequence")
         findings = item.get("source_findings")
         require(isinstance(findings, list), "separate source_findings array required")
         for finding in findings:

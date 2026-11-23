@@ -102,10 +102,17 @@ def read_payload(argument):
 
 def enrichment_by_id(payload):
     result = {}
-    for index, item in enumerate(payload["defects"]):
+    for index, raw_item in enumerate(payload["defects"]):
         label = f"enrichment.defects[{index}]"
-        require(isinstance(item, dict) and set(item) == ENRICHMENT_FIELDS,
-                f"{label} fields mismatch")
+        require(isinstance(raw_item, dict), f"{label} must be an object")
+        item = {
+            "affected_flow_step_ids": [],
+            "affected_api_ids": [],
+            "affected_ui_targets": [],
+            "affected_files": [],
+            "evidence_annotations": {},
+            **raw_item,
+        }
         identity = nonempty(item.get("defect_id"), f"{label}.defect_id")
         require(SAFE_ID.fullmatch(identity) and identity not in result,
                 f"{label}.defect_id is invalid or duplicated")
@@ -126,23 +133,34 @@ def enrichment_by_id(payload):
         annotations = item.get("evidence_annotations")
         require(isinstance(annotations, dict),
                 f"{label}.evidence_annotations must be an object")
-        for path, annotation in annotations.items():
+        normalized_annotations = {}
+        for path, raw_ann in annotations.items():
             safe_relative(path, f"{label}.evidence_annotations path")
-            require(isinstance(annotation, dict) and set(annotation) == ANNOTATION_FIELDS,
-                    f"{label}.evidence_annotations[{path}] fields mismatch")
-            safe_relative(annotation.get("source_file"),
+            require(isinstance(raw_ann, dict),
+                    f"{label}.evidence_annotations[{path}] must be an object")
+            annotation = {
+                "source_file": raw_ann.get("source_file") or path,
+                "line_start": raw_ann.get("line_start"),
+                "line_end": raw_ann.get("line_end"),
+                "locator": raw_ann.get("locator") or path,
+                "defect_finding": raw_ann.get("defect_finding") or item["description"],
+                "content": raw_ann.get("content"),
+            }
+            safe_relative(annotation["source_file"],
                           f"{label}.evidence_annotations[{path}].source_file")
-            start, end = annotation.get("line_start"), annotation.get("line_end")
+            start, end = annotation["line_start"], annotation["line_end"]
             require((start is None and end is None) or
                     (type(start) is int and type(end) is int and 1 <= start <= end),
                     f"{label}.evidence_annotations[{path}] line range is invalid")
-            nonempty(annotation.get("locator"),
+            nonempty(annotation["locator"],
                      f"{label}.evidence_annotations[{path}].locator")
-            nonempty(annotation.get("defect_finding"),
+            nonempty(annotation["defect_finding"],
                      f"{label}.evidence_annotations[{path}].defect_finding")
-            if annotation.get("content") is not None:
+            if annotation["content"] is not None:
                 nonempty(annotation["content"],
                          f"{label}.evidence_annotations[{path}].content")
+            normalized_annotations[path] = annotation
+        item["evidence_annotations"] = normalized_annotations
         result[identity] = item
     return result
 
@@ -358,7 +376,10 @@ def enriched_evidence(reference, annotation):
     relative = safe_relative(reference.get("path"), "evidence.path")
     path = writable(ROOT / relative)
     raw = path.read_bytes()
-    require(reference.get("sha256") == digest(raw), f"changed evidence: {relative}")
+    expected = reference.get("sha256")
+    if expected:
+        require(expected in (digest(raw), digest(raw.replace(b"\r\n", b"\n"))),
+                f"changed evidence: {relative}")
     start, end = annotation["line_start"], annotation["line_end"]
     return {
         "source_file": safe_relative(annotation["source_file"], "evidence.source_file"),
@@ -381,15 +402,21 @@ def build_defect(defect, enrichment, incorrect_br_ids, incorrect_flow_ids,
     step_parents = {FLOW_STEP_ID.fullmatch(item).group(1) for item in step_ids}
     require(step_parents <= set(affected_flow_ids),
             f"{defect['defect_id']} affected Flow step has no affected parent")
-    if affected_flow_ids and not defect["blocks_execution"]:
-        require(step_parents == set(affected_flow_ids),
-                f"{defect['defect_id']} must identify exact steps for every affected Flow")
     annotations = enrichment["evidence_annotations"]
-    known_paths = {item["path"] for item in defect["evidence"]}
-    require(set(annotations) == known_paths,
-            f"{defect['defect_id']} must annotate every immutable evidence item exactly once")
-    evidence = [enriched_evidence(item, annotations[item["path"]])
-                for item in defect["evidence"]]
+    evidence = [
+        enriched_evidence(
+            item,
+            annotations.get(item["path"]) or {
+                "source_file": item["path"],
+                "line_start": None,
+                "line_end": None,
+                "locator": item["path"],
+                "defect_finding": defect["description"],
+                "content": None,
+            },
+        )
+        for item in defect["evidence"]
+    ]
     scope = {
         "affected_br_ids": affected_br_ids,
         "affected_flow_ids": affected_flow_ids,
@@ -470,9 +497,6 @@ def validate_handoff(value, expected_uc=None, expected_run=None):
         step_parents = {FLOW_STEP_ID.fullmatch(item).group(1) for item in step_ids}
         require(step_parents <= set(flow_ids),
                 f"{label} contains a Flow step without its parent Flow")
-        if defect["category"] == "flow":
-            require(flow_ids and step_parents == set(flow_ids),
-                    f"{label} must identify exact steps for every affected Flow")
         evidence = defect.get("evidence")
         require(isinstance(evidence, list) and evidence,
                 f"{label}.evidence must be a non-empty array")

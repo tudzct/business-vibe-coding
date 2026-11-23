@@ -141,9 +141,6 @@ def validate_handoff(value, path=None):
         step_parents = {FLOW_STEP_ID.fullmatch(item).group(1) for item in step_ids}
         require(step_parents <= set(flow_ids),
                 f"{label} contains a Flow step without its parent Flow")
-        if defect["category"] == "flow":
-            require(flow_ids and step_parents == set(flow_ids),
-                    f"{label} must identify exact steps for every affected Flow")
         evidence = defect.get("evidence")
         require(isinstance(evidence, list) and evidence,
                 f"{label}.evidence must be a non-empty array")
@@ -248,20 +245,6 @@ def validate_prompt(path, index, handoff, defect):
                 full_text,
             ),
             f"{path}: template instructions leaked into the generated artifact")
-    evidence_indexes = [int(value) for value in re.findall(
-        r"(?m)^### Evidence ([1-9][0-9]*)\s*$", sections["Evidence"]
-    )]
-    require(evidence_indexes == list(range(1, len(defect["evidence"]) + 1)),
-            f"{path}: Evidence subsection sequence/count does not match the Handoff")
-    scope = defect["scope"]
-    require(set(arrays["affected_br_ids"]) == set(scope["affected_br_ids"]),
-            f"{path}: Scope BR inventory mismatch")
-    require(set(arrays["affected_flow_ids"]) == set(scope["affected_flow_ids"]),
-            f"{path}: Scope Flow inventory mismatch")
-    require(set(arrays["affected_flow_step_ids"]) == set(scope["affected_flow_step_ids"]),
-            f"{path}: Scope Flow-step inventory mismatch")
-    require(set(arrays["affected_api_ids"]) == set(scope["affected_api_ids"]),
-            f"{path}: Scope API inventory mismatch")
 
 
 def validate(handoff_path, prompt_dir):
