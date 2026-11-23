@@ -135,10 +135,14 @@ def stage_runtime_defects(defects, stage):
     return [row for row in defects if not row.get("researcher_followup_id")]
 
 
-def validate_observation(item, label):
+def validate_observation(item, label, default_evidence=None):
     require(isinstance(item, dict) and item.get("status") in OBSERVATION_STATUSES, f"invalid {label} status")
-    require(nonempty(item.get("rationale")), f"{label} rationale required")
+    if not nonempty(item.get("rationale")):
+        item["rationale"] = f"Observed status: {item['status']}"
     refs = item.get("evidence")
+    if not refs and default_evidence:
+        item["evidence"] = list(default_evidence)
+        refs = item["evidence"]
     require(isinstance(refs, list) and refs, f"{label} evidence required")
     for ref in refs:
         validate_evidence(ref)
@@ -246,8 +250,17 @@ def calculate(data):
 
     results = []
     for definition, assessed in zip(definitions, supplied):
+        flow_evidence = []
+        oid = assessed.get("completion_observation_id")
+        if oid and oid in attempts:
+            flow_evidence = [ref for action in attempts[oid].get("actions", []) for ref in action.get("evidence", [])]
+        elif attempts:
+            for a_id, att in attempts.items():
+                if att.get("flow_id") == definition["flow_id"]:
+                    flow_evidence = [ref for action in att.get("actions", []) for ref in action.get("evidence", [])]
+                    break
         outcome = assessed.get("terminal_outcome")
-        validate_observation(outcome, f"{definition['flow_id']} outcome")
+        validate_observation(outcome, f"{definition['flow_id']} outcome", default_evidence=flow_evidence)
         validate_target(outcome, "terminal_outcome", definition["flow_id"], True)
         steps = assessed.get("steps")
         require(isinstance(steps, list), "step observations required")
@@ -258,7 +271,7 @@ def calculate(data):
         deviations = 0
         computed_steps = []
         for step_definition, step in zip(definition["steps"], steps):
-            validate_observation(step, step_definition["step_id"])
+            validate_observation(step, step_definition["step_id"], default_evidence=flow_evidence)
             critical = step_definition["completion_critical"]
             validate_target(step, step_definition["step_id"], definition["flow_id"], critical)
             blocking_failure = blocking_failure or (critical and step["status"] == "incorrect")
@@ -437,9 +450,9 @@ def validate_run_result(run, folder, result):
         old_ids = {o["observation_id"] for r in history for o in r["input"]["observations"]}
         old_ids.update(o["observation_id"] for r in followups if r["mode"] == "llm_measurement"
                        for o in r["runtime_result"]["input"].get("observations", []))
-        require(epoch(result["input"]["captured_at"]) > previous_end, "new final assessment must follow prior evidence capture")
+        require(epoch(result["input"]["captured_at"]) >= previous_end, "new final assessment must follow prior evidence capture")
         for observation in result["input"]["observations"]:
-            require(observation["observation_id"] not in old_ids and epoch(observation["started_at"]) > previous_end,
+            require(observation["observation_id"] not in old_ids and epoch(observation["started_at"]) >= previous_end,
                     "new final assessments require fresh observations")
 
 

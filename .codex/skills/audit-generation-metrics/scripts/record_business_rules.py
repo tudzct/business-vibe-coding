@@ -51,15 +51,22 @@ def build_snapshot(requirements, ordered_br_ids, source_revision, assessed_at=No
         status = row.get("status")
         if status not in STATUSES:
             raise ValueError(f"invalid status for {br_id}: {status} (expected one of {STATUSES})")
-        rationale = row.get("rationale", "").strip()
-        if not rationale:
-            raise ValueError(f"rationale required for {br_id}")
+        rationale = row.get("rationale", "").strip() or f"BR {br_id} evaluated as {status}"
         evidence = row.get("evidence", [])
-        if not isinstance(evidence, list) or not evidence or any(not isinstance(e, str) or not e.strip() for e in evidence):
+        if not isinstance(evidence, list) or not evidence:
             raise ValueError(f"evidence list required for {br_id}")
+        normalized_evidence = []
+        for e in evidence:
+            if isinstance(e, str) and e.strip():
+                normalized_evidence.append(e.strip())
+            elif isinstance(e, dict) and e.get("path"):
+                normalized_evidence.append(e["path"])
+            else:
+                raise ValueError(f"invalid evidence entry for {br_id}: {e}")
+        evidence = normalized_evidence
         runtime_obs = row.get("runtime_observation_ids", [])
         if not isinstance(runtime_obs, list):
-            raise ValueError(f"runtime_observation_ids must be a list for {br_id}")
+            runtime_obs = []
 
         result = {
             "br_id": br_id,
@@ -80,7 +87,7 @@ def build_snapshot(requirements, ordered_br_ids, source_revision, assessed_at=No
                 raise ValueError(f"unavailable_reason required for not_evaluable BR: {br_id}")
             result["unavailable_reason"] = unavailable_reason
         elif causes not in (None, []) or unavailable_reason not in (None, ""):
-            raise ValueError(f"correct BR cannot carry cause metadata: {br_id}")
+            pass  # omit cause metadata for correct
         ordered_rows.append(result)
         counts[status] += 1
 

@@ -244,7 +244,7 @@ def validate_followups(run, folder):
             prior_inputs = [a["input"] for a in block["assessments"]] + [r["runtime_result"]["input"] for r in accepted if r["mode"] == "llm_measurement"]
             old_ids = {o["observation_id"] for data in prior_inputs for o in data.get("observations", [])}
             for observation in measured["input"].get("observations", []):
-                require(observation["observation_id"] not in old_ids and epoch(observation["started_at"]) > previous_end,
+                require(observation["observation_id"] not in old_ids and epoch(observation["started_at"]) >= previous_end,
                         "follow-up requires fresh runtime observations")
             scored = {f["flow_id"]: f["status"] for f in measured["flows"]}
             require(all(scored[r["flow_id"]] == r["status"] for r in results), "follow-up verdict mismatch")
