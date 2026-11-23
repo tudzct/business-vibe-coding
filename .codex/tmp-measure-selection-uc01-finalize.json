@@ -1,0 +1,44 @@
+{
+  "uc_id": "UC-01",
+  "run_id": "UC-01-GPT-5.6-LUNA",
+  "run_status": "complete",
+  "terminal_run_status": "complete",
+  "terminal_status": "complete",
+  "workflow_status": "complete",
+  "status": "complete",
+  "turns": [
+    {
+      "turn_id": "01a2041d-ec3a-7d80-b7cc-1c06e59410ae",
+      "phase": "prompt_generation",
+      "reason": "Generate and validate the UC-01 coding prompt Draft"
+    },
+    {
+      "turn_id": "01a20424-1dc0-7540-93a9-9af60d224da1",
+      "phase": "source_generation",
+      "reason": "Implement the approved UC-01 frontend source"
+    }
+  ],
+  "excluded_turns": [
+    {
+      "turn_id": "01a20421-e0b2-7392-9324-ef0e27066271",
+      "reason": "measurement/report turn"
+    },
+    {
+      "turn_id": "01a20427-2542-7363-ad7c-757f895b06ac",
+      "reason": "measurement/report turn"
+    }
+  ],
+  "workflow_evidence": {
+    "terminal_run_status": "complete",
+    "start": {
+      "turn_id": "01a2041d-ec3a-7d80-b7cc-1c06e59410ae",
+      "required_terms": ["gen-coding-prompt", "uc-01"]
+    },
+    "terminal": {
+      "turn_id": "01a2044f-a103-7db2-9ed9-aaa36924d2b5",
+      "required_terms": ["measure-uc-workflow", "finalize-workflow"],
+      "status": "complete",
+      "run_status": "complete"
+    }
+  }
+}

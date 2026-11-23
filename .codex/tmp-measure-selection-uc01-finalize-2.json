@@ -1,0 +1,37 @@
+{
+  "uc_id": "UC-01",
+  "run_id": "UC-01-GPT-5.6-LUNA",
+  "run_status": "complete",
+  "turns": [
+    {
+      "turn_id": "01a2041d-ec3a-7d80-b7cc-1c06e59410ae",
+      "phase": "prompt_generation",
+      "reason": "Generate and validate the UC-01 coding prompt Draft"
+    },
+    {
+      "turn_id": "01a20424-1dc0-7540-93a9-9af60d224da1",
+      "phase": "source_generation",
+      "reason": "Implement the approved UC-01 frontend source"
+    },
+    {
+      "turn_id": "01a205ec-d5a8-7722-8588-aef04d43150b",
+      "phase": "runtime_verification",
+      "reason": "Record the completed UC-01 audit follow-up and skipped repair decision"
+    }
+  ],
+  "excluded_turns": [
+    {"turn_id": "01a20421-e0b2-7392-9324-ef0e27066271", "reason": "measurement/report turn"},
+    {"turn_id": "01a20427-2542-7363-ad7c-757f895b06ac", "reason": "measurement/report turn"},
+    {"turn_id": "01a2044f-a103-7db2-9ed9-aaa36924d2b5", "reason": "measurement/report turn"}
+  ],
+  "workflow_evidence": {
+    "start": {
+      "turn_id": "01a2041d-ec3a-7d80-b7cc-1c06e59410ae",
+      "required_terms": ["gen-coding-prompt", "uc-01"]
+    },
+    "terminal": {
+      "turn_id": "01a205ec-d5a8-7722-8588-aef04d43150b",
+      "required_terms": ["continue_after_flow", "followup-uc01-01"]
+    }
+  }
+}

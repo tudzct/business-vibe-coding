@@ -24,9 +24,9 @@
     "effective_snapshot": null,
     "codex_client_version": null
   },
-  "run_status": "draft",
+  "run_status": "complete",
   "gates": {
-    "current": "repair_decision",
+    "current": null,
     "history": [
       {
         "gate": "prompt",
@@ -75,6 +75,69 @@
         },
         "command_action": "audit",
         "recorded_at": "2026-11-22T17:01:48.859739Z"
+      },
+      {
+        "gate": "repair_decision",
+        "outcome": "skipped",
+        "turn_id": "audit-followup-01",
+        "decided_at": "2026-11-23T01:02:37.934430Z",
+        "automatic_decision": {
+          "policy_id": "audit-followup-continuation-v1",
+          "policy_artifact": "docs/00-context/workflow/gates/AUDIT-FOLLOWUP-CONTINUATION.md",
+          "policy_sha256": "sha256:1983e2d62580b3b5f3a1a646d12dbca6e2c1db28fa13417da1b0f1ef96b5209e",
+          "followup_id": "followup-uc01-01",
+          "followup_sha256": "sha256:eec5cc97eb88eb8a37d37e4a528c97fbcf0213fe09b9b7c4ebc08be1aa6b6e35",
+          "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+          "defect_br_ids": [],
+          "defect_flow_ids": [],
+          "defect_ids": [],
+          "followup_parts": [
+            "business_rules",
+            "flow"
+          ]
+        },
+        "evidence": {
+          "business_rules_sha256": "sha256:8eb032eee149fc59410b78b6c4e014dc484e5e2ae59737270101326175bbc167",
+          "flow_assessment_id": "initial-audit-01",
+          "flow_assessment_sha256": "sha256:3573cdf53aea09ed8babacdd134187fede484e4cf10ede1e62c9dc424732694f",
+          "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+          "defect_ids": [],
+          "defects_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "flow_progress_sha256": "sha256:ba209e9e8d996d74a8476acd3aee832e2164ba83f2d7716664358e645be26201",
+          "flow_followup_ids": [
+            "followup-uc01-01"
+          ],
+          "flow_result_basis": "includes_researcher_results",
+          "flow_selection_policy": "accepted-audit-results-v1",
+          "flow_assessment_ids": [
+            "initial-audit-01"
+          ]
+        },
+        "reason": "No evidenced defects remain after the saved audit follow-up; repair is unnecessary."
+      },
+      {
+        "gate": "final_metrics",
+        "outcome": "confirmed",
+        "turn_id": "01a205ed-f13e-7982-9600-3b9c2774ae1e",
+        "evidence": {
+          "business_rules_sha256": "sha256:8eb032eee149fc59410b78b6c4e014dc484e5e2ae59737270101326175bbc167",
+          "flow_assessment_id": "initial-audit-01",
+          "flow_assessment_sha256": "sha256:3573cdf53aea09ed8babacdd134187fede484e4cf10ede1e62c9dc424732694f",
+          "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+          "defect_ids": [],
+          "defects_sha256": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+          "flow_progress_sha256": "sha256:ba209e9e8d996d74a8476acd3aee832e2164ba83f2d7716664358e645be26201",
+          "flow_followup_ids": [
+            "followup-uc01-01"
+          ],
+          "flow_result_basis": "includes_researcher_results",
+          "flow_selection_policy": "accepted-audit-results-v1",
+          "flow_assessment_ids": [
+            "initial-audit-01"
+          ]
+        },
+        "command_action": "finalize",
+        "recorded_at": "2026-11-23T01:04:20.325658Z"
       }
     ]
   },
@@ -87,14 +150,14 @@
     "token_attribution_method": "semantic_primary_phase_per_turn",
     "uc_id": "UC-01",
     "run_id": "UC-01-GPT-5.6-LUNA",
-    "status": "open",
-    "measured_at": "2026-11-22T16:47:20.160142+00:00",
+    "status": "finalized",
+    "measured_at": "2026-11-23T01:04:20.220307+00:00",
     "session": {
       "session_id": "01a2041d-ea41-78d2-a8f8-159319067cfe",
       "file_name": "rollout-2026-11-22T23-36-39-01a2041d-ea41-78d2-a8f8-159319067cfe.jsonl",
-      "sha256": "sha256:5a9c205a6b32dc691af03d70282e26e3fd98b3bc8dcd26f2084179f07437107a"
+      "sha256": "sha256:f132cd01d7592e8ff30b1435a67a944413cc4c8dea5735e91b682ece67413c65"
     },
-    "selection_evidence_sha256": "sha256:45b976ce2bfe555faa8ca73151bf2ae38b0311e8fea02adc1934b84052844bf0",
+    "selection_evidence_sha256": "sha256:ebc94e15ef4d8e1f03b7f3de1b7607155ee28da82be2404650e795b7a50d2b03",
     "extractor_sha256": "sha256:06fd6799ba7cfb6a7f161988af6389a0592da5effcf4192639d6590eb46ae5c3",
     "phases": {
       "prompt_generation": {
@@ -138,28 +201,62 @@
         }
       },
       "sub_prompt_generation": {
-        "status": "not_started",
-        "values": null
+        "status": "skipped",
+        "values": {
+          "tokens": {
+            "input_tokens": 0,
+            "cached_input_tokens": 0,
+            "output_tokens": 0,
+            "reasoning_output_tokens": 0,
+            "total_tokens": 0
+          },
+          "token_unavailable_reasons": {},
+          "duration_seconds": 0,
+          "wall_clock_seconds": 0,
+          "timing_unavailable_reason": null,
+          "workflow_turn_count": 0,
+          "tool_call_count": 0,
+          "model_call_count": null,
+          "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+        },
+        "reason": "No evidenced defects remain after the saved audit follow-up; repair is unnecessary."
       },
       "repair": {
-        "status": "not_started",
-        "values": null
+        "status": "skipped",
+        "values": {
+          "tokens": {
+            "input_tokens": 0,
+            "cached_input_tokens": 0,
+            "output_tokens": 0,
+            "reasoning_output_tokens": 0,
+            "total_tokens": 0
+          },
+          "token_unavailable_reasons": {},
+          "duration_seconds": 0,
+          "wall_clock_seconds": 0,
+          "timing_unavailable_reason": null,
+          "workflow_turn_count": 0,
+          "tool_call_count": 0,
+          "model_call_count": null,
+          "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
+        },
+        "reason": "No evidenced defects remain after the saved audit follow-up; repair is unnecessary."
       }
     },
     "workflow": {
       "tokens": {
-        "input_tokens": 2154121,
-        "cached_input_tokens": 2073344,
-        "output_tokens": 15989,
-        "reasoning_output_tokens": 2386,
-        "total_tokens": 2170110
+        "input_tokens": 2562202,
+        "cached_input_tokens": 2474880,
+        "output_tokens": 16821,
+        "reasoning_output_tokens": 2663,
+        "total_tokens": 2579023
       },
       "token_unavailable_reasons": {},
-      "duration_seconds": null,
-      "wall_clock_seconds": 423.104,
-      "timing_unavailable_reason": "Generation phase timing pending or unavailable; see phases",
-      "workflow_turn_count": 2,
-      "tool_call_count": 31,
+      "duration_seconds": 236.022,
+      "wall_clock_seconds": 449.303,
+      "timing_unavailable_reason": null,
+      "workflow_turn_count": 3,
+      "tool_call_count": 33,
       "model_call_count": null,
       "model_call_count_unavailable_reason": "Rollout usage updates are not proven model request events"
     },
@@ -279,6 +376,35 @@
             }
           }
         ]
+      },
+      {
+        "turn_id": "01a205ec-d5a8-7722-8588-aef04d43150b",
+        "turn_number": 6,
+        "started_at": "2026-11-23T01:02:17.130Z",
+        "ended_at": "2026-11-23T01:02:43.329Z",
+        "completed": true,
+        "model": "gpt-5.6-luna",
+        "tokens": {
+          "input_tokens": 408081,
+          "cached_input_tokens": 401536,
+          "output_tokens": 832,
+          "reasoning_output_tokens": 277,
+          "total_tokens": 408913
+        },
+        "tool_call_count": 2,
+        "prefix_bytes": 1783713,
+        "prefix_sha256": "sha256:e0713600692945f63691d1ac2ad56a7b7b3224b8d567f60930a66349ffee6834",
+        "terminal_event": "task_complete",
+        "message_sha256": "sha256:8b81d5de2277df823955e51fd95b3cd89d4dd92a853627c16242fe2be373dce1",
+        "session_id": "01a2041d-ea41-78d2-a8f8-159319067cfe",
+        "phase": "runtime_verification",
+        "timing_phase": "runtime_verification",
+        "reason": "Record the completed UC-01 audit follow-up and skipped repair decision",
+        "duration_seconds": 0,
+        "wall_clock_seconds": 26.199,
+        "timing_unavailable_reason": null,
+        "timing_exclusion_reason": "Auxiliary work excluded from generation time",
+        "timing_segments": []
       }
     ],
     "token_phase_breakdown": {
@@ -294,6 +420,19 @@
         "wall_clock_seconds": 228.284,
         "workflow_turn_count": 1,
         "tool_call_count": 19
+      },
+      "runtime_verification": {
+        "tokens": {
+          "input_tokens": 408081,
+          "cached_input_tokens": 401536,
+          "output_tokens": 832,
+          "reasoning_output_tokens": 277,
+          "total_tokens": 408913
+        },
+        "token_unavailable_reasons": {},
+        "wall_clock_seconds": 26.199,
+        "workflow_turn_count": 1,
+        "tool_call_count": 2
       },
       "source_generation": {
         "tokens": {
@@ -317,6 +456,14 @@
       {
         "turn_id": "01a20427-2542-7363-ad7c-757f895b06ac",
         "reason": "measurement/report turn"
+      },
+      {
+        "turn_id": "01a2044f-a103-7db2-9ed9-aaa36924d2b5",
+        "reason": "measurement/report turn"
+      },
+      {
+        "turn_id": "01a205ed-f13e-7982-9600-3b9c2774ae1e",
+        "reason": "measurement/report turn"
       }
     ],
     "phase_ledger": {
@@ -334,6 +481,14 @@
           "status": "closed",
           "first_turn_id": "01a20424-1dc0-7540-93a9-9af60d224da1",
           "measurement_turn_id": "01a20427-2542-7363-ad7c-757f895b06ac"
+        },
+        "sub_prompt_generation": {
+          "status": "skipped",
+          "reason": "No evidenced defects remain after the saved audit follow-up; repair is unnecessary."
+        },
+        "repair": {
+          "status": "skipped",
+          "reason": "No evidenced defects remain after the saved audit follow-up; repair is unnecessary."
         }
       },
       "segments": [
@@ -406,15 +561,37 @@
           "action": "close-phase:source_generation",
           "last_turn_id": "01a20424-1dc0-7540-93a9-9af60d224da1",
           "evidence_sha256": "sha256:45b976ce2bfe555faa8ca73151bf2ae38b0311e8fea02adc1934b84052844bf0"
+        },
+        {
+          "measurement_turn_id": "01a205ed-f13e-7982-9600-3b9c2774ae1e",
+          "action": "finalize-workflow",
+          "last_turn_id": "01a205ec-d5a8-7722-8588-aef04d43150b",
+          "evidence_sha256": "sha256:ebc94e15ef4d8e1f03b7f3de1b7607155ee28da82be2404650e795b7a50d2b03"
         }
       ],
-      "workflow_status": "open",
+      "workflow_status": "finalized",
       "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3"
     }
   },
   "repair_authorization": {
     "approved": false,
-    "turn_id": null
+    "turn_id": "audit-followup-01",
+    "mode": "automatic_policy",
+    "automatic_decision": {
+      "policy_id": "audit-followup-continuation-v1",
+      "policy_artifact": "docs/00-context/workflow/gates/AUDIT-FOLLOWUP-CONTINUATION.md",
+      "policy_sha256": "sha256:1983e2d62580b3b5f3a1a646d12dbca6e2c1db28fa13417da1b0f1ef96b5209e",
+      "followup_id": "followup-uc01-01",
+      "followup_sha256": "sha256:eec5cc97eb88eb8a37d37e4a528c97fbcf0213fe09b9b7c4ebc08be1aa6b6e35",
+      "source_revision": "sha256:176b543fbf7c3763e2be0e2bf43587d6764be92fcfae41d929a6334325b4bfd6",
+      "defect_br_ids": [],
+      "defect_flow_ids": [],
+      "defect_ids": [],
+      "followup_parts": [
+        "business_rules",
+        "flow"
+      ]
+    }
   },
   "business_rules": {
     "baseline": "docs/02-construction/implementation/UC-01/business-rule-baseline.json",
@@ -519,7 +696,91 @@
       "incorrect": 0,
       "not_evaluable": 4
     },
-    "final": null,
+    "final": {
+      "requirements": [
+        {
+          "br_id": "BR-RJPP-01",
+          "status": "correct",
+          "evidence": [
+            "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt"
+          ],
+          "rationale": "Observed: camera/mic controls disabled before grant and enabled after grant.",
+          "runtime_observation_ids": [
+            "obs-uc01-bf1"
+          ]
+        },
+        {
+          "br_id": "BR-RJPP-02",
+          "status": "correct",
+          "evidence": [
+            "Researcher verdict followup-uc01-01: Researcher verified BR-RJPP-05 at runtime and confirmed BR-RJPP-02, BR-RJPP-04, BR-RJPP-06 via source inspection."
+          ],
+          "rationale": "Researcher verified BR-RJPP-05 at runtime and confirmed BR-RJPP-02, BR-RJPP-04, BR-RJPP-06 via source inspection.",
+          "runtime_observation_ids": [
+            "obs-uc01-bf1"
+          ]
+        },
+        {
+          "br_id": "BR-RJPP-03",
+          "status": "correct",
+          "evidence": [
+            "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt"
+          ],
+          "rationale": "Observed: whitespace-only disabled Go Live; 1-50 chars enabled Go Live; 51+ chars showed error and disabled Go Live.",
+          "runtime_observation_ids": [
+            "obs-uc01-bf1"
+          ]
+        },
+        {
+          "br_id": "BR-RJPP-04",
+          "status": "correct",
+          "evidence": [
+            "Researcher verdict followup-uc01-01: Researcher verified BR-RJPP-05 at runtime and confirmed BR-RJPP-02, BR-RJPP-04, BR-RJPP-06 via source inspection."
+          ],
+          "rationale": "Researcher verified BR-RJPP-05 at runtime and confirmed BR-RJPP-02, BR-RJPP-04, BR-RJPP-06 via source inspection.",
+          "runtime_observation_ids": [
+            "obs-uc01-bf1"
+          ]
+        },
+        {
+          "br_id": "BR-RJPP-05",
+          "status": "correct",
+          "evidence": [
+            "Researcher verdict followup-uc01-01: Researcher verified BR-RJPP-05 at runtime and confirmed BR-RJPP-02, BR-RJPP-04, BR-RJPP-06 via source inspection."
+          ],
+          "rationale": "Researcher verified BR-RJPP-05 at runtime and confirmed BR-RJPP-02, BR-RJPP-04, BR-RJPP-06 via source inspection.",
+          "runtime_observation_ids": [
+            "obs-uc01-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-RJPP-06",
+          "status": "correct",
+          "evidence": [
+            "Researcher verdict followup-uc01-01: Researcher verified BR-RJPP-05 at runtime and confirmed BR-RJPP-02, BR-RJPP-04, BR-RJPP-06 via source inspection."
+          ],
+          "rationale": "Researcher verified BR-RJPP-05 at runtime and confirmed BR-RJPP-02, BR-RJPP-04, BR-RJPP-06 via source inspection.",
+          "runtime_observation_ids": [
+            "obs-uc01-ef1"
+          ]
+        },
+        {
+          "br_id": "BR-RJPP-07",
+          "status": "correct",
+          "evidence": [
+            "docs/02-construction/implementation/UC-01/runs/UC-01-GPT-5.6-LUNA/flow-accuracy/evidence/initial-audit-01/obs-uc01-bf1/ui-preview.txt"
+          ],
+          "rationale": "Observed: 0 backend network requests during preview preparation; client-local only.",
+          "runtime_observation_ids": [
+            "obs-uc01-bf1"
+          ]
+        }
+      ],
+      "total": 7,
+      "correct": 7,
+      "incorrect": 0,
+      "not_evaluable": 0
+    },
     "followups": [
       {
         "followup_id": "followup-uc01-01",
@@ -1837,5 +2098,6 @@
     "integrations": 0,
     "business_rules": 0,
     "ui_states": 0
-  }
+  },
+  "repair_skip_reason": "No evidenced defects remain after the saved audit follow-up; repair is unnecessary."
 }

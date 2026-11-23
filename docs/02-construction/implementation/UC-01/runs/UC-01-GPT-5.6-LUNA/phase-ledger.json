@@ -13,6 +13,14 @@
       "status": "closed",
       "first_turn_id": "01a20424-1dc0-7540-93a9-9af60d224da1",
       "measurement_turn_id": "01a20427-2542-7363-ad7c-757f895b06ac"
+    },
+    "sub_prompt_generation": {
+      "status": "skipped",
+      "reason": "No evidenced defects remain after the saved audit follow-up; repair is unnecessary."
+    },
+    "repair": {
+      "status": "skipped",
+      "reason": "No evidenced defects remain after the saved audit follow-up; repair is unnecessary."
     }
   },
   "segments": [
@@ -85,8 +93,14 @@
       "action": "close-phase:source_generation",
       "last_turn_id": "01a20424-1dc0-7540-93a9-9af60d224da1",
       "evidence_sha256": "sha256:45b976ce2bfe555faa8ca73151bf2ae38b0311e8fea02adc1934b84052844bf0"
+    },
+    {
+      "measurement_turn_id": "01a205ed-f13e-7982-9600-3b9c2774ae1e",
+      "action": "finalize-workflow",
+      "last_turn_id": "01a205ec-d5a8-7722-8588-aef04d43150b",
+      "evidence_sha256": "sha256:ebc94e15ef4d8e1f03b7f3de1b7607155ee28da82be2404650e795b7a50d2b03"
     }
   ],
-  "workflow_status": "open",
+  "workflow_status": "finalized",
   "timing_protocol": "generation_execution_with_separate_sub_prompt_and_repair_v3"
 }
