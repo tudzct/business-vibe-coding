@@ -349,7 +349,11 @@ def validate_flow(data, folder):
     ids = [item.get("assessment_id") for item in assessments]
     if len(ids) != len(set(ids)) or assessments[0].get("stage") != "initial":
         raise ValueError("invalid immutable flow history")
+    repairs = data.get("repairs", [])
+    final_count = 0
     for index, assessment in enumerate(assessments):
+        if assessment.get("stage") == "final":
+            final_count += 1
         if method(assessment.get("input", {})) != (version, rubric):
             raise ValueError("mixed flow rubrics in one run")
         recalculated = calculate_flow(assessment["input"])
@@ -359,8 +363,14 @@ def validate_flow(data, folder):
         prior_followups = [r for r in block.get("followups", []) if not (
             r.get("mode") == "researcher_result"
             and epoch(r["recorded_at"]) > epoch(assessment["input"]["captured_at"]))]
-        prior_run = {**data, "flow_accuracy": {**block, "assessments": assessments[:index],
-                                               "followups": prior_followups}}
+        prior_repairs = (
+            repairs[:final_count]
+            if assessment.get("stage") == "final" and isinstance(repairs, list)
+            else []
+        )
+        prior_run = {**data, "repairs": prior_repairs,
+                     "flow_accuracy": {**block, "assessments": assessments[:index],
+                                       "followups": prior_followups}}
         validate_run_result(prior_run, folder, recalculated)
     if data.get("run_status") == "complete" and current.get("stage") != "final":
         validate_unchanged_initial(data, current)
