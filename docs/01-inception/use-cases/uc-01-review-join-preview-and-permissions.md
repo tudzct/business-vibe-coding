@@ -19,7 +19,7 @@ Review Join Preview and Permissions
 
 ### Description
 
-As a prospective participant, I want to review my camera and microphone preview so that I understand how I will appear before joining.
+As a prospective participant, I want to use the pre-join screen before entering a session.
 
 ### Actor(s)
 
@@ -31,7 +31,7 @@ High
 
 ### Trigger
 
-The prospective participant opens a session preview.
+The prospective participant opens the pre-join screen.
 
 ### Pre-Condition(s)
 
@@ -39,31 +39,30 @@ PRE-1: The client displays the pre-join interface.
 
 ### Post-Condition(s)
 
-POST-1: The client displays the selected camera and microphone state.
-POST-2: The client displays the returned permission outcome when permission is requested.
+POST-1: The client updates the pre-join interface according to the preview result.
 
 ### Basic Flow
 
 Flow ID: BF-1
 
 BF-1.1: The prospective participant opens the pre-join interface.
-BF-1.2: The client presents the camera, microphone, name, and permission controls shown by the design.
-BF-1.3: The prospective participant chooses the displayed permission action.
-BF-1.4: The client requests access and receives an outcome.
-BF-1.5: The client renders the media preview and current control states.
+BF-1.2: The client renders the pre-join controls shown by the design.
+BF-1.3: The prospective participant interacts with the displayed preview controls.
+BF-1.4: The client invokes `PreviewService::prepare` and processes the returned state.
+BF-1.5: The client updates the pre-join interface to reflect the resulting state.
 
 ### Alternative Flow
 
-AF-1: Turn off microphone or camera
+AF-1: Adjust preview media state
 
-3a : The prospective participant turns the microphone or camera off.
-3b : The client renders the corresponding muted preview state.
+3a : The prospective participant changes a media control on the pre-join interface.
+3b : The client updates the preview interface to reflect the resulting control state.
 
 ### Exception Flow
 
-EF-1: Permission denied
+EF-1: Device access unavailable
 
-4a : Access is not granted.
+4a : Requested device access cannot be completed.
 4b : The client displays the permission-denied dialog and its visible recovery action.
 
 ### Related UI
@@ -78,7 +77,7 @@ None.
 
 ### Notes
 
-Preview preparation is client-local. Its participantKey identifies local draft state, not persisted session membership.
+None.
 
 ## UML Model
 

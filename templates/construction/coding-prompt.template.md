@@ -165,53 +165,5 @@ Backend validation remains authoritative where backend endpoints apply.
 
 Do not proceed with `[API CALL / OPERATION]` when client-side validation fails.
 
-## Instruction for Prompts E-F
 
-Read the input sources used to complete Prompts A-D.
 
-Additionally, read the Business Rule specification file: `docs/01-inception/business-rules/<ACTIVE-BUSINESS-RULE-FILE>.md`.
-
-Use the information obtained from these sources to follow every instruction below and complete every placeholder in Prompts E-F:
-
-1. Replace 100% of placeholders in Prompts E-F with concrete, source-backed values.
-2. Produce one `### Business Rule: [BR-ID]` block for every frozen Business Rule belonging to the active use case, preserving every Rule ID, OCL expression, and authoritative natural-language constraint verbatim without changing its meaning.
-3. Do not invent missing thresholds, statuses, ownership, schema, enforcement layers, or failure behavior; if critical source information is unresolved and changes implementation, stop and record the unresolved evidence for the researcher instead of guessing.
-4. Ensure Prompt F references the embedded Figma UI specification and inline SVG assets in Prompt B (and frozen Figma evidence only where explicitly authorized).
-5. **Cleanup when completing the coding prompt (MANDATORY):** Remove this entire `## Instruction for Prompts E-F` section and all prompt-filling instructions when the coding prompt is completed, leaving only the populated `## Prompt E` and `## Prompt F` sections.
-
-## Prompt E: Business Rules Compliance
-
-### Objective: Implement the complete frozen Business Rule set for this use case without changing its meaning.
-
-### Business Rule: `[BR-ID]`
-
-- **Name:** `[rule name]`
-- **Representation:** `OCL invariant | OCL precondition | OCL postcondition | natural language`
-- **Expression / authoritative text:** `[verbatim Sheet-derived content]`
-- **Context:** `[OCL context/class/operation or business scope]`
-- **Enforcement layer:** `[frontend | backend | database | multiple]`
-- **Failure behavior:** `[source-backed status/message/state, or unresolved]`
-- **Traceability:** `[UC step/API/UI/source range]`
-
-Preserve every Rule ID, OCL expression and authoritative natural-language constraint exactly.
-
-For each Business Rule, record its applicable enforcement layer, failure behavior, and traceability within Prompt E. Backend/database enforcement remains authoritative across trust boundaries; frontend enforcement is an additional user-experience control.
-
-Do not invent missing thresholds, statuses, ownership, schema, enforcement layers or failure behavior.
-
-## Prompt F: Implementation Context
-
-Use every prompt present in this approved artifact together with:
-
-- project rules and target manifests/lockfiles;
-- approved database contract;
-- approved API contract;
-- embedded Figma UI specification and inline SVG assets in Prompt B (and frozen Figma evidence only where explicitly authorized);
-- existing source-code conventions.
-
-Priority:
-
-1. Requirements explicitly present in this approved prompt
-2. Approved API and database/project contracts
-3. Embedded Figma UI specification and frozen design evidence
-4. Existing source-code conventions

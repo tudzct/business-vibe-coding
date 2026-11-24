@@ -4,7 +4,7 @@
   "status": "Frozen",
   "uc_id": "UC-01",
   "use_case_path": "docs/01-inception/use-cases/uc-01-review-join-preview-and-permissions.md",
-  "use_case_sha256": "sha256:f1af557b4f5cd918ef663a755f0327270a59ed6601b71d0573b7e02af6383910",
+  "use_case_sha256": "sha256:3b4e88ba9688d0353f14e50d646d5a0b7afe6e06e6d593d8c70a75331f47992e",
   "ordered_flow_ids": [
     "BF-1",
     "AF-1",
