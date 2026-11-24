@@ -167,6 +167,15 @@ def docker_executable():
     raise ValueError("Docker CLI unavailable; database validation requires Docker Compose v2")
 
 
+DOCKER_PIPE_BLOCKED = re.compile(
+    r"(?:dockerdesktoplinuxengine|docker_engine|docker\.sock|npipe://|docker daemon|docker api)"
+    r".*(?:access is denied|permission denied|operation not permitted|cannot find the file|no such file|failed to connect)"
+    r"|(?:access is denied|permission denied|operation not permitted).*"
+    r"(?:dockerdesktoplinuxengine|docker_engine|docker\.sock|npipe://|docker daemon|docker api)",
+    re.I | re.S,
+)
+
+
 def command(args, label, stdin=None):
     try:
         result = subprocess.run(args, input=stdin, capture_output=True, text=True,
@@ -181,6 +190,15 @@ def command(args, label, stdin=None):
     except OSError:
         raise ValueError(f"{label} unavailable; check Docker access") from None
     # Raw stderr/config/inspect may contain secrets. Never forward it to model output.
+    if result.returncode != 0:
+        stderr = result.stderr or ""
+        if DOCKER_PIPE_BLOCKED.search(stderr) or (
+                label != "MySQL metadata query"
+                and re.search(r"access is denied|permission denied|operation not permitted", stderr, re.I)):
+            raise ValueError(
+                f"{DOCKER_ACCESS_REQUIRED}: {label} cannot access Docker in the current sandbox; "
+                "rerun this same read-only validation with host approval"
+            )
     require(result.returncode == 0, f"{label} failed (exit {result.returncode}); check Docker/database configuration and access")
     return result.stdout
 
