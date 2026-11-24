@@ -14,7 +14,7 @@ Projection schema 2 uses `result_scope: experiment_accepted_audit`, `stage: expe
 
 ## Save and offer both paths
 
-The scorer saves `flow_accuracy.current_summary` and, when supplied, the append-only BR follow-up in the same atomic Canonical Run update. Use `record_flow_followup.py --run-json <run.json>` (dry-run first) to refresh or save the accepted-result projection. The canonical JSON is authoritative.
+The scorer saves `flow_accuracy.current_summary`, updates `business_rules.final` with the validated accepted BR snapshot when no repair/final assessment exists, and, when supplied, saves the append-only BR follow-up in the same atomic Canonical Run update. Use `record_flow_followup.py --run-json <run.json>` (dry-run first) to refresh or save the accepted-result projections without hand-authoring projection JSON. The canonical JSON is authoritative.
 
 Immediately report accepted correct/incorrect/pending counts, evaluated-only accuracy/error, coverage, whole-baseline accuracy/error (null until every flow has an accepted verdict), and bounds from canonical current_summary. List pending targets and attempts. Show later audit limitations separately when an earlier conclusive result is retained. State the updated canonical file and result source. Do not wait for every flow before saving results.
 
@@ -55,7 +55,7 @@ Preserve sanitized text in `researcher_result`. Do not fabricate step outcomes, 
 
 Observe requested flows under the original rubric: pending flows by default, or already scored flows when re-audit is requested. Declare scope/time bounds and retain failed attempts. Stop at sufficient evidence, blocker or bound; automatically save validated results and report remaining gaps. No further permission is needed to save authorized evaluation results.
 
-Prepare a fresh full assessment input with ID equal to `followup_id`, matching the current evidence parent's stage/source/baseline, and its own evidence directory. Non-targeted rows remain `not_evaluable` with a not-reassessed limitation; only requested flow IDs enter `results`. Do not splice attempts. Runtime-v2 evidence remains mandatory for LLM `correct`.
+Prepare a fresh full assessment input with ID equal to `followup_id`, matching the current evidence parent's stage/source/baseline, and its own evidence directory. Non-targeted rows remain `not_evaluable` with a not-reassessed limitation; only requested flow IDs enter `results`. Do not splice attempts. Runtime-v2 evidence remains mandatory for LLM `correct` whenever runtime auditing is possible; **if and only if** runtime auditing cannot be performed (with the limitation documented), LLM `correct` may be inferred from conclusive static source inspection with inspectable static evidence.
 
 ## Internal payload and commands
 

@@ -21,7 +21,7 @@ Record Compose v2 project, relevant FE/BE/MySQL service/container/image IDs and 
 | Data prerequisites or observation tool missing | Record affected targets, specific missing capability and impact; use `not_evaluable`. |
 | Application versus environment cause unclear | Record `ambiguous_cause`; do not invent an application defect. |
 
-Source/build/configuration evidence may diagnose and classify a defect, but it cannot establish a normal conclusive BR/Flow result without actual runtime observation. A proven generated-source blocker is the explicit operational-completion exception.
+Source/build/configuration evidence cannot replace actual runtime observation for a `correct` BR/Flow result whenever runtime auditing is possible; **if and only if** a target cannot be audited at runtime (with the exact runtime limitation documented), `correct` may be inferred from conclusive source/build/configuration inspection backed by inspectable static evidence. Conclusive source/build/configuration findings may also establish an `incorrect` result (and diagnose/classify its canonical defect) when the generated source demonstrably omits, violates, contradicts or prevents the required behavior.
 
 ## Execute one connected attempt
 
@@ -46,7 +46,7 @@ Do not change source, install mocks or add audit-only endpoints to force a branc
 
 ## Decide and preserve
 
-For every step and terminal outcome record evidence, rationale, separate source findings and a decision: `correct` for runtime-proved behavior; `incorrect` for runtime-evidenced failure; `not_evaluable` for insufficient/unreached observation. Every conclusive decision references a verified runtime attempt and target-specific evidence. Every `incorrect` decision names its causing canonical defect IDs; every `not_evaluable` decision records `unavailable_reason`. Unsupported conclusive results are invalid input, not an automatic fallback.
+For every step and terminal outcome record evidence, rationale, separate source findings and a decision: `correct` for runtime-proved behavior (or static-source-proved behavior **if and only if** runtime auditing is not possible and the limitation is documented); `incorrect` for runtime-evidenced failure or static-source-proved failure/omission/contradiction; `not_evaluable` when neither runtime observation nor static inspection (under an unauditable runtime) establishes a conclusive decision. Every runtime-proved `correct` decision references a verified runtime attempt and target-specific runtime evidence; a static-inferred `correct` decision references inspectable static evidence plus the documented runtime limitation; an `incorrect` decision references either a verified runtime attempt or inspectable static source/build/configuration evidence proving the defect. Every `incorrect` decision names its causing canonical defect IDs; every `not_evaluable` decision records `unavailable_reason`. Unsupported conclusive results are invalid input, not an automatic fallback.
 
 Apply precedence: critical/outcome `incorrect` -> Flow `incorrect`; otherwise missing critical/outcome proof or a complete connected attempt -> `not_evaluable`; otherwise `correct`. Noncritical deviations remain visible without failing the flow. If an early critical step fails, later unreached steps remain `not_evaluable`, while the Flow is `incorrect`. The Flow result carries the union of the causing defect IDs from its critical failures. All critical/outcome completion claims for `correct` must resolve to the same completed `completion_observation_id`.
 

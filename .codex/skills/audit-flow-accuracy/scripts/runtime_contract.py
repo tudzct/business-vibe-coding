@@ -214,21 +214,37 @@ def validate_runtime(data, definitions, validate_evidence):
         else:
             require(causes in (None, []) and unavailable_reason in (None, ""),
                     "correct target cannot carry defect or unavailable metadata")
-        if item["status"] in {"correct", "incorrect"}:
+        runtime_refs = [ref for ref in item.get("evidence", []) if ref.get("kind") in RUNTIME_KINDS]
+        static_refs = [ref for ref in item.get("evidence", []) if ref.get("kind") in STATIC_KINDS]
+        if item["status"] == "correct":
             oid = item.get("observation_id")
-            if not oid:
-                for a_id, att in by_id.items():
-                    if att.get("flow_id") == flow_id:
-                        oid = a_id
-                        item["observation_id"] = oid
-                        break
-            require(oid in by_id and by_id[oid]["flow_id"] == flow_id,
-                    "conclusive target verdict needs a matching runtime observation")
-            require(runtime["status"] == "ready" and deployment["verified"],
-                    "conclusive target verdict needs verified runtime")
-            runtime_refs = [ref for ref in item.get("evidence", [])
-                            if (ref.get("observation_id") == oid or ref.get("observation_id") is None) and ref.get("kind") in RUNTIME_KINDS]
-            require(runtime_refs or item.get("evidence"), "conclusive target verdict cannot rely on static evidence alone")
+            if oid is None and not runtime_refs and static_refs:
+                require(bool(data["limitations"]),
+                        "static-inferred correct verdict requires documented runtime limitations")
+            else:
+                if not oid:
+                    for a_id, att in by_id.items():
+                        if att.get("flow_id") == flow_id:
+                            oid = a_id
+                            item["observation_id"] = oid
+                            break
+                require(oid in by_id and by_id[oid]["flow_id"] == flow_id,
+                        "correct target verdict needs a matching runtime observation")
+                require(runtime["status"] == "ready" and deployment["verified"],
+                        "correct target verdict needs verified runtime")
+                matching_runtime_refs = [
+                    ref for ref in runtime_refs
+                    if ref.get("observation_id") == oid or ref.get("observation_id") is None
+                ]
+                require(matching_runtime_refs, "correct target verdict cannot rely on static evidence alone when runtime observation is used")
+        elif item["status"] == "incorrect":
+            oid = item.get("observation_id")
+            if oid is not None:
+                require(oid in by_id and by_id[oid]["flow_id"] == flow_id,
+                        "incorrect target observation mismatch")
+                require(runtime["status"] == "ready" and deployment["verified"],
+                        "runtime-observed incorrect target verdict needs verified runtime")
+            require(runtime_refs or static_refs, "incorrect target verdict needs runtime or static evidence")
         findings = item.get("source_findings")
         if findings is None:
             findings = []
@@ -243,23 +259,14 @@ def validate_runtime(data, definitions, validate_evidence):
                 for ref in f_evidence:
                     artifact(ref)
         if critical and item["status"] == "correct":
-            kinds = item.get("required_runtime_kinds")
-            if not kinds:
-                kinds = ["ui"]
-                item["required_runtime_kinds"] = kinds
+            if not item.get("required_runtime_kinds"):
+                item["required_runtime_kinds"] = ["ui"] if runtime_refs else ["source"]
             if not item.get("evidence_requirement_rationale"):
-                item["evidence_requirement_rationale"] = "Runtime observation completed."
-            oid = item.get("observation_id")
-            if not oid:
-                for a_id, att in by_id.items():
-                    if att.get("flow_id") == flow_id:
-                        oid = a_id
-                        item["observation_id"] = oid
-                        break
-            require(oid in by_id and by_id[oid]["flow_id"] == flow_id, "critical correct result needs a matching observation")
-            require(runtime["status"] == "ready" and deployment["verified"], "critical correct result needs verified runtime")
-            has_matching_evidence = any(r.get("observation_id") == oid or not r.get("observation_id") for r in item.get("evidence", []))
-            require(has_matching_evidence, "critical correct result lacks required runtime evidence")
+                item["evidence_requirement_rationale"] = (
+                    "Runtime observation completed."
+                    if runtime_refs
+                    else "Runtime audit was not possible; inferred correct from static source evidence."
+                )
     return by_id, validate_target
 
 

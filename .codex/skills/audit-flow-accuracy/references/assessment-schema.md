@@ -33,7 +33,7 @@ All paths are repository-relative. A baseline reference uses `{path, sha256}`. A
 
 | Field | Contract |
 |---|---|
-| `status` | `ready`, `BLOCKED`, or `unverified`. Only `ready` with verified deployment supports normal conclusive runtime verdicts. |
+| `status` | `ready`, `BLOCKED`, or `unverified`. Only `ready` with verified deployment supports runtime-observed `correct`/`incorrect` verdicts; static-source-proven `incorrect` verdicts require inspectable static evidence and canonical defects, and static-source-inferred `correct` verdicts are permitted **if and only if** runtime auditing is not possible and the limitation plus inspectable static evidence are recorded. |
 | `compose_version` | Integer 2 or 5, recording the installed Compose CLI major. Both are accepted as v2-compatible; no native host fallback. |
 | `reason` | Nonempty observed readiness/blocker explanation. |
 | `compose_project` | Nonempty project name for ready runtime; null allowed otherwise. |
@@ -74,7 +74,7 @@ Behavioral artifacts live below `<assessment-id>/<observation-id>/`. Steps autom
 
 Each retains `status`, `rationale`, and optional `evidence` (inherited from observation if empty). `source_findings` is optional (defaults to `[]`). An `incorrect` target includes unique nonempty `caused_by_defect_ids`; a `not_evaluable` target includes nonempty `unavailable_reason`; `correct` carries neither field.
 
-For every step or terminal outcome with conclusive `status: "correct"` or `"incorrect"`, runtime evidence linked to the flow observation is verified. `required_runtime_kinds` and `evidence_requirement_rationale` are optional (defaulted automatically to `["ui"]` and `"Runtime observation completed."`). Unreached steps are `not_evaluable`, not inferred failures.
+For every step or terminal outcome with `status: "correct"`, runtime evidence linked to the flow observation is verified whenever runtime auditing is possible; **if and only if** runtime auditing is not possible (with non-empty `limitations` explaining why), inspectable static source/build/configuration evidence proving `correct` is verified. For `status: "incorrect"`, either runtime evidence linked to the flow observation or inspectable static source/build/configuration evidence supporting the causing canonical defect(s) is verified. `required_runtime_kinds` and `evidence_requirement_rationale` are optional (defaulted automatically to `["ui"]` and `"Runtime observation completed."`). Unreached steps are `not_evaluable` unless static source evidence proves a generated-source defect causes them to fail (or proves them `correct` when runtime auditing of those steps is not possible).
 
 Each flow includes `completion_observation_id` (auto-resolved from completed attempts if omitted). An `incorrect` Flow carries the union of its causing defect IDs; a `not_evaluable` Flow carries a nonempty unavailable reason. Noncritical discrepancies do not automatically fail the flow. Formula, equal weights, coverage, null exact percentages for unavailable flows and bounds remain unchanged.
 

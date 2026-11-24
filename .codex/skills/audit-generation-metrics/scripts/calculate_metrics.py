@@ -103,15 +103,9 @@ def validate_br_runtime(snapshot, assessment, defects, field, researcher_result_
             continue
         if not set(row["runtime_observation_ids"]) <= observation_ids:
             raise ValueError(f"{field}.{row['br_id']} references an unknown runtime observation")
-        if (row["status"] in {"correct", "incorrect"} and not row.get("runtime_observation_ids")
-                and row["br_id"] not in researcher_result_ids):
-            if observation_ids:
-                row["runtime_observation_ids"] = [sorted(observation_ids)[0]]
-            else:
-                raise ValueError(f"{field}.{row['br_id']} conclusive audit verdict needs runtime observation IDs")
-        if row["status"] in {"correct", "incorrect"} and not (
+        if row.get("runtime_observation_ids") and not (
                 runtime.get("status") == "ready" and (runtime.get("deployment") or {}).get("verified") is True):
-            raise ValueError(f"{field}.{row['br_id']} conclusive verdict needs verified integrated runtime")
+            raise ValueError(f"{field}.{row['br_id']} runtime verdict needs verified integrated runtime")
         if row["status"] == "incorrect":
             if not set(causes) <= set(open_defects):
                 raise ValueError(f"{field}.{row['br_id']} references an unknown causing defect")
@@ -244,13 +238,13 @@ def accepted_br_summary(data):
                     raise ValueError("LLM BR re-audit requires evidence and rationale")
                 observations = row.get("runtime_observation_ids")
                 if (not isinstance(observations, list) or len(observations) != len(set(observations))
-                        or (row["status"] in {"correct", "incorrect"} and not observations)):
-                    raise ValueError("LLM BR re-audit requires runtime observation IDs")
+                        or any(not isinstance(value, str) or not value.strip() for value in observations)):
+                    raise ValueError("LLM BR re-audit requires a valid runtime observation ID array")
                 if any(value not in runtime_observations for value in observations):
                     raise ValueError("LLM BR re-audit references an unknown runtime observation")
-                if row["status"] in {"correct", "incorrect"} and any(
+                if observations and any(
                         not runtime_observations[value] for value in observations):
-                    raise ValueError("LLM BR re-audit conclusive verdict needs verified integrated runtime")
+                    raise ValueError("LLM BR re-audit runtime verdict needs verified integrated runtime")
                 causes = row.get("caused_by_defect_ids")
                 unavailable_reason = row.get("unavailable_reason")
                 if row["status"] == "incorrect" and (not isinstance(causes, list) or not causes):

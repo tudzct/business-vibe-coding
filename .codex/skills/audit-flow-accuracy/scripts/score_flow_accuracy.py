@@ -11,7 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
 from metrics_contract import ROOT, atomic_write, context, digest, epoch, read_json, require, run_lock, writable
 from flow_baseline_contract import flow_type, nonempty, validate_baseline
-from runtime_contract import method, configured_rubric, validate_runtime, complete_chain
+from runtime_contract import STATIC_KINDS, method, configured_rubric, validate_runtime, complete_chain
 from flow_summary import refresh_summary
 
 OBSERVATION_STATUSES = {"correct", "incorrect", "not_evaluable"}
@@ -279,9 +279,15 @@ def calculate(data):
             deviations += int(not critical and step["status"] == "incorrect")
             computed_steps.append({**step, "completion_critical": critical})
         chain_complete = complete_chain(assessed, definition, attempts)
+        has_static_fallback = bool(data["limitations"]) and any(
+            ref.get("kind") in STATIC_KINDS
+            for target in [*computed_steps, outcome]
+            if target["status"] == "correct"
+            for ref in target.get("evidence", [])
+        )
         if blocking_failure or outcome["status"] == "incorrect":
             status = "incorrect"
-        elif critical_unknown or outcome["status"] == "not_evaluable" or not chain_complete:
+        elif critical_unknown or outcome["status"] == "not_evaluable" or not (chain_complete or has_static_fallback):
             status = "not_evaluable"
         else:
             status = "correct"
@@ -482,6 +488,15 @@ def integrate_result(run, folder, result):
         updated["flow_error_percent"] = result["flow_error_percent"]
         updated["flow_accuracy_status"] = result["status"]
     summary = refresh_summary(updated, folder)
+    if (result["stage"] == "initial" and not updated.get("repairs")
+            and isinstance((updated.get("business_rules") or {}).get("initial"), dict)):
+        audit_scripts = str(Path(__file__).resolve().parents[2] / "audit-generation-metrics" / "scripts")
+        if audit_scripts not in sys.path:
+            sys.path.insert(0, audit_scripts)
+        from calculate_metrics import accepted_br_summary, br_summary_snapshot
+        updated["business_rules"]["final"] = br_summary_snapshot(accepted_br_summary(updated))
+        if updated["business_rules"].get("source_revision") is None:
+            updated["business_rules"]["source_revision"] = result["input"]["source_revision"]
     return updated, summary
 
 

@@ -15,7 +15,7 @@ from flow_summary import RESULT_POLICY, current_assessment, fingerprint, refresh
 def prepare(run, folder, payload=None):
     # Audit validation is read-only here, including the prior immutable assessments.
     sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "audit-generation-metrics/scripts"))
-    from calculate_metrics import accepted_br_summary, apply_br_followup, validate_flow
+    from calculate_metrics import accepted_br_summary, apply_br_followup, br_summary_snapshot, validate_flow
     from score_flow_accuracy import calculate
     validate_flow(run, folder)
     updated = copy.deepcopy(run)
@@ -158,6 +158,9 @@ def prepare(run, folder, payload=None):
         if previous is None:
             history.append(record)
     br_summary = apply_br_followup(updated, br_record) if br_record is not None else accepted_br_summary(updated)
+    if (not updated.get("repairs")
+            and not any(a.get("stage") == "final" for a in updated.get("flow_accuracy", {}).get("assessments", []))):
+        updated["business_rules"]["final"] = br_summary_snapshot(br_summary)
     summary = refresh_summary(updated, folder)
     validate_flow(updated, folder)
     result = {"business_rules": br_summary, "flow_accuracy": summary,

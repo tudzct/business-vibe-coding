@@ -7,9 +7,10 @@ import json
 from pathlib import Path
 from datetime import datetime, timezone
 
-from record_gate import (ROOT, atomic_write, context, digest, prepare_transition,
-                         read_json, require, run_lock, validate_prompt, writable,
-                         validate_flow, audit_evidence, closed_phase, validate_repair_authorization)
+from record_gate import (ROOT, accepted_br_summary, atomic_write, br_summary_snapshot,
+                         context, digest, prepare_transition, read_json, require,
+                         run_lock, validate_prompt, writable, validate_flow,
+                         audit_evidence, closed_phase, validate_repair_authorization)
 
 
 def approve_prompt(run, path, prompt, dry_run):
@@ -85,12 +86,16 @@ def prepare(run, folder, action, turn_id):
                 "repair must begin from the validated bounded-loop initial state")
     receipts.append(prepare_transition(updated, folder, gate, outcome, turn_id))
     if action == "audit":
-        business = updated["business_rules"]["initial"]
         counts = validate_flow(updated, folder)["counts"]
         evidence = audit_evidence(updated, folder, "initial")
-        if (business["correct"] == business["total"] and counts["correct"] == counts["total"]
+        br_summary = accepted_br_summary(updated)
+        br_counts = br_summary["counts"]
+        if (not updated.get("repairs")
+                and not any(a.get("stage") == "final"
+                            for a in updated.get("flow_accuracy", {}).get("assessments", []))):
+            updated["business_rules"]["final"] = br_summary_snapshot(br_summary)
+        if (br_counts["correct"] == br_counts["total"] and counts["correct"] == counts["total"]
                 and not evidence["defect_ids"]):
-            updated["business_rules"]["final"] = copy.deepcopy(business)
             receipts.append(prepare_transition(updated, folder, "repair_decision", "skipped", turn_id,
                                                 "All frozen BRs and flows pass; repair unnecessary."))
     for receipt in receipts:

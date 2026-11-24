@@ -21,6 +21,8 @@ AUDIT_SCRIPTS = ROOT / ".codex" / "skills" / "audit-generation-metrics" / "scrip
 sys.path.insert(0, str(AUDIT_SCRIPTS))
 from calculate_metrics import (
     STATUSES,
+    accepted_br_summary,
+    br_summary_snapshot,
     stage_runtime_defects,
     validate_snapshot,
     validate_br_runtime,
@@ -185,6 +187,10 @@ def record_business_rules(run_path, stage="initial", requirements_input=None,
     br_block[stage] = snapshot
     if br_block.get("source_revision") is None:
         br_block["source_revision"] = source_revision
+    if (stage == "initial" and not data.get("repairs")
+            and matching_assessment and matching_assessment.get("stage") == "initial"
+            and not any(a.get("stage") == "final" for a in assessments)):
+        br_block["final"] = br_summary_snapshot(accepted_br_summary(data))
 
     # Save canonically using Python json
     atomic_write(run_file, data)
