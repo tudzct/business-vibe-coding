@@ -47,6 +47,26 @@ def fixed_prompt_inventory(prompt_dir):
     return result
 
 
+def apply_target_verdict(target, verdict, observation_id, evidence):
+    """Overwrite a target verdict and clear stale initial cause/unavailable metadata."""
+    status = verdict["status"]
+    target["status"] = status
+    target["observation_id"] = observation_id
+    target["rationale"] = verdict.get("rationale", "")
+    target["required_runtime_kinds"] = sorted({item["kind"] for item in evidence})
+    target["evidence_requirement_rationale"] = verdict.get(
+        "evidence_requirement_rationale", "Recorded runtime evidence supports this verdict."
+    )
+    target["evidence"] = evidence
+    target["source_findings"] = verdict.get("source_findings", [])
+    target.pop("caused_by_defect_ids", None)
+    target.pop("unavailable_reason", None)
+    if status == "incorrect" and verdict.get("caused_by_defect_ids"):
+        target["caused_by_defect_ids"] = verdict["caused_by_defect_ids"]
+    elif status == "not_evaluable" and verdict.get("unavailable_reason"):
+        target["unavailable_reason"] = verdict["unavailable_reason"]
+
+
 def evidence_object(item, source_rev, observation_id, flow_id, captured_at):
     if isinstance(item, str):
         item = {"path": item}
@@ -345,32 +365,16 @@ def assemble_assessment(run_data, run_dir, assessment_id=None, stage="final", so
                 evidence_object(item, source_rev, observation_id, flow_id, now_iso)
                 for item in verdict.get("evidence", [])
             ] or fallback_evidence
-            step["status"] = verdict["status"]
-            step["observation_id"] = observation_id
-            step["rationale"] = verdict.get("rationale", "")
-            step["required_runtime_kinds"] = sorted({item["kind"] for item in evidence})
-            step["evidence_requirement_rationale"] = verdict.get(
-                "evidence_requirement_rationale", "Recorded runtime evidence supports this verdict."
-            )
-            step["evidence"] = evidence
-            step["source_findings"] = verdict.get("source_findings", [])
+            apply_target_verdict(step, verdict, observation_id, evidence)
 
         terminal_evidence = [
             evidence_object(item, source_rev, observation_id, flow_id, now_iso)
             for item in terminal.get("evidence", [])
         ] or fallback_evidence
+        flow.pop("caused_by_defect_ids", None)
+        flow.pop("unavailable_reason", None)
         flow["completion_observation_id"] = observation_id
-        flow["terminal_outcome"].update({
-            "status": terminal["status"],
-            "observation_id": observation_id,
-            "rationale": terminal.get("rationale", ""),
-            "evidence": terminal_evidence,
-            "required_runtime_kinds": sorted({item["kind"] for item in terminal_evidence}),
-            "evidence_requirement_rationale": terminal.get(
-                "evidence_requirement_rationale", "Recorded runtime evidence supports this verdict."
-            ),
-            "source_findings": terminal.get("source_findings", []),
-        })
+        apply_target_verdict(flow["terminal_outcome"], terminal, observation_id, terminal_evidence)
 
     data["observations"] = observations
 
@@ -584,7 +588,7 @@ def build_canonical_repair_update(run_data, source_rev, changed_files=None, asse
 
     bf_final = {
         "source_revision": source_rev,
-        "assessed_at": verification.get("captured_at", datetime.now(timezone.utc).astimezone().isoformat()),
+        "assessed_at": verification.get("captured_at") or datetime.now(timezone.utc).astimezone().isoformat(),
         "assessment_id": assessment_id,
         "stage": "final",
         "requirements": final_requirements,

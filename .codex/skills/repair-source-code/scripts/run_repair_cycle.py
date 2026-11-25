@@ -5,6 +5,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -158,6 +159,66 @@ def verification_flow_definition(flow):
     }
 
 
+def verification_schemas(assessment_id, defect_id):
+    return {
+        "verification_results": {
+            "required_top_level": [
+                "uc_id", "run_id", "assessment_id", "captured_at",
+                "limitations", "execution_blocker_defect_ids", "flows",
+                "business_rules", "defects"
+            ],
+            "flow_action_example": {
+                "sequence": 1,
+                "action": "<ACTION-PERFORMED>",
+                "actual_result": "<OBSERVED-RESULT>",
+                "target_ids": ["entry"],
+                "evidence": [{
+                    "path": f"docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/flow-accuracy/evidence/{assessment_id}/<observation-id>/<file>",
+                    "kind": "ui",
+                    "target_ids": ["entry"]
+                }]
+            },
+            "flow_rules": [
+                "Each flow requires a unique non-empty observation_id, entry_point, entry_kind ('ui'|'api'|'other'), actual_preconditions, end_state, state ('completed'|'incomplete'|'blocked'), and non-empty actions.",
+                "First action must include non-empty evidence; when entry_kind is 'ui', first action evidence must include kind 'ui' and target_ids covering 'entry'.",
+                "Last action of a completed flow should cover 'terminal_outcome'; Alternative/Exception flows must include an action targeting 'branch'."
+            ],
+            "target_status_rules": {
+                "correct": "Do NOT include caused_by_defect_ids or unavailable_reason.",
+                "incorrect": "MUST include non-empty unique caused_by_defect_ids and NO unavailable_reason.",
+                "not_evaluable": "MUST include non-empty unavailable_reason and NO caused_by_defect_ids."
+            },
+            "defect_example": {
+                "defect_id": defect_id,
+                "status": "resolved",
+                "evidence": [
+                    f"docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/flow-accuracy/evidence/{assessment_id}/<observation-id>/<file>"
+                ]
+            }
+        },
+        "deployment": {
+            "path": f"docs/02-construction/implementation/<UC-ID>/runs/<RUN-ID>/flow-accuracy/evidence/{assessment_id}/_runtime/deployment.json",
+            "capture_command": (
+                f"python -B .codex/skills/repair-source-code/scripts/run_repair_cycle.py "
+                f"--run-json <canonical.json> --assessment-id {assessment_id} --defect-id {defect_id} --capture-deployment"
+            ),
+            "ready_example": {
+                "status": "ready",
+                "compose_version": 2,
+                "verified": True,
+                "compose_project": "<OBSERVED-COMPOSE-PROJECT>",
+                "reason": "Frontend and backend containers rebuilt and healthy.",
+                "services": [{
+                    "name": "backend",
+                    "container_id": "<CONTAINER-ID>",
+                    "image_id": "<IMAGE-ID>",
+                    "state": "running"
+                }]
+            }
+        }
+    }
+
+
 def verification_flow_skeleton(flow):
     return {
         "flow_id": flow["flow_id"],
@@ -212,7 +273,8 @@ def prepare_verification(run_path, run_data, run_dir, evidence_root, assessment_
         "assessment_id": assessment_id,
         "defect_id": defect_id,
         "flows": [verification_flow_definition(flow) for flow in flows],
-        "ordered_br_ids": ordered_br_ids
+        "ordered_br_ids": ordered_br_ids,
+        "schemas": verification_schemas(assessment_id, defect_id),
     }
     results = {
         "uc_id": run_data["uc_id"],
@@ -248,39 +310,327 @@ def prepare_verification(run_path, run_data, run_dir, evidence_root, assessment_
     return plan_path, results_path
 
 
-def validate_verification_results(path, run_data, assessment_id, flow_ids, defect_id):
+def parse_compose_major(compose_dir):
+    out = run_cmd(["docker", "compose", "-f", "compose.yaml", "version", "--format", "json"], cwd=compose_dir)
+    version_text = ""
+    try:
+        version_text = str(json.loads(out).get("version", ""))
+    except json.JSONDecodeError:
+        version_text = out
+    match = re.search(r"(\d+)", version_text)
+    require(match is not None, f"Could not determine Docker Compose version from: {out}")
+    major = int(match.group(1))
+    require(major in {2, 5}, f"Unsupported Docker Compose major version {major}; expected 2 or 5")
+    return major
+
+
+def parse_compose_ps(raw):
+    text = raw.strip()
+    if not text:
+        return []
+    if text.startswith("["):
+        rows = json.loads(text)
+        require(isinstance(rows, list), "docker compose ps JSON output must be an array")
+        return rows
+    rows = []
+    for line in text.splitlines():
+        line = line.strip()
+        if line:
+            rows.append(json.loads(line))
+    return rows
+
+
+def extract_compose_label(labels_value, key):
+    if isinstance(labels_value, dict):
+        return labels_value.get(key)
+    if isinstance(labels_value, str):
+        for part in labels_value.split(","):
+            name, sep, val = part.partition("=")
+            if sep and name.strip() == key:
+                return val.strip()
+    return None
+
+
+def capture_deployment_evidence(evidence_root):
+    compose_dir = ROOT / "finalsource"
+    compose_file = compose_dir / "compose.yaml"
+    require(compose_file.is_file(), f"Compose file not found: {compose_file}")
+    compose_version = parse_compose_major(compose_dir)
+    ps_raw = run_cmd(["docker", "compose", "-f", "compose.yaml", "ps", "--format", "json"], cwd=compose_dir)
+    rows = parse_compose_ps(ps_raw)
+    require(rows, "No running Docker Compose services observed; start backend/frontend before capturing deployment")
+
+    compose_project = None
+    services = []
+    non_running = []
+    for item in rows:
+        name = item.get("Service") or item.get("Name")
+        container_id = item.get("ID")
+        labels = item.get("Labels")
+        if not compose_project:
+            compose_project = item.get("Project") or extract_compose_label(labels, "com.docker.compose.project")
+        image_id = extract_compose_label(labels, "com.docker.compose.image") or item.get("Image")
+        state = item.get("State")
+        if state != "running":
+            non_running.append(f"{name or container_id}={state}")
+        services.append({
+            "name": name,
+            "container_id": container_id,
+            "image_id": image_id,
+            "state": state,
+        })
+
+    require(not non_running, f"All observed Compose services must be running: {', '.join(non_running)}")
+    require(isinstance(compose_project, str) and compose_project.strip(),
+            "Could not determine Compose project name from docker compose ps output")
+    for idx, svc in enumerate(services):
+        for field in ("name", "container_id", "image_id", "state"):
+            require(isinstance(svc.get(field), str) and svc[field].strip(),
+                    f"Captured Compose service[{idx}] missing {field}")
+
+    deployment_path = evidence_root / "_runtime" / "deployment.json"
+    payload = {
+        "status": "ready",
+        "compose_version": compose_version,
+        "verified": True,
+        "compose_project": compose_project,
+        "reason": "Observed running Docker Compose services via docker compose ps.",
+        "services": services,
+    }
+    atomic_json(deployment_path, payload)
+    return deployment_path, payload
+
+
+def display_path(path):
+    resolved = path.resolve()
+    return resolved.relative_to(ROOT).as_posix() if resolved.is_relative_to(ROOT) else str(path)
+
+
+def check_evidence_items(items, label, evidence_root, errors, require_ui=False):
+    if not isinstance(items, list) or not items:
+        errors.append(f"{label} must be a non-empty evidence array")
+        return
+    saw_ui = False
+    for idx, item in enumerate(items):
+        entry_label = f"{label}[{idx}]"
+        if isinstance(item, str):
+            raw_path = item
+            kind = "ui"
+        elif isinstance(item, dict):
+            raw_path = item.get("path")
+            kind = item.get("kind") or "ui"
+        else:
+            errors.append(f"{entry_label} must be a path string or evidence object")
+            continue
+        if kind == "ui":
+            saw_ui = True
+        if not isinstance(raw_path, str) or not raw_path.strip():
+            errors.append(f"{entry_label}.path is required")
+            continue
+        p = Path(raw_path)
+        if p.is_absolute():
+            errors.append(f"{entry_label}.path must be repository-relative: {raw_path}")
+            continue
+        resolved = (ROOT / p).resolve()
+        if not resolved.is_file():
+            errors.append(f"{entry_label}.path file not found: {raw_path}")
+        elif not resolved.is_relative_to(evidence_root.resolve()):
+            errors.append(f"{entry_label}.path must stay under {display_path(evidence_root)}: {raw_path}")
+    if require_ui and not saw_ui:
+        errors.append(f"{label} requires at least one entry with kind 'ui'")
+
+
+def validate_target_verdict(verdict, label, errors):
+    if not isinstance(verdict, dict):
+        errors.append(f"{label} must be an object")
+        return
+    status = verdict.get("status")
+    if status not in {"correct", "incorrect", "not_evaluable"}:
+        errors.append(f"{label}.status must be 'correct', 'incorrect', or 'not_evaluable'")
+        return
+    causes = verdict.get("caused_by_defect_ids")
+    unavailable = verdict.get("unavailable_reason")
+    if status == "correct":
+        if causes not in (None, []):
+            errors.append(f"{label} has status 'correct' and must NOT carry caused_by_defect_ids")
+        if unavailable not in (None, ""):
+            errors.append(f"{label} has status 'correct' and must NOT carry unavailable_reason")
+    elif status == "incorrect":
+        if not (isinstance(causes, list) and causes and len(causes) == len(set(causes))
+                and all(isinstance(v, str) and v.strip() for v in causes)):
+            errors.append(f"{label} has status 'incorrect' and requires non-empty unique caused_by_defect_ids")
+        if unavailable not in (None, ""):
+            errors.append(f"{label} has status 'incorrect' and must NOT carry unavailable_reason")
+    else:
+        if not (isinstance(unavailable, str) and unavailable.strip()):
+            errors.append(f"{label} has status 'not_evaluable' and requires non-empty unavailable_reason")
+        if causes not in (None, []):
+            errors.append(f"{label} has status 'not_evaluable' and must NOT carry caused_by_defect_ids")
+
+
+def validate_deployment_evidence(deployment_path, execution_blocked):
+    errors = []
+    if not deployment_path.is_file():
+        errors.append(
+            f"Actual runtime deployment evidence not found: {display_path(deployment_path)} "
+            f"(run with --capture-deployment or write _runtime/deployment.json)"
+        )
+        return errors
+    try:
+        dep = json.loads(deployment_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return [f"Could not parse {display_path(deployment_path)}: {exc}"]
+
+    if not isinstance(dep, dict):
+        return ["_runtime/deployment.json must be a JSON object"]
+    runtime_status = dep.get("status", "ready")
+    if runtime_status not in {"ready", "BLOCKED", "unverified"}:
+        errors.append("_runtime/deployment.json.status must be 'ready', 'BLOCKED', or 'unverified'")
+    if dep.get("compose_version") not in {2, 5}:
+        errors.append("_runtime/deployment.json.compose_version must be integer 2 or 5")
+    verified = dep.get("verified", runtime_status == "ready")
+    if type(verified) is not bool:
+        errors.append("_runtime/deployment.json.verified must be Boolean")
+    services = dep.get("services")
+    if not isinstance(services, list):
+        errors.append("_runtime/deployment.json.services must be an array")
+        services = []
+
+    if runtime_status == "ready":
+        if execution_blocked:
+            errors.append("_runtime/deployment.json.status cannot be 'ready' when execution_blocker_defect_ids is non-empty")
+        if verified is not True:
+            errors.append("_runtime/deployment.json.verified must be true when status is 'ready'")
+        if not (isinstance(dep.get("compose_project"), str) and dep["compose_project"].strip()):
+            errors.append("_runtime/deployment.json.compose_project is required when status is 'ready'")
+        if not services:
+            errors.append("_runtime/deployment.json.services must be non-empty when status is 'ready'")
+        for idx, svc in enumerate(services):
+            if not isinstance(svc, dict) or not all(
+                isinstance(svc.get(k), str) and svc[k].strip()
+                for k in ("name", "container_id", "image_id", "state")
+            ):
+                errors.append(
+                    f"_runtime/deployment.json.services[{idx}] requires non-empty name, container_id, image_id, state"
+                )
+    else:
+        if verified is not False:
+            errors.append("_runtime/deployment.json.verified must be false when status is BLOCKED/unverified")
+        if not (isinstance(dep.get("reason"), str) and dep["reason"].strip()):
+            errors.append("_runtime/deployment.json.reason is required when status is BLOCKED/unverified")
+    return errors
+
+
+def validate_verification_results(path, run_data, assessment_id, flow_ids, defect_id,
+                                  evidence_root=None, deployment_path=None):
     require(path.is_file(), f"Repair verification results not found: {path}")
     with open(path, "r", encoding="utf-8") as handle:
         data = json.load(handle)
-    require(data.get("uc_id") == run_data["uc_id"], "verification UC identity mismatch")
-    require(data.get("run_id") == run_data["run_id"], "verification run identity mismatch")
-    require(data.get("assessment_id") == assessment_id, "verification assessment identity mismatch")
-    recorded = [item.get("flow_id") for item in data.get("flows", [])]
-    require(recorded == flow_ids,
-            "verification flow inventory/order must exactly match verification-plan.json; "
-            "restore the prepared inventory and retry this attempt")
+    if evidence_root is None:
+        evidence_root = path.parent
+
+    errors = []
+    if data.get("uc_id") != run_data["uc_id"]:
+        errors.append("uc_id mismatch")
+    if data.get("run_id") != run_data["run_id"]:
+        errors.append("run_id mismatch")
+    if data.get("assessment_id") != assessment_id:
+        errors.append("assessment_id mismatch")
+
+    blocker_ids = data.get("execution_blocker_defect_ids", [])
+    if not isinstance(blocker_ids, list):
+        errors.append("execution_blocker_defect_ids must be an array")
+        blocker_ids = []
+    execution_blocked = bool(blocker_ids)
+
+    flows = data.get("flows")
+    if not isinstance(flows, list) or [item.get("flow_id") for item in flows] != flow_ids:
+        errors.append(
+            "flows inventory/order must exactly match verification-plan.json; "
+            "restore the prepared inventory and retry this attempt"
+        )
+    else:
+        observation_ids = set()
+        for idx, flow in enumerate(flows):
+            flow_id = flow.get("flow_id", f"flows[{idx}]")
+            flabel = f"flows[{idx}] ({flow_id})"
+            if not execution_blocked:
+                observation_id = flow.get("observation_id")
+                if not (isinstance(observation_id, str) and observation_id.strip()):
+                    errors.append(f"{flabel}.observation_id is required")
+                elif observation_id in observation_ids:
+                    errors.append(f"{flabel}.observation_id is duplicated: {observation_id}")
+                else:
+                    observation_ids.add(observation_id)
+                for req_str in ("entry_point", "actual_preconditions", "end_state"):
+                    val = flow.get(req_str)
+                    if not (isinstance(val, str) and val.strip()):
+                        errors.append(f"{flabel}.{req_str} is required")
+                entry_kind = flow.get("entry_kind")
+                if entry_kind not in {"ui", "api", "other"}:
+                    errors.append(f"{flabel}.entry_kind must be 'ui', 'api', or 'other'")
+                if flow.get("state") not in {"completed", "incomplete", "blocked"}:
+                    errors.append(f"{flabel}.state must be 'completed', 'incomplete', or 'blocked'")
+                actions = flow.get("actions")
+                if not isinstance(actions, list) or not actions:
+                    errors.append(f"{flabel}.actions must be a non-empty array")
+                else:
+                    for aidx, action in enumerate(actions):
+                        alabel = f"{flabel}.actions[{aidx}]"
+                        if not isinstance(action, dict):
+                            errors.append(f"{alabel} must be an object")
+                            continue
+                        if not (isinstance(action.get("action"), str) and action["action"].strip()):
+                            errors.append(f"{alabel}.action is required")
+                        if not (isinstance(action.get("actual_result"), str) and action["actual_result"].strip()):
+                            errors.append(f"{alabel}.actual_result is required")
+                        check_evidence_items(
+                            action.get("evidence"),
+                            f"{alabel}.evidence",
+                            evidence_root,
+                            errors,
+                            require_ui=(aidx == 0 and entry_kind == "ui"),
+                        )
+            steps = flow.get("steps")
+            if not isinstance(steps, list) or not steps:
+                errors.append(f"{flabel}.steps must be a non-empty array")
+            else:
+                for sidx, step in enumerate(steps):
+                    sid = step.get("step_id", f"step[{sidx}]") if isinstance(step, dict) else f"step[{sidx}]"
+                    validate_target_verdict(step, f"{flabel}.steps[{sidx}] ({sid})", errors)
+            validate_target_verdict(flow.get("terminal_outcome"), f"{flabel}.terminal_outcome", errors)
+
     business_rules = data.get("business_rules")
-    require(isinstance(business_rules, list), "verification business_rules results must be an array")
     ordered_br_ids = run_data.get("business_rules", {}).get("ordered_br_ids", [])
-    require([item.get("br_id") for item in business_rules] == ordered_br_ids,
-            "verification BR inventory/order must exactly match verification-plan.json; "
-            "restore the prepared inventory and retry this attempt")
-    require(isinstance(data.get("defects"), list)
-            and [item.get("defect_id") for item in data["defects"]] == [defect_id],
-            "verification defects must contain exactly the current fixed defect")
-    observation_ids = set()
-    for flow in data["flows"]:
-        flow_id = flow["flow_id"]
-        observation_id = flow.get("observation_id")
-        require(isinstance(observation_id, str) and observation_id.strip(),
-                f"{flow_id} requires an observation_id")
-        require(observation_id not in observation_ids,
-                f"duplicate observation_id: {observation_id}")
-        observation_ids.add(observation_id)
-        actions = flow.get("actions")
-        require(isinstance(actions, list) and actions,
-                f"{flow_id} requires an actual runtime action sequence")
-        require(actions[0].get("evidence"), f"{flow_id} requires evidence on its first action")
+    if not isinstance(business_rules, list):
+        errors.append("business_rules must be an array")
+    elif [item.get("br_id") for item in business_rules] != ordered_br_ids:
+        errors.append(
+            "business_rules inventory/order must exactly match verification-plan.json; "
+            "restore the prepared inventory and retry this attempt"
+        )
+    else:
+        for bidx, br in enumerate(business_rules):
+            bid = br.get("br_id", f"br[{bidx}]") if isinstance(br, dict) else f"br[{bidx}]"
+            validate_target_verdict(br, f"business_rules[{bidx}] ({bid})", errors)
+            if isinstance(br, dict) and br.get("status") == "correct" and br.get("blocking_defect_ids"):
+                errors.append(f"business_rules[{bidx}] ({bid}) has status 'correct' and must NOT carry blocking_defect_ids")
+
+    defects = data.get("defects")
+    if not isinstance(defects, list) or [item.get("defect_id") for item in defects] != [defect_id]:
+        errors.append(f"defects must contain exactly the current fixed defect [{defect_id}]")
+    else:
+        dverdict = defects[0]
+        if dverdict.get("status") not in {"resolved", "unresolved"}:
+            errors.append(f"defects[0] ({defect_id}).status must be 'resolved' or 'unresolved'")
+        check_evidence_items(dverdict.get("evidence"), f"defects[0] ({defect_id}).evidence", evidence_root, errors)
+
+    if deployment_path is not None:
+        errors.extend(validate_deployment_evidence(deployment_path, execution_blocked))
+
+    if errors:
+        bullet_list = "\n- ".join(errors)
+        raise ValueError(f"Repair verification validation failed ({len(errors)} issue(s)):\n- {bullet_list}")
     return data
 
 
@@ -297,6 +647,10 @@ def main():
                         help="Exact flow inventory; defaults to the frozen baseline")
     parser.add_argument("--prepare", action="store_true",
                         help="Create the bounded verification plan and full results skeleton")
+    parser.add_argument("--capture-deployment", action="store_true",
+                        help="Inspect live Docker Compose services and write _runtime/deployment.json")
+    parser.add_argument("--validate-only", action="store_true",
+                        help="Validate verification-results.json and _runtime/deployment.json without committing")
     args = parser.parse_args()
 
     run_path = args.run_json.resolve()
@@ -314,6 +668,8 @@ def main():
                 "--verification-results cannot be combined with --prepare")
         require(args.changed_files is None,
                 "--changed-files cannot be combined with --prepare")
+        require(not args.capture_deployment and not args.validate_only,
+                "--prepare cannot be combined with --capture-deployment or --validate-only")
         evidence_root.mkdir(parents=True, exist_ok=True)
         plan_path, results_path = prepare_verification(
             run_path, run_data, run_dir, evidence_root, assessment_id, flow_ids, args.defect_id
@@ -323,14 +679,31 @@ def main():
         return
 
     require(evidence_root.is_dir(), f"Repair evidence directory not found: {evidence_root}")
+    if args.capture_deployment:
+        require(args.verification_results is None and not args.validate_only,
+                "--capture-deployment cannot be combined with --verification-results or --validate-only")
+        deployment_path, payload = capture_deployment_evidence(evidence_root)
+        print(f"Captured runtime deployment evidence: {deployment_path.relative_to(ROOT)}")
+        print(json.dumps(payload, ensure_ascii=False, indent=2))
+        return
+
     now_iso = datetime.now(timezone.utc).astimezone().isoformat()
     results_path = (args.verification_results.resolve() if args.verification_results
                     else evidence_root / "verification-results.json")
-    validate_verification_results(results_path, run_data, assessment_id, flow_ids, args.defect_id)
-
     deployment_path = evidence_root / "_runtime" / "deployment.json"
-    require(deployment_path.is_file(),
-            f"Actual runtime deployment evidence not found: {deployment_path}")
+    validate_verification_results(
+        results_path, run_data, assessment_id, flow_ids, args.defect_id,
+        evidence_root=evidence_root, deployment_path=deployment_path
+    )
+    if args.validate_only:
+        print(json.dumps({
+            "valid": True,
+            "assessment_id": assessment_id,
+            "defect_id": args.defect_id,
+            "verification_results": results_path.relative_to(ROOT).as_posix(),
+            "deployment": deployment_path.relative_to(ROOT).as_posix(),
+        }, ensure_ascii=False, indent=2))
+        return
 
     # Source manifest
     source_dir = evidence_root / "_source"
@@ -386,7 +759,7 @@ def main():
     updated_run = candidate_run
     if updated_run.get("repair_status") in {"completed", "unresolved", "blocked"}:
         metrics_script = ROOT / ".codex/skills/audit-generation-metrics/scripts/calculate_metrics.py"
-        summary_out = run_cmd([sys.executable, str(metrics_script), str(run_path)])
+        summary_out = run_cmd([sys.executable, "-B", str(metrics_script), str(run_path)])
         print("6. Final pre/post-Repair summary:", summary_out)
     print("\n=== REPAIR DEFECT ATTEMPT RECORDED ===")
 

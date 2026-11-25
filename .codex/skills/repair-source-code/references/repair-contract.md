@@ -96,8 +96,34 @@ Each subordinate verification completes the helper-prepared `verification-result
 }
 ```
 
-Allowed BR/step/terminal statuses are `correct`, `incorrect` and `not_evaluable`. Allowed defect statuses are `resolved` and `unresolved`. The assembler validates identities, frozen inventories, evidence existence and hashes; it never supplies a successful default.
+Allowed BR/step/terminal statuses are `correct`, `incorrect` and `not_evaluable`. Allowed defect statuses are `resolved` and `unresolved`. On steps, `terminal_outcome` and BR entries:
 
-For a ready runtime, every Flow uses a unique observation ID and its evidence files stay under `<assessment-id>/<observation-id>/`. The first action covers `entry`; when `entry_kind` is `ui`, that action includes evidence with `kind: ui`. The last action covers `terminal_outcome`, every recorded step target is linked to an actual action, and every Alternative or Exception Flow includes an observed `branch` target in its action sequence. The `_runtime/deployment.json` record contains the observed Compose major version, project and service identities.
+- `correct` must NOT carry `caused_by_defect_ids` or `unavailable_reason`;
+- `incorrect` requires non-empty unique `caused_by_defect_ids` and no `unavailable_reason`;
+- `not_evaluable` requires non-empty `unavailable_reason` and no `caused_by_defect_ids`.
 
-If execution remains blocked, `_runtime/deployment.json` records `status: "BLOCKED"`, `verified: false`, the Compose major version, an empty service list when nothing started, and the actual blocker reason. `execution_blocker_defect_ids` lists the unresolved blocking defects, `flows` preserves the frozen flow-ID order without invented observations, every BR is recorded `incorrect`, and the blocking defect remains `unresolved`. The scorer then records every Flow as incorrect without manufacturing runtime evidence.
+The assembler validates identities, frozen inventories, evidence existence and hashes; it never supplies a successful default.
+
+For a ready runtime, every Flow uses a unique observation ID and its evidence files stay under `<assessment-id>/<observation-id>/`. The first action covers `entry`; when `entry_kind` is `ui`, that action includes evidence with `kind: ui`. The last action covers `terminal_outcome`, every recorded step target is linked to an actual action, and every Alternative or Exception Flow includes an observed `branch` target in its action sequence.
+
+The `_runtime/deployment.json` record must use this shape (and can be generated directly from running Compose containers via `run_repair_cycle.py --capture-deployment`, or checked alongside `verification-results.json` with `--validate-only`):
+
+```json
+{
+  "status": "ready",
+  "compose_version": 2,
+  "verified": true,
+  "compose_project": "<OBSERVED-COMPOSE-PROJECT>",
+  "reason": "Frontend and backend containers rebuilt and healthy.",
+  "services": [
+    {
+      "name": "backend",
+      "container_id": "<CONTAINER-ID>",
+      "image_id": "<IMAGE-ID>",
+      "state": "running"
+    }
+  ]
+}
+```
+
+Accepted `compose_version` majors are `2` and `5`. If execution remains blocked, `_runtime/deployment.json` records `status: "BLOCKED"`, `verified: false`, the Compose major version, an empty `services` list when nothing started, and the actual `reason` string. `execution_blocker_defect_ids` lists the unresolved blocking defects, `flows` preserves the frozen flow-ID order without invented observations, every BR is recorded `incorrect`, and the blocking defect remains `unresolved`. The scorer then records every Flow as incorrect without manufacturing runtime evidence.
