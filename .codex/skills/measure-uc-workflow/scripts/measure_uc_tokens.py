@@ -16,6 +16,11 @@ from metrics_contract import (CORE, AUX, USAGE, METHOD, TIMING_PROTOCOL, aggrega
 from rollout_contract import analyze_session, classified_phase, find_turn, public_turn
 
 
+def _immutable_turn_evidence(row):
+    """Compare semantic and timing telemetry while ignoring raw rollout byte offsets."""
+    return {k: v for k, v in row.items() if k not in ("prefix_bytes", "prefix_sha256")}
+
+
 def close_repair_and_finalize(state, run, rows, selection, measurement_turn_id):
     """Close/skip Repair and finalize the four-phase ledger as one validated operation."""
     require(all(state["phases"].get(p, {}).get("status") == "closed" for p in CORE[:2]),
@@ -172,8 +177,11 @@ def measure(args):
         intervals.sort()
         require(all(a[1] <= b[0] for a, b in zip(intervals, intervals[1:])), "overlapping timing segments would double-count")
         if old_metrics:
-            require(rows[:len(old_metrics["turns"])] == old_metrics["turns"],
+            old_turns = old_metrics["turns"]
+            require([_immutable_turn_evidence(r) for r in rows[:len(old_turns)]]
+                    == [_immutable_turn_evidence(r) for r in old_turns],
                     "previously measured evidence changed; closed phase is immutable")
+            rows[:len(old_turns)] = old_turns
         action = args.command + (":" + args.phase if args.command == "close-phase" else "")
         existing = next((o for o in state["observations"] if o["measurement_turn_id"] == args.measurement_turn_id), None)
         if existing:
